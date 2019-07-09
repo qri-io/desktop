@@ -5,8 +5,8 @@ import { BrowserRouter as Router } from 'react-router-dom'
 import { Provider } from 'react-redux'
 import './app.global.scss'
 
-const { configureStore } = require('./store/configureStore');
-const store = configureStore();
+const { configureStore } = require('./store/configureStore') // eslint-disable-line
+const store = configureStore()
 
 ReactDOM.render(
   <Provider store={store}>
