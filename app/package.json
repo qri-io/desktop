@@ -1,0 +1,18 @@
+{
+  "name": "qri-desktop",
+  "productName": "Qri Desktop",
+  "version": "0.0.1",
+  "description": "Version your data with the Qri desktop app!",
+  "main": "./main.js",
+  "author": {
+    "name": "Qri, inc.",
+    "email": "sparkle_pony_2000@qri.io",
+    "url": "https://github.com/qri-io"
+  },
+  "scripts": {
+    "postinstall": "npm rebuild --runtime=electron --target=1.6.6 --disturl=https://atom.io/download/atom-shell --build-from-source"
+  },
+  "license": "GPL-3.0",
+  "dependencies": {
+  }
+}

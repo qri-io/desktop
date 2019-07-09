@@ -1,0 +1,182 @@
+{
+  "name": "qri-desktop",
+  "productName": "Qri Desktop",
+  "version": "0.0.1",
+  "description": "Version your data with the Qri desktop app!",
+  "main": "main.js",
+  "scripts": {
+    "test": "cross-env NODE_ENV=test node --trace-warnings ./test/runTests.js",
+    "test-all": "npm run test && npm run build && npm run test-e2e",
+    "test-watch": "npm test -- --watch",
+    "test-e2e": "cross-env NODE_ENV=test node --trace-warnings ./test/runTests.js e2e",
+    "hot-server": "cross-env NODE_ENV=development node --max_old_space_size=2096 server.js",
+    "build-main": "cross-env NODE_ENV=production node ./node_modules/webpack/bin/webpack --mode=production --config webpack.config.electron.js --progress --profile --colors",
+    "build-renderer": "cross-env NODE_ENV=production node ./node_modules/webpack/bin/webpack --mode=production --config webpack.config.production.js --progress --profile --colors",
+    "build": "npm run build-main && npm run build-renderer",
+    "start": "cross-env NODE_ENV=production electron ./app/",
+    "start-hot": "cross-env HOT=1 NODE_ENV=development electron ./app/main.development",
+    "postinstall": "npm run build",
+    "dev": "npm run hot-server -- --start-hot",
+    "package": "npm run build && build --publish never",
+    "package-win": "npm run build && build --win --x64",
+    "package-linux": "npm run build && build --linux",
+    "package-all": "npm run build && build -mwl",
+    "cleanup": "mop -v"
+  },
+  "jest": {
+    "moduleNameMapper": {
+      "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/internals/mocks/fileMock.js",
+      "\\.(css|less|sass|scss)$": "identity-obj-proxy"
+    },
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js"
+    ],
+    "moduleDirectories": [
+      "node_modules",
+      "app/node_modules"
+    ],
+    "transform": {
+      "^.+\\.(ts|tsx)$": "<rootDir>/test/preprocessor.js"
+    },
+    "testMatch": [
+      "**/?(*.)(spec|test).ts?(x)"
+    ]
+  },
+  "build": {
+    "productName": "Qri Desktop",
+    "appId": "io.github.qri-io.desktop",
+    "dmg": {
+      "contents": [
+        {
+          "x": 410,
+          "y": 150,
+          "type": "link",
+          "path": "/Applications"
+        },
+        {
+          "x": 130,
+          "y": 150,
+          "type": "file"
+        }
+      ]
+    },
+    "files": [
+      "dist/",
+      "node_modules/",
+      "app.html",
+      "main.js",
+      "main.js.map",
+      "package.json"
+    ],
+    "directories": {
+      "buildResources": "resources",
+      "output": "release"
+    },
+    "win": {
+      "target": "nsis"
+    },
+    "linux": {
+      "target": [
+        "deb",
+        "AppImage"
+      ]
+    }
+  },
+  "bin": {
+    "electron": "./node_modules/.bin/electron"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/qri-io/desktop"
+  },
+  "author": {
+    "name": "qri, inc.",
+    "email": "sparkle_pony_2000@qri.io",
+    "url": "https://github.com/qri-io"
+  },
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/qri-io/desktop/issues"
+  },
+  "keywords": [
+    "electron",
+    "react",
+    "react-router",
+    "flux",
+    "webpack",
+    "react-hot"
+  ],
+  "homepage": "https://qri.io",
+  "devDependencies": {
+    "@types/enzyme": "3.10.1",
+    "@types/history": "4.7.2",
+    "@types/jest": "24.0.15",
+    "@types/node": "12.6.0",
+    "@types/react": "16.8.23",
+    "@types/react-dom": "16.8.4",
+    "@types/react-hot-loader": "4.1.0",
+    "@types/react-redux": "7.1.1",
+    "@types/react-router": "5.0.3",
+    "@types/react-router-dom": "4.3.4",
+    "@types/react-router-redux": "5.0.18",
+    "@types/redux-logger": "3.0.7",
+    "@types/sinon": "7.0.13",
+    "asar": "2.0.1",
+    "concurrently": "4.1.1",
+    "cross-env": "5.2.0",
+    "css-loader": "3.0.0",
+    "css-modules-require-hook": "4.2.3",
+    "devtron": "1.4.0",
+    "electron": "5.0.6",
+    "electron-builder": "20.44.4",
+    "electron-builder-http": "19.27.5",
+    "electron-devtools-installer": "2.2.4",
+    "enzyme": "3.10.0",
+    "enzyme-adapter-react-16": "1.14.0",
+    "express": "4.17.1",
+    "file-loader": "4.0.0",
+    "html-webpack-plugin": "3.2.0",
+    "identity-obj-proxy": "3.0.0",
+    "jest": "24.8.0",
+    "json-loader": "0.5.7",
+    "mini-css-extract-plugin": "0.7.0",
+    "node-sass": "4.12.0",
+    "react-hot-loader": "4.12.5",
+    "react-test-renderer": "16.8.6",
+    "redux-logger": "3.0.6",
+    "sass-loader": "7.1.0",
+    "sinon": "7.3.2",
+    "spectron": "7.0.0",
+    "style-loader": "0.23.1",
+    "ts-loader": "6.0.4",
+    "ts-node": "8.3.0",
+    "tslint": "5.18.0",
+    "typescript": "3.5.2",
+    "url-loader": "2.0.1",
+    "webpack": "4.35.3",
+    "webpack-cli": "3.3.5",
+    "webpack-dev-middleware": "3.7.0",
+    "webpack-hot-middleware": "2.25.0",
+    "webpack-merge": "4.2.1"
+  },
+  "dependencies": {
+    "electron-debug": "3.0.1",
+    "font-awesome": "4.7.0",
+    "history": "4.9.0",
+    "react": "16.8.6",
+    "react-dom": "16.8.6",
+    "react-redux": "7.1.0",
+    "react-router": "5.0.1",
+    "react-router-dom": "5.0.1",
+    "react-router-redux": "^5.0.0-alpha.6",
+    "redux": "4.0.1",
+    "redux-thunk": "2.3.0",
+    "source-map-support": "0.5.12"
+  },
+  "devEngines": {
+    "node": ">=6.x",
+    "npm": ">=3.x"
+  }
+}

@@ -1,0 +1,226 @@
+//
+// SCSS for Item components
+// 
+// CitationItem
+// CommitItem
+// ContributorItem
+// DatasetItem
+// FieldItem
+// KeyValueItem
+// ProfileItem
+// StatItem
+// TagItem
+
+////////////////////////////
+//      CitationItem      //
+////////////////////////////
+.citation-item-flex {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.citation-item-inputs {
+  justify-content: space-between;
+}
+
+.citation-item-delete {
+  padding-top: 23px;
+  padding-left: 10px;
+}
+
+////////////////////////////
+//       CommitItem       //
+////////////////////////////
+.commit-item-color {
+  color: $text;
+  cursor: pointer;
+}
+
+.commit-item-flex {
+  display: flex;
+  align-items: baseline;
+}
+
+.commit-item-wrap {
+  margin: 20px;
+  display: flex;
+  align-items: center;
+}
+
+.commit-item-photo {
+  display: inline-block;
+}
+
+.commit-item-title {
+  color: $text;
+  margin-bottom: 0;
+}
+
+.commit-item-info {
+  margin-left: 10px;
+  display: inline-block;
+}
+
+.commit-item-no-click {
+  cursor: default;
+  border-radius: 3px;
+  border: 1px solid #50C9F4;
+  padding: 8px;
+}
+
+.commit-item-peername {
+  margin-right: 5px;
+  color: $primary;
+}
+
+////////////////////////////
+//     ContributorItem    //
+////////////////////////////
+.contributor-item-flex {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.contributor-item-inputs {
+  justify-content: space-between;
+}
+
+.contributor-item-delete {
+  padding-top: 23px;
+  padding-left: 10px;
+}
+
+////////////////////////////
+//       DatasetItem      //
+////////////////////////////
+.dataset-item-wrap {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+////////////////////////////
+//        FieldItem       //
+////////////////////////////
+.field-item-wrap {
+  margin: 2px;
+  padding: 5px;
+  flex: 1 1 230px;
+  min-height: 120px;
+  border-radius: 3px;
+  background: $appBackground;
+}
+
+.field-item-datatype {
+  margin: 0;
+}
+
+.field-item-index {
+  color: $primary-dark;
+}
+
+.field-item-title {
+  cursor: pointer;
+  color: $text;
+  margin: 0;
+}
+
+.field-item-description {
+  margin-top: 4px;
+  color: $primary-dark;
+}
+
+.field-item-save {
+  margin-left: 30px;
+  margin-top: 20px;
+  float: right;
+}
+
+////////////////////////////
+//       KeyValueItem     //
+////////////////////////////
+.key-value-item-flex {
+  width: 100%;
+  display: flex;
+}
+
+.key-value-item-inputs {
+  margin-right: 10px;
+}
+
+.key-value-item-delete {
+  padding-top: 23px;
+  padding-left: 10px;
+}
+
+////////////////////////////
+//       ProfileItem      //
+////////////////////////////
+.profile-item-wrap {
+  padding: 20px;
+}
+
+.profile-item-photo {
+  float: left;
+}
+
+.profile-item-info {
+  display: inline-block;
+  margin-left: 10px;
+}
+
+.profile-item-title {
+  color: $text;
+  margin-bottom: -1px;
+  margin-top: -5px;
+}
+
+.profile-item-muted {
+  color: $primary-dark;
+}
+
+.profile-item-name {
+  color: $primary-dark;
+  margin-bottom: -1px;
+  margin-top: -3px;
+}
+
+.profile-item-path {
+  color: $primary-muted;
+}
+
+////////////////////////////
+//        StatItem        //
+////////////////////////////
+.stat-item-wrap {
+  margin-bottom: 15px;
+}
+
+.stat-item-icon-wrap {
+  display: inline-block;
+  margin-top: 4px;
+  float: left;
+}
+
+.stat-item-text-wrap {
+  margin-left: 5px;
+  display: inline-block;
+}
+
+.stat-item-no-margin {
+  margin: 0;
+}
+
+////////////////////////////
+//         TagItem        //
+////////////////////////////
+.tag-item-pill {
+  // border: 1px solid $primary;
+  border-radius: 3px;
+  background: $sink;
+  margin: 0 0 5px 0;
+  padding: 2px 5px;
+  display: inline-block;
+}

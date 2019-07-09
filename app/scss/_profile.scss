@@ -1,0 +1,205 @@
+//
+// SCSS for Profile components
+// 
+// NoProfile
+// Profile
+// ProfileBar
+// ProfileEditor
+// ProfileHeader
+// ProfilePhoto
+
+////////////////////////////
+//        NoProfile       //
+////////////////////////////
+.no-profile-page {
+  background: $appBackground;
+  position: absolute;
+  width: 100%;
+  min-height: 1000px;
+  top: 100px;
+}
+
+.no-profile-no-session {
+  left: 0;
+}
+
+.no-profile-session {
+  left: 80px;
+}
+
+.no-profile-center {
+  width: 300px;
+  height: 300px;
+  margin: 10em auto;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  text-align: center;
+}
+
+////////////////////////////
+//         Profile        //
+////////////////////////////
+.profile-wrap {
+  display: flex;
+}
+
+////////////////////////////
+//       ProfileBar       //
+////////////////////////////
+.profile-bar-wrap {
+  display: flex;
+  flex-direction: column;
+  width: 360px;
+  margin: 20px;
+}
+
+.profile-bar-header {
+  display: flex;
+  margin-bottom: 20px;
+}
+
+.profile-bar-names {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  margin: 0 20px;
+}
+
+.profile-bar-info {
+  display: flex;
+  flex-direction: column;
+  width: 320px;
+}
+
+.profile-bar-detail {
+  margin-button: 20px;
+}
+
+.profile-bar-photo {
+  flex: 0 0;
+}
+
+.profile-bar-hidden {
+  display: none;
+}
+
+.profile-bar-cursor-pointer {
+  cursor: pointer;
+}
+
+.profile-bar-cursor-default {
+  cursor: default;
+}
+
+////////////////////////////
+//     ProfileEditor      //
+////////////////////////////
+.profile-editor-wrap {
+  margin-top: 40px;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+.profile-editor-buttons {
+  float: right;
+}
+
+.profile-editor-cancel {
+  margin-left: 10px;
+  display: inline-block;
+}
+
+.profile-editor-note {
+  color: $white;
+  position: absolute;
+  bottom: 30px;
+}
+
+////////////////////////////
+//     ProfileHeader      //
+////////////////////////////
+.profile-header-wrap {
+  height: 300px;
+  position: relative;
+  z-index: 1;
+  background-size: cover;
+  border-bottom: 2px solid $text;
+}
+
+.profile-header-info {
+  position: absolute;
+  bottom: -50px;
+  left: 0;
+}
+
+.profile-header-info:after {
+  content: '';
+  display: table;
+  clear: both;
+}
+
+.profile-header-name {
+  color: $primary;
+  font-family: "source code pro", "courier", "monospace";
+  font-weight: 300px;
+}
+
+.profile-header-photo {
+  float: left;
+}
+
+.profile-header-peername {
+  float: left;
+  margin-top: 30px;
+}
+
+.profile-header-title {
+  color: $sink;
+  border-radius: 3px;
+  display: inline;
+}
+
+.profile-header-path {
+  margin-top: 10px;
+  border-radius: 3px;
+  padding: 4px 10px;
+  color: $sink;
+}
+
+.profile-header-hidden {
+  display: none;
+}
+
+.profile-header-set-poster-wrap {
+  float: right;
+  margin-right: 20px;
+  margin-left: auto;
+}
+
+.profile-header-cursor-pointer {
+  cursor: pointer;
+}
+
+.profile-header-cursor-default {
+  cursor: default;
+}
+
+.profile-header-page-header {
+  padding: 40px 0 0 20px;
+  display: flex;
+  justify-content: space-between;
+}
+
+////////////////////////////
+//      ProfilePhoto      //
+////////////////////////////
+.profile-photo-wrap {
+  overflow: hidden;
+  background: $primary;
+  background-size: cover;
+  background-position: center;
+}
+
+

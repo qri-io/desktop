@@ -1,0 +1,353 @@
+//
+// SCSS for Form components
+// 
+// DateInput
+// DropFile
+// KeyValueInput
+// LanguageInput
+// MonthCalendar
+// SaveMetadataForm
+// SearchBar
+// UrlInput
+// ValidCitationInput
+// ValidContributorsInput
+// ValidDateTimeInput
+// ValidInput
+// ValidTextarea
+// ViewModeButton
+
+////////////////////////////
+//        DateInput       //
+////////////////////////////
+.date-input {
+  position: relative;
+}
+
+.date-input-calendar {
+  position: absolute;
+  top: 40px;
+  left: 0;
+  z-index: 2;
+  padding: 4px 8px;
+  box-shadow: 0 0 4px rgba(0,0,0,0.45);
+  border-radius: 3px;
+}
+
+.date-input-border {
+  border-color: $primary-muted;
+}
+
+.date-input-border:focus {
+  border-color: $primary;
+}
+
+////////////////////////////
+//        DropFile        //
+////////////////////////////
+.drop-file-drop-zone {
+  border-radius: 5px;
+  width: 100%;
+  height: 150px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.drop-file-reset {
+  border: 2px dashed $primary-muted;
+}
+
+.drop-file-drag-over {
+  border: 2px dashed $primary;
+}
+
+.drop-file-dropped {
+  border: 2px solid $primary;
+}
+
+.drop-file-wrap {
+  width: 50%;
+  justify-content: center;
+  align-items: center;
+  height: 150px;
+}
+
+.drop-file-uploader {
+  margin-bottom: 20px;
+}
+
+.drop-file-drop-text {
+  font-weight: 300;
+  display: block;
+}
+
+.drop-file-display-none {
+  display: none;
+}
+
+.drop-file-display-flex {
+  display: flex;
+}
+
+.drop-file-select-file {
+  color: $primary;
+  cursor: 'pointer';
+  text-transform: none;
+  margin: auto;
+  width: 100px;
+  display: block;
+}
+
+.drop-file-select-file:hover {
+  text-decoration: underline;
+}
+
+.drop-file-select-file-disabled {
+  color: $primary-muted;
+  text-transform: none;
+  margin: auto;
+  width: 100px;
+  display: block;
+}
+
+.drop-file-error {
+  height: 40px;
+  margin: 10px;
+  color: $error;
+  text-weight: 300;
+}
+
+.drop-file-file-name {
+  position: relative;
+  border: 1px solid $primary-muted;
+  border-radius: 8px;
+  padding: 10px 20px;
+}
+
+.drop-file-remove {
+  position: absolute;
+  top: -7px;
+  right: -7px;
+  cursor: pointer;
+  background: $primary-light;
+  border-radius: 8px;
+  padding-right: 4px;
+  padding-left: 4px;
+  font-size: .7rem;
+}
+
+.drop-file-remove:hover {
+  color: $primary;
+}
+
+.drop-file-label {
+  color: $primary-muted;
+}
+
+////////////////////////////
+//      KeyValueInput     //
+////////////////////////////
+.key-value-input-flex {
+  display: flex;
+  justify-content: flex-start;
+  flex-direction: column;
+}
+
+.key-value-input-add {
+  align-self: flex-end;
+  margin-top: 10px;
+}
+
+////////////////////////////
+//      LanguageInput     //
+////////////////////////////
+.language-input-width {
+  max-width: 600px;
+}
+
+////////////////////////////
+//      MonthCalendar     //
+////////////////////////////
+.month-calendar {
+  width: 300px;
+}
+
+.month-calendar-header {
+  background: transparent;
+  box-shadow: none;
+}
+
+.month-calendar-header .back {
+  float: left;
+}
+
+.month-calendar-header .month {
+  text-align: center;
+}
+
+.month-calendar-header .year {
+  text-align: center;
+}
+
+.month-calendar-header .next {
+  float: right;
+}
+
+.month-calendar-dates {
+  width: 100%;
+}
+
+.month-calendar-dates td, .month-calendar-dates th {
+  text-align: center;
+  min-width: 28px;
+  min-height: 28px;
+  color: rgb(60,60,60);
+}
+
+.month-calendar-dates .current {
+  color: rgb(180,180,180);
+}
+
+.month-calendar-dates .selected {
+  color: rgb(200,0,0);
+}
+
+////////////////////////////
+//    SaveMetadataForm    //
+////////////////////////////
+.save-metadata-form-wrap {
+  padding: 20px;
+  color: $primary-muted;
+}
+
+.save-metadata-form-form-wrap {
+  margin: 40px;
+}
+
+.save-metadata-form-cancel-button {
+  margin-left: 10px;
+  display: inline-block;
+}
+
+.save-metadata-form-float-right {
+  float: right;
+}
+
+////////////////////////////
+//        SearchBar       //
+////////////////////////////
+.search-bar-input {
+  width: 700px;
+  border: $text-light solid 1px;
+  border-radius: 10px;
+  padding: 4px 10px;
+  flex: 1 4;
+  height: 35px;
+}
+
+.search-bar-input:focus {
+  outline: none;
+}
+
+////////////////////////////
+//         UrlInput       //
+////////////////////////////
+.url-input-error {
+  height: 20px;
+  margin: 10px;
+  color: $error;
+  font-weight: 300;  
+}
+
+////////////////////////////
+//   ValidCitationInput   //
+////////////////////////////
+.valid-citation-input-label {
+  color: $primary-muted;
+}
+
+.valid-citation-input-flex {
+  display: flex;
+  justify-content: flex-start;
+  flex-direction: column;
+}
+
+.valid-citation-input-add {
+  align-self: flex-end;
+  margin-top: 10px;
+}
+
+////////////////////////////
+//  ValidContributorInput //
+////////////////////////////
+.valid-contributor-input-label {
+  color: $primary-muted;
+}
+
+.valid-contributor-input-flex {
+  display: flex;
+  justify-content: flex-start;
+  flex-direction: column;
+}
+
+.valid-contributor-input-add {
+  align-self: flex-end;
+  margin-top: 10px;
+}
+
+////////////////////////////
+//        ValidInput      //
+////////////////////////////
+.valid-input-inline {
+  display: inline-block;
+}
+
+.valid-input-margin {
+  margin-bottom: 10px;
+  margin-top: 10px;
+}
+
+////////////////////////////
+//      ValidTextarea     //
+////////////////////////////
+.valid-textarea {
+  border: 1px solid $primary-muted;
+  border-radius: 3px;
+  padding: 10px;
+}
+
+.valid-textarea:focus {
+  border: 1px solid $primary-light;
+}
+
+.valid-textarea-small {
+  height: 120px;
+}
+
+////////////////////////////
+//     ViewModeButton     //
+////////////////////////////
+.view-mode-button-nav-button {
+  cursor: pointer;
+  font-family: SSPika;
+  display: inline-block;
+  text-align: center;
+  width: 34px;
+  height: 30px;
+  margin: 8px auto;
+  padding: 4px 0;
+  color: $primary-muted;
+  border-radius: 3px;
+  border: 2px solid $primary-muted;
+}
+
+.view-mode-button-active {
+  background: $primary;
+  box-shadow: 0 0 3px rgba(0,0,0,0.15);
+  border: 2px solid $primary;
+  color: $text;
+}
+
+.view-mode-button-inactive {
+  background: transparent;
+}

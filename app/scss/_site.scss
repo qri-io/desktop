@@ -1,0 +1,788 @@
+//
+// SCSS for general sitewide styling & specific components listed here:
+// 
+// App
+// AppDrag
+// AppUnavail
+// ChoosePeername
+// CodeViewer
+// Collection
+// DatasetName
+// Datasets
+// DateStamp
+// Hash
+// Header
+// Json
+// Menu
+// Network
+// Online
+// PageTitle
+// QuitApp.electron
+// QuitApp.web
+// ReadOnly
+// Routes
+// SearchResults
+// StatsBar
+// StatsLine
+// StatsSection
+// TabPanel
+// TagList
+// Welcome
+
+////////////////////////////
+//          APP           //
+////////////////////////////
+
+.app {
+  background: $appBackground;
+  min-height: 100%;
+  color: $text;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.5);
+}
+
+.alert {
+  color: $white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0;
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  margin: 20px;
+  overflow: auto;
+  z-index: 10;
+  min-width: 200px;
+  max-width: 40%;
+  padding: 10px 15px 10px 15px;
+  border-radius: 3px;
+  box-shadow: 0 0 8px rgba(0,0,0,0.5);
+}
+
+.danger {
+  background: $error;
+}
+
+.success {
+  background: $primary;
+}
+
+.message {
+  overflow: auto;
+}
+
+.dismiss {
+  padding-left: 20px;
+}
+
+.modal {
+  z-index: 5;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.3);
+  background: $appBackground;
+  border-radius: 6px;
+  padding: 15px;
+  min-width: 400px;
+  max-width: 600px;
+  position: absolute;
+  width: 35%;
+  max-height: 50%;
+  overflow-y: auto;
+  margin: 4.5rem auto auto auto;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0 ;
+}
+
+.large {
+  max-height: 80%;
+  width: auto;
+}
+
+.thin {
+  max-height: 80%;
+}
+
+////////////////////////////
+//        AppDrag         //
+////////////////////////////
+
+.app-drag-header {
+  position: absolute;
+  overflow: auto;
+  -webkit-app-region: drag;
+  height: 40px;
+  width: 100%;
+}
+
+////////////////////////////
+//       AppUnavail       //
+////////////////////////////
+
+.app-unavail-page {
+  background: $appBackground;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  min-height: 1000px;
+  top: 0;
+  left: 0;
+}
+
+.app-unavail-center {
+  width: 300px;
+  height: 300px;
+  margin: 10em auto;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  text-align: center;
+}
+
+////////////////////////////
+//     ChoosePeername     //
+////////////////////////////
+
+.choose-peername-page {
+  background: $appBackground;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+}
+
+.choose-peername-center {
+  width: 600px;
+  padding: 5em;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+}
+
+.choose-peername-accept {
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.choose-peername-peername {
+  height: 60px;
+}
+
+////////////////////////////
+//       CodeViewer       //
+////////////////////////////
+
+.code-viewer-wrap {
+  width: 100%;
+  margin: 0 0 30px 0;
+  padding: 10px 0 0 0;
+  border-radius: 3px;
+  border: 1px solid #eee;
+  overflow: hidden;
+  position: relative;
+}
+
+.code-viewer-line-count {
+  position: absolute;
+  overflow: hidden;
+  height: 100%;
+  width: 40px;
+  font-size: 14px;
+  padding: 0 5px 20px 0;
+  text-align: right;
+  border-right: 1px solid #eee;
+}
+
+.code-viewer-line {
+  padding: 0;
+  margin: 0;
+}
+
+.code-viewer-code {
+  font-size: 14px;
+  padding: 0 20px 20px 55px;
+  overflow: auto;
+}
+
+////////////////////////////
+//       Collection       //
+////////////////////////////
+
+.collection-wrap {
+  display: flex;
+}
+
+////////////////////////////
+//       DatasetName      //
+////////////////////////////
+
+.dataset-name-slash {
+  color: $black;
+}
+
+.dataset-name-edit {
+  margin-left: 8px;
+  cursor: pointer;
+  color: $primary-muted;
+}
+
+.dataset-name-edit:hover {
+  color: $primary;
+}
+
+////////////////////////////
+//        Datasets        //
+////////////////////////////
+
+.datasets-empty {
+  padding: 20px;
+}
+
+////////////////////////////
+//        Datestamp       //
+////////////////////////////
+
+.datastamp-muted {
+  color: $primary-dark;
+}
+
+////////////////////////////
+//          Hash          //
+////////////////////////////
+.hash-old {
+  color: $primary;
+  font-weight: 600px;
+  margin-left: 20px;
+}
+
+////////////////////////////
+//         Header         //
+////////////////////////////
+.header-wrap {
+  width: 100%;
+  height: 140px;
+  display: flex;
+  // flex-direction: column;
+  // align-items: center;
+  justify-content: center;
+}
+
+.header-top {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.header-spinner-wrap {
+  height: 30px;
+}
+
+.header-spinner {
+  margin-top: 10px;
+  margin-left: -5px;
+  display: block;
+  transition: all 1s ease-in-out;
+}
+
+////////////////////////////
+//          Json          //
+////////////////////////////
+.json-text {
+  font-family: $font-family-monospace;
+  font-size: 14px;
+}
+
+.json-handle {
+  cursor: pointer;
+}
+
+.json-key-wrap {
+  padding-left: 9px;
+}
+
+.obj-light {
+  color: $primary-light;
+}
+
+.obj-dark {
+  color: $text;
+}
+
+.arr {
+  color: $text-muted;
+}
+
+.json-light {
+  color: $primary-muted;
+}
+
+.json-dark {
+  color: $primary;
+}
+
+////////////////////////////
+//          Menu          //
+////////////////////////////
+.menu-menu {
+  position: absolute;
+  overflow: hidden;
+  background: $primary-muted;
+  box-shadow: inset -2px 0px 4px -2px rgba(0, 0, 0, 0.5);
+}
+
+.menu-items {
+  margin-top: 50px;
+}
+
+.menu-active {
+  opacity: 1;
+  color: $primary;
+}
+
+.menu-inactive {
+  opacity: .75;
+}
+
+.menu-item {
+  font-family: SSPika;
+  display: block;
+  text-align: center;
+  text-decoration: none;
+  font-size: 20px;
+  margin-top: 10px;
+  transition: all 0.25s;
+  color: $text;
+}
+
+.menu-item:active {
+  color: $primary;
+  text-decoration: none;
+}
+
+.menu-item:focus {
+  text-decoration: none;
+}
+
+.menu-item:hover {
+  opacity: 1;
+  color: $primary;
+}
+
+////////////////////////////
+//        Network         //
+////////////////////////////
+.network-wrap {
+  display: flex;
+}
+
+.network-empty {
+  padding: 20px;
+}
+
+////////////////////////////
+//         Online         //
+////////////////////////////
+.online-text {
+  margin-left: 5px;
+  position: relative;
+  top: -2;
+}
+
+.online-small {
+  font-size: 14px;
+  margin: 0;
+}
+
+.online-regular {
+  font-size: 18px;
+  font-weight: bold;
+  margin: 0;
+}
+
+////////////////////////////
+//       PageTitle        //
+////////////////////////////
+.page-title-wrap {
+  padding:30px 20px 20px 20px;
+}
+
+.page-wrap-title {
+  height: 50px;
+  margin-bottom: 10px;
+}
+
+////////////////////////////
+//        ReadOnly        //
+////////////////////////////
+.read-only-page {
+  background: $appBackground;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  min-height: 1000px;
+  top: 0;
+  left: 0;
+}
+
+.read-only-center {
+  width: 600px;
+  height: 300px;
+  margin: 10em auto;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  text-align: center;
+}
+
+////////////////////////////
+//         Routes         //
+////////////////////////////
+.routes-spinner {
+  display: flex;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
+}
+
+////////////////////////////
+//      SearchResults     //
+////////////////////////////
+.search-results-wrap {
+  height: 100%;
+  display: flex;
+}
+
+.search-results-strong {
+  font-weight: 500px;
+}
+
+.search-results-text {
+  max-width: 300px;
+  margin: 20px;
+}
+
+////////////////////////////
+//        StatsBar        //
+////////////////////////////
+.stats-bar-wrap {
+  display: flex;
+  width: 100%;
+  margin-top: 10px;
+  padding-top: 12px;
+  padding-bottom: 10px;
+  border-radius: 3px;
+}
+
+.stats-bar-space {
+  margin-right: 15px;
+  flex: 2 1 80px;
+  text-align: center;
+}
+
+////////////////////////////
+//        StatsLine       //
+////////////////////////////
+.stats-line-wrap-stats {
+  display: flex;
+  align-items: center;
+}
+
+.stats-line-separated {
+  margin: 0 5px;
+}
+
+.stats-line-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+////////////////////////////
+//      StatsSection      //
+////////////////////////////
+.stats-section-wrap {
+  padding: 20px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.stats-section-stat-wrap {
+  margin-left: 40px;
+  text-align: right;
+}
+
+////////////////////////////
+//        TabPanel        //
+////////////////////////////
+.tab-panel-background {
+  background: $sink;
+  padding: 15px;
+}
+
+.tab-panel-wrap {
+  height: 100%;
+  overflow: hidden;
+  border-radius: 3px;
+  display: flex;
+  flex-flow: column nowrap;
+}
+
+.tab-panel-search {
+  height: 45px;
+  padding-left: 12px;
+}
+
+.tab-panel-tab {
+  display: inline-block;
+  transition: all 0.25s;
+  margin-right: 40px;
+}
+
+.tab-panel-expand {
+  float: right;
+  cursor: pointer;
+  max-height: 100%;
+  color: $primary-muted;
+  margin-right: 5px;
+  margin-top: 3px;
+}
+
+.tab-panel-current-tab {
+  color: $primary;
+}
+
+.tab-panel-header {
+  font-weight: bold;
+  background: $appBackground;
+}
+
+.tab-panel-content {
+  display: flex;
+  height: 100%;
+}
+
+////////////////////////////
+//         TabList        //
+////////////////////////////
+.tab-list-wrap {
+  margin: 10px 0;
+}
+
+////////////////////////////
+//         Welcome        //
+////////////////////////////
+.welcome-page {
+  background: $appBackground;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+}
+
+.welcome-center {
+  width: 600px;
+  padding: 5em;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+}
+
+.welcome-accept {
+  display: flex;
+  flex-direction: row-reverse;
+  justify-conent: space-between;
+  align-items: baseline;
+}
+
+html, body, #root, #app {
+  height: 100%;
+}
+
+header > hr {
+  margin-top: 0;
+}
+
+.wrapper, .page {
+  min-height: 100%
+}
+
+.sectionWidth {
+  max-width: 480px;
+  min-width: 300px;
+  word-wrap: break-word;
+}
+
+.col {
+  flex: 1 1 480px;
+
+  &.favored {
+    flex-grow: 2;
+  }
+
+  header {
+    height: 135px;
+    border-bottom: $border-color solid 2px;
+  }
+}
+
+.headerHeight {
+  height: 135px;
+}
+
+.logotype {
+  background: url('/svg/logotype.svg') center left no-repeat;
+  display: block;
+  overflow: hidden;
+  width: 100px;
+  height: 70px;
+  text-indent: -5000px;
+}
+
+.logotype.large {
+  margin: 150px auto 15px auto;
+}
+
+.tagline {
+  text-align: center;
+  color: #999999;
+}
+
+a {
+  text-decoration: none;
+  transition: color 0.5s;
+  cursor: pointer;
+  color: $primary;
+}
+
+a:hover {
+  text-decoration: none;
+  color: $primary-dark;
+}
+
+b {
+  font-weight: bold;
+}
+
+.right {
+  float: right;
+}
+
+.left {
+  float: left;
+}
+
+.icon {
+  font-family: 'SSPika';
+  display: block;
+  text-align: center;
+  text-decoration: none;
+  font-size: 20px;
+  margin-top: 10px;
+  transition: all 0.25s;
+  // &:active {
+  //   color: palette.primary;
+  //   textDecoration: 'none'
+  // },
+  // ':focus': {
+  //   textDecoration: 'none'
+  // },
+  // ':hover': {
+  //   opacity: 1,
+  //   color: palette.primary
+  // }
+}
+
+.icon-inline {
+  font-family: 'SSPika';
+  display: inline-block;
+  text-align: center;
+  text-decoration: none;
+  transition: all 0.25s;
+  font-size: 16px;
+}
+
+// dataset nav links
+.navLink {
+  font-size: $nav-font-size;
+  color: $nav-font-color;
+  transition: none;
+  font-weight: bold;
+  // text-transform: uppercase;
+}
+
+.navLinkSm {
+  font-size: $nav-font-size-sm;
+  color: $nav-font-color-sm;
+  transition: none;
+}
+
+.navLink:hover, {
+  color: $primary;
+}
+
+.navLinkActive, .navLink:focus {
+  font-weight: bold;
+  color: $white
+}
+
+.navLinkSm:hover {
+  color: $primary;
+}
+
+.navLinkSmActive, .navLinkSm:focus {
+  font-weight: $font-weight-bold;
+  color: $primary;
+}
+
+// layout of dataset
+
+.datasetContent {
+  height: 100%;
+  display: flex;
+  word-wrap: break-word;
+  justify-content: space-between;
+}
+
+.editor {
+  color: $white;
+}
+
+.editor .form-control {
+  color: white;
+}
+
+// borders
+.border-left {
+  border-left: $border-color solid 2px;
+}
+
+.border-right {
+  border-right: $border-color solid 2px;
+}
+
+.border-top {
+  border-top: $border-color solid 2px;
+}
+
+.border-bottom {
+  border-bottom: $border-color solid 2px;
+}
+
+.border {
+  border: $border-color solid 2px;
+}

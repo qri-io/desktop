@@ -1,0 +1,307 @@
+//
+// SCSS for Chrome components
+// 
+// Button
+// DownloadBar
+// Dropdown
+// DropdownMenu
+// LoadMore
+// NavLinks
+// Spinner
+// TopBar
+
+////////////////////////////
+//         Button         //
+////////////////////////////
+.button-full {
+  width: 100%;
+}
+.button-attached {
+  border-radius: 3px 0 0 3px;
+}
+
+////////////////////////////
+//       DownloadBar      //
+////////////////////////////
+.download-bar-wrap {
+  overflow: hidden;
+  background: $primary-dark;
+  z-index: 1;
+  box-shadow: 0 0px 4px rgba(0, 0, 0, 0.35);
+  -webkit-app-region: drag;
+  display: flex;
+  width: 100%;
+  flex-wrap: wrap;
+  align-items: center;
+  padding-left: 10px;
+  justify-content: center;
+}
+
+.download-bar-text-wrap > a {
+  display: flex;
+  align-items: center;
+}
+
+.download-bar-text {
+  color: $white;
+  margin: 3px 5px 0 5px;
+  display: flex;
+}
+
+.download-bar-dataset {
+  color: $white;
+  margin-top: 12px;
+  font-weight: $font-weight-medium;
+}
+
+.download-bar-link {
+  position: absolute;
+  right: 10px;
+}
+
+.download-bar-link > a {
+  color: $white;
+  &:hover {
+    color: $primary;
+  }
+}
+
+// .top-bar-title-bar {
+//   flex: 1 0 100%;
+//   width: 100%;
+//   height: 20px;
+//   text-align: center;
+// }
+
+// .top-bar-first-item {
+//   margin-right: 10;
+//   margin-left: 0;
+// }
+
+// .top-bar-item-spacing {
+//   margin-right: 30px;
+//   display: inline-block;
+// }
+
+// .top-bar-no-shrink {
+//   flex: 1 0;
+//   align-items: baseline;
+//   padding: 11px 0 0 20px;
+// }
+
+// .top-bar-help {
+//   display: flex;
+//   justify-content: flex-end;
+//   align-items: baseline;
+//   flex: 1 1;
+// }
+
+// .top-bar-current {
+//   color: $primary;
+// }
+
+// .top-bar-nav-button {
+//   font-family: SSPika;
+//   display: inline-block;
+//   text-align: center;
+//   width: 22px;
+//   height: 30px;
+//   font-size: 19px;
+//   color: $text;
+// }
+
+
+////////////////////////////
+//        Dropdown        //
+////////////////////////////
+.dropdown-wrap {
+  align-items: flex-end;
+  display: flex;
+  flex-direction: column;
+}
+
+.dropdown-caret {
+  border-radius: 0 3px 3px 0;
+  min-width: 30px;
+  width: 30px;
+  padding-top: 9px;
+  padding-left: 7px;
+  font-size: 14px; 
+}
+
+////////////////////////////
+//      DropdownMenu      //
+////////////////////////////
+.dropdown-menu-block {
+  display: block;
+}
+
+////////////////////////////
+//        LoadMore        //
+////////////////////////////
+.load-more {
+  margin: 10px;
+}
+
+.load-more > button {
+  margin: 0 0 0 10px;
+}
+
+////////////////////////////
+//        NavLinks        //
+////////////////////////////
+.nav-links-wrap {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.nav-links-link {
+  margin: 0 15px;
+}
+
+.nav-links-link-sm {
+  margin: 0 10px;
+}
+
+////////////////////////////
+//         Spinner        //
+////////////////////////////
+@keyframes spinnerAnim {
+  0% { transform: scaleY(0.4); }
+  20% { transform: scaleY(1.0); }
+  40% { transform: scaleY(0.4); }
+  100% { transform: scaleY(0.4); } 
+}
+
+.spinner-button {
+  width: 60px;
+  height: 30px;
+  padding-bottom: 5px;
+  text-align: center;
+  font-size: 10px;
+  display: inline-block;
+}
+
+.spinner-spinner {
+  width: 60px;
+  height: 40px;
+  text-align: center;
+  font-size: 10px;
+  display: inline-block;
+}
+
+.spinner-center {
+  margin: 100px auto;
+  display: block;
+}
+
+.spinner-block {
+  height: 100%;
+  width: 6px;
+  margin-right: 2px;
+  border-radius: 6px;
+  display: inline-block;
+  animation-name: spinnerAnim;
+  animation-duration: 1.2s;
+  animation-iteration-count: infinite;
+}
+
+.spinner-rect1 {
+  animation-delay: 0s;
+}
+
+.spinner-rect2 {
+  animation-delay: -1.1s;
+}
+
+.spinner-rect3 {
+  animation-delay: -1s;
+}
+
+.spinner-rect4 {
+  animation-delay: -1s;
+}
+
+.spinner-rect5 {
+  animation-delay: -0.9s;
+}
+
+.spinner-white {
+  background: $appBackground;
+}
+
+.spinner-dark {
+  background: $text;
+}
+
+.spinner-small {
+  margin-top: -6px;
+}
+
+////////////////////////////
+//         TopBar         //
+////////////////////////////
+.top-bar-wrap {
+  position: absolute;
+  overflow: hidden;
+  background: $sink;
+  z-index: 1;
+  box-shadow: 0 0px 4px rgba(0, 0, 0, 0.35);
+  -webkit-app-region: drag;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.top-bar-title-bar {
+  flex: 1 0 100%;
+  width: 100%;
+  height: 20px;
+  text-align: center;
+}
+
+.top-bar-first-item {
+  margin-right: 10;
+  margin-left: 0;
+}
+
+.top-bar-item-spacing {
+  margin-right: 30px;
+  display: inline-block;
+}
+
+.top-bar-no-shrink {
+  flex: 1 0;
+  align-items: baseline;
+  padding: 11px 0 0 20px;
+}
+
+.top-bar-help {
+  display: flex;
+  justify-content: flex-end;
+  align-items: baseline;
+  flex: 1 1;
+}
+
+.top-bar-current {
+  color: $primary;
+}
+
+.top-bar-nav-button {
+  font-family: SSPika;
+  display: inline-block;
+  text-align: center;
+  width: 22px;
+  height: 30px;
+  font-size: 19px;
+  color: $text;
+}
+
+
+
+
+
+
+

@@ -1,0 +1,28 @@
+//
+// SCSS for Schema components
+// 
+// EditSchema
+// schema
+
+////////////////////////////
+//         schema         //
+////////////////////////////
+.schema-wrap {
+  border-radius: 3px;
+  border: 1px solid #eee;
+  margin: 5px 10px;
+}
+
+.schema-properties {
+  margin: 5px 10px;
+}
+
+////////////////////////////
+//       EditSchema       //
+////////////////////////////
+.edit-schema-wrap {
+  width: 100%;
+  border-radius: 2px;
+  border: 1px solid $primary-muted;
+  margin: 5px 14px;
+}

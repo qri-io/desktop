@@ -1,0 +1,42 @@
+
+$borderColor: #1e1e1e;
+$highlightColor: #333;
+
+.editBody .handsontable {
+  color: white;
+
+  th {
+    background: #000;
+    border-right: 1px solid $borderColor;
+    border-bottom: 1px solid $borderColor;
+  }
+  tr {
+    background: #111;
+  }
+  td {
+    background: #111;
+    border-right: 1px solid $borderColor;
+    border-bottom: 1px solid $borderColor;
+  }
+
+  tr:first-child th,
+  tr:first-child td {
+    border-top: 1px solid $borderColor;
+  }
+
+  th:first-child,
+  th:nth-child(2),
+  td:first-of-type,
+  .htNoFrame + th,
+  .htNoFrame + td {
+    border-left: 1px solid $borderColor;
+  }
+
+  .ht__highlight {
+    background: $highlightColor;
+  }
+
+  // tr:first-child th,
+  // .handsontable tr:first-child td {
+  // }
+}

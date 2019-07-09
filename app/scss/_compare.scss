@@ -1,0 +1,41 @@
+//
+// SCSS for compare page
+// 
+
+.update {
+  background: rgb(24,159,255);
+}
+
+.delete {
+  background: rgba(255, 176, 181, .3);
+}
+
+.insert {
+  background: rgba(202,234,160, .3);
+}
+
+.updateStrong {
+  background: rgb(24,159,255);
+}
+
+.deleteStrong {
+  background: rgb(255, 176, 181);
+}
+
+.insertStrong {
+  background: rgb(202,234,160);
+}
+
+.compare-wrap {
+  margin: 20px;
+}
+
+.compare-paths-wrap {
+  display: flex;
+  text-align: center;
+  align-items: center;
+}
+
+.compare-paths {
+  margin: 0 0 10px 10px;
+}
