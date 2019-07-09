@@ -22,3 +22,9 @@
 @import "profile";
 @import "compare";
 @import "stylesheet";
+
+@import "dataset-container";
+
+#app, #app-container {
+  height: 100%;
+}
