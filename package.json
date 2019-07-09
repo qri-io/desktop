@@ -21,6 +21,7 @@
     "package-win": "npm run build && build --win --x64",
     "package-linux": "npm run build && build --linux",
     "package-all": "npm run build && build -mwl",
+    "lint": "./node_modules/.bin/eslint --fix --ext tsx --ext ts app/",
     "cleanup": "mop -v"
   },
   "jest": {
@@ -123,8 +124,6 @@
     "@types/react-router-redux": "5.0.18",
     "@types/redux-logger": "3.0.7",
     "@types/sinon": "7.0.13",
-    "@typescript-eslint/eslint-plugin": "1.11.0",
-    "@typescript-eslint/parser": "1.11.0",
     "asar": "2.0.1",
     "concurrently": "4.1.1",
     "cross-env": "5.2.0",
@@ -143,7 +142,7 @@
     "eslint-plugin-import": "2.18.0",
     "eslint-plugin-node": "9.1.0",
     "eslint-plugin-promise": "4.2.1",
-    "eslint-plugin-react": "^7.14.2",
+    "eslint-plugin-react": "7.14.2",
     "eslint-plugin-standard": "4.0.0",
     "express": "4.17.1",
     "file-loader": "4.0.0",
