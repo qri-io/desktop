@@ -47,6 +47,7 @@ const ChoosePeername: React.FunctionComponent<ChoosePeernameProps> = (props: Cho
         <div className='choose-peername-peername'>
           <TextInput
             name= 'peername'
+            maxLength={100}
             label='peername: '
             type='text'
             value={peername}
