@@ -27,7 +27,6 @@
 // StatsSection
 // TabPanel
 // TagList
-// Welcome
 
 ////////////////////////////
 //          APP           //
@@ -149,8 +148,14 @@
   position: absolute;
   width: 100%;
   height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   top: 0;
+  right: 0;
   left: 0;
+  bottom: 0;
+  z-index: 98;
 }
 
 .choose-peername-center {
@@ -175,6 +180,23 @@
 
 .choose-peername-peername {
   height: 60px;
+}
+
+.choose-peername-text {
+  height: 200px;
+}
+
+.choose-peername-input {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  width: 100%;
+  height: 150px;
+}
+
+#choose-peername-spinner {
+  height: 27px;
 }
 
 ////////////////////////////
@@ -576,54 +598,6 @@
 ////////////////////////////
 .tab-list-wrap {
   margin: 10px 0;
-}
-
-////////////////////////////
-//         Welcome        //
-////////////////////////////
-.welcome-page {
-  background: $appBackground;
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  top: 0;
-  right: 0;
-  left: 0;
-  bottom: 0;
-}
-
-.welcome-center {
-  width: 600px;
-  padding: 5em;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-evenly; 
-}
-
-.welcome-accept {
-  display: flex;
-  flex-direction: row-reverse;
-  justify-content: space-between;
-  align-items: baseline;
-}
-
-.welcome-graphic {
-  margin: auto;
-  margin-bottom: 0;
-  margin-top: 0;
-  height: 150px;
-  width: 150px;
-}
-
-.welcome-title {
-  text-align: center;
 }
 
 html, body, #root, #app {

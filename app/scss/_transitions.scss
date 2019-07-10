@@ -1,10 +1,26 @@
-.fade-enter {
+.fade-shrink-enter {
   opacity: 0;
   transform: scale(0.9);
 }
-.fade-enter-active {
+.fade-shrink-enter-active {
   opacity: 1;
   transform: translateX(0);
+  transition: opacity 300ms, transform 300ms;
+}
+.fade-shrink-exit {
+  opacity: 1;
+}
+.fade-shrink-exit-active {
+  opacity: 0;
+  transform: scale(0.9);
+  transition: opacity 300ms, transform 300ms;
+}
+
+.fade-enter {
+  opacity: 0;
+}
+.fade-enter-active {
+  opacity: 1;
   transition: opacity 300ms, transform 300ms;
 }
 .fade-exit {
@@ -12,6 +28,5 @@
 }
 .fade-exit-active {
   opacity: 0;
-  transform: scale(0.9);
   transition: opacity 300ms, transform 300ms;
 }

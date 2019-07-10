@@ -22,7 +22,11 @@
     display: inline-block;
     height: 100%;
     border-right: 1px solid #484d65;
+<<<<<<< HEAD
     padding: 10px;
+=======
+    padding: 10px 10px 10px 36px;
+>>>>>>> style(*): adjustments to style files
 
     &:hover {
       background-color: #416588;
@@ -73,11 +77,14 @@
     width: 250px;
     position: relative;
     z-index:10;
+<<<<<<< HEAD
     display:flex;
 
     img {
       margin-right:10px;
     }
+=======
+>>>>>>> style(*): adjustments to style files
 
     .label {
       font-size: 0.75rem;
@@ -157,10 +164,13 @@
       text-align: center;
       border-right: 1px solid #979797;
 
+<<<<<<< HEAD
       &:last-child {
         border-right: 0;
       }
 
+=======
+>>>>>>> style(*): adjustments to style files
       &.active {
         border-bottom: 3px solid #0666D6;
       }
