@@ -5,10 +5,10 @@ export interface ExternalLinkProps {
   href: string
   children: React.ReactNode
 }
-const ExternalLink: React.FunctionComponent<ExternalLinkProps> = (props: ExternalLinkProps) =>
-  <a href={props.href} onClick={(e) => {
+const ExternalLink: React.FunctionComponent<ExternalLinkProps> = ({ href, children }) =>
+  <a href={href} onClick={(e) => {
     e.preventDefault()
-    shell.openExternal(props.href)
-  }} {...props}>{props.children}</a>
+    shell.openExternal(href)
+  }} >{children}</a>
 
 export default ExternalLink

@@ -1,5 +1,5 @@
 import * as React from 'react'
-
+import { logo } from './AppLoading'
 import TextInput from './form/TextInput'
 import Spinner from './chrome/Spinner'
 
@@ -15,10 +15,10 @@ const ChoosePeername: React.FunctionComponent<ChoosePeernameProps> = (props: Cho
   const [newPeername, setNewPeername] = React.useState(peername)
   const [loading, setLoading] = React.useState(false)
   const [error, setError] = React.useState('')
-  // handle local change, whihc is just updating local stat
-  // handle save
 
   const handleChange = (name: string, value: any) => {
+    console.log(name)
+    console.log(value)
     if (value[value.length - 1] === ' ') {
       return
     }
@@ -28,35 +28,47 @@ const ChoosePeername: React.FunctionComponent<ChoosePeernameProps> = (props: Cho
   const handleSave = () => {
     setLoading(true)
     setError('')
-    onSave(newPeername)
-      .then((action: any) => {
-        if (action.type === SET_PEERNAME_FAILURE) {
-          setLoading(false)
-          setError(action.error)
-        }
-      })
+    setTimeout(async () =>
+      onSave(newPeername)
+        .then((action: any) => {
+          if (action.type === SET_PEERNAME_FAILURE) {
+            setLoading(false)
+            setError(action.error)
+          }
+        }), 3000)
   }
+  console.log(handleSave, loading)
 
   return (
     <div className='choose-peername-page'>
-      <div className='choose-peername-center'>
-        <div>
-          <h1>Choose Your Peername</h1>
-          <h6>Your peername is your identity on the Qri network</h6>
+      <div className='welcome-center'>
+        <img className='welcome-graphic' src={logo} />
+        <div className='welcome-title'>
+          <h2>Choose Your Peername</h2>
+          <h6>We&apos;ve generated a peername for you</h6>
         </div>
-        <div className='choose-peername-peername'>
-          <TextInput
-            name= 'peername'
-            maxLength={100}
-            label='peername: '
-            type='text'
-            value={peername}
-            errorText={error}
-            onChange={handleChange} />
+        <div className='choose-peername-text'>
+          <p style={{ textAlign: 'center' }}>Your peername is your identity on the Qri network.</p>
+          <span className='choose-peername-input'>
+            <TextInput
+              name= 'peername'
+              label='Choose your peername: '
+              type='text'
+              maxLength={100}
+              value={newPeername}
+              errorText={error}
+              onChange={handleChange} />
+          </span>
         </div>
-        <div className='choose-peername-accept'>
-          {loading ? <Spinner center={false} /> : <a className='linkLarge' onClick={handleSave}>Take me to Qri <span className='icon-inline'>right</span></a>}
-        </div>
+        {
+          loading
+            ? <div className='flex-center' id='choose-peername-spinner'>
+              <Spinner/>
+            </div>
+            : <div className='choose-peername-accept'>
+              <a className='linkLarge' onClick={handleSave}>Take me to Qri <span className='icon-inline'>right</span></a>
+            </div>
+        }
       </div>
     </div>
   )

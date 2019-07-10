@@ -1,10 +1,11 @@
 import * as React from 'react'
 
 export interface TextInputProps {
-  label: string
+  label?: string
   name: string
   type: string
   value: any
+  maxLength: number
   errorText?: string
   helpText?: string
   showHelpText?: boolean
@@ -13,7 +14,7 @@ export interface TextInputProps {
   white?: boolean
 }
 
-const TextInput: React.FunctionComponent<TextInputProps> = ({ label, name, type, value, errorText, helpText, showHelpText, onChange, placeHolder
+const TextInput: React.FunctionComponent<TextInputProps> = ({ label, name, type, value, maxLength, errorText, helpText, showHelpText, onChange, placeHolder
 }) => {
   const feedbackColor = errorText ? 'error' : showHelpText && helpText ? 'textMuted' : ''
   const feedback = errorText || (showHelpText &&
@@ -22,11 +23,12 @@ const TextInput: React.FunctionComponent<TextInputProps> = ({ label, name, type,
   return (
     <div>
       <div>
-        <span className={labelColor}>{label}</span>
+        {label && <span className={labelColor}>{label}</span>}
         <input
           id={name}
           name={name}
           type={type}
+          maxLength={maxLength}
           className='text-input'
           value={value || ''}
           placeholder={placeHolder}
