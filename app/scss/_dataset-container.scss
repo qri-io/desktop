@@ -133,6 +133,7 @@
     width: 100%;
     font-size: .9rem;
     border-bottom: 1px solid #979797;
+    cursor: default;
     &:last-child {
         border-right: 0;
     }
@@ -170,7 +171,7 @@
 
   .file-row {
     height: 60px;
-    padding: 10px;
+    padding: 8px;
 
     .label {
       font-weight: 600;
@@ -179,6 +180,39 @@
 
     &:hover {
       background-color: #efefef;
+    }
+  }
+}
+
+////////////////////////////
+//   History List Item    //
+////////////////////////////
+
+.history-list-item {
+  .title {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    line-height: 1.6rem;
+  }
+
+  .userTimeInfo {
+    display: flex;
+
+    .user-image {
+      height: 16px;
+      width: 16px;
+      margin-right: 4px;
+      border-radius: 2px;
+    }
+
+    .time-message {
+      flex: 1;
+      font-size: .65rem;
+      line-height: 1.2rem;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
     }
   }
 }
