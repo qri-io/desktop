@@ -59,9 +59,9 @@ module.exports = merge(baseConfig, {
         ]
       },
 
-      // Add SASS support  - compile all .global.scss files and pipe it to style.css
+      // Add SASS support  - compile all .scss files and pipe it to style.css
       {
-        test: /\.global\.scss$/,
+        test: /.scss$/,
         use: [
           {
             loader: 'style-loader'

@@ -42,6 +42,8 @@ app.on('ready', () =>
         show: false,
         width: 1024,
         height: 728,
+        minHeight: 640,
+        minWidth: 960,
         webPreferences: {
           nodeIntegration: true
         }
