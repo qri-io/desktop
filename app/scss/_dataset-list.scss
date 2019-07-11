@@ -1,0 +1,16 @@
+.dataset-list {
+  #controls {
+    display: flex;
+    flex-direction: row;
+    padding-bottom: 6px;
+
+    input {
+      margin-right: 10px;
+      flex: 1;
+    }
+
+    #add-button {
+      align-self: flex-end;
+    }
+  }
+}
