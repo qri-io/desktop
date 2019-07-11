@@ -1,377 +1,193 @@
-//
-// SCSS for Dataset components
-// 
-// Body
-// BodyReadOnly
-// Commits
-// Dataset
-// DatasetButtonGroup
-// DatasetHeader
-// DatasetRouter
-// DeleteDataset
-// Export
-// Meta
-// MetadataViewer
-// MetaSummary
-// Overview
-// RenameDataset
-// Render
-// StructureViewer
-// Transform
-// Viz
+////////////////////////////
+//    Dataset Container   //
+////////////////////////////
 
-////////////////////////////
-//          Body          //
-////////////////////////////
-.body-load-more {
-  margin: 10px;
-}
-
-.body-load-more > button {
-  margin: 0 0 0 10px;
-}
-
-////////////////////////////
-//       BodyReadOnly     //
-////////////////////////////
-.body-read-only-wrap {
-  margin: auto;
-  margin-top: 40px;
-  width: 600px;
-  text-align: center;
-}
-
-.body-read-only-margin-top {
-  margin-top: 20px;
-}
-
-////////////////////////////
-//         Commits        //
-////////////////////////////
-.commits-wrap {
-  margin-top: 40px;
-}
-
-.commits-note-wrap {
-  margin: 40px 20px;
-}
-
-////////////////////////////
-//         Dataset        //
-////////////////////////////
-.dataset-wrap {
+#dataset-container {
   display: flex;
   flex-direction: column;
-}
-
-.dataset-center {
-  width: 300px;
-  height: 300px;
-  margin: 10em auto;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  right: 0;
-  text-align: center;
-}
-
-////////////////////////////
-//   DatasetButtonGroup   //
-////////////////////////////
-.dataset-button-group-wrap {
-  display: flex;
-  flex-direction: column;
-  padding: 20px;
-  width: 300px;
-}
-
-.dataset-button-group-buttons {
-  display: flex;
-  justify-content: space-between;
-  flex-direction: row-reverse;
-  flex-wrap: wrap;
-}
-
-.dataset-button-group-button {
-  margin-bottom: 20px;
-}
-
-////////////////////////////
-//      DatasetHeader     //
-////////////////////////////
-.dataset-header-wrap {
-  padding: 20px;
-}
-
-.dataset-header-links {
-  margin-top: 30px;
-}
-
-////////////////////////////
-//      DatasetRouter     //
-////////////////////////////
-.dataset-router-contents {
-  display: flex;
-  justify-content: space-between;
+  flex-grow: 1;
   height: 100%;
-}
 
-.dataset-router-info {
-  flex: 1 1 960px;
-  max-width: 900px;
-}
+  .header {
+    height: 50px;
+    background-color: #315379;
+    color: #F8F2F2;
+    cursor: default;
+    flex-direction: row;
+    flex-grow: 0;
+    flex-shrink: 0;
+  }
 
-.dataset-router-buttons {
-  flex: 1 1 300px;
-  display: flex;
-  justify-content: flex-end;
-}
+  .header-column {
+    display: inline-block;
+    height: 100%;
+    border-right: 1px solid #484d65;
+    padding: 10px;
 
-////////////////////////////
-//      DeleteDataset     //
-////////////////////////////
-.delete-dataset-wrap {
-  margin-top: 40px;
-  padding-left: 20px;
-  padding-right: 20px;
-}
+    &:hover {
+      background-color: #416588;
+    }
 
-.delete-dataset-buttons {
-  display: flex;
-  justify-content: space-between;
-}
+    &.expanded {
+      border-right: none;
+    }
 
-.delete-dataset-cancel {
-  color: #fff;
-  margin-top: 5px;
-  margin-left: 10px;
-}
+    &.expanded:hover {
+      background-color: transparent;
+    }
+  }
 
-.delete-entire-dataset {
-  padding-right: 20px;
-  position: absolute;
-  bottom: 10px;
-}
+  .columns {
+    display: flex;
+    flex-direction: row;
+    flex: 1;
 
-.delete-entire-dataset-button {
-  margin-right: 20px;
-}
+    #sidebar {
+      position: relative;
 
+      .resize-handle {
+        position: absolute;
+        right: -5px;
+        top: 0px;
+        height: 100%;
+        width: 10px;
+        cursor: ew-resize;
+      }
+    }
 
-////////////////////////////
-//      ExportDataset     //
-////////////////////////////
-.export-dataset-radio {
-  margin-top: 20px;
-  height: 50px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: space-between;
-}
+    .content {
+      background-color: #d8d8d8;
+      flex: 1;
 
-.export-dataset-buttons {
-  position: 0;
-  display: flex;
-  margin: 40px 0;
-  align-items: baseline;
-  justify-content: space-between;
-}
+      .overlay {
+        position: absolute;
+        height: 100%;
+        width: 100%;
+        background-color: #000;
+        opacity: 0.4;
+      }
+    }
+  }
 
-////////////////////////////
-//     MetadataViewer     //
-////////////////////////////
-.metadata-viewer-wrap {
-  padding: 20px;
-}
+  .current-dataset {
+    width: 250px;
+    position: relative;
+    z-index:10;
+    display:flex;
 
-.metadata-viewer-title {
-  margin-top: 30px;
-}
+    img {
+      margin-right:10px;
+    }
 
-.metadata-viewer-table-wrap {
-  width: 100%;
-  margin-top: 10px;
-  border-radius: 3px;
-  border: 1px solid #eee;
-  overflow: hidden;
-}
+    .label {
+      font-size: 0.75rem;
+      font-weight: 300;
+      line-height: 0.8rem;
+    }
 
-.metadata-viewer-table {
-  width: 100%;
-}
+    .name {
+      font-weight: 600;
+      line-height: 1.5rem;
+    }
 
-.metadata-viewer-row {
-  border-bottom: 1px solid #eee;
-}
+    .arrow {
+      width: 0px;
+      height: 0px;
+      border-left: 5px solid transparent;
+      border-right: 5px solid transparent;
+      position: absolute;
 
-.metadata-viewer-key {
-  padding: 8px 5px;
-}
+      &.expand {
+        border-top: 5px solid #fff;
+        right: 15px;
+        top: 24px;
+      }
 
-.metadata-viewer-link {
-  font-size: 17px;
-}
+      &.collapse {
+        border-bottom: 5px solid #383838;
+        right: 15px;
+        top: 24px;
+      }
+    }
 
-.metadata-viewer-info {
-  color: $primary-light;
-}
+    &.expanded {
+      color: #383838;
+    }
+  }
 
-.metadata-viewer-data {
-  text-align: right;
-  color: $primary-light;
-  padding-right: 15px;
-}
-
-////////////////////////////
-//       MetaSummary      //
-////////////////////////////
-.meta-summary-wrap {
-  display: flex;
-  flex-direction: column;
-  margin: 20px; 
-}
-
-.meta-summary-content {
-  display: flex;
-  justify-content: space-between;
-}
-
-.meta-summary-description {
-  margin-right: 20px;
-  padding-right: 20px;
-  max-width: 560px;
-}
-
-.meta-summary-tags {
-  flex: 0 0;
-}
-
-.meta-summary-theme {
-  display: inline-block;
-  margin-right: 20px;
+  .dataset-list {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 250px;
+    background-color: #fff;
+    padding-top: 50px;
+  }
 }
 
 ////////////////////////////
-//        Overview        //
+//     Dataset Sidebar    //
 ////////////////////////////
-.overview-wrap {
-  display: flex;
-  flex-direction: column;
-}
 
-.overview-fields {
-  font-size: 14px;
-  margin-top: 20px;
-}
-
-.overview-value {
-  margin-left: 5px;
-}
-
-.overview-key {
-  color: $primary-muted;
-}
-
-.overview-open {
-  display: inline-block;
-  background: $primary;
-  color: rgba(0,0,0,0.6);
-  border: 1px solid rgba(0,0,0,0.2);
-  border-radius: 20px;
-  padding: 4px 8px;
-  font-size: 12px;
-  margin-left: 20px;
-}
-
-.overview-title-wrap {
-  display: flex;
-  align-items: center;
-  margin-top: 25px;
-}
-
-.overview-name {
-  margin: 0px;
-}
-
-.overview-flex {
-  margin-top: 40px;
-  display: flex;
-  align-items: baseline;
-}
-
-.overview-nav {
-  margin-left: 5px;
-  font-size: 14px;
-}
-
-.overview-schema-wrap {
-  padding: 20px;
-}
-
-////////////////////////////
-//      RenameDataset     //
-////////////////////////////
-.rename-dataset-wrap {
-  padding: 20px;
-}
-
-.rename-dataset-form-wrap {
-  margin-top: 40px;
-  color: $white;
-}
-
-.rename-dataset-buttons {
-  display: flex;
-  margin: 40px 0;
-  align-items: baseline;
-  justify-content: space-between;
-}
-
-////////////////////////////
-//     StructureViewer    //
-////////////////////////////
-.structure-viewer-wrap {
-  margin-bottom: 40px;
-  padding: 20px;
-}
-
-.structure-viewer-title {
-  margin-top: 30px;
-}
-
-.structure-viewer-table-wrap {
-  width: 100%;
-  margin-top: 10px;
-  border-radius: 3px;
-  border: 1px solid #eee;
-  overflow: hidden;
-}
-
-.structure-viewer-table {
-  width: 100%;
-}
-
-.structure-viewer-row {
-  border-bottom: 1px solid #eee;
-}
-
-.structure-viewer-key {
-  padding: 8px 5px;
-}
-
-////////////////////////////
-//        Transform       //
-////////////////////////////
-.transform-wrap {
+#dataset-sidebar {
   height: 100%;
+  width: 100%;
+
+  .sidebar-row {
+    width: 100%;
+    font-size: .9rem;
+    border-bottom: 1px solid #979797;
+    &:last-child {
+        border-right: 0;
+    }
+  }
+
+  #tabs {
+    width: 100%;
+    height: 30px;
+    background-color: #FFF;
+    cursor: default;
+
+    .tab {
+      width: 50%;
+      display: inline-block;
+      height: 100%;
+      padding: 6px;
+      text-align: center;
+      border-right: 1px solid #979797;
+
+      &:last-child {
+        border-right: 0;
+      }
+
+      &.active {
+        border-bottom: 3px solid #0666D6;
+      }
+
+      &:hover {
+        background-color: #efefef;
+      }
+    }
+  }
+
+  .changes {
+    height: 30px;
+    padding: 6px;
+    background-color: #F6F8FA;
+  }
+
+  .file-row {
+    height: 60px;
+    padding: 10px;
+
+    .label {
+      font-weight: 600;
+      font-size: 1.2rem;
+    }
+
+    &:hover {
+      background-color: #efefef;
+    }
+  }
 }
-
-////////////////////////////
-//           Viz          //
-////////////////////////////
-.viz-wrap {
-  height: 100%;
-}
-
-
