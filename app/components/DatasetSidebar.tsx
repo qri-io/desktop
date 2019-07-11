@@ -4,7 +4,7 @@ interface FileRowProps {
   name: string
 }
 
-const FileRow: React.SFC<FileRowProps> = (props) => {
+const FileRow: React.FunctionComponent<FileRowProps> = (props) => {
   return (
     <div className='file-row sidebar-row'>
       <div className='label'>{props.name}</div>
@@ -18,7 +18,7 @@ interface HistoryListItemProps {
   userTimeMessage: string
 }
 
-const HistoryListItem: React.SFC<HistoryListItemProps> = (props) => {
+const HistoryListItem: React.FunctionComponent<HistoryListItemProps> = (props) => {
   return (
     <div className='file-row sidebar-row history-list-item'>
       <div className='title'>{props.commitTitle}</div>
