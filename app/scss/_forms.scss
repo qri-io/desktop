@@ -457,8 +457,11 @@ select.form-control-lg {
 // custom input styles
 .text-input {
   display: inline-block;
-  border: $primary-light solid 1px;
-  margin-left: 5px;
+  border: #e0e0fd solid 1px;
+  width: 100%;
+  padding: 7px;
+  border-radius: 5px;
+  margin-top: 10px;
 }
 
 .text-input:active, .text-input:focus {

@@ -12,6 +12,8 @@
 
 @import "site";
 
+@import "transitions";
+
 @import "handsontable";
 @import "chrome";
 @import "dataset";
@@ -23,6 +25,6 @@
 @import "compare";
 @import "stylesheet";
 
-#app, #app-container {
-  height: 100%;
-}
+@import "dataset";
+@import "welcome";
+@import "flex";
