@@ -3,6 +3,7 @@ import { Resizable } from '../components/resizable'
 import DatasetSidebar from '../components/DatasetSidebar'
 
 const defaultSidebarWidth = 250
+const logo = require('../assets/qri-blob-logo-tiny.png') //eslint-disable-line
 
 export default class DatasetContainer extends React.Component<{}, { showDatasetList: boolean, sidebarWidth: number }> {
   constructor (p: {}) {
@@ -37,8 +38,11 @@ export default class DatasetContainer extends React.Component<{}, { showDatasetL
             onClick={() => this.toggleDatasetList()}
             style={{ width: sidebarWidth }}
           >
-            <div className="label">Current Dataset</div>
-            <div className="name">usgs_earthquakes</div>
+            <img className='app-loading-blob' src={logo} />
+            <div className='text'>
+              <div className="label">Current Dataset</div>
+              <div className="name">usgs_earthquakes</div>
+            </div>
             {
               showDatasetList
                 ? <div className="arrow collapse">&nbsp;</div>

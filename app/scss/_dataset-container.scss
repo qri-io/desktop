@@ -22,7 +22,7 @@
     display: inline-block;
     height: 100%;
     border-right: 1px solid #484d65;
-    padding: 10px 10px 10px 36px;
+    padding: 10px;
 
     &:hover {
       background-color: #416588;
@@ -73,6 +73,11 @@
     width: 250px;
     position: relative;
     z-index:10;
+    display:flex;
+
+    img {
+      margin-right:10px;
+    }
 
     .label {
       font-size: 0.75rem;
@@ -151,6 +156,10 @@
       padding: 6px;
       text-align: center;
       border-right: 1px solid #979797;
+
+      &:last-child {
+        border-right: 0;
+      }
 
       &.active {
         border-bottom: 3px solid #0666D6;
