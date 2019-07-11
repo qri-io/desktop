@@ -122,8 +122,11 @@
     "@types/react-router": "5.0.3",
     "@types/react-router-dom": "4.3.4",
     "@types/react-router-redux": "5.0.18",
+    "@types/react-transition-group": "2.9.2",
     "@types/redux-logger": "3.0.7",
     "@types/sinon": "7.0.13",
+    "@typescript-eslint/eslint-plugin": "1.11.0",
+    "@typescript-eslint/parser": "1.11.0",
     "asar": "2.0.1",
     "concurrently": "4.1.1",
     "cross-env": "5.2.0",
@@ -171,9 +174,6 @@
     "webpack-merge": "4.2.1"
   },
   "dependencies": {
-    "@types/react-transition-group": "2.9.2",
-    "@typescript-eslint/eslint-plugin": "1.11.0",
-    "@typescript-eslint/parser": "1.11.0",
     "electron-debug": "3.0.1",
     "font-awesome": "4.7.0",
     "history": "4.9.0",
