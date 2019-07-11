@@ -2,12 +2,14 @@ import * as React from 'react'
 
 interface FileRowProps {
   name: string
+  filename: string
 }
 
 const FileRow: React.FunctionComponent<FileRowProps> = (props) => {
   return (
-    <div className='file-row sidebar-row'>
-      <div className='label'>{props.name}</div>
+    <div className='sidebar-list-item sidebar-list-item-text '>
+      <div className='text'>{props.name}</div>
+      <div className='subtext'>{props.filename}</div>
     </div>
   )
 }
@@ -20,9 +22,9 @@ interface HistoryListItemProps {
 
 const HistoryListItem: React.FunctionComponent<HistoryListItemProps> = (props) => {
   return (
-    <div className='file-row sidebar-row history-list-item'>
-      <div className='title'>{props.commitTitle}</div>
-      <div className='userTimeInfo'>
+    <div className='sidebar-list-item sidebar-list-item-text'>
+      <div className='text'>{props.commitTitle}</div>
+      <div className='subtext'>
         <img className= 'user-image' src = {props.avatarUrl} />
         <div className='time-message'>
           {props.userTimeMessage}
@@ -68,21 +70,21 @@ export default class DatasetSidebar extends React.Component<{}, { activeTab: str
   render () {
     const { activeTab } = this.state
     return (
-      <div id='dataset-sidebar'>
-        <div id='tabs' className='sidebar-row'>
+      <div className='dataset-sidebar'>
+        <div id='tabs' className='sidebar-list-item'>
           <div className={'tab ' + (activeTab === 'status' ? 'active' : '')} onClick={() => this.handleTabClick('status')}>Status</div>
           <div className={'tab ' + (activeTab === 'status' ? '' : 'active')} onClick={() => this.handleTabClick('history')}>History</div>
         </div>
         <div id='content'>
           <div id='status-content' className='sidebar-content' hidden = {activeTab !== 'status'}>
-            <div className='sidebar-row'>
+            <div className='sidebar-list-item'>
               <div className='changes'>
                 Changes
               </div>
             </div>
-            <FileRow name='Meta' />
-            <FileRow name='Body' />
-            <FileRow name='Schema' />
+            <FileRow name='Meta' filename='meta.json' />
+            <FileRow name='Body' filename='body.csv' />
+            <FileRow name='Schema' filename='schema.json' />
           </div>
           <div id='history-content' className='sidebar-content' hidden = {activeTab === 'status'}>
             {
