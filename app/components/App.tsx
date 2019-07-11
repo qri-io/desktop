@@ -5,7 +5,7 @@ import Welcome from './Welcome'
 import ChoosePeername from './ChoosePeername'
 import { CSSTransition } from 'react-transition-group'
 
-const returnsError: boolean = true
+const peernameError: string = 'peername_error'
 const SET_PEERNAME_FAILURE = 'SET_PEERNAME_FAILURE'
 const SET_PEERNAME_SUCCESS = 'SET_PEERNAME_SUCCESS'
 
@@ -22,7 +22,7 @@ const App: React.FunctionComponent<any> = () => {
     return new Promise((resolve) => {
       let error: string = ''
       let type: string = SET_PEERNAME_SUCCESS
-      if (returnsError) {
+      if (peername === peernameError) {
         error = 'this peername is already taken'
         type = SET_PEERNAME_FAILURE
       } else {

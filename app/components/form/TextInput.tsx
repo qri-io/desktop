@@ -35,8 +35,8 @@ const TextInput: React.FunctionComponent<TextInputProps> = ({ label, name, type,
           onChange={(e) => { onChange(name, e.target.value, e) }}
         />
       </div>
-      <div>
-        {feedback && <h6 style={{ textAlign: 'right' }} className={feedbackColor} >{feedback}</h6>}
+      <div style={{ height: 20 }}>
+        <h6 style={{ textAlign: 'left', margin: 3 }} className={feedbackColor} >{feedback || ''}</h6>
       </div>
     </div>
   )
