@@ -3,14 +3,9 @@ import { Resizable } from '../components/resizable'
 import DatasetSidebar from '../components/DatasetSidebar'
 
 const defaultSidebarWidth = 250
-<<<<<<< HEAD
 const logo = require('../assets/qri-blob-logo-tiny.png') //eslint-disable-line
 
-export default class DatasetContainer extends React.Component<{}, { showDatasetList: boolean, sidebarWidth: number }> {
-=======
-
 export default class Dataset extends React.Component<{}, { showDatasetList: boolean, sidebarWidth: number }> {
->>>>>>> refactor(ChoosePeername): add `ChoosePeername` to App
   constructor (p: {}) {
     super(p)
     this.state = {
@@ -43,16 +38,11 @@ export default class Dataset extends React.Component<{}, { showDatasetList: bool
             onClick={() => this.toggleDatasetList()}
             style={{ width: sidebarWidth }}
           >
-<<<<<<< HEAD
             <img className='app-loading-blob' src={logo} />
             <div className='text'>
               <div className="label">Current Dataset</div>
               <div className="name">usgs_earthquakes</div>
             </div>
-=======
-            <div className="label">Current Dataset</div>
-            <div className="name">usgs_earthquakes</div>
->>>>>>> refactor(ChoosePeername): add `ChoosePeername` to App
             {
               showDatasetList
                 ? <div className="arrow collapse">&nbsp;</div>
