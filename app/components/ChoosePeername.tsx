@@ -35,7 +35,7 @@ const ChoosePeername: React.FunctionComponent<ChoosePeernameProps> = (props: Cho
             setLoading(false)
             setError(action.error)
           }
-        }), 3000)
+        }), 2000)
   }
   console.log(handleSave, loading)
 
@@ -49,7 +49,7 @@ const ChoosePeername: React.FunctionComponent<ChoosePeernameProps> = (props: Cho
         </div>
         <div className='choose-peername-text'>
           <p style={{ textAlign: 'center' }}>Your peername is your identity on the Qri network.</p>
-          <span className='choose-peername-input'>
+          <div className='choose-peername-input'>
             <TextInput
               name= 'peername'
               label='Choose your peername: '
@@ -58,7 +58,7 @@ const ChoosePeername: React.FunctionComponent<ChoosePeernameProps> = (props: Cho
               value={newPeername}
               errorText={error}
               onChange={handleChange} />
-          </span>
+          </div>
         </div>
         {
           loading
