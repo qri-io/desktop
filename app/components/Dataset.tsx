@@ -6,7 +6,7 @@ import DatasetList from '../components/DatasetList'
 const defaultSidebarWidth = 250
 const logo = require('../assets/qri-blob-logo-tiny.png') //eslint-disable-line
 
-export default class DatasetContainer extends React.Component<{}, { showDatasetList: boolean, sidebarWidth: number }> {
+export default class Dataset extends React.Component<{}, { showDatasetList: boolean, sidebarWidth: number }> {
   constructor (p: {}) {
     super(p)
     this.state = {
