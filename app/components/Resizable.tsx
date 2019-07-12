@@ -1,4 +1,5 @@
 import * as React from 'react'
+import { DEFAULT_SIDEBAR_WIDTH } from '../constants/app'
 
 /**
  * Component abstracting a resizable panel.
@@ -9,7 +10,7 @@ import * as React from 'react'
  */
 export class Resizable extends React.Component<IResizableProps, {}> {
   public static defaultProps: IResizableProps = {
-    width: 250,
+    width: DEFAULT_SIDEBAR_WIDTH,
     maximumWidth: 350,
     minimumWidth: 200
   }

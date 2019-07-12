@@ -1,5 +1,5 @@
 import * as React from 'react'
-import Dataset from './Dataset'
+import Dataset from '../containers/Dataset'
 import AppLoading from './AppLoading'
 import Welcome from './Welcome'
 import ChoosePeername from './ChoosePeername'

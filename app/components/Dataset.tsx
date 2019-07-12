@@ -3,32 +3,25 @@ import { Resizable } from '../components/resizable'
 import DatasetSidebar from '../containers/DatasetSidebar'
 import DatasetList from '../components/DatasetList'
 
-const defaultSidebarWidth = 250
 const logo = require('../assets/qri-blob-logo-tiny.png') //eslint-disable-line
 
-export default class Dataset extends React.Component<{}, { showDatasetList: boolean, sidebarWidth: number }> {
-  constructor (p: any) {
-    super(p)
-    this.state = {
-      showDatasetList: false,
-      sidebarWidth: defaultSidebarWidth
-    }
-  }
+interface DatasetProps {
+  showDatasetList: boolean
+  sidebarWidth: number
+  toggleDatasetList: () => void
+  handleResize: (sidebarWidth: number) => void
+  handleReset: () => void
+}
 
-  handleSidebarResize (width: number) {
-    this.setState({ sidebarWidth: width })
-  }
-
-  handleSidebarReset () {
-    this.setState({ sidebarWidth: defaultSidebarWidth })
-  }
-
-  toggleDatasetList () {
-    this.setState({ showDatasetList: !this.state.showDatasetList })
-  }
-
+export default class Dataset extends React.Component<DatasetProps> {
   render () {
-    const { showDatasetList, sidebarWidth } = this.state
+    const {
+      showDatasetList,
+      sidebarWidth,
+      toggleDatasetList,
+      handleResize,
+      handleReset
+    } = this.props
     const expandedClass = showDatasetList ? 'expanded' : ''
 
     return (
@@ -36,7 +29,7 @@ export default class Dataset extends React.Component<{}, { showDatasetList: bool
         <div className='header'>
           <div
             className={'current-dataset header-column ' + expandedClass}
-            onClick={() => this.toggleDatasetList()}
+            onClick={toggleDatasetList}
             style={{ width: sidebarWidth }}
           >
             <img className='app-loading-blob' src={logo} />
@@ -55,9 +48,9 @@ export default class Dataset extends React.Component<{}, { showDatasetList: bool
         <div className='columns'>
           <Resizable
             id='sidebar'
-            width={this.state.sidebarWidth}
-            onResize={(width) => this.handleSidebarResize(width)}
-            onReset={() => this.handleSidebarReset()}
+            width={sidebarWidth}
+            onResize={handleResize}
+            onReset={handleReset}
             maximumWidth={495}
           >
             <DatasetSidebar />
