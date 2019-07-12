@@ -1,0 +1,27 @@
+.dataset-list {
+  #dataset-list-header {
+    display: flex;
+    flex-direction: column;
+    padding: 6px 10px;
+
+    #controls {
+      display: flex;
+      flex-direction: row;
+      padding-bottom: 6px;
+
+      input {
+        margin-right: 10px;
+        flex: 1;
+      }
+
+      #add-button {
+        align-self: flex-end;
+      }
+    }
+
+    .strong-message {
+      font-weight: 500;
+      font-size: 0.8rem;
+    }
+  }
+}

@@ -2,6 +2,10 @@
 //    Dataset Container   //
 ////////////////////////////
 
+$list-item-bottom-border: 1px solid #979797;
+$sidebar-item-padding:  6px 10px;
+$hover-highlight-color: #F6F8FA;
+
 #dataset-container {
   display: flex;
   flex-direction: column;
@@ -58,6 +62,7 @@
     .content {
       background-color: #d8d8d8;
       flex: 1;
+      position: relative;
 
       .overlay {
         position: absolute;
@@ -130,31 +135,21 @@
 //     Dataset Sidebar    //
 ////////////////////////////
 
-#dataset-sidebar {
+.dataset-sidebar {
   height: 100%;
-  width: 100%;
-
-  .sidebar-row {
-    width: 100%;
-    font-size: .9rem;
-    border-bottom: 1px solid #979797;
-    &:last-child {
-        border-right: 0;
-    }
-  }
+  font-size: .9rem;
+  cursor: default;
 
   #tabs {
-    width: 100%;
     height: 30px;
-    background-color: #FFF;
-    cursor: default;
+    display: flex;
 
     .tab {
       width: 50%;
-      display: inline-block;
       height: 100%;
-      padding: 6px;
+      flex: 1;
       text-align: center;
+      line-height: 1.9rem;
       border-right: 1px solid #979797;
 
       &:last-child {
@@ -162,7 +157,7 @@
       }
 
       &.active {
-        border-bottom: 3px solid #0666D6;
+        border-bottom: 3px solid #315379;
       }
 
       &:hover {
@@ -174,20 +169,45 @@
   .changes {
     height: 30px;
     padding: 6px;
-    background-color: #F6F8FA;
+    background-color: $hover-highlight-color;
   }
 
-  .file-row {
-    height: 60px;
-    padding: 10px;
+  .sidebar-list-item {
+    border-bottom: $list-item-bottom-border;
+    display: flex;
+  }
 
-    .label {
-      font-weight: 600;
-      font-size: 1.2rem;
-    }
+  .sidebar-list-item-text {
+    padding: $sidebar-item-padding;
+    flex-direction: column;
 
     &:hover {
-      background-color: #efefef;
+      background-color: $hover-highlight-color
+    }
+
+    .text {
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      line-height: 1.6rem;
+    }
+
+    .subtext {
+      display: flex;
+
+      .user-image {
+        height: 16px;
+        width: 16px;
+        margin-right: 4px;
+        border-radius: 2px;
+      }
+
+      flex: 1;
+      font-size: .65rem;
+      line-height: 1.2rem;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
     }
   }
 }

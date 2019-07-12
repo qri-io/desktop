@@ -1,6 +1,7 @@
 import * as React from 'react'
 import { Resizable } from '../components/resizable'
 import DatasetSidebar from '../components/DatasetSidebar'
+import DatasetList from '../components/DatasetList'
 
 const defaultSidebarWidth = 250
 const logo = require('../assets/qri-blob-logo-tiny.png') //eslint-disable-line
@@ -73,7 +74,7 @@ export default class Dataset extends React.Component<{}, { showDatasetList: bool
               className='dataset-list'
               style={{ width: sidebarWidth }}
             >
-              Dataset List
+              <DatasetList />
             </div>
           )
         }
