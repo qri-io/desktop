@@ -17,8 +17,6 @@ const ChoosePeername: React.FunctionComponent<ChoosePeernameProps> = (props: Cho
   const [error, setError] = React.useState('')
 
   const handleChange = (name: string, value: any) => {
-    console.log(name)
-    console.log(value)
     if (value[value.length - 1] === ' ') {
       return
     }
@@ -37,7 +35,6 @@ const ChoosePeername: React.FunctionComponent<ChoosePeernameProps> = (props: Cho
           }
         }), 2000)
   }
-  console.log(handleSave, loading)
 
   return (
     <div className='choose-peername-page'>

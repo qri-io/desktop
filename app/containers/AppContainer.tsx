@@ -1,9 +1,17 @@
-import * as React from 'react'
+import { connect } from 'react-redux'
+import App from '../components/App'
+import { setSidebarTab } from '../actions/app'
+import { IState } from '../reducers'
 
-export default class AppComponent extends React.Component {
-  render () {
-    return (
-      <div style={{ height: '100%' }}>{this.props.children}</div>
-    )
+const AppContainer = connect(
+  (state: IState, ownProps) => {
+    return Object.assign({
+      activeTab: state.app.activeTab
+    }, ownProps)
+  },
+  {
+    setSidebarTab
   }
-}
+)(App)
+
+export default AppContainer

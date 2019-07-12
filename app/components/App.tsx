@@ -9,9 +9,15 @@ const peernameError: string = 'peername_error'
 const SET_PEERNAME_FAILURE = 'SET_PEERNAME_FAILURE'
 const SET_PEERNAME_SUCCESS = 'SET_PEERNAME_SUCCESS'
 
+export interface AppProps {
+  activeTab: string
+  children: React.ReactNode
+  setSidebarTab: (activeTab: string) => void
+}
+
 // App is the main component and currently the only view
 // Everything must flow through here
-const App: React.FunctionComponent<any> = () => {
+const App: React.FunctionComponent<AppProps> = ({ activeTab, setSidebarTab }) => {
   const [loading, setLoading] = React.useState(true)
   const [acceptedTOS, setAcceptedTOS] = React.useState(false)
   const [peername, setPeername] = React.useState('forest_green_doberman_pinscher')
@@ -80,7 +86,10 @@ const App: React.FunctionComponent<any> = () => {
       {renderAppLoading()}
       {renderWelcome()}
       {renderChoosePeerName()}
-      <Dataset />
+      <Dataset
+        activeTab={activeTab}
+        setSidebarTab={setSidebarTab}
+      />
     </div>
   )
 }

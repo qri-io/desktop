@@ -55,20 +55,20 @@ let dummyCommits = [
   }
 ]
 
-export default class DatasetSidebar extends React.Component<{}, { activeTab: string }> {
-  constructor (p: {}) {
-    super(p)
-    this.state = {
-      activeTab: 'status'
-    }
-  }
+interface DatasetSidebarProps {
+  activeTab: string
+  setSidebarTab: (activeTab: string) => void
+}
 
+export default class DatasetSidebar extends React.Component<DatasetSidebarProps> {
   handleTabClick (activeTab: string) {
-    this.setState({ activeTab })
+    console.log(activeTab)
+    const { setSidebarTab } = this.props
+    setSidebarTab(activeTab)
   }
 
   render () {
-    const { activeTab } = this.state
+    const { activeTab } = this.props
     return (
       <div className='dataset-sidebar'>
         <div id='tabs' className='sidebar-list-item'>
