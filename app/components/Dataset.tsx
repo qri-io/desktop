@@ -1,18 +1,13 @@
 import * as React from 'react'
 import { Resizable } from '../components/resizable'
-import DatasetSidebar from '../components/DatasetSidebar'
+import DatasetSidebar from '../containers/DatasetSidebar'
 import DatasetList from '../components/DatasetList'
 
 const defaultSidebarWidth = 250
 const logo = require('../assets/qri-blob-logo-tiny.png') //eslint-disable-line
 
-interface DatasetProps {
-  activeTab: string
-  setSidebarTab: (activeTab: string) => void
-}
-
-export default class Dataset extends React.Component<DatasetProps, { showDatasetList: boolean, sidebarWidth: number }> {
-  constructor (p: DatasetProps) {
+export default class Dataset extends React.Component<{}, { showDatasetList: boolean, sidebarWidth: number }> {
+  constructor (p: any) {
     super(p)
     this.state = {
       showDatasetList: false,
@@ -34,7 +29,6 @@ export default class Dataset extends React.Component<DatasetProps, { showDataset
 
   render () {
     const { showDatasetList, sidebarWidth } = this.state
-    const { activeTab, setSidebarTab } = this.props
     const expandedClass = showDatasetList ? 'expanded' : ''
 
     return (
@@ -66,10 +60,7 @@ export default class Dataset extends React.Component<DatasetProps, { showDataset
             onReset={() => this.handleSidebarReset()}
             maximumWidth={495}
           >
-            <DatasetSidebar
-              activeTab={activeTab}
-              setSidebarTab={setSidebarTab}
-            />
+            <DatasetSidebar />
           </Resizable>
           <div className='content'>
             {showDatasetList && <div className='overlay'></div>}
