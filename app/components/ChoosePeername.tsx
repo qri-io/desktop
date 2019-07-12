@@ -37,7 +37,7 @@ const ChoosePeername: React.FunctionComponent<ChoosePeernameProps> = (props: Cho
   }
 
   return (
-    <div className='choose-peername-page'>
+    <div id='choose-peername-page' className='welcome-page'>
       <div className='welcome-center'>
         <img className='welcome-graphic' src={logo} />
         <div className='welcome-title'>
