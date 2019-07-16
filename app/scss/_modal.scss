@@ -1,46 +1,40 @@
-#modal-wrap {
-	background: rgba(0,0,0,0.45);
-	width: 100%;
+.modal {
+	display: flex;
+	flex-direction: column;
+	max-width: 400px;
+	min-width: 260px;
+	margin: 15px 5px;
+	background-color: $appBackground;
+	z-index: $modal-z-index;
+  }
+  
+  .modal-content {
+	padding: 20px;
+  }
+  
+  // This is used for group lists such as the branch picker
+  .modal-inner-content {
+	border: solid 1px $primary-dark;
+	border-radius: $border-radius;
+	background: $appBackground;
+  }
+  
+  .modal-actions {
+	margin-top: 5px;
+  }
+  
+  .modal-error-output {
+	font-family: $font-family-monospace;
+	font-size: $font-size-base;
+	margin: 0;
+	white-space: pre-wrap;
+  }
+  
+  .modal-overlay {
+	z-index: $modal-overlay-z-index;
+  
+	background: black;
+	opacity: 0.4;
 	height: 100%;
-	position: absolute;
-	top: 0;
-	left: 0;
-	transition: all 500ms ease;
-	-webkit-transition: all 500ms ease;
-	-moz-transition: all 500ms ease;
-	-o-transition: all 500ms ease;
-}
-
-#modal-wrap.modal-wrap-in {
-	opacity: 1;
-	z-index: 4;
-}
-
-#modal-wrap.modal-wrap-out {
-	opacity: 0;
-	z-index: -1;
-}
-
-#modal {
-	z-index: 5;
-	box-shadow: 0 0 8px rgba(0,0,0,0.3);
-	background: $primary;
-	position: absolute;
-	overflow-y: auto;
-	top: 0;	
-	bottom: 0;
-	right: 0;	
-	width: 0;
-	transition: all 500ms ease;
-	-webkit-transition: all 500ms ease;
-	-moz-transition: all 500ms ease;
-	-o-transition: all 500ms ease;
-}
-
-#modal.modal-in {
-		width: 360px
-	}
-
-#modal.modal-out {
-		width: 0;
-	}
+  }
+  

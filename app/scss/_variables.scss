@@ -57,7 +57,7 @@ $connected: #F8CD1C;
 $appBackground: $white;
 $topbar: $primary-light;
 $sink: $primary-light;
-$border-color: $primary-light;
+$border-color: rgba(0, 97, 166, .1);
 
 
 $success: $primary-muted;
@@ -382,6 +382,17 @@ $zindex-modal-backdrop:             1040 !default;
 $zindex-modal:                      1050 !default;
 $zindex-popover:                    1060 !default;
 $zindex-tooltip:                    1070 !default;
+
+
+/**
+  * The z-index for modals. Nothing should be higher, but other z-indexes can
+  * be defined in terms of it.
+  *
+  * 100 seems arbitrary (because it is) 
+  */
+$modal-z-index: 100;
+$modal-overlay-z-index: calc($popup-z-index - 1);
+$foldout-z-index: calc($popup-z-index - 2);
 
 // Form validation icons
 $form-icon-success: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3E%3Cpath fill='%235cb85c' d='M2.3 6.73L.6 4.53c-.4-1.04.46-1.4 1.1-.8l1.1 1.4 3.4-3.8c.6-.63 1.6-.27 1.2.7l-4 4.6c-.43.5-.8.4-1.1.1z'/%3E%3C/svg%3E") !default;
