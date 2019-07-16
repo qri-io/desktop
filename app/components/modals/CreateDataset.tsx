@@ -2,7 +2,7 @@ import * as React from 'react'
 import Dialog, { IDialogProps } from './Dialog'
 
 const CreateDataset: React.FunctionComponent<IDialogProps> = ({ onDismissed, onSubmit }) =>
-  <div><Dialog
+  <Dialog
     id="createDataset"
     title={'Create Dataset'}
     onDismissed={onDismissed}
@@ -10,6 +10,5 @@ const CreateDataset: React.FunctionComponent<IDialogProps> = ({ onDismissed, onS
   >
     <div>HI! Create Dataset Here!</div>
   </Dialog>
-  </div>
 
 export default CreateDataset

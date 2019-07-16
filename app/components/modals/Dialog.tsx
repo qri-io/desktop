@@ -2,19 +2,6 @@ import * as React from 'react'
 import DialogHeader from './header'
 
 /**
- * The time (in milliseconds) from when the dialog is mounted
- * until it can be dismissed. See the isAppearing property in
- * IDialogState for more information.
- */
-const dismissGracePeriodMs = 250
-
-/**
- * The time (in milliseconds) that we should wait after focusing before we
- * re-enable click dismissal.
- */
-const DisableClickDismissalDelay = 500
-
-/**
  * Title bar height in pixels. Values taken from 'app/styles/_variables.scss'.
  */
 // const titleBarHeight = __DARWIN__ ? 22 : 28
@@ -23,7 +10,7 @@ const titleBarHeight = 22
 export interface IDialogProps {
   /**
    * An optional dialog title. Most, if not all dialogs should have
-   * this. When present the Dialog renders a DialogHeader element
+   *  When present the Dialog renders a DialogHeader element
    * containing an icon (if the type prop warrants it), the title itself
    * and a close button (if the dialog is dismissable).
    *
@@ -46,14 +33,6 @@ export interface IDialogProps {
    * Defaults to true if omitted.
    */
   readonly dismissable?: boolean
-
-  /**
-   * Option to prevent dismissal by clicking outside of the dialog.
-   * Requires `dismissal` to be true (or omitted) to have an effect.
-   *
-   * Defaults to false if omitted
-   */
-  readonly disableClickDismissalAlways?: boolean
 
   /**
    * Event triggered when the dialog is dismissed by the user in the
@@ -85,11 +64,6 @@ export interface IDialogProps {
   readonly onSubmit?: () => void
 
   /**
-   * An optional className to be applied to the rendered dialog element.
-   */
-  readonly className?: string
-
-  /**
    * Whether or not the dialog should be disabled. All dialogs wrap their
    * content in a <fieldset> element which, when disabled, causes all descendant
    * form elements and buttons to also become disabled. This is useful for
@@ -112,29 +86,6 @@ export interface IDialogProps {
   readonly loading?: boolean
 }
 
-interface IDialogState {
-  /**
-   * When a dialog is shown we wait for a few hundred milliseconds before
-   * acknowledging a dismissal in order to avoid people accidentally dismissing
-   * dialogs that appear as they're doing other things. Since the entire
-   * backdrop of a dialog can be clicked to dismiss all it takes is one rogue
-   * click and the dialog is gone. This is less than ideal if we're in the
-   * middle of displaying an important error message.
-   *
-   * This state boolean is used to keep track of whether we're still in that
-   * grace period or not.
-   */
-  readonly isAppearing: boolean
-
-  /**
-   * An optional id for the h1 element that contains the title of this
-   * dialog. Used to aid in accessibility by allowing the h1 to be referenced
-   * in an aria-labeledby/aria-describedby attributed. Undefined if the dialog
-   * does not have a title or the component has not yet been mounted.
-   */
-  readonly titleId?: string
-}
-
 /**
  * A general purpose, versatile, dialog component which utilizes the new
  * <dialog> element. See https://demo.agektmr.com/dialog/
@@ -143,116 +94,21 @@ interface IDialogState {
  * underlying elements. It's not possible to use the tab key to move focus
  * out of the dialog without first dismissing it.
  */
-export default class Dialog extends React.Component<IDialogProps, IDialogState> {
-  private dialogElement: HTMLElement | null = null
-  private dismissGraceTimeoutId?: number
+const Dialog: React.FunctionComponent<IDialogProps> = ({ disabled, loading, id, onSubmit, type, onDismissed, dismissable, title, children }) => {
+  const [disableClickDismissal, setDisableClickDismissal] = React.useState(true)
+  let dialogElement: HTMLElement | null = null
 
-  private disableClickDismissalTimeoutId: number | null = null
-  private disableClickDismissal = false
-
-  public constructor (props: IDialogProps) {
-    super(props)
-    this.state = { isAppearing: true }
-  }
-
-  private clearDismissGraceTimeout () {
-    if (this.dismissGraceTimeoutId !== undefined) {
-      window.clearTimeout(this.dismissGraceTimeoutId)
-      this.dismissGraceTimeoutId = undefined
-    }
-  }
-
-  private scheduleDismissGraceTimeout () {
-    this.clearDismissGraceTimeout()
-
-    this.dismissGraceTimeoutId = window.setTimeout(
-      this.onDismissGraceTimer,
-      dismissGracePeriodMs
-    )
-  }
-
-  private onDismissGraceTimer = () => {
-    this.setState({ isAppearing: false })
-  }
-
-  private isDismissable () {
-    return this.props.dismissable === undefined || this.props.dismissable
-  }
-
-  private updateTitleId () {
-    if (this.state.titleId) {
-      this.setState({ titleId: undefined })
-    }
-
-    if (this.props.title) {
-      // createUniqueId handles static strings fine, so in the case of receiving
-      // a JSX element for the title we can just pass in a fixed value rather
-      // than trying to generate a string from an arbitrary element
-      const id = typeof this.props.title === 'string' ? this.props.title : '???'
-      this.setState({
-        titleId: `Dialog_${this.props.id}_${id}`
-      })
-    }
-  }
-
-  public UNSAFE_componentWillMount () {
-    this.updateTitleId()
-  }
-
-  public componentDidMount () {
-    // This cast to any is necessary since React doesn't know about the
-    // dialog element yet.
-    ;(this.dialogElement as any).showModal()
-
-    this.setState({ isAppearing: true })
-    this.scheduleDismissGraceTimeout()
-
-    window.addEventListener('focus', this.onWindowFocus)
-  }
-
-  private onWindowFocus = () => {
-    // On Windows and Linux, a click which focuses the window will also get
-    // passed down into the DOM. But we don't want to dismiss the dialog based
-    // on that click. See https://github.com/desktop/desktop/issues/2486.
-    // macOS normally automatically disables "click-through" behavior but
-    // we've intentionally turned that off so we need to apply the same
-    // behavior regardless of platform.
-    // See https://github.com/desktop/desktop/pull/3843.
-    this.clearClickDismissalTimer()
-
-    this.disableClickDismissal = true
-
-    this.disableClickDismissalTimeoutId = window.setTimeout(() => {
-      this.disableClickDismissal = false
-      this.disableClickDismissalTimeoutId = null
-    }, DisableClickDismissalDelay)
-  }
-
-  private clearClickDismissalTimer () {
-    if (this.disableClickDismissalTimeoutId) {
-      window.clearTimeout(this.disableClickDismissalTimeoutId)
-      this.disableClickDismissalTimeoutId = null
-    }
-  }
-
-  public componentWillUnmount () {
-    this.clearDismissGraceTimeout()
-    window.removeEventListener('focus', this.onWindowFocus)
-  }
-
-  public componentDidUpdate () {
-    if (!this.props.title && this.state.titleId) {
-      this.updateTitleId()
-    }
-  }
-
-  private onDialogCancel = (e: Event) => {
+  const onDialogCancel = (e: Event) => {
     e.preventDefault()
-    this.onDismiss()
+    onDismiss()
   }
 
-  private onDialogClick = (e: React.MouseEvent<HTMLElement>) => {
-    if (this.isDismissable() === false) {
+  const isDismissable = () => {
+    return dismissable === undefined || dismissable
+  }
+
+  const onDialogClick = (e: React.MouseEvent<HTMLElement>) => {
+    if (isDismissable() === false) {
       return
     }
 
@@ -261,7 +117,7 @@ export default class Dialog extends React.Component<IDialogProps, IDialogState> 
     // event will be raised on the the submit button which isn't what we
     // want so we'll make sure that the original target for the event is
     // our own dialog element.
-    if (e.target !== this.dialogElement) {
+    if (e.target !== dialogElement) {
       return
     }
 
@@ -274,9 +130,8 @@ export default class Dialog extends React.Component<IDialogProps, IDialogState> 
     // Ignore the first click right after the window's been focused. It could
     // be the click that focused the window, in which case we don't wanna
     // dismiss the dialog.
-    if (this.disableClickDismissal) {
-      this.disableClickDismissal = false
-      this.clearClickDismissalTimer()
+    if (disableClickDismissal) {
+      setDisableClickDismissal(false)
       return
     }
 
@@ -290,89 +145,85 @@ export default class Dialog extends React.Component<IDialogProps, IDialogState> 
       rect.left <= e.clientX &&
       e.clientX <= rect.left + rect.width
 
-    if (!this.props.disableClickDismissalAlways && !isInDialog) {
+    if (!isInDialog) {
       e.preventDefault()
-      this.onDismiss()
+      onDismiss()
     }
   }
 
-  private onDialogRef = (e: HTMLElement | null) => {
+  const onDialogRef = (e: HTMLElement | null) => {
     // We need to explicitly subscribe to and unsubscribe from the dialog
     // element as react doesn't yet understand the element and which events
     // it has.
     if (!e) {
-      if (this.dialogElement) {
-        this.dialogElement.removeEventListener('cancel', this.onDialogCancel)
-        this.dialogElement.removeEventListener('keydown', this.onKeyDown)
+      if (dialogElement) {
+        dialogElement.removeEventListener('cancel', onDialogCancel)
+        dialogElement.removeEventListener('keydown', onKeyDown)
       }
     } else {
-      e.addEventListener('cancel', this.onDialogCancel)
-      e.addEventListener('keydown', this.onKeyDown)
+      e.addEventListener('cancel', onDialogCancel)
+      e.addEventListener('keydown', onKeyDown)
     }
 
-    this.dialogElement = e
+    dialogElement = e
   }
 
-  private onKeyDown = (event: KeyboardEvent) => {
+  const onKeyDown = (event: KeyboardEvent) => {
     // const shortcutKey = __DARWIN__ ? event.metaKey : event.ctrlKey
     const shortcutKey = event.metaKey
     if ((shortcutKey && event.key === 'w') || event.key === 'Escape') {
-      this.onDialogCancel(event)
+      onDialogCancel(event)
     }
   }
 
-  private onDismiss = () => {
-    if (this.isDismissable() && !this.state.isAppearing) {
-      if (this.props.onDismissed) {
-        this.props.onDismissed()
+  const onDismiss = () => {
+    if (isDismissable()) {
+      if (onDismissed) {
+        onDismissed()
       }
     }
   }
 
-  private onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
-    if (this.props.onSubmit) {
-      this.props.onSubmit()
+    if (onSubmit) {
+      onSubmit()
     } else {
-      this.onDismiss()
+      onDismiss()
     }
   }
 
-  private renderHeader () {
-    if (!this.props.title) {
+  const renderHeader = () => {
+    if (!title) {
       return null
     }
 
     return (
       <DialogHeader
-        title={this.props.title}
-        titleId={this.state.titleId}
-        dismissable={this.isDismissable()}
-        onDismissed={this.onDismiss}
-        loading={this.props.loading}
+        title={title}
+        dismissable={isDismissable()}
+        onDismissed={onDismiss}
+        loading={loading}
       />
     )
   }
-
-  public render () {
-    const className = `${this.props.type === 'error' ? 'error' : this.props.type === 'warning' ? 'warning' : ''} ${this.props.className}`
-    return (
-      <dialog
-        ref={this.onDialogRef}
-        id={this.props.id}
-        onClick={this.onDialogClick}
-        className={className}
-        aria-labelledby={this.state.titleId}
-      >
-        {this.renderHeader()}
-
-        <form onSubmit={this.onSubmit}>
-          <fieldset disabled={this.props.disabled}>
-            {this.props.children}
-          </fieldset>
-        </form>
-      </dialog>
-    )
-  }
+  return (
+    <dialog
+      open
+      ref={onDialogRef}
+      id={id}
+      onClick={onDialogClick}
+      className={`${type === 'error' ? 'error' : type === 'warning' ? 'warning' : ''}`}
+    >
+      {renderHeader()}
+      <form onSubmit={handleSubmit}>
+        <fieldset disabled={disabled}>
+          {children}
+        </fieldset>
+      </form>
+    </dialog>
+  )
 }
+
+export default Dialog
