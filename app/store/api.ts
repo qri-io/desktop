@@ -52,6 +52,11 @@ interface APIResponseEnvelope {
   pagination?: object
 }
 
+export function apiActionTypes (endpoint: string): [string, string, string] {
+  const name = endpoint.toUpperCase()
+  return [`API_${name}_REQUEST`, `API_${name}_SUCCESS`, `API_${name}_FAILURE`]
+}
+
 // getJSON fetches json data from a url
 async function getJSON<T> (url: string): Promise<T> {
   const res = await fetch(url)
@@ -63,33 +68,60 @@ async function getJSON<T> (url: string): Promise<T> {
   return json as T
 }
 
+function apiUrl (endpoint: string, params?: ApiQueryParams): string {
+  let url = `http://localhost:2503/${endpoint}`
+  if (!params) {
+    return url
+  }
+
+  if (params.peername) {
+    url += `/${params.peername}`
+  }
+  if (params.name) {
+    url += `/${params.name}`
+  }
+  if (params.peerID || params.path) {
+    url += '/at'
+  }
+  if (params.peerID) {
+    url += `/${params.peerID}`
+  }
+  if (params.path) {
+    url += params.path
+  }
+
+  return url
+}
+
 // getAPIJSON constructs an API url & fetches a JSON response
-async function getAPIJSON<T> (endpoint: string): Promise<T> {
-  return getJSON(`http://localhost:2503/${endpoint}`)
+async function getAPIJSON<T> (endpoint: string, params?: ApiQueryParams): Promise<T> {
+  return getJSON(apiUrl(endpoint, params))
 }
 
 // apiMiddleware manages requests to the qri JSON API
 export const apiMiddleware: Middleware = () => (next: Dispatch<AnyAction>) => async (action: any): Promise<any> => {
   if (action[CALL_API]) {
-    let { endpoint = '', map = identityFunc } = action[CALL_API]
-    const name = endpoint.toUpperCase()
+    let { endpoint = '', map = identityFunc, params } = action[CALL_API]
+    const [REQ_TYPE, SUCC_TYPE, FAIL_TYPE] = apiActionTypes(endpoint)
     let data: APIResponseEnvelope
 
-    next({ type: `API_${name}_REQUEST` })
+    next({ type: REQ_TYPE })
 
     try {
-      data = await getAPIJSON(endpoint)
+      data = await getAPIJSON(endpoint, params)
     } catch (err) {
       return next({
-        type: `API_${name}_ERROR`,
+        type: FAIL_TYPE,
         payload: { err }
       })
     }
 
     return next({
-      type: `API_${name}_SUCCESS`,
+      type: SUCC_TYPE,
       payload: {
         data: map(data.data)
+        // TODO (b5) - we should be able to handle pagination response
+        // state here
         // pagination:
       }
     })
