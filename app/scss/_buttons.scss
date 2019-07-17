@@ -74,7 +74,7 @@ fieldset[disabled] a.btn {
 }
 
 .btn-muted {
-  @include button-variant($black, $white, $primary-muted)
+  @include button-variant($black, $white, $border-color)
 }
 //
 // Link buttons
