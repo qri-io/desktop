@@ -23,7 +23,7 @@ type Modal =
   initialURL?: string | null
 }
 
-interface UI {
+export interface UI {
   apiConnection: ApiConnection
   showDatasetList: boolean
   errorMessage: string | null
@@ -36,7 +36,7 @@ interface UI {
 }
 
 // currently selected dataset, tab, dataset component, commit, etc
-interface Selections {
+export interface Selections {
   peername: string
   name: string | null
   activeTab: string
@@ -70,18 +70,18 @@ export interface MyDatasets {
 }
 
 // info about a dataset component as compared the same component in previous commit
-interface ComponentStatus {
+export interface ComponentStatus {
   filepath: string
   status: 'changed' | 'unchanged' | 'removed' | 'added'
   errors: object[]
   warnings: object[]
 }
 
-interface Pages {
+export interface Pages {
   [key: string]: PageInfo
 }
 
-interface DatasetComparison {
+export interface DatasetComparison {
   path: string
   prevPath: string
   peername: string
@@ -90,13 +90,13 @@ interface DatasetComparison {
   diff: object
   value: Dataset
   status: {
-    meta: ComponentStatus
-    schema: ComponentStatus
-    body: ComponentStatus
+    meta?: ComponentStatus
+    schema?: ComponentStatus
+    body?: ComponentStatus
   }
 }
 
-interface WorkingDataset extends DatasetComparison {
+export interface WorkingDataset extends DatasetComparison {
   history: {
     pageInfo: PageInfo
     value: Commit[]

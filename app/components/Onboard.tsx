@@ -12,10 +12,11 @@ const SET_PEERNAME_SUCCESS = 'SET_PEERNAME_SUCCESS'
 
 export interface OnboardProps {
   fetchMyDatasets(): ThunkAction<Promise<void>, any, any, any>
+  fetchWorkingDataset(): ThunkAction<Promise<void>, any, any, any>
 }
 
 // Onboard is a series of flows for onboarding a new user
-export const Onboard: React.FunctionComponent<any> = ({ fetchMyDatasets }) => {
+export const Onboard: React.FunctionComponent<any> = ({ fetchMyDatasets, fetchWorkingDataset }) => {
   const [loading, setLoading] = React.useState(true)
   const [acceptedTOS, setAcceptedTOS] = React.useState(false)
   const [peername, setPeername] = React.useState('forest_green_doberman_pinscher')
@@ -53,7 +54,9 @@ export const Onboard: React.FunctionComponent<any> = ({ fetchMyDatasets }) => {
   }
 
   const renderWelcome = () => {
+    // TODO (b5) - this is just to demo fetching, should be moved to a better place
     fetchMyDatasets()
+    fetchWorkingDataset()
     return (
       <CSSTransition
         in={!acceptedTOS}

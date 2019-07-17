@@ -68,10 +68,22 @@ async function getJSON<T> (url: string): Promise<T> {
   return json as T
 }
 
-function apiUrl (endpoint: string, params?: ApiQueryParams): string {
-  let url = `http://localhost:2503/${endpoint}`
+// endpointMap is an object that maps frontend endpoint names to their
+// corresponding API url path
+const endpointMap: Record<string, string> = {
+  'list': 'list',
+  'dataset': '' // dataset endpoints are constructured through query param values
+}
+
+function apiUrl (endpoint: string, params?: ApiQueryParams): [string, string] {
+  const path = endpointMap[endpoint]
+  if (path === undefined) {
+    return ['', `${endpoint} is not a valid api endpoint`]
+  }
+
+  let url = `http://localhost:2503/${path}`
   if (!params) {
-    return url
+    return [url, '']
   }
 
   if (params.peername) {
@@ -90,20 +102,24 @@ function apiUrl (endpoint: string, params?: ApiQueryParams): string {
     url += params.path
   }
 
-  return url
+  return [url, '']
 }
 
 // getAPIJSON constructs an API url & fetches a JSON response
 async function getAPIJSON<T> (endpoint: string, params?: ApiQueryParams): Promise<T> {
-  return getJSON(apiUrl(endpoint, params))
+  const [url, err] = apiUrl(endpoint, params)
+  if (err) {
+    throw err
+  }
+  return getJSON(url)
 }
 
 // apiMiddleware manages requests to the qri JSON API
 export const apiMiddleware: Middleware = () => (next: Dispatch<AnyAction>) => async (action: any): Promise<any> => {
   if (action[CALL_API]) {
+    let data: APIResponseEnvelope
     let { endpoint = '', map = identityFunc, params } = action[CALL_API]
     const [REQ_TYPE, SUCC_TYPE, FAIL_TYPE] = apiActionTypes(endpoint)
-    let data: APIResponseEnvelope
 
     next({ type: REQ_TYPE })
 

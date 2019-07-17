@@ -1,5 +1,5 @@
 import { connect } from 'react-redux'
-import { fetchMyDatasets } from '../actions/api'
+import { fetchMyDatasets, fetchWorkingDataset } from '../actions/api'
 import { Onboard } from '../components/Onboard'
 
 const mapStateToProps = () => {
@@ -7,7 +7,8 @@ const mapStateToProps = () => {
 }
 
 const actions = {
-  fetchMyDatasets
+  fetchMyDatasets,
+  fetchWorkingDataset
 }
 
 export default connect(mapStateToProps, actions)(Onboard)
