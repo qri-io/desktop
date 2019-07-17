@@ -1,30 +1,11 @@
 import * as React from 'react'
 
-const datasets = [
-  {
-    id: 1,
-    title: 'USGS Earthquakes',
-    name: 'chriswhong/usgs_earthquakes'
-  },
-  {
-    id: 2,
-    title: 'World Bank Population',
-    name: 'b5/world_bank_population'
-  },
-  {
-    id: 3,
-    title: 'Baltimore Bus Timeliness (June 2019)',
-    name: 'chriswhong/baltimore_bus_timeliness'
-  },
-  {
-    id: 4,
-    title: 'PLUTO Modified Parcels',
-    name: 'chriswhong/nyc_pluto_modified_parcels'
-  }
-]
+export interface DatasetListProps {
+  value: any[]
+}
 
-export default class DatasetList extends React.Component<{}, { activeTab: string, filterString: string }> {
-  constructor (p: {}) {
+export class DatasetList extends React.Component<DatasetListProps, { activeTab: string, filterString: string }> {
+  constructor (p: DatasetListProps) {
     super(p)
     this.state = {
       activeTab: 'history',
@@ -41,11 +22,12 @@ export default class DatasetList extends React.Component<{}, { activeTab: string
   }
 
   render () {
+    const datasets = this.props.value
     let filteredDatasets = datasets
     const { filterString } = this.state
 
     if (filterString !== '') {
-      filteredDatasets = datasets.filter((dataset) => {
+      filteredDatasets = filteredDatasets.filter((dataset) => {
         const lowercasedFilterString = filterString.toLowerCase()
         if (dataset.name.toLowerCase().includes(lowercasedFilterString)) return true
         if (dataset.title.toLowerCase().includes(lowercasedFilterString)) return true
@@ -55,8 +37,8 @@ export default class DatasetList extends React.Component<{}, { activeTab: string
     }
 
     const listContent = filteredDatasets.length > 0
-      ? filteredDatasets.map(({ id, title, name }) => (
-        <div key={id} className='sidebar-list-item sidebar-list-item-text '>
+      ? filteredDatasets.map(({ title, name, path }) => (
+        <div key={path} className='sidebar-list-item sidebar-list-item-text '>
           <div className='text'>{title}</div>
           <div className='subtext'>{name}</div>
         </div>

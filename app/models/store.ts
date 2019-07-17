@@ -45,7 +45,7 @@ interface Selections {
 }
 
 // info about the current value of a list being paginated
-interface PageInfo {
+export interface PageInfo {
   isFetching: boolean
   pageCount: number
   fetchedAll: boolean
@@ -53,7 +53,7 @@ interface PageInfo {
 }
 
 // dataset summary info to show in dataset list
-interface DatasetSummary {
+export interface DatasetSummary {
   title: string
   peername: string
   name: string
@@ -63,7 +63,7 @@ interface DatasetSummary {
 }
 
 // list of local datasets
-interface MyDatasets {
+export interface MyDatasets {
   pageInfo: PageInfo
   value: DatasetSummary[]
   filter: string // filter string from ui
