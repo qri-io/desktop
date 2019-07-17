@@ -1,14 +1,14 @@
 import * as React from 'react'
-import Dialog, { IDialogProps } from './Dialog'
+import Modal, { ModalProps } from './Modal'
 
-const AddDataset: React.FunctionComponent<IDialogProps> = ({ onDismissed, onSubmit }) =>
-  <div><Dialog
+const AddDataset: React.FunctionComponent<ModalProps> = ({ onDismissed, onSubmit }) =>
+  <Modal
     id="addDataset"
     title={'AddDataset'}
     onDismissed={onDismissed}
     onSubmit={onSubmit}
   >
     <div>HI! Add Dataset Here!</div>
-  </Dialog></div>
+  </Modal>
 
 export default AddDataset

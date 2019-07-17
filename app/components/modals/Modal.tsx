@@ -1,13 +1,13 @@
 import * as React from 'react'
-import DialogHeader from './header'
+import * as classNames from 'classnames'
+import ModalHeader from './header'
 
 /**
  * Title bar height in pixels. Values taken from 'app/styles/_variables.scss'.
  */
-// const titleBarHeight = __DARWIN__ ? 22 : 28
 const titleBarHeight = 22
 
-export interface IDialogProps {
+export interface ModalProps {
   /**
    * An optional dialog title. Most, if not all dialogs should have
    *  When present the Dialog renders a DialogHeader element
@@ -64,6 +64,11 @@ export interface IDialogProps {
   readonly onSubmit?: () => void
 
   /**
+   * An optional className to be applied to the rendered dialog element.
+   */
+  readonly className?: string
+
+  /**
    * Whether or not the dialog should be disabled. All dialogs wrap their
    * content in a <fieldset> element which, when disabled, causes all descendant
    * form elements and buttons to also become disabled. This is useful for
@@ -94,20 +99,25 @@ export interface IDialogProps {
  * underlying elements. It's not possible to use the tab key to move focus
  * out of the dialog without first dismissing it.
  */
-const Dialog: React.FunctionComponent<IDialogProps> = ({ disabled, loading, id, onSubmit, type, onDismissed, dismissable, title, children }) => {
-  const [disableClickDismissal, setDisableClickDismissal] = React.useState(true)
-  let dialogElement: HTMLElement | null = null
+const Modal: React.FunctionComponent<ModalProps> = ({ title, dismissable, onDismissed, id, type, onSubmit, className, disabled, loading, children }) => {
+  const [modalElement, setModalElement] = React.useState<HTMLElement | null>(null)
+
+  React.useEffect(() => {
+    if (modalElement) {
+      (modalElement as any).showModal()
+    }
+  }, [modalElement]) // eslint-disable-line
+
+  const isDismissable = () => {
+    return dismissable === undefined || dismissable
+  }
 
   const onDialogCancel = (e: Event) => {
     e.preventDefault()
     onDismiss()
   }
 
-  const isDismissable = () => {
-    return dismissable === undefined || dismissable
-  }
-
-  const onDialogClick = (e: React.MouseEvent<HTMLElement>) => {
+  const onModalClick = (e: React.MouseEvent<HTMLElement>) => {
     if (isDismissable() === false) {
       return
     }
@@ -117,21 +127,13 @@ const Dialog: React.FunctionComponent<IDialogProps> = ({ disabled, loading, id, 
     // event will be raised on the the submit button which isn't what we
     // want so we'll make sure that the original target for the event is
     // our own dialog element.
-    if (e.target !== dialogElement) {
+    if (e.target !== modalElement) {
       return
     }
 
     const isInTitleBar = e.clientY <= titleBarHeight
 
     if (isInTitleBar) {
-      return
-    }
-
-    // Ignore the first click right after the window's been focused. It could
-    // be the click that focused the window, in which case we don't wanna
-    // dismiss the dialog.
-    if (disableClickDismissal) {
-      setDisableClickDismissal(false)
       return
     }
 
@@ -151,25 +153,24 @@ const Dialog: React.FunctionComponent<IDialogProps> = ({ disabled, loading, id, 
     }
   }
 
-  const onDialogRef = (e: HTMLElement | null) => {
+  const onModalRef = (e: HTMLElement | null) => {
     // We need to explicitly subscribe to and unsubscribe from the dialog
     // element as react doesn't yet understand the element and which events
     // it has.
     if (!e) {
-      if (dialogElement) {
-        dialogElement.removeEventListener('cancel', onDialogCancel)
-        dialogElement.removeEventListener('keydown', onKeyDown)
+      if (modalElement) {
+        modalElement.removeEventListener('cancel', onDialogCancel)
+        modalElement.removeEventListener('keydown', onKeyDown)
       }
     } else {
       e.addEventListener('cancel', onDialogCancel)
       e.addEventListener('keydown', onKeyDown)
     }
 
-    dialogElement = e
+    setModalElement(e)
   }
 
   const onKeyDown = (event: KeyboardEvent) => {
-    // const shortcutKey = __DARWIN__ ? event.metaKey : event.ctrlKey
     const shortcutKey = event.metaKey
     if ((shortcutKey && event.key === 'w') || event.key === 'Escape') {
       onDialogCancel(event)
@@ -184,7 +185,7 @@ const Dialog: React.FunctionComponent<IDialogProps> = ({ disabled, loading, id, 
     }
   }
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const onFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
     if (onSubmit) {
@@ -200,7 +201,7 @@ const Dialog: React.FunctionComponent<IDialogProps> = ({ disabled, loading, id, 
     }
 
     return (
-      <DialogHeader
+      <ModalHeader
         title={title}
         dismissable={isDismissable()}
         onDismissed={onDismiss}
@@ -208,16 +209,26 @@ const Dialog: React.FunctionComponent<IDialogProps> = ({ disabled, loading, id, 
       />
     )
   }
+
+  const modalClassName = classNames(
+    {
+      error: type === 'error',
+      warning: type === 'warning'
+    },
+    className
+  )
+
   return (
     <dialog
-      open
-      ref={onDialogRef}
+      open={false}
+      ref={onModalRef}
       id={id}
-      onClick={onDialogClick}
-      className={`${type === 'error' ? 'error' : type === 'warning' ? 'warning' : ''}`}
+      onClick={onModalClick}
+      className={modalClassName}
     >
       {renderHeader()}
-      <form onSubmit={handleSubmit}>
+
+      <form onSubmit={onFormSubmit}>
         <fieldset disabled={disabled}>
           {children}
         </fieldset>
@@ -226,4 +237,4 @@ const Dialog: React.FunctionComponent<IDialogProps> = ({ disabled, loading, id, 
   )
 }
 
-export default Dialog
+export default Modal
