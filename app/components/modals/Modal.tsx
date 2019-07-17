@@ -101,6 +101,7 @@ export interface ModalProps {
  */
 const Modal: React.FunctionComponent<ModalProps> = ({ title, dismissable, onDismissed, id, type, onSubmit, className, disabled, loading, children }) => {
   const [modalElement, setModalElement] = React.useState<HTMLElement | null>(null)
+  const [isDismissable, setIsDismissable] = React.useState(!!dismissable)
 
   React.useEffect(() => {
     if (modalElement) {
@@ -108,17 +109,13 @@ const Modal: React.FunctionComponent<ModalProps> = ({ title, dismissable, onDism
     }
   }, [modalElement]) // eslint-disable-line
 
-  const isDismissable = () => {
-    return dismissable === undefined || dismissable
-  }
-
   const onDialogCancel = (e: Event) => {
     e.preventDefault()
     onDismiss()
   }
 
   const onModalClick = (e: React.MouseEvent<HTMLElement>) => {
-    if (isDismissable() === false) {
+    if (isDismissable === false) {
       return
     }
 
@@ -178,7 +175,7 @@ const Modal: React.FunctionComponent<ModalProps> = ({ title, dismissable, onDism
   }
 
   const onDismiss = () => {
-    if (isDismissable()) {
+    if (isDismissable) {
       if (onDismissed) {
         onDismissed()
       }
@@ -189,7 +186,11 @@ const Modal: React.FunctionComponent<ModalProps> = ({ title, dismissable, onDism
     e.preventDefault()
 
     if (onSubmit) {
-      onSubmit()
+      setIsDismissable(false)
+      new Promise((resolve) => {
+        onSubmit()
+        resolve()
+      }).then(() => setIsDismissable(!!dismissable))
     } else {
       onDismiss()
     }
@@ -203,7 +204,7 @@ const Modal: React.FunctionComponent<ModalProps> = ({ title, dismissable, onDism
     return (
       <ModalHeader
         title={title}
-        dismissable={isDismissable()}
+        dismissable={isDismissable}
         onDismissed={onDismiss}
         loading={loading}
       />
