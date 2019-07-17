@@ -4,19 +4,25 @@ import AppLoading from './AppLoading'
 import Welcome from './Welcome'
 import ChoosePeername from './ChoosePeername'
 import { CSSTransition } from 'react-transition-group'
+import { ThunkAction } from 'redux-thunk'
 
 const peernameError: string = 'peername_error'
 const SET_PEERNAME_FAILURE = 'SET_PEERNAME_FAILURE'
 const SET_PEERNAME_SUCCESS = 'SET_PEERNAME_SUCCESS'
 
-// App is the main component and currently the only view
-// Everything must flow through here
-const App: React.FunctionComponent<any> = () => {
+export interface OnboardProps {
+  fetchMyDatasets(): ThunkAction<Promise<void>, any, any, any>
+  fetchWorkingDataset(): ThunkAction<Promise<void>, any, any, any>
+}
+
+// Onboard is a series of flows for onboarding a new user
+export const Onboard: React.FunctionComponent<any> = ({ fetchMyDatasets, fetchWorkingDataset }) => {
   const [loading, setLoading] = React.useState(true)
   const [acceptedTOS, setAcceptedTOS] = React.useState(false)
   const [peername, setPeername] = React.useState('forest_green_doberman_pinscher')
   const [hasSetPeername, setHasSetPeername] = React.useState(false)
-  setTimeout(() => { setLoading(false) }, 3000)
+
+  setTimeout(() => { setLoading(false) }, 1200)
 
   async function onSave (peername: string): Promise<any> {
     return new Promise((resolve) => {
@@ -48,6 +54,9 @@ const App: React.FunctionComponent<any> = () => {
   }
 
   const renderWelcome = () => {
+    // TODO (b5) - this is just to demo fetching, should be moved to a better place
+    fetchMyDatasets()
+    fetchWorkingDataset()
     return (
       <CSSTransition
         in={!acceptedTOS}
@@ -84,5 +93,3 @@ const App: React.FunctionComponent<any> = () => {
     </div>
   )
 }
-
-export default App
