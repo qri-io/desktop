@@ -68,7 +68,7 @@ const DialogHeader: React.FunctionComponent<IDialogHeaderProps> = ({ onDismissed
         className="close"
         onClick={onCloseButtonClick}
         aria-label="close"
-        role="button" >x</a>
+        role="button" ><span className='icon'>close</span></a>
     )
   }
 

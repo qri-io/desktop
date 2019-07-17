@@ -19,8 +19,76 @@ dialog {
   max-width: 600px;
 
   &::backgrop {
-    background-color: rgba(0, 0, 0, 0.4);
+    background-color: rgba(0, 0, 0, 0.7);
     opacity: 1;
     z-index: $zindex-modal;
+  }
+
+  .dialog-header {
+    height: 50px;
+    border-bottom: solid 1px $border-color;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: $spacer;
+
+    h1 {
+      font-weight: $font-weight-bold;
+      font-size: $font-size-lg;
+      margin: 0;
+      padding: 0;
+      margin-right: $spacer;
+    }
+
+    .close {
+      flex-shrink: 0;
+
+      border: 0;
+      height: 16px;
+      width: 16px;
+
+      // Set the left margin to auto so that flexbox positions the button
+      // on the right hand side of the dialog and add a -10px right hand
+      // side margin to put the button where it should be (we use a double
+      // margin for the header itself).
+      margin: $spacer * -3 $spacer * -1 0 auto;
+      padding: 0;
+      background: transparent;
+
+      color: $primary-muted;
+      cursor: pointer;
+
+      // Let the button deal with all mouse events.
+      // Without this the octicon resets the cursor when
+      // hovering over the <path>.
+      .octicon {
+        pointer-events: none;
+      }
+
+      &:hover {
+        color: $text;
+      }
+
+      &:focus {
+        outline: 0;
+      }
+    }
+  }
+
+  form {
+    padding: $spacer
+  }
+
+  .error {
+    color: $error;
+    margin: 0 1rem 1rem 0;
+  }
+  
+  .buttons {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
   }
 }
