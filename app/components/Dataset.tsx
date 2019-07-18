@@ -30,6 +30,7 @@ interface DatasetProps {
   setWorkingDataset: (peername: string, name: string) => Action
   fetchMyDatasetsAndWorkbench: () => Promise<ApiAction>
   fetchWorkingDataset: () => Promise<ApiAction>
+  fetchWorkingStatus: () => Promise<ApiAction>
 }
 
 // using component state + getDerivedStateFromProps to determine when a new
@@ -50,6 +51,7 @@ export default class Dataset extends React.Component<DatasetProps> {
   componentDidMount () {
     // fetch datasets list, working dataset, and working dataset history
     this.props.fetchMyDatasetsAndWorkbench()
+    setInterval(() => { this.props.fetchWorkingStatus() }, 1000)
   }
 
   static getDerivedStateFromProps (nextProps: DatasetProps, prevState: DatasetState) {

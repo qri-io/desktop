@@ -128,8 +128,9 @@ export function fetchWorkingStatus (): ApiActionThunk {
         map: (data: Array<Record<string, string>>): ComponentStatus[] => {
           return data.map((d) => {
             return {
-              filepath: d.filepath,
-              status: d.status as ComponentState
+              filepath: d.sourceFile,
+              path: d.path,
+              status: d.type as ComponentState
             }
           })
         }

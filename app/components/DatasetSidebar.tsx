@@ -8,17 +8,34 @@ interface FileRowProps {
   name: string
   filename: string
   selected: boolean
+  status: string
   onClick: (type: string, selectedListItem: string) => Action
 }
 
 const FileRow: React.FunctionComponent<FileRowProps> = (props) => {
+  let statusColor
+  switch (props.status) {
+    case 'modified':
+      statusColor = '#cab081'
+      break
+    case 'unmodified':
+      statusColor = '#9bde9b'
+      break
+    default:
+      statusColor = 'transparent'
+  }
   return (
     <div
       className={`sidebar-list-item sidebar-list-item-text ${props.selected && 'selected'}`}
       onClick={() => { props.onClick('component', props.name) }}
     >
-      <div className='text'>{props.name}</div>
-      <div className='subtext'>{props.filename}</div>
+      <div className='text-column'>
+        <div className='text'>{props.name}</div>
+        <div className='subtext'>{props.filename}</div>
+      </div>
+      <div className='status-column'>
+        <span className='dot' style={{ backgroundColor: statusColor }}></span>
+      </div>
     </div>
   )
 }
@@ -38,11 +55,13 @@ const HistoryListItem: React.FunctionComponent<HistoryListItemProps> = (props) =
       className={`sidebar-list-item sidebar-list-item-text ${props.selected && 'selected'}`}
       onClick={() => { props.onClick('commit', props.path) }}
     >
-      <div className='text'>{props.commitTitle}</div>
-      <div className='subtext'>
-        <img className= 'user-image' src = {props.avatarUrl} />
-        <div className='time-message'>
-          {props.timeMessage}
+      <div className='text-column'>
+        <div className='text'>{props.commitTitle}</div>
+        <div className='subtext'>
+          <img className= 'user-image' src = {props.avatarUrl} />
+          <div className='time-message'>
+            {props.timeMessage}
+          </div>
         </div>
       </div>
     </div>
@@ -88,12 +107,14 @@ const DatasetSidebar: React.FunctionComponent<DatasetSidebarProps> = (props: Dat
           </div>
           {
             Object.keys(status).map((key) => {
-              const { filepath } = status[key]
+              const { filepath, status: fileStatus } = status[key]
+              const filename = filepath.substring((filepath.lastIndexOf('/') + 1))
               return (
                 <FileRow
                   key={key}
                   name={key}
-                  filename={filepath}
+                  filename={filename}
+                  status={fileStatus}
                   selected={selectedComponent === key}
                   onClick={onListItemClick}
                 />

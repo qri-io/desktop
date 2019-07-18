@@ -5,7 +5,8 @@ import Store from '../models/store'
 import { toggleDatasetList, setSidebarWidth } from '../actions/ui'
 import {
   fetchMyDatasetsAndWorkbench,
-  fetchWorkingDataset
+  fetchWorkingDataset,
+  fetchWorkingStatus
 } from '../actions/api'
 import {
   setActiveTab,
@@ -37,7 +38,8 @@ const DatasetContainer = connect(
     setSelectedListItem,
     setWorkingDataset,
     fetchMyDatasetsAndWorkbench,
-    fetchWorkingDataset
+    fetchWorkingDataset,
+    fetchWorkingStatus
   }
 )(Dataset)
 
