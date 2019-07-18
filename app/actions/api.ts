@@ -1,10 +1,19 @@
-import { CALL_API, ApiAction, ApiActionThunk } from '../store/api'
+import { CALL_API, ApiAction, ApiActionThunk, chainSuccess } from '../store/api'
 import { DatasetSummary } from '../models/store'
 import Dataset from '../models/dataset'
 
+export function bootstrap (): ApiActionThunk {
+  return async (dispatch, getState) => {
+    const whenOk = chainSuccess(dispatch, getState)
+    return fetchMyDatasets()(dispatch, getState)
+      .then(whenOk(fetchWorkingDataset()))
+  }
+}
+
 export function fetchMyDatasets (): ApiActionThunk {
   return async (dispatch) => {
-    const action: ApiAction = {
+    const listAction: ApiAction = {
+      type: 'api_action',
       [CALL_API]: {
         endpoint: 'list',
         method: 'GET',
@@ -22,15 +31,15 @@ export function fetchMyDatasets (): ApiActionThunk {
       }
     }
 
-    return dispatch(action)
+    return dispatch(listAction)
   }
 }
 
 export function fetchWorkingDataset (): ApiActionThunk {
   return async (dispatch, getState) => {
     const { selections } = getState()
-
-    const action: ApiAction = {
+    const action = {
+      type: 'api_action',
       [CALL_API]: {
         endpoint: 'dataset',
         method: 'GET',
