@@ -5,6 +5,7 @@ import { Resizable } from '../components/resizable'
 import DatasetSidebar from '../components/DatasetSidebar'
 import DatasetListContainer from '../containers/DatasetListContainer'
 import CommitDetailsContainer from '../containers/CommitDetailsContainer'
+import MetadataContainer from '../containers/MetadataContainer'
 
 import { defaultSidebarWidth } from '../reducers/ui'
 
@@ -97,9 +98,15 @@ export default class Dataset extends React.Component<DatasetProps> {
     let mainContent
 
     if (activeTab === 'status') {
-      mainContent = (
-        <div>Content for the {selectedComponent} component</div>
-      )
+      if (selectedComponent === 'meta') {
+        mainContent = (
+          <MetadataContainer />
+        )
+      } else {
+        mainContent = (
+          <div>Content for the {selectedComponent} component</div>
+        )
+      }
     } else {
       mainContent = (
         <CommitDetailsContainer />
@@ -145,7 +152,7 @@ export default class Dataset extends React.Component<DatasetProps> {
               onListItemClick={setSelectedListItem}
             />
           </Resizable>
-          <div className='content'>
+          <div className='content-wrapper'>
             {showDatasetList && <div className='overlay'></div>}
             {mainContent}
           </div>

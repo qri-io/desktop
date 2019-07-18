@@ -48,6 +48,7 @@ $hover-highlight-color: #F6F8FA;
 
     #sidebar {
       position: relative;
+      flex: 0 0 auto;
 
       .resize-handle {
         position: absolute;
@@ -59,10 +60,12 @@ $hover-highlight-color: #F6F8FA;
       }
     }
 
-    .content {
+    .content-wrapper {
       background-color: #d8d8d8;
       flex: 1;
       position: relative;
+      flex-basis: auto;
+      overflow: hidden;
 
       .overlay {
         position: absolute;
@@ -70,6 +73,11 @@ $hover-highlight-color: #F6F8FA;
         width: 100%;
         background-color: #000;
         opacity: 0.4;
+      }
+
+      .content {
+        padding: 15px;
+        overflow-x: scroll;
       }
     }
   }

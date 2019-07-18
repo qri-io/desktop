@@ -49,6 +49,7 @@ export interface Dataset {
   schema?: JSONSchema7
   body?: Object | []
   commit?: Commit
+  [key: string]: any
 }
 
 export default Dataset

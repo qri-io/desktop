@@ -13,19 +13,19 @@ const initialState: WorkingDataset = {
   status: {
     meta: {
       filepath: 'meta.json',
-      status: 'unchanged',
+      status: 'unmodified',
       errors: [],
       warnings: []
     },
     schema: {
       filepath: 'schema.json',
-      status: 'unchanged',
+      status: 'unmodified',
       errors: [],
       warnings: []
     },
     body: {
       filepath: 'body.csv',
-      status: 'unchanged',
+      status: 'unmodified',
       errors: [],
       warnings: []
     }
@@ -50,7 +50,8 @@ const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction
     case DATASET_REQ:
       return state
     case DATASET_SUCC:
-      return Object.assign({}, state, action.payload.data)
+      const { name, path, peername, published, dataset: value } = action.payload.data
+      return Object.assign({}, state, { name, path, peername, published, value })
     case DATASET_FAIL:
       return state
 

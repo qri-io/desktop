@@ -6,7 +6,6 @@ interface CommitDetailsProps {
 }
 
 const CommitDetails: React.FunctionComponent<CommitDetailsProps> = (props: CommitDetailsProps) => {
-  console.log(props)
   return (
     <div className='dataset-sidebar'>
       {props.commit.title}

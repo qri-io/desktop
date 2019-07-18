@@ -18,7 +18,6 @@ export default class DatasetList extends React.Component<DatasetListProps> {
 
   render () {
     const { setWorkingDataset } = this.props
-    console.log(this.props)
     const { filter, value: datasets } = this.props.myDatasets
 
     const filteredDatasets = datasets.filter(({ name, title }) => {
