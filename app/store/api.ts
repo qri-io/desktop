@@ -99,7 +99,9 @@ async function getJSON<T> (url: string): Promise<T> {
 // corresponding API url path
 const endpointMap: Record<string, string> = {
   'list': 'list',
-  'dataset': '' // dataset endpoints are constructured through query param values
+  'dataset': '', // dataset endpoints are constructured through query param values
+  'history': 'history',
+  'status': 'dsstatus'
 }
 
 function apiUrl (endpoint: string, params?: ApiQueryParams): [string, string] {

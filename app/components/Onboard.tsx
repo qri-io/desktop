@@ -5,6 +5,7 @@ import { CSSTransition } from 'react-transition-group'
 import AppLoading from './AppLoading'
 import Welcome from './Welcome'
 import ChoosePeername from './ChoosePeername'
+import { UI } from '../models/store'
 
 const peernameError: string = 'peername_error'
 const SET_PEERNAME_FAILURE = 'SET_PEERNAME_FAILURE'
@@ -12,6 +13,7 @@ const SET_PEERNAME_SUCCESS = 'SET_PEERNAME_SUCCESS'
 
 export interface OnboardProps {
   ui: UI
+
   acceptTOS: () => Action
   setPeername: () => Action
   fetchMyDatasets: () => Promise<Action>
