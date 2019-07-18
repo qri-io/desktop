@@ -1,9 +1,13 @@
-import * as React from 'react'
+import { connect } from 'react-redux'
+import App from '../components/App'
+import Store from '../models/store'
 
-export default class AppContainer extends React.Component {
-  render () {
-    return (
-      <div style={{ height: '100%' }}>{this.props.children}</div>
-    )
-  }
-}
+const AppContainer = connect(
+  (state: Store) => {
+    const { ui } = state
+    return { ui }
+  },
+  {}
+)(App)
+
+export default AppContainer

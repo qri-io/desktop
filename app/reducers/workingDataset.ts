@@ -11,6 +11,24 @@ const initialState: WorkingDataset = {
   diff: {},
   value: {},
   status: {
+    meta: {
+      filepath: 'meta.json',
+      status: 'unchanged',
+      errors: [],
+      warnings: []
+    },
+    schema: {
+      filepath: 'schema.json',
+      status: 'unchanged',
+      errors: [],
+      warnings: []
+    },
+    body: {
+      filepath: 'body.csv',
+      status: 'unchanged',
+      errors: [],
+      warnings: []
+    }
   },
   history: {
     pageInfo: {
@@ -23,23 +41,19 @@ const initialState: WorkingDataset = {
   }
 }
 
-const [DS_REQ, DS_SUCC, DS_FAIL] = apiActionTypes('dataset')
+const [DATASET_REQ, DATASET_SUCC, DATASET_FAIL] = apiActionTypes('dataset')
 
-const workingDatasetReducer: Reducer = (state = initialState, action: AnyAction): WorkingDataset => {
+const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction): WorkingDataset => {
   switch (action.type) {
-    case DS_REQ:
-      // TODO (b5) - finish
+    case DATASET_REQ:
       return state
-    case DS_SUCC:
-      // TODO (b5) - finish
-      console.log('yay fetched dataset!')
+    case DATASET_SUCC:
+      return Object.assign({}, state, action.payload.data)
+    case DATASET_FAIL:
       return state
-    case DS_FAIL:
-      // TODO (b5) - finish
+    default:
       return state
   }
-
-  return state
 }
 
-export default workingDatasetReducer
+export default workingDatasetsReducer
