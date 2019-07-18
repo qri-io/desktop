@@ -182,7 +182,11 @@ $hover-highlight-color: #F6F8FA;
     flex-direction: column;
 
     &:hover {
-      background-color: $hover-highlight-color
+      background-color: $hover-highlight-color;
+    }
+
+    &.selected {
+      background-color: #e6e6e6;
     }
 
     .text {

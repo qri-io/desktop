@@ -1,7 +1,7 @@
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
-import Routes from './Routes'
-import { BrowserRouter as Router } from 'react-router-dom'
+import RoutesContainer from './containers/RoutesContainer'
+import { HashRouter as Router } from 'react-router-dom'
 import { Provider } from 'react-redux'
 import './app.global.scss'
 
@@ -11,7 +11,7 @@ const store = configureStore()
 ReactDOM.render(
   <Provider store={store}>
     <Router>
-      <Routes/>
+      <RoutesContainer/>
     </Router>
   </Provider>,
   document.getElementById('root')

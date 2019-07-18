@@ -30,9 +30,9 @@ export interface UI {
   message: string | null
   hasAcceptedTOS: boolean
   hasSetPeername: boolean
-  modal: Modal
+  modal?: Modal
   showDiff: boolean
-  sidebarWidth: boolean
+  sidebarWidth: number
 }
 
 // currently selected dataset, tab, dataset component, commit, etc
@@ -49,7 +49,7 @@ export interface PageInfo {
   isFetching: boolean
   pageCount: number
   fetchedAll: boolean
-  error: string
+  error?: string
 }
 
 // dataset summary info to show in dataset list
@@ -58,6 +58,7 @@ export interface DatasetSummary {
   peername: string
   name: string
   hash: string
+  path: string
   isLinked: boolean
   changed: boolean
 }
@@ -90,9 +91,7 @@ export interface DatasetComparison {
   diff: object
   value: Dataset
   status: {
-    meta?: ComponentStatus
-    schema?: ComponentStatus
-    body?: ComponentStatus
+    [key: string]: ComponentStatus
   }
 }
 

@@ -1,10 +1,11 @@
 import * as React from 'react'
+import { Action } from 'redux'
 import ExternalLink from './ExternalLink'
 import { remote } from 'electron'
 import { logo } from './AppLoading'
 
 export interface WelcomeProps {
-  onAccept: () => void
+  onAccept: () => Action
 }
 
 const Welcome: React.FunctionComponent<WelcomeProps> = ({ onAccept }) => {

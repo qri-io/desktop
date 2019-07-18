@@ -2,6 +2,8 @@ import { Reducer, AnyAction } from 'redux'
 import { MyDatasets } from '../models/store'
 import { apiActionTypes } from '../store/api'
 
+export const MYDATASETS_SET_FILTER = 'MYDATASETS_SET_FILTER'
+
 const initialState: MyDatasets = {
   pageInfo: {
     isFetching: false,
@@ -17,6 +19,10 @@ const [LIST_REQ, LIST_SUCC, LIST_FAIL] = apiActionTypes('list')
 
 const myDatasetsReducer: Reducer = (state = initialState, action: AnyAction): MyDatasets => {
   switch (action.type) {
+    case MYDATASETS_SET_FILTER:
+      const { filter } = action.payload
+      return Object.assign({}, state, { filter })
+
     case LIST_REQ:
       return Object.assign({}, state, {
         pageInfo: {
@@ -36,7 +42,7 @@ const myDatasetsReducer: Reducer = (state = initialState, action: AnyAction): My
           fetchedAll: false,
           error: ''
         },
-        value: action.payload,
+        value: action.payload.data,
         filter: ''
       }
     case LIST_FAIL:

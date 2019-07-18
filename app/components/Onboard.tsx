@@ -1,26 +1,30 @@
 import * as React from 'react'
-import Dataset from './Dataset'
+import { Action } from 'redux'
+import { CSSTransition } from 'react-transition-group'
+
 import AppLoading from './AppLoading'
 import Welcome from './Welcome'
 import ChoosePeername from './ChoosePeername'
-import { CSSTransition } from 'react-transition-group'
-import { ThunkAction } from 'redux-thunk'
+
+import { UI } from '../models/store'
 
 const peernameError: string = 'peername_error'
 const SET_PEERNAME_FAILURE = 'SET_PEERNAME_FAILURE'
 const SET_PEERNAME_SUCCESS = 'SET_PEERNAME_SUCCESS'
 
 export interface OnboardProps {
-  fetchMyDatasets(): ThunkAction<Promise<void>, any, any, any>
-  fetchWorkingDataset(): ThunkAction<Promise<void>, any, any, any>
+  ui: UI
+  acceptTOS: () => Action
+  setPeername: () => Action
+  fetchMyDatasets: () => Promise<void>
+  fetchWorkingDataset: () => Promise<void>
 }
 
 // Onboard is a series of flows for onboarding a new user
-export const Onboard: React.FunctionComponent<any> = ({ fetchMyDatasets, fetchWorkingDataset }) => {
+const Onboard: React.FunctionComponent<OnboardProps> = (props: OnboardProps) => {
   const [loading, setLoading] = React.useState(true)
-  const [acceptedTOS, setAcceptedTOS] = React.useState(false)
-  const [peername, setPeername] = React.useState('forest_green_doberman_pinscher')
-  const [hasSetPeername, setHasSetPeername] = React.useState(false)
+  const [peername] = React.useState('forest_green_doberman_pinscher')
+  const { acceptTOS, setPeername } = props
 
   setTimeout(() => { setLoading(false) }, 1200)
 
@@ -32,8 +36,7 @@ export const Onboard: React.FunctionComponent<any> = ({ fetchMyDatasets, fetchWo
         error = 'this peername is already taken'
         type = SET_PEERNAME_FAILURE
       } else {
-        setPeername(peername)
-        setHasSetPeername(true)
+        setPeername()
       }
       resolve({ type, error })
     })
@@ -54,18 +57,15 @@ export const Onboard: React.FunctionComponent<any> = ({ fetchMyDatasets, fetchWo
   }
 
   const renderWelcome = () => {
-    // TODO (b5) - this is just to demo fetching, should be moved to a better place
-    fetchMyDatasets()
-    fetchWorkingDataset()
     return (
       <CSSTransition
-        in={!acceptedTOS}
+        in={true}
         classNames="fade"
         component="div"
         timeout={1000}
         unmountOnExit
       >
-        <Welcome onAccept={() => setAcceptedTOS(true)} />
+        <Welcome onAccept={acceptTOS} />
       </CSSTransition>
     )
   }
@@ -73,7 +73,7 @@ export const Onboard: React.FunctionComponent<any> = ({ fetchMyDatasets, fetchWo
   const renderChoosePeerName = () => {
     return (
       <CSSTransition
-        in={!hasSetPeername}
+        in={true}
         classNames="fade"
         component="div"
         timeout={1000}
@@ -83,13 +83,15 @@ export const Onboard: React.FunctionComponent<any> = ({ fetchMyDatasets, fetchWo
       </CSSTransition>
     )
   }
+  const { hasAcceptedTOS, hasSetPeername } = props.ui
 
   return (
     <div style={{ height: '100%' }}>
       {renderAppLoading()}
-      {renderWelcome()}
-      {renderChoosePeerName()}
-      <Dataset />
+      {!hasAcceptedTOS && renderWelcome()}
+      {!hasSetPeername && renderChoosePeerName()}
     </div>
   )
 }
+
+export default Onboard

@@ -1,49 +1,51 @@
 import * as React from 'react'
+import { Action } from 'redux'
+import { MyDatasets, WorkingDataset } from '../models/store'
 
-export interface DatasetListProps {
-  value: any[]
+interface DatasetListProps {
+  myDatasets: MyDatasets
+  workingDataset: WorkingDataset
+  setFilter: (filter: string) => Action
+  setWorkingDataset: (peername: string, name: string) => Action
 }
 
-export class DatasetList extends React.Component<DatasetListProps, { activeTab: string, filterString: string }> {
-  constructor (p: DatasetListProps) {
-    super(p)
-    this.state = {
-      activeTab: 'history',
-      filterString: ''
-    }
-  }
-
-  handleTabClick (activeTab: string) {
-    this.setState({ activeTab })
-  }
-
+export default class DatasetList extends React.Component<DatasetListProps> {
   handleFilterKeyUp (e: any) {
-    this.setState({ filterString: e.target.value })
+    const { setFilter } = this.props
+    const filter = e.target.value
+    setFilter(filter)
   }
 
   render () {
-    const datasets = this.props.value
-    let filteredDatasets = datasets
-    const { filterString } = this.state
+    const { setWorkingDataset } = this.props
+    console.log(this.props)
+    const { filter, value: datasets } = this.props.myDatasets
 
-    if (filterString !== '') {
-      filteredDatasets = filteredDatasets.filter((dataset) => {
-        const lowercasedFilterString = filterString.toLowerCase()
-        if (dataset.name.toLowerCase().includes(lowercasedFilterString)) return true
-        if (dataset.title.toLowerCase().includes(lowercasedFilterString)) return true
-
+    const filteredDatasets = datasets.filter(({ name, title }) => {
+      // if there's a non-empty filter string, only show matches on name and title
+      // TODO (chriswhong) replace this simple filtering with an API call for deeper matches
+      if (filter !== '') {
+        const lowercasedFilterString = filter.toLowerCase()
+        if (name.toLowerCase().includes(lowercasedFilterString)) return true
+        if (title.toLowerCase().includes(lowercasedFilterString)) return true
         return false
-      })
-    }
+      }
+
+      return true
+    })
 
     const listContent = filteredDatasets.length > 0
-      ? filteredDatasets.map(({ title, name, path }) => (
-        <div key={path} className='sidebar-list-item sidebar-list-item-text '>
+      ? filteredDatasets.map(({ peername, name, path, title }) => (
+        <div
+          key={path}
+          className='sidebar-list-item sidebar-list-item-text'
+          onClick={() => setWorkingDataset(peername, name)}
+        >
           <div className='text'>{title}</div>
           <div className='subtext'>{name}</div>
         </div>
       ))
-      : <div className='sidebar-list-item-text'>Oops, no matches found for <strong>&apos;{filterString}&apos;</strong></div>
+      : <div className='sidebar-list-item-text'>Oops, no matches found for <strong>&apos;{filter}&apos;</strong></div>
 
     return (
       <div className='dataset-sidebar'>
@@ -57,7 +59,7 @@ export class DatasetList extends React.Component<DatasetListProps, { activeTab: 
             />
             <div id='add-button'>Add</div>
           </div>
-          <div className='strong-message'>You have {datasets.length} local datasets</div>
+          <div className='strong-message'>You have {filteredDatasets.length} local datasets</div>
         </div>
         <div id='list'>
           {listContent}

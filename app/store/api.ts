@@ -3,6 +3,8 @@ import {
   Dispatch,
   AnyAction
 } from 'redux'
+import { ThunkDispatch } from 'redux-thunk'
+import Store from '../models/store'
 
 // CALL_API is a global, unique constant for passing actions to API middleware
 export const CALL_API = Symbol('CALL_API')
@@ -29,6 +31,12 @@ export interface ApiAction {
     map?: (data: object|[]) => any
   }
 }
+
+// ApiActionThunk is the return value of an Api action.
+// All api actions must return a promise that will be called with their result:
+// either a SUCCESS or FAILURE action. This allows callers to chain
+// .then(action) to perform additional work after an API call has completed
+export type ApiActionThunk = (dispatch: ThunkDispatch<any, any, any>, getState: () => Store) => Promise<ApiAction>
 
 // identityFunc is a function that returns the argument it's passed
 const identityFunc = <T>(a: T): T => a

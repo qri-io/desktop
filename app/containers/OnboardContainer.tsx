@@ -1,14 +1,16 @@
 import { connect } from 'react-redux'
-import { fetchMyDatasets, fetchWorkingDataset } from '../actions/api'
-import { Onboard } from '../components/Onboard'
+import { acceptTOS, setPeername } from '../actions/ui'
+import Onboard from '../components/Onboard'
+import Store from '../models/store'
 
-const mapStateToProps = () => {
-  return {}
+const mapStateToProps = (state: Store) => {
+  const { ui } = state
+  return { ui }
 }
 
 const actions = {
-  fetchMyDatasets,
-  fetchWorkingDataset
+  acceptTOS,
+  setPeername
 }
 
 export default connect(mapStateToProps, actions)(Onboard)

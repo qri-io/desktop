@@ -15,36 +15,38 @@ interface User {
 }
 
 interface Meta {
-  accessURL: string
-  accrualPeriodicity: string
-  citations: Citation[]
-  contributors: User[]
-  description: string
-  downloadURL: string
-  homeURL: string
-  identifier: string
-  keywords: string[]
-  language: string[]
-  license: {
+  accessURL?: string
+  accrualPeriodicity?: string
+  citations?: Citation[]
+  contributors?: User[]
+  description?: string
+  downloadURL?: string
+  homeURL?: string
+  identifier?: string
+  keywords?: string[]
+  language?: string[]
+  license?: {
     type: string
-    URL: string
+    url: string
   }
-  readmeURL: string
-  title: string
-  theme: string[]
-  version: string
+  qri: string
+  readmeURL?: string
+  title?: string
+  theme?: string[]
+  version?: string
 }
 
 export interface Commit {
-  path: string
-  message: string
   author: string
+  message: string
+  path: string
   timestamp: Date
+  title: string
 }
 
 export default interface Dataset {
   meta?: Meta
   schema?: JSONSchema7
-  body?: object | []
+  body?: Object | []
   commit?: Commit
 }
