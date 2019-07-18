@@ -4,6 +4,7 @@ import { ApiAction } from '../store/api'
 import { Resizable } from '../components/resizable'
 import DatasetSidebar from '../components/DatasetSidebar'
 import DatasetListContainer from '../containers/DatasetListContainer'
+import CommitDetailsContainer from '../containers/CommitDetailsContainer'
 
 import { defaultSidebarWidth } from '../reducers/ui'
 
@@ -27,9 +28,8 @@ interface DatasetProps {
   setFilter: (filter: string) => Action
   setSelectedListItem: (type: string, activeTab: string) => Action
   setWorkingDataset: (peername: string, name: string) => Action
-  fetchMyDatasets: () => Promise<ApiAction>
+  fetchMyDatasetsAndWorkbench: () => Promise<ApiAction>
   fetchWorkingDataset: () => Promise<ApiAction>
-  fetchWorkingDatasetHistory: () => Promise<ApiAction>
 }
 
 // using component state + getDerivedStateFromProps to determine when a new
@@ -48,9 +48,8 @@ export default class Dataset extends React.Component<DatasetProps> {
   };
 
   componentDidMount () {
-    this.props.fetchMyDatasets()
-    this.props.fetchWorkingDataset()
-    this.props.fetchWorkingDatasetHistory()
+    // fetch datasets list, working dataset, and working dataset history
+    this.props.fetchMyDatasetsAndWorkbench()
   }
 
   static getDerivedStateFromProps (nextProps: DatasetProps, prevState: DatasetState) {
@@ -101,7 +100,7 @@ export default class Dataset extends React.Component<DatasetProps> {
       )
     } else {
       mainContent = (
-        <div>Content for commit {selectedCommit}</div>
+        <CommitDetailsContainer />
       )
     }
 
