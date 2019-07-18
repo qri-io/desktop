@@ -29,6 +29,7 @@ interface DatasetProps {
   setWorkingDataset: (peername: string, name: string) => Action
   fetchMyDatasets: () => Promise<ApiAction>
   fetchWorkingDataset: () => Promise<ApiAction>
+  fetchWorkingDatasetHistory: () => Promise<ApiAction>
 }
 
 // using component state + getDerivedStateFromProps to determine when a new
@@ -49,6 +50,7 @@ export default class Dataset extends React.Component<DatasetProps> {
   componentDidMount () {
     this.props.fetchMyDatasets()
     this.props.fetchWorkingDataset()
+    this.props.fetchWorkingDatasetHistory()
   }
 
   static getDerivedStateFromProps (nextProps: DatasetProps, prevState: DatasetState) {

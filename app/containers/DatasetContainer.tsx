@@ -3,7 +3,11 @@ import Dataset from '../components/Dataset'
 import Store from '../models/store'
 
 import { toggleDatasetList, setSidebarWidth } from '../actions/ui'
-import { fetchMyDatasets, fetchWorkingDataset } from '../actions/api'
+import {
+  fetchMyDatasets,
+  fetchWorkingDataset,
+  fetchWorkingDatasetHistory
+} from '../actions/api'
 import {
   setActiveTab,
   setSelectedListItem,
@@ -34,7 +38,8 @@ const DatasetContainer = connect(
     setSelectedListItem,
     setWorkingDataset,
     fetchMyDatasets,
-    fetchWorkingDataset
+    fetchWorkingDataset,
+    fetchWorkingDatasetHistory
   }
 )(Dataset)
 

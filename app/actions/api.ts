@@ -142,3 +142,27 @@ export function fetchWorkingStatus (): ApiActionThunk {
     return dispatch(action)
   }
 }
+
+export function fetchWorkingDatasetHistory (): ApiActionThunk {
+  return async (dispatch, getState) => {
+    const { selections } = getState()
+
+    const action: ApiAction = {
+      [CALL_API]: {
+        endpoint: 'history',
+        method: 'GET',
+        params: {
+          // TODO (b5) - these 'default' values are just placeholders for checking
+          // the api call when we have no proper default state. should fix
+          peername: selections.peername || 'me',
+          name: selections.name || 'world_bank_population'
+        },
+        // TODO (b5): confirm this works, if so we may want to remove this
+        // map func entirely
+        map: (data: any[]) => data.map(ref => ref.dataset.commit) // eslint-disable-line
+      }
+    }
+
+    return dispatch(action)
+  }
+}

@@ -42,6 +42,7 @@ const initialState: WorkingDataset = {
 }
 
 const [DATASET_REQ, DATASET_SUCC, DATASET_FAIL] = apiActionTypes('dataset')
+const [DATASET_HISTORY_REQ, DATASET_HISTORY_SUCC, DATASET_HISTORY_FAIL] = apiActionTypes('history')
 
 const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction): WorkingDataset => {
   switch (action.type) {
@@ -51,6 +52,18 @@ const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction
       return Object.assign({}, state, action.payload.data)
     case DATASET_FAIL:
       return state
+
+    case DATASET_HISTORY_REQ:
+      return state
+    case DATASET_HISTORY_SUCC:
+      return Object.assign({}, state, {
+        history: {
+          value: action.payload.data
+        }
+      })
+    case DATASET_HISTORY_FAIL:
+      return state
+
     default:
       return state
   }
