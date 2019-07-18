@@ -1,20 +1,20 @@
 import { JSONSchema7 } from 'json-schema'
 
 // meta.citations
-interface Citation {
+export interface Citation {
   name: string
   URL: string
   email: string
 }
 
 // meta.contributors
-interface User {
+export interface User {
   id: string
   fullName: string
   email: string
 }
 
-interface Meta {
+export interface Meta {
   accessURL?: string
   accrualPeriodicity?: string
   citations?: Citation[]
@@ -44,9 +44,11 @@ export interface Commit {
   title: string
 }
 
-export default interface Dataset {
+export interface Dataset {
   meta?: Meta
   schema?: JSONSchema7
   body?: Object | []
   commit?: Commit
 }
+
+export default Dataset

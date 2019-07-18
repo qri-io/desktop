@@ -5,7 +5,6 @@ import { CSSTransition } from 'react-transition-group'
 import AppLoading from './AppLoading'
 import Welcome from './Welcome'
 import ChoosePeername from './ChoosePeername'
-
 import { UI } from '../models/store'
 
 const peernameError: string = 'peername_error'
@@ -14,10 +13,11 @@ const SET_PEERNAME_SUCCESS = 'SET_PEERNAME_SUCCESS'
 
 export interface OnboardProps {
   ui: UI
+
   acceptTOS: () => Action
   setPeername: () => Action
-  fetchMyDatasets: () => Promise<void>
-  fetchWorkingDataset: () => Promise<void>
+  fetchMyDatasets: () => Promise<Action>
+  fetchWorkingDataset: () => Promise<Action>
 }
 
 // Onboard is a series of flows for onboarding a new user

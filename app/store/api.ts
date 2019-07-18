@@ -13,13 +13,13 @@ export const CALL_API = Symbol('CALL_API')
 // intentionally does _not_ extend Action. when api middleware encounters an
 // ApiAction, it will immideately fire a API_[endpoint]_REQUEST action and
 // either API_[ENDPOINT]_SUCCESS or API_[ENDPOINT]_FAILURE on request completion
-export interface ApiAction {
+export interface ApiAction extends AnyAction {
   // All ApiAction details are specified under the CALL_API symbol key
   [CALL_API]: {
     // endpoint is a string endpoint
     // the UPPERCASE's endpoint will be used to define emitted action types
-    // eg. endpoint: 'list' will emit:
-    // API_LIST_REQUEST
+    // eg. endpoint: 'list' will emit API_LIST_REQUEST
+    // and one of:
     // API_LIST_SUCCESS / API_LIST_FAILURE
     endpoint: string
     // method is the HTTP method used
@@ -31,12 +31,6 @@ export interface ApiAction {
     map?: (data: object|[]) => any
   }
 }
-
-// ApiActionThunk is the return value of an Api action.
-// All api actions must return a promise that will be called with their result:
-// either a SUCCESS or FAILURE action. This allows callers to chain
-// .then(action) to perform additional work after an API call has completed
-export type ApiActionThunk = (dispatch: ThunkDispatch<any, any, any>, getState: () => Store) => Promise<ApiAction>
 
 // identityFunc is a function that returns the argument it's passed
 const identityFunc = <T>(a: T): T => a
@@ -51,6 +45,31 @@ export interface ApiQueryParams {
 
   page?: number
   pageSize?: number
+}
+
+// ApiActionThunk is the return value of an Api action.
+// All api actions must return a promise that will be called with their result:
+// either a SUCCESS or FAILURE action. This allows callers to chain
+// .then(action) to perform additional work after an API call has completed
+export type ApiActionThunk = (
+  dispatch: ThunkDispatch<any, any, any>,
+  getState: () => Store
+) => Promise<AnyAction>
+
+// chainSuccess wires together successive ApiActions in a ThunkAction.
+// call it with dispatch & getState to get a function that accepts actions,
+// and chain it a .then() call off another api response
+export function chainSuccess (
+  dispatch: ThunkDispatch<any, any, any>,
+  getState: () => Store) {
+  return (thunk: ApiActionThunk) => {
+    return async (action: AnyAction) => {
+      if (action.type.indexOf(`_SUCCESS`) > 0) {
+        return thunk(dispatch, getState)
+      }
+      throw action
+    }
+  }
 }
 
 // APIResponseEnvelope is interface all API responses conform to
@@ -80,7 +99,9 @@ async function getJSON<T> (url: string): Promise<T> {
 // corresponding API url path
 const endpointMap: Record<string, string> = {
   'list': 'list',
-  'dataset': '' // dataset endpoints are constructured through query param values
+  'dataset': '', // dataset endpoints are constructured through query param values
+  'history': 'history',
+  'status': 'dsstatus'
 }
 
 function apiUrl (endpoint: string, params?: ApiQueryParams): [string, string] {

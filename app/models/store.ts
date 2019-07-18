@@ -70,12 +70,14 @@ export interface MyDatasets {
   filter: string // filter string from ui
 }
 
+export type ComponentState = 'changed' | 'unchanged' | 'removed' | 'added'
+
 // info about a dataset component as compared the same component in previous commit
 export interface ComponentStatus {
   filepath: string
-  status: 'changed' | 'unchanged' | 'removed' | 'added'
-  errors: object[]
-  warnings: object[]
+  status: ComponentState
+  errors?: object[]
+  warnings?: object[]
 }
 
 export interface Pages {
