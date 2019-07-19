@@ -70,7 +70,7 @@ export interface MyDatasets {
   filter: string // filter string from ui
 }
 
-export type ComponentState = 'changed' | 'unchanged' | 'removed' | 'added'
+export type ComponentState = 'modified' | 'unmodified' | 'removed' | 'added'
 
 // info about a dataset component as compared the same component in previous commit
 export interface ComponentStatus {
@@ -84,6 +84,10 @@ export interface Pages {
   [key: string]: PageInfo
 }
 
+export interface DatasetStatus {
+  [key: string]: ComponentStatus
+}
+
 export interface DatasetComparison {
   path: string
   prevPath: string
@@ -92,9 +96,7 @@ export interface DatasetComparison {
   pages: Pages
   diff: object
   value: Dataset
-  status: {
-    [key: string]: ComponentStatus
-  }
+  status: DatasetStatus
 }
 
 export interface WorkingDataset extends DatasetComparison {
@@ -110,6 +112,6 @@ export default interface Store {
   selections: Selections
   myDatasets: MyDatasets
   workingDataset: WorkingDataset
-  workingHistory: DatasetComparison
+  commitDetail: DatasetComparison
   router: RouterState
 }

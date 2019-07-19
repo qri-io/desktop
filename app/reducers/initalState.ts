@@ -135,19 +135,19 @@ export let workingDataset: WorkingDataset = {
   status: {
     meta: {
       filepath: 'meta.json',
-      status: 'unchanged',
+      status: 'unmodified',
       errors: [],
       warnings: []
     },
     schema: {
       filepath: 'schema.json',
-      status: 'unchanged',
+      status: 'unmodified',
       errors: [],
       warnings: []
     },
     body: {
       filepath: 'body.csv',
-      status: 'unchanged',
+      status: 'unmodified',
       errors: [],
       warnings: []
     }

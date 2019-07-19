@@ -3,6 +3,8 @@ import { DatasetSummary, ComponentStatus, ComponentState } from '../models/store
 import { Dataset, Commit } from '../models/dataset'
 import { Action } from 'redux'
 
+import { setSelectedListItem } from './selections'
+
 // fetchMyDatasetsAndWorkbench attempts to fetch all details needed to intialize
 // the working dataset container
 export function fetchMyDatasetsAndWorkbench (): ApiActionThunk {
@@ -26,6 +28,11 @@ export function fetchWorkingDatasetDetails (): ApiActionThunk {
     response = await fetchWorkingDataset()(dispatch, getState)
     response = await whenOk(fetchWorkingStatus())(response)
     response = await whenOk(fetchWorkingHistory())(response)
+
+    // set selected commit to be the first on the list
+    const { workingDataset } = getState()
+    const { history } = workingDataset
+    await dispatch(setSelectedListItem('commit', history.value[0].path))
 
     return response
   }
@@ -96,17 +103,7 @@ export function fetchWorkingHistory (): ApiActionThunk {
           peername: selections.peername || 'me',
           name: selections.name || 'world_bank_population'
         },
-        map: (data: Array<Record<string, string>>): Commit[] => {
-          return data.map((cm) => {
-            return {
-              author: cm.author || '',
-              message: cm.message || '',
-              path: cm.path || '',
-              timestamp: new Date(cm.timestamp || ''),
-              title: cm.title || ''
-            }
-          })
-        }
+        map: (data: any[]): Commit[] => data.map((ref): Commit => ref.dataset.commit)
       }
     }
 
@@ -131,8 +128,9 @@ export function fetchWorkingStatus (): ApiActionThunk {
         map: (data: Array<Record<string, string>>): ComponentStatus[] => {
           return data.map((d) => {
             return {
-              filepath: d.filepath,
-              status: d.status as ComponentState
+              filepath: d.sourceFile,
+              path: d.path,
+              status: d.type as ComponentState
             }
           })
         }

@@ -48,6 +48,7 @@ $hover-highlight-color: #F6F8FA;
 
     #sidebar {
       position: relative;
+      flex: 0 0 auto;
 
       .resize-handle {
         position: absolute;
@@ -59,10 +60,12 @@ $hover-highlight-color: #F6F8FA;
       }
     }
 
-    .content {
+    .content-wrapper {
       background-color: #d8d8d8;
       flex: 1;
       position: relative;
+      flex-basis: auto;
+      overflow: hidden;
 
       .overlay {
         position: absolute;
@@ -70,6 +73,11 @@ $hover-highlight-color: #F6F8FA;
         width: 100%;
         background-color: #000;
         opacity: 0.4;
+      }
+
+      .content {
+        padding: 15px;
+        overflow-x: scroll;
       }
     }
   }
@@ -179,7 +187,7 @@ $hover-highlight-color: #F6F8FA;
 
   .sidebar-list-item-text {
     padding: $sidebar-item-padding;
-    flex-direction: column;
+    flex-direction: row;
 
     &:hover {
       background-color: $hover-highlight-color;
@@ -189,29 +197,48 @@ $hover-highlight-color: #F6F8FA;
       background-color: #e6e6e6;
     }
 
-    .text {
-      white-space: nowrap;
-      text-overflow: ellipsis;
-      overflow: hidden;
-      line-height: 1.6rem;
-    }
+    .text-column {
+      flex-direction: column;
+      flex: 1;
 
-    .subtext {
-      display: flex;
-
-      .user-image {
-        height: 16px;
-        width: 16px;
-        margin-right: 4px;
-        border-radius: 2px;
+      .text {
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        line-height: 1.6rem;
       }
 
-      flex: 1;
-      font-size: .65rem;
-      line-height: 1.2rem;
-      white-space: nowrap;
-      text-overflow: ellipsis;
-      overflow: hidden;
+      .subtext {
+        display: flex;
+
+        .user-image {
+          height: 16px;
+          width: 16px;
+          margin-right: 4px;
+          border-radius: 2px;
+        }
+
+        flex: 1;
+        font-size: .65rem;
+        line-height: 1.2rem;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+      }
+    }
+
+    .status-column {
+      text-align: center;
+      line-height: 2.9rem;
+      width: 30px;
+
+        .dot {
+          height: 10px;
+          width: 10px;
+          background-color: transparent;
+          border-radius: 50%;
+          display: inline-block;
+        }
     }
   }
 }

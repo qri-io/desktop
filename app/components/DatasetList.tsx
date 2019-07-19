@@ -18,7 +18,6 @@ export default class DatasetList extends React.Component<DatasetListProps> {
 
   render () {
     const { setWorkingDataset } = this.props
-    console.log(this.props)
     const { filter, value: datasets } = this.props.myDatasets
 
     const filteredDatasets = datasets.filter(({ name, title }) => {
@@ -41,8 +40,10 @@ export default class DatasetList extends React.Component<DatasetListProps> {
           className='sidebar-list-item sidebar-list-item-text'
           onClick={() => setWorkingDataset(peername, name)}
         >
-          <div className='text'>{title}</div>
-          <div className='subtext'>{name}</div>
+          <div className='text-column'>
+            <div className='text'>{title}</div>
+            <div className='subtext'>{name}</div>
+          </div>
         </div>
       ))
       : <div className='sidebar-list-item-text'>Oops, no matches found for <strong>&apos;{filter}&apos;</strong></div>
