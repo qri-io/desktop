@@ -11,10 +11,12 @@ export const toggleDatasetList = () => {
   }
 }
 
-export const setSidebarWidth = (sidebarWidth: number) => {
+type SidebarTypes = 'dataset' | 'commit'
+
+export const setSidebarWidth = (type: SidebarTypes, sidebarWidth: number) => {
   return {
     type: UI_SET_SIDEBAR_WIDTH,
-    payload: { sidebarWidth }
+    payload: { type, sidebarWidth }
   }
 }
 

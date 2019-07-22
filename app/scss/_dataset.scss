@@ -61,7 +61,6 @@ $hover-highlight-color: #F6F8FA;
     }
 
     .content-wrapper {
-      background-color: #d8d8d8;
       flex: 1;
       position: relative;
       flex-basis: auto;
@@ -137,6 +136,35 @@ $hover-highlight-color: #F6F8FA;
     background-color: #fff;
     padding-top: 50px;
   }
+
+  .user-image {
+    height: 16px;
+    width: 16px;
+    margin-right: 4px;
+    border-radius: 2px;
+  }
+
+  .text-column {
+    flex-direction: column;
+    flex: 1;
+
+    .text {
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      line-height: 1.6rem;
+    }
+
+    .subtext {
+      display: flex;
+      flex: 1;
+      font-size: .65rem;
+      line-height: 1.2rem;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+  }
 }
 
 ////////////////////////////
@@ -179,66 +207,59 @@ $hover-highlight-color: #F6F8FA;
     padding: 6px;
     background-color: $hover-highlight-color;
   }
+}
 
-  .sidebar-list-item {
-    border-bottom: $list-item-bottom-border;
-    display: flex;
+////////////////////////////
+//   Sidebar List Items   //
+////////////////////////////
+
+.sidebar-list-item {
+  border-bottom: $list-item-bottom-border;
+  display: flex;
+}
+
+.sidebar-list-item-text {
+  padding: $sidebar-item-padding;
+  flex-direction: row;
+
+  &:hover {
+    background-color: $hover-highlight-color;
   }
 
-  .sidebar-list-item-text {
+  &.selected {
+    background-color: #e6e6e6;
+  }
+
+  .status-column {
+    text-align: center;
+    line-height: 2.9rem;
+    width: 30px;
+
+      .dot {
+        height: 10px;
+        width: 10px;
+        background-color: transparent;
+        border-radius: 50%;
+        display: inline-block;
+      }
+  }
+}
+
+
+////////////////////////////
+//     Commit Details     //
+////////////////////////////
+
+#commit-details {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  height: 100%;
+
+  .commit-details-header {
+    height: 60px;
+    max-height: 60px;
     padding: $sidebar-item-padding;
-    flex-direction: row;
-
-    &:hover {
-      background-color: $hover-highlight-color;
-    }
-
-    &.selected {
-      background-color: #e6e6e6;
-    }
-
-    .text-column {
-      flex-direction: column;
-      flex: 1;
-
-      .text {
-        white-space: nowrap;
-        text-overflow: ellipsis;
-        overflow: hidden;
-        line-height: 1.6rem;
-      }
-
-      .subtext {
-        display: flex;
-
-        .user-image {
-          height: 16px;
-          width: 16px;
-          margin-right: 4px;
-          border-radius: 2px;
-        }
-
-        flex: 1;
-        font-size: .65rem;
-        line-height: 1.2rem;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-        overflow: hidden;
-      }
-    }
-
-    .status-column {
-      text-align: center;
-      line-height: 2.9rem;
-      width: 30px;
-
-        .dot {
-          height: 10px;
-          width: 10px;
-          background-color: transparent;
-          border-radius: 50%;
-          display: inline-block;
-        }
-    }
+    border-bottom: $list-item-bottom-border;
   }
 }

@@ -32,7 +32,8 @@ export interface UI {
   hasSetPeername: boolean
   modal?: Modal
   showDiff: boolean
-  sidebarWidth: number
+  datasetSidebarWidth: number
+  commitSidebarWidth: number
 }
 
 // currently selected dataset, tab, dataset component, commit, etc
@@ -42,6 +43,7 @@ export interface Selections {
   activeTab: string
   component: string
   commit: string
+  commitComponent: string
 }
 
 // info about the current value of a list being paginated
@@ -88,7 +90,7 @@ export interface DatasetStatus {
   [key: string]: ComponentStatus
 }
 
-export interface DatasetComparison {
+export interface CommitDetail {
   path: string
   prevPath: string
   peername: string
@@ -99,7 +101,7 @@ export interface DatasetComparison {
   status: DatasetStatus
 }
 
-export interface WorkingDataset extends DatasetComparison {
+export interface WorkingDataset extends CommitDetail {
   history: {
     pageInfo: PageInfo
     value: Commit[]
@@ -112,6 +114,6 @@ export default interface Store {
   selections: Selections
   myDatasets: MyDatasets
   workingDataset: WorkingDataset
-  commitDetail: DatasetComparison
+  commitDetail: CommitDetail
   router: RouterState
 }

@@ -14,7 +14,8 @@ export let ui: UI = {
   hasAcceptedTOS: true,
   hasSetPeername: true,
   showDiff: false,
-  sidebarWidth: 250
+  datasetSidebarWidth: 250,
+  commitSidebarWidth: 250
 }
 
 export let selections: Selections = {
@@ -22,7 +23,8 @@ export let selections: Selections = {
   name: 'usgs_earthquakes',
   activeTab: 'status',
   component: 'meta',
-  commit: '/ipfs/QmcoAc6NvivopgMoLUtTEVjLytuxwi99Dn5qe6mWvtij8q'
+  commit: '',
+  commitComponent: ''
 }
 
 export let myDatasets: MyDatasets = {
