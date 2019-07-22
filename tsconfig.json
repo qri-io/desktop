@@ -18,13 +18,15 @@
     "noImplicitReturns": true,
     "noImplicitThis": true,
     "noUnusedLocals": true,
-    
+
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
 
     "sourceMap": true,
 
-    "outDir": "dist"
+    "outDir": "dist",
+
+    "esModuleInterop": true
   },
   "files": [
     "app/index.tsx"

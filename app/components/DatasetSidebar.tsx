@@ -1,11 +1,12 @@
 import * as React from 'react'
 import { Action } from 'redux'
-import * as moment from 'moment'
+import moment from 'moment'
 
 import { WorkingDataset } from '../models/store'
 
 interface FileRowProps {
   name: string
+  displayName: string
   filename: string
   selected: boolean
   status: string
@@ -30,11 +31,25 @@ const FileRow: React.FunctionComponent<FileRowProps> = (props) => {
       onClick={() => { props.onClick('component', props.name) }}
     >
       <div className='text-column'>
-        <div className='text'>{props.name}</div>
+        <div className='text'>{props.displayName}</div>
         <div className='subtext'>{props.filename}</div>
       </div>
       <div className='status-column'>
         <span className='dot' style={{ backgroundColor: statusColor }}></span>
+      </div>
+    </div>
+  )
+}
+
+interface DisabledFileRowProps { name: string }
+
+const DisabledFileRow: React.FunctionComponent<DisabledFileRowProps> = (props) => {
+  return (
+    <div
+      className={'sidebar-list-item sidebar-list-item-text'}
+    >
+      <div className='text-column'>
+        <div className='text'>{props.name}</div>
       </div>
     </div>
   )
@@ -80,6 +95,25 @@ interface DatasetSidebarProps {
   onListItemClick: (type: componentType, activeTab: string) => Action
 }
 
+const components = [
+  {
+    name: 'meta',
+    displayName: 'Meta'
+  },
+  {
+    name: 'body',
+    displayName: 'Body'
+  },
+  {
+    name: 'schema',
+    displayName: 'Schema'
+  },
+  {
+    name: 'viz',
+    displayName: 'Viz'
+  }
+]
+
 const DatasetSidebar: React.FunctionComponent<DatasetSidebarProps> = (props: DatasetSidebarProps) => {
   const {
     activeTab,
@@ -106,19 +140,29 @@ const DatasetSidebar: React.FunctionComponent<DatasetSidebarProps> = (props: Dat
             </div>
           </div>
           {
-            Object.keys(status).map((key) => {
-              const { filepath, status: fileStatus } = status[key]
-              const filename = filepath.substring((filepath.lastIndexOf('/') + 1))
-              return (
-                <FileRow
-                  key={key}
-                  name={key}
-                  filename={filename}
-                  status={fileStatus}
-                  selected={selectedComponent === key}
-                  onClick={onListItemClick}
-                />
-              )
+            components.map(({ name, displayName }) => {
+              if (status[name]) {
+                const { filepath, status: fileStatus } = status[name]
+                const filename = filepath.substring((filepath.lastIndexOf('/') + 1))
+                return (
+                  <FileRow
+                    key={name}
+                    displayName={displayName}
+                    name={name}
+                    filename={filename}
+                    status={fileStatus}
+                    selected={selectedComponent === name}
+                    onClick={onListItemClick}
+                  />
+                )
+              } else {
+                return (
+                  <DisabledFileRow
+                    key={name}
+                    name={displayName}
+                  />
+                )
+              }
             })
           }
         </div>

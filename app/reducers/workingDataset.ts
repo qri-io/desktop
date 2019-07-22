@@ -44,6 +44,7 @@ const initialState: WorkingDataset = {
 const [DATASET_REQ, DATASET_SUCC, DATASET_FAIL] = apiActionTypes('dataset')
 const [DATASET_HISTORY_REQ, DATASET_HISTORY_SUCC, DATASET_HISTORY_FAIL] = apiActionTypes('history')
 const [DATASET_STATUS_REQ, DATASET_STATUS_SUCC, DATASET_STATUS_FAIL] = apiActionTypes('status')
+const [DATASET_BODY_REQ, DATASET_BODY_SUCC, DATASET_BODY_FAIL] = apiActionTypes('body')
 
 const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction): WorkingDataset => {
   switch (action.type) {
@@ -70,17 +71,30 @@ const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction
       return state
     case DATASET_STATUS_SUCC:
       const statusObject: DatasetStatus = action.payload.data
-        // sort array, go randomizes order
-        .sort((a: any, b: any) => (a.path > b.path) ? 1 : -1)
         .reduce((obj: any, item: any): ComponentStatus => {
           const { path, filepath, status } = item
           obj[path] = { filepath, status }
           return obj
         }, {})
+
+      // TODO (chriswhong) status endpoint does not include body, stub it in here for now
+      statusObject.body = {
+        filepath: 'somepath/body.csv',
+        status: 'unmodified'
+      }
       return Object.assign({}, state, {
         status: statusObject
       })
     case DATASET_STATUS_FAIL:
+      return state
+
+    case DATASET_BODY_REQ:
+      return state
+    case DATASET_BODY_SUCC:
+      return Object.assign({}, state, {
+        value: Object.assign({}, state.value, { body: action.payload.data })
+      })
+    case DATASET_BODY_FAIL:
       return state
 
     default:

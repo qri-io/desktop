@@ -18,11 +18,11 @@ export let ui: UI = {
 }
 
 export let selections: Selections = {
-  peername: 'chriswhong',
-  name: 'usgs_earthquakes',
+  peername: 'b5',
+  name: 'world_bank_population',
   activeTab: 'status',
   component: 'meta',
-  commit: '/ipfs/QmcoAc6NvivopgMoLUtTEVjLytuxwi99Dn5qe6mWvtij8q'
+  commit: '/ipfs/QmNj8pkhhKB3sEGMHkEhtEEAXmrnGDbMQpYH5KJ8rjGYHK'
 }
 
 export let myDatasets: MyDatasets = {

@@ -6,6 +6,8 @@ import DatasetSidebar from '../components/DatasetSidebar'
 import DatasetListContainer from '../containers/DatasetListContainer'
 import CommitDetailsContainer from '../containers/CommitDetailsContainer'
 import MetadataContainer from '../containers/MetadataContainer'
+import BodyContainer from '../containers/BodyContainer'
+import SchemaContainer from '../containers/SchemaContainer'
 
 import { defaultSidebarWidth } from '../reducers/ui'
 
@@ -30,7 +32,7 @@ interface DatasetProps {
   setSelectedListItem: (type: string, activeTab: string) => Action
   setWorkingDataset: (peername: string, name: string) => Action
   fetchMyDatasetsAndWorkbench: () => Promise<ApiAction>
-  fetchWorkingDataset: () => Promise<ApiAction>
+  fetchWorkingDatasetDetails: () => Promise<ApiAction>
   fetchWorkingStatus: () => Promise<ApiAction>
 }
 
@@ -52,7 +54,7 @@ export default class Dataset extends React.Component<DatasetProps> {
   componentDidMount () {
     // fetch datasets list, working dataset, and working dataset history
     this.props.fetchMyDatasetsAndWorkbench()
-    setInterval(() => { this.props.fetchWorkingStatus() }, 1000)
+    // setInterval(() => { this.props.fetchWorkingStatus() }, 1000)
   }
 
   static getDerivedStateFromProps (nextProps: DatasetProps, prevState: DatasetState) {
@@ -60,9 +62,9 @@ export default class Dataset extends React.Component<DatasetProps> {
     const { peername, name } = prevState
 
     // when new props arrive, compare selections.peername and selections.name to
-    // previous.  If different, fetch data
-    if ((newPeername !== peername) && (newName !== name)) {
-      nextProps.fetchWorkingDataset()
+    // previous.  If either is different, fetch data
+    if ((newPeername !== peername) || (newName !== name)) {
+      nextProps.fetchWorkingDatasetDetails()
       // if this isn't the first time, close the dataset list
       if (peername !== null) nextProps.toggleDatasetList()
       return {
@@ -98,14 +100,18 @@ export default class Dataset extends React.Component<DatasetProps> {
     let mainContent
 
     if (activeTab === 'status') {
-      if (selectedComponent === 'meta') {
-        mainContent = (
-          <MetadataContainer />
-        )
-      } else {
-        mainContent = (
-          <div>Content for the {selectedComponent} component</div>
-        )
+      switch (selectedComponent) {
+        case 'meta':
+          mainContent = <MetadataContainer />
+          break
+        case 'body':
+          mainContent = <BodyContainer />
+          break
+        case 'schema':
+          mainContent = <SchemaContainer />
+          break
+        default:
+          mainContent = <MetadataContainer />
       }
     } else {
       mainContent = (

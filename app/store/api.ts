@@ -100,6 +100,7 @@ async function getJSON<T> (url: string): Promise<T> {
 const endpointMap: Record<string, string> = {
   'list': 'list',
   'dataset': '', // dataset endpoints are constructured through query param values
+  'body': 'body', // dataset endpoints are constructured through query param values
   'history': 'history',
   'status': 'dsstatus'
 }

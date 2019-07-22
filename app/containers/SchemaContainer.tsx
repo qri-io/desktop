@@ -1,15 +1,15 @@
 import { connect } from 'react-redux'
-import Metadata from '../components/Metadata'
+import Schema from '../components/Schema'
 import Store from '../models/store'
 
 const mapStateToProps = (state: Store) => {
   const { workingDataset } = state
 
   // get data for the currently selected component
-  const meta = workingDataset.value.meta
-  return { meta }
+  const schema = workingDataset.value.structure.schema
+  return { schema }
 }
 
 const actions = {}
 
-export default connect(mapStateToProps, actions)(Metadata)
+export default connect(mapStateToProps, actions)(Schema)

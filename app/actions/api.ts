@@ -26,8 +26,8 @@ export function fetchWorkingDatasetDetails (): ApiActionThunk {
     let response: Action
 
     response = await fetchWorkingDataset()(dispatch, getState)
-    response = await whenOk(fetchWorkingStatus())(response)
     response = await whenOk(fetchWorkingHistory())(response)
+    response = await whenOk(fetchWorkingStatus())(response)
 
     // set selected commit to be the first on the list
     const { workingDataset } = getState()
@@ -133,6 +133,33 @@ export function fetchWorkingStatus (): ApiActionThunk {
               status: d.type as ComponentState
             }
           })
+        }
+      }
+    }
+
+    return dispatch(action)
+  }
+}
+
+export function fetchBody (): ApiActionThunk {
+  return async (dispatch, getState) => {
+    const { workingDataset } = getState()
+    const { peername, name, path } = workingDataset
+
+    const action = {
+      type: 'api_action',
+      [CALL_API]: {
+        endpoint: 'body',
+        method: 'GET',
+        params: {
+          peername,
+          name,
+          path
+        },
+        // TODO (b5): confirm this works, if so we may want to remove this
+        // map func entirely
+        map: (data: Record<string, string>): Dataset => {
+          return data as Dataset
         }
       }
     }
