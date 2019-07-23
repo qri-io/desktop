@@ -35,6 +35,12 @@ export interface ModalProps {
   readonly dismissable?: boolean
 
   /**
+   * Event triggered when submitting using the form submit, sets dismissible
+   * false when we have submitted and true when we get a response
+   */
+  readonly setDismissable?: (dismissable: boolean) => void
+
+  /**
    * Event triggered when the dialog is dismissed by the user in the
    * ways described in the dismissable prop.
    */
@@ -99,9 +105,8 @@ export interface ModalProps {
  * underlying elements. It's not possible to use the tab key to move focus
  * out of the dialog without first dismissing it.
  */
-const Modal: React.FunctionComponent<ModalProps> = ({ title, dismissable = true, onDismissed, id, type, onSubmit, className, disabled, loading, children }) => {
+const Modal: React.FunctionComponent<ModalProps> = ({ title, dismissable = false, setDismissable, onDismissed, id, type, onSubmit, className, disabled, loading, children }) => {
   const [modalElement, setModalElement] = React.useState<HTMLElement | null>(null)
-  const [isDismissable, setIsDismissable] = React.useState(!!dismissable)
 
   React.useEffect(() => {
     if (modalElement) {
@@ -115,7 +120,8 @@ const Modal: React.FunctionComponent<ModalProps> = ({ title, dismissable = true,
   }
 
   const onModalClick = (e: React.MouseEvent<HTMLElement>) => {
-    if (isDismissable === false) {
+    console.log(dismissable)
+    if (dismissable === false) {
       return
     }
 
@@ -175,7 +181,7 @@ const Modal: React.FunctionComponent<ModalProps> = ({ title, dismissable = true,
   }
 
   const onDismiss = () => {
-    if (isDismissable) {
+    if (dismissable) {
       if (onDismissed) {
         onDismissed()
       }
@@ -186,11 +192,11 @@ const Modal: React.FunctionComponent<ModalProps> = ({ title, dismissable = true,
     e.preventDefault()
 
     if (onSubmit) {
-      setIsDismissable(false)
+      if (setDismissable) setDismissable(false)
       new Promise((resolve) => {
         onSubmit()
         resolve()
-      }).then(() => setIsDismissable(!!dismissable))
+      }).then(() => { if (setDismissable) setDismissable(true) })
     } else {
       onDismiss()
     }
@@ -204,7 +210,7 @@ const Modal: React.FunctionComponent<ModalProps> = ({ title, dismissable = true,
     return (
       <ModalHeader
         title={title}
-        dismissable={isDismissable}
+        dismissable={dismissable}
         onDismissed={onDismiss}
         loading={loading}
       />
