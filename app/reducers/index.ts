@@ -5,7 +5,7 @@ import uiReducer from './ui'
 import selectionsReducer from './selections'
 import myDatasetsReducer from './myDatasets'
 import workingDatasetReducer from './workingDataset'
-// import { workingHistoryReducer } from './workingHistory'
+import commitDetailReducer from './commitDetail'
 
 const initialSession = 'QmcASWzDc4mGG4q8kfiZ4A9KTQGyYxKvMaVh4dWZn9oFwT'
 
@@ -19,7 +19,7 @@ const rootReducer = combineReducers({
   selections: selectionsReducer,
   myDatasets: myDatasetsReducer,
   workingDataset: workingDatasetReducer,
-  // workingHistory: workingHistoryReducer
+  commitDetail: commitDetailReducer,
   router: routerReducer
 })
 
