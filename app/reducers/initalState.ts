@@ -14,7 +14,8 @@ export let ui: UI = {
   hasAcceptedTOS: true,
   hasSetPeername: true,
   showDiff: false,
-  sidebarWidth: 250
+  datasetSidebarWidth: 250,
+  commitSidebarWidth: 250
 }
 
 export let selections: Selections = {
@@ -22,7 +23,8 @@ export let selections: Selections = {
   name: 'world_bank_population',
   activeTab: 'status',
   component: 'meta',
-  commit: '/ipfs/QmNj8pkhhKB3sEGMHkEhtEEAXmrnGDbMQpYH5KJ8rjGYHK'
+  commit: '',
+  commitComponent: ''
 }
 
 export let myDatasets: MyDatasets = {

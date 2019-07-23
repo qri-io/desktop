@@ -41,7 +41,7 @@ export function fetchWorkingDatasetDetails (): ApiActionThunk {
 export function fetchMyDatasets (): ApiActionThunk {
   return async (dispatch) => {
     const listAction: ApiAction = {
-      type: 'api_action',
+      type: 'list',
       [CALL_API]: {
         endpoint: 'list',
         method: 'GET',
@@ -67,7 +67,7 @@ export function fetchWorkingDataset (): ApiActionThunk {
   return async (dispatch, getState) => {
     const { selections } = getState()
     const action = {
-      type: 'api_action',
+      type: 'dataset',
       [CALL_API]: {
         endpoint: 'dataset',
         method: 'GET',
@@ -89,11 +89,39 @@ export function fetchWorkingDataset (): ApiActionThunk {
   }
 }
 
+export function fetchCommitDetail (): ApiActionThunk {
+  return async (dispatch, getState) => {
+    const { selections } = getState()
+    const { commit } = selections
+
+    const response = await dispatch({
+      type: 'commitdetail',
+      [CALL_API]: {
+        endpoint: 'dataset',
+        method: 'GET',
+        params: {
+          peername: selections.peername || 'me',
+          name: selections.name || 'world_bank_population',
+          path: commit
+        },
+        map: (data: Record<string, string>): Dataset => {
+          return data as Dataset
+        }
+      }
+    })
+
+    // select the body by default
+    await dispatch(setSelectedListItem('commitComponent', 'body'))
+
+    return response
+  }
+}
+
 export function fetchWorkingHistory (): ApiActionThunk {
   return async (dispatch, getState) => {
     const { selections } = getState()
     const action = {
-      type: 'api_action',
+      type: 'history',
       [CALL_API]: {
         endpoint: 'history',
         method: 'GET',
@@ -103,7 +131,16 @@ export function fetchWorkingHistory (): ApiActionThunk {
           peername: selections.peername || 'me',
           name: selections.name || 'world_bank_population'
         },
-        map: (data: any[]): Commit[] => data.map((ref): Commit => ref.dataset.commit)
+        map: (data: any[]): Commit[] => data.map((ref): Commit => {
+          const { author, message, timestamp, title } = ref.dataset.commit
+          return {
+            author,
+            message,
+            timestamp,
+            title,
+            path: ref.path
+          }
+        })
       }
     }
 
@@ -115,7 +152,7 @@ export function fetchWorkingStatus (): ApiActionThunk {
   return async (dispatch, getState) => {
     const { selections } = getState()
     const action = {
-      type: 'api_action',
+      type: 'status',
       [CALL_API]: {
         endpoint: 'status',
         method: 'GET',
@@ -147,7 +184,7 @@ export function fetchBody (): ApiActionThunk {
     const { peername, name, path } = workingDataset
 
     const action = {
-      type: 'api_action',
+      type: 'body',
       [CALL_API]: {
         endpoint: 'body',
         method: 'GET',

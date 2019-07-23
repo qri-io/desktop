@@ -9,6 +9,7 @@ interface BodyProps {
 
 export default class Body extends React.Component<BodyProps> {
   componentDidMount () {
+    console.log('DIDMOUNT')
     this.props.fetchBody()
   }
   render () {

@@ -16,11 +16,7 @@ export const CALL_API = Symbol('CALL_API')
 export interface ApiAction extends AnyAction {
   // All ApiAction details are specified under the CALL_API symbol key
   [CALL_API]: {
-    // endpoint is a string endpoint
-    // the UPPERCASE's endpoint will be used to define emitted action types
-    // eg. endpoint: 'list' will emit API_LIST_REQUEST
-    // and one of:
-    // API_LIST_SUCCESS / API_LIST_FAILURE
+    // endpoint is the api endpoint to call
     endpoint: string
     // method is the HTTP method used
     method: 'GET' | 'PUT' | 'POST' | 'DELETE'
@@ -149,7 +145,7 @@ export const apiMiddleware: Middleware = () => (next: Dispatch<AnyAction>) => as
   if (action[CALL_API]) {
     let data: APIResponseEnvelope
     let { endpoint = '', map = identityFunc, params } = action[CALL_API]
-    const [REQ_TYPE, SUCC_TYPE, FAIL_TYPE] = apiActionTypes(endpoint)
+    const [REQ_TYPE, SUCC_TYPE, FAIL_TYPE] = apiActionTypes(action.type)
 
     next({ type: REQ_TYPE })
 

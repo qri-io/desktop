@@ -10,10 +10,11 @@ interface FileRowProps {
   filename: string
   selected: boolean
   status: string
+  selectionType: string
   onClick: (type: string, selectedListItem: string) => Action
 }
 
-const FileRow: React.FunctionComponent<FileRowProps> = (props) => {
+export const FileRow: React.FunctionComponent<FileRowProps> = (props) => {
   let statusColor
   switch (props.status) {
     case 'modified':
@@ -28,7 +29,7 @@ const FileRow: React.FunctionComponent<FileRowProps> = (props) => {
   return (
     <div
       className={`sidebar-list-item sidebar-list-item-text ${props.selected && 'selected'}`}
-      onClick={() => { props.onClick('component', props.name) }}
+      onClick={() => { props.onClick(props.selectionType, props.name) }}
     >
       <div className='text-column'>
         <div className='text'>{props.displayName}</div>
@@ -152,6 +153,7 @@ const DatasetSidebar: React.FunctionComponent<DatasetSidebarProps> = (props: Dat
                     filename={filename}
                     status={fileStatus}
                     selected={selectedComponent === name}
+                    selectionType={'component'}
                     onClick={onListItemClick}
                   />
                 )

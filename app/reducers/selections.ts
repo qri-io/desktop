@@ -17,6 +17,7 @@ export default (state = initialState, action: AnyAction) => {
       const { type, selectedListItem } = action.payload
       if (type === 'component') return Object.assign({}, state, { component: selectedListItem })
       if (type === 'commit') return Object.assign({}, state, { commit: selectedListItem })
+      if (type === 'commitComponent') return Object.assign({}, state, { commitComponent: selectedListItem })
       return state
 
     case SELECTIONS_SET_WORKING_DATASET:

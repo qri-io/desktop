@@ -27,7 +27,7 @@ interface DatasetProps {
   // actions
   toggleDatasetList: () => Action
   setActiveTab: (activeTab: string) => Action
-  setSidebarWidth: (sidebarWidth: number) => Action
+  setSidebarWidth: (type: string, sidebarWidth: number) => Action
   setFilter: (filter: string) => Action
   setSelectedListItem: (type: string, activeTab: string) => Action
   setWorkingDataset: (peername: string, name: string) => Action
@@ -79,7 +79,7 @@ export default class Dataset extends React.Component<DatasetProps> {
   render () {
     // app state props
     const { ui, selections, workingDataset } = this.props
-    const { showDatasetList, sidebarWidth } = ui
+    const { showDatasetList, datasetSidebarWidth } = ui
     const {
       activeTab,
       component: selectedComponent,
@@ -125,7 +125,7 @@ export default class Dataset extends React.Component<DatasetProps> {
           <div
             className={'current-dataset header-column ' + expandedClass}
             onClick={toggleDatasetList}
-            style={{ width: sidebarWidth }}
+            style={{ width: datasetSidebarWidth }}
           >
             <img className='app-loading-blob' src={logo} />
             <div className='text'>
@@ -143,9 +143,9 @@ export default class Dataset extends React.Component<DatasetProps> {
         <div className='columns'>
           <Resizable
             id='sidebar'
-            width={sidebarWidth}
-            onResize={(width) => { setSidebarWidth(width) }}
-            onReset={() => { setSidebarWidth(defaultSidebarWidth) }}
+            width={datasetSidebarWidth}
+            onResize={(width) => { setSidebarWidth('dataset', width) }}
+            onReset={() => { setSidebarWidth('dataset', defaultSidebarWidth) }}
             maximumWidth={495}
           >
             <DatasetSidebar
@@ -168,7 +168,7 @@ export default class Dataset extends React.Component<DatasetProps> {
           showDatasetList && (
             <div
               className='dataset-list'
-              style={{ width: sidebarWidth }}
+              style={{ width: datasetSidebarWidth }}
             >
               <DatasetListContainer />
             </div>

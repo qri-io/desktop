@@ -8,7 +8,7 @@ export const UI_SET_PEERNAME = 'UI_SET_PEERNAME'
 
 const initialState = ui
 
-export const defaultSidebarWidth = ui.sidebarWidth
+export const defaultSidebarWidth = ui.datasetSidebarWidth
 
 export default (state = initialState, action: AnyAction) => {
   switch (action.type) {
@@ -17,8 +17,14 @@ export default (state = initialState, action: AnyAction) => {
       return Object.assign({}, state, { showDatasetList })
 
     case UI_SET_SIDEBAR_WIDTH:
-      const { sidebarWidth } = action.payload
-      return Object.assign({}, state, { sidebarWidth })
+      const { type, sidebarWidth } = action.payload
+      let newState
+      if (type === 'dataset') {
+        newState = { datasetSidebarWidth: sidebarWidth }
+      } else {
+        newState = { commitSidebarWidth: sidebarWidth }
+      }
+      return Object.assign({}, state, newState)
 
     case UI_ACCEPT_TOS:
       return Object.assign({}, state, { hasAcceptedTOS: true })
