@@ -42,6 +42,8 @@ const Onboard: React.FunctionComponent<OnboardProps> = (props: OnboardProps) => 
     })
   }
 
+  const { hasAcceptedTOS, hasSetPeername } = props.ui
+
   const renderAppLoading = () => {
     return (
       <CSSTransition
@@ -59,7 +61,7 @@ const Onboard: React.FunctionComponent<OnboardProps> = (props: OnboardProps) => 
   const renderWelcome = () => {
     return (
       <CSSTransition
-        in={true}
+        in={!hasAcceptedTOS}
         classNames="fade"
         component="div"
         timeout={1000}
@@ -73,7 +75,7 @@ const Onboard: React.FunctionComponent<OnboardProps> = (props: OnboardProps) => 
   const renderChoosePeerName = () => {
     return (
       <CSSTransition
-        in={true}
+        in={!hasSetPeername}
         classNames="fade"
         component="div"
         timeout={1000}
@@ -83,13 +85,12 @@ const Onboard: React.FunctionComponent<OnboardProps> = (props: OnboardProps) => 
       </CSSTransition>
     )
   }
-  const { hasAcceptedTOS, hasSetPeername } = props.ui
 
   return (
     <div style={{ height: '100%' }}>
       {renderAppLoading()}
-      {!hasAcceptedTOS && renderWelcome()}
-      {!hasSetPeername && renderChoosePeerName()}
+      {renderWelcome()}
+      {renderChoosePeerName()}
     </div>
   )
 }
