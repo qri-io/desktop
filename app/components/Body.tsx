@@ -1,53 +1,41 @@
 import * as React from 'react'
 import { ApiAction } from '../store/api'
 import HandsonTable from './HandsonTable'
+import { WorkingDataset } from '../models/store'
 
 interface BodyProps {
-  body: any
-  peername: string
-  name: string
-  path: string
+  workingDataset: WorkingDataset
   fetchBody: () => Promise<ApiAction>
 }
 
-interface BodyState {
-  peername: string
-  name: string
-  path: string
-}
-
 export default class Body extends React.Component<BodyProps> {
-  state = {
-    peername: null,
-    name: null,
-    path: null
+  constructor (props: BodyProps) {
+    super(props)
+
+    this.state = {}
   }
 
-  static getDerivedStateFromProps (nextProps: BodyProps, prevState: BodyState) {
-    const { peername: newPeername, name: newName, path: newPath } = nextProps
-    const { peername, name, path } = prevState
-    console.log('OLD', peername, name)
-    console.log('NEW', newPeername, newName)
-    // when new props arrive, compare selections.peername and selections.name to
-    // previous.  If either is different, fetch data
-    if ((newPeername !== peername) || (newName !== name) || (newPath !== path)) {
-      console.log('TRIGGERING FETCH BODY')
+  static getDerivedStateFromProps (nextProps: BodyProps) {
+    const { workingDataset } = nextProps
+    const { value, bodyLoading: isLoading } = workingDataset
+    const { body } = value
+    if (
+      body === undefined &&
+      isLoading === false
+    ) {
       nextProps.fetchBody()
-      return {
-        peername: newPeername,
-        name: newName,
-        path: newPath
-      }
+      return null
     }
 
     return null
   }
+
   render () {
     return (
       <div>
         {
-          this.props.body && (
-            <HandsonTable body={this.props.body.data} />
+          this.props.workingDataset.value.body && (
+            <HandsonTable body={this.props.workingDataset.value.body.data} />
           )
         }
       </div>

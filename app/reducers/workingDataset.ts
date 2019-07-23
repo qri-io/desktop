@@ -2,7 +2,18 @@ import { Reducer, AnyAction } from 'redux'
 import { WorkingDataset, DatasetStatus, ComponentStatus } from '../models/store'
 import { apiActionTypes } from '../store/api'
 
-const initialState = null
+const initialState = {
+  path: '',
+  prevPath: '',
+  peername: '',
+  name: '',
+  pages: {},
+  diff: {},
+  value: {},
+  status: {},
+  loading: false,
+  bodyLoading: false
+}
 
 const [DATASET_REQ, DATASET_SUCC, DATASET_FAIL] = apiActionTypes('dataset')
 const [DATASET_HISTORY_REQ, DATASET_HISTORY_SUCC, DATASET_HISTORY_FAIL] = apiActionTypes('history')
@@ -12,7 +23,9 @@ const [DATASET_BODY_REQ, DATASET_BODY_SUCC, DATASET_BODY_FAIL] = apiActionTypes(
 const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction): WorkingDataset | null => {
   switch (action.type) {
     case DATASET_REQ:
-      return state
+      return Object.assign({}, state, {
+        loading: true
+      })
     case DATASET_SUCC:
       const { name, path, peername, published, dataset: value } = action.payload.data
       return Object.assign({}, state, {
@@ -22,7 +35,8 @@ const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction
         published,
         // DATASET_SUCCESS and BODY_SUCCESS both affect 'value'
         // can't simply assign because state.value doesn't exist on by default
-        value: state ? Object.assign({}, state.value, value) : value
+        value: Object.assign({}, state.value, value),
+        loading: false
       })
     case DATASET_FAIL:
       return state
@@ -61,10 +75,13 @@ const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction
       return state
 
     case DATASET_BODY_REQ:
-      return state
+      return Object.assign({}, state, {
+        bodyLoading: true
+      })
     case DATASET_BODY_SUCC:
       return Object.assign({}, state, {
-        value: Object.assign({}, state.value, { body: action.payload.data })
+        value: Object.assign({}, state.value, { body: action.payload.data }),
+        bodyLoading: false
       })
     case DATASET_BODY_FAIL:
       return state

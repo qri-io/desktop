@@ -31,7 +31,7 @@ interface DatasetProps {
   setFilter: (filter: string) => Action
   setSelectedListItem: (type: string, activeTab: string) => Action
   setWorkingDataset: (peername: string, name: string) => Action
-  fetchMyDatasetsAndWorkbench: () => Promise<ApiAction>
+  fetchMyDatasets: () => Promise<ApiAction>
   fetchWorkingDatasetDetails: () => Promise<ApiAction>
   fetchWorkingStatus: () => Promise<ApiAction>
 }
@@ -52,8 +52,8 @@ export default class Dataset extends React.Component<DatasetProps> {
   }
 
   componentDidMount () {
-    // fetch datasets list, working dataset, and working dataset history
-    this.props.fetchMyDatasetsAndWorkbench()
+    // fetch datasets list TODO move this up to App
+    this.props.fetchMyDatasets()
     // setInterval(() => { this.props.fetchWorkingStatus() }, 1000)
   }
 
@@ -86,7 +86,8 @@ export default class Dataset extends React.Component<DatasetProps> {
       commit: selectedCommit
     } = selections
 
-    if (workingDataset) {
+    // only render if workingdataset is not loading and not default state
+    if (!workingDataset.loading && workingDataset.peername !== '') {
       const { name, history, status } = workingDataset
 
       // action props
@@ -181,7 +182,6 @@ export default class Dataset extends React.Component<DatasetProps> {
         </div>
       )
     } else {
-      console.log('WORKING DATASET IS CLEAR!!!')
       return (<div>No Working Dataset</div>)
     }
   }

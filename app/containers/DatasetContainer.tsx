@@ -4,7 +4,7 @@ import Store from '../models/store'
 
 import { toggleDatasetList, setSidebarWidth } from '../actions/ui'
 import {
-  fetchMyDatasetsAndWorkbench,
+  fetchMyDatasets,
   fetchWorkingDatasetDetails,
   fetchWorkingStatus
 } from '../actions/api'
@@ -37,7 +37,7 @@ const DatasetContainer = connect(
     setFilter,
     setSelectedListItem,
     setWorkingDataset,
-    fetchMyDatasetsAndWorkbench,
+    fetchMyDatasets,
     fetchWorkingDatasetDetails,
     fetchWorkingStatus
   }

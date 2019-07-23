@@ -47,7 +47,9 @@ export interface Commit {
 export interface Dataset {
   meta?: Meta
   schema?: JSONSchema7
-  body?: Object | []
+  body?: {
+    [key: string]: any
+  }
   commit?: Commit
   [key: string]: any
 }

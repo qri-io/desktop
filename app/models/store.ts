@@ -106,6 +106,8 @@ export interface WorkingDataset extends CommitDetail {
     pageInfo: PageInfo
     value: Commit[]
   }
+  loading: false
+  bodyLoading: false
 }
 
 export default interface Store {
