@@ -7,11 +7,12 @@ import { WorkingDataset } from '../models/store'
 interface FileRowProps {
   name: string
   displayName: string
-  filename: string
-  selected: boolean
-  status: string
-  selectionType: string
-  onClick: (type: string, selectedListItem: string) => Action
+  filename?: string
+  selected?: boolean
+  status?: string
+  selectionType?: string
+  disabled?: boolean
+  onClick?: (type: string, selectedListItem: string) => Action
 }
 
 export const FileRow: React.FunctionComponent<FileRowProps> = (props) => {
@@ -20,16 +21,20 @@ export const FileRow: React.FunctionComponent<FileRowProps> = (props) => {
     case 'modified':
       statusColor = '#cab081'
       break
-    case 'unmodified':
-      statusColor = '#9bde9b'
-      break
     default:
       statusColor = 'transparent'
   }
+
+  const selected = props.selected ? 'selected' : ''
+  const disabled = props.disabled ? 'disabled' : ''
   return (
     <div
-      className={`sidebar-list-item sidebar-list-item-text ${props.selected && 'selected'}`}
-      onClick={() => { props.onClick(props.selectionType, props.name) }}
+      className={`sidebar-list-item sidebar-list-item-text ${selected} ${disabled}`}
+      onClick={() => {
+        if (props.onClick && props.selectionType && props.name) {
+          props.onClick(props.selectionType, props.name)
+        }
+      }}
     >
       <div className='text-column'>
         <div className='text'>{props.displayName}</div>
@@ -42,19 +47,7 @@ export const FileRow: React.FunctionComponent<FileRowProps> = (props) => {
   )
 }
 
-interface DisabledFileRowProps { name: string }
-
-const DisabledFileRow: React.FunctionComponent<DisabledFileRowProps> = (props) => {
-  return (
-    <div
-      className={'sidebar-list-item sidebar-list-item-text'}
-    >
-      <div className='text-column'>
-        <div className='text'>{props.name}</div>
-      </div>
-    </div>
-  )
-}
+FileRow.displayName = 'FileRow'
 
 interface HistoryListItemProps {
   path: string
@@ -108,10 +101,6 @@ const components = [
   {
     name: 'schema',
     displayName: 'Schema'
-  },
-  {
-    name: 'viz',
-    displayName: 'Viz'
   }
 ]
 
@@ -125,7 +114,9 @@ const DatasetSidebar: React.FunctionComponent<DatasetSidebarProps> = (props: Dat
     onTabClick,
     onListItemClick
   } = props
-  const { value: historyItems } = history
+
+  const historyLoaded = !!history
+  const statusLoaded = !!status
 
   return (
     <div className='dataset-sidebar'>
@@ -141,10 +132,16 @@ const DatasetSidebar: React.FunctionComponent<DatasetSidebarProps> = (props: Dat
             </div>
           </div>
           {
-            components.map(({ name, displayName }) => {
+            statusLoaded && components.map(({ name, displayName }) => {
               if (status[name]) {
                 const { filepath, status: fileStatus } = status[name]
-                const filename = filepath.substring((filepath.lastIndexOf('/') + 1))
+                let filename
+                if (filepath === 'repo') {
+                  filename = ''
+                } else {
+                  filename = filepath.substring((filepath.lastIndexOf('/') + 1))
+                }
+
                 return (
                   <FileRow
                     key={name}
@@ -159,33 +156,39 @@ const DatasetSidebar: React.FunctionComponent<DatasetSidebarProps> = (props: Dat
                 )
               } else {
                 return (
-                  <DisabledFileRow
+                  <FileRow
                     key={name}
+                    displayName={displayName}
                     name={displayName}
+                    disabled={true}
                   />
                 )
               }
             })
           }
         </div>
-        <div id='history-content' className='sidebar-content' hidden = {activeTab === 'status'}>
-          {
-            historyItems.map(({ path, timestamp, title }) => {
-              const timeMessage = moment(timestamp).fromNow()
-              return (
-                <HistoryListItem
-                  key={path}
-                  path={path}
-                  commitTitle={title}
-                  avatarUrl={'https://avatars0.githubusercontent.com/u/1154390?s=60&v=4'}
-                  timeMessage={timeMessage}
-                  selected={selectedCommit === path}
-                  onClick={onListItemClick}
-                />
-              )
-            })
-          }
-        </div>
+        {
+          historyLoaded && (
+            <div id='history-content' className='sidebar-content' hidden = {activeTab === 'status'}>
+              {
+                history.value.map(({ path, timestamp, title }) => {
+                  const timeMessage = moment(timestamp).fromNow()
+                  return (
+                    <HistoryListItem
+                      key={path}
+                      path={path}
+                      commitTitle={title}
+                      avatarUrl={'https://avatars0.githubusercontent.com/u/1154390?s=60&v=4'}
+                      timeMessage={timeMessage}
+                      selected={selectedCommit === path}
+                      onClick={onListItemClick}
+                    />
+                  )
+                })
+              }
+            </div>
+          )
+        }
       </div>
     </div>
   )

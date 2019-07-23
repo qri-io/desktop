@@ -166,7 +166,7 @@ export function fetchWorkingStatus (): ApiActionThunk {
           return data.map((d) => {
             return {
               filepath: d.sourceFile,
-              path: d.path,
+              component: d.component,
               status: d.type as ComponentState
             }
           })

@@ -49,7 +49,7 @@ export default class Dataset extends React.Component<DatasetProps> {
   state = {
     peername: null,
     name: null
-  };
+  }
 
   componentDidMount () {
     // fetch datasets list, working dataset, and working dataset history
@@ -85,96 +85,104 @@ export default class Dataset extends React.Component<DatasetProps> {
       component: selectedComponent,
       commit: selectedCommit
     } = selections
-    const { name, history, status } = workingDataset
 
-    // action props
-    const {
-      toggleDatasetList,
-      setActiveTab,
-      setSidebarWidth,
-      setSelectedListItem
-    } = this.props
+    if (workingDataset) {
+      const { name, history, status } = workingDataset
 
-    const expandedClass = showDatasetList ? 'expanded' : ''
+      // action props
+      const {
+        toggleDatasetList,
+        setActiveTab,
+        setSidebarWidth,
+        setSelectedListItem
+      } = this.props
 
-    let mainContent
+      const expandedClass = showDatasetList ? 'expanded' : ''
 
-    if (activeTab === 'status') {
-      switch (selectedComponent) {
-        case 'meta':
-          mainContent = <MetadataContainer />
-          break
-        case 'body':
-          mainContent = <BodyContainer />
-          break
-        case 'schema':
-          mainContent = <SchemaContainer />
-          break
-        default:
-          mainContent = <MetadataContainer />
+      let mainContent
+
+      if (activeTab === 'status') {
+        switch (selectedComponent) {
+          case 'meta':
+            mainContent = <MetadataContainer />
+            break
+          case 'body':
+            mainContent = <BodyContainer />
+            break
+          case 'schema':
+            mainContent = <SchemaContainer />
+            break
+          default:
+            mainContent = <MetadataContainer />
+        }
+      } else {
+        if (workingDataset.history) {
+          mainContent = <CommitDetailsContainer />
+        } else {
+          mainContent = <div>Loading History</div>
+        }
       }
-    } else {
-      mainContent = (
-        <CommitDetailsContainer />
-      )
-    }
 
-    return (
-      <div id='dataset-container'>
-        <div className='header'>
-          <div
-            className={'current-dataset header-column ' + expandedClass}
-            onClick={toggleDatasetList}
-            style={{ width: datasetSidebarWidth }}
-          >
-            <img className='app-loading-blob' src={logo} />
-            <div className='text'>
-              <div className="label">Current Dataset</div>
-              <div className="name">{name}</div>
-            </div>
-            {
-              showDatasetList
-                ? <div className="arrow collapse">&nbsp;</div>
-                : <div className="arrow expand">&nbsp;</div>
-            }
-
-          </div>
-        </div>
-        <div className='columns'>
-          <Resizable
-            id='sidebar'
-            width={datasetSidebarWidth}
-            onResize={(width) => { setSidebarWidth('dataset', width) }}
-            onReset={() => { setSidebarWidth('dataset', defaultSidebarWidth) }}
-            maximumWidth={495}
-          >
-            <DatasetSidebar
-              activeTab={activeTab}
-              selectedComponent={selectedComponent}
-              selectedCommit={selectedCommit}
-              history={history}
-              status={status}
-              onTabClick={setActiveTab}
-              onListItemClick={setSelectedListItem}
-            />
-          </Resizable>
-          <div className='content-wrapper'>
-            {showDatasetList && <div className='overlay'></div>}
-            {mainContent}
-          </div>
-
-        </div>
-        {
-          showDatasetList && (
+      return (
+        <div id='dataset-container'>
+          <div className='header'>
             <div
-              className='dataset-list'
+              className={'current-dataset header-column ' + expandedClass}
+              onClick={toggleDatasetList}
               style={{ width: datasetSidebarWidth }}
             >
-              <DatasetListContainer />
+              <img className='app-loading-blob' src={logo} />
+              <div className='text'>
+                <div className="label">Current Dataset</div>
+                <div className="name">{name}</div>
+              </div>
+              {
+                showDatasetList
+                  ? <div className="arrow collapse">&nbsp;</div>
+                  : <div className="arrow expand">&nbsp;</div>
+              }
+
             </div>
-          )
-        }
-      </div>
-    )
+          </div>
+          <div className='columns'>
+            <Resizable
+              id='sidebar'
+              width={datasetSidebarWidth}
+              onResize={(width) => { setSidebarWidth('dataset', width) }}
+              onReset={() => { setSidebarWidth('dataset', defaultSidebarWidth) }}
+              maximumWidth={495}
+            >
+              <DatasetSidebar
+                activeTab={activeTab}
+                selectedComponent={selectedComponent}
+                selectedCommit={selectedCommit}
+                history={history}
+                status={status}
+                onTabClick={setActiveTab}
+                onListItemClick={setSelectedListItem}
+              />
+            </Resizable>
+            <div className='content-wrapper'>
+              {showDatasetList && <div className='overlay'></div>}
+              {mainContent}
+            </div>
+
+          </div>
+          {
+            showDatasetList && (
+              <div
+                className='dataset-list'
+                style={{ width: datasetSidebarWidth }}
+              >
+                <DatasetListContainer />
+              </div>
+            )
+          }
+        </div>
+      )
+    } else {
+      console.log('WORKING DATASET IS CLEAR!!!')
+      return (<div>No Working Dataset</div>)
+    }
   }
 }

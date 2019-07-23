@@ -5,10 +5,11 @@ import { fetchBody } from '../actions/api'
 
 const mapStateToProps = (state: Store) => {
   const { workingDataset } = state
+  const { peername, name, path } = workingDataset
 
   // get data for the currently selected component
   const body = workingDataset.value.body
-  return { body }
+  return { body, peername, name, path }
 }
 
 const actions = {

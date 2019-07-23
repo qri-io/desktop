@@ -1,7 +1,6 @@
 // import top-level state interfaces
 import {
   UI,
-  Selections,
   MyDatasets,
   WorkingDataset
 } from '../models/store'
@@ -16,15 +15,6 @@ export let ui: UI = {
   showDiff: false,
   datasetSidebarWidth: 250,
   commitSidebarWidth: 250
-}
-
-export let selections: Selections = {
-  peername: 'b5',
-  name: 'world_bank_population',
-  activeTab: 'status',
-  component: 'meta',
-  commit: '',
-  commitComponent: ''
 }
 
 export let myDatasets: MyDatasets = {
