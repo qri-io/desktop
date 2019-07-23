@@ -1,6 +1,5 @@
 dialog {
   border: solid 1px $border-color;
-  padding: 10px;
   border-radius: 5px;
 
   background: $appBackground;
@@ -46,8 +45,8 @@ dialog {
       flex-shrink: 0;
 
       border: 0;
-      height: 16px;
-      width: 16px;
+      height: 18px;
+      width: 18px;
 
       // Set the left margin to auto so that flexbox positions the button
       // on the right hand side of the dialog and add a -10px right hand
@@ -78,11 +77,60 @@ dialog {
   }
 
   form {
-    padding: $spacer
+    padding: $spacer;
+
+    .row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: $spacer;
+    }
+  }
+
+  .content-wrap {
+    min-height: 300px; 
+    position: relative;
+    
+    .content {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: $appBackground;
+    }
+  }
+
+  .tabs {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    border-bottom: solid 1px $border-color;
+    margin: $spacer * -1 0 $spacer $spacer * -.5;
+
+    .tab {
+      padding: $spacer * .5 $spacer;
+      border-right: solid 1px $border-color;
+      // border-bottom: solid 1px $border-color;
+      color: $primary-muted;
+      cursor: pointer;
+      font-weight: $font-weight-medium;
+      min-width: 60px;
+    }
+
+    .last {
+      border-right: none;
+    }
+
+    .active {
+      border-bottom: none;
+      color: $primary;
+      cursor: auto;
+      background-color: $white;
+    }
   }
 
   .error {
     color: $error;
+    height: $spacer;
     margin: 0 1rem 1rem 0;
   }
   

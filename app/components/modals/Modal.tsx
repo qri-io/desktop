@@ -99,7 +99,7 @@ export interface ModalProps {
  * underlying elements. It's not possible to use the tab key to move focus
  * out of the dialog without first dismissing it.
  */
-const Modal: React.FunctionComponent<ModalProps> = ({ title, dismissable, onDismissed, id, type, onSubmit, className, disabled, loading, children }) => {
+const Modal: React.FunctionComponent<ModalProps> = ({ title, dismissable = true, onDismissed, id, type, onSubmit, className, disabled, loading, children }) => {
   const [modalElement, setModalElement] = React.useState<HTMLElement | null>(null)
   const [isDismissable, setIsDismissable] = React.useState(!!dismissable)
 
@@ -228,7 +228,6 @@ const Modal: React.FunctionComponent<ModalProps> = ({ title, dismissable, onDism
       className={modalClassName}
     >
       {renderHeader()}
-
       <form onSubmit={onFormSubmit}>
         <fieldset disabled={disabled}>
           {children}

@@ -46,7 +46,7 @@ interface IDialogHeaderProps {
  * custom content needs to be rendered in a dialog and in that scenario it
  * might be necessary to use this component directly.
  */
-const DialogHeader: React.FunctionComponent<IDialogHeaderProps> = ({ onDismissed, dismissable, titleId, title, loading, children }) => {
+const DialogHeader: React.FunctionComponent<IDialogHeaderProps> = ({ onDismissed, dismissable = true, titleId, title, loading, children }) => {
   const onCloseButtonClick = () => {
     if (onDismissed) {
       onDismissed()
