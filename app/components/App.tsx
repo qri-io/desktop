@@ -5,6 +5,7 @@ import CreateDataset from './modals/CreateDataset'
 import AddDataset from './modals/AddDataset'
 import NoDatasets from './NoDatasets'
 import { Modal, ModalType } from '../models/modals'
+import AppLoading from './AppLoading'
 
 export interface AppProps {
   ui: UI
@@ -14,6 +15,9 @@ export interface AppProps {
 const App: React.FunctionComponent<AppProps> = (props: AppProps) => {
   const [currentModal, setCurrentModal] = React.useState<Modal | null>(null)
   const [hasDatasets, setHasDatasets] = React.useState(false)
+  const [loading, setLoading] = React.useState(true)
+  setTimeout(() => { setLoading(false) }, 1200)
+
   function renderModal (): JSX.Element | null {
     // Hide any dialogs while we're displaying an error
     // if (errors) {
@@ -51,10 +55,26 @@ const App: React.FunctionComponent<AppProps> = (props: AppProps) => {
       </CSSTransition>
     )
   }
+
+  const renderAppLoading = () => {
+    return (
+      <CSSTransition
+        in={loading}
+        classNames="fade"
+        component="div"
+        timeout={1000}
+        unmountOnExit
+      >
+        <AppLoading />
+      </CSSTransition>
+    )
+  }
+
   return (
     <div style={{ height: '100%' }}>
-      {currentModal && renderModal()}
-      {!hasDatasets && renderNoDatasets()}
+      {renderAppLoading()}
+      {renderModal()}
+      {renderNoDatasets()}
       {props.children}
     </div>
   )
