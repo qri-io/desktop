@@ -1,15 +1,25 @@
 import * as React from 'react'
-// import { CSSTransition } from 'react-transition-group'
+import { CSSTransition } from 'react-transition-group'
 import Modal, { ModalProps } from './Modal'
 import TextInput from '../form/TextInput'
+import SelectInput from '../form/SelectInput'
 import Error from './Error'
 import Buttons from './Buttons'
 import Tabs from './Tabs'
 
+import { ISelectOption } from '../../models/forms'
+
+const formatOptions: ISelectOption[] = [
+  { name: 'csv', value: 'csv' },
+  { name: 'json', value: 'json' },
+  { name: 'xlsx', value: 'xlsx' },
+  { name: 'cbor', value: 'cbor' }
+]
+
 const CreateDataset: React.FunctionComponent<ModalProps> = ({ onDismissed, onSubmit }) => {
   const [datasetName, setDatasetName] = React.useState('')
   const [path, setPath] = React.useState('')
-  // const [bodyFormat, setBodyFormat] = React.useState('csv')
+  const [bodyFormat, setBodyFormat] = React.useState(formatOptions[0].value)
   const [bodyPath, setBodyPath] = React.useState('')
   const [activeTab, setActiveTab] = React.useState('Create new datafile')
   const [dismissable, setDismissable] = React.useState(true)
@@ -26,8 +36,9 @@ const CreateDataset: React.FunctionComponent<ModalProps> = ({ onDismissed, onSub
       setButtonDisabled(true)
       return
     }
-    if (activeTab === 'Use existing file') {
-      bodyPath === '' && setButtonDisabled(true)
+    if ((activeTab === 'Use existing file' && bodyPath === '') ||
+        (activeTab === 'Create new datafile' && bodyFormat === '')) {
+      setButtonDisabled(true)
       return
     }
     setButtonDisabled(false)
@@ -41,7 +52,7 @@ const CreateDataset: React.FunctionComponent<ModalProps> = ({ onDismissed, onSub
 
   const renderCreateDataset = () => {
     return (
-      <div>
+      <div className='margin-bottom'>
         <TextInput
           name='datasetName'
           label='Dataset Name:'
@@ -68,6 +79,8 @@ const CreateDataset: React.FunctionComponent<ModalProps> = ({ onDismissed, onSub
     }
     if (name === 'datasetName') setDatasetName(value)
     if (name === 'path') setPath(value)
+    if (name === 'format') setBodyFormat(value)
+    if (name === 'bodyPath') setBodyPath(value)
     toggleButton(activeTab)
   }
 
@@ -75,23 +88,44 @@ const CreateDataset: React.FunctionComponent<ModalProps> = ({ onDismissed, onSub
     return <Tabs tabs={['Create new datafile', 'Use existing file']} active={activeTab} onClick={handleSetActiveTab}/>
   }
 
-  const renderCreateBody = () => {
-    return (
-      <div>
+  const renderCreateNewBody = () =>
+    <CSSTransition
+      in={ activeTab === 'Create new datafile' }
+      classNames="fade"
+      component="div"
+      timeout={300}
+      unmountOnExit
+    >
+      <div className='content'>
+        <SelectInput
+          name='format'
+          label='Choose format:'
+          options={formatOptions}
+          value={bodyFormat}
+          onChange={handleChanges}
+        />
+      </div>
+    </CSSTransition>
+
+  const renderUseExistingBody = () =>
+    <CSSTransition
+      in={ activeTab === 'Use existing file' }
+      classNames="fade"
+      component="div"
+      timeout={300}
+      unmountOnExit
+    >
+      <div className='content'>
         <TextInput
-          name='path'
-          label='Local Path:'
+          name='bodyPath'
+          label='Path to datafile:'
           type=''
-          value={path}
+          value={bodyPath}
           onChange={handleChanges}
           maxLength={300}
         />
       </div>
-    )
-  }
-
-  const renderUseExistingBody = () =>
-    <div>Use existing body!</div>
+    </CSSTransition>
 
   const handleSubmit = () => {
     setDismissable(true)
@@ -129,8 +163,10 @@ const CreateDataset: React.FunctionComponent<ModalProps> = ({ onDismissed, onSub
       <div>
         {renderCreateDataset()}
         {renderTabs()}
-        {renderCreateBody()}
-        {renderUseExistingBody()}
+        <div id='create-dataset-content-wrap' className='content-wrap'>
+          {renderCreateNewBody()}
+          {renderUseExistingBody()}
+        </div>
       </div>
       <Error text={error} />
       <Buttons

@@ -29,7 +29,7 @@ const TextInput: React.FunctionComponent<TextInputProps> = ({ label, name, type,
           name={name}
           type={type}
           maxLength={maxLength}
-          className='text-input'
+          className='input'
           value={value || ''}
           placeholder={placeHolder}
           onChange={(e) => { onChange(name, e.target.value, e) }}
