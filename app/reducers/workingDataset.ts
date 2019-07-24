@@ -12,7 +12,8 @@ const initialState = {
   value: {},
   status: {},
   loading: false,
-  bodyLoading: false
+  bodyLoading: false,
+  linkpath: null
 }
 
 const [DATASET_REQ, DATASET_SUCC, DATASET_FAIL] = apiActionTypes('dataset')
@@ -64,14 +65,16 @@ const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction
           obj[component] = { filepath, status }
           return obj
         }, {})
-
-      // TODO (chriswhong) status endpoint does not include body, stub it in here for now
-      const notLinked = action.payload.data[0].filepath === 'repo'
-      statusObject.body = {
-        filepath: notLinked ? '' : 'somepath/body.csv',
-        status: 'unmodified'
+      // check filepath in the first element in the payload to determine whether the
+      // dataset is linked
+      let linkpath = null
+      const { filepath } = action.payload.data[0]
+      if (filepath !== 'repo') {
+        linkpath = filepath.substring(0, (filepath.lastIndexOf('/')))
       }
+
       return Object.assign({}, state, {
+        linkpath,
         status: statusObject
       })
     case DATASET_STATUS_FAIL:

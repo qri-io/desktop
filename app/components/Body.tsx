@@ -5,6 +5,7 @@ import { WorkingDataset } from '../models/store'
 
 interface BodyProps {
   workingDataset: WorkingDataset
+  headers: any[]
   fetchBody: () => Promise<ApiAction>
 }
 
@@ -35,7 +36,10 @@ export default class Body extends React.Component<BodyProps> {
       <div>
         {
           this.props.workingDataset.value.body && (
-            <HandsonTable body={this.props.workingDataset.value.body.data} />
+            <HandsonTable
+              headers={this.props.headers}
+              body={this.props.workingDataset.value.body.data}
+            />
           )
         }
       </div>

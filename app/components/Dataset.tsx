@@ -1,6 +1,7 @@
 import * as React from 'react'
 import classNames from 'classnames'
 import { Action } from 'redux'
+import { shell } from 'electron'
 import { ApiAction } from '../store/api'
 import { Resizable } from '../components/resizable'
 import DatasetSidebar from '../components/DatasetSidebar'
@@ -128,6 +129,28 @@ export default class Dataset extends React.Component<DatasetProps> {
       }
     }
 
+    const linkButton = workingDataset.linkpath ? (
+      <div
+        className='header-column'
+        onClick={() => { shell.openItem(String(workingDataset.linkpath)) }}
+      >
+        <div className='header-column-icon'>
+          <span className='icon-inline'>openfolder</span>
+        </div>
+        <div className='header-column-text'>
+          <div className="label">Show Dataset Files</div>
+        </div>
+      </div>) : (
+      <div className='header-column'>
+        <div className='header-column-icon'>
+          <span className='icon-inline'>link</span>
+        </div>
+        <div className='header-column-text'>
+          <div className="label">Link to Filesystem</div>
+        </div>
+      </div>
+    )
+
     return (
       <div id='dataset-container'>
         <div className='header'>
@@ -136,8 +159,10 @@ export default class Dataset extends React.Component<DatasetProps> {
             onClick={toggleDatasetList}
             style={{ width: datasetSidebarWidth }}
           >
-            <img className='app-loading-blob' src={logo} />
-            <div className='text'>
+            <div className='header-column-icon'>
+              <img className='app-loading-blob' src={logo} />
+            </div>
+            <div className='header-column-text'>
               <div className="label">Current Dataset</div>
               <div className="name">{name}</div>
             </div>
@@ -148,6 +173,7 @@ export default class Dataset extends React.Component<DatasetProps> {
             }
 
           </div>
+          {linkButton}
         </div>
         <div className='columns'>
           <Resizable
