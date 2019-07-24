@@ -19,6 +19,7 @@ export default class Body extends React.Component<BodyProps> {
     const { workingDataset } = nextProps
     const { value, bodyLoading: isLoading } = workingDataset
     const { body } = value
+    console.log(body)
     if (
       body === undefined &&
       isLoading === false
