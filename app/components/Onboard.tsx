@@ -2,7 +2,6 @@ import * as React from 'react'
 import { Action } from 'redux'
 import { CSSTransition } from 'react-transition-group'
 
-import AppLoading from './AppLoading'
 import Welcome from './Welcome'
 import ChoosePeername from './ChoosePeername'
 import { UI } from '../models/store'
@@ -22,11 +21,8 @@ export interface OnboardProps {
 
 // Onboard is a series of flows for onboarding a new user
 const Onboard: React.FunctionComponent<OnboardProps> = (props: OnboardProps) => {
-  const [loading, setLoading] = React.useState(true)
   const [peername] = React.useState('forest_green_doberman_pinscher')
   const { acceptTOS, setPeername } = props
-
-  setTimeout(() => { setLoading(false) }, 1200)
 
   async function onSave (peername: string): Promise<any> {
     return new Promise((resolve) => {
@@ -43,20 +39,6 @@ const Onboard: React.FunctionComponent<OnboardProps> = (props: OnboardProps) => 
   }
 
   const { hasAcceptedTOS, hasSetPeername } = props.ui
-
-  const renderAppLoading = () => {
-    return (
-      <CSSTransition
-        in={loading}
-        classNames="fade-shrink"
-        component="div"
-        timeout={1000}
-        unmountOnExit
-      >
-        <AppLoading />
-      </CSSTransition>
-    )
-  }
 
   const renderWelcome = () => {
     return (
@@ -88,7 +70,6 @@ const Onboard: React.FunctionComponent<OnboardProps> = (props: OnboardProps) => 
 
   return (
     <div style={{ height: '100%' }}>
-      {renderAppLoading()}
       {renderWelcome()}
       {renderChoosePeerName()}
     </div>
