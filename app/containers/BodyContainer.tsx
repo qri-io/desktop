@@ -1,15 +1,17 @@
 import { connect } from 'react-redux'
-import Metadata from '../components/Metadata'
+import Body from '../components/Body'
 import Store from '../models/store'
+import { fetchBody } from '../actions/api'
 
 const mapStateToProps = (state: Store) => {
   const { workingDataset } = state
 
   // get data for the currently selected component
-  const meta = workingDataset.value.meta
-  return { meta }
+  return { workingDataset }
 }
 
-const actions = {}
+const actions = {
+  fetchBody
+}
 
-export default connect(mapStateToProps, actions)(Metadata)
+export default connect(mapStateToProps, actions)(Body)

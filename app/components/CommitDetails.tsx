@@ -1,5 +1,5 @@
 import * as React from 'react'
-import * as moment from 'moment'
+import moment from 'moment'
 import { Resizable } from '../components/resizable'
 import { Action } from 'redux'
 import { FileRow } from '../components/DatasetSidebar'
@@ -86,6 +86,7 @@ export default class CommitDetails extends React.Component<CommitDetailsProps> {
                     <FileRow
                       key={name}
                       name={name}
+                      displayName={name}
                       filename={filename}
                       status={fileStatus}
                       selected={selectedComponent === name}

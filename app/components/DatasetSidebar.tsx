@@ -1,16 +1,18 @@
 import * as React from 'react'
 import { Action } from 'redux'
-import * as moment from 'moment'
+import moment from 'moment'
 
 import { WorkingDataset } from '../models/store'
 
 interface FileRowProps {
   name: string
-  filename: string
-  selected: boolean
-  status: string
-  selectionType: string
-  onClick: (type: string, selectedListItem: string) => Action
+  displayName: string
+  filename?: string
+  selected?: boolean
+  status?: string
+  selectionType?: string
+  disabled?: boolean
+  onClick?: (type: string, selectedListItem: string) => Action
 }
 
 export const FileRow: React.FunctionComponent<FileRowProps> = (props) => {
@@ -19,19 +21,23 @@ export const FileRow: React.FunctionComponent<FileRowProps> = (props) => {
     case 'modified':
       statusColor = '#cab081'
       break
-    case 'unmodified':
-      statusColor = '#9bde9b'
-      break
     default:
       statusColor = 'transparent'
   }
+
+  const selected = props.selected ? 'selected' : ''
+  const disabled = props.disabled ? 'disabled' : ''
   return (
     <div
-      className={`sidebar-list-item sidebar-list-item-text ${props.selected && 'selected'}`}
-      onClick={() => { props.onClick(props.selectionType, props.name) }}
+      className={`sidebar-list-item sidebar-list-item-text ${selected} ${disabled}`}
+      onClick={() => {
+        if (props.onClick && props.selectionType && props.name) {
+          props.onClick(props.selectionType, props.name)
+        }
+      }}
     >
       <div className='text-column'>
-        <div className='text'>{props.name}</div>
+        <div className='text'>{props.displayName}</div>
         <div className='subtext'>{props.filename}</div>
       </div>
       <div className='status-column'>
@@ -40,6 +46,8 @@ export const FileRow: React.FunctionComponent<FileRowProps> = (props) => {
     </div>
   )
 }
+
+FileRow.displayName = 'FileRow'
 
 interface HistoryListItemProps {
   path: string
@@ -81,6 +89,21 @@ interface DatasetSidebarProps {
   onListItemClick: (type: componentType, activeTab: string) => Action
 }
 
+const components = [
+  {
+    name: 'meta',
+    displayName: 'Meta'
+  },
+  {
+    name: 'body',
+    displayName: 'Body'
+  },
+  {
+    name: 'schema',
+    displayName: 'Schema'
+  }
+]
+
 const DatasetSidebar: React.FunctionComponent<DatasetSidebarProps> = (props: DatasetSidebarProps) => {
   const {
     activeTab,
@@ -91,7 +114,9 @@ const DatasetSidebar: React.FunctionComponent<DatasetSidebarProps> = (props: Dat
     onTabClick,
     onListItemClick
   } = props
-  const { value: historyItems } = history
+
+  const historyLoaded = !!history
+  const statusLoaded = !!status
 
   return (
     <div className='dataset-sidebar'>
@@ -107,41 +132,63 @@ const DatasetSidebar: React.FunctionComponent<DatasetSidebarProps> = (props: Dat
             </div>
           </div>
           {
-            Object.keys(status).map((key) => {
-              const { filepath, status: fileStatus } = status[key]
-              const filename = filepath.substring((filepath.lastIndexOf('/') + 1))
-              return (
-                <FileRow
-                  key={key}
-                  name={key}
-                  filename={filename}
-                  status={fileStatus}
-                  selected={selectedComponent === key}
-                  selectionType={'component'}
-                  onClick={onListItemClick}
-                />
-              )
+            statusLoaded && components.map(({ name, displayName }) => {
+              if (status[name]) {
+                const { filepath, status: fileStatus } = status[name]
+                let filename
+                if (filepath === 'repo') {
+                  filename = ''
+                } else {
+                  filename = filepath.substring((filepath.lastIndexOf('/') + 1))
+                }
+
+                return (
+                  <FileRow
+                    key={name}
+                    displayName={displayName}
+                    name={name}
+                    filename={filename}
+                    status={fileStatus}
+                    selected={selectedComponent === name}
+                    selectionType={'component'}
+                    onClick={onListItemClick}
+                  />
+                )
+              } else {
+                return (
+                  <FileRow
+                    key={name}
+                    displayName={displayName}
+                    name={displayName}
+                    disabled={true}
+                  />
+                )
+              }
             })
           }
         </div>
-        <div id='history-content' className='sidebar-content' hidden = {activeTab === 'status'}>
-          {
-            historyItems.map(({ path, timestamp, title }) => {
-              const timeMessage = moment(timestamp).fromNow()
-              return (
-                <HistoryListItem
-                  key={path}
-                  path={path}
-                  commitTitle={title}
-                  avatarUrl={'https://avatars0.githubusercontent.com/u/1154390?s=60&v=4'}
-                  timeMessage={timeMessage}
-                  selected={selectedCommit === path}
-                  onClick={onListItemClick}
-                />
-              )
-            })
-          }
-        </div>
+        {
+          historyLoaded && (
+            <div id='history-content' className='sidebar-content' hidden = {activeTab === 'status'}>
+              {
+                history.value.map(({ path, timestamp, title }) => {
+                  const timeMessage = moment(timestamp).fromNow()
+                  return (
+                    <HistoryListItem
+                      key={path}
+                      path={path}
+                      commitTitle={title}
+                      avatarUrl={'https://avatars0.githubusercontent.com/u/1154390?s=60&v=4'}
+                      timeMessage={timeMessage}
+                      selected={selectedCommit === path}
+                      onClick={onListItemClick}
+                    />
+                  )
+                })
+              }
+            </div>
+          )
+        }
       </div>
     </div>
   )

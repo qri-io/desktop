@@ -6,6 +6,8 @@ import DatasetSidebar from '../components/DatasetSidebar'
 import DatasetListContainer from '../containers/DatasetListContainer'
 import CommitDetailsContainer from '../containers/CommitDetailsContainer'
 import MetadataContainer from '../containers/MetadataContainer'
+import BodyContainer from '../containers/BodyContainer'
+import SchemaContainer from '../containers/SchemaContainer'
 
 import { defaultSidebarWidth } from '../reducers/ui'
 
@@ -29,13 +31,11 @@ interface DatasetProps {
   setFilter: (filter: string) => Action
   setSelectedListItem: (type: string, activeTab: string) => Action
   setWorkingDataset: (peername: string, name: string) => Action
-  fetchMyDatasetsAndWorkbench: () => Promise<ApiAction>
-  fetchWorkingDataset: () => Promise<ApiAction>
+  fetchMyDatasets: () => Promise<ApiAction>
+  fetchWorkingDatasetDetails: () => Promise<ApiAction>
   fetchWorkingStatus: () => Promise<ApiAction>
 }
 
-// using component state + getDerivedStateFromProps to determine when a new
-// working dataset is selected and trigger api call(s)
 interface DatasetState {
   peername: string
   name: string
@@ -44,38 +44,42 @@ interface DatasetState {
 const logo = require('../assets/qri-blob-logo-tiny.png') //eslint-disable-line
 
 export default class Dataset extends React.Component<DatasetProps> {
+  // component state is used to compare changes when a new dataset is selected
+  // see getDerivedStateFromProps() below
   state = {
     peername: null,
     name: null
-  };
+  }
 
   componentDidMount () {
-    // fetch datasets list, working dataset, and working dataset history
-    this.props.fetchMyDatasetsAndWorkbench()
+    // fetch datasets list TODO move this up to App
+    this.props.fetchMyDatasets()
+    // poll for status
     setInterval(() => { this.props.fetchWorkingStatus() }, 1000)
   }
 
+  // using component state + getDerivedStateFromProps to determine when a new
+  // working dataset is selected and trigger api call(s)
   static getDerivedStateFromProps (nextProps: DatasetProps, prevState: DatasetState) {
     const { peername: newPeername, name: newName } = nextProps.selections
     const { peername, name } = prevState
 
     // when new props arrive, compare selections.peername and selections.name to
-    // previous.  If different, fetch data
-    if ((newPeername !== peername) && (newName !== name)) {
-      nextProps.fetchWorkingDataset()
-      // if this isn't the first time, close the dataset list
+    // previous.  If either is different, fetch data
+    if ((newPeername !== peername) || (newName !== name)) {
+      nextProps.fetchWorkingDatasetDetails()
+      // close the dataset list if this is not the initial state comparison
       if (peername !== null) nextProps.toggleDatasetList()
       return {
         peername: newPeername,
         name: newName
       }
     }
-
     return null
   }
 
   render () {
-    // app state props
+    // unpack all the things
     const { ui, selections, workingDataset } = this.props
     const { showDatasetList, datasetSidebarWidth } = ui
     const {
@@ -85,7 +89,7 @@ export default class Dataset extends React.Component<DatasetProps> {
     } = selections
     const { name, history, status } = workingDataset
 
-    // action props
+    // actions
     const {
       toggleDatasetList,
       setActiveTab,
@@ -93,24 +97,37 @@ export default class Dataset extends React.Component<DatasetProps> {
       setSelectedListItem
     } = this.props
 
+    // class to add to header for alternate styling when dataset list is open
     const expandedClass = showDatasetList ? 'expanded' : ''
 
+    // mainContent will either be a loading spinner, or content based on the selected
+    // sidebar list items
     let mainContent
-
-    if (activeTab === 'status') {
-      if (selectedComponent === 'meta') {
-        mainContent = (
-          <MetadataContainer />
-        )
-      } else {
-        mainContent = (
-          <div>Content for the {selectedComponent} component</div>
-        )
-      }
+    if (workingDataset.loading || workingDataset.peername === '') {
+      // TODO (chriswhong) add a proper loading spinner
+      mainContent = <div>Loading</div>
     } else {
-      mainContent = (
-        <CommitDetailsContainer />
-      )
+      if (activeTab === 'status') {
+        switch (selectedComponent) {
+          case 'meta':
+            mainContent = <MetadataContainer />
+            break
+          case 'body':
+            mainContent = <BodyContainer />
+            break
+          case 'schema':
+            mainContent = <SchemaContainer />
+            break
+          default:
+            mainContent = <MetadataContainer />
+        }
+      } else {
+        if (workingDataset.history) {
+          mainContent = <CommitDetailsContainer />
+        } else {
+          mainContent = <div>Loading History</div>
+        }
+      }
     }
 
     return (

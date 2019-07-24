@@ -38,7 +38,7 @@ export interface UI {
 
 // currently selected dataset, tab, dataset component, commit, etc
 export interface Selections {
-  peername: string
+  peername: string | null
   name: string | null
   activeTab: string
   component: string
@@ -106,6 +106,8 @@ export interface WorkingDataset extends CommitDetail {
     pageInfo: PageInfo
     value: Commit[]
   }
+  loading: false
+  bodyLoading: false
 }
 
 export default interface Store {
