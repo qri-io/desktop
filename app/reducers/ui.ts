@@ -8,6 +8,14 @@ export const UI_SET_PEERNAME = 'UI_SET_PEERNAME'
 
 export const defaultSidebarWidth = 250
 
+const getSidebarWidth = (key: string): number => {
+  const width = store().getItem(key)
+  if (width) {
+    return parseInt(width, 10)
+  }
+  return defaultSidebarWidth
+}
+
 const initialState = {
   apiConnection: 1,
   showDatasetList: false,
@@ -16,8 +24,8 @@ const initialState = {
   hasAcceptedTOS: true,
   hasSetPeername: true,
   showDiff: false,
-  datasetSidebarWidth: store().getItem('datasetSidebarWidth') || defaultSidebarWidth,
-  commitSidebarWidth: store().getItem('commitSidebarWidth') || defaultSidebarWidth
+  datasetSidebarWidth: getSidebarWidth('datasetSidebarWidth'),
+  commitSidebarWidth: getSidebarWidth('commitSidebarWidth')
 }
 
 export default (state = initialState, action: AnyAction) => {
