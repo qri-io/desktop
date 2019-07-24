@@ -232,7 +232,7 @@ label {
   font-size: 14px;
   line-height: 16px;
   font-weight: $font-weight-light;
-  font-color: $text-muted
+  color: $text-muted
 }
 
 .statsLine {
@@ -348,4 +348,46 @@ label {
 
 strong {
   font-weight: bold;
+}
+
+// spacing
+
+.margin {
+  margin: $spacer;
+}
+
+.margin-top {
+  margin-top: $spacer;
+}
+
+.margin-left {
+  margin-left: $spacer;
+}
+
+.margin-bottom {
+  margin-bottom: $spacer;
+}
+
+.margin-right {
+  margin-right: $spacer;
+}
+
+.padding {
+  padding: $spacer;
+}
+
+.padding-top {
+  padding-top: $spacer;
+}
+
+.padding-left {
+  padding-left: $spacer;
+}
+
+.padding-bottom {
+  padding-left: $spacer;
+}
+
+.padding-right {
+  padding-right: $spacer;
 }

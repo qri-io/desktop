@@ -4,6 +4,9 @@
 // Textual form controls
 //
 
+// Marking .form-control for deprecation
+// however, there are alot of useful styling tricks in here
+// leaving in for now until the app matures past needing to reference these tricks
 .form-control {
   display: block;
   width: 100%;
@@ -455,16 +458,36 @@ select.form-control-lg {
 }
 
 // custom input styles
-.text-input {
+.input {
   display: inline-block;
   border: $border-color solid 1px;
   width: 100%;
   padding: 7px;
   border-radius: 5px;
   margin-top: 10px;
+  background-image: none;
+  background: $white;
+  background-clip: padding-box;
 }
 
-.text-input:active, .text-input:focus {
+.input:active, .input:focus {
   background: $primary-light;
   outline: none;
+}
+
+select.input {
+  &:not([size]):not([multiple]) {
+    height: $input-height;
+  }
+
+  &:focus::-ms-value {
+    // Suppress the nested default white text on blue background highlight given to
+    // the selected option text when the (still closed) <select> receives focus
+    // in IE and (under certain conditions) Edge, as it looks bad and cannot be made to
+    // match the appearance of the native widget.
+    // See https://github.com/twbs/bootstrap/issues/19398.
+    color: $input-color;
+    background-color: $input-bg;
+    outline: none;
+  }
 }
