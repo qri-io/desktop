@@ -22,29 +22,46 @@ $hover-highlight-color: #F6F8FA;
   }
 
   .header-column {
-    display: inline-block;
     height: 100%;
     border-right: 1px solid #484d65;
-    padding: 8px 28px 0 9px;
-    display: flex;
+    padding: 0 9px;
+    display: inline-flex;
     flex-direction: row;
+    align-items: center;
+    min-width: 164px;
 
-    img {
+    .header-column-icon {
       flex: 0 0 32px;
       height: 32px;
       width: 32px;
+      margin-right:10px;
+
+      .icon-inline {
+        font-size: 1.2rem;
+        position: relative;
+        top: 5px;
+        left: 7px;
+      }
     }
 
-    .text {
+    .header-column-text {
       flex: 1;
       flex-grow: 1;
       overflow-x: hidden;
+
+      .label {
+        font-size: 0.75rem;
+        font-weight: 300;
+        line-height: 0.8rem;
+      }
 
       .name {
         white-space: nowrap;
         text-overflow: ellipsis;
         display: block;
         overflow: hidden;
+        font-weight: 600;
+        line-height: 1.5rem;
       }
     }
 
@@ -107,22 +124,7 @@ $hover-highlight-color: #F6F8FA;
     width: 250px;
     position: relative;
     z-index:10;
-    display:flex;
-
-    img {
-      margin-right:10px;
-    }
-
-    .label {
-      font-size: 0.75rem;
-      font-weight: 300;
-      line-height: 0.8rem;
-    }
-
-    .name {
-      font-weight: 600;
-      line-height: 1.5rem;
-    }
+    display: inline-flex;
 
     .arrow {
       width: 0px;

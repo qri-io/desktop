@@ -102,6 +102,7 @@ export interface CommitDetail {
 }
 
 export interface WorkingDataset extends CommitDetail {
+  linkpath: string | null
   history: {
     pageInfo: PageInfo
     value: Commit[]
