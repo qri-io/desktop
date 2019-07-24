@@ -1,4 +1,5 @@
 import * as React from 'react'
+import { remote } from 'electron'
 import { CSSTransition } from 'react-transition-group'
 import Modal, { ModalProps } from './Modal'
 import TextInput from '../form/TextInput'
@@ -6,6 +7,7 @@ import SelectInput from '../form/SelectInput'
 import Error from './Error'
 import Buttons from './Buttons'
 import Tabs from './Tabs'
+import ButtonInput from '../form/ButtonInput'
 
 import { ISelectOption } from '../../models/forms'
 
@@ -16,35 +18,88 @@ const formatOptions: ISelectOption[] = [
   { name: 'cbor', value: 'cbor' }
 ]
 
+enum TabTypes {
+  NewBody = 'Create new datafile',
+  ExistingBody = 'Use existing file',
+}
+
 const CreateDataset: React.FunctionComponent<ModalProps> = ({ onDismissed, onSubmit }) => {
   const [datasetName, setDatasetName] = React.useState('')
   const [path, setPath] = React.useState('')
   const [bodyFormat, setBodyFormat] = React.useState(formatOptions[0].value)
   const [bodyPath, setBodyPath] = React.useState('')
-  const [activeTab, setActiveTab] = React.useState('Create new datafile')
+  const [activeTab, setActiveTab] = React.useState(TabTypes.NewBody)
   const [dismissable, setDismissable] = React.useState(true)
   const [buttonDisabled, setButtonDisabled] = React.useState(true)
+  const [alreadyDatasetError, setAlreadyDatasetError] = React.useState('')
+
+  // should come from props
   const [error, setError] = React.useState('')
   const [loading, setLoading] = React.useState(false)
 
-  console.log(setDatasetName)
-  console.log(setPath)
-  console.log(setBodyPath)
+  // should come from props/actions that has us check if the directory already contains a qri dataset
+  const isQriDataset = (path: string) => !!path
+
   // call this whenever we need to check if the button should be disabled
-  const toggleButton = (activeTab: string) => {
+  const toggleButton = (activeTab: TabTypes) => {
     if (!(datasetName && path)) {
       setButtonDisabled(true)
       return
     }
-    if ((activeTab === 'Use existing file' && bodyPath === '') ||
-        (activeTab === 'Create new datafile' && bodyFormat === '')) {
+    if ((activeTab === TabTypes.ExistingBody && bodyPath === '') ||
+        (activeTab === TabTypes.NewBody && bodyFormat === '')) {
       setButtonDisabled(true)
       return
     }
     setButtonDisabled(false)
   }
 
-  const handleSetActiveTab = (activeTab: string) => {
+  const showDirectoryPicker = () => {
+    const window = remote.getCurrentWindow()
+    const directory: string[] | undefined = remote.dialog.showOpenDialog(window, {
+      properties: ['createDirectory', 'openDirectory']
+    })
+
+    if (!directory) {
+      return
+    }
+
+    const path = directory[0]
+
+    setPath(path)
+    const isDataset = isQriDataset(path)
+    if (isDataset) {
+      setAlreadyDatasetError('A dataset already exists in this directory.')
+      setButtonDisabled(true)
+    }
+  }
+
+  const showFilePicker = () => {
+    const window = remote.getCurrentWindow()
+    const directory: string[] | undefined = remote.dialog.showOpenDialog(window, {
+      properties: ['createDirectory', 'openFile'],
+      filters: [{ name: 'Data', extensions: ['csv', 'json', 'xlsx', 'cbor'] }]
+    })
+
+    if (!directory) {
+      return
+    }
+
+    const path = directory[0]
+
+    setBodyPath(path)
+  }
+
+  const handlePickerDialog = (showFunc: () => void) => {
+    new Promise(resolve => {
+      setDismissable(false)
+      resolve()
+    })
+      .then(() => showFunc())
+      .then(() => setDismissable(true))
+  }
+
+  const handleSetActiveTab = (activeTab: TabTypes) => {
     setActiveTab(activeTab)
     toggleButton(activeTab)
     setError('')
@@ -61,14 +116,18 @@ const CreateDataset: React.FunctionComponent<ModalProps> = ({ onDismissed, onSub
           onChange={handleChanges}
           maxLength={300}
         />
-        <TextInput
-          name='path'
-          label='Local Path:'
-          type=''
-          value={path}
-          onChange={handleChanges}
-          maxLength={300}
-        />
+        <div className='flex-space-between'>
+          <TextInput
+            name='path'
+            label='Local Path:'
+            type=''
+            value={path}
+            onChange={handleChanges}
+            maxLength={600}
+            errorText={alreadyDatasetError}
+          />
+          <div className='margin-left'><ButtonInput onClick={() => handlePickerDialog(showDirectoryPicker)} >Choose...</ButtonInput></div>
+        </div>
       </div>
     )
   }
@@ -78,19 +137,22 @@ const CreateDataset: React.FunctionComponent<ModalProps> = ({ onDismissed, onSub
       return
     }
     if (name === 'datasetName') setDatasetName(value)
-    if (name === 'path') setPath(value)
+    if (name === 'path') {
+      setPath(value)
+      setAlreadyDatasetError('')
+    }
     if (name === 'format') setBodyFormat(value)
     if (name === 'bodyPath') setBodyPath(value)
     toggleButton(activeTab)
   }
 
   const renderTabs = () => {
-    return <Tabs tabs={['Create new datafile', 'Use existing file']} active={activeTab} onClick={handleSetActiveTab}/>
+    return <Tabs tabs={[TabTypes.NewBody, TabTypes.ExistingBody]} active={activeTab} onClick={handleSetActiveTab}/>
   }
 
   const renderCreateNewBody = () =>
     <CSSTransition
-      in={ activeTab === 'Create new datafile' }
+      in={ activeTab === TabTypes.NewBody }
       classNames="fade"
       component="div"
       timeout={300}
@@ -109,33 +171,34 @@ const CreateDataset: React.FunctionComponent<ModalProps> = ({ onDismissed, onSub
 
   const renderUseExistingBody = () =>
     <CSSTransition
-      in={ activeTab === 'Use existing file' }
+      in={ activeTab === TabTypes.ExistingBody }
       classNames="fade"
       component="div"
       timeout={300}
       unmountOnExit
     >
-      <div className='content'>
+      <div className='content flex-space-between'>
         <TextInput
           name='bodyPath'
           label='Path to datafile:'
           type=''
           value={bodyPath}
           onChange={handleChanges}
-          maxLength={300}
+          maxLength={600}
         />
+        <div className='margin-left'><ButtonInput onClick={() => handlePickerDialog(showFilePicker)} >Choose...</ButtonInput></div>
       </div>
     </CSSTransition>
 
   const handleSubmit = () => {
-    setDismissable(true)
+    setDismissable(false)
     setLoading(true)
     // should fire off action and catch error response
     // if success, fetchDatatsets
     const handleResponse = () => {
       if (datasetName === 'error' || path === 'error' || bodyPath === 'error') {
         setError('could not find dataset!')
-        setDismissable(false)
+        setDismissable(true)
         setLoading(false)
         return
       }
@@ -156,12 +219,13 @@ const CreateDataset: React.FunctionComponent<ModalProps> = ({ onDismissed, onSub
       id="CreateDataset"
       title={'Create Dataset'}
       onDismissed={onDismissed}
-      onSubmit={handleSubmit}
+      onSubmit={() => {}}
       dismissable={dismissable}
       setDismissable={setDismissable}
     >
       <div>
         {renderCreateDataset()}
+        <hr />
         {renderTabs()}
         <div id='create-dataset-content-wrap' className='content-wrap'>
           {renderCreateNewBody()}
