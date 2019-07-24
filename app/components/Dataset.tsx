@@ -134,7 +134,7 @@ export default class Dataset extends React.Component<DatasetProps> {
           <div
             className={classNames('current-dataset', 'header-column', { 'expanded': showDatasetList })}
             onClick={toggleDatasetList}
-            style={{ width: datasetSidebarWidth }}
+            style={{ width: `${datasetSidebarWidth}px` }}
           >
             <img className='app-loading-blob' src={logo} />
             <div className='text'>
@@ -177,7 +177,7 @@ export default class Dataset extends React.Component<DatasetProps> {
           showDatasetList && (
             <div
               className='dataset-list'
-              style={{ width: datasetSidebarWidth }}
+              style={{ width: `${datasetSidebarWidth}px` }}
             >
               <DatasetListContainer />
             </div>
