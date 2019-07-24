@@ -72,13 +72,9 @@ export function fetchWorkingDataset (): ApiActionThunk {
         endpoint: 'dataset',
         method: 'GET',
         params: {
-          // TODO (b5) - these 'default' values are just placeholders for checking
-          // the api call when we have no proper default state. should fix
-          peername: selections.peername || 'me',
-          name: selections.name || 'world_bank_population'
+          peername: selections.peername,
+          name: selections.name
         },
-        // TODO (b5): confirm this works, if so we may want to remove this
-        // map func entirely
         map: (data: Record<string, string>): Dataset => {
           return data as Dataset
         }
@@ -100,8 +96,8 @@ export function fetchCommitDetail (): ApiActionThunk {
         endpoint: 'dataset',
         method: 'GET',
         params: {
-          peername: selections.peername || 'me',
-          name: selections.name || 'world_bank_population',
+          peername: selections.peername,
+          name: selections.name,
           path: commit
         },
         map: (data: Record<string, string>): Dataset => {
@@ -126,10 +122,8 @@ export function fetchWorkingHistory (): ApiActionThunk {
         endpoint: 'history',
         method: 'GET',
         params: {
-          // TODO (b5) - these 'default' values are just placeholders for checking
-          // the api call when we have no proper default state. should fix
-          peername: selections.peername || 'me',
-          name: selections.name || 'world_bank_population'
+          peername: selections.peername,
+          name: selections.name
         },
         map: (data: any[]): Commit[] => data.map((ref): Commit => {
           const { author, message, timestamp, title } = ref.dataset.commit
@@ -157,10 +151,8 @@ export function fetchWorkingStatus (): ApiActionThunk {
         endpoint: 'status',
         method: 'GET',
         params: {
-          // TODO (b5) - these 'default' values are just placeholders for checking
-          // the api call when we have no proper default state. should fix
-          peername: selections.peername || 'me',
-          name: selections.name || 'world_bank_population'
+          peername: selections.peername,
+          name: selections.name
         },
         map: (data: Array<Record<string, string>>): ComponentStatus[] => {
           return data.map((d) => {
@@ -193,8 +185,6 @@ export function fetchBody (): ApiActionThunk {
           name,
           path
         },
-        // TODO (b5): confirm this works, if so we may want to remove this
-        // map func entirely
         map: (data: Record<string, string>): Dataset => {
           return data as Dataset
         }
