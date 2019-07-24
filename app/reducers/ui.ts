@@ -1,14 +1,24 @@
-import { ui } from './initalState'
 import { AnyAction } from 'redux'
+import store from '../utils/localStore'
 
 export const UI_TOGGLE_DATASET_LIST = 'UI_TOGGLE_DATASET_LIST'
 export const UI_SET_SIDEBAR_WIDTH = 'UI_SET_SIDEBAR_WIDTH'
 export const UI_ACCEPT_TOS = 'UI_ACCEPT_TOS'
 export const UI_SET_PEERNAME = 'UI_SET_PEERNAME'
 
-const initialState = ui
+export const defaultSidebarWidth = 250
 
-export const defaultSidebarWidth = ui.datasetSidebarWidth
+const initialState = {
+  apiConnection: 1,
+  showDatasetList: false,
+  errorMessage: null,
+  message: null,
+  hasAcceptedTOS: true,
+  hasSetPeername: true,
+  showDiff: false,
+  datasetSidebarWidth: store().getItem('datasetSidebarWidth') || defaultSidebarWidth,
+  commitSidebarWidth: store().getItem('commitSidebarWidth') || defaultSidebarWidth
+}
 
 export default (state = initialState, action: AnyAction) => {
   switch (action.type) {
@@ -20,8 +30,10 @@ export default (state = initialState, action: AnyAction) => {
       const { type, sidebarWidth } = action.payload
       let newState
       if (type === 'dataset') {
+        store().setItem('datasetSidebarWidth', sidebarWidth)
         newState = { datasetSidebarWidth: sidebarWidth }
       } else {
+        store().setItem('commitSidebarWidth', sidebarWidth)
         newState = { commitSidebarWidth: sidebarWidth }
       }
       return Object.assign({}, state, newState)
