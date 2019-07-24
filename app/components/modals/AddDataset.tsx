@@ -6,7 +6,13 @@ import Error from './Error'
 import Buttons from './Buttons'
 import Tabs from './Tabs'
 
-const AddByName: React.FunctionComponent<any> = ({ peername, datasetName, onChange }) => {
+interface AddByNameProps {
+  peername: string
+  datasetName: string
+  onChange: (name: string, value: any, e: any) => void
+}
+
+const AddByName: React.FunctionComponent<AddByNameProps> = ({ peername, datasetName, onChange }) => {
   return (
     <div className='content'>
       <p>Add a dataset that already exists on Qri <br/>using the peername and dataset name.</p>
@@ -30,7 +36,12 @@ const AddByName: React.FunctionComponent<any> = ({ peername, datasetName, onChan
   )
 }
 
-const AddByUrl: React.FunctionComponent<any> = ({ url, onChange }) => {
+interface AddByUrl {
+  url: string
+  onChange: (name: string, value: any, e: any) => void
+}
+
+const AddByUrl: React.FunctionComponent<AddByUrl> = ({ url, onChange }) => {
   return (
     <div className='content'>
       <p>Add a dataset that already exists on Qri <br/> using a url.</p>
@@ -46,11 +57,22 @@ const AddByUrl: React.FunctionComponent<any> = ({ url, onChange }) => {
   )
 }
 
+enum TabTypes {
+  ByName = 'By Name',
+  ByUrl = 'By Url',
+}
+
 const AddDataset: React.FunctionComponent<ModalProps> = ({ onDismissed, onSubmit }) => {
   const [peername, setPeername] = React.useState('')
   const [datasetName, setDatasetName] = React.useState('')
   const [url, setUrl] = React.useState('')
-  const [activeTab, setActiveTab] = React.useState('By Name')
+  const [activeTab, setActiveTab] = React.useState(TabTypes.ByName)
+  const [dismissable, setDismissable] = React.useState(true)
+  const [buttonDisabled, setButtonDisabled] = React.useState(true)
+
+  // should come from props
+  const [error, setError] = React.useState('')
+  const [loading, setLoading] = React.useState(false)
 
   const handleChanges = (name: string, value: any) => {
     if (value[value.length - 1] === ' ') {
@@ -62,15 +84,15 @@ const AddDataset: React.FunctionComponent<ModalProps> = ({ onDismissed, onSubmit
     toggleButton(activeTab)
   }
 
-  const toggleButton = (activeTab: string) => {
-    if (activeTab === 'By Name') {
+  const toggleButton = (activeTab: TabTypes) => {
+    if (activeTab === TabTypes.ByName) {
       if (peername && datasetName) {
         setButtonDisabled(false)
       } else {
         setButtonDisabled(true)
       }
     }
-    if (activeTab === 'By Url') {
+    if (activeTab === TabTypes.ByUrl) {
       if (url) {
         setButtonDisabled(false)
       } else {
@@ -78,12 +100,6 @@ const AddDataset: React.FunctionComponent<ModalProps> = ({ onDismissed, onSubmit
       }
     }
   }
-
-  // should be from props
-  const [error, setError] = React.useState('')
-  const [dismissable, setDismissable] = React.useState(true)
-  const [buttonDisabled, setButtonDisabled] = React.useState(true)
-  const [loading, setLoading] = React.useState(false)
 
   const handleSetDismissable = (dismissable: boolean) => {
     console.log(dismissable)
@@ -117,7 +133,7 @@ const AddDataset: React.FunctionComponent<ModalProps> = ({ onDismissed, onSubmit
   const renderAddByName = () => {
     return (
       <CSSTransition
-        in={ activeTab === 'By Name' }
+        in={ activeTab === TabTypes.ByName }
         classNames="fade"
         component="div"
         timeout={300}
@@ -131,7 +147,7 @@ const AddDataset: React.FunctionComponent<ModalProps> = ({ onDismissed, onSubmit
   const renderAddByUrl = () => {
     return (
       <CSSTransition
-        in={ activeTab === 'By Url' }
+        in={ activeTab === TabTypes.ByUrl }
         classNames="fade"
         component="div"
         timeout={300}
@@ -142,7 +158,7 @@ const AddDataset: React.FunctionComponent<ModalProps> = ({ onDismissed, onSubmit
     )
   }
 
-  const handleSetActiveTab = (activeTab: string) => {
+  const handleSetActiveTab = (activeTab: TabTypes) => {
     toggleButton(activeTab)
     setActiveTab(activeTab)
     setError('')
@@ -157,7 +173,7 @@ const AddDataset: React.FunctionComponent<ModalProps> = ({ onDismissed, onSubmit
       dismissable={dismissable}
       setDismissable={setDismissable}
     >
-      <Tabs tabs={['By Name', 'By Url']} active={activeTab} onClick={handleSetActiveTab} />
+      <Tabs tabs={[TabTypes.ByName, TabTypes.ByUrl]} active={activeTab} onClick={handleSetActiveTab} id='add-dataset-tab'/>
       <div className='content-wrap'>
         {renderAddByName()}
         {renderAddByUrl()}

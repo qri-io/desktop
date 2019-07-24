@@ -1,13 +1,28 @@
 import * as React from 'react'
 import classNames from 'classnames'
 
-const Tab: React.FunctionComponent<any> = ({ name, active, first, last, onClick }) => {
+interface TabProps {
+  name: string
+  active: boolean
+  first: boolean
+  last: boolean
+  onClick: () => void
+}
+
+const Tab: React.FunctionComponent<TabProps> = ({ name, active, first, last, onClick }) => {
   const tabClassNames = classNames('tab', { active, first, last })
   return <div className={tabClassNames} onClick={onClick}>{name}</div>
 }
 
-const Tabs: React.FunctionComponent<any> = ({ tabs, active, onClick }) =>
-  <div className='tabs'>
+interface TabsProps {
+  tabs: string[]
+  active: string
+  onClick: (activeTab: string) => void
+  id?: string
+}
+
+const Tabs: React.FunctionComponent<TabsProps> = ({ tabs, active, onClick, id }) =>
+  <div className='tabs' id={id} >
     {
       tabs.map((name: string, index: number) => {
         let first = false

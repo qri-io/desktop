@@ -13,7 +13,7 @@ interface ButtonProps {
   // danger
   // muted
   color: 'primary' | 'dark' | 'danger' | 'muted' // the color of the button, default is 'primary'
-  onClick?: () => void // function that will trigger when the button is clicked
+  onClick?: () => void | Promise<void> // function that will trigger when the button is clicked
   full?: boolean // when full is true, the button has width 100%
   loading?: boolean // when true, the button is disabled and the loading spinner replaces the text
   download?: string // the href of what you want to make available for download. Requires download and downloadName to function properly
