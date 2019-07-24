@@ -1,4 +1,5 @@
 import * as React from 'react'
+import classNames from 'classnames'
 import { Action } from 'redux'
 import { ApiAction } from '../store/api'
 import { Resizable } from '../components/resizable'
@@ -97,9 +98,6 @@ export default class Dataset extends React.Component<DatasetProps> {
       setSelectedListItem
     } = this.props
 
-    // class to add to header for alternate styling when dataset list is open
-    const expandedClass = showDatasetList ? 'expanded' : ''
-
     // mainContent will either be a loading spinner, or content based on the selected
     // sidebar list items
     let mainContent
@@ -134,7 +132,7 @@ export default class Dataset extends React.Component<DatasetProps> {
       <div id='dataset-container'>
         <div className='header'>
           <div
-            className={'current-dataset header-column ' + expandedClass}
+            className={classNames('current-dataset', 'header-column', { 'expanded': showDatasetList })}
             onClick={toggleDatasetList}
             style={{ width: datasetSidebarWidth }}
           >

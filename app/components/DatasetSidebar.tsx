@@ -1,5 +1,6 @@
 import * as React from 'react'
 import { Action } from 'redux'
+import classNames from 'classnames'
 import moment from 'moment'
 
 import { WorkingDataset } from '../models/store'
@@ -25,11 +26,12 @@ export const FileRow: React.FunctionComponent<FileRowProps> = (props) => {
       statusColor = 'transparent'
   }
 
-  const selected = props.selected ? 'selected' : ''
-  const disabled = props.disabled ? 'disabled' : ''
   return (
     <div
-      className={`sidebar-list-item sidebar-list-item-text ${selected} ${disabled}`}
+      className={classNames('sidebar-list-item', 'sidebar-list-item-text', {
+        'selected': props.selected,
+        'disabled': props.disabled
+      })}
       onClick={() => {
         if (props.onClick && props.selectionType && props.name) {
           props.onClick(props.selectionType, props.name)
