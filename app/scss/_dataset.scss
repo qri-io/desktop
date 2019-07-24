@@ -9,7 +9,6 @@ $hover-highlight-color: #F6F8FA;
 #dataset-container {
   display: flex;
   flex-direction: column;
-  flex-grow: 1;
   height: 100%;
 
   .header {
@@ -26,7 +25,26 @@ $hover-highlight-color: #F6F8FA;
     display: inline-block;
     height: 100%;
     border-right: 1px solid #484d65;
-    padding: 10px;
+    padding: 9px 28px 9px 9px;
+    display: flex;
+    flex-direction: row;
+
+    img {
+      flex: 0 0 32px;
+    }
+
+    .text {
+      flex: 1;
+      flex-grow: 1;
+      overflow-x: hidden;
+
+      .name {
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        display: block;
+        overflow: hidden;
+      }
+    }
 
     &:hover {
       background-color: #416588;
@@ -44,7 +62,8 @@ $hover-highlight-color: #F6F8FA;
   .columns {
     display: flex;
     flex-direction: row;
-    flex: 1;
+    flex-grow: 1;
+    overflow-y: auto;
 
     #sidebar {
       position: relative;

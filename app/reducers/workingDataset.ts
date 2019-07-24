@@ -24,6 +24,9 @@ const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction
   switch (action.type) {
     case DATASET_REQ:
       return Object.assign({}, state, {
+        value: Object.assign({}, state.value, {
+          body: undefined
+        }),
         loading: true
       })
     case DATASET_SUCC:
