@@ -1,5 +1,6 @@
 import * as React from 'react'
 import { Action } from 'redux'
+import classNames from 'classnames'
 import { MyDatasets, WorkingDataset } from '../models/store'
 
 interface DatasetListProps {
@@ -17,6 +18,7 @@ export default class DatasetList extends React.Component<DatasetListProps> {
   }
 
   render () {
+    const { workingDataset } = this.props
     const { setWorkingDataset } = this.props
     const { filter, value: datasets } = this.props.myDatasets
 
@@ -37,7 +39,9 @@ export default class DatasetList extends React.Component<DatasetListProps> {
       ? filteredDatasets.map(({ peername, name, path, title }) => (
         <div
           key={path}
-          className='sidebar-list-item sidebar-list-item-text'
+          className={classNames('sidebar-list-item', 'sidebar-list-item-text', {
+            'selected': (peername === workingDataset.peername) && (name === workingDataset.name)
+          })}
           onClick={() => setWorkingDataset(peername, name)}
         >
           <div className='text-column'>
