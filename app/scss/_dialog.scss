@@ -26,12 +26,12 @@ dialog {
   .dialog-header {
     height: 50px;
     border-bottom: solid 1px $border-color;
-
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    padding: $spacer;
+    padding: $spacer $spacer $spacer $spacer;
+    margin: 0 $spacer 0 $spacer * .5;
 
     h1 {
       font-weight: $font-weight-bold;
@@ -48,7 +48,7 @@ dialog {
       height: 18px;
       width: 18px;
 
-      margin: $spacer * -3 $spacer * -1 0 auto;
+      margin: $spacer * -3 $spacer * -2 0 auto;
       padding: 0;
       background: transparent;
 
@@ -77,9 +77,8 @@ dialog {
   }
 
   // when using the /modal/Tabs component & CSSTransition
-  // wrap all the views of content
-  // .content-wrap class
-  // if you want a different min-height, use an id
+  // wrap all the views of content in a `.content-wrap` class
+  // (if you want a different min-height, use an id)
   // then wrap each different view with the .content class
   // set the CSSTransition `in` param to be true when 
   // the correct tab is active
@@ -105,12 +104,15 @@ dialog {
     justify-content: flex-start;
     align-items: center;
     border-bottom: solid 1px $border-color;
-    margin: $spacer * -1 0 $spacer $spacer * -.5;
+    margin: $spacer * -1 0 $spacer 0;
 
     .tab {
+      -moz-transition: all .2s ease-in;
+      -o-transition: all .2s ease-in;
+      -webkit-transition: all .2s ease-in;
+      transition: all .2s ease-in;
       padding: $spacer * .5 $spacer;
       border-right: solid 1px $border-color;
-      // border-bottom: solid 1px $border-color;
       color: $primary-muted;
       cursor: pointer;
       font-weight: $font-weight-medium;
@@ -122,6 +124,10 @@ dialog {
     }
 
     .active {
+      -moz-transition: all .2s ease-in;
+      -o-transition: all .2s ease-in;
+      -webkit-transition: all .2s ease-in;
+      transition: all .2s ease-in;
       border-bottom: none;
       color: $primary;
       cursor: auto;
@@ -129,10 +135,13 @@ dialog {
     }
   }
 
+  #add-dataset-tab {
+    margin: $spacer * -1 0 $spacer $spacer * -.5;
+  }
+
   .error {
     color: $error;
     height: $spacer;
-    margin: 0 1rem 1rem 0;
   }
   
   .buttons {
