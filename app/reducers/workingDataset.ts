@@ -65,12 +65,6 @@ const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction
           return obj
         }, {})
 
-      // TODO (chriswhong) status endpoint does not include body, stub it in here for now
-      const notLinked = action.payload.data[0].filepath === 'repo'
-      statusObject.body = {
-        filepath: notLinked ? '' : 'somepath/body.csv',
-        status: 'unmodified'
-      }
       return Object.assign({}, state, {
         status: statusObject
       })
