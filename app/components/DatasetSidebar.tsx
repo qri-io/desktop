@@ -192,6 +192,17 @@ const DatasetSidebar: React.FunctionComponent<DatasetSidebarProps> = (props: Dat
           )
         }
       </div>
+      <form id='save-form'>
+        <div className='title'>
+          <input type='text' name='title' placeholder='Commit message' />
+        </div>
+        <div className='message'>
+          <textarea name='message' placeholder='Detailed description' />
+        </div>
+        <div className='submit'>
+          <input className='submit'type="submit" value="Submit" />
+        </div>
+      </form>
     </div>
   )
 }
