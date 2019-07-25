@@ -71,7 +71,7 @@ export function fetchWorkingDataset (): ApiActionThunk {
       [CALL_API]: {
         endpoint: 'dataset',
         method: 'GET',
-        params: {
+        segments: {
           peername: selections.peername,
           name: selections.name
         },
@@ -95,7 +95,7 @@ export function fetchCommitDetail (): ApiActionThunk {
       [CALL_API]: {
         endpoint: 'dataset',
         method: 'GET',
-        params: {
+        segments: {
           peername: selections.peername,
           name: selections.name,
           path: commit
@@ -121,7 +121,7 @@ export function fetchWorkingHistory (): ApiActionThunk {
       [CALL_API]: {
         endpoint: 'history',
         method: 'GET',
-        params: {
+        segments: {
           peername: selections.peername,
           name: selections.name
         },
@@ -150,7 +150,7 @@ export function fetchWorkingStatus (): ApiActionThunk {
       [CALL_API]: {
         endpoint: 'status',
         method: 'GET',
-        params: {
+        segments: {
           peername: selections.peername,
           name: selections.name
         },
@@ -180,13 +180,40 @@ export function fetchBody (): ApiActionThunk {
       [CALL_API]: {
         endpoint: 'body',
         method: 'GET',
-        params: {
+        segments: {
           peername,
           name,
           path
         },
         map: (data: Record<string, string>): Dataset => {
           return data as Dataset
+        }
+      }
+    }
+
+    return dispatch(action)
+  }
+}
+
+export function saveWorkingDataset (title: string, message: string): ApiActionThunk {
+  return async (dispatch, getState) => {
+    const { workingDataset } = getState()
+    const { peername, name } = workingDataset
+    const action = {
+      type: 'save',
+      [CALL_API]: {
+        endpoint: 'save',
+        method: 'POST',
+        segments: {
+          peername,
+          name
+        },
+        params: {
+          fsi: true
+        },
+        body: {
+          title,
+          message
         }
       }
     }

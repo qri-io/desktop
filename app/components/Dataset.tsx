@@ -129,7 +129,8 @@ export default class Dataset extends React.Component<DatasetProps> {
       }
     }
 
-    const linkButton = workingDataset.linkpath ? (
+    const isLinked = !!workingDataset.linkpath
+    const linkButton = isLinked ? (
       <div
         className='header-column'
         onClick={() => { shell.openItem(String(workingDataset.linkpath)) }}
@@ -184,6 +185,7 @@ export default class Dataset extends React.Component<DatasetProps> {
             maximumWidth={495}
           >
             <DatasetSidebar
+              isLinked={isLinked}
               activeTab={activeTab}
               selectedComponent={selectedComponent}
               selectedCommit={selectedCommit}

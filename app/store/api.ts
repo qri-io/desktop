@@ -21,7 +21,11 @@ export interface ApiAction extends AnyAction {
     // method is the HTTP method used
     method: 'GET' | 'PUT' | 'POST' | 'DELETE'
     // params is a list of parameters used to construct the API request
-    params?: ApiQueryParams
+    segments?: ApiSegments
+    // query is an object of query parameters to be appended to the API call URL
+    query?: object
+    // body is the body for POST requests
+    body?: object|[]
     // map is a function
     // map defaults to the identity function
     map?: (data: object|[]) => any
@@ -33,14 +37,18 @@ const identityFunc = <T>(a: T): T => a
 
 // ApiQueryParams is an interface for all possible query parameters passed to
 // the API
-export interface ApiQueryParams {
+export interface ApiSegments {
   peername?: string
   name?: string
   peerID?: string
   path?: string
-
   page?: number
   pageSize?: number
+  fsi?: boolean
+}
+
+interface ApiParams {
+  [key: string]: string
 }
 
 // ApiActionThunk is the return value of an Api action.
@@ -81,8 +89,8 @@ export function apiActionTypes (endpoint: string): [string, string, string] {
 }
 
 // getJSON fetches json data from a url
-async function getJSON<T> (url: string): Promise<T> {
-  const res = await fetch(url)
+async function getJSON<T> (url: string, options: FetchOptions): Promise<T> {
+  const res = await fetch(url, options)
   if (res.status !== 200) {
     throw new Error(`Received non-200 status code: ${res.status}`)
   }
@@ -98,59 +106,79 @@ const endpointMap: Record<string, string> = {
   'dataset': '', // dataset endpoints are constructured through query param values
   'body': 'body', // dataset endpoints are constructured through query param values
   'history': 'history',
-  'status': 'dsstatus'
+  'status': 'dsstatus',
+  'save': 'save'
 }
 
-function apiUrl (endpoint: string, params?: ApiQueryParams): [string, string] {
+function apiUrl (endpoint: string, segments?: ApiSegments, params?: ApiParams): [string, string] {
   const path = endpointMap[endpoint]
   if (path === undefined) {
     return ['', `${endpoint} is not a valid api endpoint`]
   }
 
   let url = `http://localhost:2503/${path}`
-  if (!params) {
+  if (!segments) {
     return [url, '']
   }
 
-  if (params.peername) {
-    url += `/${params.peername}`
+  if (segments.peername) {
+    url += `/${segments.peername}`
   }
-  if (params.name) {
-    url += `/${params.name}`
+  if (segments.name) {
+    url += `/${segments.name}`
   }
-  if (params.peerID || params.path) {
+  if (segments.peerID || segments.path) {
     url += '/at'
   }
-  if (params.peerID) {
-    url += `/${params.peerID}`
+  if (segments.peerID) {
+    url += `/${segments.peerID}`
   }
-  if (params.path) {
-    url += params.path
+  if (segments.path) {
+    url += segments.path
   }
 
+  if (params) {
+    url += '?'
+    Object.keys(params).forEach((key) => {
+      url += `${key}=${params[key]}`
+    })
+  }
   return [url, '']
 }
 
+interface FetchOptions {
+  method: string
+  body?: string
+}
+
 // getAPIJSON constructs an API url & fetches a JSON response
-async function getAPIJSON<T> (endpoint: string, params?: ApiQueryParams): Promise<T> {
-  const [url, err] = apiUrl(endpoint, params)
+async function getAPIJSON<T> (
+  endpoint: string,
+  method: string,
+  segments?: ApiSegments,
+  params?: ApiParams,
+  body?: object|[]
+): Promise<T> {
+  const [url, err] = apiUrl(endpoint, segments, params)
   if (err) {
     throw err
   }
-  return getJSON(url)
+  const options: FetchOptions = { method }
+  if (body) options.body = JSON.stringify(body)
+  return getJSON(url, options)
 }
 
 // apiMiddleware manages requests to the qri JSON API
 export const apiMiddleware: Middleware = () => (next: Dispatch<AnyAction>) => async (action: any): Promise<any> => {
   if (action[CALL_API]) {
     let data: APIResponseEnvelope
-    let { endpoint = '', map = identityFunc, params } = action[CALL_API]
+    let { endpoint = '', method, map = identityFunc, segments, params, body } = action[CALL_API]
     const [REQ_TYPE, SUCC_TYPE, FAIL_TYPE] = apiActionTypes(action.type)
 
     next({ type: REQ_TYPE })
 
     try {
-      data = await getAPIJSON(endpoint, params)
+      data = await getAPIJSON(endpoint, method, segments, params, body)
     } catch (err) {
       return next({
         type: FAIL_TYPE,

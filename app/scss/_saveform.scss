@@ -2,7 +2,7 @@
 $sidebar-item-padding:  6px 10px;
 
 #save-form {
-  background-color: steelblue;
+  background-color: #ececec;
   height: 180px;
   display: flex;
   flex-direction: column;
@@ -29,5 +29,9 @@ $sidebar-item-padding:  6px 10px;
 
   .submit {
     padding: $sidebar-item-padding;
+
+    &.disabled {
+      color: #ccc
+    }
   }
 }
