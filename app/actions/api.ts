@@ -5,15 +5,16 @@ import { Action } from 'redux'
 
 import { setSelectedListItem } from './selections'
 
-// fetchMyDatasetsAndWorkbench attempts to fetch all details needed to intialize
-// the working dataset container
-export function fetchMyDatasetsAndWorkbench (): ApiActionThunk {
+// fetchMyDatasetsAndLinks fetches the user's dataset list and linked datasets
+// these two responses combined can indicate whether a given dataset is linked
+// these will be combined into a single call in the future
+export function fetchMyDatasetsAndLinks (): ApiActionThunk {
   return async (dispatch, getState) => {
     const whenOk = chainSuccess(dispatch, getState)
     let response: Action
 
     response = await fetchMyDatasets()(dispatch, getState)
-    response = await whenOk(fetchWorkingDatasetDetails())(response)
+    response = await whenOk(fetchMyLinks())(response)
 
     return response
   }
@@ -56,6 +57,21 @@ export function fetchMyDatasets (): ApiActionThunk {
             changed: false
           }))
         }
+      }
+    }
+
+    return dispatch(listAction)
+  }
+}
+
+// TODO remove, calls /fsilinks, which will be combined with /list
+export function fetchMyLinks (): ApiActionThunk {
+  return async (dispatch) => {
+    const listAction: ApiAction = {
+      type: 'links',
+      [CALL_API]: {
+        endpoint: 'fsilinks',
+        method: 'GET'
       }
     }
 
@@ -212,8 +228,10 @@ export function saveWorkingDataset (title: string, message: string): ApiActionTh
           fsi: true
         },
         body: {
-          title,
-          message
+          commit: {
+            title,
+            message
+          }
         }
       }
     }

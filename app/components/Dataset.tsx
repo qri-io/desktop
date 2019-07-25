@@ -33,7 +33,7 @@ interface DatasetProps {
   setFilter: (filter: string) => Action
   setSelectedListItem: (type: string, activeTab: string) => Action
   setWorkingDataset: (peername: string, name: string) => Action
-  fetchMyDatasets: () => Promise<ApiAction>
+  fetchMyDatasetsAndLinks: () => Promise<ApiAction>
   fetchWorkingDatasetDetails: () => Promise<ApiAction>
   fetchWorkingStatus: () => Promise<ApiAction>
 }
@@ -55,7 +55,7 @@ export default class Dataset extends React.Component<DatasetProps> {
 
   componentDidMount () {
     // fetch datasets list TODO move this up to App
-    this.props.fetchMyDatasets()
+    this.props.fetchMyDatasetsAndLinks()
     // poll for status
     setInterval(() => { this.props.fetchWorkingStatus() }, 1000)
   }

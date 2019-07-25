@@ -107,7 +107,8 @@ const endpointMap: Record<string, string> = {
   'body': 'body', // dataset endpoints are constructured through query param values
   'history': 'history',
   'status': 'dsstatus',
-  'save': 'save'
+  'save': 'fsi/save',
+  'fsilinks': 'fsilinks'
 }
 
 function apiUrl (endpoint: string, segments?: ApiSegments, params?: ApiParams): [string, string] {
