@@ -2,18 +2,26 @@ import { connect } from 'react-redux'
 import App from '../components/App'
 import Store from '../models/store'
 
-import { fetchSession, fetchMyDatasets } from '../actions/api'
+import { fetchSession, fetchMyDatasetsAndLinks } from '../actions/api'
+import { acceptTOS, setPeername } from '../actions/ui'
 
 const AppContainer = connect(
   (state: Store) => {
     const { ui, myDatasets, session } = state
-    const loading = myDatasets.pageInfo.isFetching
-    const hasDatasets = myDatasets.value.length === 0 && myDatasets.pageInfo.fetchedAll
-    const sessionID = session.id
+    const loading = myDatasets.pageInfo.isFetching || session.id === ''
+    const hasDatasets = myDatasets.value.length !== 0
+    const { id: sessionID, peername } = session
     const { hasAcceptedTOS, hasSetPeername } = ui
-    return { hasAcceptedTOS, hasSetPeername, hasDatasets, loading, sessionID }
+    return {
+      hasAcceptedTOS,
+      hasSetPeername,
+      hasDatasets,
+      loading,
+      sessionID,
+      peername
+    }
   },
-  { fetchSession, fetchMyDatasets }
+  { fetchSession, fetchMyDatasetsAndLinks, acceptTOS, setPeername }
 )(App)
 
 export default AppContainer

@@ -1,20 +1,24 @@
 import * as React from 'react'
-import { Redirect } from 'react-router'
 import { ApiAction } from '../store/api'
 import { CSSTransition } from 'react-transition-group'
 import CreateDataset from './modals/CreateDataset'
 import AddDataset from './modals/AddDataset'
 import NoDatasets from './NoDatasets'
+import Onboard from './Onboard'
 import { Modal, ModalType, NoModal } from '../models/modals'
 import AppLoading from './AppLoading'
+import { Action } from 'redux'
 
 interface AppProps {
   fetchSession: () => Promise<ApiAction>
-  fetchMyDatasets: () => Promise<ApiAction>
+  fetchMyDatasetsAndLinks: () => Promise<ApiAction>
+  acceptTOS: () => Action
+  setPeername: () => Action
   hasDatasets: boolean
   loading: boolean
   children: any
   sessionID: string
+  peername: string
   hasAcceptedTOS: boolean
   hasSetPeername: boolean
 }
@@ -29,7 +33,14 @@ export default class App extends React.Component<AppProps, AppState> {
 
   componentDidMount () {
     this.props.fetchSession()
-    this.props.fetchMyDatasets()
+    this.props.fetchMyDatasetsAndLinks()
+  }
+
+  static getDerivedStateFromProps (NextProps: AppProps, PrevState: AppState) {
+    if (PrevState.sessionID !== NextProps.sessionID) {
+      return { sessionID: NextProps.sessionID }
+    }
+    return null
   }
 
   private renderModal (): JSX.Element | null {
@@ -82,13 +93,24 @@ export default class App extends React.Component<AppProps, AppState> {
   }
 
   render () {
-    if (!this.props.hasAcceptedTOS || !this.props.hasSetPeername) {
-      return <Redirect to='/onboard' />
-    }
-    const { children } = this.props
+    const {
+      children,
+      hasSetPeername,
+      hasAcceptedTOS,
+      peername,
+      acceptTOS,
+      setPeername
+    } = this.props
     return (<div style={{ height: '100%' }}>
       {this.renderAppLoading()}
       {this.renderModal()}
+      <Onboard
+        peername={peername}
+        hasAcceptedTOS={hasAcceptedTOS}
+        hasSetPeername={hasSetPeername}
+        setPeername={setPeername}
+        acceptTOS={acceptTOS}
+      />
       {this.renderNoDatasets()}
       {children}
     </div>)
