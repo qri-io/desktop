@@ -37,8 +37,13 @@ const CreateDataset: React.FunctionComponent<ModalProps> = ({ onDismissed, onSub
   const [error, setError] = React.useState('')
   const [loading, setLoading] = React.useState(false)
 
+  React.useEffect(() => {
+    toggleButton(activeTab)
+    if (error !== '') setError('')
+  }, [path, bodyFormat, bodyPath, datasetName, activeTab])
+
   // should come from props/actions that has us check if the directory already contains a qri dataset
-  const isQriDataset = (path: string) => !!path
+  const isQriDataset = (path: string) => !path
 
   // call this whenever we need to check if the button should be disabled
   const toggleButton = (activeTab: TabTypes) => {
@@ -182,6 +187,8 @@ const CreateDataset: React.FunctionComponent<ModalProps> = ({ onDismissed, onSub
           name='bodyPath'
           label='Path to datafile:'
           type=''
+          helpText='data file can be csv, json, xlsx, or cbor'
+          showHelpText
           value={bodyPath}
           onChange={handleChanges}
           maxLength={600}
@@ -231,8 +238,8 @@ const CreateDataset: React.FunctionComponent<ModalProps> = ({ onDismissed, onSub
           {renderCreateNewBody()}
           {renderUseExistingBody()}
         </div>
+        <Error text={error} />
       </div>
-      <Error text={error} />
       <Buttons
         cancelText='cancel'
         onCancel={onDismissed}

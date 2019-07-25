@@ -15,7 +15,7 @@ interface AddByNameProps {
 const AddByName: React.FunctionComponent<AddByNameProps> = ({ peername, datasetName, onChange }) => {
   return (
     <div className='content'>
-      <p>Add a dataset that already exists on Qri <br/>using the peername and dataset name.</p>
+      <p>Add a dataset that already exists on Qri using the <strong>peername</strong> and <strong>dataset name</strong>.</p>
       <TextInput
         name='peername'
         label='Peername:'
@@ -44,7 +44,7 @@ interface AddByUrl {
 const AddByUrl: React.FunctionComponent<AddByUrl> = ({ url, onChange }) => {
   return (
     <div className='content'>
-      <p>Add a dataset that already exists on Qri <br/> using a url.</p>
+      <p>Add a dataset that already exists on Qri using a <strong>url</strong>.</p>
       <TextInput
         name='url'
         label='Url'
@@ -70,6 +70,11 @@ const AddDataset: React.FunctionComponent<ModalProps> = ({ onDismissed, onSubmit
   const [dismissable, setDismissable] = React.useState(true)
   const [buttonDisabled, setButtonDisabled] = React.useState(true)
 
+  React.useEffect(() => {
+    toggleButton(activeTab)
+    if (error !== '') setError('')
+  }, [url, peername, datasetName, activeTab])
+
   // should come from props
   const [error, setError] = React.useState('')
   const [loading, setLoading] = React.useState(false)
@@ -81,7 +86,6 @@ const AddDataset: React.FunctionComponent<ModalProps> = ({ onDismissed, onSubmit
     if (name === 'peername') setPeername(value)
     if (name === 'datasetName') setDatasetName(value)
     if (name === 'url') setUrl(value)
-    toggleButton(activeTab)
   }
 
   const toggleButton = (activeTab: TabTypes) => {
@@ -102,7 +106,6 @@ const AddDataset: React.FunctionComponent<ModalProps> = ({ onDismissed, onSubmit
   }
 
   const handleSetDismissable = (dismissable: boolean) => {
-    console.log(dismissable)
     setDismissable(dismissable)
   }
 
@@ -159,9 +162,7 @@ const AddDataset: React.FunctionComponent<ModalProps> = ({ onDismissed, onSubmit
   }
 
   const handleSetActiveTab = (activeTab: TabTypes) => {
-    toggleButton(activeTab)
     setActiveTab(activeTab)
-    setError('')
   }
 
   return (
@@ -175,10 +176,12 @@ const AddDataset: React.FunctionComponent<ModalProps> = ({ onDismissed, onSubmit
     >
       <Tabs tabs={[TabTypes.ByName, TabTypes.ByUrl]} active={activeTab} onClick={handleSetActiveTab} id='add-dataset-tab'/>
       <div className='content-wrap'>
-        {renderAddByName()}
-        {renderAddByUrl()}
+        <div>
+          {renderAddByName()}
+          {renderAddByUrl()}
+        </div>
+        <div id='error'><Error text={error} /></div>
       </div>
-      <Error text={error} />
       <Buttons
         cancelText='cancel'
         onCancel={onDismissed}

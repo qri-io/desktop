@@ -120,7 +120,6 @@ const Modal: React.FunctionComponent<ModalProps> = ({ title, dismissable = false
   }
 
   const onModalClick = (e: React.MouseEvent<HTMLElement>) => {
-    console.log(dismissable)
     if (dismissable === false) {
       return
     }

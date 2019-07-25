@@ -504,3 +504,7 @@ button.input {
     color: $primary;
   }
 }
+
+input#path, input#bodyPath {
+  min-width: 250px;
+}

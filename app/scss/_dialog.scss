@@ -14,11 +14,11 @@ dialog {
 
   z-index: $zindex-modal;
 
-  min-width: 400px;
+  min-width: 500px;
   max-width: 600px;
 
-  &::backgrop {
-    background-color: rgba(0, 0, 0, 0.7);
+  &::backdrop {
+    background-color: rgba(0, 0, 0, 0.1);
     opacity: 1;
     z-index: $zindex-modal;
   }
@@ -92,6 +92,11 @@ dialog {
       width: 100%;
       height: 100%;
       background: $appBackground;
+    }
+
+    #error {
+      bottom: 1rem;
+      position: absolute;
     }
   }
 

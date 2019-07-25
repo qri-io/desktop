@@ -42,6 +42,7 @@ const App: React.FunctionComponent<AppProps> = (props: AppProps) => {
         return null
     }
   }
+
   const renderNoDatasets = () => {
     return (
       <CSSTransition
