@@ -238,37 +238,6 @@ $hover-highlight-color: #F6F8FA;
     padding: 6px;
     background-color: $hover-highlight-color;
   }
-
-  #save-form {
-    background-color: steelblue;
-    height: 180px;
-    display: flex;
-    flex-direction: column;
-    padding: 6px 0;
-
-    input, textarea {
-      width: 100%;
-    }
-
-    textarea {
-      vertical-align: top;
-      resize: none;
-      height: 100%
-    }
-
-    .title {
-      padding: $sidebar-item-padding;
-    }
-
-    .message {
-      flex-grow: 1;
-      padding: $sidebar-item-padding;
-    }
-
-    .submit {
-      padding: $sidebar-item-padding;
-    }
-  }
 }
 
 ////////////////////////////

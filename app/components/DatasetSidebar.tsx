@@ -2,6 +2,7 @@ import * as React from 'react'
 import { Action } from 'redux'
 import classNames from 'classnames'
 import moment from 'moment'
+import SaveForm from './SaveForm'
 
 import { WorkingDataset } from '../models/store'
 
@@ -192,17 +193,7 @@ const DatasetSidebar: React.FunctionComponent<DatasetSidebarProps> = (props: Dat
           )
         }
       </div>
-      <form id='save-form'>
-        <div className='title'>
-          <input type='text' name='title' placeholder='Commit message' />
-        </div>
-        <div className='message'>
-          <textarea name='message' placeholder='Detailed description' />
-        </div>
-        <div className='submit'>
-          <input className='submit'type="submit" value="Submit" />
-        </div>
-      </form>
+      <SaveForm />
     </div>
   )
 }
