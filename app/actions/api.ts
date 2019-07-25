@@ -1,7 +1,7 @@
 import { CALL_API, ApiAction, ApiActionThunk, chainSuccess } from '../store/api'
 import { DatasetSummary, ComponentStatus, ComponentState } from '../models/store'
 import { Dataset, Commit } from '../models/dataset'
-// import { Session } from '../models/session'
+import { Session } from '../models/session'
 import { Action } from 'redux'
 
 import { setSelectedListItem } from './selections'
@@ -280,11 +280,15 @@ export function fetchSession (): ApiActionThunk {
     const action = {
       type: 'session',
       [CALL_API]: {
-        endpoint: 'me',
+        endpoint: 'session',
         method: 'GET',
-        map: (data: Record<string, string>): string => {
-          console.log(data)
-          return 'peernaaaame'
+        map: (data: Record<string, string>): Session => {
+          return {
+            peername: data.peername,
+            id: data.id,
+            created: data.created,
+            updated: data.updated
+          }
         }
       }
     }
