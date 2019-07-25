@@ -12,6 +12,7 @@ import { Action } from 'redux'
 interface AppProps {
   fetchSession: () => Promise<ApiAction>
   fetchMyDatasetsAndLinks: () => Promise<ApiAction>
+  addDataset: (peername: string, name: string) => Promise<ApiAction>
   acceptTOS: () => Action
   setPeername: () => Action
   hasDatasets: boolean
@@ -57,7 +58,7 @@ export default class App extends React.Component<AppProps, AppState> {
         )
       case ModalType.AddDataset:
         return (
-          <AddDataset onSubmit={() => this.setState({ currentModal: NoModal })} onDismissed={() => this.setState({ currentModal: NoModal })}/>
+          <AddDataset onSubmit={this.props.addDataset} onDismissed={() => this.setState({ currentModal: NoModal })}/>
         )
       default:
         return null

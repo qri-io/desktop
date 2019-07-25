@@ -1,6 +1,7 @@
 import * as React from 'react'
+import { ApiAction } from '../../store/api'
 import { CSSTransition } from 'react-transition-group'
-import Modal, { ModalProps } from './Modal'
+import Modal from './Modal'
 import TextInput from '../form/TextInput'
 import Error from './Error'
 import Buttons from './Buttons'
@@ -62,7 +63,12 @@ enum TabTypes {
   ByUrl = 'By Url',
 }
 
-const AddDataset: React.FunctionComponent<ModalProps> = ({ onDismissed, onSubmit }) => {
+interface AddDatasetProps {
+  onDismissed: () => void
+  onSubmit: (peername: string, name: string) => Promise<ApiAction>
+}
+
+const AddDataset: React.FunctionComponent<AddDatasetProps> = ({ onDismissed, onSubmit }) => {
   const [peername, setPeername] = React.useState('')
   const [datasetName, setDatasetName] = React.useState('')
   const [url, setUrl] = React.useState('')
@@ -114,23 +120,13 @@ const AddDataset: React.FunctionComponent<ModalProps> = ({ onDismissed, onSubmit
     setLoading(true)
     // should fire off action and catch error response
     // if success, fetchDatatsets
-    const handleResponse = () => {
-      if (peername === 'error' || datasetName === 'error' || url === 'error') {
-        setError('could not find dataset!')
-        handleSetDismissable(true)
+    if (!onSubmit) return
+    onSubmit(peername, datasetName)
+      .then(() => onDismissed())
+      .catch((action) => {
         setLoading(false)
-        return
-      }
-      if (onSubmit) {
-        new Promise((resolve) => {
-          onSubmit()
-          resolve()
-        }).then(() =>
-          setTimeout(onDismissed, 200)
-        )
-      }
-    }
-    setTimeout(handleResponse, 1000)
+        setError(action.payload.err.message)
+      })
   }
 
   const renderAddByName = () => {

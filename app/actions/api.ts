@@ -295,3 +295,35 @@ export function fetchSession (): ApiActionThunk {
     return dispatch(action)
   }
 }
+
+export function addDataset (peername: string, name: string): ApiActionThunk {
+  return async (dispatch) => {
+    const action = {
+      type: 'add',
+      [CALL_API]: {
+        endpoint: 'add',
+        method: 'POST',
+        params: {
+          peername,
+          name
+        }
+      }
+    }
+    return dispatch(action)
+  }
+}
+
+export function addDatasetAndFetch (peername: string, name: string): ApiActionThunk {
+  return async (dispatch, getState) => {
+    const whenOk = chainSuccess(dispatch, getState)
+    let response: Action
+
+    try {
+      response = await addDataset(peername, name)(dispatch, getState)
+      response = await whenOk(fetchMyDatasets())(response)
+    } catch (action) {
+      throw action
+    }
+    return response
+  }
+}

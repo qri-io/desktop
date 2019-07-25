@@ -109,7 +109,8 @@ const endpointMap: Record<string, string> = {
   'status': 'dsstatus',
   'save': 'fsi/save',
   'fsilinks': 'fsilinks',
-  'session': 'me'
+  'add': 'add',
+  'init': 'fsi/init'
 }
 
 function apiUrl (endpoint: string, segments?: ApiSegments, params?: ApiParams): [string, string] {
