@@ -7,7 +7,14 @@ import myDatasetsReducer from './myDatasets'
 import workingDatasetReducer from './workingDataset'
 import commitDetailReducer from './commitDetail'
 
-const initialSession = 'QmcASWzDc4mGG4q8kfiZ4A9KTQGyYxKvMaVh4dWZn9oFwT'
+import { Session } from '../models/session'
+
+const initialSession: Session = {
+  peername: '',
+  id: '',
+  created: '',
+  updated: ''
+}
 
 const sessionReducer: Reducer = (state = initialSession) => { // eslint-disable-line
   return state

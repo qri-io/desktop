@@ -7,6 +7,8 @@ export const UI_ACCEPT_TOS = 'UI_ACCEPT_TOS'
 export const UI_SET_PEERNAME = 'UI_SET_PEERNAME'
 
 export const defaultSidebarWidth = 250
+export const hasAcceptedTOSKey = 'acceptedTOS'
+export const hasSetPeernameKey = 'setPeername'
 
 const getSidebarWidth = (key: string): number => {
   const width = store().getItem(key)
@@ -21,8 +23,8 @@ const initialState = {
   showDatasetList: false,
   errorMessage: null,
   message: null,
-  hasAcceptedTOS: true,
-  hasSetPeername: true,
+  hasAcceptedTOS: store().getItem(hasAcceptedTOSKey) === 'true',
+  hasSetPeername: store().getItem(hasSetPeernameKey) === 'true',
   showDiff: false,
   datasetSidebarWidth: getSidebarWidth('datasetSidebarWidth'),
   commitSidebarWidth: getSidebarWidth('commitSidebarWidth')
@@ -47,9 +49,11 @@ export default (state = initialState, action: AnyAction) => {
       return Object.assign({}, state, newState)
 
     case UI_ACCEPT_TOS:
+      store().setItem(hasAcceptedTOSKey, 'true')
       return Object.assign({}, state, { hasAcceptedTOS: true })
 
     case UI_SET_PEERNAME:
+      store().setItem(hasSetPeernameKey, 'true')
       return Object.assign({}, state, { hasSetPeername: true })
 
     default:

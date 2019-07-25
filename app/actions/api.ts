@@ -1,6 +1,7 @@
 import { CALL_API, ApiAction, ApiActionThunk, chainSuccess } from '../store/api'
 import { DatasetSummary, ComponentStatus, ComponentState } from '../models/store'
 import { Dataset, Commit } from '../models/dataset'
+// import { Session } from '../models/session'
 import { Action } from 'redux'
 
 import { setSelectedListItem } from './selections'
@@ -270,6 +271,23 @@ export function saveWorkingDataset (title: string, message: string): ApiActionTh
       }
     }
 
+    return dispatch(action)
+  }
+}
+
+export function fetchSession (): ApiActionThunk {
+  return async (dispatch) => {
+    const action = {
+      type: 'session',
+      [CALL_API]: {
+        endpoint: 'me',
+        method: 'GET',
+        map: (data: Record<string, string>): string => {
+          console.log(data)
+          return 'peernaaaame'
+        }
+      }
+    }
     return dispatch(action)
   }
 }
