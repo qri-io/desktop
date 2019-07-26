@@ -2,6 +2,7 @@ import * as React from 'react'
 import { Action } from 'redux'
 import classNames from 'classnames'
 import moment from 'moment'
+import SaveFormContainer from '../containers/SaveFormContainer'
 
 import { WorkingDataset } from '../models/store'
 
@@ -87,6 +88,7 @@ interface DatasetSidebarProps {
   selectedCommit: string
   history: WorkingDataset['history']
   status: WorkingDataset['status']
+  isLinked: boolean
   onTabClick: (activeTab: string) => Action
   onListItemClick: (type: componentType, activeTab: string) => Action
 }
@@ -114,7 +116,8 @@ const DatasetSidebar: React.FunctionComponent<DatasetSidebarProps> = (props: Dat
     history,
     status,
     onTabClick,
-    onListItemClick
+    onListItemClick,
+    isLinked
   } = props
 
   const historyLoaded = !!history
@@ -192,6 +195,10 @@ const DatasetSidebar: React.FunctionComponent<DatasetSidebarProps> = (props: Dat
           )
         }
       </div>
+      {
+        isLinked && <SaveFormContainer />
+      }
+
     </div>
   )
 }

@@ -33,7 +33,7 @@ interface DatasetProps {
   setFilter: (filter: string) => Action
   setSelectedListItem: (type: string, activeTab: string) => Action
   setWorkingDataset: (peername: string, name: string) => Action
-  fetchMyDatasets: () => Promise<ApiAction>
+  fetchMyDatasetsAndLinks: () => Promise<ApiAction>
   fetchWorkingDatasetDetails: () => Promise<ApiAction>
   fetchWorkingStatus: () => Promise<ApiAction>
 }
@@ -55,7 +55,7 @@ export default class Dataset extends React.Component<DatasetProps> {
 
   componentDidMount () {
     // fetch datasets list TODO move this up to App
-    this.props.fetchMyDatasets()
+    this.props.fetchMyDatasetsAndLinks()
     // poll for status
     setInterval(() => { this.props.fetchWorkingStatus() }, 1000)
   }
@@ -129,7 +129,8 @@ export default class Dataset extends React.Component<DatasetProps> {
       }
     }
 
-    const linkButton = workingDataset.linkpath ? (
+    const isLinked = !!workingDataset.linkpath
+    const linkButton = isLinked ? (
       <div
         className='header-column'
         onClick={() => { shell.openItem(String(workingDataset.linkpath)) }}
@@ -184,6 +185,7 @@ export default class Dataset extends React.Component<DatasetProps> {
             maximumWidth={495}
           >
             <DatasetSidebar
+              isLinked={isLinked}
               activeTab={activeTab}
               selectedComponent={selectedComponent}
               selectedCommit={selectedCommit}

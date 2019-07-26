@@ -36,7 +36,7 @@ export default class DatasetList extends React.Component<DatasetListProps> {
     })
 
     const listContent = filteredDatasets.length > 0
-      ? filteredDatasets.map(({ peername, name, path, title }) => (
+      ? filteredDatasets.map(({ peername, name, path, title, isLinked }) => (
         <div
           key={path}
           className={classNames('sidebar-list-item', 'sidebar-list-item-text', {
@@ -48,6 +48,10 @@ export default class DatasetList extends React.Component<DatasetListProps> {
             <div className='text'>{title}</div>
             <div className='subtext'>{name}</div>
           </div>
+          <div className='status-column'>
+            {isLinked && <span className='icon-inline'>openfolder</span>}
+          </div>
+
         </div>
       ))
       : <div className='sidebar-list-item-text'>Oops, no matches found for <strong>&apos;{filter}&apos;</strong></div>

@@ -199,6 +199,8 @@ $hover-highlight-color: #F6F8FA;
   height: 100%;
   font-size: .9rem;
   cursor: default;
+  display: flex;
+  flex-direction: column;
 
   #tabs {
     height: 30px;
@@ -224,6 +226,11 @@ $hover-highlight-color: #F6F8FA;
         background-color: #efefef;
       }
     }
+  }
+
+  #content {
+    flex-grow: 1;
+    overflow: auto;
   }
 
   .changes {

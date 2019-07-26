@@ -5,15 +5,16 @@ import { Action } from 'redux'
 
 import { setSelectedListItem } from './selections'
 
-// fetchMyDatasetsAndWorkbench attempts to fetch all details needed to intialize
-// the working dataset container
-export function fetchMyDatasetsAndWorkbench (): ApiActionThunk {
+// fetchMyDatasetsAndLinks fetches the user's dataset list and linked datasets
+// these two responses combined can indicate whether a given dataset is linked
+// these will be combined into a single call in the future
+export function fetchMyDatasetsAndLinks (): ApiActionThunk {
   return async (dispatch, getState) => {
     const whenOk = chainSuccess(dispatch, getState)
     let response: Action
 
     response = await fetchMyDatasets()(dispatch, getState)
-    response = await whenOk(fetchWorkingDatasetDetails())(response)
+    response = await whenOk(fetchMyLinks())(response)
 
     return response
   }
@@ -63,6 +64,21 @@ export function fetchMyDatasets (): ApiActionThunk {
   }
 }
 
+// TODO remove, calls /fsilinks, which will be combined with /list
+export function fetchMyLinks (): ApiActionThunk {
+  return async (dispatch) => {
+    const listAction: ApiAction = {
+      type: 'links',
+      [CALL_API]: {
+        endpoint: 'fsilinks',
+        method: 'GET'
+      }
+    }
+
+    return dispatch(listAction)
+  }
+}
+
 export function fetchWorkingDataset (): ApiActionThunk {
   return async (dispatch, getState) => {
     const { selections } = getState()
@@ -71,7 +87,7 @@ export function fetchWorkingDataset (): ApiActionThunk {
       [CALL_API]: {
         endpoint: 'dataset',
         method: 'GET',
-        params: {
+        segments: {
           peername: selections.peername,
           name: selections.name
         },
@@ -95,7 +111,7 @@ export function fetchCommitDetail (): ApiActionThunk {
       [CALL_API]: {
         endpoint: 'dataset',
         method: 'GET',
-        params: {
+        segments: {
           peername: selections.peername,
           name: selections.name,
           path: commit
@@ -121,7 +137,7 @@ export function fetchWorkingHistory (): ApiActionThunk {
       [CALL_API]: {
         endpoint: 'history',
         method: 'GET',
-        params: {
+        segments: {
           peername: selections.peername,
           name: selections.name
         },
@@ -150,7 +166,7 @@ export function fetchWorkingStatus (): ApiActionThunk {
       [CALL_API]: {
         endpoint: 'status',
         method: 'GET',
-        params: {
+        segments: {
           peername: selections.peername,
           name: selections.name
         },
@@ -180,13 +196,42 @@ export function fetchBody (): ApiActionThunk {
       [CALL_API]: {
         endpoint: 'body',
         method: 'GET',
-        params: {
+        segments: {
           peername,
           name,
           path
         },
         map: (data: Record<string, string>): Dataset => {
           return data as Dataset
+        }
+      }
+    }
+
+    return dispatch(action)
+  }
+}
+
+export function saveWorkingDataset (title: string, message: string): ApiActionThunk {
+  return async (dispatch, getState) => {
+    const { workingDataset } = getState()
+    const { peername, name } = workingDataset
+    const action = {
+      type: 'save',
+      [CALL_API]: {
+        endpoint: 'save',
+        method: 'POST',
+        segments: {
+          peername,
+          name
+        },
+        params: {
+          fsi: true
+        },
+        body: {
+          commit: {
+            title,
+            message
+          }
         }
       }
     }
