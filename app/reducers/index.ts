@@ -1,5 +1,6 @@
-import { combineReducers, Reducer } from 'redux'
+import { combineReducers, Reducer, AnyAction } from 'redux'
 import { routerReducer } from 'react-router-redux'
+import { apiActionTypes } from '../store/api'
 
 import uiReducer from './ui'
 import selectionsReducer from './selections'
@@ -7,10 +8,28 @@ import myDatasetsReducer from './myDatasets'
 import workingDatasetReducer from './workingDataset'
 import commitDetailReducer from './commitDetail'
 
-const initialSession = 'QmcASWzDc4mGG4q8kfiZ4A9KTQGyYxKvMaVh4dWZn9oFwT'
+import { Session } from '../models/session'
 
-const sessionReducer: Reducer = (state = initialSession) => { // eslint-disable-line
-  return state
+const initialSession: Session = {
+  peername: '',
+  id: '',
+  created: '',
+  updated: ''
+}
+
+const [SESSION_REQ, SESSION_SUCC, SESSION_FAIL] = apiActionTypes('session')
+
+const sessionReducer: Reducer = (state = initialSession, action: AnyAction) => { // eslint-disable-line
+  switch (action.type) {
+    case SESSION_REQ:
+      return state
+    case SESSION_SUCC:
+      return Object.assign({}, state, action.payload.data)
+    case SESSION_FAIL:
+      return state
+    default:
+      return state
+  }
 }
 
 const rootReducer = combineReducers({

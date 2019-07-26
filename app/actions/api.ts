@@ -1,6 +1,7 @@
 import { CALL_API, ApiAction, ApiActionThunk, chainSuccess } from '../store/api'
 import { DatasetSummary, ComponentStatus, ComponentState } from '../models/store'
 import { Dataset, Commit } from '../models/dataset'
+import { Session } from '../models/session'
 import { Action } from 'redux'
 
 import { setSelectedListItem } from './selections'
@@ -271,5 +272,91 @@ export function saveWorkingDataset (title: string, message: string): ApiActionTh
     }
 
     return dispatch(action)
+  }
+}
+
+export function fetchSession (): ApiActionThunk {
+  return async (dispatch) => {
+    const action = {
+      type: 'session',
+      [CALL_API]: {
+        endpoint: 'session',
+        method: 'GET',
+        map: (data: Record<string, string>): Session => {
+          return {
+            peername: data.peername,
+            id: data.id,
+            created: data.created,
+            updated: data.updated
+          }
+        }
+      }
+    }
+    return dispatch(action)
+  }
+}
+
+export function addDataset (peername: string, name: string): ApiActionThunk {
+  return async (dispatch) => {
+    const action = {
+      type: 'add',
+      [CALL_API]: {
+        endpoint: 'add',
+        method: 'POST',
+        segments: {
+          peername,
+          name
+        }
+      }
+    }
+    return dispatch(action)
+  }
+}
+
+export function addDatasetAndFetch (peername: string, name: string): ApiActionThunk {
+  return async (dispatch, getState) => {
+    const whenOk = chainSuccess(dispatch, getState)
+    let response: Action
+
+    try {
+      response = await addDataset(peername, name)(dispatch, getState)
+      response = await whenOk(fetchMyDatasets())(response)
+    } catch (action) {
+      throw action
+    }
+    return response
+  }
+}
+
+export function initDataset (filepath: string, name: string, format: string): ApiActionThunk {
+  return async (dispatch) => {
+    const action = {
+      type: 'init',
+      [CALL_API]: {
+        endpoint: 'init',
+        method: 'POST',
+        params: {
+          filepath,
+          name,
+          format
+        }
+      }
+    }
+    return dispatch(action)
+  }
+}
+
+export function initDatasetAndFetch (filepath: string, name: string, format: string): ApiActionThunk {
+  return async (dispatch, getState) => {
+    const whenOk = chainSuccess(dispatch, getState)
+    let response: Action
+
+    try {
+      response = await initDataset(filepath, name, format)(dispatch, getState)
+      response = await whenOk(fetchMyDatasets())(response)
+    } catch (action) {
+      throw action
+    }
+    return response
   }
 }

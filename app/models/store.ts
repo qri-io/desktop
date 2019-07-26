@@ -1,5 +1,6 @@
 import { RouterState } from 'react-router-redux'
 import Dataset, { Commit } from './dataset'
+import { Session } from './session'
 
 enum ApiConnection {
   neverConnected = 0,
@@ -113,7 +114,7 @@ export interface WorkingDataset extends CommitDetails {
 }
 
 export default interface Store {
-  session: string
+  session: Session
   ui: UI
   selections: Selections
   myDatasets: MyDatasets
