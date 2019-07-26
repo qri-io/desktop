@@ -15,6 +15,10 @@ const ChoosePeername: React.FunctionComponent<ChoosePeernameProps> = (props: Cho
   const [loading, setLoading] = React.useState(false)
   const [error, setError] = React.useState('')
 
+  React.useEffect(() => {
+    setNewPeername(peername)
+  }, [peername])
+
   const handleChange = (name: string, value: any) => {
     if (value[value.length - 1] === ' ') {
       return
