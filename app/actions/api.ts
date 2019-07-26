@@ -303,7 +303,7 @@ export function addDataset (peername: string, name: string): ApiActionThunk {
       [CALL_API]: {
         endpoint: 'add',
         method: 'POST',
-        params: {
+        segments: {
           peername,
           name
         }

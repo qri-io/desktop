@@ -108,6 +108,7 @@ const endpointMap: Record<string, string> = {
   'history': 'history',
   'status': 'dsstatus',
   'save': 'fsi/save',
+  'session': 'me',
   'fsilinks': 'fsilinks',
   'add': 'add',
   'init': 'fsi/init'
