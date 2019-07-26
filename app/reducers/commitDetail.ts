@@ -1,8 +1,8 @@
 import { Reducer, AnyAction } from 'redux'
-import { CommitDetail } from '../models/store'
+import { CommitDetails } from '../models/store'
 import { apiActionTypes } from '../store/api'
 
-const initialState: CommitDetail = {
+const initialState: CommitDetails = {
   path: '',
   prevPath: '',
   peername: '',
@@ -10,38 +10,32 @@ const initialState: CommitDetail = {
   pages: {},
   diff: {},
   value: {},
-  status: {
-    meta: {
-      filepath: 'meta.json',
-      status: 'unmodified',
-      errors: [],
-      warnings: []
-    },
-    schema: {
-      filepath: 'schema.json',
-      status: 'unmodified',
-      errors: [],
-      warnings: []
-    },
-    body: {
-      filepath: 'body.csv',
-      status: 'unmodified',
-      errors: [],
-      warnings: []
-    }
-  }
+  status: {}
 }
 
-const [COMMITDETAIL_REQ, COMMITDETAIL_SUCC, COMMITDETAIL_FAIL] = apiActionTypes('commitDetail')
+const [COMMITDATASET_REQ, COMMITDATASET_SUCC, COMMITDATASET_FAIL] = apiActionTypes('commitdataset')
+const [COMMITSTATUS_REQ, COMMITSTATUS_SUCC, COMMITSTATUS_FAIL] = apiActionTypes('commitstatus')
 
-const commitDetailReducer: Reducer = (state = initialState, action: AnyAction): CommitDetail => {
+const commitDetailsReducer: Reducer = (state = initialState, action: AnyAction): CommitDetails => {
   switch (action.type) {
-    case COMMITDETAIL_REQ:
+    case COMMITDATASET_REQ:
       return state
-    case COMMITDETAIL_SUCC:
+    case COMMITDATASET_SUCC:
       const { name, path, peername, published, dataset: value } = action.payload.data
       return Object.assign({}, state, { name, path, peername, published, value })
-    case COMMITDETAIL_FAIL:
+    case COMMITDATASET_FAIL:
+      return state
+
+    case COMMITSTATUS_REQ:
+      return state
+    case COMMITSTATUS_SUCC:
+      const statusObject = action.payload.data.reduce((acc: Record<string, Record<string, any>>, d: Record<string, any>) => {
+        acc[d.component] = d
+        delete d.component
+        return acc
+      }, {})
+      return Object.assign({}, state, { status: statusObject })
+    case COMMITSTATUS_FAIL:
       return state
 
     default:
@@ -49,4 +43,4 @@ const commitDetailReducer: Reducer = (state = initialState, action: AnyAction): 
   }
 }
 
-export default commitDetailReducer
+export default commitDetailsReducer

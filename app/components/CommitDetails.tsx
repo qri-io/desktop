@@ -6,6 +6,7 @@ import { FileRow } from '../components/DatasetSidebar'
 
 import { ApiAction } from '../store/api'
 import { Commit } from '../models/dataset'
+import { CommitDetails as ICommitDetails } from '../models/Store'
 
 import { defaultSidebarWidth } from '../reducers/ui'
 
@@ -16,6 +17,7 @@ interface CommitDetailsProps {
   setSelectedListItem: (type: string, activeTab: string) => Action
   setSidebarWidth: (type: string, sidebarWidth: number) => Action
   fetchCommitDetail: () => Promise<ApiAction>
+  commitDetails: ICommitDetails
 }
 
 export default class CommitDetails extends React.Component<CommitDetailsProps> {
@@ -37,26 +39,10 @@ export default class CommitDetails extends React.Component<CommitDetailsProps> {
 
   render () {
     const { selectedComponent } = this.props
-    const files = [
-      {
-        name: 'body',
-        filepath: 'a/body.csv',
-        status: 'modified'
-      },
-      {
-        name: 'meta',
-        filepath: 'a/meta.json',
-        status: 'modified'
-      },
-      {
-        name: 'schema',
-        filepath: 'a/schema.json',
-        status: 'modified'
-      }
-    ]
+    const components = [ 'body', 'meta', 'schema' ]
 
-    if (this.props.commit) {
-      const { commit, sidebarWidth, setSidebarWidth, setSelectedListItem } = this.props
+    if (this.props.commit && this.props.commitDetails) {
+      const { commit, sidebarWidth, setSidebarWidth, setSelectedListItem, commitDetails } = this.props
       const { title, timestamp } = commit
       const timeMessage = moment(timestamp).fromNow()
       return (
@@ -79,21 +65,29 @@ export default class CommitDetails extends React.Component<CommitDetailsProps> {
               maximumWidth={348}
             >
               {
-                files.map((file) => {
-                  const { name, filepath, status: fileStatus } = file
-                  const filename = filepath.substring((filepath.lastIndexOf('/') + 1))
-                  return (
-                    <FileRow
-                      key={name}
-                      name={name}
-                      displayName={name}
-                      filename={filename}
-                      status={fileStatus}
-                      selected={selectedComponent === name}
-                      selectionType={'commitComponent'}
-                      onClick={setSelectedListItem}
-                    />
-                  )
+                components.map((component) => {
+                  const activeComponents = Object.keys(commitDetails.status)
+                  if (activeComponents.includes(component)) {
+                    return (
+                      <FileRow
+                        key={component}
+                        name={component}
+                        displayName={component}
+                        selected={selectedComponent === name}
+                        selectionType={'commitComponent'}
+                        onClick={setSelectedListItem}
+                      />
+                    )
+                  } else {
+                    return (
+                      <FileRow
+                        key={component}
+                        name={component}
+                        displayName={component}
+                        disabled
+                      />
+                    )
+                  }
                 })
               }
             </Resizable>

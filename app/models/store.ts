@@ -80,6 +80,7 @@ export interface ComponentStatus {
   status: ComponentState
   errors?: object[]
   warnings?: object[]
+  component?: string
 }
 
 export interface Pages {
@@ -90,7 +91,7 @@ export interface DatasetStatus {
   [key: string]: ComponentStatus
 }
 
-export interface CommitDetail {
+export interface CommitDetails {
   path: string
   prevPath: string
   peername: string
@@ -101,7 +102,7 @@ export interface CommitDetail {
   status: DatasetStatus
 }
 
-export interface WorkingDataset extends CommitDetail {
+export interface WorkingDataset extends CommitDetails {
   linkpath: string | null
   history: {
     pageInfo: PageInfo
@@ -117,6 +118,6 @@ export default interface Store {
   selections: Selections
   myDatasets: MyDatasets
   workingDataset: WorkingDataset
-  commitDetail: CommitDetail
+  commitDetails: CommitDetails
   router: RouterState
 }

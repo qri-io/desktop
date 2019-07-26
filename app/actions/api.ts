@@ -103,13 +103,53 @@ export function fetchWorkingDataset (): ApiActionThunk {
 
 export function fetchCommitDetail (): ApiActionThunk {
   return async (dispatch, getState) => {
+    const whenOk = chainSuccess(dispatch, getState)
+    let response: Action
+
+    response = await fetchCommitDataset()(dispatch, getState)
+    response = await whenOk(fetchCommitStatus())(response)
+
+    return response
+  }
+}
+
+export function fetchCommitDataset (): ApiActionThunk {
+  return async (dispatch, getState) => {
     const { selections } = getState()
     const { commit } = selections
 
     const response = await dispatch({
-      type: 'commitdetail',
+      type: 'commitdataset',
       [CALL_API]: {
         endpoint: 'dataset',
+        method: 'GET',
+        segments: {
+          peername: selections.peername,
+          name: selections.name,
+          path: commit
+        },
+        map: (data: Record<string, string>): Dataset => {
+          return data as Dataset
+        }
+      }
+    })
+
+    // select the body by default
+    await dispatch(setSelectedListItem('commitComponent', 'body'))
+
+    return response
+  }
+}
+
+export function fetchCommitStatus (): ApiActionThunk {
+  return async (dispatch, getState) => {
+    const { selections } = getState()
+    const { commit } = selections
+
+    const response = await dispatch({
+      type: 'commitstatus',
+      [CALL_API]: {
+        endpoint: 'status',
         method: 'GET',
         segments: {
           peername: selections.peername,
