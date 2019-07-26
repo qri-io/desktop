@@ -3,6 +3,9 @@ import moment from 'moment'
 import { Resizable } from '../components/resizable'
 import { Action } from 'redux'
 import { FileRow } from '../components/DatasetSidebar'
+import MetadataContainer from '../containers/MetadataContainer'
+import BodyContainer from '../containers/BodyContainer'
+import SchemaContainer from '../containers/SchemaContainer'
 
 import { ApiAction } from '../store/api'
 import { Commit } from '../models/dataset'
@@ -41,6 +44,20 @@ export default class CommitDetails extends React.Component<CommitDetailsProps> {
     const { selectedComponent } = this.props
     const components = [ 'body', 'meta', 'schema' ]
 
+    let mainContent
+
+    switch (selectedComponent) {
+      case 'meta':
+        mainContent = <MetadataContainer history />
+        break
+      case 'body':
+        mainContent = <BodyContainer />
+        break
+      case 'schema':
+        mainContent = <SchemaContainer history />
+        break
+    }
+
     if (this.props.commit && this.props.commitDetails) {
       const { commit, sidebarWidth, setSidebarWidth, setSelectedListItem, commitDetails } = this.props
       const { title, timestamp } = commit
@@ -73,7 +90,7 @@ export default class CommitDetails extends React.Component<CommitDetailsProps> {
                         key={component}
                         name={component}
                         displayName={component}
-                        selected={selectedComponent === name}
+                        selected={selectedComponent === component}
                         selectionType={'commitComponent'}
                         onClick={setSelectedListItem}
                       />
@@ -92,7 +109,7 @@ export default class CommitDetails extends React.Component<CommitDetailsProps> {
               }
             </Resizable>
             <div className='content-wrapper'>
-              Component commit details for {selectedComponent}.
+              {mainContent}
             </div>
           </div>
         </div>

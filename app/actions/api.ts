@@ -134,9 +134,6 @@ export function fetchCommitDataset (): ApiActionThunk {
       }
     })
 
-    // select the body by default
-    await dispatch(setSelectedListItem('commitComponent', 'body'))
-
     return response
   }
 }
@@ -161,9 +158,6 @@ export function fetchCommitStatus (): ApiActionThunk {
         }
       }
     })
-
-    // select the body by default
-    await dispatch(setSelectedListItem('commitComponent', 'body'))
 
     return response
   }

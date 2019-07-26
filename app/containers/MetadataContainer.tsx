@@ -2,11 +2,15 @@ import { connect } from 'react-redux'
 import Metadata from '../components/Metadata'
 import Store from '../models/store'
 
-const mapStateToProps = (state: Store) => {
-  const { workingDataset } = state
+interface MetadataContainerProps {
+  history?: boolean
+}
+
+const mapStateToProps = (state: Store, ownProps: MetadataContainerProps) => {
+  const { workingDataset, commitDetails } = state
 
   // get data for the currently selected component
-  const meta = workingDataset.value.meta
+  const meta = ownProps.history ? commitDetails.value.meta : workingDataset.value.meta
   return { meta }
 }
 
