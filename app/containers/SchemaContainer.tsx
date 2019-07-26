@@ -2,11 +2,15 @@ import { connect } from 'react-redux'
 import Schema from '../components/Schema'
 import Store from '../models/store'
 
-const mapStateToProps = (state: Store) => {
-  const { workingDataset } = state
+interface SchemaContainerProps {
+  history?: boolean
+}
+
+const mapStateToProps = (state: Store, ownProps: SchemaContainerProps) => {
+  const { workingDataset, commitDetails } = state
 
   // get data for the currently selected component
-  const schema = workingDataset.value.structure.schema
+  const schema = ownProps.history ? commitDetails.value.structure.schema : workingDataset.value.structure.schema
   return { schema }
 }
 

@@ -19,7 +19,7 @@ const rootReducer = combineReducers({
   selections: selectionsReducer,
   myDatasets: myDatasetsReducer,
   workingDataset: workingDatasetReducer,
-  commitDetail: commitDetailReducer,
+  commitDetails: commitDetailReducer,
   router: routerReducer
 })
 

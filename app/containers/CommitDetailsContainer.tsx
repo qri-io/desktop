@@ -6,7 +6,7 @@ import { setSelectedListItem } from '../actions/selections'
 import { fetchCommitDetail } from '../actions/api'
 
 const mapStateToProps = (state: Store) => {
-  const { workingDataset, selections, ui } = state
+  const { workingDataset, selections, ui, commitDetails } = state
 
   const {
     commit: selectedCommitPath,
@@ -20,7 +20,8 @@ const mapStateToProps = (state: Store) => {
   return {
     commit: selectedCommit,
     selectedComponent,
-    sidebarWidth: ui.commitSidebarWidth
+    sidebarWidth: ui.commitSidebarWidth,
+    commitDetails
   }
 }
 

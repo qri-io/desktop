@@ -274,6 +274,10 @@ $hover-highlight-color: #F6F8FA;
         display: inline-block;
       }
   }
+
+  &.disabled {
+    color: #ccc;
+  }
 }
 
 

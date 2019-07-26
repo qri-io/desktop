@@ -23,6 +23,12 @@ export const FileRow: React.FunctionComponent<FileRowProps> = (props) => {
     case 'modified':
       statusColor = '#cab081'
       break
+    case 'add':
+      statusColor = '#83d683'
+      break
+    case 'removed':
+      statusColor = '#e04f4f'
+      break
     default:
       statusColor = 'transparent'
   }
