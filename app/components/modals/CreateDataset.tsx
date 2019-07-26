@@ -1,7 +1,8 @@
 import * as React from 'react'
 import { remote } from 'electron'
 import { CSSTransition } from 'react-transition-group'
-import Modal, { ModalProps } from './Modal'
+import Modal from './Modal'
+import { ApiAction } from '../../store/api'
 import TextInput from '../form/TextInput'
 import SelectInput from '../form/SelectInput'
 import Error from './Error'
@@ -23,7 +24,12 @@ enum TabTypes {
   ExistingBody = 'Use existing file',
 }
 
-const CreateDataset: React.FunctionComponent<ModalProps> = ({ onDismissed, onSubmit }) => {
+interface CreateDatasetProps {
+  onDismissed: () => void
+  onSubmit: (path: string, name: string, format: string) => Promise<ApiAction>
+}
+
+const CreateDataset: React.FunctionComponent<CreateDatasetProps> = ({ onDismissed, onSubmit }) => {
   const [datasetName, setDatasetName] = React.useState('')
   const [path, setPath] = React.useState('')
   const [bodyFormat, setBodyFormat] = React.useState(formatOptions[0].value)
@@ -104,12 +110,6 @@ const CreateDataset: React.FunctionComponent<ModalProps> = ({ onDismissed, onSub
       .then(() => setDismissable(true))
   }
 
-  const handleSetActiveTab = (activeTab: TabTypes) => {
-    setActiveTab(activeTab)
-    toggleButton(activeTab)
-    setError('')
-  }
-
   const renderCreateDataset = () => {
     return (
       <div className='margin-bottom'>
@@ -148,11 +148,11 @@ const CreateDataset: React.FunctionComponent<ModalProps> = ({ onDismissed, onSub
     }
     if (name === 'format') setBodyFormat(value)
     if (name === 'bodyPath') setBodyPath(value)
-    toggleButton(activeTab)
   }
 
   const renderTabs = () => {
-    return <Tabs tabs={[TabTypes.NewBody, TabTypes.ExistingBody]} active={activeTab} onClick={handleSetActiveTab}/>
+    // return <Tabs tabs={[TabTypes.NewBody, TabTypes.ExistingBody]} active={activeTab} onClick={(activeTab: TabTypes) => setActiveTab(activeTab)}/>
+    return <Tabs tabs={[TabTypes.NewBody]} active={activeTab} onClick={(activeTab: TabTypes) => setActiveTab(activeTab)}/>
   }
 
   const renderCreateNewBody = () =>
@@ -202,23 +202,13 @@ const CreateDataset: React.FunctionComponent<ModalProps> = ({ onDismissed, onSub
     setLoading(true)
     // should fire off action and catch error response
     // if success, fetchDatatsets
-    const handleResponse = () => {
-      if (datasetName === 'error' || path === 'error' || bodyPath === 'error') {
-        setError('could not find dataset!')
-        setDismissable(true)
+    if (!onSubmit) return
+    onSubmit(path, datasetName, bodyFormat)
+      .then(() => onDismissed())
+      .catch((action) => {
         setLoading(false)
-        return
-      }
-      if (onSubmit) {
-        new Promise((resolve) => {
-          onSubmit()
-          resolve()
-        }).then(() =>
-          setTimeout(onDismissed, 200)
-        )
-      }
-    }
-    setTimeout(handleResponse, 1000)
+        setError(action.payload.err.message)
+      })
   }
 
   return (
@@ -243,7 +233,7 @@ const CreateDataset: React.FunctionComponent<ModalProps> = ({ onDismissed, onSub
       <Buttons
         cancelText='cancel'
         onCancel={onDismissed}
-        submitText='Add Dataset'
+        submitText='Create Dataset'
         onSubmit={handleSubmit}
         disabled={buttonDisabled}
         loading={loading}

@@ -2,7 +2,7 @@ import { connect } from 'react-redux'
 import App from '../components/App'
 import Store from '../models/store'
 
-import { fetchSession, fetchMyDatasetsAndLinks, addDatasetAndFetch } from '../actions/api'
+import { fetchSession, fetchMyDatasetsAndLinks, addDatasetAndFetch, initDatasetAndFetch } from '../actions/api'
 import { acceptTOS, setPeername } from '../actions/ui'
 
 const AppContainer = connect(
@@ -26,7 +26,8 @@ const AppContainer = connect(
     fetchMyDatasetsAndLinks,
     acceptTOS,
     setPeername,
-    addDataset: addDatasetAndFetch
+    addDataset: addDatasetAndFetch,
+    initDataset: initDatasetAndFetch
   }
 )(App)
 

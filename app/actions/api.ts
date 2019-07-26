@@ -327,3 +327,36 @@ export function addDatasetAndFetch (peername: string, name: string): ApiActionTh
     return response
   }
 }
+
+export function initDataset (filepath: string, name: string, format: string): ApiActionThunk {
+  return async (dispatch) => {
+    const action = {
+      type: 'init',
+      [CALL_API]: {
+        endpoint: 'init',
+        method: 'POST',
+        params: {
+          filepath,
+          name,
+          format
+        }
+      }
+    }
+    return dispatch(action)
+  }
+}
+
+export function initDatasetAndFetch (filepath: string, name: string, format: string): ApiActionThunk {
+  return async (dispatch, getState) => {
+    const whenOk = chainSuccess(dispatch, getState)
+    let response: Action
+
+    try {
+      response = await initDataset(filepath, name, format)(dispatch, getState)
+      response = await whenOk(fetchMyDatasets())(response)
+    } catch (action) {
+      throw action
+    }
+    return response
+  }
+}

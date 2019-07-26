@@ -13,6 +13,7 @@ interface AppProps {
   fetchSession: () => Promise<ApiAction>
   fetchMyDatasetsAndLinks: () => Promise<ApiAction>
   addDataset: (peername: string, name: string) => Promise<ApiAction>
+  initDataset: (path: string, name: string, format: string) => Promise<ApiAction>
   acceptTOS: () => Action
   setPeername: () => Action
   hasDatasets: boolean
@@ -54,7 +55,7 @@ export default class App extends React.Component<AppProps, AppState> {
     switch (Modal.type) {
       case ModalType.CreateDataset:
         return (
-          <CreateDataset onSubmit={() => this.setState({ currentModal: NoModal })} onDismissed={() => this.setState({ currentModal: NoModal })}/>
+          <CreateDataset onSubmit={this.props.initDataset} onDismissed={() => this.setState({ currentModal: NoModal })}/>
         )
       case ModalType.AddDataset:
         return (

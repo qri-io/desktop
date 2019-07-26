@@ -15,10 +15,10 @@
     bottom: 0;
   }
 
-#app-loading { z-index: 100 }
-#welcome-page { z-index: 99 }
-#choose-peername-page { z-index: 98 }
-#no-datasets-page { z-index: 97 }
+#app-loading { z-index: 200 }
+#welcome-page { z-index: 199 }
+#choose-peername-page { z-index: 198 }
+#no-datasets-page { z-index: 197 }
   
 .welcome-center {
   width: 600px;

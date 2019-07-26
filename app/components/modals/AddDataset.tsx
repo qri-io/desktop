@@ -111,12 +111,8 @@ const AddDataset: React.FunctionComponent<AddDatasetProps> = ({ onDismissed, onS
     }
   }
 
-  const handleSetDismissable = (dismissable: boolean) => {
-    setDismissable(dismissable)
-  }
-
   const handleSubmit = () => {
-    handleSetDismissable(false)
+    setDismissable(false)
     setLoading(true)
     // should fire off action and catch error response
     // if success, fetchDatatsets
