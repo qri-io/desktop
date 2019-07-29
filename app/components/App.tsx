@@ -3,6 +3,7 @@ import { ApiAction } from '../store/api'
 import { CSSTransition } from 'react-transition-group'
 import CreateDataset from './modals/CreateDataset'
 import AddDataset from './modals/AddDataset'
+import DatasetContainer from '../containers/DatasetContainer'
 import NoDatasets from './NoDatasets'
 import Onboard from './Onboard'
 import { Modal, ModalType, NoModal } from '../models/modals'
@@ -18,7 +19,6 @@ interface AppProps {
   setPeername: () => Action
   hasDatasets: boolean
   loading: boolean
-  children: any
   sessionID: string
   peername: string
   hasAcceptedTOS: boolean
@@ -96,7 +96,6 @@ export default class App extends React.Component<AppProps, AppState> {
 
   render () {
     const {
-      children,
       hasSetPeername,
       hasAcceptedTOS,
       peername,
@@ -114,7 +113,7 @@ export default class App extends React.Component<AppProps, AppState> {
         acceptTOS={acceptTOS}
       />
       {this.renderNoDatasets()}
-      {children}
+      { this.props.hasDatasets && <DatasetContainer /> }
     </div>)
   }
 }

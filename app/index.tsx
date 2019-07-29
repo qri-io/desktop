@@ -1,7 +1,6 @@
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
-import RoutesContainer from './containers/RoutesContainer'
-import { HashRouter as Router } from 'react-router-dom'
+import AppContainer from './containers/AppContainer'
 import { Provider } from 'react-redux'
 import './app.global.scss'
 
@@ -10,9 +9,7 @@ const store = configureStore()
 
 ReactDOM.render(
   <Provider store={store}>
-    <Router>
-      <RoutesContainer/>
-    </Router>
+    <AppContainer />
   </Provider>,
   document.getElementById('root')
 )
