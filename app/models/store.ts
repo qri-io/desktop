@@ -24,6 +24,18 @@ type Modal =
   initialURL?: string | null
 }
 
+export interface Mutation {
+  value: {
+    [key: string]: any
+  }
+  isLoading: boolean
+  error: string | null
+}
+
+export interface Mutations {
+  [key: string]: Mutation
+}
+
 export interface UI {
   apiConnection: ApiConnection
   showDatasetList: boolean
@@ -120,5 +132,6 @@ export default interface Store {
   myDatasets: MyDatasets
   workingDataset: WorkingDataset
   commitDetails: CommitDetails
+  mutations: Mutations
   router: RouterState
 }

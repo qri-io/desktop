@@ -20,13 +20,15 @@ const DatasetContainer = connect(
       ui,
       selections,
       myDatasets,
-      workingDataset
+      workingDataset,
+      mutations
     } = state
     return Object.assign({
       ui,
       selections,
       myDatasets,
-      workingDataset
+      workingDataset,
+      mutations
     }, ownProps)
   },
   {
