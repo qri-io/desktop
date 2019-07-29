@@ -16,7 +16,7 @@ const Welcome: React.FunctionComponent<WelcomeProps> = ({ onAccept }) =>
     exit
   >
     <span>
-      <p>We’re currently in Beta. There will be bugs. Features will change quickly &amp; often. We hope you’ll come on this adventure with us! Our <ExternalLink href='https://github.com/qri-io/frontend'>github org</ExternalLink> and our <ExternalLink href='https://discord.gg/etap8Gb' >discord</ExternalLink> are the best places to stay informed.</p>
+      <p>We’re currently in Beta. There will be bugs. Features will change quickly &amp; often. We hope you’ll come on this adventure with us! Our <ExternalLink href='https://github.com/qri-io/desktop'>github org</ExternalLink> and our <ExternalLink href='https://discord.gg/etap8Gb' >discord</ExternalLink> are the best places to stay informed.</p>
       <div>
           A few notes before we get started:<br />
         <ul>
