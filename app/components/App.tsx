@@ -12,10 +12,11 @@ import { Action } from 'redux'
 interface AppProps {
   fetchSession: () => Promise<ApiAction>
   fetchMyDatasetsAndLinks: () => Promise<ApiAction>
+  setPeername: (newPeername: string) => Promise<ApiAction>
   addDataset: (peername: string, name: string) => Promise<ApiAction>
   initDataset: (path: string, name: string, format: string) => Promise<ApiAction>
   acceptTOS: () => Action
-  setPeername: () => Action
+  setHasSetPeername: () => Action
   hasDatasets: boolean
   loading: boolean
   children: any
@@ -101,7 +102,8 @@ export default class App extends React.Component<AppProps, AppState> {
       hasAcceptedTOS,
       peername,
       acceptTOS,
-      setPeername
+      setPeername,
+      setHasSetPeername
     } = this.props
     return (<div style={{ height: '100%' }}>
       {this.renderAppLoading()}
@@ -110,6 +112,7 @@ export default class App extends React.Component<AppProps, AppState> {
         peername={peername}
         hasAcceptedTOS={hasAcceptedTOS}
         hasSetPeername={hasSetPeername}
+        setHasSetPeername={setHasSetPeername}
         setPeername={setPeername}
         acceptTOS={acceptTOS}
       />
