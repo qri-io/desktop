@@ -1,19 +1,22 @@
 import { AnyAction } from 'redux'
 import { Selections } from '../models/store'
 import store from '../utils/localStore'
+import { apiActionTypes } from '../store/api'
 
 export const SELECTIONS_SET_ACTIVE_TAB = 'SELECTIONS_SET_ACTIVE_TAB'
 export const SELECTIONS_SET_SELECTED_LISTITEM = 'SELECTIONS_SET_SELECTED_LISTITEM'
 export const SELECTIONS_SET_WORKING_DATASET = 'SELECTIONS_SET_WORKING_DATASET'
 
 const initialState: Selections = {
-  peername: store().getItem('peername'),
-  name: store().getItem('name'),
+  peername: store().getItem('peername') || '',
+  name: store().getItem('name') || '',
   activeTab: store().getItem('activeTab') || 'status',
   component: store().getItem('component') || '',
   commit: store().getItem('commit') || '',
   commitComponent: store().getItem('commitComponent') || ''
 }
+
+const [, LIST_SUCC] = apiActionTypes('list')
 
 export default (state = initialState, action: AnyAction) => {
   switch (action.type) {
@@ -43,6 +46,17 @@ export default (state = initialState, action: AnyAction) => {
       store().setItem('peername', peername)
       store().setItem('name', name)
       return Object.assign({}, state, { peername, name })
+
+    case LIST_SUCC:
+      // if there is no peername + name in selections, use the first one on the list
+      if (state.peername === '' && state.name === '') {
+        const { peername: firstPeername, name: firstName } = action.payload.data[0]
+        store().setItem('peername', firstPeername)
+        store().setItem('name', firstName)
+        return Object.assign({}, state, { peername: firstPeername, name: firstName })
+      } else {
+        return state
+      }
 
     default:
       return state
