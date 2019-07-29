@@ -232,12 +232,6 @@ $hover-highlight-color: #F6F8FA;
     flex-grow: 1;
     overflow: auto;
   }
-
-  .changes {
-    height: 30px;
-    padding: 6px;
-    background-color: $hover-highlight-color;
-  }
 }
 
 ////////////////////////////
@@ -247,6 +241,11 @@ $hover-highlight-color: #F6F8FA;
 .sidebar-list-item {
   border-bottom: $list-item-bottom-border;
   display: flex;
+}
+
+.sidebar-list-header  {
+  font-weight: 500;
+  font-size: .9rem;
 }
 
 .sidebar-list-item-text {

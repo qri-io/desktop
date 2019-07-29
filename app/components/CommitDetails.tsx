@@ -2,14 +2,14 @@ import * as React from 'react'
 import moment from 'moment'
 import { Resizable } from '../components/resizable'
 import { Action } from 'redux'
-import { FileRow } from '../components/DatasetSidebar'
+import ComponentList from '../components/ComponentList'
 import MetadataContainer from '../containers/MetadataContainer'
 import BodyContainer from '../containers/BodyContainer'
 import SchemaContainer from '../containers/SchemaContainer'
 
 import { ApiAction } from '../store/api'
 import { Commit } from '../models/dataset'
-import { CommitDetails as ICommitDetails } from '../models/Store'
+import { CommitDetails as ICommitDetails, ComponentType, DatasetStatus } from '../models/Store'
 
 import { defaultSidebarWidth } from '../reducers/ui'
 
@@ -21,6 +21,14 @@ interface CommitDetailsProps {
   setSidebarWidth: (type: string, sidebarWidth: number) => Action
   fetchCommitDetail: () => Promise<ApiAction>
   commitDetails: ICommitDetails
+}
+
+const isEmpty = (status: DatasetStatus) => {
+  const { body, meta, schema } = status
+  if (body) return false
+  if (meta) return false
+  if (schema) return false
+  return true
 }
 
 export default class CommitDetails extends React.Component<CommitDetailsProps> {
@@ -42,7 +50,6 @@ export default class CommitDetails extends React.Component<CommitDetailsProps> {
 
   render () {
     const { selectedComponent } = this.props
-    const components = [ 'body', 'meta', 'schema' ]
 
     let mainContent
 
@@ -58,8 +65,9 @@ export default class CommitDetails extends React.Component<CommitDetailsProps> {
         break
     }
 
-    if (this.props.commit && this.props.commitDetails) {
+    if (this.props.commit && !isEmpty(this.props.commitDetails.status)) {
       const { commit, sidebarWidth, setSidebarWidth, setSelectedListItem, commitDetails } = this.props
+      const { status } = commitDetails
       const { title, timestamp } = commit
       const timeMessage = moment(timestamp).fromNow()
       return (
@@ -81,32 +89,12 @@ export default class CommitDetails extends React.Component<CommitDetailsProps> {
               onReset={() => { setSidebarWidth('commit', defaultSidebarWidth) }}
               maximumWidth={348}
             >
-              {
-                components.map((component) => {
-                  const activeComponents = Object.keys(commitDetails.status)
-                  if (activeComponents.includes(component)) {
-                    return (
-                      <FileRow
-                        key={component}
-                        name={component}
-                        displayName={component}
-                        selected={selectedComponent === component}
-                        selectionType={'commitComponent'}
-                        onClick={setSelectedListItem}
-                      />
-                    )
-                  } else {
-                    return (
-                      <FileRow
-                        key={component}
-                        name={component}
-                        displayName={component}
-                        disabled
-                      />
-                    )
-                  }
-                })
-              }
+              <ComponentList
+                status={status}
+                selectedComponent={selectedComponent}
+                selectionType={'commitComponent' as ComponentType}
+                onComponentClick={setSelectedListItem}
+              />
             </Resizable>
             <div className='content-wrapper'>
               {mainContent}

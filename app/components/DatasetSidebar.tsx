@@ -1,62 +1,10 @@
 import * as React from 'react'
 import { Action } from 'redux'
-import classNames from 'classnames'
 import moment from 'moment'
 import SaveFormContainer from '../containers/SaveFormContainer'
+import ComponentList from './ComponentList'
 
-import { WorkingDataset } from '../models/store'
-
-interface FileRowProps {
-  name: string
-  displayName: string
-  filename?: string
-  selected?: boolean
-  status?: string
-  selectionType?: string
-  disabled?: boolean
-  onClick?: (type: string, selectedListItem: string) => Action
-}
-
-export const FileRow: React.FunctionComponent<FileRowProps> = (props) => {
-  let statusColor
-  switch (props.status) {
-    case 'modified':
-      statusColor = '#cab081'
-      break
-    case 'add':
-      statusColor = '#83d683'
-      break
-    case 'removed':
-      statusColor = '#e04f4f'
-      break
-    default:
-      statusColor = 'transparent'
-  }
-
-  return (
-    <div
-      className={classNames('sidebar-list-item', 'sidebar-list-item-text', {
-        'selected': props.selected,
-        'disabled': props.disabled
-      })}
-      onClick={() => {
-        if (props.onClick && props.selectionType && props.name) {
-          props.onClick(props.selectionType, props.name)
-        }
-      }}
-    >
-      <div className='text-column'>
-        <div className='text'>{props.displayName}</div>
-        <div className='subtext'>{props.filename}</div>
-      </div>
-      <div className='status-column'>
-        <span className='dot' style={{ backgroundColor: statusColor }}></span>
-      </div>
-    </div>
-  )
-}
-
-FileRow.displayName = 'FileRow'
+import { WorkingDataset, ComponentType } from '../models/store'
 
 interface HistoryListItemProps {
   path: string
@@ -86,8 +34,6 @@ const HistoryListItem: React.FunctionComponent<HistoryListItemProps> = (props) =
   )
 }
 
-type componentType = 'component' | 'commit'
-
 interface DatasetSidebarProps {
   activeTab: string
   selectedComponent: string
@@ -96,23 +42,8 @@ interface DatasetSidebarProps {
   status: WorkingDataset['status']
   isLinked: boolean
   onTabClick: (activeTab: string) => Action
-  onListItemClick: (type: componentType, activeTab: string) => Action
+  onListItemClick: (type: ComponentType, activeTab: string) => Action
 }
-
-const components = [
-  {
-    name: 'meta',
-    displayName: 'Meta'
-  },
-  {
-    name: 'body',
-    displayName: 'Body'
-  },
-  {
-    name: 'schema',
-    displayName: 'Schema'
-  }
-]
 
 const DatasetSidebar: React.FunctionComponent<DatasetSidebarProps> = (props: DatasetSidebarProps) => {
   const {
@@ -137,46 +68,14 @@ const DatasetSidebar: React.FunctionComponent<DatasetSidebarProps> = (props: Dat
       </div>
       <div id='content'>
         <div id='status-content' className='sidebar-content' hidden = {activeTab !== 'status'}>
-          <div className='sidebar-list-item'>
-            <div className='changes'>
-                Changes
-            </div>
-          </div>
-          {
-            statusLoaded && components.map(({ name, displayName }) => {
-              if (status[name]) {
-                const { filepath, status: fileStatus } = status[name]
-                let filename
-                if (filepath === 'repo') {
-                  filename = ''
-                } else {
-                  filename = filepath.substring((filepath.lastIndexOf('/') + 1))
-                }
-
-                return (
-                  <FileRow
-                    key={name}
-                    displayName={displayName}
-                    name={name}
-                    filename={filename}
-                    status={fileStatus}
-                    selected={selectedComponent === name}
-                    selectionType={'component'}
-                    onClick={onListItemClick}
-                  />
-                )
-              } else {
-                return (
-                  <FileRow
-                    key={name}
-                    displayName={displayName}
-                    name={displayName}
-                    disabled={true}
-                  />
-                )
-              }
-            })
-          }
+          { statusLoaded &&
+            <ComponentList
+              status={status}
+              selectedComponent={selectedComponent}
+              onComponentClick={onListItemClick}
+              selectionType={'component' as ComponentType}
+              isLinked={isLinked}
+            />}
         </div>
         {
           historyLoaded && (
