@@ -154,8 +154,14 @@ export function fetchCommitStatus (): ApiActionThunk {
           name: selections.name,
           path: commit
         },
-        map: (data: Record<string, string>): Dataset => {
-          return data as Dataset
+        map: (data: Array<Record<string, string>>): ComponentStatus[] => {
+          return data.map((d) => {
+            return {
+              filepath: d.sourceFile,
+              component: d.component,
+              status: d.type as ComponentState
+            }
+          })
         }
       }
     })
