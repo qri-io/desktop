@@ -53,18 +53,28 @@ export default class App extends React.Component<AppProps, AppState> {
     // }
     const Modal = this.state.currentModal
 
-    switch (Modal.type) {
-      case ModalType.CreateDataset:
-        return (
+    return (
+      <div >
+        <CSSTransition
+          in={ModalType.CreateDataset === Modal.type}
+          classNames='fade'
+          component='div'
+          timeout={300}
+          unmountOnExit
+        >
           <CreateDataset onSubmit={this.props.initDataset} onDismissed={() => this.setState({ currentModal: NoModal })}/>
-        )
-      case ModalType.AddDataset:
-        return (
+        </CSSTransition>
+        <CSSTransition
+          in={ModalType.AddDataset === Modal.type}
+          classNames='fade'
+          component='div'
+          timeout={300}
+          unmountOnExit
+        >
           <AddDataset onSubmit={this.props.addDataset} onDismissed={() => this.setState({ currentModal: NoModal })}/>
-        )
-      default:
-        return null
-    }
+        </CSSTransition>
+      </div>
+    )
   }
 
   private renderNoDatasets () {

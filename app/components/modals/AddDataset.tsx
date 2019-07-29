@@ -162,7 +162,7 @@ const AddDataset: React.FunctionComponent<AddDatasetProps> = ({ onDismissed, onS
       id="addDataset"
       title={'Add Dataset'}
       onDismissed={onDismissed}
-      onSubmit={handleSubmit}
+      onSubmit={() => {}}
       dismissable={dismissable}
       setDismissable={setDismissable}
     >
