@@ -18,14 +18,15 @@ const initialSession: Session = {
 }
 
 const [SESSION_REQ, SESSION_SUCC, SESSION_FAIL] = apiActionTypes('session')
+const [SET_PEERNAME_REQ, SET_PEERNAME_SUCC, SET_PEERNAME_FAIL] = apiActionTypes('set_peername')
 
 const sessionReducer: Reducer = (state = initialSession, action: AnyAction) => { // eslint-disable-line
   switch (action.type) {
-    case SESSION_REQ:
+    case SESSION_REQ || SET_PEERNAME_REQ:
       return state
-    case SESSION_SUCC:
+    case SESSION_SUCC || SET_PEERNAME_SUCC:
       return Object.assign({}, state, action.payload.data)
-    case SESSION_FAIL:
+    case SESSION_FAIL || SET_PEERNAME_FAIL:
       return state
     default:
       return state
