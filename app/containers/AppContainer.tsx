@@ -3,7 +3,7 @@ import App from '../components/App'
 import Store from '../models/store'
 
 import { fetchSession, fetchMyDatasetsAndLinks, addDatasetAndFetch, initDatasetAndFetch } from '../actions/api'
-import { acceptTOS, setPeername } from '../actions/ui'
+import { acceptTOS, setPeername, closeToast } from '../actions/ui'
 
 const AppContainer = connect(
   (state: Store) => {
@@ -11,14 +11,15 @@ const AppContainer = connect(
     const loading = myDatasets.pageInfo.isFetching || session.id === ''
     const hasDatasets = myDatasets.value.length !== 0
     const { id: sessionID, peername } = session
-    const { hasAcceptedTOS, hasSetPeername } = ui
+    const { hasAcceptedTOS, hasSetPeername, toast } = ui
     return {
       hasAcceptedTOS,
       hasSetPeername,
       hasDatasets,
       loading,
       sessionID,
-      peername
+      peername,
+      toast
     }
   },
   {
@@ -27,7 +28,8 @@ const AppContainer = connect(
     acceptTOS,
     setPeername,
     addDataset: addDatasetAndFetch,
-    initDataset: initDatasetAndFetch
+    initDataset: initDatasetAndFetch,
+    closeToast
   }
 )(App)
 

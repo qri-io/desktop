@@ -2,8 +2,12 @@ import {
   UI_TOGGLE_DATASET_LIST,
   UI_SET_SIDEBAR_WIDTH,
   UI_ACCEPT_TOS,
-  UI_SET_PEERNAME
+  UI_SET_PEERNAME,
+  UI_OPEN_TOAST,
+  UI_CLOSE_TOAST
 } from '../reducers/ui'
+
+import { ToastType } from '../models/store'
 
 export const toggleDatasetList = () => {
   return {
@@ -29,5 +33,18 @@ export const acceptTOS = () => {
 export const setPeername = () => {
   return {
     type: UI_SET_PEERNAME
+  }
+}
+
+export const openToast = (type: ToastType, message: string) => {
+  return {
+    type: UI_OPEN_TOAST,
+    payload: { type, message }
+  }
+}
+
+export const closeToast = () => {
+  return {
+    type: UI_CLOSE_TOAST
   }
 }

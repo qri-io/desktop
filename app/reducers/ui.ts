@@ -5,6 +5,8 @@ export const UI_TOGGLE_DATASET_LIST = 'UI_TOGGLE_DATASET_LIST'
 export const UI_SET_SIDEBAR_WIDTH = 'UI_SET_SIDEBAR_WIDTH'
 export const UI_ACCEPT_TOS = 'UI_ACCEPT_TOS'
 export const UI_SET_PEERNAME = 'UI_SET_PEERNAME'
+export const UI_OPEN_TOAST = 'UI_OPEN_TOAST'
+export const UI_CLOSE_TOAST = 'UI_CLOSE_TOAST'
 
 export const defaultSidebarWidth = 250
 export const hasAcceptedTOSKey = 'acceptedTOS'
@@ -18,6 +20,12 @@ const getSidebarWidth = (key: string): number => {
   return defaultSidebarWidth
 }
 
+const defaultToast = {
+  type: 'success',
+  message: '',
+  visible: false
+}
+
 const initialState = {
   apiConnection: 1,
   showDatasetList: false,
@@ -27,7 +35,8 @@ const initialState = {
   hasSetPeername: store().getItem(hasSetPeernameKey) === 'true',
   showDiff: false,
   datasetSidebarWidth: getSidebarWidth('datasetSidebarWidth'),
-  commitSidebarWidth: getSidebarWidth('commitSidebarWidth')
+  commitSidebarWidth: getSidebarWidth('commitSidebarWidth'),
+  toast: defaultToast
 }
 
 export default (state = initialState, action: AnyAction) => {
@@ -55,6 +64,27 @@ export default (state = initialState, action: AnyAction) => {
     case UI_SET_PEERNAME:
       store().setItem(hasSetPeernameKey, 'true')
       return Object.assign({}, state, { hasSetPeername: true })
+
+    case UI_OPEN_TOAST:
+      const { type: toastType, message } = action.payload
+      return {
+        ...state,
+        toast: {
+          type: toastType,
+          message,
+          visible: true
+        }
+      }
+
+    case UI_CLOSE_TOAST:
+      return {
+        ...state,
+        toast: {
+          type: 'success',
+          message: '',
+          visible: false
+        }
+      }
 
     default:
       return state

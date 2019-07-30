@@ -1,28 +1,35 @@
 import * as React from 'react'
-import { ApiAction } from '../store/api'
+import { Action } from 'redux'
 import { CSSTransition } from 'react-transition-group'
+
+import NoDatasets from './NoDatasets'
+import Toast from './Toast'
+import Onboard from './Onboard'
+import AppLoading from './AppLoading'
+
 import CreateDataset from './modals/CreateDataset'
 import AddDataset from './modals/AddDataset'
+
+import { ApiAction } from '../store/api'
 import DatasetContainer from '../containers/DatasetContainer'
-import NoDatasets from './NoDatasets'
-import Onboard from './Onboard'
 import { Modal, ModalType, NoModal } from '../models/modals'
-import AppLoading from './AppLoading'
-import { Action } from 'redux'
+import { Toast as IToast } from '../models/store'
 
 interface AppProps {
-  fetchSession: () => Promise<ApiAction>
-  fetchMyDatasetsAndLinks: () => Promise<ApiAction>
-  addDataset: (peername: string, name: string) => Promise<ApiAction>
-  initDataset: (path: string, name: string, format: string) => Promise<ApiAction>
-  acceptTOS: () => Action
-  setPeername: () => Action
   hasDatasets: boolean
   loading: boolean
   sessionID: string
   peername: string
   hasAcceptedTOS: boolean
   hasSetPeername: boolean
+  toast: IToast
+  fetchSession: () => Promise<ApiAction>
+  fetchMyDatasetsAndLinks: () => Promise<ApiAction>
+  addDataset: (peername: string, name: string) => Promise<ApiAction>
+  initDataset: (path: string, name: string, format: string) => Promise<ApiAction>
+  acceptTOS: () => Action
+  setPeername: () => Action
+  closeToast: () => Action
 }
 
 interface AppState {
@@ -100,9 +107,15 @@ export default class App extends React.Component<AppProps, AppState> {
       hasAcceptedTOS,
       peername,
       acceptTOS,
-      setPeername
+      setPeername,
+      toast,
+      closeToast
     } = this.props
-    return (<div style={{ height: '100%' }}>
+    return (<div style={{
+      height: '100%',
+      position: 'relative',
+      overflow: 'hidden'
+    }}>
       {this.renderAppLoading()}
       {this.renderModal()}
       <Onboard
@@ -114,6 +127,13 @@ export default class App extends React.Component<AppProps, AppState> {
       />
       {this.renderNoDatasets()}
       { this.props.hasDatasets && <DatasetContainer /> }
+      <Toast
+        type={toast.type}
+        message={toast.message}
+        isVisible={toast.visible}
+        timeout={3000}
+        onClose={closeToast}
+      />
     </div>)
   }
 }

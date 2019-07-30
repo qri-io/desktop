@@ -38,6 +38,14 @@ export interface Mutations {
   [key: string]: Mutation
 }
 
+export type ToastType = 'success' | 'error'
+
+export interface Toast {
+  type: ToastType
+  message: string
+  visible: false
+}
+
 export interface UI {
   apiConnection: ApiConnection
   showDatasetList: boolean
@@ -49,6 +57,7 @@ export interface UI {
   showDiff: boolean
   datasetSidebarWidth: number
   commitSidebarWidth: number
+  toast: Toast
 }
 
 // currently selected dataset, tab, dataset component, commit, etc
