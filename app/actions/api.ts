@@ -252,10 +252,11 @@ export function fetchBody (): ApiActionThunk {
   }
 }
 
-export function saveWorkingDataset (title: string, message: string): ApiActionThunk {
+export function saveWorkingDataset (): ApiActionThunk {
   return async (dispatch, getState) => {
-    const { workingDataset } = getState()
+    const { workingDataset, mutations } = getState()
     const { peername, name } = workingDataset
+    const { title, message } = mutations.save.value
     const action = {
       type: 'save',
       [CALL_API]: {
