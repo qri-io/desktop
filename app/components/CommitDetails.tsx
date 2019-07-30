@@ -58,7 +58,7 @@ export default class CommitDetails extends React.Component<CommitDetailsProps> {
         mainContent = <MetadataContainer history />
         break
       case 'body':
-        mainContent = <BodyContainer />
+        mainContent = <BodyContainer history />
         break
       case 'schema':
         mainContent = <SchemaContainer history />

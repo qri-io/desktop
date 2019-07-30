@@ -227,10 +227,19 @@ export function fetchWorkingStatus (): ApiActionThunk {
   }
 }
 
-export function fetchBody (): ApiActionThunk {
+export function fetchBody (history: boolean): ApiActionThunk {
   return async (dispatch, getState) => {
-    const { workingDataset } = getState()
-    const { peername, name, path } = workingDataset
+    const { workingDataset, selections } = getState()
+    let peername, name, path
+    if (history) {
+      peername = selections.peername
+      name = selections.name
+      path = selections.commit
+    } else {
+      peername = workingDataset.peername
+      name = workingDataset.name
+      path = workingDataset.path
+    }
 
     const action = {
       type: 'body',

@@ -18,15 +18,21 @@ const extractColumnHeaders = (workingDataset: WorkingDataset): undefined | objec
   return schema && schema.items && schema.items.items.map((d: { title: string }): string => d.title)
 }
 
-const mapStateToProps = (state: Store) => {
+const mapStateToProps = (state: Store, ownProps: {
+  history?: boolean
+}) => {
   const { workingDataset } = state
+  const { isLoading, value } = state.components.body
+  const { history } = ownProps
 
   const headers = extractColumnHeaders(workingDataset)
 
   // get data for the currently selected component
   return {
-    workingDataset,
-    headers
+    isLoading,
+    headers,
+    value,
+    history
   }
 }
 

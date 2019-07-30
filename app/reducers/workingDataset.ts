@@ -19,7 +19,6 @@ const initialState = {
 const [DATASET_REQ, DATASET_SUCC, DATASET_FAIL] = apiActionTypes('dataset')
 const [DATASET_HISTORY_REQ, DATASET_HISTORY_SUCC, DATASET_HISTORY_FAIL] = apiActionTypes('history')
 const [DATASET_STATUS_REQ, DATASET_STATUS_SUCC, DATASET_STATUS_FAIL] = apiActionTypes('status')
-const [DATASET_BODY_REQ, DATASET_BODY_SUCC, DATASET_BODY_FAIL] = apiActionTypes('body')
 
 const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction): WorkingDataset | null => {
   switch (action.type) {
@@ -78,18 +77,6 @@ const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction
         status: statusObject
       })
     case DATASET_STATUS_FAIL:
-      return state
-
-    case DATASET_BODY_REQ:
-      return Object.assign({}, state, {
-        bodyLoading: true
-      })
-    case DATASET_BODY_SUCC:
-      return Object.assign({}, state, {
-        value: Object.assign({}, state.value, { body: action.payload.data }),
-        bodyLoading: false
-      })
-    case DATASET_BODY_FAIL:
       return state
 
     default:

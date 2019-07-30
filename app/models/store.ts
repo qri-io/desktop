@@ -112,7 +112,14 @@ export interface WorkingDataset extends CommitDetails {
     value: Commit[]
   }
   loading: false
-  bodyLoading: false
+}
+
+export interface Components {
+  body: {
+    isLoading: boolean
+    value: any[]
+    error: string
+  }
 }
 
 export default interface Store {
@@ -122,5 +129,6 @@ export default interface Store {
   myDatasets: MyDatasets
   workingDataset: WorkingDataset
   commitDetails: CommitDetails
+  components: Components
   router: RouterState
 }
