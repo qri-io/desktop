@@ -20,7 +20,9 @@ const Toast: React.FunctionComponent<ToastProps> = (props: ToastProps) => {
     : <span className='icon-inline'>warning</span>
 
   React.useEffect(() => {
-    // set timeout
+    // set timeout for the toast
+    // TODO(chriswhong): handle cancelling the timeout so it will behave if
+    // you fire multiple toasts in succession
     if (isVisible === true) {
       setTimeout(onClose, timeout)
     }

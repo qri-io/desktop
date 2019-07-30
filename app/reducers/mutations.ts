@@ -15,7 +15,7 @@ const initialState: Mutations = {
 
 export const MUTATIONS_SET_SAVE_VALUE = 'MUTATIONS_SET_SAVE_VALUE'
 
-const [SAVE_REQ, SAVE_SUCC, SAVE_FAIL] = apiActionTypes('save')
+export const [SAVE_REQ, SAVE_SUCC, SAVE_FAIL] = apiActionTypes('save')
 
 const mutationsReducer: Reducer = (state = initialState, action: AnyAction): Mutations => {
   switch (action.type) {

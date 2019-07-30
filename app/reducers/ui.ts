@@ -1,5 +1,6 @@
 import { AnyAction } from 'redux'
 import store from '../utils/localStore'
+import { SAVE_SUCC, SAVE_FAIL } from '../reducers/mutations'
 
 export const UI_TOGGLE_DATASET_LIST = 'UI_TOGGLE_DATASET_LIST'
 export const UI_SET_SIDEBAR_WIDTH = 'UI_SET_SIDEBAR_WIDTH'
@@ -80,12 +81,31 @@ export default (state = initialState, action: AnyAction) => {
       return {
         ...state,
         toast: {
-          type: 'success',
-          message: '',
+          ...state.toast,
           visible: false
         }
       }
 
+    // listen for SAVE_SUCC and SAVE_FAIL to set the toast
+    case SAVE_SUCC:
+      return {
+        ...state,
+        toast: {
+          type: 'success',
+          message: 'Commit Successful!',
+          visible: true
+        }
+      }
+
+    case SAVE_FAIL:
+      return {
+        ...state,
+        toast: {
+          type: 'error',
+          message: 'Oops, something went wrong with this commit',
+          visible: true
+        }
+      }
     default:
       return state
   }

@@ -7,6 +7,7 @@ import { ApiAction } from '../store/api'
 interface SaveFormProps {
   title: string
   message: string
+  isLoading: boolean
   saveWorkingDataset: () => Promise<ApiAction>
   setSaveValue: (name: string, value: string) => Action
 }
@@ -29,7 +30,7 @@ export default class SaveForm extends React.Component<SaveFormProps> {
   }
 
   render () {
-    const { title, message } = this.props
+    const { title, message, isLoading } = this.props
     const valid = title.length > 3
     return (
       <form id='save-form' onSubmit={this.handleSubmit}>
@@ -51,7 +52,11 @@ export default class SaveForm extends React.Component<SaveFormProps> {
           />
         </div>
         <div className='submit'>
-          <input className={classNames('submit', { 'disabled': !valid })} type="submit" value="Submit" />
+          {
+            isLoading
+              ? <div className='spinner'><span className='icon-inline'>crosshair</span> Saving...</div>
+              : <input className={classNames('submit', { 'disabled': !valid })} type="submit" value="Submit" />
+          }
         </div>
       </form>
     )

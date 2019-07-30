@@ -5,10 +5,13 @@ import { setSaveValue } from '../actions/mutations'
 import Store from '../models/store'
 
 const mapStateToProps = (state: Store) => {
-  const { title, message } = state.mutations.save.value
+  const { save } = state.mutations
+  const { isLoading } = save
+  const { title, message } = save.value
   return {
     title,
-    message
+    message,
+    isLoading
   }
 }
 
