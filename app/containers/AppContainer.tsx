@@ -2,24 +2,35 @@ import { connect } from 'react-redux'
 import App from '../components/App'
 import Store from '../models/store'
 
-import { fetchMyDatasetsAndLinks, addDatasetAndFetch, initDatasetAndFetch } from '../actions/api'
-import { acceptTOS, setHasSetPeername } from '../actions/ui'
+import {
+  fetchMyDatasetsAndLinks,
+  addDatasetAndFetch,
+  initDatasetAndFetch,
+  pingApi
+} from '../actions/api'
+import {
+  acceptTOS,
+  setHasSetPeername,
+  setApiConnection
+} from '../actions/ui'
+
 import { fetchSession, setPeername } from '../actions/session'
 
 const AppContainer = connect(
   (state: Store) => {
     const { ui, myDatasets, session } = state
-    const loading = myDatasets.pageInfo.isFetching || session.id === ''
+    const loading = ui.apiConnection === 0
     const hasDatasets = myDatasets.value.length !== 0
     const { id: sessionID, peername } = session
-    const { hasAcceptedTOS, hasSetPeername } = ui
+    const { hasAcceptedTOS, hasSetPeername, apiConnection } = ui
     return {
       hasAcceptedTOS,
       hasSetPeername,
       hasDatasets,
       loading,
       sessionID,
-      peername
+      peername,
+      apiConnection
     }
   },
   {
@@ -29,7 +40,9 @@ const AppContainer = connect(
     setPeername,
     setHasSetPeername,
     addDataset: addDatasetAndFetch,
-    initDataset: initDatasetAndFetch
+    initDataset: initDatasetAndFetch,
+    pingApi,
+    setApiConnection
   }
 )(App)
 

@@ -5,6 +5,23 @@ import { Action } from 'redux'
 
 import { setSelectedListItem } from './selections'
 
+export function pingApi (): ApiActionThunk {
+  return async (dispatch) => {
+    const pingAction: ApiAction = {
+      type: 'ping',
+      [CALL_API]: {
+        endpoint: 'ping',
+        method: 'GET',
+        map: (data: Record<string, string>): any => { //eslint-disable-line
+          console.log(data)
+          return data
+        }
+      }
+    }
+    return dispatch(pingAction)
+  }
+}
+
 // fetchMyDatasetsAndLinks fetches the user's dataset list and linked datasets
 // these two responses combined can indicate whether a given dataset is linked
 // these will be combined into a single call in the future
