@@ -8,6 +8,7 @@ import NoDatasets from './NoDatasets'
 import Onboard from './Onboard'
 import { Modal, ModalType, NoModal } from '../models/modals'
 import AppLoading from './AppLoading'
+import AppError from './AppError'
 import { Action } from 'redux'
 
 interface AppProps {
@@ -18,10 +19,13 @@ interface AppProps {
   initDataset: (path: string, name: string, format: string) => Promise<ApiAction>
   acceptTOS: () => Action
   setHasSetPeername: () => Action
+  setApiConnection: (status: number) => Action
+  pingApi: () => Promise<ApiAction>
   hasDatasets: boolean
   loading: boolean
   sessionID: string
   peername: string
+  apiConnection?: number
   hasAcceptedTOS: boolean
   hasSetPeername: boolean
 }
@@ -32,9 +36,32 @@ interface AppState {
 }
 
 export default class App extends React.Component<AppProps, AppState> {
-  readonly state = { currentModal: NoModal, sessionID: this.props.sessionID }
+  constructor (props: AppProps) {
+    super(props)
+
+    this.state = {
+      currentModal: NoModal,
+      sessionID: this.props.sessionID
+    }
+
+    this.renderModal = this.renderModal.bind(this)
+    this.renderNoDatasets = this.renderNoDatasets.bind(this)
+    this.renderAppLoading = this.renderAppLoading.bind(this)
+    this.renderAppError = this.renderAppError.bind(this)
+  }
 
   componentDidMount () {
+    if (this.props.apiConnection === 0) {
+      var iter = 0
+      const pingTimer = setInterval(() => {
+        if (iter > 30) {
+          this.props.setApiConnection(-1)
+          clearInterval(pingTimer)
+        }
+        this.props.pingApi()
+        iter++
+      }, 850)
+    }
     this.props.fetchSession()
     this.props.fetchMyDatasetsAndLinks()
   }
@@ -78,6 +105,7 @@ export default class App extends React.Component<AppProps, AppState> {
   }
 
   private renderNoDatasets () {
+    console.log(this.props.hasDatasets)
     return (
       <CSSTransition
         in={!this.props.hasDatasets}
@@ -92,6 +120,7 @@ export default class App extends React.Component<AppProps, AppState> {
   }
 
   private renderAppLoading () {
+    console.log(this.props.loading)
     return (
       <CSSTransition
         in={this.props.loading}
@@ -101,6 +130,20 @@ export default class App extends React.Component<AppProps, AppState> {
         unmountOnExit
       >
         <AppLoading />
+      </CSSTransition>
+    )
+  }
+
+  private renderAppError () {
+    return (
+      <CSSTransition
+        in={this.props.apiConnection === -1}
+        classNames="fade"
+        component="div"
+        timeout={1000}
+        unmountOnExit
+      >
+        <AppError />
       </CSSTransition>
     )
   }
@@ -116,6 +159,7 @@ export default class App extends React.Component<AppProps, AppState> {
     } = this.props
     return (<div style={{ height: '100%' }}>
       {this.renderAppLoading()}
+      {this.renderAppError()}
       {this.renderModal()}
       <Onboard
         peername={peername}
