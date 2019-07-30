@@ -13,6 +13,8 @@ enum ModalType {
   AddDataset,
 }
 
+export type ComponentType = 'component' | 'commit' | 'componentCommit'
+
 type Modal =
 | {
   type: ModalType.CreateDataset
