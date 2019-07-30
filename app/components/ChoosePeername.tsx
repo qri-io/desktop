@@ -7,13 +7,17 @@ export interface ChoosePeernameProps {
   peername: string
 }
 
-const SET_PEERNAME_FAILURE = 'SET_PEERNAME_FAILURE'
-
 const ChoosePeername: React.FunctionComponent<ChoosePeernameProps> = (props: ChoosePeernameProps) => {
   const { peername, onSave } = props
   const [newPeername, setNewPeername] = React.useState(peername)
   const [loading, setLoading] = React.useState(false)
   const [error, setError] = React.useState('')
+  const [acceptEnabled, setAcceptEnabled] = React.useState(true)
+
+  React.useEffect(() => {
+    if (newPeername === '' && acceptEnabled) setAcceptEnabled(false)
+    else if (!acceptEnabled) setAcceptEnabled(true)
+  }, [newPeername])
 
   React.useEffect(() => {
     setNewPeername(peername)
@@ -26,22 +30,23 @@ const ChoosePeername: React.FunctionComponent<ChoosePeernameProps> = (props: Cho
     setNewPeername(value)
   }
 
-  const handleSave = () => {
-    setLoading(true)
-    setError('')
-    setTimeout(async () =>
-      onSave(newPeername)
-        .then((action: any) => {
-          if (action.type === SET_PEERNAME_FAILURE) {
-            setLoading(false)
-            setError(action.error)
-          }
-        }), 2000)
+  async function handleSave () {
+    new Promise(resolve => {
+      setLoading(true)
+      resolve()
+    })
+      .then(async () => onSave(newPeername))
+      .catch((action) => {
+        console.log(action)
+        setLoading(false)
+        setError('some error occured')
+      })
   }
 
   return (
     <WelcomeTemplate
       onAccept={handleSave}
+      acceptEnabled={acceptEnabled}
       acceptText='Take me to Qri '
       title='Choose Your Peername'
       subtitle='We&apos;ve generated a peername for you'

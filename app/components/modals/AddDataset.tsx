@@ -5,29 +5,22 @@ import Modal from './Modal'
 import TextInput from '../form/TextInput'
 import Error from './Error'
 import Buttons from './Buttons'
-import Tabs from './Tabs'
+// import Tabs from './Tabs'
 
 interface AddByNameProps {
-  peername: string
   datasetName: string
   onChange: (name: string, value: any, e: any) => void
 }
 
-const AddByName: React.FunctionComponent<AddByNameProps> = ({ peername, datasetName, onChange }) => {
+const AddByName: React.FunctionComponent<AddByNameProps> = ({ datasetName, onChange }) => {
   return (
     <div className='content'>
-      <p>Add a dataset that already exists on Qri using the <strong>peername</strong> and <strong>dataset name</strong>.</p>
-      <TextInput
-        name='peername'
-        label='Peername:'
-        type=''
-        value={peername}
-        onChange={onChange}
-        maxLength={300}
-      />
+      <p>Add a dataset that already exists on Qri</p>
+      <p>Qri dataset names have the following structure: <strong>peername/dataset name</strong>.</p>
+      <p>For example: <strong>chriswhong/usgs_earthquakes</strong>.</p>
       <TextInput
         name='datasetName'
-        label='Dataset Name:'
+        label='Peername/Dataset_Name:'
         type=''
         value={datasetName}
         onChange={onChange}
@@ -69,17 +62,20 @@ interface AddDatasetProps {
 }
 
 const AddDataset: React.FunctionComponent<AddDatasetProps> = ({ onDismissed, onSubmit }) => {
-  const [peername, setPeername] = React.useState('')
   const [datasetName, setDatasetName] = React.useState('')
-  const [url, setUrl] = React.useState('')
-  const [activeTab, setActiveTab] = React.useState(TabTypes.ByName)
+
+  // restore when you can add by URL
+  // const [url, setUrl] = React.useState('')
+  // const [activeTab, setActiveTab] = React.useState(TabTypes.ByName)
+  const activeTab = TabTypes.ByName
+
   const [dismissable, setDismissable] = React.useState(true)
   const [buttonDisabled, setButtonDisabled] = React.useState(true)
 
   React.useEffect(() => {
     toggleButton(activeTab)
     if (error !== '') setError('')
-  }, [url, peername, datasetName, activeTab])
+  }, [datasetName, activeTab])
 
   // should come from props
   const [error, setError] = React.useState('')
@@ -89,26 +85,27 @@ const AddDataset: React.FunctionComponent<AddDatasetProps> = ({ onDismissed, onS
     if (value[value.length - 1] === ' ') {
       return
     }
-    if (name === 'peername') setPeername(value)
     if (name === 'datasetName') setDatasetName(value)
-    if (name === 'url') setUrl(value)
+    // restore when you can add by URL
+    // if (name === 'url') setUrl(value)
   }
 
   const toggleButton = (activeTab: TabTypes) => {
     if (activeTab === TabTypes.ByName) {
-      if (peername && datasetName) {
+      if (datasetName) {
         setButtonDisabled(false)
       } else {
         setButtonDisabled(true)
       }
     }
-    if (activeTab === TabTypes.ByUrl) {
-      if (url) {
-        setButtonDisabled(false)
-      } else {
-        setButtonDisabled(true)
-      }
-    }
+    // restore when you can add by URL
+    // if (activeTab === TabTypes.ByUrl) {
+    //   if (url) {
+    //     setButtonDisabled(false)
+    //   } else {
+    //     setButtonDisabled(true)
+    //   }
+    // }
   }
 
   const handleSubmit = () => {
@@ -117,7 +114,15 @@ const AddDataset: React.FunctionComponent<AddDatasetProps> = ({ onDismissed, onS
     // should fire off action and catch error response
     // if success, fetchDatatsets
     if (!onSubmit) return
-    onSubmit(peername, datasetName)
+    const names = datasetName.split('/')
+    if (names.length !== 2) {
+      setError('dataset reference should be in the format [peername]/[dataset_name]')
+      setLoading(false)
+      setDismissable(true)
+      return
+    }
+
+    onSubmit(names[0], names[1])
       .then(() => onDismissed())
       .catch((action) => {
         setLoading(false)
@@ -134,43 +139,46 @@ const AddDataset: React.FunctionComponent<AddDatasetProps> = ({ onDismissed, onS
         timeout={300}
         unmountOnExit
       >
-        <AddByName peername={peername} datasetName={datasetName} onChange={handleChanges}/>
+        <AddByName datasetName={datasetName} onChange={handleChanges}/>
       </CSSTransition>
     )
   }
 
-  const renderAddByUrl = () => {
-    return (
-      <CSSTransition
-        in={ activeTab === TabTypes.ByUrl }
-        classNames="fade"
-        component="div"
-        timeout={300}
-        unmountOnExit
-      >
-        <AddByUrl url={url} onChange={handleChanges}/>
-      </CSSTransition>
-    )
-  }
-
-  const handleSetActiveTab = (activeTab: TabTypes) => {
-    setActiveTab(activeTab)
-  }
+  // restore when you can add by URL
+  // const renderAddByUrl = () => {
+  //   return (
+  //     <CSSTransition
+  //       in={ activeTab === TabTypes.ByUrl }
+  //       classNames="fade"
+  //       component="div"
+  //       timeout={300}
+  //       unmountOnExit
+  //     >
+  //       <AddByUrl url={url} onChange={handleChanges}/>
+  //     </CSSTransition>
+  //   )
+  // }
+  //
+  // const handleSetActiveTab = (activeTab: TabTypes) => {
+  //   setActiveTab(activeTab)
+  // }
 
   return (
     <Modal
       id="addDataset"
       title={'Add Dataset'}
       onDismissed={onDismissed}
-      onSubmit={handleSubmit}
+      onSubmit={() => {}}
       dismissable={dismissable}
       setDismissable={setDismissable}
     >
-      <Tabs tabs={[TabTypes.ByName, TabTypes.ByUrl]} active={activeTab} onClick={handleSetActiveTab} id='add-dataset-tab'/>
+      {/* restore when you can add by URL */}
+      {/* <Tabs tabs={[TabTypes.ByName, TabTypes.ByUrl]} active={activeTab} onClick={handleSetActiveTab} id='add-dataset-tab'/> */}
       <div className='content-wrap'>
         <div>
           {renderAddByName()}
-          {renderAddByUrl()}
+          {/* restore when you can add by URL */}
+          {/* {renderAddByUrl()} */}
         </div>
         <div id='error'><Error text={error} /></div>
       </div>

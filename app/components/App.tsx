@@ -13,10 +13,11 @@ import { Action } from 'redux'
 interface AppProps {
   fetchSession: () => Promise<ApiAction>
   fetchMyDatasetsAndLinks: () => Promise<ApiAction>
+  setPeername: (newPeername: string) => Promise<ApiAction>
   addDataset: (peername: string, name: string) => Promise<ApiAction>
   initDataset: (path: string, name: string, format: string) => Promise<ApiAction>
   acceptTOS: () => Action
-  setPeername: () => Action
+  setHasSetPeername: () => Action
   hasDatasets: boolean
   loading: boolean
   sessionID: string
@@ -52,18 +53,28 @@ export default class App extends React.Component<AppProps, AppState> {
     // }
     const Modal = this.state.currentModal
 
-    switch (Modal.type) {
-      case ModalType.CreateDataset:
-        return (
+    return (
+      <div >
+        <CSSTransition
+          in={ModalType.CreateDataset === Modal.type}
+          classNames='fade'
+          component='div'
+          timeout={300}
+          unmountOnExit
+        >
           <CreateDataset onSubmit={this.props.initDataset} onDismissed={() => this.setState({ currentModal: NoModal })}/>
-        )
-      case ModalType.AddDataset:
-        return (
+        </CSSTransition>
+        <CSSTransition
+          in={ModalType.AddDataset === Modal.type}
+          classNames='fade'
+          component='div'
+          timeout={300}
+          unmountOnExit
+        >
           <AddDataset onSubmit={this.props.addDataset} onDismissed={() => this.setState({ currentModal: NoModal })}/>
-        )
-      default:
-        return null
-    }
+        </CSSTransition>
+      </div>
+    )
   }
 
   private renderNoDatasets () {
@@ -100,7 +111,8 @@ export default class App extends React.Component<AppProps, AppState> {
       hasAcceptedTOS,
       peername,
       acceptTOS,
-      setPeername
+      setPeername,
+      setHasSetPeername
     } = this.props
     return (<div style={{ height: '100%' }}>
       {this.renderAppLoading()}
@@ -109,6 +121,7 @@ export default class App extends React.Component<AppProps, AppState> {
         peername={peername}
         hasAcceptedTOS={hasAcceptedTOS}
         hasSetPeername={hasSetPeername}
+        setHasSetPeername={setHasSetPeername}
         setPeername={setPeername}
         acceptTOS={acceptTOS}
       />

@@ -1,13 +1,10 @@
 import * as React from 'react'
 import { Action } from 'redux'
+import { ApiAction } from '../store/api'
 import { CSSTransition } from 'react-transition-group'
 
 import Welcome from './Welcome'
 import ChoosePeername from './ChoosePeername'
-
-const peernameError: string = 'peername_error'
-const SET_PEERNAME_FAILURE = 'SET_PEERNAME_FAILURE'
-const SET_PEERNAME_SUCCESS = 'SET_PEERNAME_SUCCESS'
 
 export interface OnboardProps {
   peername: string
@@ -15,7 +12,8 @@ export interface OnboardProps {
   hasSetPeername: boolean
 
   acceptTOS: () => Action
-  setPeername: () => Action
+  setHasSetPeername: () => Action
+  setPeername: (newPeername: string) => Promise<ApiAction>
 }
 
 // Onboard is a series of flows for onboarding a new user
@@ -25,20 +23,12 @@ const Onboard: React.FunctionComponent<OnboardProps> = (
     hasAcceptedTOS,
     hasSetPeername,
     acceptTOS,
-    setPeername
+    setPeername,
+    setHasSetPeername
   }) => {
   async function onSave (peername: string): Promise<any> {
-    return new Promise((resolve) => {
-      let error: string = ''
-      let type: string = SET_PEERNAME_SUCCESS
-      if (peername === peernameError) {
-        error = 'this peername is already taken'
-        type = SET_PEERNAME_FAILURE
-      } else {
-        setPeername()
-      }
-      resolve({ type, error })
-    })
+    return setPeername(peername)
+      .then(() => setHasSetPeername())
   }
 
   const renderWelcome = () => {
