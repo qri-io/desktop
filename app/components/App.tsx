@@ -1,26 +1,23 @@
 import * as React from 'react'
-import { ApiAction } from '../store/api'
+import { Action } from 'redux'
 import { CSSTransition } from 'react-transition-group'
+
+// import components
+import Toast from './Toast'
+import Onboard from './Onboard'
+import AppError from './AppError'
+import AppLoading from './AppLoading'
+import NoDatasets from './NoDatasets'
 import CreateDataset from './modals/CreateDataset'
 import AddDataset from './modals/AddDataset'
 import DatasetContainer from '../containers/DatasetContainer'
-import NoDatasets from './NoDatasets'
-import Onboard from './Onboard'
+
+// import models
+import { ApiAction } from '../store/api'
 import { Modal, ModalType, NoModal } from '../models/modals'
-import AppLoading from './AppLoading'
-import AppError from './AppError'
-import { Action } from 'redux'
+import { Toast as IToast } from '../models/store'
 
 interface AppProps {
-  fetchSession: () => Promise<ApiAction>
-  fetchMyDatasetsAndLinks: () => Promise<ApiAction>
-  setPeername: (newPeername: string) => Promise<ApiAction>
-  addDataset: (peername: string, name: string) => Promise<ApiAction>
-  initDataset: (path: string, name: string, format: string) => Promise<ApiAction>
-  acceptTOS: () => Action
-  setHasSetPeername: () => Action
-  setApiConnection: (status: number) => Action
-  pingApi: () => Promise<ApiAction>
   hasDatasets: boolean
   loading: boolean
   sessionID: string
@@ -28,6 +25,17 @@ interface AppProps {
   apiConnection?: number
   hasAcceptedTOS: boolean
   hasSetPeername: boolean
+  toast: IToast
+  fetchSession: () => Promise<ApiAction>
+  fetchMyDatasetsAndLinks: () => Promise<ApiAction>
+  addDataset: (peername: string, name: string) => Promise<ApiAction>
+  initDataset: (path: string, name: string, format: string) => Promise<ApiAction>
+  acceptTOS: () => Action
+  setHasSetPeername: () => Action
+  setPeername: (newPeername: string) => Promise<ApiAction>
+  closeToast: () => Action
+  setApiConnection: (status: number) => Action
+  pingApi: () => Promise<ApiAction>
 }
 
 interface AppState {
@@ -155,9 +163,15 @@ export default class App extends React.Component<AppProps, AppState> {
       peername,
       acceptTOS,
       setPeername,
+      toast,
+      closeToast,
       setHasSetPeername
     } = this.props
-    return (<div style={{ height: '100%' }}>
+    return (<div style={{
+      height: '100%',
+      position: 'relative',
+      overflow: 'hidden'
+    }}>
       {this.renderAppLoading()}
       {this.renderAppError()}
       {this.renderModal()}
@@ -171,6 +185,13 @@ export default class App extends React.Component<AppProps, AppState> {
       />
       {this.renderNoDatasets()}
       { this.props.hasDatasets && <DatasetContainer /> }
+      <Toast
+        type={toast.type}
+        message={toast.message}
+        isVisible={toast.visible}
+        timeout={3000}
+        onClose={closeToast}
+      />
     </div>)
   }
 }

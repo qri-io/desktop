@@ -8,13 +8,18 @@ import {
   initDatasetAndFetch,
   pingApi
 } from '../actions/api'
+
 import {
   acceptTOS,
   setHasSetPeername,
+  closeToast,
   setApiConnection
 } from '../actions/ui'
 
-import { fetchSession, setPeername } from '../actions/session'
+import {
+  fetchSession,
+  setPeername
+} from '../actions/session'
 
 const AppContainer = connect(
   (state: Store) => {
@@ -22,7 +27,7 @@ const AppContainer = connect(
     const loading = ui.apiConnection === 0
     const hasDatasets = myDatasets.value.length !== 0
     const { id: sessionID, peername } = session
-    const { hasAcceptedTOS, hasSetPeername, apiConnection } = ui
+    const { hasAcceptedTOS, hasSetPeername, apiConnection, toast } = ui
     return {
       hasAcceptedTOS,
       hasSetPeername,
@@ -30,6 +35,7 @@ const AppContainer = connect(
       loading,
       sessionID,
       peername,
+      toast,
       apiConnection
     }
   },
@@ -41,6 +47,7 @@ const AppContainer = connect(
     setHasSetPeername,
     addDataset: addDatasetAndFetch,
     initDataset: initDatasetAndFetch,
+    closeToast,
     pingApi,
     setApiConnection
   }

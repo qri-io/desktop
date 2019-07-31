@@ -17,7 +17,8 @@ import {
   UI,
   Selections,
   MyDatasets,
-  WorkingDataset
+  WorkingDataset,
+  Mutations
 } from '../models/store'
 
 interface DatasetProps {
@@ -26,6 +27,7 @@ interface DatasetProps {
   selections: Selections
   myDatasets: MyDatasets
   workingDataset: WorkingDataset
+  mutations: Mutations
   // actions
   toggleDatasetList: () => Action
   setActiveTab: (activeTab: string) => Action
@@ -40,6 +42,7 @@ interface DatasetProps {
 interface DatasetState {
   peername: string
   name: string
+  saveIsLoading: boolean
 }
 
 const logo = require('../assets/qri-blob-logo-tiny.png') //eslint-disable-line
@@ -49,7 +52,8 @@ export default class Dataset extends React.Component<DatasetProps> {
   // see getDerivedStateFromProps() below
   state = {
     peername: null,
-    name: null
+    name: null,
+    saveIsLoading: false
   }
 
   componentDidMount () {
@@ -74,7 +78,23 @@ export default class Dataset extends React.Component<DatasetProps> {
         name: newName
       }
     }
-    return null
+
+    // check state to see if there was a successful save
+    // successful save means mutations.save.isLoading was true and is now false,
+    // and mutations.save.error is falsy
+    const { isLoading: newSaveIsLoading, error: newSaveError } = nextProps.mutations.save
+    const { saveIsLoading } = prevState
+
+    if (
+      (saveIsLoading === true && newSaveIsLoading === false) &&
+      (!newSaveError)
+    ) {
+      nextProps.fetchWorkingDatasetDetails()
+    }
+
+    return {
+      saveIsLoading: newSaveIsLoading
+    }
   }
 
   render () {
