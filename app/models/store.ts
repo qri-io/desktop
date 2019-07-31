@@ -49,8 +49,6 @@ export interface Toast {
 export interface UI {
   apiConnection: ApiConnection
   showDatasetList: boolean
-  errorMessage: string | null
-  message: string | null
   hasAcceptedTOS: boolean
   hasSetPeername: boolean
   modal?: Modal

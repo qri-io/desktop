@@ -30,8 +30,6 @@ const defaultToast = {
 const initialState = {
   apiConnection: 1,
   showDatasetList: false,
-  errorMessage: null,
-  message: null,
   hasAcceptedTOS: store().getItem(hasAcceptedTOSKey) === 'true',
   hasSetPeername: store().getItem(hasSetPeernameKey) === 'true',
   showDiff: false,
