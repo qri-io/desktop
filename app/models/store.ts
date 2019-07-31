@@ -26,17 +26,36 @@ type Modal =
   initialURL?: string | null
 }
 
+export interface Mutation {
+  value: {
+    [key: string]: any
+  }
+  isLoading: boolean
+  error: string | null
+}
+
+export interface Mutations {
+  [key: string]: Mutation
+}
+
+export type ToastType = 'success' | 'error'
+
+export interface Toast {
+  type: ToastType
+  message: string
+  visible: false
+}
+
 export interface UI {
   apiConnection: ApiConnection
   showDatasetList: boolean
-  errorMessage: string | null
-  message: string | null
   hasAcceptedTOS: boolean
   hasSetPeername: boolean
   modal?: Modal
   showDiff: boolean
   datasetSidebarWidth: number
   commitSidebarWidth: number
+  toast: Toast
 }
 
 // currently selected dataset, tab, dataset component, commit, etc
@@ -130,5 +149,6 @@ export default interface Store {
   workingDataset: WorkingDataset
   commitDetails: CommitDetails
   components: Components
+  mutations: Mutations
   router: RouterState
 }

@@ -18,34 +18,29 @@
 
 .fade-enter {
   opacity: 0;
+  &::backdrop {
+    opacity: 0;
+  }
 }
 .fade-enter-active {
   opacity: 1;
   transition: opacity 300ms, transform 300ms;
+  &::backdrop {
+    opacity: 1;
+    transition: opacity 300ms, transform 300ms;
+  }
 }
 .fade-exit {
   opacity: 1;
+  &::backdrop {
+    opacity: 1;
+  }
 }
 .fade-exit-active {
   opacity: 0;
   transition: opacity 300ms, transform 300ms;
-}
-
-.modal-enter {
-  opacity: 0;
-  background: black;
-}
-.modal-enter-active {
-  opacity: 1;
-  transition: opacity 300ms, transform 300ms;
-  background: red;
-}
-.modal-exit {
-  opacity: 1;
-  background: green;
-}
-.modal-exit-active {
-  opacity: 0;
-  transition: opacity 300ms, transform 300ms;
-  background: blue;
+  &::backdrop {
+    opacity: 0;
+    transition: opacity 300ms, transform 300ms;
+  }
 }

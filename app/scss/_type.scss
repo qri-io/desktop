@@ -254,6 +254,20 @@ label {
   color: $primary;
 }
 
+.linkDisabled {
+  color: $primary-muted;
+  &:hover {
+    cursor: default;
+  }
+  &:focus {
+    color: $primary-muted;
+  }
+  &:hover, &:focus {
+    color: $primary-muted;   
+    cursor: default;
+  }
+}
+
 .linkMedium {
   font-weight: $font-weight-medium;
   font-size: 15px;

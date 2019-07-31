@@ -7,7 +7,7 @@ import TextInput from '../form/TextInput'
 import SelectInput from '../form/SelectInput'
 import Error from './Error'
 import Buttons from './Buttons'
-import Tabs from './Tabs'
+// import Tabs from './Tabs'
 import ButtonInput from '../form/ButtonInput'
 
 import { ISelectOption } from '../../models/forms'
@@ -34,7 +34,11 @@ const CreateDataset: React.FunctionComponent<CreateDatasetProps> = ({ onDismisse
   const [path, setPath] = React.useState('')
   const [bodyFormat, setBodyFormat] = React.useState(formatOptions[0].value)
   const [bodyPath, setBodyPath] = React.useState('')
-  const [activeTab, setActiveTab] = React.useState(TabTypes.NewBody)
+
+  // remove until we can init from an existing bodyfile
+  // const [activeTab, setActiveTab] = React.useState(TabTypes.NewBody)
+  const activeTab = TabTypes.NewBody
+
   const [dismissable, setDismissable] = React.useState(true)
   const [buttonDisabled, setButtonDisabled] = React.useState(true)
   const [alreadyDatasetError, setAlreadyDatasetError] = React.useState('')
@@ -85,21 +89,24 @@ const CreateDataset: React.FunctionComponent<CreateDatasetProps> = ({ onDismisse
     }
   }
 
-  const showFilePicker = () => {
-    const window = remote.getCurrentWindow()
-    const directory: string[] | undefined = remote.dialog.showOpenDialog(window, {
-      properties: ['createDirectory', 'openFile'],
-      filters: [{ name: 'Data', extensions: ['csv', 'json', 'xlsx', 'cbor'] }]
-    })
+  //
+  // remove until we can init from an existing bodyfile
+  //
+  // const showFilePicker = () => {
+  //   const window = remote.getCurrentWindow()
+  //   const directory: string[] | undefined = remote.dialog.showOpenDialog(window, {
+  //     properties: ['createDirectory', 'openFile'],
+  //     filters: [{ name: 'Data', extensions: ['csv', 'json', 'xlsx', 'cbor'] }]
+  //   })
 
-    if (!directory) {
-      return
-    }
+  //   if (!directory) {
+  //     return
+  //   }
 
-    const path = directory[0]
+  //   const path = directory[0]
 
-    setBodyPath(path)
-  }
+  //   setBodyPath(path)
+  // }
 
   const handlePickerDialog = (showFunc: () => void) => {
     new Promise(resolve => {
@@ -150,10 +157,12 @@ const CreateDataset: React.FunctionComponent<CreateDatasetProps> = ({ onDismisse
     if (name === 'bodyPath') setBodyPath(value)
   }
 
-  const renderTabs = () => {
-    // return <Tabs tabs={[TabTypes.NewBody, TabTypes.ExistingBody]} active={activeTab} onClick={(activeTab: TabTypes) => setActiveTab(activeTab)}/>
-    return <Tabs tabs={[TabTypes.NewBody]} active={activeTab} onClick={(activeTab: TabTypes) => setActiveTab(activeTab)}/>
-  }
+  //
+  // remove until we can init on an existing bodyfile
+  //
+  // const renderTabs = () => {
+  //   return <Tabs tabs={[TabTypes.NewBody]} active={activeTab} onClick={(activeTab: TabTypes) => setActiveTab(activeTab)}/>
+  // }
 
   const renderCreateNewBody = () =>
     <CSSTransition
@@ -174,28 +183,31 @@ const CreateDataset: React.FunctionComponent<CreateDatasetProps> = ({ onDismisse
       </div>
     </CSSTransition>
 
-  const renderUseExistingBody = () =>
-    <CSSTransition
-      in={ activeTab === TabTypes.ExistingBody }
-      classNames="fade"
-      component="div"
-      timeout={300}
-      unmountOnExit
-    >
-      <div className='content flex-space-between'>
-        <TextInput
-          name='bodyPath'
-          label='Path to datafile:'
-          type=''
-          helpText='data file can be csv, json, xlsx, or cbor'
-          showHelpText
-          value={bodyPath}
-          onChange={handleChanges}
-          maxLength={600}
-        />
-        <div className='margin-left'><ButtonInput onClick={() => handlePickerDialog(showFilePicker)} >Choose...</ButtonInput></div>
-      </div>
-    </CSSTransition>
+  //
+  // remove until we can also init on an existing bodyfile
+  //
+  // const renderUseExistingBody = () =>
+  //   <CSSTransition
+  //     in={ activeTab === TabTypes.ExistingBody }
+  //     classNames="fade"
+  //     component="div"
+  //     timeout={300}
+  //     unmountOnExit
+  //   >
+  //     <div className='content flex-space-between'>
+  //       <TextInput
+  //         name='bodyPath'
+  //         label='Path to datafile:'
+  //         type=''
+  //         helpText='data file can be csv, json, xlsx, or cbor'
+  //         showHelpText
+  //         value={bodyPath}
+  //         onChange={handleChanges}
+  //         maxLength={600}
+  //       />
+  //       <div className='margin-left'><ButtonInput onClick={() => handlePickerDialog(showFilePicker)} >Choose...</ButtonInput></div>
+  //     </div>
+  //   </CSSTransition>
 
   const handleSubmit = () => {
     setDismissable(false)
@@ -222,11 +234,13 @@ const CreateDataset: React.FunctionComponent<CreateDatasetProps> = ({ onDismisse
     >
       <div>
         {renderCreateDataset()}
-        <hr />
-        {renderTabs()}
+        {/* remove tabs until we can also init on an existing body file */}
+        {/* <hr /> */}
+        {/* {renderTabs()} */}
         <div id='create-dataset-content-wrap' className='content-wrap'>
           {renderCreateNewBody()}
-          {renderUseExistingBody()}
+          {/* remove until we can also init on an existing body file */}
+          {/* {renderUseExistingBody()} */}
         </div>
         <Error text={error} />
       </div>
