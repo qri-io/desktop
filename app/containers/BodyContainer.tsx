@@ -4,7 +4,7 @@ import Store, { WorkingDataset } from '../models/store'
 import { fetchBody } from '../actions/api'
 
 const extractColumnHeaders = (workingDataset: WorkingDataset): undefined | object => {
-  const { schema } = workingDataset.components
+  const schema = workingDataset.components.schema.value
 
   if (!schema) {
     return undefined

@@ -16,8 +16,12 @@ const initialState: WorkingDataset = {
       value: undefined,
       error: ''
     },
-    meta: {},
-    schema: {}
+    meta: {
+      value: {}
+    },
+    schema: {
+      value: {}
+    }
   },
   history: {
     pageInfo: {
@@ -56,8 +60,12 @@ const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction
             value: undefined,
             error: ''
           },
-          meta: dataset.meta,
-          schema: dataset.structure.schema
+          meta: {
+            value: dataset.meta
+          },
+          schema: {
+            value: dataset.structure.schema
+          }
         }
       }
     case DATASET_FAIL:
@@ -69,11 +77,12 @@ const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction
     case DATASET_HISTORY_REQ:
       return state
     case DATASET_HISTORY_SUCC:
-      return Object.assign({}, state, {
+      return {
+        ...state,
         history: {
           value: action.payload.data
         }
-      })
+      }
     case DATASET_HISTORY_FAIL:
       return state
 
@@ -94,10 +103,11 @@ const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction
         linkpath = filepath.substring(0, (filepath.lastIndexOf('/')))
       }
 
-      return Object.assign({}, state, {
+      return {
+        ...state,
         linkpath,
         status: statusObject
-      })
+      }
     case DATASET_STATUS_FAIL:
       return state
 

@@ -126,8 +126,12 @@ export interface CommitDetails {
       value: any[] | undefined
       error: string
     }
-    meta: Meta
-    schema: any // Schema
+    meta: {
+      value: Meta
+    }
+    schema: {
+      value: any
+    }
   }
 }
 

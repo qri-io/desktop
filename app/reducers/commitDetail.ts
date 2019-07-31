@@ -15,8 +15,12 @@ const initialState: CommitDetails = {
       value: undefined,
       error: ''
     },
-    meta: {},
-    schema: {}
+    meta: {
+      value: {}
+    },
+    schema: {
+      value: {}
+    }
   }
 }
 
@@ -46,8 +50,12 @@ const commitDetailsReducer: Reducer = (state = initialState, action: AnyAction):
             value: undefined,
             error: ''
           },
-          meta: dataset.meta,
-          schema: dataset.structure.schema
+          meta: {
+            value: dataset.meta
+          },
+          schema: {
+            value: dataset.structure.schema
+          }
         }
       }
     case COMMITDATASET_FAIL:
