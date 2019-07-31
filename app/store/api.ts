@@ -111,7 +111,8 @@ const endpointMap: Record<string, string> = {
   'session': 'me',
   'fsilinks': 'fsilinks',
   'add': 'add',
-  'init': 'fsi/init'
+  'init': 'fsi/init',
+  'ping': 'status'
 }
 
 function apiUrl (endpoint: string, segments?: ApiSegments, params?: ApiParams): [string, string] {
@@ -121,29 +122,27 @@ function apiUrl (endpoint: string, segments?: ApiSegments, params?: ApiParams): 
   }
 
   let url = `http://localhost:2503/${path}`
-  if (!segments) {
-    return [url, '']
-  }
-
-  if (segments.peername) {
-    url += `/${segments.peername}`
-  }
-  if (segments.name) {
-    url += `/${segments.name}`
-  }
-  if (segments.peerID || segments.path) {
-    url += '/at'
-  }
-  if (segments.peerID) {
-    url += `/${segments.peerID}`
-  }
-  if (segments.path) {
-    url += segments.path
+  if (segments) {
+    if (segments.peername) {
+      url += `/${segments.peername}`
+    }
+    if (segments.name) {
+      url += `/${segments.name}`
+    }
+    if (segments.peerID || segments.path) {
+      url += '/at'
+    }
+    if (segments.peerID) {
+      url += `/${segments.peerID}`
+    }
+    if (segments.path) {
+      url += segments.path
+    }
   }
 
   if (params) {
-    url += '?'
-    Object.keys(params).forEach((key) => {
+    Object.keys(params).forEach((key, index) => {
+      url += index === 0 ? '?' : '&'
       url += `${key}=${params[key]}`
     })
   }

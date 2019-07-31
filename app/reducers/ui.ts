@@ -1,5 +1,6 @@
 import { AnyAction } from 'redux'
 import store from '../utils/localStore'
+import { apiActionTypes } from '../store/api'
 import { SAVE_SUCC, SAVE_FAIL } from '../reducers/mutations'
 
 export const UI_TOGGLE_DATASET_LIST = 'UI_TOGGLE_DATASET_LIST'
@@ -8,10 +9,13 @@ export const UI_ACCEPT_TOS = 'UI_ACCEPT_TOS'
 export const UI_SET_PEERNAME = 'UI_SET_PEERNAME'
 export const UI_OPEN_TOAST = 'UI_OPEN_TOAST'
 export const UI_CLOSE_TOAST = 'UI_CLOSE_TOAST'
+export const UI_SET_API_CONNECTION = 'UI_SET_API_CONNECTION'
 
 export const defaultSidebarWidth = 250
 export const hasAcceptedTOSKey = 'acceptedTOS'
 export const hasSetPeernameKey = 'setPeername'
+
+export const [, PING_SUCCESS, PING_FAILURE] = apiActionTypes('ping')
 
 const getSidebarWidth = (key: string): number => {
   const width = store().getItem(key)
@@ -28,7 +32,7 @@ const defaultToast = {
 }
 
 const initialState = {
-  apiConnection: 1,
+  apiConnection: 0,
   showDatasetList: false,
   hasAcceptedTOS: store().getItem(hasAcceptedTOSKey) === 'true',
   hasSetPeername: store().getItem(hasSetPeernameKey) === 'true',
@@ -104,6 +108,14 @@ export default (state = initialState, action: AnyAction) => {
           visible: true
         }
       }
+
+    case PING_SUCCESS:
+      if (state.apiConnection === 1) return state
+      return Object.assign({}, state, { apiConnection: 1 })
+    case PING_FAILURE:
+      return Object.assign({}, state, { apiConnection: -1 })
+    case UI_SET_API_CONNECTION:
+      return Object.assign({}, state, { apiConnection: action.status })
     default:
       return state
   }

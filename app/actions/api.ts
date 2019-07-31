@@ -1,10 +1,26 @@
 import { CALL_API, ApiAction, ApiActionThunk, chainSuccess } from '../store/api'
 import { DatasetSummary, ComponentStatus, ComponentState } from '../models/store'
 import { Dataset, Commit } from '../models/dataset'
-import { Session } from '../models/session'
 import { Action } from 'redux'
 
 import { setSelectedListItem } from './selections'
+
+export function pingApi (): ApiActionThunk {
+  return async (dispatch) => {
+    const pingAction: ApiAction = {
+      type: 'ping',
+      [CALL_API]: {
+        endpoint: 'ping',
+        method: 'GET',
+        map: (data: Record<string, string>): any => { //eslint-disable-line
+          console.log(data)
+          return data
+        }
+      }
+    }
+    return dispatch(pingAction)
+  }
+}
 
 // fetchMyDatasetsAndLinks fetches the user's dataset list and linked datasets
 // these two responses combined can indicate whether a given dataset is linked
@@ -278,27 +294,6 @@ export function saveWorkingDataset (): ApiActionThunk {
       }
     }
 
-    return dispatch(action)
-  }
-}
-
-export function fetchSession (): ApiActionThunk {
-  return async (dispatch) => {
-    const action = {
-      type: 'session',
-      [CALL_API]: {
-        endpoint: 'session',
-        method: 'GET',
-        map: (data: Record<string, string>): Session => {
-          return {
-            peername: data.peername,
-            id: data.id,
-            created: data.created,
-            updated: data.updated
-          }
-        }
-      }
-    }
     return dispatch(action)
   }
 }

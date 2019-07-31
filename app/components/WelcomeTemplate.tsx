@@ -1,6 +1,7 @@
 import * as React from 'react' // eslint-disable-line
 import { remote } from 'electron'
 import { Spinner } from './chrome/Spinner'
+import classNames from 'classnames'
 export const logo = require('../assets/qri-blob-logo-large.png') // eslint-disable-line
 
 interface WelcomeTemplateProps {
@@ -11,9 +12,16 @@ interface WelcomeTemplateProps {
   subtitle: string
   loading?: boolean
   id?: string
+  acceptEnabled?: boolean
 }
 
-const WelcomeTemplate: React.FunctionComponent<WelcomeTemplateProps> = ({ onAccept, acceptText, exit, title, subtitle, loading, id, children }) => {
+const WelcomeTemplate: React.FunctionComponent<WelcomeTemplateProps> = ({ onAccept, acceptText, exit, title, subtitle, loading, id, acceptEnabled = true, children }) => {
+  const handleOnClick = () => {
+    if (acceptEnabled && onAccept) {
+      onAccept()
+    }
+  }
+
   return (
     <div className='welcome-page' id={id}>
       <div className='welcome-center'>
@@ -30,7 +38,7 @@ const WelcomeTemplate: React.FunctionComponent<WelcomeTemplateProps> = ({ onAcce
                 <Spinner/>
               </div>
               : !!onAccept && <div className='welcome-accept'>
-                <a className='linkLarge' onClick={onAccept}>{acceptText}<span className='icon-inline'>right</span></a><br />
+                <a className={classNames('linkLarge', { 'linkDisabled': !acceptEnabled })} onClick={handleOnClick}><span>{acceptText}</span><span className={classNames('icon-inline', { 'linkDisabled': !acceptEnabled })}>right</span></a><br />
                 {exit && <a className='linkSmallMuted' onClick={() => { remote.app.quit() }}>exit</a>}
               </div>
           }

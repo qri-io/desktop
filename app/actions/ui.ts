@@ -4,7 +4,8 @@ import {
   UI_ACCEPT_TOS,
   UI_SET_PEERNAME,
   UI_OPEN_TOAST,
-  UI_CLOSE_TOAST
+  UI_CLOSE_TOAST,
+  UI_SET_API_CONNECTION
 } from '../reducers/ui'
 
 import { ToastType } from '../models/store'
@@ -30,7 +31,7 @@ export const acceptTOS = () => {
   }
 }
 
-export const setPeername = () => {
+export const setHasSetPeername = () => {
   return {
     type: UI_SET_PEERNAME
   }
@@ -46,5 +47,12 @@ export const openToast = (type: ToastType, message: string) => {
 export const closeToast = () => {
   return {
     type: UI_CLOSE_TOAST
+  }
+}
+
+export const setApiConnection = (status: number) => {
+  return {
+    type: UI_SET_API_CONNECTION,
+    status
   }
 }

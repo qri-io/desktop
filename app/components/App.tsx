@@ -2,16 +2,18 @@ import * as React from 'react'
 import { Action } from 'redux'
 import { CSSTransition } from 'react-transition-group'
 
-import NoDatasets from './NoDatasets'
+// import components
 import Toast from './Toast'
 import Onboard from './Onboard'
+import AppError from './AppError'
 import AppLoading from './AppLoading'
-
+import NoDatasets from './NoDatasets'
 import CreateDataset from './modals/CreateDataset'
 import AddDataset from './modals/AddDataset'
-
-import { ApiAction } from '../store/api'
 import DatasetContainer from '../containers/DatasetContainer'
+
+// import models
+import { ApiAction } from '../store/api'
 import { Modal, ModalType, NoModal } from '../models/modals'
 import { Toast as IToast } from '../models/store'
 
@@ -20,6 +22,7 @@ interface AppProps {
   loading: boolean
   sessionID: string
   peername: string
+  apiConnection?: number
   hasAcceptedTOS: boolean
   hasSetPeername: boolean
   toast: IToast
@@ -28,8 +31,11 @@ interface AppProps {
   addDataset: (peername: string, name: string) => Promise<ApiAction>
   initDataset: (path: string, name: string, format: string) => Promise<ApiAction>
   acceptTOS: () => Action
-  setPeername: () => Action
+  setHasSetPeername: () => Action
+  setPeername: (newPeername: string) => Promise<ApiAction>
   closeToast: () => Action
+  setApiConnection: (status: number) => Action
+  pingApi: () => Promise<ApiAction>
 }
 
 interface AppState {
@@ -38,9 +44,32 @@ interface AppState {
 }
 
 export default class App extends React.Component<AppProps, AppState> {
-  readonly state = { currentModal: NoModal, sessionID: this.props.sessionID }
+  constructor (props: AppProps) {
+    super(props)
+
+    this.state = {
+      currentModal: NoModal,
+      sessionID: this.props.sessionID
+    }
+
+    this.renderModal = this.renderModal.bind(this)
+    this.renderNoDatasets = this.renderNoDatasets.bind(this)
+    this.renderAppLoading = this.renderAppLoading.bind(this)
+    this.renderAppError = this.renderAppError.bind(this)
+  }
 
   componentDidMount () {
+    if (this.props.apiConnection === 0) {
+      var iter = 0
+      const pingTimer = setInterval(() => {
+        if (iter > 30) {
+          this.props.setApiConnection(-1)
+          clearInterval(pingTimer)
+        }
+        this.props.pingApi()
+        iter++
+      }, 850)
+    }
     this.props.fetchSession()
     this.props.fetchMyDatasetsAndLinks()
   }
@@ -59,21 +88,32 @@ export default class App extends React.Component<AppProps, AppState> {
     // }
     const Modal = this.state.currentModal
 
-    switch (Modal.type) {
-      case ModalType.CreateDataset:
-        return (
+    return (
+      <div >
+        <CSSTransition
+          in={ModalType.CreateDataset === Modal.type}
+          classNames='fade'
+          component='div'
+          timeout={300}
+          unmountOnExit
+        >
           <CreateDataset onSubmit={this.props.initDataset} onDismissed={() => this.setState({ currentModal: NoModal })}/>
-        )
-      case ModalType.AddDataset:
-        return (
+        </CSSTransition>
+        <CSSTransition
+          in={ModalType.AddDataset === Modal.type}
+          classNames='fade'
+          component='div'
+          timeout={300}
+          unmountOnExit
+        >
           <AddDataset onSubmit={this.props.addDataset} onDismissed={() => this.setState({ currentModal: NoModal })}/>
-        )
-      default:
-        return null
-    }
+        </CSSTransition>
+      </div>
+    )
   }
 
   private renderNoDatasets () {
+    console.log(this.props.hasDatasets)
     return (
       <CSSTransition
         in={!this.props.hasDatasets}
@@ -88,6 +128,7 @@ export default class App extends React.Component<AppProps, AppState> {
   }
 
   private renderAppLoading () {
+    console.log(this.props.loading)
     return (
       <CSSTransition
         in={this.props.loading}
@@ -101,6 +142,20 @@ export default class App extends React.Component<AppProps, AppState> {
     )
   }
 
+  private renderAppError () {
+    return (
+      <CSSTransition
+        in={this.props.apiConnection === -1}
+        classNames="fade"
+        component="div"
+        timeout={1000}
+        unmountOnExit
+      >
+        <AppError />
+      </CSSTransition>
+    )
+  }
+
   render () {
     const {
       hasSetPeername,
@@ -109,7 +164,8 @@ export default class App extends React.Component<AppProps, AppState> {
       acceptTOS,
       setPeername,
       toast,
-      closeToast
+      closeToast,
+      setHasSetPeername
     } = this.props
     return (<div style={{
       height: '100%',
@@ -117,11 +173,13 @@ export default class App extends React.Component<AppProps, AppState> {
       overflow: 'hidden'
     }}>
       {this.renderAppLoading()}
+      {this.renderAppError()}
       {this.renderModal()}
       <Onboard
         peername={peername}
         hasAcceptedTOS={hasAcceptedTOS}
         hasSetPeername={hasSetPeername}
+        setHasSetPeername={setHasSetPeername}
         setPeername={setPeername}
         acceptTOS={acceptTOS}
       />
