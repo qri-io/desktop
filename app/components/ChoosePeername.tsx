@@ -36,8 +36,7 @@ const ChoosePeername: React.FunctionComponent<ChoosePeernameProps> = (props: Cho
       resolve()
     })
       .then(async () => onSave(newPeername))
-      .catch((action) => {
-        console.log(action)
+      .catch(() => {
         setLoading(false)
         setError('some error occured')
       })

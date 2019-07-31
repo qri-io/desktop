@@ -113,7 +113,6 @@ export default class App extends React.Component<AppProps, AppState> {
   }
 
   private renderNoDatasets () {
-    console.log(this.props.hasDatasets)
     return (
       <CSSTransition
         in={!this.props.hasDatasets}
@@ -128,7 +127,6 @@ export default class App extends React.Component<AppProps, AppState> {
   }
 
   private renderAppLoading () {
-    console.log(this.props.loading)
     return (
       <CSSTransition
         in={this.props.loading}

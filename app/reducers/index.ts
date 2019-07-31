@@ -7,7 +7,6 @@ import selectionsReducer from './selections'
 import myDatasetsReducer from './myDatasets'
 import workingDatasetReducer from './workingDataset'
 import commitDetailReducer from './commitDetail'
-import componentsReducer from './components'
 import mutationsReducer from './mutations'
 
 import { Session } from '../models/session'
@@ -42,7 +41,6 @@ const rootReducer = combineReducers({
   myDatasets: myDatasetsReducer,
   workingDataset: workingDatasetReducer,
   commitDetails: commitDetailReducer,
-  components: componentsReducer,
   mutations: mutationsReducer,
   router: routerReducer
 })

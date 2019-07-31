@@ -18,6 +18,7 @@ const mapStateToProps = (state: Store) => {
     .find(d => d.path === selectedCommitPath)
 
   return {
+    selectedCommitPath: selectedCommitPath,
     commit: selectedCommit,
     selectedComponent,
     sidebarWidth: ui.commitSidebarWidth,

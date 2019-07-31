@@ -10,7 +10,7 @@ const mapStateToProps = (state: Store, ownProps: MetadataContainerProps) => {
   const { workingDataset, commitDetails } = state
 
   // get data for the currently selected component
-  const meta = ownProps.history ? commitDetails.value.meta : workingDataset.value.meta
+  const meta = ownProps.history ? commitDetails.components.meta : workingDataset.components.meta
   return { meta }
 }
 

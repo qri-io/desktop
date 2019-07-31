@@ -13,7 +13,6 @@ export function pingApi (): ApiActionThunk {
         endpoint: 'ping',
         method: 'GET',
         map: (data: Record<string, string>): any => { //eslint-disable-line
-          console.log(data)
           return data
         }
       }
@@ -258,7 +257,7 @@ export function fetchBody (history: boolean): ApiActionThunk {
     }
 
     const action = {
-      type: 'body',
+      type: history ? 'commitBody' : 'body',
       [CALL_API]: {
         endpoint: 'body',
         method: 'GET',

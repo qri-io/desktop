@@ -4,12 +4,11 @@ import Store, { WorkingDataset } from '../models/store'
 import { fetchBody } from '../actions/api'
 
 const extractColumnHeaders = (workingDataset: WorkingDataset): undefined | object => {
-  const { structure } = workingDataset.value
-  if (!structure) {
+  const { schema } = workingDataset.components
+
+  if (!schema) {
     return undefined
   }
-
-  const { schema } = structure
 
   if (schema && (!schema.items || (schema.items && !schema.items.items))) {
     return undefined
@@ -21,9 +20,10 @@ const extractColumnHeaders = (workingDataset: WorkingDataset): undefined | objec
 const mapStateToProps = (state: Store, ownProps: {
   history?: boolean
 }) => {
-  const { workingDataset } = state
-  const { isLoading, value } = state.components.body
   const { history } = ownProps
+  const { workingDataset, commitDetails } = state
+  const dataset = history ? commitDetails : workingDataset
+  const { isLoading, value } = dataset.components.body
 
   const headers = extractColumnHeaders(workingDataset)
 

@@ -2,47 +2,69 @@ import { Reducer, AnyAction } from 'redux'
 import { WorkingDataset, DatasetStatus, ComponentStatus } from '../models/store'
 import { apiActionTypes } from '../store/api'
 
-const initialState = {
+const initialState: WorkingDataset = {
   path: '',
   prevPath: '',
   peername: '',
   name: '',
-  pages: {},
-  diff: {},
-  value: {},
   status: {},
-  loading: false,
-  bodyLoading: false,
-  linkpath: null
+  isLoading: false,
+  linkpath: null,
+  components: {
+    body: {
+      isLoading: false,
+      value: undefined,
+      error: ''
+    },
+    meta: {},
+    schema: {}
+  },
+  history: {
+    pageInfo: {
+      isFetching: false,
+      pageCount: 0,
+      fetchedAll: false
+    },
+    value: []
+  }
 }
 
 const [DATASET_REQ, DATASET_SUCC, DATASET_FAIL] = apiActionTypes('dataset')
 const [DATASET_HISTORY_REQ, DATASET_HISTORY_SUCC, DATASET_HISTORY_FAIL] = apiActionTypes('history')
 const [DATASET_STATUS_REQ, DATASET_STATUS_SUCC, DATASET_STATUS_FAIL] = apiActionTypes('status')
+const [DATASET_BODY_REQ, DATASET_BODY_SUCC, DATASET_BODY_FAIL] = apiActionTypes('body')
 
 const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction): WorkingDataset | null => {
   switch (action.type) {
     case DATASET_REQ:
-      return Object.assign({}, state, {
-        value: Object.assign({}, state.value, {
-          body: undefined
-        }),
-        loading: true
-      })
+      return {
+        ...state,
+        isLoading: true
+      }
     case DATASET_SUCC:
-      const { name, path, peername, published, dataset: value } = action.payload.data
-      return Object.assign({}, state, {
+      const { name, path, peername, published, dataset } = action.payload.data
+      return {
+        ...state,
         name,
         path,
         peername,
         published,
-        // DATASET_SUCCESS and BODY_SUCCESS both affect 'value'
-        // can't simply assign because state.value doesn't exist on by default
-        value: Object.assign({}, state.value, value),
-        loading: false
-      })
+        isLoading: false,
+        components: {
+          body: {
+            isLoading: false,
+            value: undefined,
+            error: ''
+          },
+          meta: dataset.meta,
+          schema: dataset.structure.schema
+        }
+      }
     case DATASET_FAIL:
-      return state
+      return {
+        ...state,
+        isLoading: false
+      }
 
     case DATASET_HISTORY_REQ:
       return state
@@ -78,6 +100,43 @@ const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction
       })
     case DATASET_STATUS_FAIL:
       return state
+
+    case DATASET_BODY_REQ:
+      return {
+        ...state,
+        components: {
+          ...state.components,
+          body: {
+            ...state.body,
+            isLoading: true
+          }
+        }
+      }
+    case DATASET_BODY_SUCC:
+      return {
+        ...state,
+        components: {
+          ...state.components,
+          body: {
+            ...state.body,
+            value: action.payload.data.data,
+            error: '',
+            isLoading: false
+          }
+        }
+      }
+    case DATASET_BODY_FAIL:
+      return {
+        ...state,
+        components: {
+          ...state.components,
+          body: {
+            ...state.body,
+            error: action.payload.err,
+            isLoading: false
+          }
+        }
+      }
 
     default:
       return state

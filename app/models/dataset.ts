@@ -29,7 +29,6 @@ export interface Meta {
     type: string
     url: string
   }
-  qri: string
   readmeURL?: string
   title?: string
   theme?: string[]
@@ -44,9 +43,11 @@ export interface Commit {
   title: string
 }
 
+export interface Schema extends JSONSchema7 {}
+
 export interface Dataset {
   meta?: Meta
-  schema?: JSONSchema7
+  schema?: Schema
   body?: {
     [key: string]: any
   }
