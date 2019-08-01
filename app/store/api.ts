@@ -19,7 +19,7 @@ export interface ApiAction extends AnyAction {
     // endpoint is the api endpoint to call
     endpoint: string
     // method is the HTTP method used
-    method: 'GET' | 'PUT' | 'POST' | 'DELETE'
+    method: 'GET' | 'PUT' | 'POST' | 'DELETE' | 'OPTIONS'
     // params is a list of parameters used to construct the API request
     segments?: ApiSegments
     // query is an object of query parameters to be appended to the API call URL
@@ -106,12 +106,12 @@ const endpointMap: Record<string, string> = {
   'dataset': '', // dataset endpoints are constructured through query param values
   'body': 'body', // dataset endpoints are constructured through query param values
   'history': 'history',
-  'status': 'dsstatus',
-  'save': 'fsi/save',
+  'status': 'status',
+  'save': 'save',
   'session': 'me',
-  'fsilinks': 'fsilinks',
+  'health': 'health',
   'add': 'add',
-  'init': 'fsi/init',
+  'init': 'init/',
   'ping': 'health'
 }
 
@@ -151,6 +151,7 @@ function apiUrl (endpoint: string, segments?: ApiSegments, params?: ApiParams): 
 
 interface FetchOptions {
   method: string
+  headers: Record<string, string>
   body?: string
 }
 
@@ -166,7 +167,13 @@ async function getAPIJSON<T> (
   if (err) {
     throw err
   }
-  const options: FetchOptions = { method }
+  const options: FetchOptions = {
+    method,
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
+    }
+  }
   if (body) options.body = JSON.stringify(body)
   return getJSON(url, options)
 }

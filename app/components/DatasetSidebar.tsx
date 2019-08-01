@@ -101,7 +101,7 @@ const DatasetSidebar: React.FunctionComponent<DatasetSidebarProps> = (props: Dat
         }
       </div>
       {
-        isLinked && <SaveFormContainer />
+        isLinked && activeTab === 'status' && <SaveFormContainer />
       }
 
     </div>
