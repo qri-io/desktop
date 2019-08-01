@@ -5,6 +5,8 @@ import { Action } from 'redux'
 
 import { setSelectedListItem } from './selections'
 
+const pageSizeDefault = 15
+
 export function pingApi (): ApiActionThunk {
   return async (dispatch) => {
     const pingAction: ApiAction = {
@@ -40,13 +42,24 @@ export function fetchWorkingDatasetDetails (): ApiActionThunk {
   }
 }
 
-export function fetchMyDatasets (): ApiActionThunk {
-  return async (dispatch) => {
+export function fetchMyDatasets (page: number = 1, pageSize: number = pageSizeDefault): ApiActionThunk {
+  return async (dispatch, getState) => {
+    const state = getState()
+    if (state &&
+          state.myDatasets &&
+          state.myDatasets.pageInfo &&
+          state.myDatasets.pageInfo.fetchedAll) {
+      return new Promise(resolve => resolve({ type: 'NO_ACTION_NEEDED' }))
+    }
     const listAction: ApiAction = {
       type: 'list',
       [CALL_API]: {
         endpoint: 'list',
         method: 'GET',
+        pageInfo: {
+          page,
+          pageSize
+        },
         map: (data: any[]): DatasetSummary[] => {
           return data.map((ref: any) => ({
             title: (ref.dataset && ref.dataset.title) || `${ref.peername}/${ref.name}`,
@@ -153,7 +166,7 @@ export function fetchCommitStatus (): ApiActionThunk {
   }
 }
 
-export function fetchWorkingHistory (): ApiActionThunk {
+export function fetchWorkingHistory (page: number = 1, pageSize: number = pageSizeDefault): ApiActionThunk {
   return async (dispatch, getState) => {
     const { selections } = getState()
     const action = {
@@ -164,6 +177,10 @@ export function fetchWorkingHistory (): ApiActionThunk {
         segments: {
           peername: selections.peername,
           name: selections.name
+        },
+        pageInfo: {
+          page,
+          pageSize
         },
         map: (data: any[]): Commit[] => data.map((ref): Commit => {
           const { author, message, timestamp, title } = ref.dataset.commit
