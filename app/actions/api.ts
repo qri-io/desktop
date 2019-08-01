@@ -242,22 +242,38 @@ export function fetchWorkingStatus (): ApiActionThunk {
   }
 }
 
-export function fetchBody (history: boolean): ApiActionThunk {
+export function fetchBody (): ApiActionThunk {
   return async (dispatch, getState) => {
-    const { workingDataset, selections } = getState()
-    let peername, name, path
-    if (history) {
-      peername = selections.peername
-      name = selections.name
-      path = selections.commit
-    } else {
-      peername = workingDataset.peername
-      name = workingDataset.name
-      path = workingDataset.path
-    }
+    const { workingDataset } = getState()
+    const { peername, name, path } = workingDataset
 
     const action = {
-      type: history ? 'commitBody' : 'body',
+      type: 'body',
+      [CALL_API]: {
+        endpoint: 'body',
+        method: 'GET',
+        segments: {
+          peername,
+          name,
+          path
+        },
+        map: (data: Record<string, string>): Dataset => {
+          return data as Dataset
+        }
+      }
+    }
+
+    return dispatch(action)
+  }
+}
+
+export function fetchCommitBody (): ApiActionThunk {
+  return async (dispatch, getState) => {
+    const { selections } = getState()
+    let { peername, name, commit: path } = selections
+
+    const action = {
+      type: 'commitBody',
       [CALL_API]: {
         endpoint: 'body',
         method: 'GET',

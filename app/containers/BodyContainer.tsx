@@ -1,7 +1,8 @@
 import { connect } from 'react-redux'
-import Body from '../components/Body'
+import { bindActionCreators, Dispatch } from 'redux'
+import Body, { BodyProps } from '../components/Body'
 import Store, { WorkingDataset } from '../models/store'
-import { fetchBody } from '../actions/api'
+import { fetchBody, fetchCommitBody } from '../actions/api'
 
 const extractColumnHeaders = (workingDataset: WorkingDataset): undefined | object => {
   const schema = workingDataset.components.schema.value
@@ -17,9 +18,11 @@ const extractColumnHeaders = (workingDataset: WorkingDataset): undefined | objec
   return schema && schema.items && schema.items.items.map((d: { title: string }): string => d.title)
 }
 
-const mapStateToProps = (state: Store, ownProps: {
+interface BodyContainerProps {
   history?: boolean
-}) => {
+}
+
+const mapStateToProps = (state: Store, ownProps: BodyContainerProps) => {
   const { history } = ownProps
   const { workingDataset, commitDetails } = state
   const dataset = history ? commitDetails : workingDataset
@@ -31,13 +34,17 @@ const mapStateToProps = (state: Store, ownProps: {
   return {
     isLoading,
     headers,
-    value,
-    history
+    value
   }
 }
 
-const actions = {
-  fetchBody
+const mergeProps = (props: any, actions: any): BodyProps => {
+  return { ...props, ...actions }
 }
 
-export default connect(mapStateToProps, actions)(Body)
+const mapDispatchToProps = (dispatch: Dispatch, ownProps: BodyContainerProps) => {
+  const onFetch = ownProps.history ? fetchCommitBody : fetchBody
+  return bindActionCreators({ onFetch }, dispatch)
+}
+
+export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(Body)
