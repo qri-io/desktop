@@ -33,7 +33,13 @@ const router = routerMiddleware(history)
 const composeEnhancers: typeof compose = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
   ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({
     // Options: http://zalmoxisus.github.io/redux-devtools-extension/API/Arguments.html
-    actionCreators
+    actionCreators,
+    actionsBlacklist: [
+      'API_STATUS_REQUEST',
+      'API_STATUS_SUCCESS',
+      'API_HEALTH_REQUEST',
+      'API_HEALTH_SUCCESS'
+    ]
   }) as any
   : compose
 /* eslint-enable no-underscore-dangle */
