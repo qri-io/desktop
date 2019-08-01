@@ -1,8 +1,10 @@
 const { app, BrowserWindow, Menu, shell } = require('electron')
+const { BackendProcess } = require('./backend')
 
 let menu
 let template
 let mainWindow = null
+let backendProcess
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support'); // eslint-disable-line
@@ -38,6 +40,10 @@ const installExtensions = () => {
 app.on('ready', () =>
   installExtensions()
     .then(() => {
+
+      backendProcess = new BackendProcess();
+      backendProcess.maybeStartup();
+
       mainWindow = new BrowserWindow({
         show: false,
         width: 1024,
@@ -57,6 +63,8 @@ app.on('ready', () =>
 
       mainWindow.on('closed', () => {
         mainWindow = null
+        backendProcess.close()
+        backendProcess = null
       })
 
       if (process.env.NODE_ENV === 'development') {

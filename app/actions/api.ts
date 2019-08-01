@@ -333,9 +333,6 @@ export function initDataset (filepath: string, name: string, format: string): Ap
           filepath,
           name,
           format
-        },
-        body: {
-          foo: 'bar'
         }
       }
     }

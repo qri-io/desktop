@@ -112,7 +112,7 @@ const endpointMap: Record<string, string> = {
   'health': 'health',
   'add': 'add',
   'init': 'init/',
-  'ping': 'status'
+  'ping': 'health'
 }
 
 function apiUrl (endpoint: string, segments?: ApiSegments, params?: ApiParams): [string, string] {
