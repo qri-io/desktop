@@ -58,7 +58,7 @@ export default class Dataset extends React.Component<DatasetProps> {
 
   componentDidMount () {
     // poll for status
-    // setInterval(() => { this.props.fetchWorkingStatus() }, 1000)
+    setInterval(() => { this.props.fetchWorkingStatus() }, 1000)
   }
 
   // using component state + getDerivedStateFromProps to determine when a new

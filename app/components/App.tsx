@@ -27,7 +27,7 @@ interface AppProps {
   hasSetPeername: boolean
   toast: IToast
   fetchSession: () => Promise<ApiAction>
-  fetchMyDatasetsAndLinks: () => Promise<ApiAction>
+  fetchMyDatasets: () => Promise<ApiAction>
   addDataset: (peername: string, name: string) => Promise<ApiAction>
   initDataset: (path: string, name: string, format: string) => Promise<ApiAction>
   acceptTOS: () => Action
@@ -71,7 +71,7 @@ export default class App extends React.Component<AppProps, AppState> {
       }, 850)
     }
     this.props.fetchSession()
-    this.props.fetchMyDatasetsAndLinks()
+    this.props.fetchMyDatasets()
   }
 
   static getDerivedStateFromProps (NextProps: AppProps, PrevState: AppState) {
