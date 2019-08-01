@@ -1,5 +1,6 @@
 import * as React from 'react'
 import { Action } from 'redux'
+import { ApiActionThunk } from '../store/api'
 import moment from 'moment'
 import SaveFormContainer from '../containers/SaveFormContainer'
 import ComponentList from './ComponentList'
@@ -43,22 +44,32 @@ interface DatasetSidebarProps {
   isLinked: boolean
   onTabClick: (activeTab: string) => Action
   onListItemClick: (type: ComponentType, activeTab: string) => Action
+  fetchWorkingHistory: (page: number, pageSize: number) => ApiActionThunk
 }
 
-const DatasetSidebar: React.FunctionComponent<DatasetSidebarProps> = (props: DatasetSidebarProps) => {
-  const {
-    activeTab,
-    selectedComponent,
-    selectedCommit,
-    history,
-    status,
-    onTabClick,
-    onListItemClick,
-    isLinked
-  } = props
-
+const DatasetSidebar: React.FunctionComponent<DatasetSidebarProps> = ({
+  activeTab,
+  selectedComponent,
+  selectedCommit,
+  history,
+  status,
+  onTabClick,
+  onListItemClick,
+  fetchWorkingHistory,
+  isLinked
+}) => {
   const historyLoaded = !!history
   const statusLoaded = !!status
+
+  const handleHistoryScroll = (e: any) => {
+    if (!(history && history.pageInfo)) {
+      fetchWorkingHistory(1, 15)
+      return
+    }
+    if (e.target.scrollHeight === parseInt(e.target.scrollTop) + parseInt(e.target.offsetHeight)) {
+      fetchWorkingHistory(history.pageInfo.page + 1, history.pageInfo.pageSize)
+    }
+  }
 
   return (
     <div className='dataset-sidebar'>
@@ -79,7 +90,7 @@ const DatasetSidebar: React.FunctionComponent<DatasetSidebarProps> = (props: Dat
         </div>
         {
           historyLoaded && (
-            <div id='history-content' className='sidebar-content' hidden = {activeTab === 'status'}>
+            <div id='history-content' className='sidebar-content' onScroll={(e) => handleHistoryScroll(e)} hidden = {activeTab === 'status'}>
               {
                 history.value.map(({ path, timestamp, title }) => {
                   const timeMessage = moment(timestamp).fromNow()

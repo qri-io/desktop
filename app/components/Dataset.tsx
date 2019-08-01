@@ -2,7 +2,7 @@ import * as React from 'react'
 import classNames from 'classnames'
 import { Action } from 'redux'
 import { shell } from 'electron'
-import { ApiAction } from '../store/api'
+import { ApiAction, ApiActionThunk } from '../store/api'
 import { Resizable } from '../components/resizable'
 import DatasetSidebar from '../components/DatasetSidebar'
 import DatasetListContainer from '../containers/DatasetListContainer'
@@ -20,6 +20,7 @@ import {
   WorkingDataset,
   Mutations
 } from '../models/store'
+import { fetchWorkingHistory } from '../actions/api'
 
 interface DatasetProps {
   // redux state
@@ -36,6 +37,7 @@ interface DatasetProps {
   setSelectedListItem: (type: string, activeTab: string) => Action
   setWorkingDataset: (peername: string, name: string) => Action
   fetchWorkingDatasetDetails: () => Promise<ApiAction>
+  fetchWorkingHistory: (page: number, pageSize: number) => ApiActionThunk
   fetchWorkingStatus: () => Promise<ApiAction>
 }
 
@@ -209,6 +211,7 @@ export default class Dataset extends React.Component<DatasetProps> {
               history={history}
               status={status}
               onTabClick={setActiveTab}
+              fetchWorkingHistory={fetchWorkingHistory}
               onListItemClick={setSelectedListItem}
             />
           </Resizable>
