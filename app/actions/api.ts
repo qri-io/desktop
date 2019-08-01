@@ -64,7 +64,7 @@ export function fetchMyDatasets (): ApiActionThunk {
         method: 'GET',
         map: (data: any[]): DatasetSummary[] => {
           return data.map((ref: any) => ({
-            title: ref.dataset.title || `${ref.peername}/${ref.name}`,
+            title: (ref.dataset && ref.dataset.title) || `${ref.peername}/${ref.name}`,
             peername: ref.peername,
             name: ref.name,
             path: ref.path,
