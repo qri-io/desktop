@@ -14,6 +14,7 @@ import { CommitDetails as ICommitDetails, ComponentType, DatasetStatus } from '.
 import { defaultSidebarWidth } from '../reducers/ui'
 
 interface CommitDetailsProps {
+  selectedCommitPath: string
   commit: Commit
   selectedComponent: string
   sidebarWidth: number
@@ -32,20 +33,28 @@ const isEmpty = (status: DatasetStatus) => {
 }
 
 export default class CommitDetails extends React.Component<CommitDetailsProps> {
-  state = { commit: '' }
+  state = {
+    selectedCommitPath: ''
+  }
 
   static getDerivedStateFromProps (nextProps: CommitDetailsProps, prevState: CommitDetailsProps) {
-    const { commit: newCommit } = nextProps
-    const { commit } = prevState
+    const { selectedCommitPath: newCommitPath, commitDetails } = nextProps
+    const { selectedCommitPath } = prevState
 
-    // when new props arrive, compare commit to previous.  If different, fetch data
-    if (newCommit !== commit) {
-      nextProps.fetchCommitDetail()
-
-      return { commit: newCommit }
+    // if selectedCommitPath = '', the component has just mounted
+    if (selectedCommitPath === '') {
+      // get new data only if there isn't already data in state
+      if (commitDetails.path === '') {
+        nextProps.fetchCommitDetail()
+      }
+    } else {
+      // if the component is already mounted, only get data if commit.path has changed
+      if (newCommitPath !== selectedCommitPath) {
+        nextProps.fetchCommitDetail()
+      }
     }
 
-    return null
+    return { selectedCommitPath: newCommitPath }
   }
 
   render () {
@@ -58,7 +67,7 @@ export default class CommitDetails extends React.Component<CommitDetailsProps> {
         mainContent = <MetadataContainer history />
         break
       case 'body':
-        mainContent = <BodyContainer />
+        mainContent = <BodyContainer history />
         break
       case 'schema':
         mainContent = <SchemaContainer history />

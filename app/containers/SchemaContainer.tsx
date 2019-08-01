@@ -10,7 +10,7 @@ const mapStateToProps = (state: Store, ownProps: SchemaContainerProps) => {
   const { workingDataset, commitDetails } = state
 
   // get data for the currently selected component
-  const schema = ownProps.history ? commitDetails.value.structure.schema : workingDataset.value.structure.schema
+  const schema = ownProps.history ? commitDetails.components.schema.value : workingDataset.components.schema.value
   return { schema }
 }
 

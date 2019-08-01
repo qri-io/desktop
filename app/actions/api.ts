@@ -13,7 +13,6 @@ export function pingApi (): ApiActionThunk {
         endpoint: 'ping',
         method: 'GET',
         map: (data: Record<string, string>): any => { //eslint-disable-line
-          console.log(data)
           return data
         }
       }
@@ -250,6 +249,31 @@ export function fetchBody (): ApiActionThunk {
 
     const action = {
       type: 'body',
+      [CALL_API]: {
+        endpoint: 'body',
+        method: 'GET',
+        segments: {
+          peername,
+          name,
+          path
+        },
+        map: (data: Record<string, string>): Dataset => {
+          return data as Dataset
+        }
+      }
+    }
+
+    return dispatch(action)
+  }
+}
+
+export function fetchCommitBody (): ApiActionThunk {
+  return async (dispatch, getState) => {
+    const { selections } = getState()
+    let { peername, name, commit: path } = selections
+
+    const action = {
+      type: 'commitBody',
       [CALL_API]: {
         endpoint: 'body',
         method: 'GET',

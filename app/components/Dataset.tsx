@@ -119,7 +119,7 @@ export default class Dataset extends React.Component<DatasetProps> {
     // mainContent will either be a loading spinner, or content based on the selected
     // sidebar list items
     let mainContent
-    if (workingDataset.loading || workingDataset.peername === '') {
+    if (workingDataset.isLoading || workingDataset.peername === '') {
       // TODO (chriswhong) add a proper loading spinner
       mainContent = <div>Loading</div>
     } else {

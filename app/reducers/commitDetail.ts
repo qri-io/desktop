@@ -7,24 +7,62 @@ const initialState: CommitDetails = {
   prevPath: '',
   peername: '',
   name: '',
-  pages: {},
-  diff: {},
-  value: {},
-  status: {}
+  status: {},
+  isLoading: false,
+  components: {
+    body: {
+      isLoading: false,
+      value: undefined,
+      error: ''
+    },
+    meta: {
+      value: {}
+    },
+    schema: {
+      value: {}
+    }
+  }
 }
 
 const [COMMITDATASET_REQ, COMMITDATASET_SUCC, COMMITDATASET_FAIL] = apiActionTypes('commitdataset')
 const [COMMITSTATUS_REQ, COMMITSTATUS_SUCC, COMMITSTATUS_FAIL] = apiActionTypes('commitstatus')
+const [COMMITBODY_REQ, COMMITBODY_SUCC, COMMITBODY_FAIL] = apiActionTypes('commitbody')
 
 const commitDetailsReducer: Reducer = (state = initialState, action: AnyAction): CommitDetails => {
   switch (action.type) {
     case COMMITDATASET_REQ:
-      return state
+      return {
+        ...state,
+        isLoading: true
+      }
     case COMMITDATASET_SUCC:
-      const { name, path, peername, published, dataset: value } = action.payload.data
-      return Object.assign({}, state, { name, path, peername, published, value })
+      const { name, path, peername, published, dataset } = action.payload.data
+      return {
+        ...state,
+        name,
+        path,
+        peername,
+        published,
+        isLoading: false,
+        components: {
+          body: {
+            isLoading: false,
+            value: undefined,
+            error: ''
+          },
+          meta: {
+            value: dataset.meta
+          },
+          schema: {
+            value: dataset.structure.schema
+          }
+        }
+      }
     case COMMITDATASET_FAIL:
-      return state
+      return {
+        ...state,
+        isLoading: false
+      }
 
     case COMMITSTATUS_REQ:
       return state
@@ -37,6 +75,43 @@ const commitDetailsReducer: Reducer = (state = initialState, action: AnyAction):
       return Object.assign({}, state, { status: statusObject })
     case COMMITSTATUS_FAIL:
       return state
+
+    case COMMITBODY_REQ:
+      return {
+        ...state,
+        components: {
+          ...state.components,
+          body: {
+            ...state.body,
+            isLoading: true
+          }
+        }
+      }
+    case COMMITBODY_SUCC:
+      return {
+        ...state,
+        components: {
+          ...state.components,
+          body: {
+            ...state.body,
+            value: action.payload.data.data,
+            error: '',
+            isLoading: false
+          }
+        }
+      }
+    case COMMITBODY_FAIL:
+      return {
+        ...state,
+        components: {
+          ...state.components,
+          body: {
+            ...state.body,
+            error: action.payload.err,
+            isLoading: false
+          }
+        }
+      }
 
     default:
       return state

@@ -1,12 +1,12 @@
 import * as React from 'react'
 import { ApiAction } from '../store/api'
 import HandsonTable from './HandsonTable'
-import { WorkingDataset } from '../models/store'
 
-interface BodyProps {
-  workingDataset: WorkingDataset
+export interface BodyProps {
+  value: any[]
+  isLoading: boolean
   headers: any[]
-  fetchBody: () => Promise<ApiAction>
+  onFetch: () => Promise<ApiAction>
 }
 
 export default class Body extends React.Component<BodyProps> {
@@ -17,14 +17,13 @@ export default class Body extends React.Component<BodyProps> {
   }
 
   static getDerivedStateFromProps (nextProps: BodyProps) {
-    const { workingDataset } = nextProps
-    const { value, bodyLoading: isLoading } = workingDataset
-    const { body } = value
+    const { value, isLoading, onFetch } = nextProps
     if (
-      body === undefined &&
+      value === undefined &&
       isLoading === false
     ) {
-      nextProps.fetchBody()
+      console.log('CALLING FOR BODY')
+      onFetch()
       return null
     }
 
@@ -35,10 +34,10 @@ export default class Body extends React.Component<BodyProps> {
     return (
       <div>
         {
-          this.props.workingDataset.value.body && (
+          this.props.value && (
             <HandsonTable
               headers={this.props.headers}
-              body={this.props.workingDataset.value.body.data}
+              body={this.props.value}
             />
           )
         }
