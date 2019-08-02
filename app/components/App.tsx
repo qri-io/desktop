@@ -70,6 +70,7 @@ export default class App extends React.Component<AppProps, AppState> {
         iter++
       }, 850)
     }
+    this.props.pingApi()
     this.props.fetchSession()
     this.props.fetchMyDatasets()
   }
