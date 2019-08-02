@@ -5,6 +5,9 @@ import moment from 'moment'
 import SaveFormContainer from '../containers/SaveFormContainer'
 import ComponentList from './ComponentList'
 
+import { CSSTransition } from 'react-transition-group'
+import { Spinner } from './chrome/Spinner'
+
 import { WorkingDataset, ComponentType } from '../models/store'
 
 interface HistoryListItemProps {
@@ -44,7 +47,7 @@ interface DatasetSidebarProps {
   isLinked: boolean
   onTabClick: (activeTab: string) => Action
   onListItemClick: (type: ComponentType, activeTab: string) => Action
-  fetchWorkingHistory: (page: number, pageSize: number) => ApiActionThunk
+  fetchWorkingHistory: (page?: number, pageSize?: number) => ApiActionThunk
 }
 
 const DatasetSidebar: React.FunctionComponent<DatasetSidebarProps> = ({
@@ -63,7 +66,7 @@ const DatasetSidebar: React.FunctionComponent<DatasetSidebarProps> = ({
 
   const handleHistoryScroll = (e: any) => {
     if (!(history && history.pageInfo)) {
-      fetchWorkingHistory(1, 15)
+      fetchWorkingHistory()
       return
     }
     if (e.target.scrollHeight === parseInt(e.target.scrollTop) + parseInt(e.target.offsetHeight)) {
@@ -78,38 +81,64 @@ const DatasetSidebar: React.FunctionComponent<DatasetSidebarProps> = ({
         <div className={`tab ${activeTab !== 'status' && 'active'}`} onClick={() => { onTabClick('history') }}>History</div>
       </div>
       <div id='content'>
-        <div id='status-content' className='sidebar-content' hidden = {activeTab !== 'status'}>
-          { statusLoaded &&
+        <CSSTransition
+          in={(!statusLoaded && activeTab === 'status') || (!historyLoaded && activeTab === 'history')}
+          classNames='fade'
+          component='div'
+          timeout={300}
+          unmountOnExit
+        >
+          <Spinner />
+        </CSSTransition>
+        <CSSTransition
+          in={statusLoaded && activeTab === 'status'}
+          classNames='fade'
+          component='div'
+          timeout={300}
+          unmountOnExit
+        >
+          <div id='status-content' className='sidebar-content'>
             <ComponentList
               status={status}
               selectedComponent={selectedComponent}
               onComponentClick={onListItemClick}
               selectionType={'component' as ComponentType}
               isLinked={isLinked}
-            />}
-        </div>
-        {
-          historyLoaded && (
-            <div id='history-content' className='sidebar-content' onScroll={(e) => handleHistoryScroll(e)} hidden = {activeTab === 'status'}>
-              {
-                history.value.map(({ path, timestamp, title }) => {
-                  const timeMessage = moment(timestamp).fromNow()
-                  return (
-                    <HistoryListItem
-                      key={path}
-                      path={path}
-                      commitTitle={title}
-                      avatarUrl={'https://avatars0.githubusercontent.com/u/1154390?s=60&v=4'}
-                      timeMessage={timeMessage}
-                      selected={selectedCommit === path}
-                      onClick={onListItemClick}
-                    />
-                  )
-                })
-              }
-            </div>
+            />
+          </div>
+        </CSSTransition>
+        <CSSTransition
+          in={historyLoaded && activeTab === 'history'}
+          classNames='fade'
+          component='div'
+          timeout={300}
+          unmountOnExit
+        >
+          <div
+            id='history-content'
+            className='sidebar-content'
+            onScroll={(e) => handleHistoryScroll(e)}
+            hidden = {activeTab === 'status'}
+          >
+            {
+              history.value.map(({ path, timestamp, title }) => {
+                const timeMessage = moment(timestamp).fromNow()
+                return (
+                  <HistoryListItem
+                    key={path}
+                    path={path}
+                    commitTitle={title}
+                    avatarUrl={'https://avatars0.githubusercontent.com/u/1154390?s=60&v=4'}
+                    timeMessage={timeMessage}
+                    selected={selectedCommit === path}
+                    onClick={onListItemClick}
+                  />
+                )
+              })
+            }
+          </div>
+        </CSSTransition>
           )
-        }
       </div>
       {
         isLinked && activeTab === 'status' && <SaveFormContainer />
