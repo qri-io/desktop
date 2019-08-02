@@ -168,6 +168,16 @@ export function fetchCommitStatus (): ApiActionThunk {
 
 export function fetchWorkingHistory (page: number = 1, pageSize: number = pageSizeDefault): ApiActionThunk {
   return async (dispatch, getState) => {
+    const state = getState()
+    // if page === 1, this is a new history
+    if (page !== 1 &&
+        state &&
+        state.workingDataset &&
+        state.workingDataset.history &&
+        state.workingDataset.history.pageInfo &&
+        state.workingDataset.history.pageInfo.fetchedAll) {
+      return new Promise(resolve => resolve({ type: 'NO_ACTION_NEEDED' }))
+    }
     const { selections } = getState()
     const action = {
       type: 'history',

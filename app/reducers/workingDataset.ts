@@ -81,7 +81,8 @@ const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction
         ...state,
         history: {
           ...state.history,
-          pageInfo: withPagination(action, state.history.pageInfo)
+          pageInfo: withPagination(action, state.history.pageInfo),
+          value: action.pageInfo.page === 1 ? [] : [].concat(state.history.value)
         }
       }
     case DATASET_HISTORY_SUCC:
