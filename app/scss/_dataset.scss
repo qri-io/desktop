@@ -202,6 +202,10 @@ $hover-highlight-color: #F6F8FA;
   display: flex;
   flex-direction: column;
 
+  #list {
+    overflow-y: auto;
+  }
+
   #tabs {
     height: 30px;
     display: flex;

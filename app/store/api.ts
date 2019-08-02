@@ -23,9 +23,11 @@ export interface ApiAction extends AnyAction {
     // params is a list of parameters used to construct the API request
     segments?: ApiSegments
     // query is an object of query parameters to be appended to the API call URL
-    query?: object
+    query?: ApiQuery
     // body is the body for POST requests
     body?: object|[]
+    // pageInfo is the pagination information
+    pageInfo?: ApiPagination
     // map is a function
     // map defaults to the identity function
     map?: (data: object|[]) => any
@@ -42,12 +44,14 @@ export interface ApiSegments {
   name?: string
   peerID?: string
   path?: string
-  page?: number
-  pageSize?: number
   fsi?: boolean
 }
 
-interface ApiParams {
+interface ApiPagination {
+  page: number
+  pageSize: number
+}
+interface ApiQuery {
   [key: string]: string
 }
 
@@ -115,7 +119,7 @@ const endpointMap: Record<string, string> = {
   'ping': 'health'
 }
 
-function apiUrl (endpoint: string, segments?: ApiSegments, params?: ApiParams): [string, string] {
+function apiUrl (endpoint: string, segments?: ApiSegments, query?: ApiQuery, pageInfo?: ApiPagination): [string, string] {
   const path = endpointMap[endpoint]
   if (path === undefined) {
     return ['', `${endpoint} is not a valid api endpoint`]
@@ -140,11 +144,16 @@ function apiUrl (endpoint: string, segments?: ApiSegments, params?: ApiParams): 
     }
   }
 
-  if (params) {
-    Object.keys(params).forEach((key, index) => {
+  if (query) {
+    Object.keys(query).forEach((key, index) => {
       url += index === 0 ? '?' : '&'
-      url += `${key}=${params[key]}`
+      url += `${key}=${query[key]}`
     })
+  }
+
+  if (pageInfo) {
+    url += query ? '&' : '?'
+    url += `page=${pageInfo.page}&pageSize=${pageInfo.pageSize}`
   }
   return [url, '']
 }
@@ -160,10 +169,11 @@ async function getAPIJSON<T> (
   endpoint: string,
   method: string,
   segments?: ApiSegments,
-  params?: ApiParams,
+  query?: ApiQuery,
+  pageInfo?: ApiPagination,
   body?: object|[]
 ): Promise<T> {
-  const [url, err] = apiUrl(endpoint, segments, params)
+  const [url, err] = apiUrl(endpoint, segments, query, pageInfo)
   if (err) {
     throw err
   }
@@ -182,13 +192,13 @@ async function getAPIJSON<T> (
 export const apiMiddleware: Middleware = () => (next: Dispatch<AnyAction>) => async (action: any): Promise<any> => {
   if (action[CALL_API]) {
     let data: APIResponseEnvelope
-    let { endpoint = '', method, map = identityFunc, segments, params, body } = action[CALL_API]
+    let { endpoint = '', method, map = identityFunc, segments, params, body, pageInfo } = action[CALL_API]
     const [REQ_TYPE, SUCC_TYPE, FAIL_TYPE] = apiActionTypes(action.type)
 
-    next({ type: REQ_TYPE })
+    next({ type: REQ_TYPE, pageInfo })
 
     try {
-      data = await getAPIJSON(endpoint, method, segments, params, body)
+      data = await getAPIJSON(endpoint, method, segments, params, pageInfo, body)
     } catch (err) {
       return next({
         type: FAIL_TYPE,
@@ -200,9 +210,6 @@ export const apiMiddleware: Middleware = () => (next: Dispatch<AnyAction>) => as
       type: SUCC_TYPE,
       payload: {
         data: map(data.data)
-        // TODO (b5) - we should be able to handle pagination response
-        // state here
-        // pagination:
       }
     })
   }

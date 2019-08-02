@@ -1,5 +1,6 @@
 import { connect } from 'react-redux'
 import { setFilter } from '../actions/myDatasets'
+import { fetchMyDatasets } from '../actions/api'
 import { setWorkingDataset } from '../actions/selections'
 import DatasetList from '../components/DatasetList'
 
@@ -13,7 +14,8 @@ const mapStateToProps = (state: any) => {
 
 const actions = {
   setFilter,
-  setWorkingDataset
+  setWorkingDataset,
+  fetchMyDatasets
 }
 
 export default connect(mapStateToProps, actions)(DatasetList)

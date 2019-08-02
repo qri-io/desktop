@@ -1,13 +1,15 @@
 import { Reducer, AnyAction } from 'redux'
 import { MyDatasets } from '../models/store'
 import { apiActionTypes } from '../store/api'
+import { withPagination } from './page'
 
 export const MYDATASETS_SET_FILTER = 'MYDATASETS_SET_FILTER'
 
 const initialState: MyDatasets = {
   pageInfo: {
     isFetching: false,
-    pageCount: 0,
+    page: 0,
+    pageSize: 0,
     fetchedAll: false,
     error: ''
   },
@@ -21,40 +23,25 @@ const myDatasetsReducer: Reducer = (state = initialState, action: AnyAction): My
   switch (action.type) {
     case MYDATASETS_SET_FILTER:
       const { filter } = action.payload
-      return Object.assign({}, state, { filter })
+      return { ...state, filter }
 
     case LIST_REQ:
-      return Object.assign({}, state, {
-        pageInfo: {
-          isFetching: true,
-          // TODO (b5) - update pagination details!
-          pageCount: 0,
-          fetchedAll: false,
-          error: ''
-        }
-      })
+      return {
+        ...state,
+        pageInfo: withPagination(action, state.pageInfo)
+      }
     case LIST_SUCC:
       return {
-        pageInfo: {
-          isFetching: false,
-          // TODO (b5) - update pagination details!
-          pageCount: 1,
-          fetchedAll: false,
-          error: ''
-        },
-        value: action.payload.data,
+        ...state,
+        pageInfo: withPagination(action, state.pageInfo),
+        value: state.value ? state.value.concat(action.payload.data) : action.payload.data,
         filter: ''
       }
     case LIST_FAIL:
-      return Object.assign({}, state, {
-        pageInfo: {
-          isFetching: false,
-          // TODO (b5) - update pagination details!
-          pageCount: 0,
-          fetchedAll: false,
-          error: ''
-        }
-      })
+      return {
+        ...state,
+        pageInfo: withPagination(action, state)
+      }
   }
 
   return state
