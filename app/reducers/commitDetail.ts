@@ -11,9 +11,13 @@ const initialState: CommitDetails = {
   isLoading: false,
   components: {
     body: {
-      isLoading: false,
-      value: undefined,
-      error: ''
+      value: [],
+      pageInfo: {
+        isFetching: false,
+        page: 0,
+        pageSize: 100,
+        fetchedAll: false
+      }
     },
     meta: {
       value: {}
@@ -46,9 +50,13 @@ const commitDetailsReducer: Reducer = (state = initialState, action: AnyAction):
         isLoading: false,
         components: {
           body: {
-            isLoading: false,
-            value: undefined,
-            error: ''
+            value: [],
+            pageInfo: {
+              ...state.components.body.pageInfo,
+              isFetching: false,
+              page: 0,
+              fetchedAll: false
+            }
           },
           meta: {
             value: dataset.meta
@@ -82,21 +90,32 @@ const commitDetailsReducer: Reducer = (state = initialState, action: AnyAction):
         components: {
           ...state.components,
           body: {
-            ...state.body,
-            isLoading: true
+            ...state.components.body,
+            pageInfo: {
+              ...state.components.body.pageInfo,
+              isFetching: true
+            }
           }
         }
       }
     case COMMITBODY_SUCC:
+      const fetchedAll = action.payload.data.data.length < state.components.body.pageInfo.pageSize
       return {
         ...state,
         components: {
           ...state.components,
           body: {
-            ...state.body,
-            value: action.payload.data.data,
-            error: '',
-            isLoading: false
+            ...state.components.body,
+            value: [
+              ...state.components.body.value,
+              ...action.payload.data.data
+            ],
+            pageInfo: {
+              ...state.components.body.pageInfo,
+              page: state.components.body.pageInfo.page + 1, // eslint-disable-line
+              fetchedAll,
+              isFetching: false
+            }
           }
         }
       }
@@ -108,7 +127,10 @@ const commitDetailsReducer: Reducer = (state = initialState, action: AnyAction):
           body: {
             ...state.body,
             error: action.payload.err,
-            isLoading: false
+            pageInfo: {
+              ...state.body.pageInfo,
+              isFetching: false
+            }
           }
         }
       }

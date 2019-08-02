@@ -227,16 +227,24 @@ export function fetchWorkingStatus (): ApiActionThunk {
   }
 }
 
-export function fetchBody (): ApiActionThunk {
+export function fetchBody (page: number, pageSize: number): ApiActionThunk {
   return async (dispatch, getState) => {
     const { workingDataset } = getState()
     const { peername, name, path } = workingDataset
+
+    if (workingDataset.components.body.pageInfo.fetchedAll) {
+      return new Promise(resolve => resolve({ type: 'NO_ACTION_NEEDED' }))
+    }
 
     const action = {
       type: 'body',
       [CALL_API]: {
         endpoint: 'body',
         method: 'GET',
+        pageInfo: {
+          page,
+          pageSize
+        },
         segments: {
           peername,
           name,
@@ -252,16 +260,24 @@ export function fetchBody (): ApiActionThunk {
   }
 }
 
-export function fetchCommitBody (): ApiActionThunk {
+export function fetchCommitBody (page: number, pageSize: number): ApiActionThunk {
   return async (dispatch, getState) => {
-    const { selections } = getState()
+    const { selections, commitDetails } = getState()
     let { peername, name, commit: path } = selections
+
+    if (commitDetails.components.body.pageInfo.fetchedAll) {
+      return new Promise(resolve => resolve({ type: 'NO_ACTION_NEEDED' }))
+    }
 
     const action = {
       type: 'commitBody',
       [CALL_API]: {
         endpoint: 'body',
         method: 'GET',
+        pageInfo: {
+          page,
+          pageSize
+        },
         segments: {
           peername,
           name,

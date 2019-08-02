@@ -46,9 +46,9 @@ export default class DatasetList extends React.Component<DatasetListProps> {
     })
 
     const listContent = filteredDatasets.length > 0
-      ? filteredDatasets.map(({ peername, name, path, title, isLinked }) => (
+      ? filteredDatasets.map(({ peername, name, title, isLinked }) => (
         <div
-          key={path}
+          key={`${peername}/${name}`}
           className={classNames('sidebar-list-item', 'sidebar-list-item-text', {
             'selected': (peername === workingDataset.peername) && (name === workingDataset.name)
           })}

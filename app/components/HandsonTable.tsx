@@ -1,42 +1,41 @@
 import * as React from 'react'
 import { HotTable } from '@handsontable/react'
+import * as _ from 'underscore'
 
 interface HandsonTableProps {
   headers?: any[]
   body: any[]
+  onScrollToBottom: () => void
 }
 
 export default class HandsonTable extends React.Component<HandsonTableProps> {
-  private hotRef: React.RefObject<HotTable>;
   constructor (props: HandsonTableProps) {
     super(props)
-    this.hotRef = React.createRef()
+
+    // use underscore to debounce the onScroll event
+    this.handleVerticalScrollThrottled = _.debounce(this.handleVerticalScroll, 100)
   }
 
   handleVerticalScroll () {
-    if (this.hotRef.current) {
-      const { hotInstance } = this.hotRef.current
-      const autoRowSize = hotInstance.getPlugin('autoRowSize')
+    // onScroll is firing on the containing div so there is no 'e'
+    // grab the scrollable container from the HandsonTable layout
+    const scroller: any = document.getElementsByClassName('wtHolder')[0]
+    const { scrollHeight, scrollTop, offsetHeight } = scroller
 
-      const totalRows = hotInstance.countRows()
-      const lastVisibleRow = autoRowSize.getLastVisibleRow() + 1 // add 1 because it's zero indexed
-
-      if (lastVisibleRow === totalRows) console.log('YOU ARE AT THE BOTTOM OF THE LIST, GET DATA NOW!!!!!')
+    if (scrollHeight === parseInt(scrollTop) + parseInt(offsetHeight)) {
+      this.props.onScrollToBottom()
     }
   }
 
-  componentDidMount () {
-
-  }
+  handleVerticalScrollThrottled () {}
 
   render () {
     const { body } = this.props
     const headers = this.props.headers ? this.props.headers : true
 
     return (
-      <div>
+      <div onScroll={() => this.handleVerticalScrollThrottled() }>
         <HotTable
-          ref={this.hotRef}
           data={body}
           colHeaders={headers}
           rowHeaders
@@ -47,8 +46,6 @@ export default class HandsonTable extends React.Component<HandsonTableProps> {
           viewportColumnRenderingOffset={100}
           viewportRowRenderingOffset={100}
           columnSorting
-          autoRowSize
-          afterScrollVertically={() => { this.handleVerticalScroll() }}
         />
       </div>
     )

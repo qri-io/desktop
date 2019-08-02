@@ -26,13 +26,13 @@ const mapStateToProps = (state: Store, ownProps: BodyContainerProps) => {
   const { history } = ownProps
   const { workingDataset, commitDetails } = state
   const dataset = history ? commitDetails : workingDataset
-  const { isLoading, value } = dataset.components.body
+  const { pageInfo, value } = dataset.components.body
 
   const headers = extractColumnHeaders(workingDataset)
 
   // get data for the currently selected component
   return {
-    isLoading,
+    pageInfo,
     headers,
     value
   }
