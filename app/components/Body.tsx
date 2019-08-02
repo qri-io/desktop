@@ -22,7 +22,6 @@ export default class Body extends React.Component<BodyProps> {
       value === undefined &&
       isLoading === false
     ) {
-      console.log('CALLING FOR BODY')
       onFetch()
       return null
     }

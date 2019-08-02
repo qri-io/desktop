@@ -3,7 +3,7 @@ import App from '../components/App'
 import Store from '../models/store'
 
 import {
-  fetchMyDatasetsAndLinks,
+  fetchMyDatasets,
   addDatasetAndFetch,
   initDatasetAndFetch,
   pingApi
@@ -41,7 +41,7 @@ const AppContainer = connect(
   },
   {
     fetchSession,
-    fetchMyDatasetsAndLinks,
+    fetchMyDatasets,
     acceptTOS,
     setPeername,
     setHasSetPeername,

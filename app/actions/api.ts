@@ -8,9 +8,9 @@ import { setSelectedListItem } from './selections'
 export function pingApi (): ApiActionThunk {
   return async (dispatch) => {
     const pingAction: ApiAction = {
-      type: 'ping',
+      type: 'health',
       [CALL_API]: {
-        endpoint: 'ping',
+        endpoint: 'health',
         method: 'GET',
         map: (data: Record<string, string>): any => { //eslint-disable-line
           return data
@@ -18,21 +18,6 @@ export function pingApi (): ApiActionThunk {
       }
     }
     return dispatch(pingAction)
-  }
-}
-
-// fetchMyDatasetsAndLinks fetches the user's dataset list and linked datasets
-// these two responses combined can indicate whether a given dataset is linked
-// these will be combined into a single call in the future
-export function fetchMyDatasetsAndLinks (): ApiActionThunk {
-  return async (dispatch, getState) => {
-    const whenOk = chainSuccess(dispatch, getState)
-    let response: Action
-
-    response = await fetchMyDatasets()(dispatch, getState)
-    response = await whenOk(fetchMyLinks())(response)
-
-    return response
   }
 }
 
@@ -68,26 +53,9 @@ export function fetchMyDatasets (): ApiActionThunk {
             peername: ref.peername,
             name: ref.name,
             path: ref.path,
-            hash: '',
-            isLinked: false,
-            changed: false
+            isLinked: !!ref.fsiPath
           }))
         }
-      }
-    }
-
-    return dispatch(listAction)
-  }
-}
-
-// TODO remove, calls /fsilinks, which will be combined with /list
-export function fetchMyLinks (): ApiActionThunk {
-  return async (dispatch) => {
-    const listAction: ApiAction = {
-      type: 'links',
-      [CALL_API]: {
-        endpoint: 'fsilinks',
-        method: 'GET'
       }
     }
 

@@ -81,10 +81,8 @@ export interface DatasetSummary {
   title: string
   peername: string
   name: string
-  hash: string
   path: string
   isLinked: boolean
-  changed: boolean
 }
 
 // list of local datasets
