@@ -5,6 +5,7 @@ import Modal from './Modal'
 import TextInput from '../form/TextInput'
 import Error from './Error'
 import Buttons from './Buttons'
+import { fetchMyDatasets } from '../../actions/api'
 // import Tabs from './Tabs'
 
 interface AddByNameProps {
@@ -17,7 +18,7 @@ const AddByName: React.FunctionComponent<AddByNameProps> = ({ datasetName, onCha
     <div className='content'>
       <p>Add a dataset that already exists on Qri</p>
       <p>Qri dataset names have the following structure: <strong>peername/dataset name</strong>.</p>
-      <p>For example: <strong>chriswhong/usgs_earthquakes</strong>.</p>
+      <p>For example: <strong>chriswhong/usgs_earthquakes</strong></p>
       <TextInput
         name='datasetName'
         label='Peername/Dataset_Name:'
@@ -38,7 +39,7 @@ interface AddByUrl {
 const AddByUrl: React.FunctionComponent<AddByUrl> = ({ url, onChange }) => {
   return (
     <div className='content'>
-      <p>Add a dataset that already exists on Qri using a <strong>url</strong>.</p>
+      <p>Add a dataset that already exists on Qri using a <strong>url</strong></p>
       <TextInput
         name='url'
         label='Url'
@@ -59,9 +60,11 @@ enum TabTypes {
 interface AddDatasetProps {
   onDismissed: () => void
   onSubmit: (peername: string, name: string) => Promise<ApiAction>
+  setWorkingDataset: (peername: string, name: string) => Promise<ApiAction>
+  fetchMyDatasets: () => Promise<ApiAction>
 }
 
-const AddDataset: React.FunctionComponent<AddDatasetProps> = ({ onDismissed, onSubmit }) => {
+const AddDataset: React.FunctionComponent<AddDatasetProps> = ({ onDismissed, onSubmit, setWorkingDataset }) => {
   const [datasetName, setDatasetName] = React.useState('')
 
   // restore when you can add by URL
@@ -124,7 +127,11 @@ const AddDataset: React.FunctionComponent<AddDatasetProps> = ({ onDismissed, onS
     }
 
     onSubmit(names[0], names[1])
-      .then(() => onDismissed())
+      .then(() => {
+        fetchMyDatasets()
+        setWorkingDataset(names[0], names[1])
+          .then(() => onDismissed())
+      })
       .catch((action) => {
         setDismissable(true)
         setLoading(false)
