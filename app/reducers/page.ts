@@ -1,5 +1,6 @@
 import { AnyAction } from 'redux'
 import { PageInfo } from '../models/store'
+import getActionType from '../utils/actionType'
 
 const initialPageInfo = {
   isFetching: true,
@@ -10,13 +11,6 @@ const initialPageInfo = {
 }
 
 export function withPagination (action: AnyAction, pageInfo: PageInfo = initialPageInfo): PageInfo {
-  // TODO (ramfox): export this and move to /store/api ?
-  const getActionType = (type: string): string => {
-    if (type.includes('REQUEST')) return 'request'
-    if (type.includes('SUCCESS')) return 'success'
-    if (type.includes('FAILURE')) return 'failure'
-    return 'default'
-  }
   switch (getActionType(action.type)) {
     case 'request':
       return Object.assign({},
