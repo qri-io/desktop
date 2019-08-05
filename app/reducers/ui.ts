@@ -15,7 +15,7 @@ export const defaultSidebarWidth = 250
 export const hasAcceptedTOSKey = 'acceptedTOS'
 export const hasSetPeernameKey = 'setPeername'
 
-export const [, HEALTH_SUCCESS, HEALTH_FAILURE] = apiActionTypes('health')
+const [, HEALTH_SUCCESS, HEALTH_FAILURE] = apiActionTypes('health')
 
 const getSidebarWidth = (key: string): number => {
   const width = store().getItem(key)

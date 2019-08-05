@@ -1,0 +1,40 @@
+// body toast
+
+.body-toast {
+  background: #cccc;
+  font-size: .8rem;
+  margin: 0 auto;
+  max-width: 500px;
+  padding: 2px 12px;
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  right: auto;
+  border-radius: 2px;
+  transition: all 20ms ;
+  transform: translateX(-50%) translateY(100%);
+}
+
+.body-toast-enter {
+    transform: translateX(-50%) translateY(100%);
+}
+
+.body-toast-enter-active {
+    transform: translateX(-50%) translateY(-40%);
+}
+
+.body-toast-enter-done {
+  transform: translateX(-50%) translateY(-40%);
+}
+
+.body-toast-exit {
+  transform: translateX(-50%) translateY(-40%);
+}
+
+.body-toast-exit-active {
+  transform: translateX(-50%) translateY(100%);
+}
+
+.body-toast-exit-done {
+  transform: translateX(-50%) translateY(100%);
+}

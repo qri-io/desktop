@@ -121,9 +121,8 @@ export interface CommitDetails {
   isLoading: false
   components: {
     body: {
-      isLoading: boolean
       value: any[] | undefined
-      error: string
+      pageInfo: PageInfo
     }
     meta: {
       value: Meta

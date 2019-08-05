@@ -2,7 +2,7 @@ import { createStore, applyMiddleware, compose } from 'redux'
 import thunk from 'redux-thunk'
 import { createHashHistory } from 'history'
 import { routerMiddleware, push } from 'react-router-redux'
-import { createLogger } from 'redux-logger'
+// import { createLogger } from 'redux-logger'
 import rootReducer from '../reducers'
 import { apiMiddleware } from './api'
 
@@ -19,11 +19,6 @@ declare const module: NodeModule & {
 const actionCreators = Object.assign({},
   { push }
 )
-
-const logger = (createLogger as any)({
-  level: 'info',
-  collapsed: true
-})
 
 const history = createHashHistory()
 const router = routerMiddleware(history)
@@ -44,7 +39,7 @@ const composeEnhancers: typeof compose = window.__REDUX_DEVTOOLS_EXTENSION_COMPO
   : compose
 /* eslint-enable no-underscore-dangle */
 const enhancer = composeEnhancers(
-  applyMiddleware(thunk, router, apiMiddleware, logger)
+  applyMiddleware(thunk, router, apiMiddleware)
 )
 
 export = {

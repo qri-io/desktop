@@ -68,7 +68,7 @@ export default class App extends React.Component<AppProps, AppState> {
         }
         this.props.pingApi()
         iter++
-      }, 850)
+      }, 10000)
     }
     this.props.pingApi()
     this.props.fetchSession()
