@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { ApiAction } from '../store/api'
-import { CSSTransition } from 'react-transition-group'
+import Toast, { ToastTypes } from './chrome/Toast'
 import HandsonTable from './HandsonTable'
 
 import { PageInfo } from '../models/store'
@@ -53,13 +53,11 @@ export default class Body extends React.Component<BodyProps> {
             />
           )
         }
-        <CSSTransition
-          in={this.props.pageInfo.isFetching && this.props.pageInfo.page > 0}
-          classNames="body-toast"
-          timeout={300}
-        >
-          <div className='body-toast'>Loading more rows...</div>
-        </CSSTransition>
+        <Toast
+          show={this.props.pageInfo.isFetching && this.props.pageInfo.page > 0}
+          type={ToastTypes.message}
+          text='Loading more rows...'
+        />
       </div>
     )
   }
