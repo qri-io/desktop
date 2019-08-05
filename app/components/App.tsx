@@ -61,16 +61,16 @@ export default class App extends React.Component<AppProps, AppState> {
   componentDidMount () {
     if (this.props.apiConnection === 0) {
       var iter = 0
-      const pingTimer = setInterval(() => {
-        if (iter > 15) {
-          this.props.setApiConnection(-1)
-          clearInterval(pingTimer)
-        }
+      const backendLoadedCheck = setInterval(() => {
         this.props.pingApi()
         iter++
-      }, 10000)
+        if (this.props.apiConnection === 1) clearInterval(backendLoadedCheck)
+        if (iter > 20) {
+          this.props.setApiConnection(-1)
+          clearInterval(backendLoadedCheck)
+        }
+      }, 750)
     }
-    this.props.pingApi()
     this.props.fetchSession()
     this.props.fetchMyDatasets()
   }
