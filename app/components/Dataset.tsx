@@ -2,7 +2,7 @@ import * as React from 'react'
 import classNames from 'classnames'
 import { Action } from 'redux'
 import { shell } from 'electron'
-import { ApiAction } from '../store/api'
+import { ApiAction, ApiActionThunk } from '../store/api'
 import { Resizable } from '../components/resizable'
 import DatasetSidebar from '../components/DatasetSidebar'
 import DatasetListContainer from '../containers/DatasetListContainer'
@@ -21,7 +21,7 @@ import {
   Mutations
 } from '../models/store'
 
-interface DatasetProps {
+export interface DatasetProps {
   // redux state
   ui: UI
   selections: Selections
@@ -36,6 +36,7 @@ interface DatasetProps {
   setSelectedListItem: (type: string, activeTab: string) => Action
   setWorkingDataset: (peername: string, name: string) => Action
   fetchWorkingDatasetDetails: () => Promise<ApiAction>
+  fetchWorkingHistory: (page?: number, pageSize?: number) => ApiActionThunk
   fetchWorkingStatus: () => Promise<ApiAction>
 }
 
@@ -66,7 +67,6 @@ export default class Dataset extends React.Component<DatasetProps> {
   static getDerivedStateFromProps (nextProps: DatasetProps, prevState: DatasetState) {
     const { peername: newPeername, name: newName } = nextProps.selections
     const { peername, name } = prevState
-
     // when new props arrive, compare selections.peername and selections.name to
     // previous.  If either is different, fetch data
     if ((newPeername !== peername) || (newName !== name)) {
@@ -113,7 +113,8 @@ export default class Dataset extends React.Component<DatasetProps> {
       toggleDatasetList,
       setActiveTab,
       setSidebarWidth,
-      setSelectedListItem
+      setSelectedListItem,
+      fetchWorkingHistory
     } = this.props
 
     // mainContent will either be a loading spinner, or content based on the selected
@@ -209,6 +210,7 @@ export default class Dataset extends React.Component<DatasetProps> {
               history={history}
               status={status}
               onTabClick={setActiveTab}
+              fetchWorkingHistory={fetchWorkingHistory}
               onListItemClick={setSelectedListItem}
             />
           </Resizable>

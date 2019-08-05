@@ -43,7 +43,7 @@ export interface Commit {
   title: string
 }
 
-export interface Schema extends JSONSchema7 {}
+export type Schema = JSONSchema7
 
 export interface Dataset {
   meta?: Meta

@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Action } from 'redux'
+import { Action, AnyAction } from 'redux'
 import classNames from 'classnames'
 import { MyDatasets, WorkingDataset } from '../models/store'
 
@@ -8,6 +8,7 @@ interface DatasetListProps {
   workingDataset: WorkingDataset
   setFilter: (filter: string) => Action
   setWorkingDataset: (peername: string, name: string) => Action
+  fetchMyDatasets: (page: number, pageSize: number) => Promise<AnyAction>
 }
 
 export default class DatasetList extends React.Component<DatasetListProps> {
@@ -15,6 +16,15 @@ export default class DatasetList extends React.Component<DatasetListProps> {
     const { setFilter } = this.props
     const filter = e.target.value
     setFilter(filter)
+  }
+
+  handleScroll (e: any) {
+    const { myDatasets } = this.props
+    // this assumes myDatasets is being called for the first time by the App component
+    if (!myDatasets.pageInfo) return
+    if (e.target.scrollHeight === parseInt(e.target.scrollTop) + parseInt(e.target.offsetHeight)) {
+      this.props.fetchMyDatasets(myDatasets.pageInfo.page + 1, myDatasets.pageInfo.pageSize)
+    }
   }
 
   render () {
@@ -57,7 +67,7 @@ export default class DatasetList extends React.Component<DatasetListProps> {
       : <div className='sidebar-list-item-text'>Oops, no matches found for <strong>&apos;{filter}&apos;</strong></div>
 
     return (
-      <div className='dataset-sidebar'>
+      <div className='dataset-sidebar' >
         <div id='dataset-list-header' className='sidebar-list-item'>
           <div id='controls'>
             <input
@@ -70,7 +80,7 @@ export default class DatasetList extends React.Component<DatasetListProps> {
           </div>
           <div className='strong-message'>You have {filteredDatasets.length} local datasets</div>
         </div>
-        <div id='list'>
+        <div id='list' onScroll={(e) => this.handleScroll(e)}>
           {listContent}
         </div>
       </div>

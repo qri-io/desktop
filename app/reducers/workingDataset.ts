@@ -1,6 +1,7 @@
 import { Reducer, AnyAction } from 'redux'
 import { WorkingDataset, DatasetStatus, ComponentStatus } from '../models/store'
 import { apiActionTypes } from '../store/api'
+import { withPagination } from './page'
 
 const initialState: WorkingDataset = {
   path: '',
@@ -26,8 +27,9 @@ const initialState: WorkingDataset = {
   history: {
     pageInfo: {
       isFetching: false,
-      pageCount: 0,
-      fetchedAll: false
+      page: 0,
+      fetchedAll: false,
+      pageSize: 0
     },
     value: []
   }
@@ -75,12 +77,23 @@ const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction
       }
 
     case DATASET_HISTORY_REQ:
-      return state
+      return {
+        ...state,
+        history: {
+          ...state.history,
+          pageInfo: withPagination(action, state.history.pageInfo),
+          value: action.pageInfo.page === 1 ? [] : [].concat(state.history.value)
+        }
+      }
     case DATASET_HISTORY_SUCC:
       return {
         ...state,
         history: {
-          value: action.payload.data
+          ...history,
+          value: state.history.value
+            ? state.history.value.concat(action.payload.data)
+            : action.payload.data,
+          pageInfo: withPagination(action, state.history.pageInfo)
         }
       }
     case DATASET_HISTORY_FAIL:

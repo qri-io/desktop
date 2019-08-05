@@ -201,10 +201,16 @@ $hover-highlight-color: #F6F8FA;
   cursor: default;
   display: flex;
   flex-direction: column;
+  background: $appBackground;
+  border-right-style: solid 1px $border-color;
+
+  #list {
+    overflow-y: auto;
+  }
 
   #tabs {
     height: 30px;
-    display: flex;
+    display: flex; 
 
     .tab {
       width: 50%;
@@ -230,8 +236,18 @@ $hover-highlight-color: #F6F8FA;
 
   #content {
     flex-grow: 1;
-    overflow: auto;
+    height: 100%;
+    position: relative;
+    
+    .sidebar-content {
+      overflow: auto;
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background:$appBackground;
+    }
   }
+
 }
 
 ////////////////////////////

@@ -27,7 +27,7 @@ interface AppProps {
   hasSetPeername: boolean
   toast: IToast
   fetchSession: () => Promise<ApiAction>
-  fetchMyDatasets: () => Promise<ApiAction>
+  fetchMyDatasets: (page?: number, pageSize?: number) => Promise<ApiAction>
   addDataset: (peername: string, name: string) => Promise<ApiAction>
   initDataset: (path: string, name: string, format: string) => Promise<ApiAction>
   acceptTOS: () => Action
@@ -62,7 +62,7 @@ export default class App extends React.Component<AppProps, AppState> {
     if (this.props.apiConnection === 0) {
       var iter = 0
       const pingTimer = setInterval(() => {
-        if (iter > 30) {
+        if (iter > 15) {
           this.props.setApiConnection(-1)
           clearInterval(pingTimer)
         }

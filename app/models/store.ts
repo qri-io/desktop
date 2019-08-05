@@ -71,7 +71,8 @@ export interface Selections {
 // info about the current value of a list being paginated
 export interface PageInfo {
   isFetching: boolean
-  pageCount: number
+  page: number
+  pageSize: number
   fetchedAll: boolean
   error?: string
 }
