@@ -65,12 +65,20 @@ export function fetchMyDatasets (): ApiActionThunk {
 
 export function fetchWorkingDataset (): ApiActionThunk {
   return async (dispatch, getState) => {
-    const { selections } = getState()
+    const { selections, myDatasets } = getState()
+    const { peername, name } = selections
+
+    // find the selected dataset in myDatasets to determine isLinked
+    const match = myDatasets.value.find((d) => d.name === name && d.peername === peername)
+
+    const params = (match && match.isLinked) ? { fsi: true } : {}
+
     const action = {
       type: 'dataset',
       [CALL_API]: {
         endpoint: 'dataset',
         method: 'GET',
+        params,
         segments: {
           peername: selections.peername,
           name: selections.name
