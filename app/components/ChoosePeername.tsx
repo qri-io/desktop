@@ -1,14 +1,18 @@
 import * as React from 'react'
 import WelcomeTemplate from './WelcomeTemplate'
 import TextInput from './form/TextInput'
+import getActionType from '../utils/actionType'
+import { ApiAction } from '../store/api'
+import { Action } from 'redux'
 
 export interface ChoosePeernameProps {
-  onSave: (newPeername: string) => Promise<any>
+  setPeername: (newPeername: string) => Promise<ApiAction>
+  setHasSetPeername: () => Action
   peername: string
 }
 
 const ChoosePeername: React.FunctionComponent<ChoosePeernameProps> = (props: ChoosePeernameProps) => {
-  const { peername, onSave } = props
+  const { peername, setPeername, setHasSetPeername } = props
   const [newPeername, setNewPeername] = React.useState(peername)
   const [loading, setLoading] = React.useState(false)
   const [error, setError] = React.useState('')
@@ -32,13 +36,22 @@ const ChoosePeername: React.FunctionComponent<ChoosePeernameProps> = (props: Cho
 
   async function handleSave () {
     new Promise(resolve => {
+      error && setError('')
       setLoading(true)
       resolve()
     })
-      .then(async () => onSave(newPeername))
-      .catch(() => {
-        setLoading(false)
-        setError('some error occured')
+      .then(async () => {
+        setPeername(newPeername)
+          .then((action) => {
+            setLoading(false)
+            // TODO (ramfox): possibly these should move to the reducer
+            if (getActionType(action.type) === 'failure') {
+              setError(action.payload.err.message)
+            }
+            if (getActionType(action.type) === 'success') {
+              setHasSetPeername()
+            }
+          })
       })
   }
 

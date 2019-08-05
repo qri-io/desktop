@@ -26,11 +26,6 @@ const Onboard: React.FunctionComponent<OnboardProps> = (
     setPeername,
     setHasSetPeername
   }) => {
-  async function onSave (peername: string): Promise<any> {
-    return setPeername(peername)
-      .then(() => setHasSetPeername())
-  }
-
   const renderWelcome = () => {
     return (
       <CSSTransition
@@ -54,7 +49,11 @@ const Onboard: React.FunctionComponent<OnboardProps> = (
         timeout={1000}
         unmountOnExit
       >
-        < ChoosePeername onSave={onSave} peername={peername}/>
+        < ChoosePeername
+          peername={peername}
+          setPeername={setPeername}
+          setHasSetPeername={setHasSetPeername}
+        />
       </CSSTransition>
     )
   }
