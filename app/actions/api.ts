@@ -7,6 +7,10 @@ import { setSelectedListItem } from './selections'
 
 const pageSizeDefault = 15
 
+// use NO_ACTION when you need to skip/debounce unneccessary calls to the api
+// it will still register as a success
+export const NO_ACTION: Action = {type: 'NO_ACTION_SUCCESS'}
+
 export function pingApi (): ApiActionThunk {
   return async (dispatch) => {
     const pingAction: ApiAction = {
@@ -45,11 +49,12 @@ export function fetchWorkingDatasetDetails (): ApiActionThunk {
 export function fetchMyDatasets (page: number = 1, pageSize: number = pageSizeDefault): ApiActionThunk {
   return async (dispatch, getState) => {
     const state = getState()
-    if (state &&
+    if (page !== 1 &&
+          state &&
           state.myDatasets &&
           state.myDatasets.pageInfo &&
           state.myDatasets.pageInfo.fetchedAll) {
-      return new Promise(resolve => resolve({ type: 'NO_ACTION_NEEDED' }))
+      return new Promise(resolve => resolve(NO_ACTION))
     }
     const listAction: ApiAction = {
       type: 'list',
@@ -184,7 +189,7 @@ export function fetchWorkingHistory (page: number = 1, pageSize: number = pageSi
         state.workingDataset.history &&
         state.workingDataset.history.pageInfo &&
         state.workingDataset.history.pageInfo.fetchedAll) {
-      return new Promise(resolve => resolve({ type: 'NO_ACTION_NEEDED' }))
+      return new Promise(resolve => resolve(NO_ACTION))
     }
     const { selections } = getState()
     const action = {
@@ -251,7 +256,7 @@ export function fetchBody (page: number, pageSize: number): ApiActionThunk {
     const { peername, name, path } = workingDataset
 
     if (workingDataset.components.body.pageInfo.fetchedAll) {
-      return new Promise(resolve => resolve({ type: 'NO_ACTION_NEEDED' }))
+      return new Promise(resolve => resolve(NO_ACTION))
     }
 
     const action = {
@@ -284,7 +289,7 @@ export function fetchCommitBody (page: number, pageSize: number): ApiActionThunk
     let { peername, name, commit: path } = selections
 
     if (commitDetails.components.body.pageInfo.fetchedAll) {
-      return new Promise(resolve => resolve({ type: 'NO_ACTION_NEEDED' }))
+      return new Promise(resolve => resolve(NO_ACTION))
     }
 
     const action = {
