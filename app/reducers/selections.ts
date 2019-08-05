@@ -50,6 +50,7 @@ export default (state = initialState, action: AnyAction) => {
     case LIST_SUCC:
       // if there is no peername + name in selections, use the first one on the list
       if (state.peername === '' && state.name === '') {
+        if (action.payload.data.length === 0) return state
         const { peername: firstPeername, name: firstName } = action.payload.data[0]
         store().setItem('peername', firstPeername)
         store().setItem('name', firstName)
