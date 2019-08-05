@@ -44,3 +44,21 @@
     transition: opacity 300ms, transform 300ms;
   }
 }
+
+.slide-enter {
+  max-height: 0px;
+}
+
+.slide-enter-active {
+  max-height: 500px;
+  transition: max-height 300ms, transform 300ms;
+}
+
+.slide-exit {
+  max-height: 500px;
+}
+
+.slide-exit-active {
+  max-height: 0px;
+  transition: max-height 300ms, transform 300ms;
+}

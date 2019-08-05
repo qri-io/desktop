@@ -212,13 +212,13 @@ const CreateDataset: React.FunctionComponent<CreateDatasetProps> = ({ onDismisse
   const handleSubmit = () => {
     setDismissable(false)
     setLoading(true)
-    // should fire off action and catch error response
-    // if success, fetchDatatsets
+    error && setError('')
     if (!onSubmit) return
     onSubmit(path, datasetName, bodyFormat)
       .then(() => onDismissed())
       .catch((action) => {
         setLoading(false)
+        setDismissable(true)
         setError(action.payload.err.message)
       })
   }

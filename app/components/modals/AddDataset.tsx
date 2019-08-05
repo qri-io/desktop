@@ -111,6 +111,7 @@ const AddDataset: React.FunctionComponent<AddDatasetProps> = ({ onDismissed, onS
   const handleSubmit = () => {
     setDismissable(false)
     setLoading(true)
+    error && setError('')
     // should fire off action and catch error response
     // if success, fetchDatatsets
     if (!onSubmit) return
@@ -125,6 +126,7 @@ const AddDataset: React.FunctionComponent<AddDatasetProps> = ({ onDismissed, onS
     onSubmit(names[0], names[1])
       .then(() => onDismissed())
       .catch((action) => {
+        setDismissable(true)
         setLoading(false)
         setError(action.payload.err.message)
       })
@@ -180,7 +182,14 @@ const AddDataset: React.FunctionComponent<AddDatasetProps> = ({ onDismissed, onS
           {/* restore when you can add by URL */}
           {/* {renderAddByUrl()} */}
         </div>
-        <div id='error'><Error text={error} /></div>
+        <CSSTransition
+          in={!!error}
+          timeout={300}
+          classNames='slide'
+          component='div'
+        >
+          <div id='error'><Error text={error} /></div>
+        </CSSTransition>
       </div>
       <Buttons
         cancelText='cancel'
