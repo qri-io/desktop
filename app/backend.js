@@ -28,7 +28,7 @@ class BackendProcess {
 
   launchProcess () {
     try {
-      this.process = childProcess.spawn(this.qriBinPath, ['connect'], {})
+      this.process = childProcess.spawn(this.qriBinPath, ['connect', '--setup'], {})
       this.process.on('error', (err) => { this.handleEvent('error', err) })
       this.process.on('exit', (err) => { this.handleEvent('exit', err) })
       this.process.on('close', (err) => { this.handleEvent('close', err) })

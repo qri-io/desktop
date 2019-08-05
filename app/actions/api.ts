@@ -78,12 +78,20 @@ export function fetchMyDatasets (page: number = 1, pageSize: number = pageSizeDe
 
 export function fetchWorkingDataset (): ApiActionThunk {
   return async (dispatch, getState) => {
-    const { selections } = getState()
+    const { selections, myDatasets } = getState()
+    const { peername, name } = selections
+
+    // find the selected dataset in myDatasets to determine isLinked
+    const match = myDatasets.value.find((d) => d.name === name && d.peername === peername)
+
+    const params = (match && match.isLinked) ? { fsi: true } : {}
+
     const action = {
       type: 'dataset',
       [CALL_API]: {
         endpoint: 'dataset',
         method: 'GET',
+        params,
         segments: {
           peername: selections.peername,
           name: selections.name
@@ -168,6 +176,16 @@ export function fetchCommitStatus (): ApiActionThunk {
 
 export function fetchWorkingHistory (page: number = 1, pageSize: number = pageSizeDefault): ApiActionThunk {
   return async (dispatch, getState) => {
+    const state = getState()
+    // if page === 1, this is a new history
+    if (page !== 1 &&
+        state &&
+        state.workingDataset &&
+        state.workingDataset.history &&
+        state.workingDataset.history.pageInfo &&
+        state.workingDataset.history.pageInfo.fetchedAll) {
+      return new Promise(resolve => resolve({ type: 'NO_ACTION_NEEDED' }))
+    }
     const { selections } = getState()
     const action = {
       type: 'history',
