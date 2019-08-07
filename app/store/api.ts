@@ -126,7 +126,7 @@ function apiUrl (endpoint: string, segments?: ApiSegments, query?: ApiQuery, pag
   }
 
   const addToUrl = (url: string, seg: string): string => {
-    if (url[-1] !== '/') url += '/'
+    if (url[-1] !== '/' || seg[0] !== '/') url += '/'
     return url + seg
   }
 

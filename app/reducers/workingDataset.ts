@@ -9,7 +9,7 @@ const initialState: WorkingDataset = {
   peername: '',
   name: '',
   status: {},
-  isLoading: false,
+  isLoading: true,
   linkpath: null,
   components: {
     body: {
@@ -47,10 +47,7 @@ const [DATASET_BODY_REQ, DATASET_BODY_SUCC, DATASET_BODY_FAIL] = apiActionTypes(
 const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction): WorkingDataset | null => {
   switch (action.type) {
     case DATASET_REQ:
-      return {
-        ...state,
-        isLoading: true
-      }
+      return initialState
     case DATASET_SUCC:
       const { name, path, peername, published, dataset } = action.payload.data
       return {

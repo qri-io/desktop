@@ -118,7 +118,7 @@ export interface CommitDetails {
   peername: string
   name: string
   status: DatasetStatus
-  isLoading: false
+  isLoading: boolean
   components: {
     body: {
       value: any[] | undefined
