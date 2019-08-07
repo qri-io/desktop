@@ -7,7 +7,7 @@ import { ApiActionThunk } from '../store/api'
 import SaveFormContainer from '../containers/SaveFormContainer'
 import ComponentList from './ComponentList'
 
-import { Spinner } from './chrome/Spinner'
+import Spinner from './chrome/Spinner'
 
 import { WorkingDataset, ComponentType } from '../models/store'
 

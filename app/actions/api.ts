@@ -9,7 +9,7 @@ const pageSizeDefault = 15
 
 // use NO_ACTION when you need to skip/debounce unneccessary calls to the api
 // it will still register as a success
-export const NO_ACTION: Action = {type: 'NO_ACTION_SUCCESS'}
+export const NO_ACTION: Action = { type: 'NO_ACTION_SUCCESS' }
 
 export function pingApi (): ApiActionThunk {
   return async (dispatch) => {

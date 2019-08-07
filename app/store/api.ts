@@ -125,22 +125,27 @@ function apiUrl (endpoint: string, segments?: ApiSegments, query?: ApiQuery, pag
     return ['', `${endpoint} is not a valid api endpoint`]
   }
 
+  const addToUrl = (url: string, seg: string): string => {
+    if (url[-1] !== '/') url += '/'
+    return url + seg
+  }
+
   let url = `http://localhost:2503/${path}`
   if (segments) {
     if (segments.peername) {
-      url += `/${segments.peername}`
+      url = addToUrl(url, segments.peername)
     }
     if (segments.name) {
-      url += `/${segments.name}`
+      url = addToUrl(url, segments.name)
     }
     if (segments.peerID || segments.path) {
-      url += '/at'
+      url = addToUrl(url, 'at')
     }
     if (segments.peerID) {
-      url += `/${segments.peerID}`
+      url = addToUrl(url, segments.peerID)
     }
     if (segments.path) {
-      url += segments.path
+      url = addToUrl(url, segments.path)
     }
   }
 
