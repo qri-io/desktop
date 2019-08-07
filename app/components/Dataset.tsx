@@ -3,13 +3,11 @@ import classNames from 'classnames'
 import { Action } from 'redux'
 import { shell } from 'electron'
 import { ApiAction, ApiActionThunk } from '../store/api'
-import { Resizable } from '../components/resizable'
-import DatasetSidebar from '../components/DatasetSidebar'
+import { Resizable } from './Resizable'
+import DatasetSidebar from './DatasetSidebar'
+import DatasetComponent from './DatasetComponent'
 import DatasetListContainer from '../containers/DatasetListContainer'
 import CommitDetailsContainer from '../containers/CommitDetailsContainer'
-import MetadataContainer from '../containers/MetadataContainer'
-import BodyContainer from '../containers/BodyContainer'
-import SchemaContainer from '../containers/SchemaContainer'
 
 import { defaultSidebarWidth } from '../reducers/ui'
 
@@ -125,19 +123,8 @@ export default class Dataset extends React.Component<DatasetProps> {
       mainContent = <div>Loading</div>
     } else {
       if (activeTab === 'status') {
-        switch (selectedComponent) {
-          case 'meta':
-            mainContent = <MetadataContainer />
-            break
-          case 'body':
-            mainContent = <BodyContainer />
-            break
-          case 'schema':
-            mainContent = <SchemaContainer />
-            break
-          default:
-            mainContent = <MetadataContainer />
-        }
+        const componentStatus = status[selectedComponent]
+        mainContent = <DatasetComponent component={selectedComponent} componentStatus={componentStatus}/>
       } else {
         if (workingDataset.history) {
           mainContent = <CommitDetailsContainer />

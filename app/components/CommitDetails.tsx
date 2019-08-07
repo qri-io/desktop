@@ -3,9 +3,7 @@ import moment from 'moment'
 import { Resizable } from '../components/resizable'
 import { Action } from 'redux'
 import ComponentList from '../components/ComponentList'
-import MetadataContainer from '../containers/MetadataContainer'
-import BodyContainer from '../containers/BodyContainer'
-import SchemaContainer from '../containers/SchemaContainer'
+import DatasetComponent from './DatasetComponent'
 
 import { ApiAction } from '../store/api'
 import { Commit } from '../models/dataset'
@@ -60,25 +58,15 @@ export default class CommitDetails extends React.Component<CommitDetailsProps> {
   render () {
     const { selectedComponent } = this.props
 
-    let mainContent
-
-    switch (selectedComponent) {
-      case 'meta':
-        mainContent = <MetadataContainer history />
-        break
-      case 'body':
-        mainContent = <BodyContainer history />
-        break
-      case 'schema':
-        mainContent = <SchemaContainer history />
-        break
-    }
-
     if (this.props.commit && !isEmpty(this.props.commitDetails.status)) {
       const { commit, sidebarWidth, setSidebarWidth, setSelectedListItem, commitDetails } = this.props
       const { status } = commitDetails
       const { title, timestamp } = commit
       const timeMessage = moment(timestamp).fromNow()
+
+      const componentStatus = status[selectedComponent]
+      let mainContent = <DatasetComponent component={selectedComponent} componentStatus={componentStatus} history />
+
       return (
         <div id='commit-details' className='dataset-content'>
           <div className='commit-details-header text-column'>

@@ -3,18 +3,11 @@ import { Action } from 'redux'
 import classNames from 'classnames'
 import { DatasetStatus, ComponentType } from '../models/store'
 
-interface FileRowProps {
-  name: string
-  displayName: string
-  filename?: string
-  selected?: boolean
-  status?: string
-  selectionType?: ComponentType
-  disabled?: boolean
-  onClick?: (type: ComponentType, activeTab: string) => Action
+interface StatusDotProps {
+  status: string | undefined
 }
 
-export const FileRow: React.FunctionComponent<FileRowProps> = (props) => {
+export const StatusDot: React.FunctionComponent<StatusDotProps> = (props) => {
   let statusColor
   switch (props.status) {
     case 'modified':
@@ -29,29 +22,43 @@ export const FileRow: React.FunctionComponent<FileRowProps> = (props) => {
     default:
       statusColor = 'transparent'
   }
-
   return (
-    <div
-      className={classNames('sidebar-list-item', 'sidebar-list-item-text', {
-        'selected': props.selected,
-        'disabled': props.disabled
-      })}
-      onClick={() => {
-        if (props.onClick && props.selectionType && props.name) {
-          props.onClick(props.selectionType, props.name)
-        }
-      }}
-    >
-      <div className='text-column'>
-        <div className='text'>{props.displayName}</div>
-        <div className='subtext'>{props.filename}</div>
-      </div>
-      <div className='status-column'>
-        <span className='dot' style={{ backgroundColor: statusColor }}></span>
-      </div>
-    </div>
+    <div className='status-dot' style={{ backgroundColor: statusColor }}></div>
   )
 }
+
+interface FileRowProps {
+  name: string
+  displayName: string
+  filename?: string
+  selected?: boolean
+  status?: string
+  selectionType?: ComponentType
+  disabled?: boolean
+  onClick?: (type: ComponentType, activeTab: string) => Action
+}
+
+export const FileRow: React.FunctionComponent<FileRowProps> = (props) => (
+  <div
+    className={classNames('sidebar-list-item', 'sidebar-list-item-text', {
+      'selected': props.selected,
+      'disabled': props.disabled
+    })}
+    onClick={() => {
+      if (props.onClick && props.selectionType && props.name) {
+        props.onClick(props.selectionType, props.name)
+      }
+    }}
+  >
+    <div className='text-column'>
+      <div className='text'>{props.displayName}</div>
+      <div className='subtext'>{props.filename}</div>
+    </div>
+    <div className='status-column'>
+      <StatusDot status={props.status} />
+    </div>
+  </div>
+)
 
 FileRow.displayName = 'FileRow'
 
@@ -77,6 +84,11 @@ const components = [
     displayName: 'Schema'
   }
 ]
+
+export const getComponentDisplayName = (name: string) => {
+  const match = components.find(d => d.name === name)
+  return match && match.displayName
+}
 
 const ComponentList: React.FunctionComponent<ComponentListProps> = (props: ComponentListProps) => {
   const {
