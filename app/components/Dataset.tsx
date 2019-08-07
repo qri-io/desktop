@@ -2,6 +2,8 @@ import * as React from 'react'
 import classNames from 'classnames'
 import { Action } from 'redux'
 import { shell } from 'electron'
+import ReactTooltip from 'react-tooltip'
+
 import { ApiAction, ApiActionThunk } from '../store/api'
 import { Resizable } from '../components/resizable'
 import DatasetSidebar from '../components/DatasetSidebar'
@@ -60,6 +62,10 @@ export default class Dataset extends React.Component<DatasetProps> {
   componentDidMount () {
     // poll for status
     setInterval(() => { this.props.fetchWorkingStatus() }, 1000)
+  }
+
+  componentDidUpdate () {
+    ReactTooltip.rebuild()
   }
 
   // using component state + getDerivedStateFromProps to determine when a new
@@ -151,6 +157,7 @@ export default class Dataset extends React.Component<DatasetProps> {
     const linkButton = isLinked ? (
       <div
         className='header-column'
+        data-tip={workingDataset.linkpath}
         onClick={() => { shell.openItem(String(workingDataset.linkpath)) }}
       >
         <div className='header-column-icon'>
@@ -160,7 +167,7 @@ export default class Dataset extends React.Component<DatasetProps> {
           <div className="label">Show Dataset Files</div>
         </div>
       </div>) : (
-      <div className='header-column'>
+      <div className='header-column' data-tip='Link this dataset to a folder on your computer'>
         <div className='header-column-icon'>
           <span className='icon-inline'>link</span>
         </div>
@@ -175,6 +182,7 @@ export default class Dataset extends React.Component<DatasetProps> {
         <div className='header'>
           <div
             className={classNames('current-dataset', 'header-column', { 'expanded': showDatasetList })}
+            data-tip={`${workingDataset.peername}/${workingDataset.name}`}
             onClick={toggleDatasetList}
             style={{ width: datasetSidebarWidth }}
           >
@@ -230,6 +238,18 @@ export default class Dataset extends React.Component<DatasetProps> {
             </div>
           )
         }
+        {/*
+          This adds react-tooltip to all children of Dataset
+          To add a tooltip to any element, add a data-tip={'tooltip text'} attribute
+          See componentDidUpdate, which calls rebuild() to re-bind all tooltips
+        */}
+        <ReactTooltip
+          place='bottom'
+          type='dark'
+          effect='solid'
+          delayShow={1000}
+          multiline
+        />
       </div>
     )
   }

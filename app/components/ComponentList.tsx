@@ -11,23 +11,28 @@ interface FileRowProps {
   status?: string
   selectionType?: ComponentType
   disabled?: boolean
+  tooltip?: string
   onClick?: (type: ComponentType, activeTab: string) => Action
 }
 
 export const FileRow: React.FunctionComponent<FileRowProps> = (props) => {
-  let statusColor
+  let statusColor, statusTooltip
   switch (props.status) {
     case 'modified':
       statusColor = '#cab081'
+      statusTooltip = 'modified'
       break
     case 'add':
       statusColor = '#83d683'
+      statusTooltip = 'added'
       break
     case 'removed':
       statusColor = '#e04f4f'
+      statusTooltip = 'removed'
       break
     default:
       statusColor = 'transparent'
+      statusTooltip = ''
   }
 
   return (
@@ -36,6 +41,7 @@ export const FileRow: React.FunctionComponent<FileRowProps> = (props) => {
         'selected': props.selected,
         'disabled': props.disabled
       })}
+      data-tip={props.tooltip}
       onClick={() => {
         if (props.onClick && props.selectionType && props.name) {
           props.onClick(props.selectionType, props.name)
@@ -47,7 +53,7 @@ export const FileRow: React.FunctionComponent<FileRowProps> = (props) => {
         <div className='subtext'>{props.filename}</div>
       </div>
       <div className='status-column'>
-        <span className='dot' style={{ backgroundColor: statusColor }}></span>
+        <span className='dot' style={{ backgroundColor: statusColor }} data-tip={statusTooltip}></span>
       </div>
     </div>
   )
@@ -66,15 +72,18 @@ interface ComponentListProps {
 const components = [
   {
     name: 'meta',
-    displayName: 'Meta'
+    displayName: 'Meta',
+    tooltip: 'View title, description, tags, etc'
   },
   {
     name: 'body',
-    displayName: 'Body'
+    displayName: 'Body',
+    tooltip: "View the dataset's content"
   },
   {
     name: 'schema',
-    displayName: 'Schema'
+    displayName: 'Schema',
+    tooltip: 'View the structure of the dataset'
   }
 ]
 
@@ -93,7 +102,7 @@ const ComponentList: React.FunctionComponent<ComponentListProps> = (props: Compo
         Dataset Components
       </div>
       {
-        components.map(({ name, displayName }) => {
+        components.map(({ name, displayName, tooltip }) => {
           if (status[name]) {
             const { filepath, status: fileStatus } = status[name]
             let filename
@@ -112,6 +121,7 @@ const ComponentList: React.FunctionComponent<ComponentListProps> = (props: Compo
                 status={fileStatus}
                 selected={selectedComponent === name}
                 selectionType={selectionType}
+                tooltip={tooltip}
                 onClick={onComponentClick}
               />
             )
@@ -122,6 +132,7 @@ const ComponentList: React.FunctionComponent<ComponentListProps> = (props: Compo
                 displayName={displayName}
                 name={displayName}
                 disabled={true}
+                tooltip={tooltip}
               />
             )
           }
