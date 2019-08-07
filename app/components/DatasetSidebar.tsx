@@ -1,11 +1,12 @@
 import * as React from 'react'
 import { Action } from 'redux'
-import { ApiActionThunk } from '../store/api'
 import moment from 'moment'
+import { CSSTransition } from 'react-transition-group'
+
+import { ApiActionThunk } from '../store/api'
 import SaveFormContainer from '../containers/SaveFormContainer'
 import ComponentList from './ComponentList'
 
-import { CSSTransition } from 'react-transition-group'
 import { Spinner } from './chrome/Spinner'
 
 import { WorkingDataset, ComponentType } from '../models/store'
@@ -77,8 +78,20 @@ const DatasetSidebar: React.FunctionComponent<DatasetSidebarProps> = ({
   return (
     <div className='dataset-sidebar'>
       <div id='tabs' className='sidebar-list-item'>
-        <div className={`tab ${activeTab === 'status' && 'active'}`} onClick={() => { onTabClick('status') }}>Status</div>
-        <div className={`tab ${activeTab !== 'status' && 'active'}`} onClick={() => { onTabClick('history') }}>History</div>
+        <div
+          className={`tab ${activeTab === 'status' && 'active'}`}
+          onClick={() => { onTabClick('status') }}
+          data-tip='View the latest version or working changes<br/> to this dataset&apos;s components'
+        >
+          Status
+        </div>
+        <div
+          className={`tab ${activeTab !== 'status' && 'active'}`}
+          onClick={() => { onTabClick('history') }}
+          data-tip='Explore older versions of this dataset'
+        >
+          History
+        </div>
       </div>
       <div id='content'>
         <CSSTransition
@@ -143,7 +156,6 @@ const DatasetSidebar: React.FunctionComponent<DatasetSidebarProps> = ({
       {
         isLinked && activeTab === 'status' && <SaveFormContainer />
       }
-
     </div>
   )
 }

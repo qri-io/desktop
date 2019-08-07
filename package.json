@@ -178,7 +178,8 @@
   },
   "dependencies": {
     "@handsontable/react": "3.0.0",
-    "@types/underscore": "^1.9.2",
+    "@types/react-tooltip": "3.9.3",
+    "@types/underscore": "1.9.2",
     "classnames": "2.2.6",
     "electron-debug": "3.0.1",
     "font-awesome": "4.7.0",
@@ -191,11 +192,12 @@
     "react-router": "5.0.1",
     "react-router-dom": "5.0.1",
     "react-router-redux": "5.0.0-alpha.6",
+    "react-tooltip": "3.10.0",
     "react-transition-group": "4.2.1",
     "redux": "4.0.4",
     "redux-thunk": "2.3.0",
     "source-map-support": "0.5.12",
-    "underscore": "^1.9.1"
+    "underscore": "1.9.1"
   },
   "devEngines": {
     "node": ">=6.x",
