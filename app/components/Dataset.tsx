@@ -20,6 +20,8 @@ import {
   WorkingDataset,
   Mutations
 } from '../models/store'
+import { CSSTransition } from 'react-transition-group'
+import SpinnerWithIcon from './chrome/SpinnerWithIcon'
 
 export interface DatasetProps {
   // redux state
@@ -126,9 +128,8 @@ export default class Dataset extends React.Component<DatasetProps> {
     // mainContent will either be a loading spinner, or content based on the selected
     // sidebar list items
     let mainContent
-    if (workingDataset.isLoading || workingDataset.peername === '') {
-      // TODO (chriswhong) add a proper loading spinner
-      mainContent = <div>Loading</div>
+    if ((activeTab === 'status' && workingDataset.isLoading) || workingDataset.peername === '' || (activeTab === 'history' && workingDataset.history.pageInfo.isFetching)) {
+      mainContent = <SpinnerWithIcon loading={true}/>
     } else {
       if (activeTab === 'status') {
         const componentStatus = status[selectedComponent]
@@ -136,11 +137,15 @@ export default class Dataset extends React.Component<DatasetProps> {
       } else {
         if (workingDataset.history) {
           mainContent = <CommitDetailsContainer />
-        } else {
-          mainContent = <div>Loading History</div>
         }
       }
     }
+
+    // TODO (ramfox): since this loading boolean is controlling the entire
+    // main-content section, it might make more sense for each container
+    // (eg metadata container, commit details container) to control its own
+    // loading
+    const loading = workingDataset.isLoading || workingDataset.peername === ''
 
     const isLinked = !!workingDataset.linkpath
     const linkButton = isLinked ? (
@@ -213,7 +218,18 @@ export default class Dataset extends React.Component<DatasetProps> {
           </Resizable>
           <div className='content-wrapper'>
             {showDatasetList && <div className='overlay'></div>}
-            {mainContent}
+            <div className='main-content'>
+              <div><SpinnerWithIcon loading={loading}/></div>
+              <div><CSSTransition
+                in={!loading}
+                classNames='fade'
+                component='div'
+                timeout={300}
+                unmountOnExit
+              >
+                {mainContent}
+              </CSSTransition></div>
+            </div>
           </div>
 
         </div>
