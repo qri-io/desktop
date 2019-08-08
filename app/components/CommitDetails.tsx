@@ -72,7 +72,7 @@ export default class CommitDetails extends React.Component<CommitDetailsProps> {
           <div className='commit-details-header text-column'>
             <div className='text'>{title}</div>
             <div className='subtext'>
-              <img className= 'user-image' src = {'https://avatars0.githubusercontent.com/u/1154390?s=60&v=4'} />
+              {/* <img className= 'user-image' src = {'https://avatars0.githubusercontent.com/u/1154390?s=60&v=4'} /> */}
               <div className='time-message'>
                 {timeMessage}
               </div>

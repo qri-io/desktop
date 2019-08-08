@@ -14,7 +14,6 @@ import { WorkingDataset, ComponentType } from '../models/store'
 interface HistoryListItemProps {
   path: string
   commitTitle: string
-  avatarUrl: string
   timeMessage: string
   selected: boolean
   onClick: (type: string, selectedListItem: string) => Action
@@ -29,7 +28,7 @@ const HistoryListItem: React.FunctionComponent<HistoryListItemProps> = (props) =
       <div className='text-column'>
         <div className='text'>{props.commitTitle}</div>
         <div className='subtext'>
-          <img className= 'user-image' src = {props.avatarUrl} />
+          {/* Bring back avatar later <img className= 'user-image' src = {props.avatarUrl} /> */}
           <div className='time-message'>
             {props.timeMessage}
           </div>
@@ -141,7 +140,6 @@ const DatasetSidebar: React.FunctionComponent<DatasetSidebarProps> = ({
                     key={path}
                     path={path}
                     commitTitle={title}
-                    avatarUrl={'https://avatars0.githubusercontent.com/u/1154390?s=60&v=4'}
                     timeMessage={timeMessage}
                     selected={selectedCommit === path}
                     onClick={onListItemClick}
