@@ -9,6 +9,8 @@ const mapStateToProps = (state: Store) => {
   const { workingDataset, selections, ui, commitDetails } = state
 
   const {
+    peername,
+    name,
     commit: selectedCommitPath,
     commitComponent: selectedComponent
   } = selections
@@ -18,6 +20,8 @@ const mapStateToProps = (state: Store) => {
     .find(d => d.path === selectedCommitPath)
 
   return {
+    peername,
+    name,
     selectedCommitPath: selectedCommitPath,
     commit: selectedCommit,
     selectedComponent,
