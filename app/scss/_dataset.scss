@@ -2,9 +2,11 @@
 //    Dataset Container   //
 ////////////////////////////
 
-$list-item-bottom-border: 1px solid #979797;
+$list-item-bottom-border: 1px solid $border-color;
 $sidebar-item-padding:  6px 10px;
 $hover-highlight-color: #F6F8FA;
+$header-height: 30px;
+$header-font-size: .9rem;
 
 #dataset-container {
   display: flex;
@@ -23,7 +25,7 @@ $hover-highlight-color: #F6F8FA;
 
   .header-column {
     height: 100%;
-    border-right: 1px solid #484d65;
+    border-right: 1px solid #66737b;
     padding: 0 9px;
     display: inline-flex;
     flex-direction: row;
@@ -87,6 +89,7 @@ $hover-highlight-color: #F6F8FA;
     #sidebar {
       position: relative;
       flex: 0 0 auto;
+      border-right: 1px solid $border-color;
 
       .resize-handle {
         position: absolute;
@@ -113,9 +116,42 @@ $hover-highlight-color: #F6F8FA;
         z-index: 110;
       }
 
+      .component-container {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+
+        .component-header {
+          line-height: 1.9rem;
+          height: $header-height;
+          border-bottom: $list-item-bottom-border;
+          font-size: $header-font-size;
+          padding: 0px 10px;
+          flex-direction: row;
+          display: flex;
+
+          .component-display-name-container {
+            flex: 1;
+          }
+
+          .status-dot-container {
+            display: flex;
+            align-items: center;
+          }
+        }
+
+        .component-content {
+          flex: 1;
+          height: 100%;
+          width: 100%;
+          overflow: hidden;
+        }
+      }
+
       .content {
         padding: 15px;
         overflow-x: scroll;
+        height: 100%;
       }
     }
   }
@@ -197,20 +233,20 @@ $hover-highlight-color: #F6F8FA;
 
 .dataset-sidebar {
   height: 100%;
-  font-size: .9rem;
+  font-size: $header-font-size;
   cursor: default;
   display: flex;
   flex-direction: column;
   background: $appBackground;
-  border-right-style: solid 1px $border-color;
+  border-right: 1px solid $border-color;
 
   #list {
     overflow-y: auto;
   }
 
   #tabs {
-    height: 30px;
-    display: flex; 
+    height: $header-height;
+    display: flex;
 
     .tab {
       width: 50%;
@@ -218,7 +254,7 @@ $hover-highlight-color: #F6F8FA;
       flex: 1;
       text-align: center;
       line-height: 1.9rem;
-      border-right: 1px solid #979797;
+      border-right: 1px solid $border-color;
 
       &:last-child {
         border-right: 0;
@@ -235,10 +271,10 @@ $hover-highlight-color: #F6F8FA;
   }
 
   #content {
-    flex-grow: 1;
+    flex: 1;
     height: 100%;
     position: relative;
-    
+
     .sidebar-content {
       overflow: auto;
       position: absolute;
@@ -260,6 +296,7 @@ $hover-highlight-color: #F6F8FA;
 }
 
 .sidebar-list-header  {
+  height: $header-height;
   font-weight: 500;
   font-size: .9rem;
 }
@@ -280,19 +317,19 @@ $hover-highlight-color: #F6F8FA;
     text-align: center;
     line-height: 2.9rem;
     width: 30px;
-
-      .dot {
-        height: 10px;
-        width: 10px;
-        background-color: transparent;
-        border-radius: 50%;
-        display: inline-block;
-      }
   }
 
   &.disabled {
     color: #ccc;
   }
+}
+
+.status-dot {
+  height: 10px;
+  width: 10px;
+  background-color: transparent;
+  border-radius: 50%;
+  display: inline-block;
 }
 
 

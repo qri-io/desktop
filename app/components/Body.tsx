@@ -43,7 +43,7 @@ export default class Body extends React.Component<BodyProps> {
 
   render () {
     return (
-      <div>
+      <div className='body-container'>
         {
           this.props.value && (
             <HandsonTable
