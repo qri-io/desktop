@@ -34,7 +34,8 @@ const mapStateToProps = (state: Store, ownProps: BodyContainerProps) => {
   return {
     pageInfo,
     headers,
-    value
+    value,
+    datasetLoading: workingDataset.isLoading
   }
 }
 

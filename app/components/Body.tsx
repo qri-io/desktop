@@ -1,15 +1,16 @@
 import * as React from 'react'
 import { ApiAction } from '../store/api'
 import Toast, { ToastTypes } from './chrome/Toast'
-import HandsonTable from './HandsonTable'
 
 import { PageInfo } from '../models/store'
+import SpinnerWithIcon from './chrome/SpinnerWithIcon'
+const HandsonTable = React.lazy(() => import('./HandsonTable')) //eslint-disable-line
 
 export interface BodyProps {
   value: any[]
   pageInfo: PageInfo
   headers: any[]
-  onFetch: (page: number, pageSize: number) => Promise<ApiAction>
+  onFetch: (page?: number, pageSize?: number) => Promise<ApiAction>
 }
 
 export default class Body extends React.Component<BodyProps> {
@@ -20,20 +21,8 @@ export default class Body extends React.Component<BodyProps> {
     this.handleScrollToBottom.bind(this)
   }
 
-  static getDerivedStateFromProps (nextProps: BodyProps) {
-    const { value, pageInfo, onFetch } = nextProps
-    const { isFetching, fetchedAll } = pageInfo
-    if (
-      value.length === 0 &&
-      isFetching === false &&
-      fetchedAll === false
-    ) {
-      onFetch(pageInfo.page + 1, pageInfo.pageSize)
-
-      return null
-    }
-
-    return null
+  componentDidMount () {
+    if (this.props.value.length === 0) this.props.onFetch()
   }
 
   handleScrollToBottom () {
@@ -43,22 +32,18 @@ export default class Body extends React.Component<BodyProps> {
 
   render () {
     return (
-      <div className='body-container'>
-        {
-          this.props.value && (
-            <HandsonTable
-              headers={this.props.headers}
-              body={this.props.value}
-              onScrollToBottom={() => { this.handleScrollToBottom() }}
-            />
-          )
-        }
+      <React.Suspense fallback={<div><SpinnerWithIcon loading={true}/></div>} >
+        <HandsonTable
+          headers={this.props.headers}
+          body={this.props.value}
+          onScrollToBottom={() => { this.handleScrollToBottom() }}
+        />
         <Toast
           show={this.props.pageInfo.isFetching && this.props.pageInfo.page > 0}
           type={ToastTypes.message}
           text='Loading more rows...'
         />
-      </div>
+      </React.Suspense>
     )
   }
 }
