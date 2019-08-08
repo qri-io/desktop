@@ -38,10 +38,13 @@ export function fetchWorkingDatasetDetails (): ApiActionThunk {
     response = await whenOk(fetchWorkingStatus())(response)
 
     // set selected commit to be the first on the list
-    const { workingDataset } = getState()
+    const { workingDataset, selections } = getState()
     const { history } = workingDataset
-    await dispatch(setSelectedListItem('commit', history.value[0].path))
+    const { commit } = selections
 
+    if (commit === '' || !history.value.some(c => c.path === commit)) {
+      await dispatch(setSelectedListItem('commit', history.value[0].path))
+    }
     return response
   }
 }
@@ -252,8 +255,9 @@ export function fetchWorkingStatus (): ApiActionThunk {
 
 export function fetchBody (page: number, pageSize: number): ApiActionThunk {
   return async (dispatch, getState) => {
-    const { workingDataset } = getState()
-    const { peername, name, path } = workingDataset
+    const { workingDataset, selections } = getState()
+    const { peername, name } = selections
+    const { path } = workingDataset
 
     if (workingDataset.components.body.pageInfo.fetchedAll) {
       return new Promise(resolve => resolve(NO_ACTION))

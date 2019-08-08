@@ -25,7 +25,11 @@ $header-font-size: .9rem;
 
   .header-column {
     height: 100%;
+<<<<<<< HEAD
     border-right: 1px solid #66737b;
+=======
+    border-right: 1px solid $border-color;
+>>>>>>> refactor(api): fix some api bugs & some style
     padding: 0 9px;
     display: inline-flex;
     flex-direction: row;
@@ -80,11 +84,23 @@ $header-font-size: .9rem;
     }
   }
 
+  .terminal {
+    background: $black;
+    border: solid 1px $border-color;
+    font-family: $font-family-monospace;
+    overflow: scroll;
+    font-size: $small-font-size;
+    padding: $spacer;
+    color: $white;
+    text-overflow: unset;
+  }
+
   .columns {
     display: flex;
     flex-direction: row;
     flex-grow: 1;
     overflow-y: auto;
+    height: 100%;
 
     #sidebar {
       position: relative;
@@ -116,6 +132,7 @@ $header-font-size: .9rem;
         z-index: 110;
       }
 
+<<<<<<< HEAD
       .main-content {
         position: relative;
         width: 100%;
@@ -160,6 +177,8 @@ $header-font-size: .9rem;
         }
       }
 
+=======
+>>>>>>> refactor(api): fix some api bugs & some style
       .content {
         padding: 15px;
         overflow-x: scroll;
@@ -276,6 +295,11 @@ $header-font-size: .9rem;
         border-bottom: 3px solid #315379;
       }
 
+      &.disabled {
+        background-color: #efefef;
+        color: $text-muted;
+      }
+
       &:hover {
         background-color: #efefef;
       }
@@ -353,6 +377,8 @@ $header-font-size: .9rem;
   flex-direction: column;
   flex-grow: 1;
   height: 100%;
+  width: 100%;
+  position:relative;
 
   .commit-details-header {
     height: 60px;
