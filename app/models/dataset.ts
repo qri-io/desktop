@@ -14,6 +14,11 @@ export interface User {
   email: string
 }
 
+export interface License {
+  type: string
+  url: string
+}
+
 export interface Meta {
   accessURL?: string
   accrualPeriodicity?: string
@@ -25,14 +30,12 @@ export interface Meta {
   identifier?: string
   keywords?: string[]
   language?: string[]
-  license?: {
-    type: string
-    url: string
-  }
+  license?: License
   readmeURL?: string
   title?: string
   theme?: string[]
   version?: string
+  [key: string]: any
 }
 
 export interface Commit {
