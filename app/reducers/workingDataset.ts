@@ -15,7 +15,7 @@ const initialState: WorkingDataset = {
     body: {
       value: [],
       pageInfo: {
-        isFetching: false,
+        isFetching: true,
         page: 0,
         pageSize: 100,
         fetchedAll: false
@@ -30,7 +30,7 @@ const initialState: WorkingDataset = {
   },
   history: {
     pageInfo: {
-      isFetching: false,
+      isFetching: true,
       page: 0,
       fetchedAll: false,
       pageSize: 0
@@ -60,12 +60,9 @@ const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction
         components: {
           body: {
             pageInfo: {
-              ...state.components.body.pageInfo,
-              isFetching: false,
-              page: 0,
-              fetchedAll: false
+              ...state.components.body.pageInfo
             },
-            value: []
+            value: state.components.body.value
           },
           meta: {
             value: dataset.meta
@@ -174,7 +171,7 @@ const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction
             ...state.body,
             error: action.payload.err,
             pageInfo: {
-              ...state.body.pageInfo,
+              ...state.components.body.pageInfo,
               isFetching: false
             }
           }
