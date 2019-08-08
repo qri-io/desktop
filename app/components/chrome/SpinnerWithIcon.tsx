@@ -7,15 +7,18 @@ interface SpinnerWithIconProps {
   title?: string
   subtitle?: string
   loading: boolean
+  spinner?: boolean
 }
 
-const SpinnerWithIcon: React.FunctionComponent<SpinnerWithIconProps> = ({ loading, title, subtitle, children }) => {
+const SpinnerWithIcon: React.FunctionComponent<SpinnerWithIconProps> = ({ loading, title, subtitle, spinner = true, children }) => {
   return (
     <CSSTransition
       in={loading}
       classNames='fade'
       component='div'
       timeout={300}
+      appear={true}
+      mountOnEnter
       unmountOnExit
     >
       <div className='welcome-center' id='spinner-with-icon-wrap'>
@@ -27,7 +30,7 @@ const SpinnerWithIcon: React.FunctionComponent<SpinnerWithIconProps> = ({ loadin
         <div className='welcome-content'>
           {children}
           <div className='welcome-spinner'>
-            <Spinner/>
+            {spinner && <Spinner/>}
           </div>
         </div>
       </div>
