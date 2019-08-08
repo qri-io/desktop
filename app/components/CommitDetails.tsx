@@ -53,11 +53,20 @@ const CommitDetails: React.FunctionComponent<CommitDetailsProps> = ({
   // version of the dataset.
   // for now, we will tell the user to run a command on the command line
   const [isLogError, setLogError] = React.useState(false)
+  const [loading, setLoading] = React.useState(false)
+  const isLoadingRef = React.useRef(commitDetails.isLoading)
+
+  const isLoadingTimeout = setTimeout(() => {
+    if (isLoadingRef.current) {
+      setLoading(true)
+    }
+    clearTimeout(isLoadingTimeout)
+  }, 250)
+
   React.useEffect(() => {
     if (selectedCommitPath !== '') {
       fetchCommitDetail()
         .then(() => {
-          console.log('here')
           if (isLogError) setLogError(false)
         })
         .catch(action => {
@@ -67,12 +76,17 @@ const CommitDetails: React.FunctionComponent<CommitDetailsProps> = ({
     }
   }, [selectedCommitPath])
 
+  React.useEffect(() => {
+    if (isLoadingRef.current !== commitDetails.isLoading) {
+      isLoadingRef.current = commitDetails.isLoading
+    }
+  }, [commitDetails.isLoading])
 
-  const { status, isLoading } = commitDetails
+  const { status } = commitDetails
   return (
     <div id='commit-details' className='dataset-content transition-group'>
       <CSSTransition
-        in={!isLogError}
+        in={!isLogError && !loading}
         classNames='fade'
         timeout={300}
         unmountOnExit
@@ -103,12 +117,13 @@ const CommitDetails: React.FunctionComponent<CommitDetailsProps> = ({
               />
             </Resizable>
             <div className='content-wrapper'>
-              <DatasetComponent isLoading={isLoading} component={selectedComponent} componentStatus={status[selectedComponent]} history />
+              <DatasetComponent isLoading={loading} component={selectedComponent} componentStatus={status[selectedComponent]} history />
             </div>
           </div>
         </div>
       </CSSTransition>
-      <SpinnerWithIcon loading={isLogError} title='Oh no!' spinner={false}>
+      <SpinnerWithIcon loading={loading} />
+      <SpinnerWithIcon loading={isLogError && !loading} title='Oh no!' spinner={false}>
         <p>Oops, you don&apos;t have this version of the dataset.</p>
         <p>Try adding it by using the terminal and the Qri command line tool that can be used when this desktop app is running!</p>
         <p>Open up the terminal and paste this command:</p>
