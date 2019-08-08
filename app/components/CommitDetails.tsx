@@ -60,12 +60,11 @@ export default class CommitDetails extends React.Component<CommitDetailsProps> {
 
     if (this.props.commit && !isEmpty(this.props.commitDetails.status)) {
       const { commit, sidebarWidth, setSidebarWidth, setSelectedListItem, commitDetails } = this.props
-      const { status } = commitDetails
+      const { status, isLoading } = commitDetails
       const { title, timestamp } = commit
       const timeMessage = moment(timestamp).fromNow()
 
       const componentStatus = status[selectedComponent]
-      let mainContent = <DatasetComponent component={selectedComponent} componentStatus={componentStatus} history />
 
       return (
         <div id='commit-details' className='dataset-content'>
@@ -94,7 +93,7 @@ export default class CommitDetails extends React.Component<CommitDetailsProps> {
               />
             </Resizable>
             <div className='content-wrapper'>
-              {mainContent}
+              <DatasetComponent isLoading={isLoading} component={selectedComponent} componentStatus={componentStatus} history />
             </div>
           </div>
         </div>

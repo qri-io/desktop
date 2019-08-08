@@ -20,8 +20,8 @@ import {
   WorkingDataset,
   Mutations
 } from '../models/store'
+
 import { CSSTransition } from 'react-transition-group'
-import SpinnerWithIcon from './chrome/SpinnerWithIcon'
 
 export interface DatasetProps {
   // redux state
@@ -61,7 +61,7 @@ export default class Dataset extends React.Component<DatasetProps> {
 
   componentDidMount () {
     // poll for status
-    setInterval(() => { this.props.fetchWorkingStatus() }, 1000)
+    setInterval(() => { this.props.fetchWorkingStatus() }, 5000)
   }
 
   componentDidUpdate () {
@@ -114,7 +114,8 @@ export default class Dataset extends React.Component<DatasetProps> {
       component: selectedComponent,
       commit: selectedCommit
     } = selections
-    const { name, history, status, path } = workingDataset
+
+    const { history, status, path } = workingDataset
 
     // actions
     const {
@@ -124,28 +125,6 @@ export default class Dataset extends React.Component<DatasetProps> {
       setSelectedListItem,
       fetchWorkingHistory
     } = this.props
-
-    // mainContent will either be a loading spinner, or content based on the selected
-    // sidebar list items
-    let mainContent
-    if ((activeTab === 'status' && workingDataset.isLoading) || workingDataset.peername === '' || (activeTab === 'history' && workingDataset.history.pageInfo.isFetching)) {
-      mainContent = <SpinnerWithIcon loading={true}/>
-    } else {
-      if (activeTab === 'status') {
-        const componentStatus = status[selectedComponent]
-        mainContent = <DatasetComponent component={selectedComponent} componentStatus={componentStatus}/>
-      } else {
-        if (workingDataset.history) {
-          mainContent = <CommitDetailsContainer />
-        }
-      }
-    }
-
-    // TODO (ramfox): since this loading boolean is controlling the entire
-    // main-content section, it might make more sense for each container
-    // (eg metadata container, commit details container) to control its own
-    // loading
-    const loading = workingDataset.isLoading || workingDataset.peername === ''
 
     const isLinked = !!workingDataset.linkpath
     const linkButton = isLinked ? (
@@ -184,7 +163,7 @@ export default class Dataset extends React.Component<DatasetProps> {
               <img className='app-loading-blob' src={logo} />
             </div>
             <div className='header-column-text'>
-              <div className="label">Current Dataset</div>
+              <div className="label">{name ? 'Current Dataset' : 'Choose a Dataset'}</div>
               <div className="name">{name}</div>
             </div>
             {
@@ -219,17 +198,25 @@ export default class Dataset extends React.Component<DatasetProps> {
           </Resizable>
           <div className='content-wrapper'>
             {showDatasetList && <div className='overlay'></div>}
-            <div className='main-content'>
-              <div><SpinnerWithIcon loading={loading}/></div>
-              <div><CSSTransition
-                in={!loading}
+            <div className='transition-group' >
+              <CSSTransition
+                in={activeTab === 'status'}
                 classNames='fade'
-                component='div'
                 timeout={300}
+                mountOnEnter
                 unmountOnExit
               >
-                {mainContent}
-              </CSSTransition></div>
+                <DatasetComponent component={selectedComponent} componentStatus={status[selectedComponent]} isLoading={workingDataset.isLoading}/>
+              </CSSTransition>
+              <CSSTransition
+                in={activeTab === 'history'}
+                classNames='fade'
+                timeout={300}
+                mountOnEnter
+                unmountOnExit
+              >
+                <CommitDetailsContainer />
+              </CSSTransition>
             </div>
           </div>
 

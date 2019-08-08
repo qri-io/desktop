@@ -39,32 +39,50 @@ interface FileRowProps {
   status?: string
   selectionType?: ComponentType
   disabled?: boolean
-  tooltip?: string
   onClick?: (type: ComponentType, activeTab: string) => Action
 }
 
-export const FileRow: React.FunctionComponent<FileRowProps> = (props) => (
-  <div
-    className={classNames('sidebar-list-item', 'sidebar-list-item-text', {
-      'selected': props.selected,
-      'disabled': props.disabled
-    })}
-    onClick={() => {
-      if (props.onClick && props.selectionType && props.name) {
-        props.onClick(props.selectionType, props.name)
-      }
-    }}
-    data-tip={props.tooltip}
-  >
-    <div className='text-column'>
-      <div className='text'>{props.displayName}</div>
-      <div className='subtext'>{props.filename}</div>
+export const FileRow: React.FunctionComponent<FileRowProps> = (props) => {
+  let statusColor
+  switch (props.status) {
+    case 'modified':
+      statusColor = '#cab081'
+      break
+    case 'add':
+      statusColor = '#83d683'
+      break
+    case 'removed':
+      statusColor = '#e04f4f'
+      break
+    default:
+      statusColor = 'transparent'
+  }
+
+  // if previously not disabled, and turned to disabled
+  // set timeout to see if it is going to stay disabled before changing it
+
+  return (
+    <div
+      className={classNames('sidebar-list-item', 'sidebar-list-item-text', {
+        'selected': props.selected,
+        'disabled': props.disabled
+      })}
+      onClick={() => {
+        if (props.onClick && props.selectionType && props.name) {
+          props.onClick(props.selectionType, props.name)
+        }
+      }}
+    >
+      <div className='text-column'>
+        <div className='text'>{props.displayName}</div>
+        <div className='subtext'>{props.filename}</div>
+      </div>
+      <div className='status-column'>
+        <span className='dot' style={{ backgroundColor: statusColor }}></span>
+      </div>
     </div>
-    <div className='status-column'>
-      <StatusDot status={props.status} />
-    </div>
-  </div>
-)
+  )
+}
 
 FileRow.displayName = 'FileRow'
 
@@ -114,7 +132,7 @@ const ComponentList: React.FunctionComponent<ComponentListProps> = (props: Compo
         Dataset Components
       </div>
       {
-        components.map(({ name, displayName, tooltip }) => {
+        components.map(({ name, displayName }) => {
           if (status[name]) {
             const { filepath, status: fileStatus } = status[name]
             let filename
@@ -133,7 +151,6 @@ const ComponentList: React.FunctionComponent<ComponentListProps> = (props: Compo
                 status={fileStatus}
                 selected={selectedComponent === name}
                 selectionType={selectionType}
-                tooltip={tooltip}
                 onClick={onComponentClick}
               />
             )
@@ -144,7 +161,6 @@ const ComponentList: React.FunctionComponent<ComponentListProps> = (props: Compo
                 displayName={displayName}
                 name={displayName}
                 disabled={true}
-                tooltip={tooltip}
               />
             )
           }
