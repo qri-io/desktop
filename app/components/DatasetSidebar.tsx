@@ -7,6 +7,7 @@ import { ApiActionThunk } from '../store/api'
 import SaveFormContainer from '../containers/SaveFormContainer'
 import ComponentList from './ComponentList'
 
+import classNames from 'classnames'
 import Spinner from './chrome/Spinner'
 
 import { WorkingDataset, ComponentType } from '../models/store'
@@ -40,6 +41,7 @@ const HistoryListItem: React.FunctionComponent<HistoryListItemProps> = (props) =
 
 interface DatasetSidebarProps {
   activeTab: string
+  path: string
   selectedComponent: string
   selectedCommit: string
   history: WorkingDataset['history']
@@ -52,6 +54,7 @@ interface DatasetSidebarProps {
 
 const DatasetSidebar: React.FunctionComponent<DatasetSidebarProps> = ({
   activeTab,
+  path,
   selectedComponent,
   selectedCommit,
   history,
@@ -73,23 +76,22 @@ const DatasetSidebar: React.FunctionComponent<DatasetSidebarProps> = ({
       fetchWorkingHistory(history.pageInfo.page + 1, history.pageInfo.pageSize)
     }
   }
-
   return (
     <div className='dataset-sidebar'>
       <div id='tabs' className='sidebar-list-item'>
         <div
-          className={`tab ${activeTab === 'status' && 'active'}`}
+          className={classNames('tab', { 'active': activeTab === 'status' })}
           onClick={() => { onTabClick('status') }}
           data-tip='View the latest version or working changes<br/> to this dataset&apos;s components'
         >
-          Status
+            Status
         </div>
         <div
-          className={`tab ${activeTab !== 'status' && 'active'}`}
-          onClick={() => { onTabClick('history') }}
-          data-tip='Explore older versions of this dataset'
+          className={classNames('tab', { 'active': activeTab === 'history', 'disabled': !path })}
+          onClick={() => { !!path && onTabClick('history') }}
+          data-tip={path ? 'Explore older versions of this dataset' : 'This dataset has no previous versions'}
         >
-          History
+            History
         </div>
       </div>
       <div id='content'>

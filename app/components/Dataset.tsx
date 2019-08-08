@@ -114,7 +114,7 @@ export default class Dataset extends React.Component<DatasetProps> {
       component: selectedComponent,
       commit: selectedCommit
     } = selections
-    const { name, history, status } = workingDataset
+    const { name, history, status, path } = workingDataset
 
     // actions
     const {
@@ -205,6 +205,7 @@ export default class Dataset extends React.Component<DatasetProps> {
             maximumWidth={495}
           >
             <DatasetSidebar
+              path={path}
               isLinked={isLinked}
               activeTab={activeTab}
               selectedComponent={selectedComponent}

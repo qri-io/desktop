@@ -25,11 +25,7 @@ $header-font-size: .9rem;
 
   .header-column {
     height: 100%;
-<<<<<<< HEAD
     border-right: 1px solid #66737b;
-=======
-    border-right: 1px solid $border-color;
->>>>>>> refactor(api): fix some api bugs & some style
     padding: 0 9px;
     display: inline-flex;
     flex-direction: row;
@@ -132,7 +128,6 @@ $header-font-size: .9rem;
         z-index: 110;
       }
 
-<<<<<<< HEAD
       .main-content {
         position: relative;
         width: 100%;
@@ -177,8 +172,6 @@ $header-font-size: .9rem;
         }
       }
 
-=======
->>>>>>> refactor(api): fix some api bugs & some style
       .content {
         padding: 15px;
         overflow-x: scroll;
