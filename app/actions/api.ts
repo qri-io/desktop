@@ -6,6 +6,7 @@ import { Action } from 'redux'
 import { setSelectedListItem } from './selections'
 
 const pageSizeDefault = 15
+const bodyPageSizeDefault = 100
 
 // use NO_ACTION when you need to skip/debounce unneccessary calls to the api
 // it will still register as a success
@@ -253,7 +254,7 @@ export function fetchWorkingStatus (): ApiActionThunk {
   }
 }
 
-export function fetchBody (page: number, pageSize: number): ApiActionThunk {
+export function fetchBody (page: number = 1, pageSize: number = bodyPageSizeDefault): ApiActionThunk {
   return async (dispatch, getState) => {
     const { workingDataset, selections } = getState()
     const { peername, name } = selections
@@ -287,7 +288,7 @@ export function fetchBody (page: number, pageSize: number): ApiActionThunk {
   }
 }
 
-export function fetchCommitBody (page: number, pageSize: number): ApiActionThunk {
+export function fetchCommitBody (page: number= 1, pageSize: number = bodyPageSizeDefault): ApiActionThunk {
   return async (dispatch, getState) => {
     const { selections, commitDetails } = getState()
     let { peername, name, commit: path } = selections

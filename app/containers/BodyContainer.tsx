@@ -24,14 +24,18 @@ interface BodyContainerProps {
 
 const mapStateToProps = (state: Store, ownProps: BodyContainerProps) => {
   const { history } = ownProps
-  const { workingDataset, commitDetails } = state
+  const { workingDataset, commitDetails, selections } = state
   const dataset = history ? commitDetails : workingDataset
   const { pageInfo, value } = dataset.components.body
+  const { peername, name, commit: path } = selections
 
   const headers = extractColumnHeaders(workingDataset)
 
   // get data for the currently selected component
   return {
+    peername,
+    path,
+    name,
     pageInfo,
     headers,
     value,
