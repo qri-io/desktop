@@ -17,7 +17,7 @@ export interface BodyProps {
   onFetch: (page?: number, pageSize?: number) => Promise<ApiAction>
 }
 
-const Body: React.FunctionComponent<BodyProps> = ({ peername, name, path, value, pageInfo, headers, onFetch }) => {
+const Body: React.FunctionComponent<BodyProps> = ({ value, pageInfo, headers, onFetch }) => {
   const [isLoadingFirstPage, setIsLoadingFirstPage] = React.useState(false)
   const isLoadingFirstPageRef = React.useRef(pageInfo.page === 1 && pageInfo.isFetching)
 
@@ -33,10 +33,6 @@ const Body: React.FunctionComponent<BodyProps> = ({ peername, name, path, value,
       isLoadingFirstPageRef.current = true
     }
   }, [pageInfo.page, pageInfo.isFetching])
-
-  React.useEffect(() => {
-    onFetch()
-  }, [peername, name, path])
 
   const handleScrollToBottom = () => {
     onFetch(pageInfo.page + 1, pageInfo.pageSize)

@@ -37,6 +37,7 @@ export function fetchWorkingDatasetDetails (): ApiActionThunk {
     response = await fetchWorkingDataset()(dispatch, getState)
     response = await whenOk(fetchWorkingHistory())(response)
     response = await whenOk(fetchWorkingStatus())(response)
+    response = await whenOk(fetchBody())(response)
 
     // set selected commit to be the first on the list
     const { workingDataset, selections } = getState()
@@ -122,6 +123,7 @@ export function fetchCommitDetail (): ApiActionThunk {
 
     response = await fetchCommitDataset()(dispatch, getState)
     response = await whenOk(fetchCommitStatus())(response)
+    response = await whenOk(fetchCommitBody())(response)
 
     return response
   }
@@ -288,7 +290,7 @@ export function fetchBody (page: number = 1, pageSize: number = bodyPageSizeDefa
   }
 }
 
-export function fetchCommitBody (page: number= 1, pageSize: number = bodyPageSizeDefault): ApiActionThunk {
+export function fetchCommitBody (page: number = 1, pageSize: number = bodyPageSizeDefault): ApiActionThunk {
   return async (dispatch, getState) => {
     const { selections, commitDetails } = getState()
     let { peername, name, commit: path } = selections
