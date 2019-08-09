@@ -3,12 +3,15 @@ import { Action, AnyAction } from 'redux'
 import classNames from 'classnames'
 import { MyDatasets, WorkingDataset } from '../models/store'
 
+import { Modal, ModalType } from '../models/modals'
+
 interface DatasetListProps {
   myDatasets: MyDatasets
   workingDataset: WorkingDataset
   setFilter: (filter: string) => Action
   setWorkingDataset: (peername: string, name: string, isLinked: boolean) => Action
   fetchMyDatasets: (page: number, pageSize: number) => Promise<AnyAction>
+  setModal: (modal: Modal) => void
 }
 
 export default class DatasetList extends React.Component<DatasetListProps> {
@@ -28,7 +31,7 @@ export default class DatasetList extends React.Component<DatasetListProps> {
   }
 
   render () {
-    const { workingDataset } = this.props
+    const { workingDataset, setModal } = this.props
     const { setWorkingDataset } = this.props
     const { filter, value: datasets } = this.props.myDatasets
 
@@ -76,7 +79,7 @@ export default class DatasetList extends React.Component<DatasetListProps> {
               placeholder='Filter'
               onKeyUp={(e) => this.handleFilterKeyUp(e)}
             />
-            <div id='add-button'>Add</div>
+            <div id='add-button' onClick={() => { setModal({ type: ModalType.AddDataset }) }}>Add</div>
           </div>
           <div className='strong-message'>You have {filteredDatasets.length} local datasets</div>
         </div>

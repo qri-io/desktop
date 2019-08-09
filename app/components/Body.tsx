@@ -1,11 +1,14 @@
 import * as React from 'react'
-import { ApiAction } from '../store/api'
-import Toast, { ToastTypes } from './chrome/Toast'
+import { CSSTransition } from 'react-transition-group'
 
-import { PageInfo } from '../models/store'
+import Toast, { ToastTypes } from './chrome/Toast'
 import SpinnerWithIcon from './chrome/SpinnerWithIcon'
 import HandsonTable from './HandsonTable'
-import { CSSTransition } from 'react-transition-group'
+import JSON from './JSON'
+import { ApiAction } from '../store/api'
+
+import { Structure } from '../models/dataset'
+import { PageInfo } from '../models/store'
 
 export interface BodyProps {
   peername: string
@@ -15,9 +18,10 @@ export interface BodyProps {
   pageInfo: PageInfo
   headers: any[]
   onFetch: (page?: number, pageSize?: number) => Promise<ApiAction>
+  structure: Structure
 }
 
-const Body: React.FunctionComponent<BodyProps> = ({ value, pageInfo, headers, onFetch }) => {
+const Body: React.FunctionComponent<BodyProps> = ({ value, pageInfo, headers, structure, onFetch }) => {
   if (!value || value.length === 0) {
     return <SpinnerWithIcon loading={true} />
   }
@@ -41,6 +45,21 @@ const Body: React.FunctionComponent<BodyProps> = ({ value, pageInfo, headers, on
   const handleScrollToBottom = () => {
     onFetch(pageInfo.page + 1, pageInfo.pageSize)
   }
+
+  let bodyContent
+  // if it's a CSV, or if JSON with depth of 2, render a table
+  if (value && structure && (structure.format === 'csv' || structure.depth === 2)) {
+    bodyContent = (
+      <HandsonTable
+        headers={headers}
+        body={value}
+        onScrollToBottom={() => { handleScrollToBottom() }}
+      />
+    )
+  } else { // otherwise use our nifty JSON renderer
+    bodyContent = <JSON body={value} />
+  }
+
   return (
     <div className='transition-group'>
       <CSSTransition
@@ -49,11 +68,7 @@ const Body: React.FunctionComponent<BodyProps> = ({ value, pageInfo, headers, on
         classNames='fade'
       >
         <div id='transition-wrap'>
-          <HandsonTable
-            headers={headers}
-            body={value}
-            onScrollToBottom={() => { handleScrollToBottom() }}
-          />
+          {bodyContent}
           <Toast
             show={pageInfo.isFetching && pageInfo.page > 0}
             type={ToastTypes.message}

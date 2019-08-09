@@ -18,6 +18,7 @@ const initialState: Selections = {
 }
 
 const [, LIST_SUCC] = apiActionTypes('list')
+const [, ADD_SUCC] = apiActionTypes('add')
 
 export default (state = initialState, action: AnyAction) => {
   switch (action.type) {
@@ -60,6 +61,17 @@ export default (state = initialState, action: AnyAction) => {
         return Object.assign({}, state, { peername: firstPeername, name: firstName, isLinked: firstIsLinked })
       } else {
         return state
+      }
+
+      // when a new dataset is added via the modal, make it the selected dataset
+    case ADD_SUCC:
+      const { peername: newPeername, name: newName } = action.payload.data
+      store().setItem('peername', newPeername)
+      store().setItem('name', newName)
+      return {
+        ...state,
+        peername: newPeername,
+        name: newName
       }
 
     default:

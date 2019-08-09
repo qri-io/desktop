@@ -53,6 +53,7 @@ export default class App extends React.Component<AppProps, AppState> {
       sessionID: this.props.sessionID
     }
 
+    this.setModal = this.setModal.bind(this)
     this.renderModal = this.renderModal.bind(this)
     this.renderNoDatasets = this.renderNoDatasets.bind(this)
     this.renderAppLoading = this.renderAppLoading.bind(this)
@@ -133,7 +134,7 @@ export default class App extends React.Component<AppProps, AppState> {
         timeout={1000}
         unmountOnExit
       >
-        < NoDatasets setModal={(modal: Modal) => this.setState({ currentModal: modal })}/>
+        < NoDatasets setModal={this.setModal}/>
       </CSSTransition>
     )
   }
@@ -166,6 +167,10 @@ export default class App extends React.Component<AppProps, AppState> {
     )
   }
 
+  setModal (modal: Modal) {
+    this.setState({ currentModal: modal })
+  }
+
   render () {
     const {
       hasSetPeername,
@@ -194,7 +199,7 @@ export default class App extends React.Component<AppProps, AppState> {
         acceptTOS={acceptTOS}
       />
       {this.renderNoDatasets()}
-      { this.props.hasDatasets && <DatasetContainer /> }
+      { this.props.hasDatasets && <DatasetContainer setModal={this.setModal}/> }
       <Toast
         type={toast.type}
         message={toast.message}

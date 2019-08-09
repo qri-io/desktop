@@ -46,11 +46,19 @@ export interface Commit {
   title: string
 }
 
+export interface Structure {
+  depth: number
+  entries: number
+  format: string
+  length: number
+}
+
 export type Schema = JSONSchema7
 
 export interface Dataset {
   meta?: Meta
   schema?: Schema
+  structure?: Structure
   body?: {
     [key: string]: any
   }

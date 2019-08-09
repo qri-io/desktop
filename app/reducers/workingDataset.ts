@@ -12,6 +12,7 @@ const initialState: WorkingDataset = {
   isLoading: true,
   linkpath: '',
   hasHistory: true,
+  structure: null,
   components: {
     body: {
       value: [],
@@ -44,12 +45,13 @@ const [DATASET_REQ, DATASET_SUCC, DATASET_FAIL] = apiActionTypes('dataset')
 const [DATASET_HISTORY_REQ, DATASET_HISTORY_SUCC, DATASET_HISTORY_FAIL] = apiActionTypes('history')
 const [DATASET_STATUS_REQ, DATASET_STATUS_SUCC, DATASET_STATUS_FAIL] = apiActionTypes('status')
 const [DATASET_BODY_REQ, DATASET_BODY_SUCC, DATASET_BODY_FAIL] = apiActionTypes('body')
+const [, ADD_SUCC] = apiActionTypes('add')
 
 const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction): WorkingDataset | null => {
   switch (action.type) {
     case DATASET_REQ:
       return initialState
-    case DATASET_SUCC:
+    case DATASET_SUCC || ADD_SUCC: // when adding a new dataset, set it as the new workingDataset
       const { name, path, peername, published, dataset } = action.payload.data
       return {
         ...state,
@@ -57,6 +59,7 @@ const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction
         path,
         peername,
         published,
+        structure: dataset.structure,
         isLoading: false,
         components: {
           body: {
@@ -66,7 +69,7 @@ const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction
             value: state.components.body.value
           },
           meta: {
-            value: dataset.meta
+            value: dataset.meta || {}
           },
           schema: {
             value: dataset.structure.schema

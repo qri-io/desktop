@@ -9,6 +9,7 @@ const initialState: CommitDetails = {
   name: '',
   status: {},
   isLoading: true,
+  structure: null,
   components: {
     body: {
       value: [],
@@ -44,6 +45,7 @@ const commitDetailsReducer: Reducer = (state = initialState, action: AnyAction):
         path,
         peername,
         published,
+        structure: dataset.structure,
         isLoading: false,
         components: {
           body: {

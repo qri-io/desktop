@@ -16,6 +16,12 @@
 
       #add-button {
         align-self: flex-end;
+        cursor: pointer;
+        color: $primary;
+
+        &:hover {
+          color: $primary-dark;
+        }
       }
     }
 

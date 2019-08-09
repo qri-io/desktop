@@ -1,5 +1,7 @@
 import { connect } from 'react-redux'
 import Dataset, { DatasetProps } from '../components/Dataset'
+
+import { Modal } from '../models/modals'
 import Store from '../models/store'
 
 import { toggleDatasetList, setSidebarWidth } from '../actions/ui'
@@ -19,8 +21,12 @@ const mergeProps = (props: any, actions: any): DatasetProps => {
   return { ...props, ...actions }
 }
 
+interface DatasetContainerProps {
+  setModal: (modal: Modal) => void
+}
+
 const DatasetContainer = connect(
-  (state: Store, ownProps) => {
+  (state: Store, ownProps: DatasetContainerProps) => {
     const {
       ui,
       selections,
@@ -28,12 +34,15 @@ const DatasetContainer = connect(
       workingDataset,
       mutations
     } = state
+
+    const { setModal } = ownProps
     return Object.assign({
       ui,
       selections,
       myDatasets,
       workingDataset,
-      mutations
+      mutations,
+      setModal
     }, ownProps)
   },
   {
