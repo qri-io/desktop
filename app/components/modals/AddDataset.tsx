@@ -60,7 +60,7 @@ enum TabTypes {
 interface AddDatasetProps {
   onDismissed: () => void
   onSubmit: (peername: string, name: string) => Promise<ApiAction>
-  setWorkingDataset: (peername: string, name: string) => Promise<ApiAction>
+  setWorkingDataset: (peername: string, name: string, isLinked: boolean) => Promise<ApiAction>
   fetchMyDatasets: () => Promise<ApiAction>
 }
 
@@ -129,7 +129,7 @@ const AddDataset: React.FunctionComponent<AddDatasetProps> = ({ onDismissed, onS
     onSubmit(names[0], names[1])
       .then(() => {
         fetchMyDatasets()
-        setWorkingDataset(names[0], names[1])
+        setWorkingDataset(names[0], names[1], false)
           .then(() => onDismissed())
       })
       .catch((action) => {

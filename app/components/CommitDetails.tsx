@@ -81,6 +81,8 @@ const CommitDetails: React.FunctionComponent<CommitDetailsProps> = ({
       isLoadingRef.current = commitDetails.isLoading
     }
     // make sure that the component we are trying to show actually exists in this version of the dataset
+    // TODO (ramfox): there is a bug here when we try to switch to body, but body hasn't finished fetching yet
+    // this will prematurely decide to switch away from body.
     if (!commitDetails.isLoading) {
       const { components } = commitDetails
       if (selectedComponent === '' || (!components[selectedComponent].value || components[selectedComponent].value.length === 0)) {

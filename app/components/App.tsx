@@ -29,7 +29,7 @@ export interface AppProps {
   fetchSession: () => Promise<ApiAction>
   fetchMyDatasets: (page?: number, pageSize?: number) => Promise<ApiAction>
   addDataset: (peername: string, name: string) => Promise<ApiAction>
-  setWorkingDataset: (peername: string, name: string) => Promise<ApiAction>
+  setWorkingDataset: (peername: string, name: string, isLinked: boolean) => Promise<ApiAction>
   initDataset: (path: string, name: string, format: string) => Promise<ApiAction>
   acceptTOS: () => Action
   setHasSetPeername: () => Action

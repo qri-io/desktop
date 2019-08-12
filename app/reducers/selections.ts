@@ -10,6 +10,7 @@ export const SELECTIONS_SET_WORKING_DATASET = 'SELECTIONS_SET_WORKING_DATASET'
 const initialState: Selections = {
   peername: store().getItem('peername') || '',
   name: store().getItem('name') || '',
+  isLinked: store().getItem('isLinked') === 'true',
   activeTab: store().getItem('activeTab') || 'status',
   component: store().getItem('component') || '',
   commit: store().getItem('commit') || '',
@@ -42,19 +43,21 @@ export default (state = initialState, action: AnyAction) => {
       return state
 
     case SELECTIONS_SET_WORKING_DATASET:
-      const { peername, name } = action.payload
+      const { peername, name, isLinked } = action.payload
       store().setItem('peername', peername)
       store().setItem('name', name)
-      return Object.assign({}, state, { peername, name })
+      store().setItem('isLinked', isLinked)
+      return Object.assign({}, state, { peername, name, isLinked })
 
     case LIST_SUCC:
       // if there is no peername + name in selections, use the first one on the list
       if (state.peername === '' && state.name === '') {
         if (action.payload.data.length === 0) return state
-        const { peername: firstPeername, name: firstName } = action.payload.data[0]
+        const { peername: firstPeername, name: firstName, isLinked: firstIsLinked } = action.payload.data[0]
         store().setItem('peername', firstPeername)
         store().setItem('name', firstName)
-        return Object.assign({}, state, { peername: firstPeername, name: firstName })
+        store().setItem('isLinked', firstIsLinked)
+        return Object.assign({}, state, { peername: firstPeername, name: firstName, isLinked: firstIsLinked })
       } else {
         return state
       }

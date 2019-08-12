@@ -44,7 +44,7 @@ export function fetchWorkingDatasetDetails (): ApiActionThunk {
     const { history } = workingDataset
     const { commit } = selections
 
-    if (commit === '' || !history.value.some(c => c.path === commit)) {
+    if (history.value.length !== 0 && (commit === '' || !history.value.some(c => c.path === commit))) {
       await dispatch(setSelectedListItem('commit', history.value[0].path))
     }
     return response
@@ -88,23 +88,18 @@ export function fetchMyDatasets (page: number = 1, pageSize: number = pageSizeDe
 
 export function fetchWorkingDataset (): ApiActionThunk {
   return async (dispatch, getState) => {
-    const { selections, myDatasets } = getState()
-    const { peername, name } = selections
-
-    // find the selected dataset in myDatasets to determine isLinked
-    const match = myDatasets.value.find((d) => d.name === name && d.peername === peername)
-
-    const params = (match && match.isLinked) ? { fsi: true } : {}
+    const { selections } = getState()
+    const { peername, name, isLinked } = selections
 
     const action = {
       type: 'dataset',
       [CALL_API]: {
         endpoint: 'dataset',
         method: 'GET',
-        params,
+        params: { fsi: isLinked },
         segments: {
-          peername: selections.peername,
-          name: selections.name
+          peername,
+          name
         },
         map: (data: Record<string, string>): Dataset => {
           return data as Dataset
@@ -198,14 +193,16 @@ export function fetchWorkingHistory (page: number = 1, pageSize: number = pageSi
       return new Promise(resolve => resolve(NO_ACTION))
     }
     const { selections } = getState()
+    const { peername, name, isLinked } = selections
     const action = {
       type: 'history',
       [CALL_API]: {
         endpoint: 'history',
         method: 'GET',
+        params: { fsi: isLinked },
         segments: {
-          peername: selections.peername,
-          name: selections.name
+          peername: peername,
+          name: name
         },
         pageInfo: {
           page,
@@ -231,14 +228,16 @@ export function fetchWorkingHistory (page: number = 1, pageSize: number = pageSi
 export function fetchWorkingStatus (): ApiActionThunk {
   return async (dispatch, getState) => {
     const { selections } = getState()
+    const { peername, name, isLinked } = selections
     const action = {
       type: 'status',
       [CALL_API]: {
         endpoint: 'status',
         method: 'GET',
+        params: { fsi: isLinked },
         segments: {
-          peername: selections.peername,
-          name: selections.name
+          peername: peername,
+          name: name
         },
         map: (data: Array<Record<string, string>>): ComponentStatus[] => {
           return data.map((d) => {
@@ -259,7 +258,7 @@ export function fetchWorkingStatus (): ApiActionThunk {
 export function fetchBody (page: number = 1, pageSize: number = bodyPageSizeDefault): ApiActionThunk {
   return async (dispatch, getState) => {
     const { workingDataset, selections } = getState()
-    const { peername, name } = selections
+    const { peername, name, isLinked } = selections
     const { path } = workingDataset
 
     if (workingDataset.components.body.pageInfo.fetchedAll) {
@@ -275,6 +274,7 @@ export function fetchBody (page: number = 1, pageSize: number = bodyPageSizeDefa
           page,
           pageSize
         },
+        params: { fsi: isLinked },
         segments: {
           peername,
           name,

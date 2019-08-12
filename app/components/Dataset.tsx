@@ -36,7 +36,7 @@ export interface DatasetProps {
   setSidebarWidth: (type: string, sidebarWidth: number) => Action
   setFilter: (filter: string) => Action
   setSelectedListItem: (type: string, activeTab: string) => Action
-  setWorkingDataset: (peername: string, name: string) => Action
+  setWorkingDataset: (peername: string, name: string, isLinked: boolean) => Action
   fetchWorkingDatasetDetails: () => Promise<ApiAction>
   fetchWorkingHistory: (page?: number, pageSize?: number) => ApiActionThunk
   fetchWorkingStatus: () => Promise<ApiAction>
@@ -92,6 +92,8 @@ export default class Dataset extends React.Component<DatasetProps> {
     }
 
     // make sure that the component we are trying to show actually exists in this version of the dataset
+    // TODO (ramfox): there is a bug here when we try to switch to body, but body hasn't finished fetching yet
+    // this will prematurely decide to switch away from body.
     if ((workingDatasetIsLoading && !nextProps.workingDataset.isLoading && nextProps.selections.activeTab === 'status') ||
         (activeTab === 'history' && nextProps.selections.activeTab === 'status')) {
       const { workingDataset, selections, setSelectedListItem } = nextProps
@@ -155,7 +157,7 @@ export default class Dataset extends React.Component<DatasetProps> {
       <div
         className='header-column'
         data-tip={workingDataset.linkpath}
-        onClick={() => { shell.openItem(String(workingDataset.linkpath)) }}
+        onClick={() => { shell.openItem(workingDataset.linkpath) }}
       >
         <div className='header-column-icon'>
           <span className='icon-inline'>openfolder</span>

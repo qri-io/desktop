@@ -28,7 +28,7 @@ enum TabTypes {
 interface CreateDatasetProps {
   onDismissed: () => void
   onSubmit: (path: string, name: string, format: string) => Promise<ApiAction>
-  setWorkingDataset: (peername: string, name: string) => Promise<ApiAction>
+  setWorkingDataset: (peername: string, name: string, isLinked: boolean) => Promise<ApiAction>
   fetchMyDatasets: () => Promise<ApiAction>
 }
 
@@ -222,7 +222,7 @@ const CreateDataset: React.FunctionComponent<CreateDatasetProps> = ({ onDismisse
       .then(() => {
         console.log('AFTER SUBMIT')
         fetchMyDatasets()
-        setWorkingDataset('me', datasetName)
+        setWorkingDataset('me', datasetName, true)
           .then(() => {
             console.log('DISMISSING')
             onDismissed()

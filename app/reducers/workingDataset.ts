@@ -10,7 +10,8 @@ const initialState: WorkingDataset = {
   name: '',
   status: {},
   isLoading: true,
-  linkpath: null,
+  linkpath: '',
+  hasHistory: true,
   components: {
     body: {
       value: [],
@@ -112,7 +113,7 @@ const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction
         }, {})
       // check filepath in the first element in the payload to determine whether the
       // dataset is linked
-      let linkpath = null
+      let linkpath = ''
       const { filepath } = action.payload.data[0]
       if (filepath !== 'repo') {
         linkpath = filepath.substring(0, (filepath.lastIndexOf('/')))
