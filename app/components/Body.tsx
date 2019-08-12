@@ -18,6 +18,10 @@ export interface BodyProps {
 }
 
 const Body: React.FunctionComponent<BodyProps> = ({ value, pageInfo, headers, onFetch }) => {
+  if (!value || value.length === 0) {
+    return <SpinnerWithIcon loading={true} />
+  }
+
   const [isLoadingFirstPage, setIsLoadingFirstPage] = React.useState(false)
   const isLoadingFirstPageRef = React.useRef(pageInfo.page === 1 && pageInfo.isFetching)
 
