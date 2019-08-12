@@ -66,12 +66,26 @@ export default class Dataset extends React.Component<DatasetProps> {
   componentDidMount () {
     // poll for status
     setInterval(() => { this.props.fetchWorkingStatus() }, 5000)
+    const { selections, workingDataset } = this.props
+    const { activeTab, isLinked } = selections
+    if (activeTab === 'status' && !isLinked) {
+      this.props.setActiveTab('history')
+    } else if (activeTab === 'history' && workingDataset.history.pageInfo.error && workingDataset.history.pageInfo.error.includes('no history')) {
+      this.props.setActiveTab('status')
+    }
   }
 
   componentDidUpdate () {
     // this "wires up" all of the tooltips, must be called on update, as tooltips
     // in descendents can come and go
     ReactTooltip.rebuild()
+    const { selections, workingDataset } = this.props
+    const { activeTab, isLinked } = selections
+    if (activeTab === 'status' && !isLinked) {
+      this.props.setActiveTab('history')
+    } else if (activeTab === 'history' && workingDataset.history.pageInfo.error && workingDataset.history.pageInfo.error.includes('no history')) {
+      this.props.setActiveTab('status')
+    }
   }
 
   // using component state + getDerivedStateFromProps to determine when a new
@@ -138,7 +152,8 @@ export default class Dataset extends React.Component<DatasetProps> {
       name,
       activeTab,
       component: selectedComponent,
-      commit: selectedCommit
+      commit: selectedCommit,
+      isLinked
     } = selections
 
     const { history, status, path } = workingDataset
@@ -152,7 +167,6 @@ export default class Dataset extends React.Component<DatasetProps> {
       fetchWorkingHistory
     } = this.props
 
-    const isLinked = !!workingDataset.linkpath
     const linkButton = isLinked ? (
       <div
         className='header-column'

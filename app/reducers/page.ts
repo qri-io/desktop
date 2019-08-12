@@ -33,7 +33,7 @@ export function withPagination (action: AnyAction, pageInfo: PageInfo = initialP
         pageInfo,
         {
           isFetching: false,
-          error: action.payload.message
+          error: action.payload.err.message
         })
     default:
       return pageInfo

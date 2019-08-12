@@ -79,20 +79,20 @@ const DatasetSidebar: React.FunctionComponent<DatasetSidebarProps> = ({
   return (
     <div className='dataset-sidebar'>
       <div id='tabs' className='sidebar-list-item'>
-        <div
+        {isLinked && <div
           className={classNames('tab', { 'active': activeTab === 'status' })}
           onClick={() => { onTabClick('status') }}
           data-tip='View the latest version or working changes<br/> to this dataset&apos;s components'
         >
             Status
-        </div>
-        <div
-          className={classNames('tab', { 'active': activeTab === 'history', 'disabled': !path })}
-          onClick={() => { !!path && onTabClick('history') }}
+        </div>}
+        {!(history.pageInfo.error && history.pageInfo.error.includes('no history')) && <div
+          className={classNames('tab', { 'active': activeTab === 'history' })}
+          onClick={() => { onTabClick('history') }}
           data-tip={path ? 'Explore older versions of this dataset' : 'This dataset has no previous versions'}
         >
             History
-        </div>
+        </div>}
       </div>
       <div id='content'>
         <CSSTransition

@@ -91,6 +91,7 @@ const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction
     case DATASET_HISTORY_SUCC:
       return {
         ...state,
+        hasHistory: true,
         history: {
           ...state.history,
           value: state.history.value
