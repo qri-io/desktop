@@ -35,9 +35,9 @@ export function fetchWorkingDatasetDetails (): ApiActionThunk {
     let response: Action
 
     response = await fetchWorkingDataset()(dispatch, getState)
-    response = await whenOk(fetchWorkingHistory())(response)
     response = await whenOk(fetchWorkingStatus())(response)
     response = await whenOk(fetchBody())(response)
+    response = await whenOk(fetchWorkingHistory())(response)
 
     // set selected commit to be the first on the list
     const { workingDataset, selections } = getState()
