@@ -1,6 +1,6 @@
 import * as React from 'react'
 import moment from 'moment'
-import { Resizable } from '../components/resizable'
+import { Resizable } from '../components/Resizable'
 import { Action } from 'redux'
 import ComponentList from '../components/ComponentList'
 import DatasetComponent from './DatasetComponent'
@@ -17,7 +17,7 @@ export interface CommitDetailsProps {
   name: string
   selectedCommitPath: string
   commit: Commit
-  selectedComponent: string
+  selectedComponent: 'meta' | 'body' | 'schema' | ''
   sidebarWidth: number
   setSelectedListItem: (type: string, activeTab: string) => Action
   setSidebarWidth: (type: string, sidebarWidth: number) => Action
@@ -79,6 +79,21 @@ const CommitDetails: React.FunctionComponent<CommitDetailsProps> = ({
   React.useEffect(() => {
     if (isLoadingRef.current !== commitDetails.isLoading) {
       isLoadingRef.current = commitDetails.isLoading
+    }
+    // make sure that the component we are trying to show actually exists in this version of the dataset
+    if (!commitDetails.isLoading) {
+      const { components } = commitDetails
+      if (selectedComponent === '' || (!components[selectedComponent].value || components[selectedComponent].value.length === 0)) {
+        if (status['meta']) {
+          setSelectedListItem('commitComponent', 'meta')
+          return
+        }
+        if (status['body']) {
+          setSelectedListItem('commitComponent', 'body')
+          return
+        }
+        setSelectedListItem('commitComponent', 'schema')
+      }
     }
   }, [commitDetails.isLoading])
 

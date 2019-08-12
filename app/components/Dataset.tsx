@@ -11,6 +11,8 @@ import DatasetComponent from './DatasetComponent'
 import DatasetListContainer from '../containers/DatasetListContainer'
 import CommitDetailsContainer from '../containers/CommitDetailsContainer'
 
+import { CSSTransition } from 'react-transition-group'
+
 import { defaultSidebarWidth } from '../reducers/ui'
 
 import {
@@ -20,8 +22,6 @@ import {
   WorkingDataset,
   Mutations
 } from '../models/store'
-
-import { CSSTransition } from 'react-transition-group'
 
 export interface DatasetProps {
   // redux state
@@ -46,6 +46,8 @@ interface DatasetState {
   peername: string
   name: string
   saveIsLoading: boolean
+  workingDatasetIsLoading: boolean
+  activeTab: string
 }
 
 const logo = require('../assets/qri-blob-logo-tiny.png') //eslint-disable-line
@@ -56,7 +58,9 @@ export default class Dataset extends React.Component<DatasetProps> {
   state = {
     peername: null,
     name: null,
-    saveIsLoading: false
+    saveIsLoading: false,
+    workingDatasetIsLoading: true,
+    activeTab: this.props.selections.activeTab
   }
 
   componentDidMount () {
@@ -74,7 +78,7 @@ export default class Dataset extends React.Component<DatasetProps> {
   // working dataset is selected and trigger api call(s)
   static getDerivedStateFromProps (nextProps: DatasetProps, prevState: DatasetState) {
     const { peername: newPeername, name: newName } = nextProps.selections
-    const { peername, name } = prevState
+    const { peername, name, workingDatasetIsLoading, activeTab } = prevState
     // when new props arrive, compare selections.peername and selections.name to
     // previous.  If either is different, fetch data
     if ((newPeername !== peername) || (newName !== name)) {
@@ -84,6 +88,23 @@ export default class Dataset extends React.Component<DatasetProps> {
       return {
         peername: newPeername,
         name: newName
+      }
+    }
+
+    // make sure that the component we are trying to show actually exists in this version of the dataset
+    if ((workingDatasetIsLoading && !nextProps.workingDataset.isLoading && nextProps.selections.activeTab === 'status') ||
+        (activeTab === 'history' && nextProps.selections.activeTab === 'status')) {
+      const { workingDataset, selections, setSelectedListItem } = nextProps
+      const { component } = selections
+      const { status } = workingDataset
+      if (component === '' || !status[component]) {
+        if (status['meta']) {
+          setSelectedListItem('component', 'meta')
+        }
+        if (status['body']) {
+          setSelectedListItem('component', 'body')
+        }
+        setSelectedListItem('component', 'schema')
       }
     }
 
@@ -101,7 +122,9 @@ export default class Dataset extends React.Component<DatasetProps> {
     }
 
     return {
-      saveIsLoading: newSaveIsLoading
+      saveIsLoading: newSaveIsLoading,
+      activeTab: nextProps.selections.activeTab,
+      workingDatasetIsLoading: nextProps.workingDataset.isLoading
     }
   }
 
@@ -110,6 +133,7 @@ export default class Dataset extends React.Component<DatasetProps> {
     const { ui, selections, workingDataset } = this.props
     const { showDatasetList, datasetSidebarWidth } = ui
     const {
+      name,
       activeTab,
       component: selectedComponent,
       commit: selectedCommit
@@ -197,7 +221,7 @@ export default class Dataset extends React.Component<DatasetProps> {
             />
           </Resizable>
           <div className='content-wrapper'>
-            {showDatasetList && <div className='overlay'></div>}
+            {showDatasetList && <div className='overlay' onClick={toggleDatasetList}></div>}
             <div className='transition-group' >
               <CSSTransition
                 in={activeTab === 'status'}
@@ -219,7 +243,6 @@ export default class Dataset extends React.Component<DatasetProps> {
               </CSSTransition>
             </div>
           </div>
-
         </div>
         {
           showDatasetList && (
