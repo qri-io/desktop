@@ -92,7 +92,7 @@ const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction
       return {
         ...state,
         history: {
-          ...history,
+          ...state.history,
           value: state.history.value
             ? state.history.value.concat(action.payload.data)
             : action.payload.data,
@@ -100,7 +100,14 @@ const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction
         }
       }
     case DATASET_HISTORY_FAIL:
-      return state
+      return {
+        ...state,
+        hasHistory: !action.payload.err.message.includes('no history'),
+        history: {
+          ...state.history,
+          pageInfo: withPagination(action, state.history.pageInfo)
+        }
+      }
 
     case DATASET_STATUS_REQ:
       return state

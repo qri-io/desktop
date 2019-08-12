@@ -217,14 +217,11 @@ const CreateDataset: React.FunctionComponent<CreateDatasetProps> = ({ onDismisse
     setLoading(true)
     error && setError('')
     if (!onSubmit) return
-    console.log('submitting!')
     onSubmit(path, datasetName, bodyFormat)
       .then(() => {
-        console.log('AFTER SUBMIT')
         fetchMyDatasets()
         setWorkingDataset('me', datasetName, true)
           .then(() => {
-            console.log('DISMISSING')
             onDismissed()
           })
       })
