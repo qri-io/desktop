@@ -15,7 +15,7 @@ export const defaultSidebarWidth = 250
 export const hasAcceptedTOSKey = 'acceptedTOS'
 export const hasSetPeernameKey = 'setPeername'
 
-const [, HEALTH_SUCCESS, HEALTH_FAILURE] = apiActionTypes('health')
+const [, HEALTH_SUCCESS] = apiActionTypes('health')
 
 const getSidebarWidth = (key: string): number => {
   const width = store().getItem(key)
@@ -112,8 +112,6 @@ export default (state = initialState, action: AnyAction) => {
     case HEALTH_SUCCESS:
       if (state.apiConnection === 1) return state
       return Object.assign({}, state, { apiConnection: 1 })
-    case HEALTH_FAILURE:
-      return Object.assign({}, state, { apiConnection: -1 })
     case UI_SET_API_CONNECTION:
       return Object.assign({}, state, { apiConnection: action.status })
     default:

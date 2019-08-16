@@ -14,8 +14,7 @@ dialog {
 
   z-index: $zindex-modal;
 
-  min-width: 500px;
-  max-width: 600px;
+  width: 500px;
 
   &::backdrop {
     background-color: rgba(0, 0, 0, 0.1);
@@ -86,18 +85,18 @@ dialog {
   .content-wrap {
     min-height: 300px; 
     position: relative;
+    display: flex;
+    flex-direction: column;
     
     .content {
-      position: absolute;
       width: 100%;
       height: 100%;
       background: $appBackground;
     }
 
-    #error {
-      bottom: 1rem;
-      position: absolute;
-    }
+    // #error {
+    //   bottom: 1rem;
+    // }
   }
 
   #create-dataset-content-wrap {
@@ -146,7 +145,10 @@ dialog {
 
   .error {
     color: $error;
-    height: $spacer * 2;
+    height: 100%;
+    overflow-wrap: normal;
+    width: 90%;
+    margin-bottom: $spacer;
   }
   
   .buttons {

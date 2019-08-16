@@ -17,7 +17,7 @@ import { ApiAction } from '../store/api'
 import { Modal, ModalType, NoModal } from '../models/modals'
 import { Toast as IToast } from '../models/store'
 
-interface AppProps {
+export interface AppProps {
   hasDatasets: boolean
   loading: boolean
   sessionID: string
@@ -29,6 +29,7 @@ interface AppProps {
   fetchSession: () => Promise<ApiAction>
   fetchMyDatasets: (page?: number, pageSize?: number) => Promise<ApiAction>
   addDataset: (peername: string, name: string) => Promise<ApiAction>
+  setWorkingDataset: (peername: string, name: string, isLinked: boolean) => Promise<ApiAction>
   initDataset: (path: string, name: string, format: string) => Promise<ApiAction>
   acceptTOS: () => Action
   setHasSetPeername: () => Action
@@ -61,16 +62,16 @@ export default class App extends React.Component<AppProps, AppState> {
   componentDidMount () {
     if (this.props.apiConnection === 0) {
       var iter = 0
-      const pingTimer = setInterval(() => {
-        if (iter > 15) {
-          this.props.setApiConnection(-1)
-          clearInterval(pingTimer)
-        }
+      const backendLoadedCheck = setInterval(() => {
         this.props.pingApi()
         iter++
-      }, 10000)
+        if (this.props.apiConnection === 1) clearInterval(backendLoadedCheck)
+        if (iter > 20) {
+          this.props.setApiConnection(-1)
+          clearInterval(backendLoadedCheck)
+        }
+      }, 750)
     }
-    this.props.pingApi()
     this.props.fetchSession()
     this.props.fetchMyDatasets()
   }
@@ -98,7 +99,12 @@ export default class App extends React.Component<AppProps, AppState> {
           timeout={300}
           unmountOnExit
         >
-          <CreateDataset onSubmit={this.props.initDataset} onDismissed={() => this.setState({ currentModal: NoModal })}/>
+          <CreateDataset
+            onSubmit={this.props.initDataset}
+            onDismissed={() => this.setState({ currentModal: NoModal })}
+            setWorkingDataset={this.props.setWorkingDataset}
+            fetchMyDatasets={this.props.fetchMyDatasets}
+          />
         </CSSTransition>
         <CSSTransition
           in={ModalType.AddDataset === Modal.type}
@@ -107,7 +113,12 @@ export default class App extends React.Component<AppProps, AppState> {
           timeout={300}
           unmountOnExit
         >
-          <AddDataset onSubmit={this.props.addDataset} onDismissed={() => this.setState({ currentModal: NoModal })}/>
+          <AddDataset
+            onSubmit={this.props.addDataset}
+            onDismissed={() => this.setState({ currentModal: NoModal })}
+            setWorkingDataset={this.props.setWorkingDataset}
+            fetchMyDatasets={this.props.fetchMyDatasets}
+          />
         </CSSTransition>
       </div>
     )

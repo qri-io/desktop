@@ -62,6 +62,7 @@ export interface UI {
 export interface Selections {
   peername: string | null
   name: string | null
+  isLinked: boolean
   activeTab: string
   component: string
   commit: string
@@ -118,7 +119,7 @@ export interface CommitDetails {
   peername: string
   name: string
   status: DatasetStatus
-  isLoading: false
+  isLoading: boolean
   components: {
     body: {
       value: any[] | undefined
@@ -134,7 +135,8 @@ export interface CommitDetails {
 }
 
 export interface WorkingDataset extends CommitDetails {
-  linkpath: string | null
+  linkpath: string
+  hasHistory: boolean
   history: {
     pageInfo: PageInfo
     value: Commit[]

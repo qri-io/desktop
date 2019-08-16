@@ -1,5 +1,5 @@
 import { connect } from 'react-redux'
-import App from '../components/App'
+import App, { AppProps } from '../components/App'
 import Store from '../models/store'
 
 import {
@@ -20,6 +20,14 @@ import {
   fetchSession,
   setPeername
 } from '../actions/session'
+
+import {
+  setWorkingDataset
+} from '../actions/selections'
+
+const mergeProps = (props: any, actions: any): AppProps => {
+  return { ...props, ...actions }
+}
 
 const AppContainer = connect(
   (state: Store) => {
@@ -49,8 +57,10 @@ const AppContainer = connect(
     initDataset: initDatasetAndFetch,
     closeToast,
     pingApi,
-    setApiConnection
-  }
+    setApiConnection,
+    setWorkingDataset
+  },
+  mergeProps
 )(App)
 
 export default AppContainer

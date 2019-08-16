@@ -2,6 +2,8 @@ import * as React from 'react'
 import ExternalLink from './ExternalLink'
 import { Meta, Citation, License } from '../models/dataset'
 
+import SpinnerWithIcon from './chrome/SpinnerWithIcon'
+
 interface MetadataProps {
   meta: Meta
 }
@@ -74,6 +76,11 @@ const renderTable = (keys: string[], data: Meta) => {
 
 const Metadata: React.FunctionComponent<MetadataProps> = (props: MetadataProps) => {
   const { meta } = props
+
+  if (!meta) {
+    return <SpinnerWithIcon loading={true} />
+  }
+
   const standardFields = [
     'title',
     'theme',

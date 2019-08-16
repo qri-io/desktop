@@ -7,7 +7,7 @@ export interface SpinnerProps {
   large?: boolean
 }
 
-export const Spinner: React.FunctionComponent<SpinnerProps> = ({ center, button, white, large }) =>
+const Spinner: React.FunctionComponent<SpinnerProps> = ({ center, button, white, large }) =>
   <div className={`${button ? 'spinner-button' : 'spinner-spinner'} ${center && 'spinner-center'} ${!large && 'spinner-small'}`}>
     <div className={`spinner-block spinner-rect1 ${white ? 'spinner-white' : 'spinner-dark'}`} />
     <div className={`spinner-block spinner-rect2 ${white ? 'spinner-white' : 'spinner-dark'}`} />

@@ -11,6 +11,7 @@ import Buttons from './Buttons'
 import ButtonInput from '../form/ButtonInput'
 
 import { ISelectOption } from '../../models/forms'
+import { fetchMyDatasets } from '../../actions/api'
 
 const formatOptions: ISelectOption[] = [
   { name: 'csv', value: 'csv' },
@@ -27,9 +28,11 @@ enum TabTypes {
 interface CreateDatasetProps {
   onDismissed: () => void
   onSubmit: (path: string, name: string, format: string) => Promise<ApiAction>
+  setWorkingDataset: (peername: string, name: string, isLinked: boolean) => Promise<ApiAction>
+  fetchMyDatasets: () => Promise<ApiAction>
 }
 
-const CreateDataset: React.FunctionComponent<CreateDatasetProps> = ({ onDismissed, onSubmit }) => {
+const CreateDataset: React.FunctionComponent<CreateDatasetProps> = ({ onDismissed, onSubmit, setWorkingDataset }) => {
   const [datasetName, setDatasetName] = React.useState('')
   const [path, setPath] = React.useState('')
   const [bodyFormat, setBodyFormat] = React.useState(formatOptions[0].value)
@@ -212,13 +215,17 @@ const CreateDataset: React.FunctionComponent<CreateDatasetProps> = ({ onDismisse
   const handleSubmit = () => {
     setDismissable(false)
     setLoading(true)
-    // should fire off action and catch error response
-    // if success, fetchDatatsets
+    error && setError('')
     if (!onSubmit) return
     onSubmit(path, datasetName, bodyFormat)
-      .then(() => onDismissed())
+      .then(() => {
+        fetchMyDatasets()
+        setWorkingDataset('me', datasetName, true)
+          .then(onDismissed)
+      })
       .catch((action) => {
         setLoading(false)
+        setDismissable(true)
         setError(action.payload.err.message)
       })
   }

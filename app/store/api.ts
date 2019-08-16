@@ -5,6 +5,7 @@ import {
 } from 'redux'
 import { ThunkDispatch } from 'redux-thunk'
 import Store from '../models/store'
+import mapError from './mapError'
 
 // CALL_API is a global, unique constant for passing actions to API middleware
 export const CALL_API = Symbol('CALL_API')
@@ -94,13 +95,12 @@ export function apiActionTypes (endpoint: string): [string, string, string] {
 
 // getJSON fetches json data from a url
 async function getJSON<T> (url: string, options: FetchOptions): Promise<T> {
-  const res = await fetch(url, options)
-  if (res.status !== 200) {
-    throw new Error(`Received non-200 status code: ${res.status}`)
+  const r = await fetch(url, options)
+  const res = await r.json()
+  if (res.meta.code !== 200) {
+    throw new Error(mapError(res.meta.error))
   }
-
-  const json = await res.json()
-  return json as T
+  return res as T
 }
 
 // endpointMap is an object that maps frontend endpoint names to their
@@ -125,22 +125,27 @@ function apiUrl (endpoint: string, segments?: ApiSegments, query?: ApiQuery, pag
     return ['', `${endpoint} is not a valid api endpoint`]
   }
 
+  const addToUrl = (url: string, seg: string): string => {
+    if (!(url[url.length - 1] === '/' || seg[0] === '/')) url += '/'
+    return url + seg
+  }
+
   let url = `http://localhost:2503/${path}`
   if (segments) {
     if (segments.peername) {
-      url += `/${segments.peername}`
+      url = addToUrl(url, segments.peername)
     }
     if (segments.name) {
-      url += `/${segments.name}`
+      url = addToUrl(url, segments.name)
     }
     if (segments.peerID || segments.path) {
-      url += '/at'
+      url = addToUrl(url, 'at')
     }
     if (segments.peerID) {
-      url += `/${segments.peerID}`
+      url = addToUrl(url, segments.peerID)
     }
     if (segments.path) {
-      url += segments.path
+      url = addToUrl(url, segments.path)
     }
   }
 

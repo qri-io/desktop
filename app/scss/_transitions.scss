@@ -30,6 +30,22 @@
     transition: opacity 300ms, transform 300ms;
   }
 }
+
+.fade-appear {
+  opacity: 0;
+  &::backdrop {
+    opacity: 0;
+  }
+}
+.fade-appear-active {
+  opacity: 1;
+  transition: opacity 300ms, transform 300ms;
+  &::backdrop {
+    opacity: 1;
+    transition: opacity 300ms, transform 300ms;
+  }
+}
+
 .fade-exit {
   opacity: 1;
   &::backdrop {
@@ -43,4 +59,36 @@
     opacity: 0;
     transition: opacity 300ms, transform 300ms;
   }
+}
+
+.slide-enter {
+  max-height: 0px;
+}
+
+.slide-enter-active {
+  max-height: 500px;
+  transition: max-height 300ms, transform 300ms;
+}
+
+.slide-exit {
+  max-height: 500px;
+}
+
+.slide-exit-active {
+  max-height: 0px;
+  transition: max-height 300ms, transform 300ms;
+}
+
+// outer div
+.transition-group {
+  position:relative;
+  height:100%;
+  width:100%;
+}
+
+// inner divs
+#transition-wrap {
+  position: absolute;
+  width: 100%;
+  height: 100%;
 }

@@ -1,6 +1,6 @@
 import * as React from 'react' // eslint-disable-line
 import { remote } from 'electron'
-import { Spinner } from './chrome/Spinner'
+import Spinner from './chrome/Spinner'
 import classNames from 'classnames'
 export const logo = require('../assets/qri-blob-logo-large.png') // eslint-disable-line
 

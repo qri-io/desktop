@@ -5,6 +5,7 @@ import Modal from './Modal'
 import TextInput from '../form/TextInput'
 import Error from './Error'
 import Buttons from './Buttons'
+import { fetchMyDatasets } from '../../actions/api'
 // import Tabs from './Tabs'
 
 interface AddByNameProps {
@@ -17,7 +18,7 @@ const AddByName: React.FunctionComponent<AddByNameProps> = ({ datasetName, onCha
     <div className='content'>
       <p>Add a dataset that already exists on Qri</p>
       <p>Qri dataset names have the following structure: <strong>peername/dataset name</strong>.</p>
-      <p>For example: <strong>chriswhong/usgs_earthquakes</strong>.</p>
+      <p>For example: <strong>chriswhong/usgs_earthquakes</strong></p>
       <TextInput
         name='datasetName'
         label='Peername/Dataset_Name:'
@@ -38,7 +39,7 @@ interface AddByUrl {
 const AddByUrl: React.FunctionComponent<AddByUrl> = ({ url, onChange }) => {
   return (
     <div className='content'>
-      <p>Add a dataset that already exists on Qri using a <strong>url</strong>.</p>
+      <p>Add a dataset that already exists on Qri using a <strong>url</strong></p>
       <TextInput
         name='url'
         label='Url'
@@ -59,9 +60,11 @@ enum TabTypes {
 interface AddDatasetProps {
   onDismissed: () => void
   onSubmit: (peername: string, name: string) => Promise<ApiAction>
+  setWorkingDataset: (peername: string, name: string, isLinked: boolean) => Promise<ApiAction>
+  fetchMyDatasets: () => Promise<ApiAction>
 }
 
-const AddDataset: React.FunctionComponent<AddDatasetProps> = ({ onDismissed, onSubmit }) => {
+const AddDataset: React.FunctionComponent<AddDatasetProps> = ({ onDismissed, onSubmit, setWorkingDataset }) => {
   const [datasetName, setDatasetName] = React.useState('')
 
   // restore when you can add by URL
@@ -111,6 +114,7 @@ const AddDataset: React.FunctionComponent<AddDatasetProps> = ({ onDismissed, onS
   const handleSubmit = () => {
     setDismissable(false)
     setLoading(true)
+    error && setError('')
     // should fire off action and catch error response
     // if success, fetchDatatsets
     if (!onSubmit) return
@@ -123,8 +127,13 @@ const AddDataset: React.FunctionComponent<AddDatasetProps> = ({ onDismissed, onS
     }
 
     onSubmit(names[0], names[1])
-      .then(() => onDismissed())
+      .then(() => {
+        fetchMyDatasets()
+        setWorkingDataset(names[0], names[1], false)
+          .then(() => onDismissed())
+      })
       .catch((action) => {
+        setDismissable(true)
         setLoading(false)
         setError(action.payload.err.message)
       })
@@ -180,7 +189,14 @@ const AddDataset: React.FunctionComponent<AddDatasetProps> = ({ onDismissed, onS
           {/* restore when you can add by URL */}
           {/* {renderAddByUrl()} */}
         </div>
-        <div id='error'><Error text={error} /></div>
+        <CSSTransition
+          in={!!error}
+          timeout={300}
+          classNames='slide'
+          component='div'
+        >
+          <div id='error'><Error text={error} /></div>
+        </CSSTransition>
       </div>
       <Buttons
         cancelText='cancel'

@@ -11,6 +11,8 @@ import DatasetComponent from './DatasetComponent'
 import DatasetListContainer from '../containers/DatasetListContainer'
 import CommitDetailsContainer from '../containers/CommitDetailsContainer'
 
+import { CSSTransition } from 'react-transition-group'
+
 import { defaultSidebarWidth } from '../reducers/ui'
 
 import {
@@ -34,7 +36,7 @@ export interface DatasetProps {
   setSidebarWidth: (type: string, sidebarWidth: number) => Action
   setFilter: (filter: string) => Action
   setSelectedListItem: (type: string, activeTab: string) => Action
-  setWorkingDataset: (peername: string, name: string) => Action
+  setWorkingDataset: (peername: string, name: string, isLinked: boolean) => Action
   fetchWorkingDatasetDetails: () => Promise<ApiAction>
   fetchWorkingHistory: (page?: number, pageSize?: number) => ApiActionThunk
   fetchWorkingStatus: () => Promise<ApiAction>
@@ -44,6 +46,8 @@ interface DatasetState {
   peername: string
   name: string
   saveIsLoading: boolean
+  workingDatasetIsLoading: boolean
+  activeTab: string
 }
 
 const logo = require('../assets/qri-blob-logo-tiny.png') //eslint-disable-line
@@ -54,25 +58,41 @@ export default class Dataset extends React.Component<DatasetProps> {
   state = {
     peername: null,
     name: null,
-    saveIsLoading: false
+    saveIsLoading: false,
+    workingDatasetIsLoading: true,
+    activeTab: this.props.selections.activeTab
   }
 
   componentDidMount () {
     // poll for status
-    setInterval(() => { this.props.fetchWorkingStatus() }, 1000)
+    setInterval(() => { this.props.fetchWorkingStatus() }, 5000)
+    const { selections, workingDataset } = this.props
+    const { activeTab, isLinked } = selections
+    if (activeTab === 'status' && !isLinked) {
+      this.props.setActiveTab('history')
+    } else if (activeTab === 'history' && workingDataset.history.pageInfo.error && workingDataset.history.pageInfo.error.includes('no history')) {
+      this.props.setActiveTab('status')
+    }
   }
 
   componentDidUpdate () {
     // this "wires up" all of the tooltips, must be called on update, as tooltips
     // in descendents can come and go
     ReactTooltip.rebuild()
+    const { selections, workingDataset } = this.props
+    const { activeTab, isLinked } = selections
+    if (activeTab === 'status' && !isLinked) {
+      this.props.setActiveTab('history')
+    } else if (activeTab === 'history' && workingDataset.history.pageInfo.error && workingDataset.history.pageInfo.error.includes('no history')) {
+      this.props.setActiveTab('status')
+    }
   }
 
   // using component state + getDerivedStateFromProps to determine when a new
   // working dataset is selected and trigger api call(s)
   static getDerivedStateFromProps (nextProps: DatasetProps, prevState: DatasetState) {
     const { peername: newPeername, name: newName } = nextProps.selections
-    const { peername, name } = prevState
+    const { peername, name, workingDatasetIsLoading, activeTab } = prevState
     // when new props arrive, compare selections.peername and selections.name to
     // previous.  If either is different, fetch data
     if ((newPeername !== peername) || (newName !== name)) {
@@ -82,6 +102,25 @@ export default class Dataset extends React.Component<DatasetProps> {
       return {
         peername: newPeername,
         name: newName
+      }
+    }
+
+    // make sure that the component we are trying to show actually exists in this version of the dataset
+    // TODO (ramfox): there is a bug here when we try to switch to body, but body hasn't finished fetching yet
+    // this will prematurely decide to switch away from body.
+    if ((workingDatasetIsLoading && !nextProps.workingDataset.isLoading && nextProps.selections.activeTab === 'status') ||
+        (activeTab === 'history' && nextProps.selections.activeTab === 'status')) {
+      const { workingDataset, selections, setSelectedListItem } = nextProps
+      const { component } = selections
+      const { status } = workingDataset
+      if (component === '' || !status[component]) {
+        if (status['meta']) {
+          setSelectedListItem('component', 'meta')
+        }
+        if (status['body']) {
+          setSelectedListItem('component', 'body')
+        }
+        setSelectedListItem('component', 'schema')
       }
     }
 
@@ -99,7 +138,9 @@ export default class Dataset extends React.Component<DatasetProps> {
     }
 
     return {
-      saveIsLoading: newSaveIsLoading
+      saveIsLoading: newSaveIsLoading,
+      activeTab: nextProps.selections.activeTab,
+      workingDatasetIsLoading: nextProps.workingDataset.isLoading
     }
   }
 
@@ -108,11 +149,14 @@ export default class Dataset extends React.Component<DatasetProps> {
     const { ui, selections, workingDataset } = this.props
     const { showDatasetList, datasetSidebarWidth } = ui
     const {
+      name,
       activeTab,
       component: selectedComponent,
-      commit: selectedCommit
+      commit: selectedCommit,
+      isLinked
     } = selections
-    const { name, history, status } = workingDataset
+
+    const { history, status, path } = workingDataset
 
     // actions
     const {
@@ -123,31 +167,11 @@ export default class Dataset extends React.Component<DatasetProps> {
       fetchWorkingHistory
     } = this.props
 
-    // mainContent will either be a loading spinner, or content based on the selected
-    // sidebar list items
-    let mainContent
-    if (workingDataset.isLoading || workingDataset.peername === '') {
-      // TODO (chriswhong) add a proper loading spinner
-      mainContent = <div>Loading</div>
-    } else {
-      if (activeTab === 'status') {
-        const componentStatus = status[selectedComponent]
-        mainContent = <DatasetComponent component={selectedComponent} componentStatus={componentStatus}/>
-      } else {
-        if (workingDataset.history) {
-          mainContent = <CommitDetailsContainer />
-        } else {
-          mainContent = <div>Loading History</div>
-        }
-      }
-    }
-
-    const isLinked = !!workingDataset.linkpath
     const linkButton = isLinked ? (
       <div
         className='header-column'
         data-tip={workingDataset.linkpath}
-        onClick={() => { shell.openItem(String(workingDataset.linkpath)) }}
+        onClick={() => { shell.openItem(workingDataset.linkpath) }}
       >
         <div className='header-column-icon'>
           <span className='icon-inline'>openfolder</span>
@@ -179,7 +203,7 @@ export default class Dataset extends React.Component<DatasetProps> {
               <img className='app-loading-blob' src={logo} />
             </div>
             <div className='header-column-text'>
-              <div className="label">Current Dataset</div>
+              <div className="label">{name ? 'Current Dataset' : 'Choose a Dataset'}</div>
               <div className="name">{name}</div>
             </div>
             {
@@ -200,6 +224,7 @@ export default class Dataset extends React.Component<DatasetProps> {
             maximumWidth={495}
           >
             <DatasetSidebar
+              path={path}
               isLinked={isLinked}
               activeTab={activeTab}
               selectedComponent={selectedComponent}
@@ -212,10 +237,28 @@ export default class Dataset extends React.Component<DatasetProps> {
             />
           </Resizable>
           <div className='content-wrapper'>
-            {showDatasetList && <div className='overlay'></div>}
-            {mainContent}
+            {showDatasetList && <div className='overlay' onClick={toggleDatasetList}></div>}
+            <div className='transition-group' >
+              <CSSTransition
+                in={activeTab === 'status'}
+                classNames='fade'
+                timeout={300}
+                mountOnEnter
+                unmountOnExit
+              >
+                <DatasetComponent component={selectedComponent} componentStatus={status[selectedComponent]} isLoading={workingDataset.isLoading}/>
+              </CSSTransition>
+              <CSSTransition
+                in={activeTab === 'history'}
+                classNames='fade'
+                timeout={300}
+                mountOnEnter
+                unmountOnExit
+              >
+                <CommitDetailsContainer />
+              </CSSTransition>
+            </div>
           </div>
-
         </div>
         {
           showDatasetList && (

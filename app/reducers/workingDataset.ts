@@ -9,13 +9,14 @@ const initialState: WorkingDataset = {
   peername: '',
   name: '',
   status: {},
-  isLoading: false,
-  linkpath: null,
+  isLoading: true,
+  linkpath: '',
+  hasHistory: true,
   components: {
     body: {
       value: [],
       pageInfo: {
-        isFetching: false,
+        isFetching: true,
         page: 0,
         pageSize: 100,
         fetchedAll: false
@@ -30,7 +31,7 @@ const initialState: WorkingDataset = {
   },
   history: {
     pageInfo: {
-      isFetching: false,
+      isFetching: true,
       page: 0,
       fetchedAll: false,
       pageSize: 0
@@ -47,10 +48,7 @@ const [DATASET_BODY_REQ, DATASET_BODY_SUCC, DATASET_BODY_FAIL] = apiActionTypes(
 const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction): WorkingDataset | null => {
   switch (action.type) {
     case DATASET_REQ:
-      return {
-        ...state,
-        isLoading: true
-      }
+      return initialState
     case DATASET_SUCC:
       const { name, path, peername, published, dataset } = action.payload.data
       return {
@@ -63,12 +61,9 @@ const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction
         components: {
           body: {
             pageInfo: {
-              ...state.components.body.pageInfo,
-              isFetching: false,
-              page: 0,
-              fetchedAll: false
+              ...state.components.body.pageInfo
             },
-            value: []
+            value: state.components.body.value
           },
           meta: {
             value: dataset.meta
@@ -96,8 +91,9 @@ const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction
     case DATASET_HISTORY_SUCC:
       return {
         ...state,
+        hasHistory: true,
         history: {
-          ...history,
+          ...state.history,
           value: state.history.value
             ? state.history.value.concat(action.payload.data)
             : action.payload.data,
@@ -105,7 +101,14 @@ const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction
         }
       }
     case DATASET_HISTORY_FAIL:
-      return state
+      return {
+        ...state,
+        hasHistory: !action.payload.err.message.includes('no history'),
+        history: {
+          ...state.history,
+          pageInfo: withPagination(action, state.history.pageInfo)
+        }
+      }
 
     case DATASET_STATUS_REQ:
       return state
@@ -118,7 +121,7 @@ const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction
         }, {})
       // check filepath in the first element in the payload to determine whether the
       // dataset is linked
-      let linkpath = null
+      let linkpath = ''
       const { filepath } = action.payload.data[0]
       if (filepath !== 'repo') {
         linkpath = filepath.substring(0, (filepath.lastIndexOf('/')))
@@ -177,7 +180,7 @@ const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction
             ...state.body,
             error: action.payload.err,
             pageInfo: {
-              ...state.body.pageInfo,
+              ...state.components.body.pageInfo,
               isFetching: false
             }
           }

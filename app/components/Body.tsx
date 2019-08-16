@@ -1,66 +1,69 @@
 import * as React from 'react'
 import { ApiAction } from '../store/api'
-import { CSSTransition } from 'react-transition-group'
-import HandsonTable from './HandsonTable'
+import Toast, { ToastTypes } from './chrome/Toast'
 
 import { PageInfo } from '../models/store'
+import SpinnerWithIcon from './chrome/SpinnerWithIcon'
+import HandsonTable from './HandsonTable'
+import { CSSTransition } from 'react-transition-group'
 
 export interface BodyProps {
+  peername: string
+  name: string
+  path: string
   value: any[]
   pageInfo: PageInfo
   headers: any[]
-  onFetch: (page: number, pageSize: number) => Promise<ApiAction>
+  onFetch: (page?: number, pageSize?: number) => Promise<ApiAction>
 }
 
-export default class Body extends React.Component<BodyProps> {
-  constructor (props: BodyProps) {
-    super(props)
-
-    this.state = {}
-    this.handleScrollToBottom.bind(this)
+const Body: React.FunctionComponent<BodyProps> = ({ value, pageInfo, headers, onFetch }) => {
+  if (!value || value.length === 0) {
+    return <SpinnerWithIcon loading={true} />
   }
 
-  static getDerivedStateFromProps (nextProps: BodyProps) {
-    const { value, pageInfo, onFetch } = nextProps
-    const { isFetching, fetchedAll } = pageInfo
-    if (
-      value.length === 0 &&
-      isFetching === false &&
-      fetchedAll === false
-    ) {
-      onFetch(pageInfo.page + 1, pageInfo.pageSize)
+  const [isLoadingFirstPage, setIsLoadingFirstPage] = React.useState(false)
+  const isLoadingFirstPageRef = React.useRef(pageInfo.page === 1 && pageInfo.isFetching)
 
-      return null
+  const loadingTimeout = setTimeout(() => {
+    if (isLoadingFirstPageRef.current) {
+      setIsLoadingFirstPage(true)
     }
+    clearTimeout(loadingTimeout)
+  }, 250)
 
-    return null
-  }
+  React.useEffect(() => {
+    if (pageInfo.page === 1 && pageInfo.isFetching) {
+      isLoadingFirstPageRef.current = true
+    }
+  }, [pageInfo.page, pageInfo.isFetching])
 
-  handleScrollToBottom () {
-    const { pageInfo, onFetch } = this.props
+  const handleScrollToBottom = () => {
     onFetch(pageInfo.page + 1, pageInfo.pageSize)
   }
-
-  render () {
-    return (
-      <div className='body-container'>
-        {
-          this.props.value && (
-            <HandsonTable
-              headers={this.props.headers}
-              body={this.props.value}
-              onScrollToBottom={() => { this.handleScrollToBottom() }}
-            />
-          )
-        }
-        <CSSTransition
-          in={this.props.pageInfo.isFetching && this.props.pageInfo.page > 0}
-          classNames="body-toast"
-          timeout={300}
-        >
-          <div className='body-toast'>Loading more rows...</div>
-        </CSSTransition>
-      </div>
-    )
-  }
+  return (
+    <div className='transition-group'>
+      <CSSTransition
+        in={!isLoadingFirstPage}
+        timeout={300}
+        classNames='fade'
+      >
+        <div id='transition-wrap'>
+          <HandsonTable
+            headers={headers}
+            body={value}
+            onScrollToBottom={() => { handleScrollToBottom() }}
+          />
+          <Toast
+            show={pageInfo.isFetching && pageInfo.page > 0}
+            type={ToastTypes.message}
+            text='Loading more rows...'
+          />
+        </div>
+      </CSSTransition>
+      <SpinnerWithIcon loading={isLoadingFirstPage}/>
+    </div>
+  )
 }
+
+export default Body

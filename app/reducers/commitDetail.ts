@@ -8,12 +8,12 @@ const initialState: CommitDetails = {
   peername: '',
   name: '',
   status: {},
-  isLoading: false,
+  isLoading: true,
   components: {
     body: {
       value: [],
       pageInfo: {
-        isFetching: false,
+        isFetching: true,
         page: 0,
         pageSize: 100,
         fetchedAll: false
@@ -35,10 +35,7 @@ const [COMMITBODY_REQ, COMMITBODY_SUCC, COMMITBODY_FAIL] = apiActionTypes('commi
 const commitDetailsReducer: Reducer = (state = initialState, action: AnyAction): CommitDetails => {
   switch (action.type) {
     case COMMITDATASET_REQ:
-      return {
-        ...state,
-        isLoading: true
-      }
+      return initialState
     case COMMITDATASET_SUCC:
       const { name, path, peername, published, dataset } = action.payload.data
       return {
@@ -50,13 +47,7 @@ const commitDetailsReducer: Reducer = (state = initialState, action: AnyAction):
         isLoading: false,
         components: {
           body: {
-            value: [],
-            pageInfo: {
-              ...state.components.body.pageInfo,
-              isFetching: false,
-              page: 0,
-              fetchedAll: false
-            }
+            ...state.components.body
           },
           meta: {
             value: dataset.meta
@@ -68,7 +59,7 @@ const commitDetailsReducer: Reducer = (state = initialState, action: AnyAction):
       }
     case COMMITDATASET_FAIL:
       return {
-        ...state,
+        ...initialState,
         isLoading: false
       }
 

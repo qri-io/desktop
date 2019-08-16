@@ -21,7 +21,7 @@ export function setPeername (newPeername: string): ApiActionThunk {
   return async (dispatch, getStore) => {
     const { session } = getStore()
     if (newPeername === session.peername) {
-      return new Promise(resolve => resolve({ type: 'NO_ACTION_NEEDED' }))
+      return new Promise(resolve => resolve())
     }
     const newSession = Object.assign({}, session, { peername: newPeername })
     const action = {

@@ -6,6 +6,7 @@ import { Action } from 'redux'
 import { setSelectedListItem } from './selections'
 
 const pageSizeDefault = 15
+const bodyPageSizeDefault = 100
 
 export function pingApi (): ApiActionThunk {
   return async (dispatch) => {
@@ -30,14 +31,18 @@ export function fetchWorkingDatasetDetails (): ApiActionThunk {
     let response: Action
 
     response = await fetchWorkingDataset()(dispatch, getState)
-    response = await whenOk(fetchWorkingHistory())(response)
     response = await whenOk(fetchWorkingStatus())(response)
+    response = await whenOk(fetchBody())(response)
+    response = await whenOk(fetchWorkingHistory())(response)
 
     // set selected commit to be the first on the list
-    const { workingDataset } = getState()
+    const { workingDataset, selections } = getState()
     const { history } = workingDataset
-    await dispatch(setSelectedListItem('commit', history.value[0].path))
+    const { commit } = selections
 
+    if (history.value.length !== 0 && (commit === '' || !history.value.some(c => c.path === commit))) {
+      await dispatch(setSelectedListItem('commit', history.value[0].path))
+    }
     return response
   }
 }
@@ -45,11 +50,12 @@ export function fetchWorkingDatasetDetails (): ApiActionThunk {
 export function fetchMyDatasets (page: number = 1, pageSize: number = pageSizeDefault): ApiActionThunk {
   return async (dispatch, getState) => {
     const state = getState()
-    if (state &&
+    if (page !== 1 &&
+          state &&
           state.myDatasets &&
           state.myDatasets.pageInfo &&
           state.myDatasets.pageInfo.fetchedAll) {
-      return new Promise(resolve => resolve({ type: 'NO_ACTION_NEEDED' }))
+      return new Promise(resolve => resolve())
     }
     const listAction: ApiAction = {
       type: 'list',
@@ -78,23 +84,18 @@ export function fetchMyDatasets (page: number = 1, pageSize: number = pageSizeDe
 
 export function fetchWorkingDataset (): ApiActionThunk {
   return async (dispatch, getState) => {
-    const { selections, myDatasets } = getState()
-    const { peername, name } = selections
-
-    // find the selected dataset in myDatasets to determine isLinked
-    const match = myDatasets.value.find((d) => d.name === name && d.peername === peername)
-
-    const params = (match && match.isLinked) ? { fsi: true } : {}
+    const { selections } = getState()
+    const { peername, name, isLinked } = selections
 
     const action = {
       type: 'dataset',
       [CALL_API]: {
         endpoint: 'dataset',
         method: 'GET',
-        params,
+        params: { fsi: isLinked },
         segments: {
-          peername: selections.peername,
-          name: selections.name
+          peername,
+          name
         },
         map: (data: Record<string, string>): Dataset => {
           return data as Dataset
@@ -113,6 +114,7 @@ export function fetchCommitDetail (): ApiActionThunk {
 
     response = await fetchCommitDataset()(dispatch, getState)
     response = await whenOk(fetchCommitStatus())(response)
+    response = await whenOk(fetchCommitBody())(response)
 
     return response
   }
@@ -184,17 +186,19 @@ export function fetchWorkingHistory (page: number = 1, pageSize: number = pageSi
         state.workingDataset.history &&
         state.workingDataset.history.pageInfo &&
         state.workingDataset.history.pageInfo.fetchedAll) {
-      return new Promise(resolve => resolve({ type: 'NO_ACTION_NEEDED' }))
+      return new Promise(resolve => resolve())
     }
     const { selections } = getState()
+    const { peername, name, isLinked } = selections
     const action = {
       type: 'history',
       [CALL_API]: {
         endpoint: 'history',
         method: 'GET',
+        params: { fsi: isLinked },
         segments: {
-          peername: selections.peername,
-          name: selections.name
+          peername: peername,
+          name: name
         },
         pageInfo: {
           page,
@@ -220,14 +224,16 @@ export function fetchWorkingHistory (page: number = 1, pageSize: number = pageSi
 export function fetchWorkingStatus (): ApiActionThunk {
   return async (dispatch, getState) => {
     const { selections } = getState()
+    const { peername, name, isLinked } = selections
     const action = {
       type: 'status',
       [CALL_API]: {
         endpoint: 'status',
         method: 'GET',
+        params: { fsi: isLinked },
         segments: {
-          peername: selections.peername,
-          name: selections.name
+          peername: peername,
+          name: name
         },
         map: (data: Array<Record<string, string>>): ComponentStatus[] => {
           return data.map((d) => {
@@ -245,13 +251,14 @@ export function fetchWorkingStatus (): ApiActionThunk {
   }
 }
 
-export function fetchBody (page: number, pageSize: number): ApiActionThunk {
+export function fetchBody (page: number = 1, pageSize: number = bodyPageSizeDefault): ApiActionThunk {
   return async (dispatch, getState) => {
-    const { workingDataset } = getState()
-    const { peername, name, path } = workingDataset
+    const { workingDataset, selections } = getState()
+    const { peername, name, isLinked } = selections
+    const { path } = workingDataset
 
     if (workingDataset.components.body.pageInfo.fetchedAll) {
-      return new Promise(resolve => resolve({ type: 'NO_ACTION_NEEDED' }))
+      return new Promise(resolve => resolve())
     }
 
     const action = {
@@ -263,6 +270,7 @@ export function fetchBody (page: number, pageSize: number): ApiActionThunk {
           page,
           pageSize
         },
+        params: { fsi: isLinked },
         segments: {
           peername,
           name,
@@ -278,13 +286,13 @@ export function fetchBody (page: number, pageSize: number): ApiActionThunk {
   }
 }
 
-export function fetchCommitBody (page: number, pageSize: number): ApiActionThunk {
+export function fetchCommitBody (page: number = 1, pageSize: number = bodyPageSizeDefault): ApiActionThunk {
   return async (dispatch, getState) => {
     const { selections, commitDetails } = getState()
     let { peername, name, commit: path } = selections
 
     if (commitDetails.components.body.pageInfo.fetchedAll) {
-      return new Promise(resolve => resolve({ type: 'NO_ACTION_NEEDED' }))
+      return new Promise(resolve => resolve())
     }
 
     const action = {
