@@ -1,6 +1,5 @@
 import { CALL_API, ApiActionThunk } from '../store/api'
 import { Session } from '../models/session'
-import { NO_ACTION } from './api'
 
 export function fetchSession (): ApiActionThunk {
   return async (dispatch) => {
@@ -22,7 +21,7 @@ export function setPeername (newPeername: string): ApiActionThunk {
   return async (dispatch, getStore) => {
     const { session } = getStore()
     if (newPeername === session.peername) {
-      return new Promise(resolve => resolve(NO_ACTION))
+      return new Promise(resolve => resolve())
     }
     const newSession = Object.assign({}, session, { peername: newPeername })
     const action = {

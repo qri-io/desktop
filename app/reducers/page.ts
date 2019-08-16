@@ -11,7 +11,7 @@ const initialPageInfo = {
 }
 
 export function withPagination (action: AnyAction, pageInfo: PageInfo = initialPageInfo): PageInfo {
-  switch (getActionType(action.type)) {
+  switch (getActionType(action)) {
     case 'request':
       return Object.assign({},
         pageInfo,

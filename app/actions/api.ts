@@ -8,10 +8,6 @@ import { setSelectedListItem } from './selections'
 const pageSizeDefault = 15
 const bodyPageSizeDefault = 100
 
-// use NO_ACTION when you need to skip/debounce unneccessary calls to the api
-// it will still register as a success
-export const NO_ACTION: Action = { type: 'NO_ACTION_SUCCESS' }
-
 export function pingApi (): ApiActionThunk {
   return async (dispatch) => {
     const pingAction: ApiAction = {
@@ -59,7 +55,7 @@ export function fetchMyDatasets (page: number = 1, pageSize: number = pageSizeDe
           state.myDatasets &&
           state.myDatasets.pageInfo &&
           state.myDatasets.pageInfo.fetchedAll) {
-      return new Promise(resolve => resolve(NO_ACTION))
+      return new Promise(resolve => resolve())
     }
     const listAction: ApiAction = {
       type: 'list',
@@ -190,7 +186,7 @@ export function fetchWorkingHistory (page: number = 1, pageSize: number = pageSi
         state.workingDataset.history &&
         state.workingDataset.history.pageInfo &&
         state.workingDataset.history.pageInfo.fetchedAll) {
-      return new Promise(resolve => resolve(NO_ACTION))
+      return new Promise(resolve => resolve())
     }
     const { selections } = getState()
     const { peername, name, isLinked } = selections
@@ -262,7 +258,7 @@ export function fetchBody (page: number = 1, pageSize: number = bodyPageSizeDefa
     const { path } = workingDataset
 
     if (workingDataset.components.body.pageInfo.fetchedAll) {
-      return new Promise(resolve => resolve(NO_ACTION))
+      return new Promise(resolve => resolve())
     }
 
     const action = {
@@ -296,7 +292,7 @@ export function fetchCommitBody (page: number = 1, pageSize: number = bodyPageSi
     let { peername, name, commit: path } = selections
 
     if (commitDetails.components.body.pageInfo.fetchedAll) {
-      return new Promise(resolve => resolve(NO_ACTION))
+      return new Promise(resolve => resolve())
     }
 
     const action = {

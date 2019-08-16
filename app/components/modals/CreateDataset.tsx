@@ -221,9 +221,7 @@ const CreateDataset: React.FunctionComponent<CreateDatasetProps> = ({ onDismisse
       .then(() => {
         fetchMyDatasets()
         setWorkingDataset('me', datasetName, true)
-          .then(() => {
-            onDismissed()
-          })
+          .then(onDismissed)
       })
       .catch((action) => {
         setLoading(false)

@@ -45,10 +45,9 @@ const ChoosePeername: React.FunctionComponent<ChoosePeernameProps> = (props: Cho
           .then((action) => {
             setLoading(false)
             // TODO (ramfox): possibly these should move to the reducer
-            if (getActionType(action.type) === 'failure') {
+            if (getActionType(action) === 'failure') {
               setError(action.payload.err.message)
-            }
-            if (getActionType(action.type) === 'success') {
+            } else {
               setHasSetPeername()
             }
           })
