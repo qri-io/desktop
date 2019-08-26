@@ -50,7 +50,7 @@ export interface UI {
   apiConnection: ApiConnection
   showDatasetList: boolean
   hasAcceptedTOS: boolean
-  hasSetPeername: boolean
+  hasSignedUp: boolean
   modal?: Modal
   showDiff: boolean
   datasetSidebarWidth: number

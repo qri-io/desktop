@@ -11,14 +11,14 @@ import {
 
 import {
   acceptTOS,
-  setHasSetPeername,
+  setHasSignedUp,
   closeToast,
   setApiConnection
 } from '../actions/ui'
 
 import {
   fetchSession,
-  setPeername
+  signup
 } from '../actions/session'
 
 import {
@@ -35,10 +35,10 @@ const AppContainer = connect(
     const loading = ui.apiConnection === 0
     const hasDatasets = myDatasets.value.length !== 0
     const { id: sessionID, peername } = session
-    const { hasAcceptedTOS, hasSetPeername, apiConnection, toast } = ui
+    const { hasAcceptedTOS, hasSignedUp, apiConnection, toast } = ui
     return {
       hasAcceptedTOS,
-      hasSetPeername,
+      hasSignedUp,
       hasDatasets,
       loading,
       sessionID,
@@ -51,8 +51,8 @@ const AppContainer = connect(
     fetchSession,
     fetchMyDatasets,
     acceptTOS,
-    setPeername,
-    setHasSetPeername,
+    signup,
+    setHasSignedUp,
     addDataset: addDatasetAndFetch,
     initDataset: initDatasetAndFetch,
     closeToast,

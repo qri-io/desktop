@@ -116,7 +116,8 @@ const endpointMap: Record<string, string> = {
   'health': 'health',
   'add': 'add',
   'init': 'init/',
-  'ping': 'health'
+  'ping': 'health',
+  'signin': 'signin'
 }
 
 function apiUrl (endpoint: string, segments?: ApiSegments, query?: ApiQuery, pageInfo?: ApiPagination): [string, string] {
@@ -201,6 +202,27 @@ export const apiMiddleware: Middleware = () => (next: Dispatch<AnyAction>) => as
     const [REQ_TYPE, SUCC_TYPE, FAIL_TYPE] = apiActionTypes(action.type)
 
     next({ type: REQ_TYPE, pageInfo })
+
+    // TODO (chriswhong): Turn this into dev middleware
+    // // to simulate an API failure response in development, add dummySuccess to the action object
+    // if (action.dummyFailure) {
+    //   return next({
+    //     type: FAIL_TYPE,
+    //     payload: {
+    //       data: action.dummyFailure
+    //     }
+    //   })
+    // }
+    //
+    // // to simulate an API success response in development, add dummySuccess to the action object
+    // if (action.dummySuccess) {
+    //   return next({
+    //     type: SUCC_TYPE,
+    //     payload: {
+    //       data: action.dummySuccess
+    //     }
+    //   })
+    // }
 
     try {
       data = await getAPIJSON(endpoint, method, segments, params, pageInfo, body)

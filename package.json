@@ -127,6 +127,8 @@
     "@types/react-router-redux": "5.0.18",
     "@types/react-transition-group": "2.9.2",
     "@types/redux-logger": "3.0.7",
+    "@types/react-tooltip": "3.9.3",
+    "@types/underscore": "1.9.2",
     "@types/sinon": "7.0.13",
     "@typescript-eslint/eslint-plugin": "1.11.0",
     "@typescript-eslint/parser": "1.11.0",
@@ -178,8 +180,6 @@
   },
   "dependencies": {
     "@handsontable/react": "3.0.0",
-    "@types/react-tooltip": "3.9.3",
-    "@types/underscore": "1.9.2",
     "classnames": "2.2.6",
     "electron-debug": "3.0.1",
     "font-awesome": "4.7.0",
@@ -197,7 +197,8 @@
     "redux": "4.0.4",
     "redux-thunk": "2.3.0",
     "source-map-support": "0.5.12",
-    "underscore": "1.9.1"
+    "underscore": "1.9.1",
+    "use-debounce": "3.0.0"
   },
   "devEngines": {
     "node": ">=6.x",

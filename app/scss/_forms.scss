@@ -95,9 +95,9 @@ select.form-control {
   display: block;
 }
 
-// 
+//
 // error
-// 
+//
 .has-error {
   border-bottom-color: $input-border-color;
   &:focus {
@@ -249,9 +249,9 @@ select.form-control-lg {
 }
 
 // Form Wrap
-// 
-// style used to wrap forms 
-.form-wrap {  
+//
+// style used to wrap forms
+.form-wrap {
   margin-bottom: 20px;
   padding: 10px;
 }
@@ -464,7 +464,7 @@ select.form-control-lg {
   width: 100%;
   padding: 7px;
   border-radius: 5px;
-  margin-top: 10px;
+  margin-top: 5px;
   background-image: none;
   background: $white;
   background-clip: padding-box;

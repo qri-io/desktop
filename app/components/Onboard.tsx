@@ -4,16 +4,16 @@ import { ApiAction } from '../store/api'
 import { CSSTransition } from 'react-transition-group'
 
 import Welcome from './Welcome'
-import ChoosePeername from './ChoosePeername'
+import Signup from './Signup'
 
 export interface OnboardProps {
   peername: string
   hasAcceptedTOS: boolean
-  hasSetPeername: boolean
+  hasSignedUp: boolean
 
   acceptTOS: () => Action
-  setHasSetPeername: () => Action
-  setPeername: (newPeername: string) => Promise<ApiAction>
+  setHasSignedUp: () => Action
+  signup: (username: string, email: string, password: string) => Promise<ApiAction>
 }
 
 // Onboard is a series of flows for onboarding a new user
@@ -21,10 +21,10 @@ const Onboard: React.FunctionComponent<OnboardProps> = (
   {
     peername,
     hasAcceptedTOS,
-    hasSetPeername,
+    hasSignedUp,
     acceptTOS,
-    setPeername,
-    setHasSetPeername
+    signup,
+    setHasSignedUp
   }) => {
   const renderWelcome = () => {
     return (
@@ -43,16 +43,15 @@ const Onboard: React.FunctionComponent<OnboardProps> = (
   const renderChoosePeerName = () => {
     return (
       <CSSTransition
-        in={!hasSetPeername}
+        in={!hasSignedUp}
         classNames="fade"
         component="div"
         timeout={1000}
         unmountOnExit
       >
-        < ChoosePeername
-          peername={peername}
-          setPeername={setPeername}
-          setHasSetPeername={setHasSetPeername}
+        <Signup
+          signup={signup}
+          setHasSignedUp={setHasSignedUp}
         />
       </CSSTransition>
     )

@@ -21,8 +21,8 @@ const TextInput: React.FunctionComponent<TextInputProps> = ({ label, name, type,
     helpText)
   const labelColor = 'primary'
   return (
-    <div>
-      <div>
+    <>
+      <div className='text-input-container'>
         {label && <span className={labelColor}>{label}</span>}
         <input
           id={name}
@@ -38,7 +38,7 @@ const TextInput: React.FunctionComponent<TextInputProps> = ({ label, name, type,
       <div style={{ height: 20 }}>
         <h6 style={{ textAlign: 'left', margin: 3 }} className={feedbackColor} >{feedback || ''}</h6>
       </div>
-    </div>
+    </>
   )
 }
 

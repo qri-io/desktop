@@ -31,7 +31,7 @@ export const acceptTOS = () => {
   }
 }
 
-export const setHasSetPeername = () => {
+export const setHasSignedUp = () => {
   return {
     type: UI_SET_PEERNAME
   }

@@ -13,7 +13,7 @@ export const UI_SET_API_CONNECTION = 'UI_SET_API_CONNECTION'
 
 export const defaultSidebarWidth = 250
 export const hasAcceptedTOSKey = 'acceptedTOS'
-export const hasSetPeernameKey = 'setPeername'
+export const hasSignedUpKey = 'setPeername'
 
 const [, HEALTH_SUCCESS] = apiActionTypes('health')
 
@@ -35,7 +35,7 @@ const initialState = {
   apiConnection: 0,
   showDatasetList: false,
   hasAcceptedTOS: store().getItem(hasAcceptedTOSKey) === 'true',
-  hasSetPeername: store().getItem(hasSetPeernameKey) === 'true',
+  hasSignedUp: store().getItem(hasSignedUpKey) === 'true',
   showDiff: false,
   datasetSidebarWidth: getSidebarWidth('datasetSidebarWidth'),
   commitSidebarWidth: getSidebarWidth('commitSidebarWidth'),
@@ -65,8 +65,8 @@ export default (state = initialState, action: AnyAction) => {
       return Object.assign({}, state, { hasAcceptedTOS: true })
 
     case UI_SET_PEERNAME:
-      store().setItem(hasSetPeernameKey, 'true')
-      return Object.assign({}, state, { hasSetPeername: true })
+      store().setItem(hasSignedUpKey, 'true')
+      return Object.assign({}, state, { hasSignedUp: true })
 
     case UI_OPEN_TOAST:
       const { type: toastType, message } = action.payload
