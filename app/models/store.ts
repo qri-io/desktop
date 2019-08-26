@@ -1,5 +1,5 @@
 import { RouterState } from 'react-router-redux'
-import { Commit, Meta } from './dataset'
+import { Commit, Meta, Structure } from './dataset'
 import { Session } from './session'
 
 enum ApiConnection {
@@ -120,6 +120,7 @@ export interface CommitDetails {
   name: string
   status: DatasetStatus
   isLoading: boolean
+  structure: Structure | null
   components: {
     body: {
       value: any[] | undefined

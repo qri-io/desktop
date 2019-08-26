@@ -27,7 +27,9 @@ const mapStateToProps = (state: Store, ownProps: BodyContainerProps) => {
   const { workingDataset, commitDetails, selections } = state
   const dataset = history ? commitDetails : workingDataset
   const { pageInfo, value } = dataset.components.body
+
   const { peername, name, commit: path } = selections
+  const { structure } = dataset
 
   const headers = extractColumnHeaders(workingDataset)
 
@@ -39,6 +41,7 @@ const mapStateToProps = (state: Store, ownProps: BodyContainerProps) => {
     pageInfo,
     headers,
     value,
+    structure,
     datasetLoading: workingDataset.isLoading
   }
 }

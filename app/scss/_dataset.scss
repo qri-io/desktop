@@ -168,7 +168,7 @@ $header-font-size: .9rem;
           flex: 1;
           height: 100%;
           width: 100%;
-          overflow: hidden;
+          overflow-y: scroll;
         }
       }
 
@@ -375,7 +375,6 @@ $header-font-size: .9rem;
 
   .commit-details-header {
     height: 60px;
-    max-height: 60px;
     padding: $sidebar-item-padding;
     border-bottom: $list-item-bottom-border;
   }

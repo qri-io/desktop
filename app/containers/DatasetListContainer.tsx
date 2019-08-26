@@ -4,11 +4,19 @@ import { fetchMyDatasets } from '../actions/api'
 import { setWorkingDataset } from '../actions/selections'
 import DatasetList from '../components/DatasetList'
 
-const mapStateToProps = (state: any) => {
+import { Modal } from '../models/modals'
+
+interface DatasetListContainerProps {
+  setModal: (modal: Modal) => void
+}
+
+const mapStateToProps = (state: any, ownProps: DatasetListContainerProps) => {
   const { myDatasets, workingDataset } = state
+  const { setModal } = ownProps
   return {
     myDatasets,
-    workingDataset
+    workingDataset,
+    setModal
   }
 }
 

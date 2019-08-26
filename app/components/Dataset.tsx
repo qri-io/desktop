@@ -12,6 +12,7 @@ import DatasetListContainer from '../containers/DatasetListContainer'
 import CommitDetailsContainer from '../containers/CommitDetailsContainer'
 
 import { CSSTransition } from 'react-transition-group'
+import { Modal } from '../models/modals'
 
 import { defaultSidebarWidth } from '../reducers/ui'
 
@@ -30,6 +31,8 @@ export interface DatasetProps {
   myDatasets: MyDatasets
   workingDataset: WorkingDataset
   mutations: Mutations
+  setModal: (modal: Modal) => void
+
   // actions
   toggleDatasetList: () => Action
   setActiveTab: (activeTab: string) => Action
@@ -146,7 +149,7 @@ export default class Dataset extends React.Component<DatasetProps> {
 
   render () {
     // unpack all the things
-    const { ui, selections, workingDataset } = this.props
+    const { ui, selections, workingDataset, setModal } = this.props
     const { showDatasetList, datasetSidebarWidth } = ui
     const {
       name,
@@ -266,7 +269,7 @@ export default class Dataset extends React.Component<DatasetProps> {
               className='dataset-list'
               style={{ width: datasetSidebarWidth }}
             >
-              <DatasetListContainer />
+              <DatasetListContainer setModal={setModal} />
             </div>
           )
         }
