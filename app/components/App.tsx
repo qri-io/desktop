@@ -21,10 +21,10 @@ export interface AppProps {
   hasDatasets: boolean
   loading: boolean
   sessionID: string
-  peername: string
   apiConnection?: number
   hasAcceptedTOS: boolean
   hasSignedUp: boolean
+  hasSignedIn: boolean
   toast: IToast
   fetchSession: () => Promise<ApiAction>
   fetchMyDatasets: (page?: number, pageSize?: number) => Promise<ApiAction>
@@ -33,7 +33,9 @@ export interface AppProps {
   initDataset: (path: string, name: string, format: string) => Promise<ApiAction>
   acceptTOS: () => Action
   setHasSignedUp: () => Action
+  setHasSignedIn: () => Action
   signup: (username: string, email: string, password: string) => Promise<ApiAction>
+  signin: (username: string, password: string) => Promise<ApiAction>
   closeToast: () => Action
   setApiConnection: (status: number) => Action
   pingApi: () => Promise<ApiAction>
@@ -174,13 +176,15 @@ export default class App extends React.Component<AppProps, AppState> {
   render () {
     const {
       hasSignedUp,
+      hasSignedIn,
       hasAcceptedTOS,
-      peername,
       acceptTOS,
       signup,
+      signin,
       toast,
       closeToast,
-      setHasSignedUp
+      setHasSignedUp,
+      setHasSignedIn
     } = this.props
     return (<div style={{
       height: '100%',
@@ -191,11 +195,13 @@ export default class App extends React.Component<AppProps, AppState> {
       {this.renderAppError()}
       {this.renderModal()}
       <Onboard
-        peername={peername}
         hasAcceptedTOS={hasAcceptedTOS}
         hasSignedUp={hasSignedUp}
+        hasSignedIn={hasSignedIn}
         setHasSignedUp={setHasSignedUp}
+        setHasSignedIn={setHasSignedIn}
         signup={signup}
+        signin={signin}
         acceptTOS={acceptTOS}
       />
       {this.renderNoDatasets()}

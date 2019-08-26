@@ -5,26 +5,30 @@ import { CSSTransition } from 'react-transition-group'
 
 import Welcome from './Welcome'
 import Signup from './Signup'
+import Signin from './Signin'
 
 export interface OnboardProps {
-  peername: string
   hasAcceptedTOS: boolean
   hasSignedUp: boolean
-
+  hasSignedIn: boolean
   acceptTOS: () => Action
   setHasSignedUp: () => Action
+  setHasSignedIn: () => Action
   signup: (username: string, email: string, password: string) => Promise<ApiAction>
+  signin: (username: string, password: string) => Promise<ApiAction>
 }
 
 // Onboard is a series of flows for onboarding a new user
 const Onboard: React.FunctionComponent<OnboardProps> = (
   {
-    peername,
     hasAcceptedTOS,
     hasSignedUp,
+    hasSignedIn,
     acceptTOS,
     signup,
-    setHasSignedUp
+    setHasSignedUp,
+    signin,
+    setHasSignedIn
   }) => {
   const renderWelcome = () => {
     return (
@@ -40,7 +44,7 @@ const Onboard: React.FunctionComponent<OnboardProps> = (
     )
   }
 
-  const renderChoosePeerName = () => {
+  const renderSignup = () => {
     return (
       <CSSTransition
         in={!hasSignedUp}
@@ -57,10 +61,28 @@ const Onboard: React.FunctionComponent<OnboardProps> = (
     )
   }
 
+  const renderSignin = () => {
+    return (
+      <CSSTransition
+        in={!hasSignedIn}
+        classNames="fade"
+        component="div"
+        timeout={1000}
+        unmountOnExit
+      >
+        <Signin
+          signin={signin}
+          setHasSignedIn={setHasSignedIn}
+        />
+      </CSSTransition>
+    )
+  }
+
   return (
     <div>
       {renderWelcome()}
-      {renderChoosePeerName()}
+      {renderSignup()}
+      {renderSignin()}
     </div>
   )
 }

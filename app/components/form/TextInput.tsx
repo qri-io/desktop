@@ -9,7 +9,7 @@ export interface TextInputProps {
   errorText?: string
   helpText?: string
   showHelpText?: boolean
-  onChange: (name: string, value: any, e: any) => void
+  onChange: (name: string, value: any) => void
   placeHolder?: string
   white?: boolean
 }
@@ -32,7 +32,7 @@ const TextInput: React.FunctionComponent<TextInputProps> = ({ label, name, type,
           className='input'
           value={value || ''}
           placeholder={placeHolder}
-          onChange={(e) => { onChange(name, e.target.value, e) }}
+          onChange={(e) => { onChange(name, e.target.value) }}
         />
       </div>
       <div style={{ height: 20 }}>

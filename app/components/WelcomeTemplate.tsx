@@ -28,7 +28,7 @@ const WelcomeTemplate: React.FunctionComponent<WelcomeTemplateProps> = ({ onAcce
         <img className='welcome-graphic' src={logo} />
         <div className='welcome-title'>
           <h2>{title}</h2>
-          <h6>{subtitle}</h6>
+          <h6 dangerouslySetInnerHTML={{ __html: subtitle }}></h6>
         </div>
         <div className='welcome-content'>
           {children}
