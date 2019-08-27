@@ -2,6 +2,8 @@ import * as React from 'react'
 import { Action } from 'redux'
 import classNames from 'classnames'
 import { DatasetStatus, ComponentType } from '../models/store'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faTags, faArchive, faTh, IconDefinition } from '@fortawesome/free-solid-svg-icons'
 
 interface StatusDotProps {
   status: string | undefined
@@ -34,6 +36,7 @@ export const StatusDot: React.FunctionComponent<StatusDotProps> = (props) => {
 interface FileRowProps {
   name: string
   displayName: string
+  icon?: IconDefinition
   filename?: string
   selected?: boolean
   status?: string
@@ -56,6 +59,9 @@ export const FileRow: React.FunctionComponent<FileRowProps> = (props) => (
     }}
     data-tip={props.tooltip}
   >
+    {props.icon && (<div className='icon-column'>
+      <FontAwesomeIcon icon={props.icon} size='sm'/>
+    </div>)}
     <div className='text-column'>
       <div className='text'>{props.displayName}</div>
       <div className='subtext'>{props.filename}</div>
@@ -80,23 +86,25 @@ const components = [
   {
     name: 'meta',
     displayName: 'Meta',
-    tooltip: 'title, description, tags, etc'
+    tooltip: 'title, description, tags, etc',
+    icon: faTags
   },
   {
     name: 'body',
     displayName: 'Body',
-    tooltip: "the dataset's content"
+    tooltip: 'the data',
+    icon: faArchive
   },
   {
     name: 'schema',
     displayName: 'Schema',
-    tooltip: 'the structure of the dataset'
+    tooltip: 'the structure of the dataset',
+    icon: faTh
   }
 ]
 
-export const getComponentDisplayName = (name: string) => {
-  const match = components.find(d => d.name === name)
-  return match && match.displayName
+export const getComponentDisplayProps = (name: string) => {
+  return components.filter(d => d.name === name)[0]
 }
 
 const ComponentList: React.FunctionComponent<ComponentListProps> = (props: ComponentListProps) => {
@@ -111,10 +119,10 @@ const ComponentList: React.FunctionComponent<ComponentListProps> = (props: Compo
   return (
     <div>
       <div className='sidebar-list-item sidebar-list-item-text sidebar-list-header'>
-        Dataset Components
+          Dataset Components
       </div>
       {
-        components.map(({ name, displayName, tooltip }) => {
+        components.map(({ name, displayName, tooltip, icon }) => {
           if (status[name]) {
             const { filepath, status: fileStatus } = status[name]
             let filename
@@ -129,6 +137,7 @@ const ComponentList: React.FunctionComponent<ComponentListProps> = (props: Compo
                 key={name}
                 displayName={displayName}
                 name={name}
+                icon={icon}
                 filename={isLinked ? filename : ''}
                 status={fileStatus}
                 selected={selectedComponent === name}
@@ -143,6 +152,7 @@ const ComponentList: React.FunctionComponent<ComponentListProps> = (props: Compo
                 key={name}
                 displayName={displayName}
                 name={displayName}
+                icon={icon}
                 disabled={true}
                 tooltip={tooltip}
               />

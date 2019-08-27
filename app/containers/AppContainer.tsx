@@ -11,9 +11,10 @@ import {
 
 import {
   acceptTOS,
-  setHasSignedUp,
+  setQriCloudAuthenticated,
   closeToast,
-  setApiConnection
+  setApiConnection,
+  setModal
 } from '../actions/ui'
 
 import {
@@ -35,15 +36,14 @@ const AppContainer = connect(
     const loading = ui.apiConnection === 0
     const hasDatasets = myDatasets.value.length !== 0
     const { id: sessionID, peername } = session
-    const { hasAcceptedTOS, hasSignedUp, apiConnection, toast } = ui
+    const { apiConnection, toast, modal } = ui
     return {
-      hasAcceptedTOS,
-      hasSignedUp,
       hasDatasets,
       loading,
       sessionID,
       peername,
       toast,
+      modal,
       apiConnection
     }
   },
@@ -52,13 +52,14 @@ const AppContainer = connect(
     fetchMyDatasets,
     acceptTOS,
     signup,
-    setHasSignedUp,
+    setQriCloudAuthenticated,
     addDataset: addDatasetAndFetch,
     initDataset: initDatasetAndFetch,
     closeToast,
     pingApi,
     setApiConnection,
-    setWorkingDataset
+    setWorkingDataset,
+    setModal
   },
   mergeProps
 )(App)

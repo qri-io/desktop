@@ -1,19 +1,23 @@
 import * as React from 'react'
+import { Action } from 'redux'
+import { Link } from 'react-router-dom'
+
 import WelcomeTemplate from './WelcomeTemplate'
 import DebouncedTextInput from './form/DebouncedTextInput'
 import getActionType from '../utils/actionType'
 import { ApiAction } from '../store/api'
-import { Action } from 'redux'
 
 import { validateUsername, validatePassword } from '../utils/formValidation'
 
 export interface SigninProps {
   signin: (username: string, password: string) => Promise<ApiAction>
-  setHasSignedIn: () => Action
+  onSuccess: () => Action
 }
 
 const Signin: React.FunctionComponent<SigninProps> = (props: SigninProps) => {
-  const { signin, setHasSignedIn } = props
+  const { signin, onSuccess } = props
+
+  const [serverError, setServerError] = React.useState()
 
   // track two form values
   const [username, setUsername] = React.useState('')
@@ -54,17 +58,12 @@ const Signin: React.FunctionComponent<SigninProps> = (props: SigninProps) => {
         signin(username, password)
           .then((action) => {
             setLoading(false)
-            // TODO (ramfox): possibly these should move to the reducer
+            // TODO (chriswhong): the server should be able to return field-specific errors
+            // e.g. err.username = 'The username is not available'
             if (getActionType(action) === 'failure') {
-              const { errors } = action.payload.data
-              const { username, password } = errors
-
-              // set server-side errors for each field
-              username && setUsernameError(username)
-              password && setPasswordError(password)
+              setServerError(action.payload.err.message)
             } else {
-              // SUCCESS!
-              setHasSignedIn()
+              onSuccess()
             }
           })
       })
@@ -76,10 +75,10 @@ const Signin: React.FunctionComponent<SigninProps> = (props: SigninProps) => {
       acceptEnabled={acceptEnabled}
       acceptText='Take me to Qri '
       title='Sign in to Qri'
-      subtitle={'Don\'t have an account? <a href=\'#\'> Sign Up</a>'}
       loading={loading}
       id='signin-page'
     >
+      <h6>Don&apos;t have an account yet? <Link to='/signup'>Sign Up</Link></h6>
       <div className='welcome-form'>
         <DebouncedTextInput
           name= 'username'
@@ -97,6 +96,7 @@ const Signin: React.FunctionComponent<SigninProps> = (props: SigninProps) => {
           value={password}
           errorText={passwordError}
           onChange={handleChange} />
+        <div className = 'error'> { serverError } </div>
       </div>
     </WelcomeTemplate>
   )

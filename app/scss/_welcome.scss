@@ -32,6 +32,12 @@
   justify-content: space-evenly;
 }
 
+.welcome-content {
+  h6 {
+    text-align: center
+  }
+}
+
 .welcome-accept {
   display: flex;
   flex-direction: row-reverse;

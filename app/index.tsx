@@ -1,7 +1,8 @@
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
-import AppContainer from './containers/AppContainer'
 import { Provider } from 'react-redux'
+import AppContainer from './containers/AppContainer'
+
 import './app.global.scss'
 
 const { configureStore } = require('./store/configureStore') // eslint-disable-line

@@ -24,7 +24,7 @@ interface Storage {
   }
 }
 
-export default function store () {
+export default function localStore () {
   if (window.localStorage) {
     return window.localStorage
   }

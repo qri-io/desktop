@@ -1,20 +1,23 @@
 import * as React from 'react'
+import { Action } from 'redux'
+import { Link } from 'react-router-dom'
+
 import WelcomeTemplate from './WelcomeTemplate'
 import DebouncedTextInput from './form/DebouncedTextInput'
 import getActionType from '../utils/actionType'
 import { ApiAction } from '../store/api'
-import { Action } from 'redux'
 
 import { validateUsername, validateEmail, validatePassword } from '../utils/formValidation'
 
 export interface SignupProps {
   signup: (username: string, email: string, password: string) => Promise<ApiAction>
-  setHasSignedUp: () => Action
+  onSuccess: () => Action
 }
 
 const Signup: React.FunctionComponent<SignupProps> = (props: SignupProps) => {
-  const { signup, setHasSignedUp } = props
+  const { signup, onSuccess } = props
 
+  const [serverError, setServerError] = React.useState()
   // track three form values
   const [username, setUsername] = React.useState('')
   const [email, setEmail] = React.useState('')
@@ -59,18 +62,12 @@ const Signup: React.FunctionComponent<SignupProps> = (props: SignupProps) => {
         signup(username, email, password)
           .then((action) => {
             setLoading(false)
-            // TODO (ramfox): possibly these should move to the reducer
+            // TODO (chriswhong): the server should be able to return field-specific errors
+            // e.g. err.username = 'The username is not available'
             if (getActionType(action) === 'failure') {
-              const { errors } = action.payload.data
-              const { username, email, password } = errors
-
-              // set server-side errors for each field
-              username && setUsernameError(username)
-              email && setEmailError(email)
-              password && setPasswordError(password)
+              setServerError(action.payload.err.message)
             } else {
-              // SUCCESS!
-              setHasSignedUp()
+              onSuccess()
             }
           })
       })
@@ -82,10 +79,10 @@ const Signup: React.FunctionComponent<SignupProps> = (props: SignupProps) => {
       acceptEnabled={acceptEnabled}
       acceptText='Take me to Qri '
       title='Sign up for Qri'
-      subtitle='Already have an account? Sign In'
       loading={loading}
       id='signup-page'
     >
+      <h6>Already have account? <Link to='/signin'>Sign In</Link></h6>
       <div className='welcome-form'>
         <DebouncedTextInput
           name= 'username'
@@ -94,7 +91,8 @@ const Signup: React.FunctionComponent<SignupProps> = (props: SignupProps) => {
           maxLength={100}
           value={username}
           errorText={usernameError}
-          onChange={handleChange} />
+          onChange={handleChange}
+        />
         <DebouncedTextInput
           name= 'email'
           label='Email'
@@ -102,7 +100,8 @@ const Signup: React.FunctionComponent<SignupProps> = (props: SignupProps) => {
           maxLength={100}
           value={email}
           errorText={emailError}
-          onChange={handleChange} />
+          onChange={handleChange}
+        />
         <DebouncedTextInput
           name= 'password'
           label='Password'
@@ -110,7 +109,9 @@ const Signup: React.FunctionComponent<SignupProps> = (props: SignupProps) => {
           maxLength={100}
           value={password}
           errorText={passwordError}
-          onChange={handleChange} />
+          onChange={handleChange}
+        />
+        <div className = 'error'> { serverError } </div>
       </div>
     </WelcomeTemplate>
   )

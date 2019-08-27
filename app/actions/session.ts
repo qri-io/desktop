@@ -6,7 +6,7 @@ export function fetchSession (): ApiActionThunk {
     const action = {
       type: 'session',
       [CALL_API]: {
-        endpoint: 'session',
+        endpoint: 'me',
         method: 'GET',
         map: (data: Record<string, any>): Session => {
           return data as Session
@@ -20,13 +20,30 @@ export function fetchSession (): ApiActionThunk {
 export function signup (username: string, email: string, password: string): ApiActionThunk {
   return async (dispatch) => {
     const action = {
-      type: 'signin',
+      type: 'signup',
       [CALL_API]: {
-        endpoint: 'signin',
+        endpoint: 'registry/profile/new',
         method: 'POST',
         body: {
           username,
           email,
+          password
+        }
+      }
+    }
+    return dispatch(action)
+  }
+}
+
+export function signin (username: string, password: string): ApiActionThunk {
+  return async (dispatch) => {
+    const action = {
+      type: 'signin',
+      [CALL_API]: {
+        endpoint: 'registry/profile/prove',
+        method: 'POST',
+        body: {
+          username,
           password
         }
       }

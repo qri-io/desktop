@@ -2,6 +2,8 @@ import * as React from 'react'
 import { Action, AnyAction } from 'redux'
 import classNames from 'classnames'
 import { MyDatasets, WorkingDataset } from '../models/store'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faFolderOpen } from '@fortawesome/free-regular-svg-icons'
 
 import { Modal, ModalType } from '../models/modals'
 
@@ -62,7 +64,7 @@ export default class DatasetList extends React.Component<DatasetListProps> {
             <div className='subtext'>{name}</div>
           </div>
           <div className='status-column'>
-            {isLinked && <span className='icon-inline'>openfolder</span>}
+            {isLinked && <FontAwesomeIcon icon={faFolderOpen} size='sm'/>}
           </div>
 
         </div>
