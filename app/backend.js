@@ -53,6 +53,10 @@ class BackendProcess {
       if (fs.existsSync(binPath)) {
         return binPath
       }
+      binPath += '.exe'
+      if (fs.existsSync(binPath)) {
+        return binPath
+      }
     }
     return null
   }
