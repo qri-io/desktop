@@ -78,7 +78,7 @@ export default class Dataset extends React.Component<DatasetProps> {
 
   componentDidMount () {
     // poll for status
-    setInterval(() => { this.props.fetchWorkingStatus() }, 5000)
+    // setInterval(() => { this.props.fetchWorkingStatus() }, 5000)
     const { selections, workingDataset } = this.props
     const { activeTab, isLinked } = selections
     if (activeTab === 'status' && !isLinked) {
