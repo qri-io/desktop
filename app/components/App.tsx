@@ -2,19 +2,22 @@ import * as React from 'react'
 import { Action } from 'redux'
 import { CSSTransition } from 'react-transition-group'
 import { HashRouter as Router } from 'react-router-dom'
-import RoutesContainer from '../containers/RoutesContainer'
+import { ipcRenderer } from 'electron'
 
 // import components
 import Toast from './Toast'
 import AppError from './AppError'
 import AppLoading from './AppLoading'
 import CreateDataset from './modals/CreateDataset'
+import RoutesContainer from '../containers/RoutesContainer'
 import AddDataset from './modals/AddDataset'
 
 // import models
 import { ApiAction } from '../store/api'
 import { Modal, ModalType, NoModal } from '../models/modals'
 import { Toast as IToast } from '../models/store'
+
+export const QRI_CLOUD_ROOT = 'https://qri.cloud'
 
 export interface AppProps {
   hasDatasets: boolean
@@ -55,13 +58,21 @@ export default class App extends React.Component<AppProps, AppState> {
       sessionID: this.props.sessionID
     }
 
-    this.setModal = this.setModal.bind(this)
     this.renderModal = this.renderModal.bind(this)
     this.renderAppLoading = this.renderAppLoading.bind(this)
     this.renderAppError = this.renderAppError.bind(this)
   }
 
   componentDidMount () {
+    // handle ipc events from electron menus
+    ipcRenderer.on('create-dataset', () => {
+      this.props.setModal({ type: ModalType.CreateDataset })
+    })
+
+    ipcRenderer.on('add-dataset', () => {
+      this.props.setModal({ type: ModalType.AddDataset })
+    })
+
     if (this.props.apiConnection === 0) {
       var iter = 0
       const backendLoadedCheck = setInterval(() => {
@@ -150,10 +161,6 @@ export default class App extends React.Component<AppProps, AppState> {
         <AppError />
       </CSSTransition>
     )
-  }
-
-  setModal (modal: Modal) {
-    this.setState({ currentModal: modal })
   }
 
   render () {

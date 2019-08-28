@@ -1,7 +1,7 @@
 import * as React from 'react'
 import classNames from 'classnames'
 import { Action } from 'redux'
-import { shell } from 'electron'
+import { ipcRenderer, shell } from 'electron'
 import ReactTooltip from 'react-tooltip'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faFile } from '@fortawesome/free-regular-svg-icons'
@@ -90,6 +90,26 @@ export default class Dataset extends React.Component<DatasetProps> {
     } else if (activeTab === 'history' && workingDataset.history.pageInfo.error && workingDataset.history.pageInfo.error.includes('no history')) {
       this.props.setActiveTab('status')
     }
+
+    this.openWorkingDirectory = this.openWorkingDirectory.bind(this)
+    this.publishUnpublishDataset = this.publishUnpublishDataset.bind(this)
+
+    // electron menu events
+    ipcRenderer.on('show-status', () => {
+      this.props.setActiveTab('status')
+    })
+
+    ipcRenderer.on('show-history', () => {
+      this.props.setActiveTab('history')
+    })
+
+    ipcRenderer.on('show-datasets', () => {
+      this.props.toggleDatasetList()
+    })
+
+    ipcRenderer.on('open-working-directory', this.openWorkingDirectory)
+
+    ipcRenderer.on('publish-unpublish-dataset', this.publishUnpublishDataset)
   }
 
   componentDidUpdate () {
@@ -161,6 +181,17 @@ export default class Dataset extends React.Component<DatasetProps> {
     }
   }
 
+  openWorkingDirectory () {
+    shell.openItem(this.props.workingDataset.linkpath)
+  }
+
+  publishUnpublishDataset () {
+    const { publishDataset, unpublishDataset, selections, workingDataset } = this.props
+    const { published } = selections
+
+    published ? unpublishDataset(workingDataset) : publishDataset(workingDataset)
+  }
+
   render () {
     // unpack all the things
     const { ui, selections, workingDataset, setModal, session } = this.props
@@ -184,17 +215,15 @@ export default class Dataset extends React.Component<DatasetProps> {
       setSidebarWidth,
       setSelectedListItem,
       fetchWorkingHistory,
-      publishDataset,
-      unpublishDataset,
       signout
     } = this.props
 
     const linkButton = isLinked ? (
       <HeaderColumnButton
         icon={'faFolderOpen'}
-        tooltip={workingDataset.linkpath}
+        tooltip={`Open ${workingDataset.linkpath}`}
         label='Show Files'
-        onClick={() => { shell.openItem(workingDataset.linkpath) }}
+        onClick={this.openWorkingDirectory}
       />) : (
       <HeaderColumnButton
         label='link to filesystem'
@@ -216,15 +245,15 @@ export default class Dataset extends React.Component<DatasetProps> {
           label='View in Cloud'
           items={[
             <a key={0} onClick={(e) => { shell.openExternal(`http://localhost:3000/${workingDataset.peername}/${workingDataset.name}`); e.stopPropagation() }}>Copy Link</a>,
-            <a key={1} onClick={(e) => { unpublishDataset(workingDataset); e.stopPropagation() }}>Unpublish</a>
+            <a key={1} onClick={this.publishUnpublishDataset}>Unpublish</a>
           ]}
         />
       ) : (
         <HeaderColumnButton
           label='Publish'
           icon='faCloudUploadAlt'
-          tooltip={workingDataset.linkpath}
-          onClick={() => { publishDataset(workingDataset) }}
+          tooltip={'Publish this dataset on the Qri network'}
+          onClick={this.publishUnpublishDataset}
         />
       )
     }
