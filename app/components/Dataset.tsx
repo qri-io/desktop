@@ -4,7 +4,7 @@ import { Action } from 'redux'
 import { shell } from 'electron'
 import ReactTooltip from 'react-tooltip'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faFile, faFolderOpen } from '@fortawesome/free-regular-svg-icons'
+import { faFile } from '@fortawesome/free-regular-svg-icons'
 import { faLink } from '@fortawesome/free-solid-svg-icons'
 
 import { ApiAction, ApiActionThunk } from '../store/api'
@@ -14,13 +14,15 @@ import DatasetSidebar from './DatasetSidebar'
 import DatasetComponent from './DatasetComponent'
 import DatasetListContainer from '../containers/DatasetListContainer'
 import CommitDetailsContainer from '../containers/CommitDetailsContainer'
+import HeaderColumnButton from './chrome/HeaderColumnButton'
+import HeaderColumnButtonDropdown from './chrome/HeaderColumnButtonDropdown'
 
 import { CSSTransition } from 'react-transition-group'
 import { Modal } from '../models/modals'
 
 import { defaultSidebarWidth } from '../reducers/ui'
 
-import { QRI_CLOUD_ROOT } from './App'
+import { QRI_CLOUD_URL } from '../utils/registry'
 
 import {
   UI,
@@ -186,91 +188,42 @@ export default class Dataset extends React.Component<DatasetProps> {
     } = this.props
 
     const linkButton = isLinked ? (
-      <div
-        className='header-column'
-        data-tip={workingDataset.linkpath}
+      <HeaderColumnButton
+        icon={'faFolderOpen'}
+        tooltip={workingDataset.linkpath}
+        label='Show Files'
         onClick={() => { shell.openItem(workingDataset.linkpath) }}
-      >
-        <div className='header-column-icon'>
-          <FontAwesomeIcon icon={faFolderOpen} size='lg'/>
-        </div>
-        <div className='header-column-text'>
-          <div className="label">Show Dataset Files</div>
-        </div>
-      </div>) : (
-      <div className='header-column' data-tip='Link this dataset to a folder on your computer'>
-        <div className='header-column-icon'>
-          <span className="fa-layers fa-fw">
-            <FontAwesomeIcon icon={faFile} size='lg'/>
-            <FontAwesomeIcon icon={faLink} transform="shrink-8" />
-          </span>
-        </div>
-        <div className='header-column-text'>
-          <div className="label">Link to Filesystem</div>
-        </div>
-      </div>
+      />) : (
+      <HeaderColumnButton
+        label='link to filesystem'
+        tooltip='Link this dataset to a folder on your computer'
+        icon={(<>
+          <FontAwesomeIcon icon={faFile} size='lg'/>
+          <FontAwesomeIcon icon={faLink} transform="shrink-8" />
+        </>)}
+        onClick={() => { console.log('not finished: linking to filesystem') }}
+      />
     )
 
     let publishButton
     if (username === workingDataset.peername) {
       publishButton = published ? (
-        <div
-          className='header-column'
-          data-tip={`http://localhost:3000/${workingDataset.peername}/${workingDataset.name}`}
+        <HeaderColumnButtonDropdown
           onClick={() => { shell.openExternal(`http://localhost:3000/${workingDataset.peername}/${workingDataset.name}`) }}
-        >
-          <div className='header-column-icon'>
-            <FontAwesomeIcon icon={faFolderOpen} size='lg'/>
-          </div>
-          <div className='header-column-text'>
-            <div className='label'>Show on Web</div>
-          </div>
-        </div>
+          icon='faCloud'
+          label='View in Cloud'
+          items={[
+            <a key={0} onClick={(e) => { shell.openExternal(`http://localhost:3000/${workingDataset.peername}/${workingDataset.name}`); e.stopPropagation() }}>Copy Link</a>,
+            <a key={1} onClick={(e) => { alert('unpublish'); e.stopPropagation() }}>Unpublish</a>
+          ]}
+        />
       ) : (
-        <div
-          className='header-column'
-          data-tip={workingDataset.linkpath}
+        <HeaderColumnButton
+          label='Publish'
+          icon='faCloudUploadAlt'
+          tooltip={workingDataset.linkpath}
           onClick={() => { publishDataset(workingDataset.peername, workingDataset.name) }}
-        >
-          <div className='header-column-icon'>
-            <FontAwesomeIcon icon={faFolderOpen} size='lg'/>
-          </div>
-          <div className='header-column-text'>
-            <div className='label'>Publish</div>
-          </div>
-        </div>
-      )
-    }
-
-    const UserMenu = () => {
-      const [showMenu, setShowMenu] = React.useState(false)
-
-      return (
-        <div
-          className='header-column'
-          onClick={() => { setShowMenu(!showMenu) }}
-        >
-          <div className='header-column-icon'>
-            <img src={userphoto} />
-          </div>
-          <div className='header-column-text'>
-            <div className="label">{username}</div>
-          </div>
-          {
-            showMenu
-              ? <div className="arrow collapse">&nbsp;</div>
-              : <div className="arrow expand">&nbsp;</div>
-          }
-          {
-            showMenu && (
-              <ul className='dropdown'>
-                <li><ExternalLink href={`${QRI_CLOUD_ROOT}/${username}`}>Public Profile</ExternalLink></li>
-                <li><ExternalLink href={`${QRI_CLOUD_ROOT}/settings`}>Settings</ExternalLink></li>
-                <li onClick={signout}>Sign Out</li>
-              </ul>
-            )
-          }
-        </div>
+        />
       )
     }
 
@@ -299,7 +252,15 @@ export default class Dataset extends React.Component<DatasetProps> {
           </div>
           {linkButton}
           {publishButton}
-          <UserMenu />
+          <HeaderColumnButtonDropdown
+            icon={<div className='header-column-icon' ><img src={userphoto} /></div>}
+            label={username}
+            items={[
+              <ExternalLink key={0} href={`${QRI_CLOUD_URL}/${username}`}>Public Profile</ExternalLink>,
+              <ExternalLink key={1} href={`${QRI_CLOUD_URL}/settings`}>Settings</ExternalLink>,
+              <a key={2} onClick={signout}>Sign Out</a>
+            ]}
+          />
         </div>
         <div className='columns'>
           <Resizable
