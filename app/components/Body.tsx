@@ -1,10 +1,10 @@
 import * as React from 'react'
 import { CSSTransition } from 'react-transition-group'
+import ReactJson from 'react-json-view'
 
 import Toast, { ToastTypes } from './chrome/Toast'
 import SpinnerWithIcon from './chrome/SpinnerWithIcon'
 import HandsonTable from './HandsonTable'
-import JSON from './JSON'
 import { ApiAction } from '../store/api'
 
 import { Structure } from '../models/dataset'
@@ -57,7 +57,11 @@ const Body: React.FunctionComponent<BodyProps> = ({ value, pageInfo, headers, st
       />
     )
   } else { // otherwise use our nifty JSON renderer
-    bodyContent = <JSON body={value} />
+    bodyContent = <ReactJson
+      name={null}
+      src={value}
+      displayDataTypes={false}
+    />
   }
 
   return (
