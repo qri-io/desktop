@@ -4,7 +4,7 @@ import { Action } from 'redux'
 import { shell } from 'electron'
 import ReactTooltip from 'react-tooltip'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faFile, faFolderOpen } from '@fortawesome/free-regular-svg-icons'
+import { faFile } from '@fortawesome/free-regular-svg-icons'
 import { faLink } from '@fortawesome/free-solid-svg-icons'
 
 import { ApiAction, ApiActionThunk } from '../store/api'
@@ -14,13 +14,15 @@ import DatasetSidebar from './DatasetSidebar'
 import DatasetComponent from './DatasetComponent'
 import DatasetListContainer from '../containers/DatasetListContainer'
 import CommitDetailsContainer from '../containers/CommitDetailsContainer'
+import HeaderColumnButton from './chrome/HeaderColumnButton'
+import HeaderColumnButtonDropdown from './chrome/HeaderColumnButtonDropdown'
 
 import { CSSTransition } from 'react-transition-group'
 import { Modal } from '../models/modals'
 
 import { defaultSidebarWidth } from '../reducers/ui'
 
-import { QRI_CLOUD_ROOT } from './App'
+import { QRI_CLOUD_URL } from '../utils/registry'
 
 import {
   UI,
@@ -48,10 +50,12 @@ export interface DatasetProps {
   setSidebarWidth: (type: string, sidebarWidth: number) => Action
   setFilter: (filter: string) => Action
   setSelectedListItem: (type: string, activeTab: string) => Action
-  setWorkingDataset: (peername: string, name: string, isLinked: boolean) => Action
+  setWorkingDataset: (peername: string, name: string, isLinked: boolean, published: boolean) => Action
   fetchWorkingDatasetDetails: () => Promise<ApiAction>
   fetchWorkingHistory: (page?: number, pageSize?: number) => ApiActionThunk
   fetchWorkingStatus: () => Promise<ApiAction>
+  publishDataset: (dataset: WorkingDataset) => Action
+  unpublishDataset: (dataset: WorkingDataset) => Action
   signout: () => Action
 }
 
@@ -78,7 +82,7 @@ export default class Dataset extends React.Component<DatasetProps> {
 
   componentDidMount () {
     // poll for status
-    setInterval(() => { this.props.fetchWorkingStatus() }, 5000)
+    // setInterval(() => { this.props.fetchWorkingStatus() }, 5000)
     const { selections, workingDataset } = this.props
     const { activeTab, isLinked } = selections
     if (activeTab === 'status' && !isLinked) {
@@ -167,7 +171,8 @@ export default class Dataset extends React.Component<DatasetProps> {
       activeTab,
       component: selectedComponent,
       commit: selectedCommit,
-      isLinked
+      isLinked,
+      published
     } = selections
 
     const { history, status, path } = workingDataset
@@ -179,64 +184,48 @@ export default class Dataset extends React.Component<DatasetProps> {
       setSidebarWidth,
       setSelectedListItem,
       fetchWorkingHistory,
+      publishDataset,
+      unpublishDataset,
       signout
     } = this.props
 
     const linkButton = isLinked ? (
-      <div
-        className='header-column'
-        data-tip={workingDataset.linkpath}
+      <HeaderColumnButton
+        icon={'faFolderOpen'}
+        tooltip={workingDataset.linkpath}
+        label='Show Files'
         onClick={() => { shell.openItem(workingDataset.linkpath) }}
-      >
-        <div className='header-column-icon'>
-          <FontAwesomeIcon icon={faFolderOpen} size='lg'/>
-        </div>
-        <div className='header-column-text'>
-          <div className="label">Show Dataset Files</div>
-        </div>
-      </div>) : (
-      <div className='header-column' data-tip='Link this dataset to a folder on your computer'>
-        <div className='header-column-icon'>
-          <span className="fa-layers fa-fw">
-            <FontAwesomeIcon icon={faFile} size='lg'/>
-            <FontAwesomeIcon icon={faLink} transform="shrink-8" />
-          </span>
-        </div>
-        <div className='header-column-text'>
-          <div className="label">Link to Filesystem</div>
-        </div>
-      </div>
+      />) : (
+      <HeaderColumnButton
+        label='link to filesystem'
+        tooltip='Link this dataset to a folder on your computer'
+        icon={(<>
+          <FontAwesomeIcon icon={faFile} size='lg'/>
+          <FontAwesomeIcon icon={faLink} transform="shrink-8" />
+        </>)}
+        onClick={() => { console.log('not finished: linking to filesystem') }}
+      />
     )
 
-    const UserMenu = () => {
-      const [showMenu, setShowMenu] = React.useState(false)
-
-      return (
-        <div
-          className='header-column'
-          onClick={() => { setShowMenu(!showMenu) }}
-        >
-          <div className='header-column-icon'>
-            <img src={userphoto} />
-          </div>
-          <div className='header-column-text'>
-            <div className="label">{username}</div>
-          </div>
-          {
-            showMenu
-              ? <div className="arrow collapse">&nbsp;</div>
-              : <div className="arrow expand">&nbsp;</div>
-          }
-          {
-            showMenu && (
-              <ul className='dropdown'>
-                <li><ExternalLink href={`${QRI_CLOUD_ROOT}/${username}`}>Public Profile</ExternalLink></li>
-                <li><ExternalLink href={`${QRI_CLOUD_ROOT}/settings`}>Settings</ExternalLink></li>
-                <li onClick={signout}>Sign Out</li>
-              </ul>
-            )
-          }
-        </div>
+    let publishButton
+    if (username === workingDataset.peername) {
+      publishButton = published ? (
+        <HeaderColumnButtonDropdown
+          onClick={() => { shell.openExternal(`http://localhost:3000/${workingDataset.peername}/${workingDataset.name}`) }}
+          icon='faCloud'
+          label='View in Cloud'
+          items={[
+            <a key={0} onClick={(e) => { shell.openExternal(`http://localhost:3000/${workingDataset.peername}/${workingDataset.name}`); e.stopPropagation() }}>Copy Link</a>,
+            <a key={1} onClick={(e) => { unpublishDataset(workingDataset); e.stopPropagation() }}>Unpublish</a>
+          ]}
+        />
+      ) : (
+        <HeaderColumnButton
+          label='Publish'
+          icon='faCloudUploadAlt'
+          tooltip={workingDataset.linkpath}
+          onClick={() => { publishDataset(workingDataset) }}
+        />
       )
     }
 
@@ -264,7 +253,16 @@ export default class Dataset extends React.Component<DatasetProps> {
 
           </div>
           {linkButton}
-          <UserMenu />
+          {publishButton}
+          <HeaderColumnButtonDropdown
+            icon={<div className='header-column-icon' ><img src={userphoto} /></div>}
+            label={username}
+            items={[
+              <ExternalLink key={0} href={`${QRI_CLOUD_URL}/${username}`}>Public Profile</ExternalLink>,
+              <ExternalLink key={1} href={`${QRI_CLOUD_URL}/settings`}>Settings</ExternalLink>,
+              <a key={2} onClick={signout}>Sign Out</a>
+            ]}
+          />
         </div>
         <div className='columns'>
           <Resizable

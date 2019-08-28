@@ -1,9 +1,10 @@
-import { CALL_API, ApiAction, ApiActionThunk, chainSuccess } from '../store/api'
-import { DatasetSummary, ComponentStatus, ComponentState } from '../models/store'
-import { Dataset, Commit } from '../models/dataset'
 import { Action } from 'redux'
 
-import { setSelectedListItem } from './selections'
+import { CALL_API, ApiAction, ApiActionThunk, chainSuccess } from '../store/api'
+import { DatasetSummary, ComponentStatus, ComponentState, WorkingDataset } from '../models/store'
+import { Dataset, Commit } from '../models/dataset'
+import { openToast } from './ui'
+import { setWorkingDataset, setSelectedListItem } from './selections'
 
 const pageSizeDefault = 15
 const bodyPageSizeDefault = 100
@@ -72,7 +73,8 @@ export function fetchMyDatasets (page: number = 1, pageSize: number = pageSizeDe
             peername: ref.peername,
             name: ref.name,
             path: ref.path,
-            isLinked: !!ref.fsiPath
+            isLinked: !!ref.fsiPath,
+            published: ref.published
           }))
         }
       }
@@ -411,5 +413,63 @@ export function initDatasetAndFetch (filepath: string, name: string, format: str
       throw action
     }
     return response
+  }
+}
+
+export function publishDataset (dataset: WorkingDataset): ApiActionThunk {
+  const { peername, name } = dataset
+  return async (dispatch, getState) => {
+    const whenOk = chainSuccess(dispatch, getState)
+    const action = {
+      type: 'publish',
+      [CALL_API]: {
+        endpoint: 'publish',
+        method: 'POST',
+        segments: {
+          peername,
+          name
+        }
+      }
+    }
+
+    try {
+      let response: Action
+      response = await dispatch(action)
+      await whenOk(fetchWorkingDataset())(response)
+      response = await dispatch(setWorkingDataset(dataset.peername, dataset.name, dataset.linkpath !== 'repo', true))
+    } catch (action) {
+      throw action
+    }
+    // return response
+    return dispatch(openToast('success', 'dataset published'))
+  }
+}
+
+export function unpublishDataset (dataset: WorkingDataset): ApiActionThunk {
+  const { peername, name } = dataset
+  return async (dispatch, getState) => {
+    const whenOk = chainSuccess(dispatch, getState)
+    const action = {
+      type: 'unpublish',
+      [CALL_API]: {
+        endpoint: 'publish',
+        method: 'DELETE',
+        segments: {
+          peername,
+          name
+        }
+      }
+    }
+
+    try {
+      let response: Action
+      response = await dispatch(action)
+      await whenOk(fetchWorkingDataset())(response)
+      response = await dispatch(setWorkingDataset(dataset.peername, dataset.name, dataset.linkpath !== 'repo', false))
+    } catch (action) {
+      throw action
+    }
+    // return response
+    return dispatch(openToast('success', 'dataset unpublished'))
   }
 }

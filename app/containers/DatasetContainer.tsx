@@ -8,7 +8,9 @@ import { toggleDatasetList, setSidebarWidth, signout } from '../actions/ui'
 import {
   fetchWorkingDatasetDetails,
   fetchWorkingStatus,
-  fetchWorkingHistory
+  fetchWorkingHistory,
+  publishDataset,
+  unpublishDataset
 } from '../actions/api'
 import {
   setActiveTab,
@@ -57,6 +59,8 @@ const DatasetContainer = connect(
     fetchWorkingDatasetDetails,
     fetchWorkingStatus,
     fetchWorkingHistory,
+    publishDataset,
+    unpublishDataset,
     signout
   },
   mergeProps

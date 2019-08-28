@@ -65,6 +65,7 @@ export interface Selections {
   peername: string | null
   name: string | null
   isLinked: boolean
+  published: boolean
   activeTab: string
   component: SelectedComponent
   commit: string
@@ -87,6 +88,7 @@ export interface DatasetSummary {
   name: string
   path: string
   isLinked: boolean
+  published: boolean
 }
 
 // list of local datasets
@@ -140,6 +142,7 @@ export interface CommitDetails {
 export interface WorkingDataset extends CommitDetails {
   linkpath: string
   hasHistory: boolean
+  published: boolean
   history: {
     pageInfo: PageInfo
     value: Commit[]
