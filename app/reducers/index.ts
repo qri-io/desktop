@@ -15,7 +15,8 @@ const initialSession: Session = {
   peername: '',
   id: '',
   created: '',
-  updated: ''
+  updated: '',
+  photo: 'https://avatars0.githubusercontent.com/u/1833820?s=23&v=4'
 }
 
 const [SESSION_REQ, SESSION_SUCC, SESSION_FAIL] = apiActionTypes('session')
@@ -26,7 +27,12 @@ const sessionReducer: Reducer = (state = initialSession, action: AnyAction) => {
     case SESSION_REQ || SET_PEERNAME_REQ:
       return state
     case SESSION_SUCC || SET_PEERNAME_SUCC:
-      return Object.assign({}, state, action.payload.data)
+      return {
+        ...state,
+        ...action.payload.data,
+        // hard code this photo until the backend provides user photos
+        photo: 'https://avatars0.githubusercontent.com/u/1833820?s=23&v=4'
+      }
     case SESSION_FAIL || SET_PEERNAME_FAIL:
       return state
     default:

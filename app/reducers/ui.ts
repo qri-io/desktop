@@ -6,14 +6,16 @@ import { SAVE_SUCC, SAVE_FAIL } from '../reducers/mutations'
 export const UI_TOGGLE_DATASET_LIST = 'UI_TOGGLE_DATASET_LIST'
 export const UI_SET_SIDEBAR_WIDTH = 'UI_SET_SIDEBAR_WIDTH'
 export const UI_ACCEPT_TOS = 'UI_ACCEPT_TOS'
-export const UI_SET_PEERNAME = 'UI_SET_PEERNAME'
+export const UI_SET_QRI_CLOUD_AUTHENTICATED = 'UI_SET_QRI_CLOUD_AUTHENTICATED'
 export const UI_OPEN_TOAST = 'UI_OPEN_TOAST'
 export const UI_CLOSE_TOAST = 'UI_CLOSE_TOAST'
 export const UI_SET_API_CONNECTION = 'UI_SET_API_CONNECTION'
+export const UI_SET_MODAL = 'UI_SET_MODAL'
+export const UI_SIGNOUT = 'UI_SIGNOUT'
 
 export const defaultSidebarWidth = 250
 export const hasAcceptedTOSKey = 'acceptedTOS'
-export const hasSetPeernameKey = 'setPeername'
+export const qriCloudAuthenticatedKey = 'qriCloudAuthenticated'
 
 const [, HEALTH_SUCCESS] = apiActionTypes('health')
 
@@ -35,7 +37,7 @@ const initialState = {
   apiConnection: 0,
   showDatasetList: false,
   hasAcceptedTOS: store().getItem(hasAcceptedTOSKey) === 'true',
-  hasSetPeername: store().getItem(hasSetPeernameKey) === 'true',
+  qriCloudAuthenticated: store().getItem(qriCloudAuthenticatedKey) === 'true',
   showDiff: false,
   datasetSidebarWidth: getSidebarWidth('datasetSidebarWidth'),
   commitSidebarWidth: getSidebarWidth('commitSidebarWidth'),
@@ -64,9 +66,9 @@ export default (state = initialState, action: AnyAction) => {
       store().setItem(hasAcceptedTOSKey, 'true')
       return Object.assign({}, state, { hasAcceptedTOS: true })
 
-    case UI_SET_PEERNAME:
-      store().setItem(hasSetPeernameKey, 'true')
-      return Object.assign({}, state, { hasSetPeername: true })
+    case UI_SET_QRI_CLOUD_AUTHENTICATED:
+      store().setItem(qriCloudAuthenticatedKey, 'true')
+      return Object.assign({}, state, { qriCloudAuthenticated: true })
 
     case UI_OPEN_TOAST:
       const { type: toastType, message } = action.payload
@@ -86,6 +88,13 @@ export default (state = initialState, action: AnyAction) => {
           ...state.toast,
           visible: false
         }
+      }
+
+    case UI_SET_MODAL:
+      const modal = action.payload
+      return {
+        ...state,
+        modal
       }
 
     // listen for SAVE_SUCC and SAVE_FAIL to set the toast
@@ -114,6 +123,13 @@ export default (state = initialState, action: AnyAction) => {
       return Object.assign({}, state, { apiConnection: 1 })
     case UI_SET_API_CONNECTION:
       return Object.assign({}, state, { apiConnection: action.status })
+
+    case UI_SIGNOUT:
+      store().setItem('qriCloudAuthenticated', 'false')
+      return {
+        ...state,
+        qriCloudAuthenticated: false
+      }
     default:
       return state
   }

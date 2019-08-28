@@ -90,7 +90,7 @@ export function fetchWorkingDataset (): ApiActionThunk {
     const action = {
       type: 'dataset',
       [CALL_API]: {
-        endpoint: 'dataset',
+        endpoint: '',
         method: 'GET',
         params: { fsi: isLinked },
         segments: {
@@ -128,7 +128,7 @@ export function fetchCommitDataset (): ApiActionThunk {
     const response = await dispatch({
       type: 'commitdataset',
       [CALL_API]: {
-        endpoint: 'dataset',
+        endpoint: '',
         method: 'GET',
         segments: {
           peername: selections.peername,
@@ -386,7 +386,7 @@ export function initDataset (filepath: string, name: string, format: string): Ap
     const action = {
       type: 'init',
       [CALL_API]: {
-        endpoint: 'init',
+        endpoint: 'init/',
         method: 'POST',
         params: {
           filepath,

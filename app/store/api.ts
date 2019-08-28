@@ -103,34 +103,12 @@ async function getJSON<T> (url: string, options: FetchOptions): Promise<T> {
   return res as T
 }
 
-// endpointMap is an object that maps frontend endpoint names to their
-// corresponding API url path
-const endpointMap: Record<string, string> = {
-  'list': 'list',
-  'dataset': '', // dataset endpoints are constructured through query param values
-  'body': 'body', // dataset endpoints are constructured through query param values
-  'history': 'history',
-  'status': 'status',
-  'save': 'save',
-  'session': 'me',
-  'health': 'health',
-  'add': 'add',
-  'init': 'init/',
-  'ping': 'health'
-}
-
 function apiUrl (endpoint: string, segments?: ApiSegments, query?: ApiQuery, pageInfo?: ApiPagination): [string, string] {
-  const path = endpointMap[endpoint]
-  if (path === undefined) {
-    return ['', `${endpoint} is not a valid api endpoint`]
-  }
-
   const addToUrl = (url: string, seg: string): string => {
     if (!(url[url.length - 1] === '/' || seg[0] === '/')) url += '/'
     return url + seg
   }
-
-  let url = `http://localhost:2503/${path}`
+  let url = `http://localhost:2503/${endpoint}`
   if (segments) {
     if (segments.peername) {
       url = addToUrl(url, segments.peername)
@@ -201,6 +179,27 @@ export const apiMiddleware: Middleware = () => (next: Dispatch<AnyAction>) => as
     const [REQ_TYPE, SUCC_TYPE, FAIL_TYPE] = apiActionTypes(action.type)
 
     next({ type: REQ_TYPE, pageInfo })
+
+    // TODO (chriswhong): Turn this into dev middleware
+    // // to simulate an API failure response in development, add dummySuccess to the action object
+    // if (action.dummyFailure) {
+    //   return next({
+    //     type: FAIL_TYPE,
+    //     payload: {
+    //       data: action.dummyFailure
+    //     }
+    //   })
+    // }
+    //
+    // // to simulate an API success response in development, add dummySuccess to the action object
+    // if (action.dummySuccess) {
+    //   return next({
+    //     type: SUCC_TYPE,
+    //     payload: {
+    //       data: action.dummySuccess
+    //     }
+    //   })
+    // }
 
     try {
       data = await getAPIJSON(endpoint, method, segments, params, pageInfo, body)

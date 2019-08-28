@@ -2,13 +2,16 @@ import {
   UI_TOGGLE_DATASET_LIST,
   UI_SET_SIDEBAR_WIDTH,
   UI_ACCEPT_TOS,
-  UI_SET_PEERNAME,
+  UI_SET_QRI_CLOUD_AUTHENTICATED,
   UI_OPEN_TOAST,
   UI_CLOSE_TOAST,
-  UI_SET_API_CONNECTION
+  UI_SET_API_CONNECTION,
+  UI_SET_MODAL,
+  UI_SIGNOUT
 } from '../reducers/ui'
 
 import { ToastType } from '../models/store'
+import { Modal } from '../models/modals'
 
 export const toggleDatasetList = () => {
   return {
@@ -31,9 +34,9 @@ export const acceptTOS = () => {
   }
 }
 
-export const setHasSetPeername = () => {
+export const setQriCloudAuthenticated = () => {
   return {
-    type: UI_SET_PEERNAME
+    type: UI_SET_QRI_CLOUD_AUTHENTICATED
   }
 }
 
@@ -50,9 +53,22 @@ export const closeToast = () => {
   }
 }
 
+export const setModal = (modal: Modal) => {
+  return {
+    type: UI_SET_MODAL,
+    payload: modal
+  }
+}
+
 export const setApiConnection = (status: number) => {
   return {
     type: UI_SET_API_CONNECTION,
     status
+  }
+}
+
+export const signout = () => {
+  return {
+    type: UI_SIGNOUT
   }
 }

@@ -1,14 +1,64 @@
 import * as React from 'react'
-import { Switch, Route } from 'react-router'
-import AppContainer from './containers/AppContainer'
+import { Switch, Route, Redirect } from 'react-router-dom'
+import Welcome from './components/Welcome'
+import Signup from './components/Signup'
+import Signin from './components/Signin'
+import NoDatasets from './components/NoDatasets'
 import DatasetContainer from './containers/DatasetContainer'
 
-export default function Routes () {
+export default function Routes (props: any) {
+  const {
+    hasAcceptedTOS,
+    qriCloudAuthenticated,
+    hasDatasets,
+    setQriCloudAuthenticated,
+    acceptTOS,
+    signup,
+    signin,
+    setModal
+  } = props
+
   return (
-    <AppContainer>
-      <Switch>
-        <Route exact path="/" component={DatasetContainer}/>
-      </Switch>
-    </AppContainer>
+    <Switch>
+      <Route path='/'>
+
+        {/* Welcome page (Accept TOS) */}
+        <Route exact path='/' render={() => {
+          if (hasAcceptedTOS) return <Redirect to='/signup' />
+          return <Welcome onAccept={acceptTOS} />
+        }} />
+
+        {/* Sign Up */}
+        <Route exact path='/signup' render={() => {
+          if (!hasAcceptedTOS) return <Redirect to='/' />
+          if (qriCloudAuthenticated) return <Redirect to='/dataset' />
+          return <Signup signup={signup} onSuccess={setQriCloudAuthenticated} />
+        }} />
+
+        {/* Sign In */}
+        <Route exact path='/signin' render={() => {
+          if (!hasAcceptedTOS) return <Redirect to='/' />
+          if (qriCloudAuthenticated) return <Redirect to='/dataset' />
+          return <Signin signin={signin} onSuccess={setQriCloudAuthenticated} />
+        }} />
+
+        {/* Dataset */}
+        <Route exact path='/dataset' render={() => {
+          if (!hasAcceptedTOS) return <Redirect to='/' />
+          if (!qriCloudAuthenticated) return <Redirect to='/signup' />
+          if (!hasDatasets) return <Redirect to='/nodatasets' />
+          return <DatasetContainer setModal={setModal} />
+        }}/>
+
+        {/* No Datasets */}
+        <Route exact path='/nodatasets' render={() => {
+          if (!hasAcceptedTOS) return <Redirect to='/' />
+          if (!qriCloudAuthenticated) return <Redirect to='/signup' />
+
+          if (hasDatasets) return <Redirect to='/dataset' />
+          return <NoDatasets setModal={setModal}/>
+        }}/>
+      </Route>
+    </Switch>
   )
 }

@@ -4,7 +4,7 @@ import Dataset, { DatasetProps } from '../components/Dataset'
 import { Modal } from '../models/modals'
 import Store from '../models/store'
 
-import { toggleDatasetList, setSidebarWidth } from '../actions/ui'
+import { toggleDatasetList, setSidebarWidth, signout } from '../actions/ui'
 import {
   fetchWorkingDatasetDetails,
   fetchWorkingStatus,
@@ -32,7 +32,8 @@ const DatasetContainer = connect(
       selections,
       myDatasets,
       workingDataset,
-      mutations
+      mutations,
+      session
     } = state
 
     const { setModal } = ownProps
@@ -42,7 +43,8 @@ const DatasetContainer = connect(
       myDatasets,
       workingDataset,
       mutations,
-      setModal
+      setModal,
+      session
     }, ownProps)
   },
   {
@@ -54,7 +56,8 @@ const DatasetContainer = connect(
     setWorkingDataset,
     fetchWorkingDatasetDetails,
     fetchWorkingStatus,
-    fetchWorkingHistory
+    fetchWorkingHistory,
+    signout
   },
   mergeProps
 )(Dataset)

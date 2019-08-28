@@ -10,7 +10,7 @@ import { fetchMyDatasets } from '../../actions/api'
 
 interface AddByNameProps {
   datasetName: string
-  onChange: (name: string, value: any, e: any) => void
+  onChange: (name: string, value: any) => void
 }
 
 const AddByName: React.FunctionComponent<AddByNameProps> = ({ datasetName, onChange }) => {
@@ -33,7 +33,7 @@ const AddByName: React.FunctionComponent<AddByNameProps> = ({ datasetName, onCha
 
 interface AddByUrl {
   url: string
-  onChange: (name: string, value: any, e: any) => void
+  onChange: (name: string, value: any) => void
 }
 
 const AddByUrl: React.FunctionComponent<AddByUrl> = ({ url, onChange }) => {

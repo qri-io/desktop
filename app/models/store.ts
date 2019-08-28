@@ -50,7 +50,7 @@ export interface UI {
   apiConnection: ApiConnection
   showDatasetList: boolean
   hasAcceptedTOS: boolean
-  hasSetPeername: boolean
+  qriCloudAuthenticated: boolean
   modal?: Modal
   showDiff: boolean
   datasetSidebarWidth: number
@@ -58,13 +58,15 @@ export interface UI {
   toast: Toast
 }
 
+export type SelectedComponent = 'meta' | 'body' | 'schema' | ''
+
 // currently selected dataset, tab, dataset component, commit, etc
 export interface Selections {
   peername: string | null
   name: string | null
   isLinked: boolean
   activeTab: string
-  component: string
+  component: SelectedComponent
   commit: string
   commitComponent: string
 }

@@ -3,8 +3,12 @@ import classNames from 'classnames'
 import { Action } from 'redux'
 import { shell } from 'electron'
 import ReactTooltip from 'react-tooltip'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faFile, faFolderOpen } from '@fortawesome/free-regular-svg-icons'
+import { faLink } from '@fortawesome/free-solid-svg-icons'
 
 import { ApiAction, ApiActionThunk } from '../store/api'
+import ExternalLink from './ExternalLink'
 import { Resizable } from './Resizable'
 import DatasetSidebar from './DatasetSidebar'
 import DatasetComponent from './DatasetComponent'
@@ -16,6 +20,8 @@ import { Modal } from '../models/modals'
 
 import { defaultSidebarWidth } from '../reducers/ui'
 
+import { QRI_CLOUD_ROOT } from './App'
+
 import {
   UI,
   Selections,
@@ -23,6 +29,8 @@ import {
   WorkingDataset,
   Mutations
 } from '../models/store'
+
+import { Session } from '../models/session'
 
 export interface DatasetProps {
   // redux state
@@ -32,6 +40,7 @@ export interface DatasetProps {
   workingDataset: WorkingDataset
   mutations: Mutations
   setModal: (modal: Modal) => void
+  session: Session
 
   // actions
   toggleDatasetList: () => Action
@@ -43,6 +52,7 @@ export interface DatasetProps {
   fetchWorkingDatasetDetails: () => Promise<ApiAction>
   fetchWorkingHistory: (page?: number, pageSize?: number) => ApiActionThunk
   fetchWorkingStatus: () => Promise<ApiAction>
+  signout: () => Action
 }
 
 interface DatasetState {
@@ -149,7 +159,8 @@ export default class Dataset extends React.Component<DatasetProps> {
 
   render () {
     // unpack all the things
-    const { ui, selections, workingDataset, setModal } = this.props
+    const { ui, selections, workingDataset, setModal, session } = this.props
+    const { peername: username, photo: userphoto } = session
     const { showDatasetList, datasetSidebarWidth } = ui
     const {
       name,
@@ -167,7 +178,8 @@ export default class Dataset extends React.Component<DatasetProps> {
       setActiveTab,
       setSidebarWidth,
       setSelectedListItem,
-      fetchWorkingHistory
+      fetchWorkingHistory,
+      signout
     } = this.props
 
     const linkButton = isLinked ? (
@@ -177,7 +189,7 @@ export default class Dataset extends React.Component<DatasetProps> {
         onClick={() => { shell.openItem(workingDataset.linkpath) }}
       >
         <div className='header-column-icon'>
-          <span className='icon-inline'>openfolder</span>
+          <FontAwesomeIcon icon={faFolderOpen} size='lg'/>
         </div>
         <div className='header-column-text'>
           <div className="label">Show Dataset Files</div>
@@ -185,13 +197,48 @@ export default class Dataset extends React.Component<DatasetProps> {
       </div>) : (
       <div className='header-column' data-tip='Link this dataset to a folder on your computer'>
         <div className='header-column-icon'>
-          <span className='icon-inline'>link</span>
+          <span className="fa-layers fa-fw">
+            <FontAwesomeIcon icon={faFile} size='lg'/>
+            <FontAwesomeIcon icon={faLink} transform="shrink-8" />
+          </span>
         </div>
         <div className='header-column-text'>
           <div className="label">Link to Filesystem</div>
         </div>
       </div>
     )
+
+    const UserMenu = () => {
+      const [showMenu, setShowMenu] = React.useState(false)
+
+      return (
+        <div
+          className='header-column'
+          onClick={() => { setShowMenu(!showMenu) }}
+        >
+          <div className='header-column-icon'>
+            <img src={userphoto} />
+          </div>
+          <div className='header-column-text'>
+            <div className="label">{username}</div>
+          </div>
+          {
+            showMenu
+              ? <div className="arrow collapse">&nbsp;</div>
+              : <div className="arrow expand">&nbsp;</div>
+          }
+          {
+            showMenu && (
+              <ul className='dropdown'>
+                <li><ExternalLink href={`${QRI_CLOUD_ROOT}/${username}`}>Public Profile</ExternalLink></li>
+                <li><ExternalLink href={`${QRI_CLOUD_ROOT}/settings`}>Settings</ExternalLink></li>
+                <li onClick={signout}>Sign Out</li>
+              </ul>
+            )
+          }
+        </div>
+      )
+    }
 
     return (
       <div id='dataset-container'>
@@ -217,6 +264,7 @@ export default class Dataset extends React.Component<DatasetProps> {
 
           </div>
           {linkButton}
+          <UserMenu />
         </div>
         <div className='columns'>
           <Resizable

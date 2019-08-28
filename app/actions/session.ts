@@ -6,7 +6,7 @@ export function fetchSession (): ApiActionThunk {
     const action = {
       type: 'session',
       [CALL_API]: {
-        endpoint: 'session',
+        endpoint: 'me',
         method: 'GET',
         map: (data: Record<string, any>): Session => {
           return data as Session
@@ -17,21 +17,34 @@ export function fetchSession (): ApiActionThunk {
   }
 }
 
-export function setPeername (newPeername: string): ApiActionThunk {
-  return async (dispatch, getStore) => {
-    const { session } = getStore()
-    if (newPeername === session.peername) {
-      return new Promise(resolve => resolve())
-    }
-    const newSession = Object.assign({}, session, { peername: newPeername })
+export function signup (username: string, email: string, password: string): ApiActionThunk {
+  return async (dispatch) => {
     const action = {
-      type: 'new_peername',
+      type: 'signup',
       [CALL_API]: {
-        endpoint: 'session',
+        endpoint: 'registry/profile/new',
         method: 'POST',
-        body: newSession,
-        map: (data: Record<string, any>): Session => {
-          return data as Session
+        body: {
+          username,
+          email,
+          password
+        }
+      }
+    }
+    return dispatch(action)
+  }
+}
+
+export function signin (username: string, password: string): ApiActionThunk {
+  return async (dispatch) => {
+    const action = {
+      type: 'signin',
+      [CALL_API]: {
+        endpoint: 'registry/profile/prove',
+        method: 'POST',
+        body: {
+          username,
+          password
         }
       }
     }

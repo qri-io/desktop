@@ -1,16 +1,15 @@
 import * as React from 'react'
 import { Action } from 'redux'
 import { CSSTransition } from 'react-transition-group'
+import { HashRouter as Router } from 'react-router-dom'
+import RoutesContainer from '../containers/RoutesContainer'
 
 // import components
 import Toast from './Toast'
-import Onboard from './Onboard'
 import AppError from './AppError'
 import AppLoading from './AppLoading'
-import NoDatasets from './NoDatasets'
 import CreateDataset from './modals/CreateDataset'
 import AddDataset from './modals/AddDataset'
-import DatasetContainer from '../containers/DatasetContainer'
 
 // import models
 import { ApiAction } from '../store/api'
@@ -21,22 +20,25 @@ export interface AppProps {
   hasDatasets: boolean
   loading: boolean
   sessionID: string
-  peername: string
   apiConnection?: number
   hasAcceptedTOS: boolean
-  hasSetPeername: boolean
+  qriCloudAuthenticated: boolean
   toast: IToast
+  modal: Modal
+  children: JSX.Element[] | JSX.Element
   fetchSession: () => Promise<ApiAction>
   fetchMyDatasets: (page?: number, pageSize?: number) => Promise<ApiAction>
   addDataset: (peername: string, name: string) => Promise<ApiAction>
   setWorkingDataset: (peername: string, name: string, isLinked: boolean) => Promise<ApiAction>
   initDataset: (path: string, name: string, format: string) => Promise<ApiAction>
   acceptTOS: () => Action
-  setHasSetPeername: () => Action
-  setPeername: (newPeername: string) => Promise<ApiAction>
+  setQriCloudAuthenticated: () => Action
+  signup: (username: string, email: string, password: string) => Promise<ApiAction>
+  signin: (username: string, password: string) => Promise<ApiAction>
   closeToast: () => Action
   setApiConnection: (status: number) => Action
   pingApi: () => Promise<ApiAction>
+  setModal: (modal: Modal) => Action
 }
 
 interface AppState {
@@ -55,7 +57,6 @@ export default class App extends React.Component<AppProps, AppState> {
 
     this.setModal = this.setModal.bind(this)
     this.renderModal = this.renderModal.bind(this)
-    this.renderNoDatasets = this.renderNoDatasets.bind(this)
     this.renderAppLoading = this.renderAppLoading.bind(this)
     this.renderAppError = this.renderAppError.bind(this)
   }
@@ -85,12 +86,10 @@ export default class App extends React.Component<AppProps, AppState> {
   }
 
   private renderModal (): JSX.Element | null {
-    // Hide any dialogs while we're displaying an error
-    // if (errors) {
-    //   return null
-    // }
-    const Modal = this.state.currentModal
+    const { modal, setModal } = this.props
+    const Modal = modal
 
+    if (!Modal) return null
     return (
       <div >
         <CSSTransition
@@ -102,7 +101,7 @@ export default class App extends React.Component<AppProps, AppState> {
         >
           <CreateDataset
             onSubmit={this.props.initDataset}
-            onDismissed={() => this.setState({ currentModal: NoModal })}
+            onDismissed={async () => setModal(NoModal)}
             setWorkingDataset={this.props.setWorkingDataset}
             fetchMyDatasets={this.props.fetchMyDatasets}
           />
@@ -116,26 +115,12 @@ export default class App extends React.Component<AppProps, AppState> {
         >
           <AddDataset
             onSubmit={this.props.addDataset}
-            onDismissed={() => this.setState({ currentModal: NoModal })}
+            onDismissed={async () => setModal(NoModal)}
             setWorkingDataset={this.props.setWorkingDataset}
             fetchMyDatasets={this.props.fetchMyDatasets}
           />
         </CSSTransition>
       </div>
-    )
-  }
-
-  private renderNoDatasets () {
-    return (
-      <CSSTransition
-        in={!this.props.hasDatasets}
-        classNames="fade"
-        component="div"
-        timeout={1000}
-        unmountOnExit
-      >
-        < NoDatasets setModal={this.setModal}/>
-      </CSSTransition>
     )
   }
 
@@ -173,40 +158,30 @@ export default class App extends React.Component<AppProps, AppState> {
 
   render () {
     const {
-      hasSetPeername,
-      hasAcceptedTOS,
-      peername,
-      acceptTOS,
-      setPeername,
       toast,
-      closeToast,
-      setHasSetPeername
+      closeToast
     } = this.props
-    return (<div style={{
-      height: '100%',
-      position: 'relative',
-      overflow: 'hidden'
-    }}>
-      {this.renderAppLoading()}
-      {this.renderAppError()}
-      {this.renderModal()}
-      <Onboard
-        peername={peername}
-        hasAcceptedTOS={hasAcceptedTOS}
-        hasSetPeername={hasSetPeername}
-        setHasSetPeername={setHasSetPeername}
-        setPeername={setPeername}
-        acceptTOS={acceptTOS}
-      />
-      {this.renderNoDatasets()}
-      { this.props.hasDatasets && <DatasetContainer setModal={this.setModal}/> }
-      <Toast
-        type={toast.type}
-        message={toast.message}
-        isVisible={toast.visible}
-        timeout={3000}
-        onClose={closeToast}
-      />
-    </div>)
+
+    return (
+      <div style={{
+        height: '100%',
+        position: 'relative',
+        overflow: 'hidden'
+      }}>
+        {this.renderAppLoading()}
+        {this.renderAppError()}
+        {this.renderModal()}
+        <Router>
+          <RoutesContainer />
+        </Router>
+        <Toast
+          type={toast.type}
+          message={toast.message}
+          isVisible={toast.visible}
+          timeout={3000}
+          onClose={closeToast}
+        />
+      </div>
+    )
   }
 }
