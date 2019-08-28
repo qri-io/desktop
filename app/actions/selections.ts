@@ -21,13 +21,14 @@ export const setSelectedListItem = (type: string, selectedListItem: string) => {
   }
 }
 
-export const setWorkingDataset = (peername: string, name: string, isLinked: boolean) => {
+export const setWorkingDataset = (peername: string, name: string, isLinked: boolean, published: boolean) => {
   return {
     type: SELECTIONS_SET_WORKING_DATASET,
     payload: {
       peername,
       name,
-      isLinked
+      isLinked,
+      published
     }
   }
 }

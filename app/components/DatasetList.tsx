@@ -11,7 +11,7 @@ interface DatasetListProps {
   myDatasets: MyDatasets
   workingDataset: WorkingDataset
   setFilter: (filter: string) => Action
-  setWorkingDataset: (peername: string, name: string, isLinked: boolean) => Action
+  setWorkingDataset: (peername: string, name: string, isLinked: boolean, published: boolean) => Action
   fetchMyDatasets: (page: number, pageSize: number) => Promise<AnyAction>
   setModal: (modal: Modal) => void
 }
@@ -50,14 +50,16 @@ export default class DatasetList extends React.Component<DatasetListProps> {
       return true
     })
 
+    console.log(filteredDatasets)
+
     const listContent = filteredDatasets.length > 0
-      ? filteredDatasets.map(({ peername, name, title, isLinked }) => (
+      ? filteredDatasets.map(({ peername, name, title, isLinked, published }) => (
         <div
           key={`${peername}/${name}`}
           className={classNames('sidebar-list-item', 'sidebar-list-item-text', {
             'selected': (peername === workingDataset.peername) && (name === workingDataset.name)
           })}
-          onClick={() => setWorkingDataset(peername, name, isLinked)}
+          onClick={() => setWorkingDataset(peername, name, isLinked, published)}
         >
           <div className='text-column'>
             <div className='text'>{title}</div>

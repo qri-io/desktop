@@ -48,7 +48,8 @@ export interface DatasetProps {
   setSidebarWidth: (type: string, sidebarWidth: number) => Action
   setFilter: (filter: string) => Action
   setSelectedListItem: (type: string, activeTab: string) => Action
-  setWorkingDataset: (peername: string, name: string, isLinked: boolean) => Action
+  setWorkingDataset: (peername: string, name: string, isLinked: boolean, published: boolean) => Action
+  publishDataset: (peername: string, name: string) => Action
   fetchWorkingDatasetDetails: () => Promise<ApiAction>
   fetchWorkingHistory: (page?: number, pageSize?: number) => ApiActionThunk
   fetchWorkingStatus: () => Promise<ApiAction>
@@ -167,7 +168,8 @@ export default class Dataset extends React.Component<DatasetProps> {
       activeTab,
       component: selectedComponent,
       commit: selectedCommit,
-      isLinked
+      isLinked,
+      published
     } = selections
 
     const { history, status, path } = workingDataset
@@ -179,6 +181,7 @@ export default class Dataset extends React.Component<DatasetProps> {
       setSidebarWidth,
       setSelectedListItem,
       fetchWorkingHistory,
+      publishDataset,
       signout
     } = this.props
 
@@ -207,6 +210,37 @@ export default class Dataset extends React.Component<DatasetProps> {
         </div>
       </div>
     )
+
+    let publishButton
+    if (username === workingDataset.peername) {
+      publishButton = published ? (
+        <div
+          className='header-column'
+          data-tip={`http://localhost:3000/${workingDataset.peername}/${workingDataset.name}`}
+          onClick={() => { shell.openExternal(`http://localhost:3000/${workingDataset.peername}/${workingDataset.name}`) }}
+        >
+          <div className='header-column-icon'>
+            <FontAwesomeIcon icon={faFolderOpen} size='lg'/>
+          </div>
+          <div className='header-column-text'>
+            <div className='label'>Show on Web</div>
+          </div>
+        </div>
+      ) : (
+        <div
+          className='header-column'
+          data-tip={workingDataset.linkpath}
+          onClick={() => { publishDataset(workingDataset.peername, workingDataset.name) }}
+        >
+          <div className='header-column-icon'>
+            <FontAwesomeIcon icon={faFolderOpen} size='lg'/>
+          </div>
+          <div className='header-column-text'>
+            <div className='label'>Publish</div>
+          </div>
+        </div>
+      )
+    }
 
     const UserMenu = () => {
       const [showMenu, setShowMenu] = React.useState(false)
@@ -264,6 +298,7 @@ export default class Dataset extends React.Component<DatasetProps> {
 
           </div>
           {linkButton}
+          {publishButton}
           <UserMenu />
         </div>
         <div className='columns'>

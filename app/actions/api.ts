@@ -72,7 +72,8 @@ export function fetchMyDatasets (page: number = 1, pageSize: number = pageSizeDe
             peername: ref.peername,
             name: ref.name,
             path: ref.path,
-            isLinked: !!ref.fsiPath
+            isLinked: !!ref.fsiPath,
+            published: ref.published
           }))
         }
       }
@@ -411,5 +412,22 @@ export function initDatasetAndFetch (filepath: string, name: string, format: str
       throw action
     }
     return response
+  }
+}
+
+export function publishDataset (peername: string, name: string): ApiActionThunk {
+  return async (dispatch) => {
+    const action = {
+      type: 'publish',
+      [CALL_API]: {
+        endpoint: 'publish',
+        method: 'POST',
+        segments: {
+          peername,
+          name
+        }
+      }
+    }
+    return dispatch(action)
   }
 }
