@@ -50,8 +50,6 @@ export default class DatasetList extends React.Component<DatasetListProps> {
       return true
     })
 
-    console.log(filteredDatasets)
-
     const listContent = filteredDatasets.length > 0
       ? filteredDatasets.map(({ peername, name, title, isLinked, published }) => (
         <div

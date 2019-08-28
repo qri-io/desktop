@@ -142,6 +142,7 @@ export interface CommitDetails {
 export interface WorkingDataset extends CommitDetails {
   linkpath: string
   hasHistory: boolean
+  published: boolean
   history: {
     pageInfo: PageInfo
     value: Commit[]

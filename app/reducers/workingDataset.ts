@@ -11,6 +11,7 @@ const initialState: WorkingDataset = {
   status: {},
   isLoading: true,
   linkpath: '',
+  published: true,
   hasHistory: true,
   structure: null,
   components: {

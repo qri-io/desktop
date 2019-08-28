@@ -51,10 +51,11 @@ export interface DatasetProps {
   setFilter: (filter: string) => Action
   setSelectedListItem: (type: string, activeTab: string) => Action
   setWorkingDataset: (peername: string, name: string, isLinked: boolean, published: boolean) => Action
-  publishDataset: (peername: string, name: string) => Action
   fetchWorkingDatasetDetails: () => Promise<ApiAction>
   fetchWorkingHistory: (page?: number, pageSize?: number) => ApiActionThunk
   fetchWorkingStatus: () => Promise<ApiAction>
+  publishDataset: (dataset: WorkingDataset) => Action
+  unpublishDataset: (dataset: WorkingDataset) => Action
   signout: () => Action
 }
 
@@ -184,6 +185,7 @@ export default class Dataset extends React.Component<DatasetProps> {
       setSelectedListItem,
       fetchWorkingHistory,
       publishDataset,
+      unpublishDataset,
       signout
     } = this.props
 
@@ -214,7 +216,7 @@ export default class Dataset extends React.Component<DatasetProps> {
           label='View in Cloud'
           items={[
             <a key={0} onClick={(e) => { shell.openExternal(`http://localhost:3000/${workingDataset.peername}/${workingDataset.name}`); e.stopPropagation() }}>Copy Link</a>,
-            <a key={1} onClick={(e) => { alert('unpublish'); e.stopPropagation() }}>Unpublish</a>
+            <a key={1} onClick={(e) => { unpublishDataset(workingDataset); e.stopPropagation() }}>Unpublish</a>
           ]}
         />
       ) : (
@@ -222,7 +224,7 @@ export default class Dataset extends React.Component<DatasetProps> {
           label='Publish'
           icon='faCloudUploadAlt'
           tooltip={workingDataset.linkpath}
-          onClick={() => { publishDataset(workingDataset.peername, workingDataset.name) }}
+          onClick={() => { publishDataset(workingDataset) }}
         />
       )
     }

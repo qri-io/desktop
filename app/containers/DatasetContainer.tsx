@@ -9,7 +9,8 @@ import {
   fetchWorkingDatasetDetails,
   fetchWorkingStatus,
   fetchWorkingHistory,
-  publishDataset
+  publishDataset,
+  unpublishDataset
 } from '../actions/api'
 import {
   setActiveTab,
@@ -59,6 +60,7 @@ const DatasetContainer = connect(
     fetchWorkingStatus,
     fetchWorkingHistory,
     publishDataset,
+    unpublishDataset,
     signout
   },
   mergeProps
