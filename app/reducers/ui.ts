@@ -1,4 +1,6 @@
 import { AnyAction } from 'redux'
+import { ipcRenderer } from 'electron'
+
 import store from '../utils/localStore'
 import { apiActionTypes } from '../store/api'
 import { SAVE_SUCC, SAVE_FAIL } from '../reducers/mutations'
@@ -41,8 +43,12 @@ const initialState = {
   showDiff: false,
   datasetSidebarWidth: getSidebarWidth('datasetSidebarWidth'),
   commitSidebarWidth: getSidebarWidth('commitSidebarWidth'),
-  toast: defaultToast
+  toast: defaultToast,
+  blockMenus: true
 }
+
+// send an event to electron to block menus on first load
+ipcRenderer.send('block-menus', true)
 
 export default (state = initialState, action: AnyAction) => {
   switch (action.type) {
@@ -92,6 +98,11 @@ export default (state = initialState, action: AnyAction) => {
 
     case UI_SET_MODAL:
       const modal = action.payload
+
+      // if modal is open, block electron menus
+      const blockMenus = modal.type !== 0
+      ipcRenderer.send('block-menus', blockMenus)
+
       return {
         ...state,
         modal

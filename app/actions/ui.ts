@@ -1,3 +1,5 @@
+import { ipcRenderer } from 'electron'
+
 import {
   UI_TOGGLE_DATASET_LIST,
   UI_SET_SIDEBAR_WIDTH,
@@ -68,6 +70,7 @@ export const setApiConnection = (status: number) => {
 }
 
 export const signout = () => {
+  ipcRenderer.send('block-menus', true)
   return {
     type: UI_SIGNOUT
   }

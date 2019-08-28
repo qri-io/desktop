@@ -233,7 +233,7 @@ const CreateDataset: React.FunctionComponent<CreateDatasetProps> = ({ onDismisse
   return (
     <Modal
       id="CreateDataset"
-      title={'Create Dataset'}
+      title={'New Dataset'}
       onDismissed={onDismissed}
       onSubmit={() => {}}
       dismissable={dismissable}

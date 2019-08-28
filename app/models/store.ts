@@ -56,6 +56,7 @@ export interface UI {
   datasetSidebarWidth: number
   commitSidebarWidth: number
   toast: Toast
+  blockMenus: boolean
 }
 
 export type SelectedComponent = 'meta' | 'body' | 'schema' | ''

@@ -2,6 +2,7 @@ import { Reducer, AnyAction } from 'redux'
 import { WorkingDataset, DatasetStatus, ComponentStatus } from '../models/store'
 import { apiActionTypes } from '../store/api'
 import { withPagination } from './page'
+import { ipcRenderer } from 'electron'
 
 const initialState: WorkingDataset = {
   path: '',
@@ -53,7 +54,16 @@ const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction
     case DATASET_REQ:
       return initialState
     case DATASET_SUCC || ADD_SUCC: // when adding a new dataset, set it as the new workingDataset
-      const { name, path, peername, published, dataset } = action.payload.data
+      const { name, path, peername, published, dataset, fsiPath } = action.payload.data
+
+      // set electron menus
+      ipcRenderer.send('block-menus', false) // unblock menus once we have a working dataset
+      // some menus are contextual based on linked and published status
+      ipcRenderer.send('set-working-dataset', {
+        fsiPath,
+        published
+      })
+
       return {
         ...state,
         name,
