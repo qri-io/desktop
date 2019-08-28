@@ -280,7 +280,7 @@ app.on('ready', () =>
             submenu: [
               {
                 id: 'publish-unpublish-dataset',
-                label: 'Publish Dataset',
+                label: 'Publish/Unpublish Dataset',
                 accelerator: 'Shift+Command+P',
                 click () {
                   mainWindow.webContents.send('publish-unpublish-dataset')
@@ -457,10 +457,6 @@ app.on('ready', () =>
 
         // enable/disable 'view in qri cloud' menu item
         setMenuItemEnabled(['view-on-qri-cloud'], published)
-
-        // set different label for publish/unpublish menu item
-        const publishLabel = published ? 'Unpublish Dataset' : 'Publish Dataset'
-        setMenuItemLabel('publish-unpublish-dataset', publishLabel)
       })
 
       ipcMain.on('block-menus', (e, blockMenus) => {
