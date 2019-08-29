@@ -276,14 +276,6 @@ $header-font-size: .9rem;
     border-radius: 2px;
   }
 
-  .icon-column {
-    flex-basis: 27px;
-    text-align: center;
-    color: #315379;
-    display: flex;
-    align-self: center;
-  }
-
   .text-column {
     flex-direction: column;
     flex: 1;
@@ -404,8 +396,20 @@ $header-font-size: .9rem;
     width: 30px;
   }
 
+  .icon-column {
+    flex-basis: 27px;
+    text-align: center;
+    color: #315379;
+    display: flex;
+    align-self: center;
+  }
+
   &.disabled {
     color: #ccc;
+
+    .icon-column {
+      color: #ccc;
+    }
   }
 }
 

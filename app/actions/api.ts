@@ -6,6 +6,8 @@ import { Dataset, Commit } from '../models/dataset'
 import { openToast } from './ui'
 import { setWorkingDataset, setSelectedListItem } from './selections'
 
+import { RESET_MY_DATASETS } from '../reducers/myDatasets'
+
 const pageSizeDefault = 15
 const bodyPageSizeDefault = 100
 
@@ -48,8 +50,18 @@ export function fetchWorkingDatasetDetails (): ApiActionThunk {
   }
 }
 
-export function fetchMyDatasets (page: number = 1, pageSize: number = pageSizeDefault): ApiActionThunk {
+// clears the dataset list
+function resetMyDatasets (): Action {
+  return {
+    type: RESET_MY_DATASETS
+  }
+}
+
+export function fetchMyDatasets (page: number = 1, pageSize: number = pageSizeDefault, invalidatePagination: boolean = false): ApiActionThunk {
   return async (dispatch, getState) => {
+    if (invalidatePagination) {
+      dispatch(resetMyDatasets())
+    }
     const state = getState()
     if (page !== 1 &&
           state &&
@@ -471,5 +483,35 @@ export function unpublishDataset (dataset: WorkingDataset): ApiActionThunk {
     }
     // return response
     return dispatch(openToast('success', 'dataset unpublished'))
+  }
+}
+
+export function linkDataset (peername: string, name: string, dir: string): ApiActionThunk {
+  return async (dispatch, getState) => {
+    const whenOk = chainSuccess(dispatch, getState)
+    let response: Action
+
+    try {
+      const action = {
+        type: 'checkout',
+        [CALL_API]: {
+          endpoint: 'checkout',
+          method: 'POST',
+          segments: {
+            peername,
+            name
+          },
+          params: {
+            dir
+          }
+        }
+      }
+      response = await dispatch(action)
+      response = await whenOk(fetchWorkingDatasetDetails())(response)
+      response = await whenOk(fetchMyDatasets(1, pageSizeDefault, true))(response) // non-paginated
+    } catch (action) {
+      throw action
+    }
+    return response
   }
 }

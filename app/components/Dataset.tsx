@@ -1,29 +1,27 @@
 import * as React from 'react'
-import classNames from 'classnames'
 import { Action } from 'redux'
-import { ipcRenderer, shell } from 'electron'
+import classNames from 'classnames'
 import ReactTooltip from 'react-tooltip'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faFile } from '@fortawesome/free-regular-svg-icons'
+import { ipcRenderer, shell } from 'electron'
+import { CSSTransition } from 'react-transition-group'
 import { faLink } from '@fortawesome/free-solid-svg-icons'
+import { faFile } from '@fortawesome/free-regular-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 import { ApiAction, ApiActionThunk } from '../store/api'
 import ExternalLink from './ExternalLink'
 import { Resizable } from './Resizable'
+import { Session } from '../models/session'
 import DatasetSidebar from './DatasetSidebar'
 import UnlinkedDataset from './UnlinkedDataset'
 import DatasetComponent from './DatasetComponent'
+import { QRI_CLOUD_URL } from '../utils/registry'
+import { Modal, ModalType } from '../models/modals'
+import { defaultSidebarWidth } from '../reducers/ui'
+import HeaderColumnButton from './chrome/HeaderColumnButton'
 import DatasetListContainer from '../containers/DatasetListContainer'
 import CommitDetailsContainer from '../containers/CommitDetailsContainer'
-import HeaderColumnButton from './chrome/HeaderColumnButton'
 import HeaderColumnButtonDropdown from './chrome/HeaderColumnButtonDropdown'
-
-import { CSSTransition } from 'react-transition-group'
-import { Modal } from '../models/modals'
-
-import { defaultSidebarWidth } from '../reducers/ui'
-
-import { QRI_CLOUD_URL } from '../utils/registry'
 
 import {
   UI,
@@ -32,8 +30,6 @@ import {
   WorkingDataset,
   Mutations
 } from '../models/store'
-
-import { Session } from '../models/session'
 
 export interface DatasetProps {
   // redux state
@@ -189,9 +185,11 @@ export default class Dataset extends React.Component<DatasetProps> {
       activeTab,
       component: selectedComponent,
       commit: selectedCommit,
-      isLinked,
       published
     } = selections
+
+    // don't use isLinked from selections
+    const isLinked = workingDataset.linkpath !== ''
 
     const { history, status, path } = workingDataset
 
@@ -202,6 +200,7 @@ export default class Dataset extends React.Component<DatasetProps> {
       setSidebarWidth,
       setSelectedListItem,
       fetchWorkingHistory,
+      // linkDataset,
       signout
     } = this.props
 
@@ -221,7 +220,7 @@ export default class Dataset extends React.Component<DatasetProps> {
             <FontAwesomeIcon icon={faLink} transform="shrink-8" />
           </span>
         )}
-        onClick={() => { console.log('not finished: linking to filesystem') }}
+        onClick={() => { setModal({ type: ModalType.LinkDataset }) }}
       />
     )
 
@@ -315,7 +314,7 @@ export default class Dataset extends React.Component<DatasetProps> {
                 mountOnEnter
                 unmountOnExit
               >
-                <UnlinkedDataset />
+                <UnlinkedDataset setModal={setModal}/>
               </CSSTransition>
               <CSSTransition
                 in={activeTab === 'status' && isLinked}

@@ -131,6 +131,7 @@ const CommitDetails: React.FunctionComponent<CommitDetailsProps> = ({
                 selectedComponent={selectedComponent}
                 selectionType={'commitComponent' as ComponentType}
                 onComponentClick={setSelectedListItem}
+                isLinked
               />
             </Resizable>
             <div className='content-wrapper'>
