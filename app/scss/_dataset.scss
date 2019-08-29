@@ -18,6 +18,7 @@ $header-font-size: .9rem;
     background-color: #315379;
     color: #F8F2F2;
     cursor: default;
+    display: flex;
     flex-direction: row;
     flex-grow: 0;
     flex-shrink: 0;
@@ -60,16 +61,13 @@ $header-font-size: .9rem;
     display: inline-flex;
     flex-direction: row;
     align-items: center;
-    min-width: 164px;
 
     &:last-child {
-      float: right;
+      margin-left: auto;
       border-left: $header-column-border;
     }
 
     .header-column-icon {
-      flex: 0 0 32px;
-
       .icon-inline {
         font-size: 1.2rem;
         position: relative;
@@ -77,12 +75,15 @@ $header-font-size: .9rem;
         left: 7px;
       }
 
-
+      img {
+        border-radius: 2px;
+      }
     }
 
     .header-column-text {
       flex-grow: 1;
-      overflow-x: hidden;
+      white-space: nowrap;
+      padding-left: 9px;
 
       .label {
         font-size: 0.75rem;
@@ -97,6 +98,12 @@ $header-font-size: .9rem;
         font-weight: 600;
         line-height: 1.5rem;
       }
+    }
+
+    .header-column-arrow {
+      height: 100%;
+      width: 26px;
+      padding-left: 9px;
     }
 
     &:hover {
@@ -238,6 +245,10 @@ $header-font-size: .9rem;
     position: relative;
     z-index:10;
     display: inline-flex;
+
+    .header-column-text {
+      overflow-x: hidden;
+    }
 
     &.expanded {
       color: #383838;

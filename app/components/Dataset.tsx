@@ -228,10 +228,12 @@ export default class Dataset extends React.Component<DatasetProps> {
       <HeaderColumnButton
         label='link to filesystem'
         tooltip='Link this dataset to a folder on your computer'
-        icon={(<>
-          <FontAwesomeIcon icon={faFile} size='lg'/>
-          <FontAwesomeIcon icon={faLink} transform="shrink-8" />
-        </>)}
+        icon={(
+          <span className='fa-layers fa-fw'>
+            <FontAwesomeIcon icon={faFile} size='lg'/>
+            <FontAwesomeIcon icon={faLink} transform="shrink-8" />
+          </span>
+        )}
         onClick={() => { console.log('not finished: linking to filesystem') }}
       />
     )
@@ -274,12 +276,13 @@ export default class Dataset extends React.Component<DatasetProps> {
               <div className="label">{name ? 'Current Dataset' : 'Choose a Dataset'}</div>
               <div className="name">{name}</div>
             </div>
-            {
-              showDatasetList
-                ? <div className="arrow collapse">&nbsp;</div>
-                : <div className="arrow expand">&nbsp;</div>
-            }
-
+            <div className='header-column-arrow'>
+              {
+                showDatasetList
+                  ? <div className="arrow collapse">&nbsp;</div>
+                  : <div className="arrow expand">&nbsp;</div>
+              }
+            </div>
           </div>
           {linkButton}
           {publishButton}
