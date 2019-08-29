@@ -11,6 +11,7 @@ import { ApiAction, ApiActionThunk } from '../store/api'
 import ExternalLink from './ExternalLink'
 import { Resizable } from './Resizable'
 import DatasetSidebar from './DatasetSidebar'
+import UnlinkedDataset from './UnlinkedDataset'
 import DatasetComponent from './DatasetComponent'
 import DatasetListContainer from '../containers/DatasetListContainer'
 import CommitDetailsContainer from '../containers/CommitDetailsContainer'
@@ -82,14 +83,7 @@ export default class Dataset extends React.Component<DatasetProps> {
 
   componentDidMount () {
     // poll for status
-    // setInterval(() => { this.props.fetchWorkingStatus() }, 5000)
-    const { selections, workingDataset } = this.props
-    const { activeTab, isLinked } = selections
-    if (activeTab === 'status' && !isLinked) {
-      this.props.setActiveTab('history')
-    } else if (activeTab === 'history' && workingDataset.history.pageInfo.error && workingDataset.history.pageInfo.error.includes('no history')) {
-      this.props.setActiveTab('status')
-    }
+    setInterval(() => { this.props.fetchWorkingStatus() }, 5000)
 
     this.openWorkingDirectory = this.openWorkingDirectory.bind(this)
     this.publishUnpublishDataset = this.publishUnpublishDataset.bind(this)
@@ -116,13 +110,6 @@ export default class Dataset extends React.Component<DatasetProps> {
     // this "wires up" all of the tooltips, must be called on update, as tooltips
     // in descendents can come and go
     ReactTooltip.rebuild()
-    const { selections, workingDataset } = this.props
-    const { activeTab, isLinked } = selections
-    if (activeTab === 'status' && !isLinked) {
-      this.props.setActiveTab('history')
-    } else if (activeTab === 'history' && workingDataset.history.pageInfo.error && workingDataset.history.pageInfo.error.includes('no history')) {
-      this.props.setActiveTab('status')
-    }
   }
 
   // using component state + getDerivedStateFromProps to determine when a new
@@ -318,16 +305,26 @@ export default class Dataset extends React.Component<DatasetProps> {
             />
           </Resizable>
           <div className='content-wrapper'>
+            {/* Show the overlay to dim the rest of the app when the sidebar is open */}
             {showDatasetList && <div className='overlay' onClick={toggleDatasetList}></div>}
             <div className='transition-group' >
               <CSSTransition
-                in={activeTab === 'status'}
+                in={(activeTab === 'status') && !isLinked}
                 classNames='fade'
                 timeout={300}
                 mountOnEnter
                 unmountOnExit
               >
-                <DatasetComponent component={selectedComponent} componentStatus={status[selectedComponent]} isLoading={workingDataset.isLoading}/>
+                <UnlinkedDataset />
+              </CSSTransition>
+              <CSSTransition
+                in={activeTab === 'status' && isLinked}
+                classNames='fade'
+                timeout={300}
+                mountOnEnter
+                unmountOnExit
+              >
+                <DatasetComponent component={selectedComponent} componentStatus={status[selectedComponent]} isLoading={workingDataset.isLoading} />
               </CSSTransition>
               <CSSTransition
                 in={activeTab === 'history'}

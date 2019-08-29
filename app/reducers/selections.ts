@@ -50,7 +50,16 @@ export default (state = initialState, action: AnyAction) => {
       localStore().setItem('name', name)
       localStore().setItem('isLinked', isLinked)
       localStore().setItem('published', published)
-      return Object.assign({}, state, { peername, name, isLinked, published })
+
+      const newActiveTab = isLinked ? 'status' : 'history'
+
+      return Object.assign({}, state, {
+        peername,
+        name,
+        isLinked,
+        published,
+        activeTab: newActiveTab
+      })
 
     case LIST_SUCC:
       // if there is no peername + name in selections, use the first one on the list
