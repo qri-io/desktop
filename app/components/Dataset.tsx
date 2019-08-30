@@ -28,7 +28,9 @@ import {
   Selections,
   MyDatasets,
   WorkingDataset,
-  Mutations
+  Mutations,
+  DatasetStatus,
+  SelectedComponent
 } from '../models/store'
 
 export interface DatasetProps {
@@ -51,6 +53,8 @@ export interface DatasetProps {
   fetchWorkingDatasetDetails: () => Promise<ApiAction>
   fetchWorkingHistory: (page?: number, pageSize?: number) => ApiActionThunk
   fetchWorkingStatus: () => Promise<ApiAction>
+  resetBody: () => Promise<ApiAction>
+  resetOtherComponents: () => Promise<ApiAction>
   publishDataset: (dataset: WorkingDataset) => Action
   unpublishDataset: (dataset: WorkingDataset) => Action
   signout: () => Action
@@ -62,6 +66,7 @@ interface DatasetState {
   saveIsLoading: boolean
   workingDatasetIsLoading: boolean
   activeTab: string
+  status: DatasetStatus
 }
 
 const logo = require('../assets/qri-blob-logo-tiny.png') //eslint-disable-line
@@ -74,12 +79,13 @@ export default class Dataset extends React.Component<DatasetProps> {
     name: null,
     saveIsLoading: false,
     workingDatasetIsLoading: true,
-    activeTab: this.props.selections.activeTab
+    activeTab: this.props.selections.activeTab,
+    status: this.props.workingDataset.status
   }
 
   componentDidMount () {
     // poll for status
-    setInterval(() => { this.props.fetchWorkingStatus() }, 5000)
+    setInterval(() => { this.props.fetchWorkingStatus() }, 3000)
 
     this.openWorkingDirectory = this.openWorkingDirectory.bind(this)
     this.publishUnpublishDataset = this.publishUnpublishDataset.bind(this)
@@ -102,7 +108,28 @@ export default class Dataset extends React.Component<DatasetProps> {
     ipcRenderer.on('publish-unpublish-dataset', this.publishUnpublishDataset)
   }
 
-  componentDidUpdate () {
+  componentDidUpdate (prevProps: DatasetProps) {
+    // map mtime deltas to a boolean to determine whether to update the workingDataset
+    const { workingDataset, resetBody, resetOtherComponents } = this.props
+    const { status } = workingDataset
+    const { status: prevStatus } = prevProps.workingDataset
+    if (status) {
+      // create an array of components that need updating
+      const componentsToReset: SelectedComponent[] = []
+
+      Object.keys(status).forEach((component: SelectedComponent) => {
+        const currentMtime = status[component].mtime
+        const prevMtime = prevStatus[component] && prevStatus[component].mtime
+        if (currentMtime && prevMtime) {
+          if (currentMtime.getTime() !== prevMtime.getTime()) componentsToReset.push(component)
+        }
+      })
+
+      // reset components
+      if (componentsToReset.includes('body')) resetBody()
+      if (componentsToReset.includes('schema') || componentsToReset.includes('meta')) resetOtherComponents()
+    }
+
     // this "wires up" all of the tooltips, must be called on update, as tooltips
     // in descendents can come and go
     ReactTooltip.rebuild()

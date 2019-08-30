@@ -47,7 +47,10 @@ const [DATASET_REQ, DATASET_SUCC, DATASET_FAIL] = apiActionTypes('dataset')
 const [DATASET_HISTORY_REQ, DATASET_HISTORY_SUCC, DATASET_HISTORY_FAIL] = apiActionTypes('history')
 const [DATASET_STATUS_REQ, DATASET_STATUS_SUCC, DATASET_STATUS_FAIL] = apiActionTypes('status')
 const [DATASET_BODY_REQ, DATASET_BODY_SUCC, DATASET_BODY_FAIL] = apiActionTypes('body')
+const [RESETOTHERCOMPONENTS_REQ, RESETOTHERCOMPONENTS_SUCC, RESETOTHERCOMPONENTS_FAIL] = apiActionTypes('resetOtherComponents')
 const [, ADD_SUCC] = apiActionTypes('add')
+
+export const RESET_BODY = 'RESET_BODY'
 
 const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction): WorkingDataset | null => {
   switch (action.type) {
@@ -130,8 +133,8 @@ const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction
     case DATASET_STATUS_SUCC:
       const statusObject: DatasetStatus = action.payload.data
         .reduce((obj: any, item: any): ComponentStatus => {
-          const { component, filepath, status } = item
-          obj[component] = { filepath, status }
+          const { component, filepath, status, mtime } = item
+          obj[component] = { filepath, status, mtime }
           return obj
         }, {})
       return {
@@ -189,6 +192,56 @@ const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction
               ...state.components.body.pageInfo,
               isFetching: false
             }
+          }
+        }
+      }
+
+    case RESET_BODY:
+      return {
+        ...state,
+        components: {
+          ...state.components,
+          body: initialState.components.body
+        }
+      }
+
+    case RESETOTHERCOMPONENTS_REQ:
+      return {
+        ...state,
+        components: {
+          ...state.components,
+          meta: initialState.components.meta,
+          schema: initialState.components.schema
+        }
+      }
+
+    case RESETOTHERCOMPONENTS_SUCC:
+      const { dataset: newDataset } = action.payload.data
+      return {
+        ...state,
+        components: {
+          ...state.components,
+          meta: {
+            value: newDataset.meta || {}
+          },
+          schema: {
+            value: newDataset.structure.schema
+          }
+        }
+      }
+
+    case RESETOTHERCOMPONENTS_FAIL:
+      return {
+        ...state,
+        components: {
+          ...state.components,
+          meta: {
+            ...state.components.meta,
+            error: action.payload.err
+          },
+          schema: {
+            ...state.components.schema,
+            error: action.payload.err
           }
         }
       }

@@ -43,9 +43,61 @@ export function fetchWorkingDatasetDetails (): ApiActionThunk {
     const { history } = workingDataset
     const { commit } = selections
 
+    // if history length changes, select the latest commit
     if (history.value.length !== 0 && (commit === '' || !history.value.some(c => c.path === commit))) {
       await dispatch(setSelectedListItem('commit', history.value[0].path))
     }
+    return response
+  }
+}
+
+export function fetchModifiedComponents (): ApiActionThunk {
+  return async (dispatch, getState) => {
+    const { selections, workingDataset } = getState()
+    const { path } = workingDataset
+    const { peername, name, isLinked } = selections
+
+    let response: Action
+
+    const resetComponents = {
+      type: 'resetComponents',
+      [CALL_API]: {
+        endpoint: '',
+        method: 'GET',
+        params: { fsi: isLinked },
+        segments: {
+          peername,
+          name
+        },
+        map: (data: Record<string, string>): Dataset => {
+          return data as Dataset
+        }
+      }
+    }
+    response = await dispatch(resetComponents)
+
+    const resetBody = {
+      type: 'resetBody',
+      [CALL_API]: {
+        endpoint: 'body',
+        method: 'GET',
+        pageInfo: {
+          page: 1,
+          pageSize: bodyPageSizeDefault
+        },
+        params: { fsi: isLinked },
+        segments: {
+          peername,
+          name,
+          path
+        },
+        map: (data: Record<string, string>): Dataset => {
+          return data as Dataset
+        }
+      }
+    }
+    response = await dispatch(resetBody)
+
     return response
   }
 }
@@ -254,7 +306,8 @@ export function fetchWorkingStatus (): ApiActionThunk {
             return {
               filepath: d.sourceFile,
               component: d.component,
-              status: d.type as ComponentState
+              status: d.type as ComponentState,
+              mtime: new Date(d.mtime)
             }
           })
         }
