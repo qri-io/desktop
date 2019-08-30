@@ -6,6 +6,7 @@ import {
   fetchMyDatasets,
   addDatasetAndFetch,
   initDatasetAndFetch,
+  linkDataset,
   pingApi
 } from '../actions/api'
 
@@ -32,7 +33,7 @@ const mergeProps = (props: any, actions: any): AppProps => {
 
 const AppContainer = connect(
   (state: Store) => {
-    const { ui, myDatasets, session } = state
+    const { ui, myDatasets, session, workingDataset } = state
     const loading = ui.apiConnection === 0
     const hasDatasets = myDatasets.value.length !== 0
     const { id: sessionID, peername } = session
@@ -44,6 +45,7 @@ const AppContainer = connect(
       peername,
       toast,
       modal,
+      workingDataset,
       apiConnection
     }
   },
@@ -55,6 +57,7 @@ const AppContainer = connect(
     setQriCloudAuthenticated,
     addDataset: addDatasetAndFetch,
     initDataset: initDatasetAndFetch,
+    linkDataset,
     closeToast,
     pingApi,
     setApiConnection,

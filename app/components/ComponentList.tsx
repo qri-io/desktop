@@ -123,7 +123,7 @@ const ComponentList: React.FunctionComponent<ComponentListProps> = (props: Compo
       </div>
       {
         components.map(({ name, displayName, tooltip, icon }) => {
-          if (status[name]) {
+          if (status[name] && isLinked) {
             const { filepath, status: fileStatus } = status[name]
             let filename
             if (filepath === 'repo') {
@@ -138,7 +138,7 @@ const ComponentList: React.FunctionComponent<ComponentListProps> = (props: Compo
                 displayName={displayName}
                 name={name}
                 icon={icon}
-                filename={isLinked ? filename : ''}
+                filename={filename}
                 status={fileStatus}
                 selected={selectedComponent === name}
                 selectionType={selectionType}

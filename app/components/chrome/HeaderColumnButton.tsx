@@ -29,7 +29,7 @@ const HeaderColumnButton: React.FunctionComponent<HeaderColumnButtonProps> = (pr
     >
       {(icon !== '') && (typeof icon === 'string')
         ? <div className='header-column-icon'><FontAwesomeIcon icon={icons[icon]} size='lg'/></div>
-        : icon
+        : (<div className='header-column-icon'>{icon}</div>)
       }
       {(label !== '') &&
         <div className='header-column-text'>

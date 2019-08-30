@@ -18,6 +18,7 @@ $header-font-size: .9rem;
     background-color: #315379;
     color: #F8F2F2;
     cursor: default;
+    display: flex;
     flex-direction: row;
     flex-grow: 0;
     flex-shrink: 0;
@@ -60,16 +61,13 @@ $header-font-size: .9rem;
     display: inline-flex;
     flex-direction: row;
     align-items: center;
-    min-width: 164px;
 
     &:last-child {
-      float: right;
+      margin-left: auto;
       border-left: $header-column-border;
     }
 
     .header-column-icon {
-      flex: 0 0 32px;
-
       .icon-inline {
         font-size: 1.2rem;
         position: relative;
@@ -77,12 +75,15 @@ $header-font-size: .9rem;
         left: 7px;
       }
 
-
+      img {
+        border-radius: 2px;
+      }
     }
 
     .header-column-text {
       flex-grow: 1;
-      overflow-x: hidden;
+      white-space: nowrap;
+      padding-left: 9px;
 
       .label {
         font-size: 0.75rem;
@@ -97,6 +98,12 @@ $header-font-size: .9rem;
         font-weight: 600;
         line-height: 1.5rem;
       }
+    }
+
+    .header-column-arrow {
+      height: 100%;
+      width: 26px;
+      padding-left: 9px;
     }
 
     &:hover {
@@ -162,6 +169,7 @@ $header-font-size: .9rem;
         height: 100%;
         width: 10px;
         cursor: ew-resize;
+        z-index: 10;
       }
     }
 
@@ -238,6 +246,10 @@ $header-font-size: .9rem;
     z-index:10;
     display: inline-flex;
 
+    .header-column-text {
+      overflow-x: hidden;
+    }
+
     &.expanded {
       color: #383838;
     }
@@ -262,14 +274,6 @@ $header-font-size: .9rem;
     width: 16px;
     margin-right: 4px;
     border-radius: 2px;
-  }
-
-  .icon-column {
-    flex-basis: 27px;
-    text-align: center;
-    color: #315379;
-    display: flex;
-    align-self: center;
   }
 
   .text-column {
@@ -392,8 +396,20 @@ $header-font-size: .9rem;
     width: 30px;
   }
 
+  .icon-column {
+    flex-basis: 27px;
+    text-align: center;
+    color: #315379;
+    display: flex;
+    align-self: center;
+  }
+
   &.disabled {
     color: #ccc;
+
+    .icon-column {
+      color: #ccc;
+    }
   }
 }
 
@@ -422,5 +438,30 @@ $header-font-size: .9rem;
     height: 60px;
     padding: $sidebar-item-padding;
     border-bottom: $list-item-bottom-border;
+  }
+}
+
+
+////////////////////////////
+//    Unlinked Dataset    //
+////////////////////////////
+
+.unlinked-dataset {
+  height: 100%;
+
+  .message-container {
+    h4 {
+      color: #777;
+      font-weight: 500;
+    }
+
+    color: #777;
+    display: flex;
+    flex-direction: row;
+    padding: 19px;
+    border: 2px solid #E9F0F7;
+    max-width: 475px;
+    margin: 150px auto;
+    border-radius: 5px;
   }
 }

@@ -23,7 +23,6 @@ const HeaderColumnButtonDropdown: React.FunctionComponent<HeaderColumnButtonDrop
   return (
     <div
       className='header-column'
-      style={{ position: 'relative', paddingRight: 0 }}
       data-tip={tooltip}
       onClick={onClick}
     >
@@ -36,7 +35,7 @@ const HeaderColumnButtonDropdown: React.FunctionComponent<HeaderColumnButtonDrop
           <div className='label'>{label}</div>
         </div>
       }
-      <div onClick={toggleMenu} style={(onClick === toggleMenu) ? undefined : twoActionStyle }>
+      <div className='header-column-arrow' onClick={toggleMenu} style={(onClick === toggleMenu) ? undefined : twoActionStyle }>
         {showMenu
           ? <div className="arrow collapse">&nbsp;</div>
           : <div className="arrow expand">&nbsp;</div>

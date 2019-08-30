@@ -7,34 +7,38 @@
 	background-color: $appBackground;
 	z-index: $modal-z-index;
   }
-  
+
   .modal-content {
 	padding: 20px;
   }
-  
+
   // This is used for group lists such as the branch picker
   .modal-inner-content {
 	border: solid 1px $primary-dark;
 	border-radius: $border-radius;
 	background: $appBackground;
   }
-  
+
   .modal-actions {
 	margin-top: 5px;
   }
-  
+
   .modal-error-output {
 	font-family: $font-family-monospace;
 	font-size: $font-size-base;
 	margin: 0;
 	white-space: pre-wrap;
   }
-  
+
   .modal-overlay {
 	z-index: $modal-overlay-z-index;
-  
+
 	background: black;
 	opacity: 0.4;
 	height: 100%;
   }
-  
+
+.submit-message {
+	font-size: .8rem;
+	color: #777;
+}

@@ -4,6 +4,7 @@ import { apiActionTypes } from '../store/api'
 import { withPagination } from './page'
 
 export const MYDATASETS_SET_FILTER = 'MYDATASETS_SET_FILTER'
+export const RESET_MY_DATASETS = 'RESET_MY_DATASETS'
 
 const initialState: MyDatasets = {
   pageInfo: {
@@ -42,6 +43,9 @@ const myDatasetsReducer: Reducer = (state = initialState, action: AnyAction): My
         ...state,
         pageInfo: withPagination(action, state)
       }
+
+    case RESET_MY_DATASETS:
+      return initialState
   }
 
   return state

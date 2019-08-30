@@ -70,6 +70,7 @@ const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction
         path,
         peername,
         published,
+        linkpath: fsiPath || '',
         structure: dataset.structure,
         isLoading: false,
         components: {
@@ -133,17 +134,8 @@ const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction
           obj[component] = { filepath, status }
           return obj
         }, {})
-      // check filepath in the first element in the payload to determine whether the
-      // dataset is linked
-      let linkpath = ''
-      const { filepath } = action.payload.data[0]
-      if (filepath !== 'repo') {
-        linkpath = filepath.substring(0, (filepath.lastIndexOf('/')))
-      }
-
       return {
         ...state,
-        linkpath,
         status: statusObject
       }
     case DATASET_STATUS_FAIL:

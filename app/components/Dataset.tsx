@@ -1,28 +1,27 @@
 import * as React from 'react'
-import classNames from 'classnames'
 import { Action } from 'redux'
-import { ipcRenderer, shell } from 'electron'
+import classNames from 'classnames'
 import ReactTooltip from 'react-tooltip'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faFile } from '@fortawesome/free-regular-svg-icons'
+import { ipcRenderer, shell } from 'electron'
+import { CSSTransition } from 'react-transition-group'
 import { faLink } from '@fortawesome/free-solid-svg-icons'
+import { faFile } from '@fortawesome/free-regular-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 import { ApiAction, ApiActionThunk } from '../store/api'
 import ExternalLink from './ExternalLink'
 import { Resizable } from './Resizable'
+import { Session } from '../models/session'
 import DatasetSidebar from './DatasetSidebar'
+import UnlinkedDataset from './UnlinkedDataset'
 import DatasetComponent from './DatasetComponent'
+import { QRI_CLOUD_URL } from '../utils/registry'
+import { Modal, ModalType } from '../models/modals'
+import { defaultSidebarWidth } from '../reducers/ui'
+import HeaderColumnButton from './chrome/HeaderColumnButton'
 import DatasetListContainer from '../containers/DatasetListContainer'
 import CommitDetailsContainer from '../containers/CommitDetailsContainer'
-import HeaderColumnButton from './chrome/HeaderColumnButton'
 import HeaderColumnButtonDropdown from './chrome/HeaderColumnButtonDropdown'
-
-import { CSSTransition } from 'react-transition-group'
-import { Modal } from '../models/modals'
-
-import { defaultSidebarWidth } from '../reducers/ui'
-
-import { QRI_CLOUD_URL } from '../utils/registry'
 
 import {
   UI,
@@ -31,8 +30,6 @@ import {
   WorkingDataset,
   Mutations
 } from '../models/store'
-
-import { Session } from '../models/session'
 
 export interface DatasetProps {
   // redux state
@@ -82,14 +79,7 @@ export default class Dataset extends React.Component<DatasetProps> {
 
   componentDidMount () {
     // poll for status
-    // setInterval(() => { this.props.fetchWorkingStatus() }, 5000)
-    const { selections, workingDataset } = this.props
-    const { activeTab, isLinked } = selections
-    if (activeTab === 'status' && !isLinked) {
-      this.props.setActiveTab('history')
-    } else if (activeTab === 'history' && workingDataset.history.pageInfo.error && workingDataset.history.pageInfo.error.includes('no history')) {
-      this.props.setActiveTab('status')
-    }
+    setInterval(() => { this.props.fetchWorkingStatus() }, 5000)
 
     this.openWorkingDirectory = this.openWorkingDirectory.bind(this)
     this.publishUnpublishDataset = this.publishUnpublishDataset.bind(this)
@@ -116,13 +106,6 @@ export default class Dataset extends React.Component<DatasetProps> {
     // this "wires up" all of the tooltips, must be called on update, as tooltips
     // in descendents can come and go
     ReactTooltip.rebuild()
-    const { selections, workingDataset } = this.props
-    const { activeTab, isLinked } = selections
-    if (activeTab === 'status' && !isLinked) {
-      this.props.setActiveTab('history')
-    } else if (activeTab === 'history' && workingDataset.history.pageInfo.error && workingDataset.history.pageInfo.error.includes('no history')) {
-      this.props.setActiveTab('status')
-    }
   }
 
   // using component state + getDerivedStateFromProps to determine when a new
@@ -202,9 +185,11 @@ export default class Dataset extends React.Component<DatasetProps> {
       activeTab,
       component: selectedComponent,
       commit: selectedCommit,
-      isLinked,
       published
     } = selections
+
+    // don't use isLinked from selections
+    const isLinked = workingDataset.linkpath !== ''
 
     const { history, status, path } = workingDataset
 
@@ -215,6 +200,7 @@ export default class Dataset extends React.Component<DatasetProps> {
       setSidebarWidth,
       setSelectedListItem,
       fetchWorkingHistory,
+      // linkDataset,
       signout
     } = this.props
 
@@ -228,11 +214,13 @@ export default class Dataset extends React.Component<DatasetProps> {
       <HeaderColumnButton
         label='link to filesystem'
         tooltip='Link this dataset to a folder on your computer'
-        icon={(<>
-          <FontAwesomeIcon icon={faFile} size='lg'/>
-          <FontAwesomeIcon icon={faLink} transform="shrink-8" />
-        </>)}
-        onClick={() => { console.log('not finished: linking to filesystem') }}
+        icon={(
+          <span className='fa-layers fa-fw'>
+            <FontAwesomeIcon icon={faFile} size='lg'/>
+            <FontAwesomeIcon icon={faLink} transform="shrink-8" />
+          </span>
+        )}
+        onClick={() => { setModal({ type: ModalType.LinkDataset }) }}
       />
     )
 
@@ -274,12 +262,13 @@ export default class Dataset extends React.Component<DatasetProps> {
               <div className="label">{name ? 'Current Dataset' : 'Choose a Dataset'}</div>
               <div className="name">{name}</div>
             </div>
-            {
-              showDatasetList
-                ? <div className="arrow collapse">&nbsp;</div>
-                : <div className="arrow expand">&nbsp;</div>
-            }
-
+            <div className='header-column-arrow'>
+              {
+                showDatasetList
+                  ? <div className="arrow collapse">&nbsp;</div>
+                  : <div className="arrow expand">&nbsp;</div>
+              }
+            </div>
           </div>
           {linkButton}
           {publishButton}
@@ -315,16 +304,26 @@ export default class Dataset extends React.Component<DatasetProps> {
             />
           </Resizable>
           <div className='content-wrapper'>
+            {/* Show the overlay to dim the rest of the app when the sidebar is open */}
             {showDatasetList && <div className='overlay' onClick={toggleDatasetList}></div>}
             <div className='transition-group' >
               <CSSTransition
-                in={activeTab === 'status'}
+                in={(activeTab === 'status') && !isLinked}
                 classNames='fade'
                 timeout={300}
                 mountOnEnter
                 unmountOnExit
               >
-                <DatasetComponent component={selectedComponent} componentStatus={status[selectedComponent]} isLoading={workingDataset.isLoading}/>
+                <UnlinkedDataset setModal={setModal}/>
+              </CSSTransition>
+              <CSSTransition
+                in={activeTab === 'status' && isLinked}
+                classNames='fade'
+                timeout={300}
+                mountOnEnter
+                unmountOnExit
+              >
+                <DatasetComponent component={selectedComponent} componentStatus={status[selectedComponent]} isLoading={workingDataset.isLoading} />
               </CSSTransition>
               <CSSTransition
                 in={activeTab === 'history'}

@@ -8,14 +8,16 @@ import { ipcRenderer } from 'electron'
 import Toast from './Toast'
 import AppError from './AppError'
 import AppLoading from './AppLoading'
+import AddDataset from './modals/AddDataset'
+import LinkDataset from './modals/LinkDataset'
 import CreateDataset from './modals/CreateDataset'
 import RoutesContainer from '../containers/RoutesContainer'
-import AddDataset from './modals/AddDataset'
 
 // import models
 import { ApiAction } from '../store/api'
 import { Modal, ModalType, NoModal } from '../models/modals'
 import { Toast as IToast } from '../models/store'
+import { Dataset } from '../models/dataset'
 
 export const QRI_CLOUD_ROOT = 'https://qri.cloud'
 
@@ -28,10 +30,12 @@ export interface AppProps {
   qriCloudAuthenticated: boolean
   toast: IToast
   modal: Modal
+  workingDataset: Dataset
   children: JSX.Element[] | JSX.Element
   fetchSession: () => Promise<ApiAction>
   fetchMyDatasets: (page?: number, pageSize?: number) => Promise<ApiAction>
   addDataset: (peername: string, name: string) => Promise<ApiAction>
+  linkDataset: (peername: string, name: string, dir: string) => Promise<ApiAction>
   setWorkingDataset: (peername: string, name: string, isLinked: boolean) => Promise<ApiAction>
   initDataset: (path: string, name: string, format: string) => Promise<ApiAction>
   acceptTOS: () => Action
@@ -97,7 +101,8 @@ export default class App extends React.Component<AppProps, AppState> {
   }
 
   private renderModal (): JSX.Element | null {
-    const { modal, setModal } = this.props
+    const { modal, setModal, workingDataset } = this.props
+    const { peername, name } = workingDataset
     const Modal = modal
 
     if (!Modal) return null
@@ -129,6 +134,20 @@ export default class App extends React.Component<AppProps, AppState> {
             onDismissed={async () => setModal(NoModal)}
             setWorkingDataset={this.props.setWorkingDataset}
             fetchMyDatasets={this.props.fetchMyDatasets}
+          />
+        </CSSTransition>
+        <CSSTransition
+          in={ModalType.LinkDataset === Modal.type}
+          classNames='fade'
+          component='div'
+          timeout={300}
+          unmountOnExit
+        >
+          <LinkDataset
+            peername={peername}
+            name={name}
+            onSubmit={this.props.linkDataset}
+            onDismissed={async () => setModal(NoModal)}
           />
         </CSSTransition>
       </div>
