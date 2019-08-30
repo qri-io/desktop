@@ -56,11 +56,6 @@ const setMenuItemEnabled = (menuItemIds, enabled) => {
   })
 }
 
-const setMenuItemLabel = (menuItemId, label) => {
-  const menu = Menu.getApplicationMenu()
-  menu.getMenuItemById(menuItemId).label = label
-}
-
 app.on('ready', () =>
   installExtensions()
     .then(() => {

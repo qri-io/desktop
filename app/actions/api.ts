@@ -1,7 +1,7 @@
 import { Action } from 'redux'
 
 import { CALL_API, ApiAction, ApiActionThunk, chainSuccess } from '../store/api'
-import { DatasetSummary, ComponentStatus, ComponentState, WorkingDataset } from '../models/store'
+import { DatasetSummary, ComponentStatus, ComponentState, WorkingDataset, ComponentType } from '../models/store'
 import { Dataset, Commit } from '../models/dataset'
 import { openToast } from './ui'
 import { setWorkingDataset, setSelectedListItem } from './selections'
@@ -562,6 +562,35 @@ export function linkDataset (peername: string, name: string, dir: string): ApiAc
       response = await dispatch(action)
       response = await whenOk(fetchWorkingDatasetDetails())(response)
       response = await whenOk(fetchMyDatasets(1, pageSizeDefault, true))(response) // non-paginated
+    } catch (action) {
+      throw action
+    }
+    return response
+  }
+}
+
+export function discardChanges (component: ComponentType): ApiActionThunk {
+  return async (dispatch, getState) => {
+    const { selections } = getState()
+    const { peername, name } = selections
+    let response: Action
+
+    try {
+      const action = {
+        type: 'restore',
+        [CALL_API]: {
+          endpoint: 'restore',
+          method: 'POST',
+          segments: {
+            peername,
+            name
+          },
+          params: {
+            component
+          }
+        }
+      }
+      response = await dispatch(action)
     } catch (action) {
       throw action
     }
