@@ -105,6 +105,7 @@ export type ComponentState = 'modified' | 'unmodified' | 'removed' | 'added'
 export interface ComponentStatus {
   filepath: string
   status: ComponentState
+  mtime?: Date
   errors?: object[]
   warnings?: object[]
   component?: string
