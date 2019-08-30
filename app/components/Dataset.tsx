@@ -30,7 +30,8 @@ import {
   WorkingDataset,
   Mutations,
   DatasetStatus,
-  SelectedComponent
+  SelectedComponent,
+  ComponentType
 } from '../models/store'
 
 export interface DatasetProps {
@@ -58,6 +59,7 @@ export interface DatasetProps {
   publishDataset: (dataset: WorkingDataset) => Action
   unpublishDataset: (dataset: WorkingDataset) => Action
   signout: () => Action
+  discardChanges: (component: ComponentType) => ApiActionThunk
 }
 
 interface DatasetState {
@@ -218,7 +220,7 @@ export default class Dataset extends React.Component<DatasetProps> {
     // don't use isLinked from selections
     const isLinked = workingDataset.linkpath !== ''
 
-    const { history, status, path } = workingDataset
+    const { status } = workingDataset
 
     // actions
     const {
@@ -227,8 +229,8 @@ export default class Dataset extends React.Component<DatasetProps> {
       setSidebarWidth,
       setSelectedListItem,
       fetchWorkingHistory,
-      // linkDataset,
-      signout
+      signout,
+      discardChanges
     } = this.props
 
     const linkButton = isLinked ? (
@@ -318,16 +320,15 @@ export default class Dataset extends React.Component<DatasetProps> {
             maximumWidth={495}
           >
             <DatasetSidebar
-              path={path}
               isLinked={isLinked}
               activeTab={activeTab}
               selectedComponent={selectedComponent}
               selectedCommit={selectedCommit}
-              history={history}
-              status={status}
+              workingDataset={workingDataset}
               onTabClick={setActiveTab}
               fetchWorkingHistory={fetchWorkingHistory}
               onListItemClick={setSelectedListItem}
+              discardChanges={discardChanges}
             />
           </Resizable>
           <div className='content-wrapper'>

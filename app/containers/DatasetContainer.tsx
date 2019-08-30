@@ -10,7 +10,8 @@ import {
   fetchWorkingStatus,
   fetchWorkingHistory,
   publishDataset,
-  unpublishDataset
+  unpublishDataset,
+  discardChanges
 } from '../actions/api'
 
 import {
@@ -70,7 +71,8 @@ const DatasetContainer = connect(
     resetOtherComponents,
     publishDataset,
     unpublishDataset,
-    signout
+    signout,
+    discardChanges
   },
   mergeProps
 )(Dataset)

@@ -41,29 +41,29 @@ const HistoryListItem: React.FunctionComponent<HistoryListItemProps> = (props) =
 
 interface DatasetSidebarProps {
   activeTab: string
-  path: string
   selectedComponent: string
   selectedCommit: string
-  history: WorkingDataset['history']
-  status: WorkingDataset['status']
   isLinked: boolean
   onTabClick: (activeTab: string) => Action
   onListItemClick: (type: ComponentType, activeTab: string) => Action
   fetchWorkingHistory: (page?: number, pageSize?: number) => ApiActionThunk
+  discardChanges: (component: ComponentType) => ApiActionThunk
+  workingDataset: WorkingDataset
 }
 
 const DatasetSidebar: React.FunctionComponent<DatasetSidebarProps> = ({
   activeTab,
-  path,
   selectedComponent,
   selectedCommit,
-  history,
-  status,
   onTabClick,
   onListItemClick,
   fetchWorkingHistory,
-  isLinked
+  isLinked,
+  discardChanges,
+  workingDataset
 }) => {
+  const { path, linkpath, history, status } = workingDataset
+
   const historyLoaded = !!history
   const statusLoaded = !!status
 
@@ -118,6 +118,8 @@ const DatasetSidebar: React.FunctionComponent<DatasetSidebarProps> = ({
               onComponentClick={onListItemClick}
               selectionType={'component' as ComponentType}
               isLinked={isLinked}
+              linkpath={linkpath}
+              discardChanges={discardChanges}
             />
           </div>
         </CSSTransition>

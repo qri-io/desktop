@@ -1,9 +1,13 @@
 import * as React from 'react'
 import { Action } from 'redux'
 import classNames from 'classnames'
-import { DatasetStatus, ComponentType } from '../models/store'
+import { clipboard, shell, MenuItemConstructorOptions } from 'electron'
+import ContextMenuArea from 'react-electron-contextmenu'
+import { ApiActionThunk } from '../store/api'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTags, faArchive, faTh, IconDefinition } from '@fortawesome/free-solid-svg-icons'
+
+import { DatasetStatus, ComponentType } from '../models/store'
 
 interface StatusDotProps {
   status: string | undefined
@@ -78,8 +82,10 @@ interface ComponentListProps {
   status: DatasetStatus
   selectedComponent: string
   onComponentClick: (type: ComponentType, activeTab: string) => Action
+  discardChanges?: (component: ComponentType) => ApiActionThunk
   selectionType: ComponentType
   isLinked?: boolean
+  linkpath?: string
 }
 
 const components = [
@@ -113,7 +119,9 @@ const ComponentList: React.FunctionComponent<ComponentListProps> = (props: Compo
     selectedComponent,
     onComponentClick,
     selectionType,
-    isLinked
+    isLinked,
+    discardChanges,
+    linkpath
   } = props
 
   return (
@@ -132,7 +140,7 @@ const ComponentList: React.FunctionComponent<ComponentListProps> = (props: Compo
               filename = filepath.substring((filepath.lastIndexOf('/') + 1))
             }
 
-            return (
+            const fileRow = (
               <FileRow
                 key={name}
                 displayName={displayName}
@@ -146,6 +154,38 @@ const ComponentList: React.FunctionComponent<ComponentListProps> = (props: Compo
                 onClick={onComponentClick}
               />
             )
+
+            if (discardChanges && linkpath) {
+              const menuItems: MenuItemConstructorOptions[] = [
+                {
+                  label: 'Open in Finder',
+                  click: () => { shell.showItemInFolder(`${linkpath}/${filepath}`) }
+                },
+                {
+                  label: 'Copy File Path',
+                  click: () => { clipboard.writeText(`${linkpath}/${filepath}`) }
+                }
+              ]
+
+              // add discard changes option of file is modified
+              if (fileStatus !== 'unmodified') {
+                menuItems.unshift({
+                  label: 'Discard Changes...',
+                  click: () => { discardChanges(name as ComponentType) }
+                },
+                {
+                  type: 'separator'
+                })
+              }
+
+              return (
+                <ContextMenuArea menuItems={menuItems} key={name}>
+                  {fileRow}
+                </ContextMenuArea>
+              )
+            } else {
+              return fileRow
+            }
           } else {
             return (
               <FileRow
