@@ -2,6 +2,9 @@ import * as React from 'react'
 import { CSSTransition } from 'react-transition-group'
 import classNames from 'classnames'
 import { Action } from 'redux'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faCheck, faExclamationTriangle } from '@fortawesome/free-solid-svg-icons'
+
 // import classNames from 'classnames'
 import { ToastType } from '../models/store'
 
@@ -16,8 +19,8 @@ interface ToastProps {
 const Toast: React.FunctionComponent<ToastProps> = (props: ToastProps) => {
   const { type, message, isVisible, timeout, onClose } = props
   const icon = type === 'success'
-    ? <span className='icon-inline'>checkmark</span>
-    : <span className='icon-inline'>warning</span>
+    ? <FontAwesomeIcon icon={faCheck} size='lg'/>
+    : <FontAwesomeIcon icon={faExclamationTriangle} size='lg'/>
 
   React.useEffect(() => {
     // set timeout for the toast
@@ -39,6 +42,7 @@ const Toast: React.FunctionComponent<ToastProps> = (props: ToastProps) => {
         'error': type === 'error'
       })}>
         {icon}
+        &nbsp;
         {message}
       </div>
     </CSSTransition>

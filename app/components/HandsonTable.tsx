@@ -46,6 +46,7 @@ export default class HandsonTable extends React.Component<HandsonTableProps> {
           viewportColumnRenderingOffset={100}
           viewportRowRenderingOffset={100}
           columnSorting
+          readOnly
         />
       </div>
     )

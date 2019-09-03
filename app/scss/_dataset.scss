@@ -13,6 +13,15 @@ $header-font-size: .9rem;
   flex-direction: column;
   height: 100%;
 
+  .overlay {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    background-color: #000;
+    opacity: 0.4;
+    z-index: 110;
+  }
+
   .header {
     height: 50px;
     background-color: #315379;
@@ -54,6 +63,22 @@ $header-font-size: .9rem;
 
   $header-column-border: 1px solid #66737b;
 
+  .header-left {
+    flex: 1;
+    display: flex;
+  }
+
+  .header-right {
+    flex: 1;
+    display: flex;
+    justify-content: flex-end;
+
+    .header-column {
+      border-right: none;
+      border-left: $header-column-border;
+    }
+  }
+
   .header-column {
     height: 100%;
     border-right: $header-column-border;
@@ -61,10 +86,18 @@ $header-font-size: .9rem;
     display: inline-flex;
     flex-direction: row;
     align-items: center;
+    position: relative;
 
-    &:last-child {
-      margin-left: auto;
-      border-left: $header-column-border;
+    &.disabled {
+      color: #66737b;
+      pointer-events: none;
+      &:hover {
+        background-color: inherit;
+      }
+    }
+
+    &.header-column-dropdown, &.current-dataset {
+      padding-right: 0;
     }
 
     .header-column-icon {
@@ -101,9 +134,13 @@ $header-font-size: .9rem;
     }
 
     .header-column-arrow {
+      flex-shrink: 0;
       height: 100%;
-      width: 26px;
-      padding-left: 9px;
+      width: 32px;
+      margin-left: 9px;
+      display: flex;
+      justify-content: center;
+      background-color: rgba(0,0,0,0.1);
     }
 
     &:hover {
@@ -123,18 +160,15 @@ $header-font-size: .9rem;
       height: 0px;
       border-left: 5px solid transparent;
       border-right: 5px solid transparent;
-      position: absolute;
+      align-self: center;
 
       &.expand {
         border-top: 5px solid #fff;
-        right: 15px;
-        top: 24px;
       }
 
       &.collapse {
         border-bottom: 5px solid #fff;
-        right: 15px;
-        top: 24px;
+
       }
     }
   }
@@ -169,7 +203,7 @@ $header-font-size: .9rem;
         height: 100%;
         width: 10px;
         cursor: ew-resize;
-        z-index: 10;
+        z-index: 112;
       }
     }
 
@@ -178,15 +212,6 @@ $header-font-size: .9rem;
       position: relative;
       flex-basis: auto;
       overflow: hidden;
-
-      .overlay {
-        position: absolute;
-        height: 100%;
-        width: 100%;
-        background-color: #000;
-        opacity: 0.4;
-        z-index: 110;
-      }
 
       .main-content {
         position: relative;
@@ -216,6 +241,9 @@ $header-font-size: .9rem;
 
           .component-display-name-container {
             flex: 1;
+            .component-display-name {
+              display: inline-block
+            }
           }
 
           .status-dot-container {
@@ -251,6 +279,7 @@ $header-font-size: .9rem;
     }
 
     &.expanded {
+      z-index: 111;
       color: #383838;
     }
 
@@ -260,6 +289,7 @@ $header-font-size: .9rem;
   }
 
   .dataset-list {
+    z-index: 110;
     position: absolute;
     top: 0;
     bottom: 0;
@@ -280,6 +310,7 @@ $header-font-size: .9rem;
     flex-direction: column;
     flex: 1;
     align-self: center;
+    overflow-x: hidden;
 
     .text {
       white-space: nowrap;

@@ -1,16 +1,6 @@
 // * Symbolset
 // * www.symbolset.com
 // * Copyright © 2012 Oak Studios LLC
-@font-face {
-  font-family: "SSPika";
-  src: url('./assets/ss-pika.eot');
-  src: url('./assets/ss-pika.eot?#iefix') format('embedded-opentype'),
-       url('./assets/ss-pika.woff') format('woff'),
-       url('./assets/ss-pika.ttf')  format('truetype');
-       // url('./assets/ss-pika.svg#SSPika') format('svg');
-  font-weight: normal;
-  font-style: normal;
-}
 
 /* This triggers a redraw in IE to Fix IE8's :before content rendering. */
 html:hover [class^="ss-"]{-ms-zoom: 1;}
@@ -52,35 +42,35 @@ h1, h2, h3, h4, h5, h6,
   color: $headings-color;
 }
 
-h1, .h1 { 
-  font-size: $font-size-h1; 
-  font-weight: $font-weight-bold; 
+h1, .h1 {
+  font-size: $font-size-h1;
+  font-weight: $font-weight-bold;
   line-height: 50px;
   }
-h2, .h2 { 
-  font-size: $font-size-h2; 
+h2, .h2 {
+  font-size: $font-size-h2;
   font-weight: $font-weight-medium;
   line-height: 40px;
   }
-h3, .h3 { 
-  font-size: $font-size-h3; 
+h3, .h3 {
+  font-size: $font-size-h3;
   font-weight: $font-weight-regular;
   line-height: 32px;
   }
-h4, .h4 { 
-  font-size: $font-size-h4; 
+h4, .h4 {
+  font-size: $font-size-h4;
   font-weight: $font-weight-regular;
   line-height: 30px;
   }
-h5, .h5 { 
-  font-size: $font-size-h5; 
+h5, .h5 {
+  font-size: $font-size-h5;
   font-weight: $font-weight-regular;
   line-height: 20px;
   color: $primary;
   }
 
 h6, .h6 {
-  font-size: $font-size-h6; 
+  font-size: $font-size-h6;
   font-weight: $font-weight-light;
   font-style: italic;
   line-height: 16px;
@@ -263,7 +253,7 @@ label {
     color: $primary-muted;
   }
   &:hover, &:focus {
-    color: $primary-muted;   
+    color: $primary-muted;
     cursor: default;
   }
 }

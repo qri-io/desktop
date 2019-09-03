@@ -1,5 +1,7 @@
 import * as React from 'react'
 import { Action } from 'redux'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faSync } from '@fortawesome/free-solid-svg-icons'
 
 import classNames from 'classnames'
 import { ApiAction } from '../store/api'
@@ -54,7 +56,7 @@ export default class SaveForm extends React.Component<SaveFormProps> {
         <div className='submit'>
           {
             isLoading
-              ? <div className='spinner'><span className='icon-inline'>crosshair</span> Saving...</div>
+              ? <div className='spinner'><FontAwesomeIcon icon={faSync} /> Saving...</div>
               : <input className={classNames('submit', { 'disabled': !valid })} type="submit" value="Submit" />
           }
         </div>

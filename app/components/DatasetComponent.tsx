@@ -22,13 +22,15 @@ const DatasetComponent: React.FunctionComponent<DatasetComponentProps> = (props:
   const { component, componentStatus, isLoading, history = false } = props
 
   if (component === 'meta' || component === 'body' || component === 'schema') {
-    const { displayName, icon } = getComponentDisplayProps(component)
+    const { displayName, icon, tooltip } = getComponentDisplayProps(component)
 
     return (
       <div className='component-container'>
         <div className='component-header'>
           <div className='component-display-name-container'>
-            <FontAwesomeIcon icon={icon} size='sm'/> {displayName}
+            <div className='component-display-name' data-tip={tooltip}>
+              <FontAwesomeIcon icon={icon} size='sm'/> {displayName}
+            </div>
           </div>
           <div className='status-dot-container'>
             {componentStatus && <StatusDot status={componentStatus.status} />}
