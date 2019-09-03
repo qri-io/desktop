@@ -278,6 +278,8 @@ export default class Dataset extends React.Component<DatasetProps> {
 
     return (
       <div id='dataset-container'>
+        {/* Show the overlay to dim the rest of the app when the sidebar is open */}
+        {showDatasetList && <div className='overlay' onClick={toggleDatasetList}></div>}
         <div className='header'>
           <div className='header-left'>
             <div
@@ -342,8 +344,6 @@ export default class Dataset extends React.Component<DatasetProps> {
             />
           </Resizable>
           <div className='content-wrapper'>
-            {/* Show the overlay to dim the rest of the app when the sidebar is open */}
-            {showDatasetList && <div className='overlay' onClick={toggleDatasetList}></div>}
             <div className='transition-group' >
               <CSSTransition
                 in={(activeTab === 'status') && !isLinked}
