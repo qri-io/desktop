@@ -1,2 +1,2 @@
 
-export const QRI_CLOUD_URL = 'http://localhost:3000'
+export const QRI_CLOUD_URL = 'https://qri.cloud'
