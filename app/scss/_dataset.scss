@@ -299,6 +299,7 @@ $header-font-size: .9rem;
     flex-direction: column;
     flex: 1;
     align-self: center;
+    overflow-x: hidden;
 
     .text {
       white-space: nowrap;
