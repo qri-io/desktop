@@ -28,6 +28,9 @@ export function signup (username: string, email: string, password: string): ApiA
           username,
           email,
           password
+        },
+        map: (data: Record<string, any>): Session => {
+          return data as Session
         }
       }
     }
@@ -45,6 +48,9 @@ export function signin (username: string, password: string): ApiActionThunk {
         body: {
           username,
           password
+        },
+        map: (data: Record<string, any>): Session => {
+          return data as Session
         }
       }
     }

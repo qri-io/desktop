@@ -27,6 +27,9 @@ const myDatasetsReducer: Reducer = (state = initialState, action: AnyAction): My
       return { ...state, filter }
 
     case LIST_REQ:
+      if (action.pageInfo.page === 1) {
+        return initialState
+      }
       return {
         ...state,
         pageInfo: withPagination(action, state.pageInfo)
