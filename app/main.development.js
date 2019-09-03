@@ -19,13 +19,16 @@ if (process.env.NODE_ENV === 'development') {
   require('module').globalPaths.push(p); // eslint-disable-line
 }
 
-app.setAboutPanelOptions({
-  applicationName: 'Qri Desktop',
-  applicationVersion: '0.0.1',
-  credits: 'https://qri.io',
-  website: 'https://qri.io',
-  iconPath: '../assets/qri-blob-logo-large.png'
-})
+if (app.setAboutPanelOptions) {
+  // Mac only
+  app.setAboutPanelOptions({
+    applicationName: 'Qri Desktop',
+    applicationVersion: '0.0.1',
+    credits: 'https://qri.io',
+    website: 'https://qri.io',
+    iconPath: '../assets/qri-blob-logo-large.png'
+  })
+}
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') app.quit()
@@ -52,7 +55,10 @@ const setMenuItemEnabled = (menuItemIds, enabled) => {
   const menu = Menu.getApplicationMenu()
 
   menuItemIds.forEach(menuItemId => {
-    menu.getMenuItemById(menuItemId).enabled = enabled
+    let item = menu.getMenuItemById(menuItemId)
+    if (item) {
+      item.enabled = enabled
+    }
   })
 }
 
