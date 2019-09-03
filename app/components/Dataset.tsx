@@ -259,7 +259,7 @@ export default class Dataset extends React.Component<DatasetProps> {
       publishButton = published ? (
         <HeaderColumnButtonDropdown
           onClick={() => { shell.openExternal(`${QRI_CLOUD_URL}/${workingDataset.peername}/${workingDataset.name}`) }}
-          icon='faCloud'
+          icon={faCloud}
           label='View in Cloud'
           items={[
             <a key={0} onClick={(e) => { shell.openExternal(`${QRI_CLOUD_URL}/${workingDataset.peername}/${workingDataset.name}`); e.stopPropagation() }}>Copy Link</a>,
@@ -271,6 +271,7 @@ export default class Dataset extends React.Component<DatasetProps> {
           label='Publish'
           icon={faCloudUploadAlt}
           tooltip={'Publish this dataset on the Qri network'}
+          disabled={workingDataset.history.value.length === 0}
           onClick={this.publishUnpublishDataset}
         />
       )

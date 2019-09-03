@@ -88,6 +88,14 @@ $header-font-size: .9rem;
     align-items: center;
     position: relative;
 
+    &.disabled {
+      color: #66737b;
+      pointer-events: none;
+      &:hover {
+        background-color: inherit;
+      }
+    }
+
     &.header-column-dropdown, &.current-dataset {
       padding-right: 0;
     }
