@@ -257,11 +257,11 @@ export default class Dataset extends React.Component<DatasetProps> {
     if (username === workingDataset.peername) {
       publishButton = published ? (
         <HeaderColumnButtonDropdown
-          onClick={() => { shell.openExternal(`http://localhost:3000/${workingDataset.peername}/${workingDataset.name}`) }}
+          onClick={() => { shell.openExternal(`${QRI_CLOUD_URL}/${workingDataset.peername}/${workingDataset.name}`) }}
           icon='faCloud'
           label='View in Cloud'
           items={[
-            <a key={0} onClick={(e) => { shell.openExternal(`http://localhost:3000/${workingDataset.peername}/${workingDataset.name}`); e.stopPropagation() }}>Copy Link</a>,
+            <a key={0} onClick={(e) => { shell.openExternal(`${QRI_CLOUD_URL}/${workingDataset.peername}/${workingDataset.name}`); e.stopPropagation() }}>Copy Link</a>,
             <a key={1} onClick={this.publishUnpublishDataset}>Unpublish</a>
           ]}
         />
