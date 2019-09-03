@@ -61,7 +61,6 @@ export const FileRow: React.FunctionComponent<FileRowProps> = (props) => (
         props.onClick(props.selectionType, props.name)
       }
     }}
-    data-tip={props.tooltip}
   >
     {props.icon && (<div className='icon-column'>
       <FontAwesomeIcon icon={props.icon} size='sm'/>
@@ -92,13 +91,13 @@ const components = [
   {
     name: 'meta',
     displayName: 'Meta',
-    tooltip: 'title, description, tags, etc',
+    tooltip: 'the dataset\'s title, description, tags, etc',
     icon: faTags
   },
   {
     name: 'body',
     displayName: 'Body',
-    tooltip: 'the data',
+    tooltip: 'the structured content of the dataset',
     icon: faArchive
   },
   {

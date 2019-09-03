@@ -216,6 +216,9 @@ $header-font-size: .9rem;
 
           .component-display-name-container {
             flex: 1;
+            .component-display-name {
+              display: inline-block
+            }
           }
 
           .status-dot-container {

@@ -384,7 +384,7 @@ export default class Dataset extends React.Component<DatasetProps> {
           place='bottom'
           type='dark'
           effect='solid'
-          delayShow={1000}
+          delayShow={500}
           multiline
         />
       </div>
