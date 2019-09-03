@@ -2,6 +2,9 @@ import * as React from 'react' // eslint-disable-line
 import { remote } from 'electron'
 import Spinner from './chrome/Spinner'
 import classNames from 'classnames'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faArrowRight } from '@fortawesome/free-solid-svg-icons'
+
 export const logo = require('../assets/qri-blob-logo-large.png') // eslint-disable-line
 
 interface WelcomeTemplateProps {
@@ -38,7 +41,10 @@ const WelcomeTemplate: React.FunctionComponent<WelcomeTemplateProps> = ({ onAcce
                 <Spinner/>
               </div>
               : !!onAccept && <div className='welcome-accept'>
-                <a className={classNames('linkLarge', { 'linkDisabled': !acceptEnabled })} onClick={handleOnClick}><span>{acceptText}</span><span className={classNames('icon-inline', { 'linkDisabled': !acceptEnabled })}>right</span></a><br />
+                <a className={classNames('linkLarge', { 'linkDisabled': !acceptEnabled })} onClick={handleOnClick}>
+                  <span>{acceptText}</span>
+                  &nbsp;<FontAwesomeIcon icon={faArrowRight} className={classNames({ 'linkDisabled': !acceptEnabled })} size='lg'/>
+                </a><br />
                 {exit && <a className='linkSmallMuted' onClick={() => { remote.app.quit() }}>exit</a>}
               </div>
           }
