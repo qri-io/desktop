@@ -150,6 +150,13 @@
   dependencies:
     "@fortawesome/fontawesome-common-types" "^0.2.22"
 
+"@fortawesome/free-brands-svg-icons@^5.10.2":
+  version "5.10.2"
+  resolved "https://registry.yarnpkg.com/@fortawesome/free-brands-svg-icons/-/free-brands-svg-icons-5.10.2.tgz#01a227e37ca96237a5a9e8681d926a36fd6195c0"
+  integrity sha512-r5Dxr2h8f9bEI7F/gj/2v1OX9S6DMif9ZKR2VFQCSXHwahojLlOWnFILYsrjhzOISESkh6WDL9IOdkdbKM7KPw==
+  dependencies:
+    "@fortawesome/fontawesome-common-types" "^0.2.22"
+
 "@fortawesome/free-regular-svg-icons@5.10.2":
   version "5.10.2"
   resolved "https://registry.yarnpkg.com/@fortawesome/free-regular-svg-icons/-/free-regular-svg-icons-5.10.2.tgz#e4ada1c15f42133ad92761418a9b0e2d407fb022"
@@ -6291,7 +6298,7 @@ react-dom@16.8.6:
     prop-types "^15.6.2"
     scheduler "^0.13.6"
 
-react-electron-contextmenu@^1.0.0:
+react-electron-contextmenu@1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/react-electron-contextmenu/-/react-electron-contextmenu-1.0.0.tgz#035291edc6ee7e98d1ff4d7074c2cd8035e575ea"
   integrity sha1-A1KR7cbufpjR/01wdMLNgDXldeo=
@@ -6313,7 +6320,7 @@ react-is@^16.6.0, react-is@^16.7.0, react-is@^16.8.1, react-is@^16.8.4, react-is
   version "16.8.6"
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.8.6.tgz#5bbc1e2d29141c9fbdfed456343fe2bc430a6a16"
 
-react-json-view@^1.19.1:
+react-json-view@1.19.1:
   version "1.19.1"
   resolved "https://registry.yarnpkg.com/react-json-view/-/react-json-view-1.19.1.tgz#95d8e59e024f08a25e5dc8f076ae304eed97cf5c"
   integrity sha512-u5e0XDLIs9Rj43vWkKvwL8G3JzvXSl6etuS5G42a8klMohZuYFQzSN6ri+/GiBptDqlrXPTdExJVU7x9rrlXhg==

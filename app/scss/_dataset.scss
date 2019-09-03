@@ -54,6 +54,17 @@ $header-font-size: .9rem;
 
   $header-column-border: 1px solid #66737b;
 
+  .header-right {
+    flex: 1;
+    display: flex;
+    justify-content: flex-end;
+
+    .header-column {
+      border-right: none;
+      border-left: $header-column-border;
+    }
+  }
+
   .header-column {
     height: 100%;
     border-right: $header-column-border;
@@ -61,11 +72,6 @@ $header-font-size: .9rem;
     display: inline-flex;
     flex-direction: row;
     align-items: center;
-
-    &:last-child {
-      margin-left: auto;
-      border-left: $header-column-border;
-    }
 
     .header-column-icon {
       .icon-inline {

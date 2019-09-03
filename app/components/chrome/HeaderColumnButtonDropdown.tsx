@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { HeaderColumnButtonProps, icons } from './HeaderColumnButton'
+import { HeaderColumnButtonProps } from './HeaderColumnButton'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 interface HeaderColumnButtonDropdownProps extends HeaderColumnButtonProps {
@@ -27,7 +27,7 @@ const HeaderColumnButtonDropdown: React.FunctionComponent<HeaderColumnButtonDrop
       onClick={onClick}
     >
       {(icon !== '') && (typeof icon === 'string')
-        ? <div className='header-column-icon'><FontAwesomeIcon icon={icons[icon]} size='lg'/></div>
+        ? <div className='header-column-icon'><FontAwesomeIcon icon={icon} size='lg'/></div>
         : icon
       }
       {(label !== '') &&

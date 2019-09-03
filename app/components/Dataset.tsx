@@ -4,9 +4,10 @@ import classNames from 'classnames'
 import ReactTooltip from 'react-tooltip'
 import { ipcRenderer, shell } from 'electron'
 import { CSSTransition } from 'react-transition-group'
-import { faLink } from '@fortawesome/free-solid-svg-icons'
-import { faFile } from '@fortawesome/free-regular-svg-icons'
+import { faDiscord } from '@fortawesome/free-brands-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faFile, faFolderOpen } from '@fortawesome/free-regular-svg-icons'
+import { faLink, faCloudUploadAlt, faCloud } from '@fortawesome/free-solid-svg-icons'
 
 import { ApiAction, ApiActionThunk } from '../store/api'
 import ExternalLink from './ExternalLink'
@@ -235,7 +236,7 @@ export default class Dataset extends React.Component<DatasetProps> {
 
     const linkButton = isLinked ? (
       <HeaderColumnButton
-        icon={'faFolderOpen'}
+        icon={faFolderOpen}
         tooltip={`Open ${workingDataset.linkpath}`}
         label='Show Files'
         onClick={this.openWorkingDirectory}
@@ -268,7 +269,7 @@ export default class Dataset extends React.Component<DatasetProps> {
       ) : (
         <HeaderColumnButton
           label='Publish'
-          icon='faCloudUploadAlt'
+          icon={faCloudUploadAlt}
           tooltip={'Publish this dataset on the Qri network'}
           onClick={this.publishUnpublishDataset}
         />
@@ -278,38 +279,47 @@ export default class Dataset extends React.Component<DatasetProps> {
     return (
       <div id='dataset-container'>
         <div className='header'>
-          <div
-            className={classNames('current-dataset', 'header-column', { 'expanded': showDatasetList })}
-            data-tip={`${workingDataset.peername}/${workingDataset.name}`}
-            onClick={toggleDatasetList}
-            style={{ width: datasetSidebarWidth }}
-          >
-            <div className='header-column-icon'>
-              <img className='app-loading-blob' src={logo} />
+          <div className='header-left'>
+            <div
+              className={classNames('current-dataset', 'header-column', { 'expanded': showDatasetList })}
+              data-tip={`${workingDataset.peername}/${workingDataset.name}`}
+              onClick={toggleDatasetList}
+              style={{ width: datasetSidebarWidth }}
+            >
+              <div className='header-column-icon'>
+                <img className='app-loading-blob' src={logo} />
+              </div>
+              <div className='header-column-text'>
+                <div className="label">{name ? 'Current Dataset' : 'Choose a Dataset'}</div>
+                <div className="name">{name}</div>
+              </div>
+              <div className='header-column-arrow'>
+                {
+                  showDatasetList
+                    ? <div className="arrow collapse">&nbsp;</div>
+                    : <div className="arrow expand">&nbsp;</div>
+                }
+              </div>
             </div>
-            <div className='header-column-text'>
-              <div className="label">{name ? 'Current Dataset' : 'Choose a Dataset'}</div>
-              <div className="name">{name}</div>
-            </div>
-            <div className='header-column-arrow'>
-              {
-                showDatasetList
-                  ? <div className="arrow collapse">&nbsp;</div>
-                  : <div className="arrow expand">&nbsp;</div>
-              }
-            </div>
+            {linkButton}
+            {publishButton}
           </div>
-          {linkButton}
-          {publishButton}
-          <HeaderColumnButtonDropdown
-            icon={<div className='header-column-icon' ><img src={userphoto} /></div>}
-            label={username}
-            items={[
-              <ExternalLink key={0} href={`${QRI_CLOUD_URL}/${username}`}>Public Profile</ExternalLink>,
-              <ExternalLink key={1} href={`${QRI_CLOUD_URL}/settings`}>Settings</ExternalLink>,
-              <a key={2} onClick={signout}>Sign Out</a>
-            ]}
-          />
+          <div className='header-right'>
+            <HeaderColumnButton
+              icon={faDiscord}
+              tooltip={'Need help? Ask questions in our Discord channel'}
+              onClick={() => { shell.openExternal('https://discordapp.com/invite/thkJHKj') }}
+            />
+            <HeaderColumnButtonDropdown
+              icon={<div className='header-column-icon' ><img src={userphoto} /></div>}
+              label={username}
+              items={[
+                <ExternalLink key={0} href={`${QRI_CLOUD_URL}/${username}`}>Public Profile</ExternalLink>,
+                <ExternalLink key={1} href={`${QRI_CLOUD_URL}/settings`}>Settings</ExternalLink>,
+                <a key={2} onClick={signout}>Sign Out</a>
+              ]}
+            />
+          </div>
         </div>
         <div className='columns'>
           <Resizable
