@@ -54,6 +54,11 @@ $header-font-size: .9rem;
 
   $header-column-border: 1px solid #66737b;
 
+  .header-left {
+    flex: 1;
+    display: flex;
+  }
+
   .header-right {
     flex: 1;
     display: flex;
@@ -72,6 +77,11 @@ $header-font-size: .9rem;
     display: inline-flex;
     flex-direction: row;
     align-items: center;
+    position: relative;
+
+    &.header-column-dropdown, &.current-dataset {
+      padding-right: 0;
+    }
 
     .header-column-icon {
       .icon-inline {
@@ -108,8 +118,11 @@ $header-font-size: .9rem;
 
     .header-column-arrow {
       height: 100%;
-      width: 26px;
-      padding-left: 9px;
+      width: 32px;
+      margin-left: 9px;
+      display: flex;
+      justify-content: center;
+      background-color: rgba(0,0,0,0.1);
     }
 
     &:hover {
@@ -129,18 +142,15 @@ $header-font-size: .9rem;
       height: 0px;
       border-left: 5px solid transparent;
       border-right: 5px solid transparent;
-      position: absolute;
+      align-self: center;
 
       &.expand {
         border-top: 5px solid #fff;
-        right: 15px;
-        top: 24px;
       }
 
       &.collapse {
         border-bottom: 5px solid #fff;
-        right: 15px;
-        top: 24px;
+
       }
     }
   }
