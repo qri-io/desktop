@@ -31,6 +31,7 @@ app/node_modules
 .DS_Store
 
 # App packaged
+backend/qri
 release
 app/main.js
 app/main.js.map

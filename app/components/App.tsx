@@ -25,6 +25,7 @@ export interface AppProps {
   hasDatasets: boolean
   loading: boolean
   sessionID: string
+  peername: string
   apiConnection?: number
   hasAcceptedTOS: boolean
   qriCloudAuthenticated: boolean
@@ -51,6 +52,7 @@ export interface AppProps {
 interface AppState {
   currentModal: Modal
   sessionID: string
+  peername: string
 }
 
 export default class App extends React.Component<AppProps, AppState> {
@@ -59,7 +61,8 @@ export default class App extends React.Component<AppProps, AppState> {
 
     this.state = {
       currentModal: NoModal,
-      sessionID: this.props.sessionID
+      sessionID: this.props.sessionID,
+      peername: this.props.peername
     }
 
     this.renderModal = this.renderModal.bind(this)
@@ -90,12 +93,18 @@ export default class App extends React.Component<AppProps, AppState> {
       }, 750)
     }
     this.props.fetchSession()
-    this.props.fetchMyDatasets()
+      .then(async () => this.props.fetchMyDatasets())
   }
 
   static getDerivedStateFromProps (NextProps: AppProps, PrevState: AppState) {
-    if (PrevState.sessionID !== NextProps.sessionID) {
-      return { sessionID: NextProps.sessionID }
+    if (PrevState.sessionID !== NextProps.sessionID || PrevState.peername !== NextProps.peername) {
+      // clear selection if the sessionID has changed from one user to another
+      // if it has gone from no user (initial state) to a user, don't re-fetch
+      if (PrevState.sessionID !== '') {
+        NextProps.setWorkingDataset('', '', false)
+          .then(async () => NextProps.fetchMyDatasets(1))
+      }
+      return { sessionID: NextProps.sessionID, peername: NextProps.peername }
     }
     return null
   }
