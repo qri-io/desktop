@@ -24,7 +24,7 @@ if (app.setAboutPanelOptions) {
   // Mac only
   app.setAboutPanelOptions({
     applicationName: 'Qri Desktop',
-    applicationVersion: '0.0.1',
+    applicationVersion: '0.1.0-rc1',
     credits: 'https://qri.io',
     website: 'https://qri.io',
     iconPath: '../assets/qri-blob-logo-large.png'
