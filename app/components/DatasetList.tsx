@@ -1,6 +1,7 @@
 import * as React from 'react'
 import { Action, AnyAction } from 'redux'
 import classNames from 'classnames'
+
 import { MyDatasets, WorkingDataset } from '../models/store'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faFolderOpen } from '@fortawesome/free-regular-svg-icons'
@@ -73,6 +74,23 @@ export default class DatasetList extends React.Component<DatasetListProps> {
 
     return (
       <div className='dataset-sidebar' >
+        <div>
+          <div id='buttons'>
+            <div
+              className='dataset-list-button'
+              onClick={() => { setModal({ type: ModalType.AddDataset }) }}
+              data-tip='Add an existing<br/>Qri dataset'
+            >
+              <a href='#'>Add a Dataset</a>
+            </div>
+            <div
+              className='dataset-list-button'
+              onClick={() => { setModal({ type: ModalType.CreateDataset }) }}
+              data-tip='Create a new Qri <br/>dataset from a data file'
+            >
+              <a href='#'>New Dataset</a></div>
+          </div>
+        </div>
         <div id='dataset-list-header' className='sidebar-list-item'>
           <div id='controls'>
             <input
@@ -81,7 +99,6 @@ export default class DatasetList extends React.Component<DatasetListProps> {
               placeholder='Filter'
               onKeyUp={(e) => this.handleFilterKeyUp(e)}
             />
-            <div id='add-button' onClick={() => { setModal({ type: ModalType.AddDataset }) }}>Add</div>
           </div>
           <div className='strong-message'>You have {filteredDatasets.length} local datasets</div>
         </div>

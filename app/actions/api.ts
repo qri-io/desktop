@@ -448,7 +448,7 @@ export function addDatasetAndFetch (peername: string, name: string): ApiActionTh
   }
 }
 
-export function initDataset (filepath: string, name: string, format: string): ApiActionThunk {
+export function initDataset (filepath: string, name: string, dir: string): ApiActionThunk {
   return async (dispatch) => {
     const action = {
       type: 'init',
@@ -458,7 +458,7 @@ export function initDataset (filepath: string, name: string, format: string): Ap
         params: {
           filepath,
           name,
-          format
+          dir
         }
       }
     }

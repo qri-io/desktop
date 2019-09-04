@@ -1,4 +1,7 @@
 import * as React from 'react'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faTimes } from '@fortawesome/free-solid-svg-icons'
+
 import Spinner from '../chrome/Spinner'
 
 // Mimicing React's DialogHeader
@@ -68,7 +71,7 @@ const DialogHeader: React.FunctionComponent<IDialogHeaderProps> = ({ onDismissed
         className="close"
         onClick={onCloseButtonClick}
         aria-label="close"
-        role="button" ><span className='icon'>close</span></a>
+        role="button" ><FontAwesomeIcon icon={faTimes} size='lg'/></a>
     )
   }
 

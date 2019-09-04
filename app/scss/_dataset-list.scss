@@ -6,28 +6,35 @@
 
     #controls {
       display: flex;
-      flex-direction: row;
+      flex-direction: column;
       padding-bottom: 6px;
 
       input {
         margin-right: 10px;
         flex: 1;
       }
-
-      #add-button {
-        align-self: flex-end;
-        cursor: pointer;
-        color: $primary;
-
-        &:hover {
-          color: $primary-dark;
-        }
-      }
     }
 
     .strong-message {
       font-weight: 500;
       font-size: 0.8rem;
+    }
+  }
+
+  #buttons {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: $list-item-bottom-border;
+
+    .dataset-list-button {
+      flex: 1;
+      text-align: center;
+      border-right: $list-item-bottom-border;
+      padding: 4px;
+
+      &:last-child {
+        border-right: none;
+      }
     }
   }
 }

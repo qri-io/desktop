@@ -143,6 +143,7 @@ $header-font-size: .9rem;
       display: flex;
       justify-content: center;
       background-color: rgba(0,0,0,0.1);
+      user-select: none; 
     }
 
     &:hover {
