@@ -1,4 +1,5 @@
 const { app, BrowserWindow, Menu, shell } = require('electron')
+const { autoUpdater } = require('electron-updater')
 const { BackendProcess } = require('./backend')
 const { ipcMain } = require('electron')
 
@@ -65,6 +66,7 @@ const setMenuItemEnabled = (menuItemIds, enabled) => {
 app.on('ready', () =>
   installExtensions()
     .then(() => {
+      autoUpdater.checkForUpdatesAndNotify()
       backendProcess = new BackendProcess()
       backendProcess.maybeStartup()
 
