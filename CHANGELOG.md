@@ -1,11 +1,13 @@
 <a name="v0.1.0-rc1"></a>
 # v0.1.0-rc1 (2019-09-4)
 
-Welcome to the Qri Desktop release candidate! Qri Desktop is an app for creating and managing datasets and versions. It gives a UI to our qri commandline tool. This is a release candidate, so all features have not been perfected yet. Qri Desktop will make it easy for you to create and version datasets, look back through the history of your datasets to see what has changed, and to double check your changes before you commit them! You can also publish your datasets and add colleagues datasets' that have already been published. 
+Welcome to the Qri Desktop release candidate! Qri Desktop is an app for creating and managing datasets and versions (meant to replace the Qri Frontend app). It gives a UI to our qri commandline tool. This is a release candidate, so all features have not been perfected yet. Qri Desktop will make it easy for you to create and version datasets, look back through the history of your datasets to see what has changed, and to double check your changes before you commit them! You can also publish your datasets and add colleagues datasets' that have already been published. 
 
 Qri is an amalgamation of three hefty areas: a version control system, a network to other data users, and a database for your local data. In order to make working with Qri and it's local database easier, we have implimented a way to integrate your normal filesystem to our database. You can have your working directories where you keep your current workspace and data, but still be able to commit/save to your qri database at important times during your workflow. Using Qri, you can load your data from those specific points if you have made a mistake, or you just want to view the data at a different point in time. **The Qri Desktop app gives you the ability to visualize all those different versions and your different datasets from one application.**
 
 Even though this is a release candidate, Qri Desktop is extremely functional and can be used right away to begin versioning and publishing your data! The main feature we are missing (which is why we are considering this a candidate and not an official release as of yet) is the ability to delete dataset versions from inside the Qri Desktop app. This functionality exists in the command line client, which comes bundled with Qri Desktop. [Check out the Qri CLI reference here if you run into this problem.](https://qri.io/docs/reference/cli_commands/#qri_remove)
+
+We are also currently cleaning up our `add` functionality. If you are trying to add from the network, you will most likely encounter bugs. This will be cleaned up by the next release.
 
 On our immediate roadmap:
 - the ability to delete versions of a dataset
