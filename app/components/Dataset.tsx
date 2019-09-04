@@ -73,6 +73,7 @@ interface DatasetState {
 }
 
 const logo = require('../assets/qri-blob-logo-tiny.png') //eslint-disable-line
+const defaultPhoto = require('../assets/default_46x46.png') //eslint-disable-line
 
 export default class Dataset extends React.Component<DatasetProps> {
   // component state is used to compare changes when a new dataset is selected
@@ -318,7 +319,7 @@ export default class Dataset extends React.Component<DatasetProps> {
               onClick={() => { shell.openExternal('https://discordapp.com/invite/thkJHKj') }}
             />
             <HeaderColumnButtonDropdown
-              icon={<div className='header-column-icon' ><img src={userphoto} /></div>}
+              icon={<div className='header-column-icon' ><img src={userphoto || defaultPhoto} /></div>}
               label={username}
               items={[
                 <ExternalLink key={0} href={`${QRI_CLOUD_URL}/${username}`}>Public Profile</ExternalLink>,
