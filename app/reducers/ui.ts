@@ -50,6 +50,8 @@ const initialState = {
 // send an event to electron to block menus on first load
 ipcRenderer.send('block-menus', true)
 
+const [, DATASET_SUCC] = apiActionTypes('dataset')
+
 export default (state = initialState, action: AnyAction) => {
   switch (action.type) {
     case UI_TOGGLE_DATASET_LIST:
@@ -141,6 +143,14 @@ export default (state = initialState, action: AnyAction) => {
         ...state,
         qriCloudAuthenticated: false
       }
+
+    // close the dataset list when the user chooses a new dataset or adds a new dataset
+    case DATASET_SUCC:
+      return {
+        ...state,
+        showDatasetList: false
+      }
+
     default:
       return state
   }
