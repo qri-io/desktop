@@ -2,7 +2,7 @@ import * as React from 'react'
 import { Action } from 'redux'
 import classNames from 'classnames'
 import ReactTooltip from 'react-tooltip'
-import { ipcRenderer, shell } from 'electron'
+import { remote, ipcRenderer, shell } from 'electron'
 import { CSSTransition } from 'react-transition-group'
 import { faDiscord } from '@fortawesome/free-brands-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -109,6 +109,10 @@ export default class Dataset extends React.Component<DatasetProps> {
     ipcRenderer.on('open-working-directory', this.openWorkingDirectory)
 
     ipcRenderer.on('publish-unpublish-dataset', this.publishUnpublishDataset)
+
+    ipcRenderer.on('reload', () => {
+      remote.getCurrentWindow().reload()
+    })
   }
 
   componentDidUpdate (prevProps: DatasetProps) {
@@ -310,7 +314,7 @@ export default class Dataset extends React.Component<DatasetProps> {
           <div className='header-right'>
             <HeaderColumnButton
               icon={faDiscord}
-              tooltip={'Need help? Ask questions in our Discord channel'}
+              tooltip={'Need help? Ask questions<br/> in our Discord channel'}
               onClick={() => { shell.openExternal('https://discordapp.com/invite/thkJHKj') }}
             />
             <HeaderColumnButtonDropdown
