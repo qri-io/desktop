@@ -48,6 +48,7 @@ On our immediate roadmap:
 
 ### Features
 
+* show window on refocusing app ([899b103](https://github.com/qri-io/desktop/commit/899b103))
 * **profile photo:** use a default profile photo if no photo is returned ([e9bbc12](https://github.com/qri-io/desktop/commit/e9bbc12))
 * add Command-R shortcut ([062f337](https://github.com/qri-io/desktop/commit/062f337))
 * **auto update:** use electron-updater for auto updates ([26e9bed](https://github.com/qri-io/desktop/commit/26e9bed))
@@ -74,7 +75,9 @@ On our immediate roadmap:
 * implement tooltips in dataset component ([b93b39c](https://github.com/qri-io/desktop/commit/b93b39c))
 * implement tooltips in dataset component ([16781fb](https://github.com/qri-io/desktop/commit/16781fb))
 * link to filesystem (checkout) ([db3ae89](https://github.com/qri-io/desktop/commit/db3ae89))
+* make component states more consistent ([1ce47bb](https://github.com/qri-io/desktop/commit/1ce47bb))
 * make dataset list resizable ([6adb9a9](https://github.com/qri-io/desktop/commit/6adb9a9))
+* refactor workingDataset and commitDetails state, remove unnecessary API calls ([e633c04](https://github.com/qri-io/desktop/commit/e633c04))
 * update components on mtime diff ([2a6c0d6](https://github.com/qri-io/desktop/commit/2a6c0d6))
 * **`/form/ButtonInput`:** button that should be used along side inputs ([c1f5d56](https://github.com/qri-io/desktop/commit/c1f5d56))
 * **api:** add commit detail component and layout ([#25](https://github.com/qri-io/desktop/issues/25)) ([441cee0](https://github.com/qri-io/desktop/commit/441cee0))
@@ -90,23 +93,18 @@ On our immediate roadmap:
 * **DatasetSidebar:** `handleHistoryScroll` to see if we should load next page of history ([8030e91](https://github.com/qri-io/desktop/commit/8030e91))
 * **Error, Header:** created Error, Buttons, and Header components to be used in the Modal ([e4c6405](https://github.com/qri-io/desktop/commit/e4c6405))
 * **fetchWorkingDataset:** add action & reducer skeleton for fetching a working dataset ([9f55e15](https://github.com/qri-io/desktop/commit/9f55e15))
+* **initDataset:** add `initDataset` api call and wire to app ([4748a8a](https://github.com/qri-io/desktop/commit/4748a8a))
 * **json:** use react-json-view for great good ([842eda2](https://github.com/qri-io/desktop/commit/842eda2))
 * **layout:** add dataset view with draggable sidebar, datasets picker, etc ([#9](https://github.com/qri-io/desktop/issues/9)) ([a25881c](https://github.com/qri-io/desktop/commit/a25881c))
+* **NoDatasets:** page when user does not have any datasets ([dc18222](https://github.com/qri-io/desktop/commit/dc18222))
 * **pagination:** add page "reducer" and adjust interfaces ([caa5c58](https://github.com/qri-io/desktop/commit/caa5c58))
 * **publish:** initial support for dataset publication ([6399545](https://github.com/qri-io/desktop/commit/6399545))
-* **save:** stub out save UI ([f1d07e4](https://github.com/qri-io/desktop/commit/f1d07e4))
-* **SpinnerWithIcon:** add component and use in `Dataset` ([8f62a01](https://github.com/qri-io/desktop/commit/8f62a01))
-* make component states more consistent ([1ce47bb](https://github.com/qri-io/desktop/commit/1ce47bb))
-* refactor workingDataset and commitDetails state, remove unnecessary API calls ([e633c04](https://github.com/qri-io/desktop/commit/e633c04))
-* **initDataset:** add `initDataset` api call and wire to app ([4748a8a](https://github.com/qri-io/desktop/commit/4748a8a))
-* **NoDatasets:** page when user does not have any datasets ([dc18222](https://github.com/qri-io/desktop/commit/dc18222))
 * **save:** move dummy form to component ([993633f](https://github.com/qri-io/desktop/commit/993633f))
 * **save:** set up POST api call ([f608981](https://github.com/qri-io/desktop/commit/f608981))
+* **save:** stub out save UI ([f1d07e4](https://github.com/qri-io/desktop/commit/f1d07e4))
 * **SelectInput:** add `SelectInput` component for form select! ([72af951](https://github.com/qri-io/desktop/commit/72af951))
+* **SpinnerWithIcon:** add component and use in `Dataset` ([8f62a01](https://github.com/qri-io/desktop/commit/8f62a01))
 * **toast:** remove unnecessary state ([7020e68](https://github.com/qri-io/desktop/commit/7020e68))
 * style disabled components as subdued ([b9872e7](https://github.com/qri-io/desktop/commit/b9872e7))
 * visually show add/remove status ([5c9c3b2](https://github.com/qri-io/desktop/commit/5c9c3b2))
 * wip handle save with mutations reducer ([59522d4](https://github.com/qri-io/desktop/commit/59522d4))
-
-
-
