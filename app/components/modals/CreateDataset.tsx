@@ -69,6 +69,11 @@ const CreateDataset: React.FunctionComponent<CreateDatasetProps> = ({ onDismisse
     }
 
     const path = filePath[0]
+    const splitOnSlash = path.split('/')
+    const file = splitOnSlash && splitOnSlash.pop()
+    const name = file && file.split('.')[0]
+
+    name && datasetName === '' && setDatasetName(name)
 
     setFilePath(path)
     const isDataset = isQriDataset(path)
@@ -136,15 +141,6 @@ const CreateDataset: React.FunctionComponent<CreateDatasetProps> = ({ onDismisse
     >
       <div className='content-wrap'>
         <div className='content'>
-          <TextInput
-            name='datasetName'
-            label='Dataset Name'
-            type=''
-            value={datasetName}
-            onChange={handleChanges}
-            maxLength={600}
-            errorText={alreadyDatasetError}
-          />
           <div className='flex-space-between'>
             <TextInput
               name='path'
@@ -157,6 +153,15 @@ const CreateDataset: React.FunctionComponent<CreateDatasetProps> = ({ onDismisse
             />
             <div className='margin-left'><ButtonInput onClick={() => handleFilePickerDialog(showFilePicker)} >Choose...</ButtonInput></div>
           </div>
+          <TextInput
+            name='datasetName'
+            label='Dataset Name'
+            type=''
+            value={datasetName}
+            onChange={handleChanges}
+            maxLength={600}
+            errorText={alreadyDatasetError}
+          />
           <div className='flex-space-between'>
             <TextInput
               name='path'

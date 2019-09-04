@@ -289,7 +289,7 @@ export default class Dataset extends React.Component<DatasetProps> {
         <div className='header'>
           <div className='header-left'>
             <div
-              className={classNames('current-dataset', 'header-column', { 'expanded': showDatasetList })}
+              className={classNames('current-dataset', 'header-column', 'sidebar-list-item', { 'expanded': showDatasetList })}
               data-tip={`${workingDataset.peername}/${workingDataset.name}`}
               onClick={toggleDatasetList}
               style={{ width: datasetSidebarWidth }}
