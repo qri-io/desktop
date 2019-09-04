@@ -63,6 +63,8 @@ const setMenuItemEnabled = (menuItemIds, enabled) => {
   })
 }
 
+let quitting = false
+
 app.on('ready', () =>
   installExtensions()
     .then(() => {
@@ -148,10 +150,10 @@ app.on('ready', () =>
                 type: 'separator'
               },
               {
-                label: 'Quit',
+                label: 'Quit Qri Desktop',
                 accelerator: 'Command+Q',
                 click () {
-                  app.quit()
+                  quitting = true; app.quit()
                 }
               }
             ]
@@ -483,5 +485,16 @@ app.on('ready', () =>
           'open-working-directory'
         ]
         setMenuItemEnabled(blockableMenus, !blockMenus)
+      })
+
+      mainWindow.on('close', (e) => {
+        if (!quitting) {
+          e.preventDefault()
+          Menu.sendActionToFirstResponder('hide:')
+        }
+      })
+
+      app.on('activate', () => {
+        mainWindow.show()
       })
     }))
