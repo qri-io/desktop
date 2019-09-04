@@ -310,7 +310,7 @@ export default class Dataset extends React.Component<DatasetProps> {
           <div className='header-right'>
             <HeaderColumnButton
               icon={faDiscord}
-              tooltip={'Need help? Ask questions in our Discord channel'}
+              tooltip={'Need help? Ask questions<br/> in our Discord channel'}
               onClick={() => { shell.openExternal('https://discordapp.com/invite/thkJHKj') }}
             />
             <HeaderColumnButtonDropdown
