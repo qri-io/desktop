@@ -270,6 +270,13 @@ app.on('ready', () =>
                 type: 'separator'
               },
               {
+                label: 'Reload',
+                accelerator: 'Command+R',
+                click () {
+                  mainWindow.webContents.send('reload')
+                }
+              },
+              {
                 label: 'Toggle Developer Tools',
                 accelerator: 'Option+Command+I',
                 role: 'toggleDevTools'
