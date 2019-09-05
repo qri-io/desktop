@@ -86,13 +86,17 @@ const DatasetSidebar: React.FunctionComponent<DatasetSidebarProps> = ({
         >
           Status
         </div>
-        {!(history.pageInfo.error && history.pageInfo.error.includes('no history')) && <div
-          className={classNames('tab', { 'active': activeTab === 'history' })}
-          onClick={() => { onTabClick('history') }}
+        <div
+          className={classNames('tab', { 'active': activeTab === 'history', 'disabled': history.pageInfo.error && history.pageInfo.error.includes('no history') })}
+          onClick={() => {
+            if (!(history.pageInfo.error && history.pageInfo.error.includes('no history'))) {
+              onTabClick('history')
+            }
+          }}
           data-tip={path ? 'Explore older versions of this dataset' : 'This dataset has no previous versions'}
         >
           History
-        </div>}
+        </div>
       </div>
       <div id='content'>
         <CSSTransition

@@ -133,10 +133,8 @@ const ComponentList: React.FunctionComponent<ComponentListProps> = (props: Compo
         components.map(({ name, displayName, tooltip, icon }) => {
           if (status[name] && isLinked) {
             const { filepath, status: fileStatus } = status[name]
-            let filename
-            if (filepath === 'repo') {
-              filename = ''
-            } else {
+            let filename = ''
+            if (filepath !== 'repo') {
               filename = filepath.substring((filepath.lastIndexOf('/') + 1))
             }
 
@@ -159,11 +157,11 @@ const ComponentList: React.FunctionComponent<ComponentListProps> = (props: Compo
               const menuItems: MenuItemConstructorOptions[] = [
                 {
                   label: 'Open in Finder',
-                  click: () => { shell.showItemInFolder(`${linkpath}/${filepath}`) }
+                  click: () => { shell.showItemInFolder(`${linkpath}/${filename}`) }
                 },
                 {
                   label: 'Copy File Path',
-                  click: () => { clipboard.writeText(`${linkpath}/${filepath}`) }
+                  click: () => { clipboard.writeText(`${linkpath}/${filename}`) }
                 }
               ]
 
