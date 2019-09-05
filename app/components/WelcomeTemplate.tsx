@@ -5,7 +5,7 @@ import classNames from 'classnames'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowRight } from '@fortawesome/free-solid-svg-icons'
 
-export const logo = require('../assets/qri-blob-logo-large.png') // eslint-disable-line
+export const logo = require('../assets/qri-blob-logo-small.png') // eslint-disable-line
 
 interface WelcomeTemplateProps {
   onAccept?: () => any
