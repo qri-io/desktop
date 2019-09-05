@@ -82,7 +82,12 @@ app.on('ready', () =>
           nodeIntegration: true
         }
       })
-      mainWindow.loadURL(`file://${__dirname}/app.html`)
+
+      if (process.env.NODE_ENV === 'development') {
+        mainWindow.loadURL(`file://${__dirname}/app.development.html`)
+      } else {
+        mainWindow.loadURL(`file://${__dirname}/app.production.html`)
+      }
 
       mainWindow.webContents.on('did-finish-load', () => {
         mainWindow.show()
