@@ -5,7 +5,7 @@ import { clipboard, shell, MenuItemConstructorOptions } from 'electron'
 import ContextMenuArea from 'react-electron-contextmenu'
 import { ApiActionThunk } from '../store/api'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faTags, faArchive, faTh, IconDefinition } from '@fortawesome/free-solid-svg-icons'
+import { faTags, faArchive, faTh, IconDefinition, faExclamation } from '@fortawesome/free-solid-svg-icons'
 
 import { DatasetStatus, ComponentType } from '../models/store'
 
@@ -32,9 +32,10 @@ export const StatusDot: React.FunctionComponent<StatusDotProps> = (props) => {
       statusColor = 'transparent'
       statusTooltip = ''
   }
-  return (
-    <div className='status-dot' style={{ backgroundColor: statusColor }} data-tip={statusTooltip}></div>
-  )
+  if (props.status === 'parse error') {
+    return <FontAwesomeIcon icon={faExclamation} className='parse-error' style={{ color: '#e04f4f' }} data-tip='parsing error' size='sm' />
+  }
+  return <div className='status-dot' style={{ backgroundColor: statusColor }} data-tip={statusTooltip}></div>
 }
 
 interface FileRowProps {

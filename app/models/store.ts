@@ -99,7 +99,7 @@ export interface MyDatasets {
   filter: string // filter string from ui
 }
 
-export type ComponentState = 'modified' | 'unmodified' | 'removed' | 'added'
+export type ComponentState = 'modified' | 'unmodified' | 'removed' | 'added' | 'parse error'
 
 // info about a dataset component as compared the same component in previous commit
 export interface ComponentStatus {

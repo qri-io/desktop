@@ -367,7 +367,7 @@ export default class Dataset extends React.Component<DatasetProps> {
                 mountOnEnter
                 unmountOnExit
               >
-                <DatasetComponent component={selectedComponent} componentStatus={status[selectedComponent]} isLoading={workingDataset.isLoading} />
+                <DatasetComponent component={selectedComponent} componentStatus={status[selectedComponent]} isLoading={workingDataset.isLoading} linkpath={this.props.workingDataset.linkpath}/>
               </CSSTransition>
               <CSSTransition
                 in={activeTab === 'history'}

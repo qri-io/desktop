@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import MetadataContainer from '../containers/MetadataContainer'
 import BodyContainer from '../containers/BodyContainer'
 import SchemaContainer from '../containers/SchemaContainer'
+import ParseError from './ParseError'
 import { CSSTransition } from 'react-transition-group'
 import SpinnerWithIcon from './chrome/SpinnerWithIcon'
 
@@ -16,10 +17,13 @@ interface DatasetComponentProps {
   component: SelectedComponent
   componentStatus: ComponentStatus
   history?: boolean
+  linkpath?: string
 }
 
 const DatasetComponent: React.FunctionComponent<DatasetComponentProps> = (props: DatasetComponentProps) => {
-  const { component, componentStatus, isLoading, history = false } = props
+  const { component, componentStatus, isLoading, history = false, linkpath } = props
+
+  const hasParseError = componentStatus && componentStatus.status === 'parse error'
 
   if (component === 'meta' || component === 'body' || component === 'schema') {
     const { displayName, icon, tooltip } = getComponentDisplayProps(component)
@@ -38,7 +42,20 @@ const DatasetComponent: React.FunctionComponent<DatasetComponentProps> = (props:
         </div>
         <div className='component-content transition-group'>
           <CSSTransition
-            in={component === 'meta' && !isLoading}
+            in={!!componentStatus && hasParseError}
+            classNames='fade'
+            component='div'
+            timeout={300}
+            mountOnEnter
+            unmountOnExit
+            appear={true}
+          >
+            <div id='transition-wrap'>
+              <ParseError linkpath={linkpath || ''} filename={componentStatus && componentStatus.filepath} component={component} />
+            </div>
+          </CSSTransition>
+          <CSSTransition
+            in={component === 'meta' && !isLoading && !hasParseError}
             classNames='fade'
             component='div'
             timeout={300}
@@ -51,7 +68,7 @@ const DatasetComponent: React.FunctionComponent<DatasetComponentProps> = (props:
             </div>
           </CSSTransition>
           <CSSTransition
-            in={component === 'body'}
+            in={component === 'body' && !hasParseError}
             classNames='fade'
             component='div'
             timeout={300}
@@ -64,7 +81,7 @@ const DatasetComponent: React.FunctionComponent<DatasetComponentProps> = (props:
             </div>
           </CSSTransition>
           <CSSTransition
-            in={component === 'schema' && !isLoading}
+            in={component === 'schema' && !isLoading && !hasParseError}
             classNames='fade'
             component='div'
             timeout={300}
