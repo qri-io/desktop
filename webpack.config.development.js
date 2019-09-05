@@ -4,12 +4,14 @@
  * https://webpack.github.io/docs/hot-module-replacement-with-webpack.html
  */
 
-const webpack = require('webpack');
-const merge = require('webpack-merge');
-// const MiniCssExtractPlugin = require('mini-css-extract-plugin')
-const baseConfig = require('./webpack.config.base');
+const webpack = require('webpack')
+const merge = require('webpack-merge')
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 
-const port = process.env.PORT || 1212;
+// const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const baseConfig = require('./webpack.config.base')
+
+const port = process.env.PORT || 1212
 
 module.exports = merge(baseConfig, {
   mode: 'development',
@@ -44,58 +46,16 @@ module.exports = merge(baseConfig, {
         }
       },
       {
-        test: /\.global\.css$/,
-        loaders: [
-          'style-loader',
-          'css-loader?sourceMap'
-        ]
-      },
-
-      {
-        test: /^((?!\.global).)*\.css$/,
-        loaders: [
-          'style-loader',
-          'css-loader?modules&sourceMap&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]'
-        ]
-      },
-
-      // Add SASS support  - compile all .scss files and pipe it to style.css
-      {
-        test: /.scss$/,
+        test: /\.scss$/,
         use: [
           {
-            loader: 'style-loader'
-          },
-          {
-            loader: 'css-loader',
+            loader: MiniCssExtractPlugin.loader,
             options: {
-              sourceMap: true,
-            },
-          },
-          {
-            loader: 'sass-loader'
-          }
-        ]
-      },
-      // Add SASS support  - compile all other .scss files and pipe it to style.css
-      {
-        test: /^((?!\.global).)*\.scss$/,
-        use: [
-          {
-            loader: 'style-loader'
-          },
-          {
-            loader: 'css-loader',
-            options: {
-              modules: true,
-              sourceMap: true,
-              importLoaders: 1,
-              localIdentName: '[name]__[local]__[hash:base64:5]',
+              publicPath: '../'
             }
           },
-          {
-            loader: 'sass-loader'
-          }
+          'css-loader',
+          'sass-loader'
         ]
       },
 
@@ -106,9 +66,9 @@ module.exports = merge(baseConfig, {
           loader: 'url-loader',
           options: {
             limit: 10000,
-            mimetype: 'application/font-woff',
+            mimetype: 'application/font-woff'
           }
-        },
+        }
       },
       // WOFF2 Font
       {
@@ -117,7 +77,7 @@ module.exports = merge(baseConfig, {
           loader: 'url-loader',
           options: {
             limit: 10000,
-            mimetype: 'application/font-woff',
+            mimetype: 'application/font-woff'
           }
         }
       },
@@ -135,7 +95,7 @@ module.exports = merge(baseConfig, {
       // EOT Font
       {
         test: /\.eot(\?v=\d+\.\d+\.\d+)?$/,
-        use: 'file-loader',
+        use: 'file-loader'
       },
       // SVG Font
       {
@@ -144,14 +104,14 @@ module.exports = merge(baseConfig, {
           loader: 'url-loader',
           options: {
             limit: 10000,
-            mimetype: 'image/svg+xml',
+            mimetype: 'image/svg+xml'
           }
         }
       },
       // Common Image Formats
       {
         test: /\.(?:ico|gif|png|jpg|jpeg|webp)$/,
-        use: 'url-loader',
+        use: 'url-loader'
       }
     ]
   },
@@ -170,8 +130,13 @@ module.exports = merge(baseConfig, {
     new webpack.LoaderOptionsPlugin({
       debug: true
     }),
+
+    new MiniCssExtractPlugin({ // define where to save the file
+      filename: 'bundle.css',
+      allChunks: true
+    })
   ],
 
   // https://github.com/chentsulin/webpack-target-electron-renderer#how-this-module-works
   target: 'electron-renderer'
-});
+})

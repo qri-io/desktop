@@ -2,44 +2,39 @@
  * Build config for electron 'Renderer Process' file
  */
 
-const path = require('path');
-const webpack = require('webpack');
-const merge = require('webpack-merge');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const baseConfig = require('./webpack.config.base');
+const path = require('path')
+const webpack = require('webpack')
+const merge = require('webpack-merge')
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+
+const baseConfig = require('./webpack.config.base')
 
 module.exports = merge(baseConfig, {
   mode: 'production',
-  
+
   devtool: 'cheap-module-source-map',
 
-  entry: [
-    './app/index'
-  ],
+  entry: ['./app/index'],
 
   output: {
     path: path.join(__dirname, 'app/dist'),
-    publicPath: '../dist/'
+    publicPath: '../app/dist/',
+    filename: 'bundle.js'
   },
 
   module: {
     rules: [
       {
-        test: /\.css$/,
-        use: ['style-loader', 'css-loader']
-      },
-      // Add SASS support  - compile all .global.scss files and pipe it to style.css
-      {
-        test: /\.global\.scss$/,
+        test: /\.scss$/,
         use: [
-          { loader: 'style-loader' },
           {
-            loader: 'css-loader',
+            loader: MiniCssExtractPlugin.loader,
             options: {
-              sourceMap: true
+              publicPath: '../'
             }
           },
-          { loader: 'sass-loader' }
+          'css-loader',
+          'sass-loader'
         ]
       },
       // WOFF Font
@@ -49,9 +44,9 @@ module.exports = merge(baseConfig, {
           loader: 'url-loader',
           options: {
             limit: 10000,
-            mimetype: 'application/font-woff',
+            mimetype: 'application/font-woff'
           }
-        },
+        }
       },
       // WOFF2 Font
       {
@@ -60,7 +55,7 @@ module.exports = merge(baseConfig, {
           loader: 'url-loader',
           options: {
             limit: 10000,
-            mimetype: 'application/font-woff',
+            mimetype: 'application/font-woff'
           }
         }
       },
@@ -78,7 +73,7 @@ module.exports = merge(baseConfig, {
       // EOT Font
       {
         test: /\.eot(\?v=\d+\.\d+\.\d+)?$/,
-        use: 'file-loader',
+        use: 'file-loader'
       },
       // SVG Font
       {
@@ -87,14 +82,14 @@ module.exports = merge(baseConfig, {
           loader: 'url-loader',
           options: {
             limit: 10000,
-            mimetype: 'image/svg+xml',
+            mimetype: 'image/svg+xml'
           }
         }
       },
       // Common Image Formats
       {
         test: /\.(?:ico|gif|png|jpg|jpeg|webp)$/,
-        use: 'url-loader',
+        use: 'url-loader'
       }
     ]
   },
@@ -104,13 +99,12 @@ module.exports = merge(baseConfig, {
     // https://github.com/webpack/webpack/issues/864
     new webpack.optimize.OccurrenceOrderPlugin(),
 
-    new HtmlWebpackPlugin({
-      filename: '../app.html',
-      template: 'app/app.html',
-      inject: false
+    new MiniCssExtractPlugin({ // define where to save the file
+      filename: '[name].bundle.css',
+      allChunks: true
     })
   ],
 
   // https://github.com/chentsulin/webpack-target-electron-renderer#how-this-module-works
   target: 'electron-renderer'
-});
+})
