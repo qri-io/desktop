@@ -17,7 +17,7 @@ export function mapDatasetSummary (data: any[]): DatasetSummary[] {
     peername: ref.peername,
     name: ref.name,
     path: ref.path,
-    isLinked: !!ref.fsiPath,
+    fsipath: ref.fsiPath,
     published: ref.published
   }))
 }

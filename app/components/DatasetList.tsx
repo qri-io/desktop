@@ -1,6 +1,8 @@
 import * as React from 'react'
 import { Action, AnyAction } from 'redux'
 import classNames from 'classnames'
+import ContextMenuArea from 'react-electron-contextmenu'
+import { shell, MenuItemConstructorOptions } from 'electron'
 
 import { MyDatasets, WorkingDataset } from '../models/store'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -57,9 +59,13 @@ export default class DatasetList extends React.Component<DatasetListProps> {
   }
 
   render () {
-    const { workingDataset, setModal } = this.props
-    const { setWorkingDataset } = this.props
-    const { filter, value: datasets } = this.props.myDatasets
+    const {
+      workingDataset,
+      setModal,
+      setWorkingDataset,
+      myDatasets
+    } = this.props
+    const { filter, value: datasets } = myDatasets
 
     const filteredDatasets = datasets.filter(({ peername, name, title }) => {
       // if there's a non-empty filter string, only show matches on peername, name, and title
@@ -76,26 +82,50 @@ export default class DatasetList extends React.Component<DatasetListProps> {
     })
 
     const listContent = filteredDatasets.length > 0
-      ? filteredDatasets.map(({ peername, name, title, isLinked, published }) => (
-        <div
-          key={`${peername}/${name}`}
-          className={classNames('sidebar-list-item', 'sidebar-list-item-text', {
-            'selected': (peername === workingDataset.peername) && (name === workingDataset.name)
-          })}
-          onClick={() => setWorkingDataset(peername, name, isLinked, published)}
-        >
-          <div className='text-column'>
-            <div className='text'>{peername}/{name}</div>
-            <div className='subtext'>{title || <br/>}</div>
-          </div>
-          <div className='status-column' data-tip='unlinked'>
-            {!isLinked && (
-              <FontAwesomeIcon icon={faUnlink} size='sm'/>
-            )}
-          </div>
+      ? filteredDatasets.map(({ peername, name, title, fsipath, published }) => {
+        const menuItems: MenuItemConstructorOptions[] = fsipath
+          ? [
+            {
+              label: 'Reveal in Finder',
+              click: () => { shell.showItemInFolder(fsipath) }
+            },
+            {
+              type: 'separator'
+            },
+            {
+              label: 'Remove...',
+              click: () => { setModal({ type: ModalType.RemoveDataset }) }
+            }
+          ]
+          : [
+            {
+              label: 'Remove...',
+              click: () => { setModal({ type: ModalType.RemoveDataset }) }
+            }
+          ]
 
-        </div>
-      ))
+        return (<ContextMenuArea menuItems={menuItems} key={`${peername}/${name}`}>
+          <div
+            key={`${peername}/${name}`}
+            className={classNames('sidebar-list-item', 'sidebar-list-item-text', {
+              'selected': (peername === workingDataset.peername) && (name === workingDataset.name)
+            })}
+            onClick={() => setWorkingDataset(peername, name, !!fsipath, published)}
+          >
+            <div className='text-column'>
+              <div className='text'>{peername}/{name}</div>
+              <div className='subtext'>{title || <br/>}</div>
+            </div>
+            <div className='status-column' data-tip='unlinked'>
+              {!!fsipath && (
+                <FontAwesomeIcon icon={faUnlink} size='sm'/>
+              )}
+            </div>
+
+          </div>
+        </ContextMenuArea>)
+      }
+      )
       : <div className='sidebar-list-item-text'>Oops, no matches found for <strong>&apos;{filter}&apos;</strong></div>
 
     const countMessage = filteredDatasets.length !== datasets.length

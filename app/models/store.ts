@@ -89,7 +89,7 @@ export interface DatasetSummary {
   peername: string
   name: string
   path: string
-  isLinked: boolean
+  fsipath: string
   published: boolean
 }
 

@@ -11,6 +11,7 @@ import AppError from './AppError'
 import AppLoading from './AppLoading'
 import AddDataset from './modals/AddDataset'
 import LinkDataset from './modals/LinkDataset'
+import RemoveDataset from './modals/RemoveDataset'
 import CreateDataset from './modals/CreateDataset'
 import RoutesContainer from '../containers/RoutesContainer'
 
@@ -48,6 +49,8 @@ export interface AppProps {
   setApiConnection: (status: number) => Action
   pingApi: () => Promise<ApiAction>
   setModal: (modal: Modal) => Action
+  removeDataset: (peername: string, name: string, dir: string) => Promise<ApiAction>
+
 }
 
 interface AppState {
@@ -109,7 +112,7 @@ class App extends React.Component<AppProps, AppState> {
 
   private renderModal (): JSX.Element | null {
     const { modal, setModal, workingDataset } = this.props
-    const { peername, name } = workingDataset
+    const { peername, name, linkpath } = workingDataset
     const Modal = modal
 
     if (!Modal) return null
@@ -150,6 +153,21 @@ class App extends React.Component<AppProps, AppState> {
             peername={peername}
             name={name}
             onSubmit={this.props.linkDataset}
+            onDismissed={async () => setModal(NoModal)}
+          />
+        </CSSTransition>
+        <CSSTransition
+          in={ModalType.RemoveDataset === Modal.type}
+          classNames='fade'
+          component='div'
+          timeout={300}
+          unmountOnExit
+        >
+          <RemoveDataset
+            peername={peername}
+            name={name}
+            linkpath={linkpath}
+            onSubmit={this.props.removeDataset}
             onDismissed={async () => setModal(NoModal)}
           />
         </CSSTransition>

@@ -424,6 +424,7 @@ $header-font-size: .9rem;
   border-bottom: $list-item-bottom-border;
   display: flex;
   align-items: center;
+  user-select: none;
 }
 
 .sidebar-list-header  {
