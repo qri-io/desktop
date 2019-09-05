@@ -11,6 +11,7 @@ import { Modal, ModalType } from '../models/modals'
 interface DatasetListProps {
   myDatasets: MyDatasets
   workingDataset: WorkingDataset
+  toggleDatasetList: () => Action
   setFilter: (filter: string) => Action
   setWorkingDataset: (peername: string, name: string, isLinked: boolean, published: boolean) => Action
   fetchMyDatasets: (page: number, pageSize: number) => Promise<AnyAction>
@@ -18,6 +19,23 @@ interface DatasetListProps {
 }
 
 export default class DatasetList extends React.Component<DatasetListProps> {
+  constructor (props: DatasetListProps) {
+    super(props)
+    this.handleEsc = this.handleEsc.bind(this)
+  }
+
+  handleEsc (e: KeyboardEvent) {
+    if (e.key === 'Escape') this.props.toggleDatasetList()
+  }
+
+  componentDidMount () {
+    document.addEventListener('keydown', this.handleEsc)
+  }
+
+  componentWillUnmount () {
+    document.removeEventListener('keydown', this.handleEsc)
+  }
+
   handleFilterChange (e: any) {
     const { setFilter } = this.props
     const filter = e.target.value
