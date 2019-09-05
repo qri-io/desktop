@@ -103,7 +103,7 @@ export default class Dataset extends React.Component<DatasetProps> {
       this.props.setActiveTab('history')
     })
 
-    ipcRenderer.on('show-datasets', () => {
+    ipcRenderer.on('toggle-dataset-list', () => {
       this.props.toggleDatasetList()
     })
 

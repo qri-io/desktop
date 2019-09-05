@@ -237,11 +237,11 @@ app.on('ready', () =>
                 }
               },
               {
-                id: 'show-dataset-list',
-                label: 'Show Dataset List',
+                id: 'toggle-dataset-list',
+                label: 'Toggle Dataset List',
                 accelerator: 'Command+T',
                 click () {
-                  mainWindow.webContents.send('show-datasets')
+                  mainWindow.webContents.send('toggle-dataset-list')
                 }
               },
               {
@@ -366,6 +366,12 @@ app.on('ready', () =>
                 click: () => {
                   shell.openExternal('https://qri.io/contact/')
                 }
+              },
+              {
+                label: 'Chat with the community...',
+                click: () => {
+                  shell.openExternal('https://discord.gg/etap8Gb')
+                }
               }
             ]
           }
@@ -479,7 +485,7 @@ app.on('ready', () =>
           'add-dataset',
           'show-status',
           'show-history',
-          'show-dataset-list',
+          'toggle-dataset-list',
           'publish-unpublish-dataset',
           'view-on-qri-cloud',
           'open-working-directory'
