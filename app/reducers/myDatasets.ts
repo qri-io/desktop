@@ -28,7 +28,10 @@ const myDatasetsReducer: Reducer = (state = initialState, action: AnyAction): My
 
     case LIST_REQ:
       if (action.pageInfo.page === 1) {
-        return initialState
+        return {
+          ...initialState,
+          pageInfo: action.pageInfo
+        }
       }
       return {
         ...state,
