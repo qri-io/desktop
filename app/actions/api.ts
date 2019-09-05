@@ -8,7 +8,7 @@ import { setWorkingDataset, setSelectedListItem } from './selections'
 
 import { RESET_MY_DATASETS } from '../reducers/myDatasets'
 
-const pageSizeDefault = 15
+const pageSizeDefault = 50
 const bodyPageSizeDefault = 100
 
 export function pingApi (): ApiActionThunk {

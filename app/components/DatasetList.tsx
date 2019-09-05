@@ -18,7 +18,7 @@ interface DatasetListProps {
 }
 
 export default class DatasetList extends React.Component<DatasetListProps> {
-  handleFilterKeyUp (e: any) {
+  handleFilterChange (e: any) {
     const { setFilter } = this.props
     const filter = e.target.value
     setFilter(filter)
@@ -97,7 +97,8 @@ export default class DatasetList extends React.Component<DatasetListProps> {
               type='text'
               name='filter'
               placeholder='Filter'
-              onKeyUp={(e) => this.handleFilterKeyUp(e)}
+              value={filter}
+              onChange={(e) => this.handleFilterChange(e)}
             />
           </div>
           <div className='strong-message'>You have {filteredDatasets.length} local datasets</div>
