@@ -1,7 +1,8 @@
 import {
   SELECTIONS_SET_ACTIVE_TAB,
   SELECTIONS_SET_SELECTED_LISTITEM,
-  SELECTIONS_SET_WORKING_DATASET
+  SELECTIONS_SET_WORKING_DATASET,
+  SELECTIONS_CLEAR
 } from '../reducers/selections'
 
 export const setActiveTab = (activeTab: string) => {
@@ -30,5 +31,11 @@ export const setWorkingDataset = (peername: string, name: string, isLinked: bool
       isLinked,
       published
     }
+  }
+}
+
+export const clearSelection = () => {
+  return {
+    type: SELECTIONS_CLEAR
   }
 }

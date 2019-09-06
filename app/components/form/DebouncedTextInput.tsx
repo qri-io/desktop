@@ -7,7 +7,7 @@ interface DebouncedTextInputProps extends TextInputProps {
 }
 
 const DebouncedTextInput: React.FunctionComponent<DebouncedTextInputProps> = ({ debounceTimer = 500, ...props }) => {
-  const { value, name, onChange } = props
+  const { value, name, onChange, onKeyDown } = props
 
   const [internalValue, setInternalValue] = React.useState(value)
   const [debouncedValue] = useDebounce(internalValue, debounceTimer)
@@ -23,6 +23,7 @@ const DebouncedTextInput: React.FunctionComponent<DebouncedTextInputProps> = ({ 
       {...props}
       value={internalValue}
       onChange={handleChange}
+      onKeyDown={onKeyDown}
     />
   )
 }

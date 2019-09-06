@@ -6,6 +6,7 @@ import { apiActionTypes } from '../store/api'
 export const SELECTIONS_SET_ACTIVE_TAB = 'SELECTIONS_SET_ACTIVE_TAB'
 export const SELECTIONS_SET_SELECTED_LISTITEM = 'SELECTIONS_SET_SELECTED_LISTITEM'
 export const SELECTIONS_SET_WORKING_DATASET = 'SELECTIONS_SET_WORKING_DATASET'
+export const SELECTIONS_CLEAR = 'SELECTIONS_CLEAR'
 
 const initialState: Selections = {
   peername: localStore().getItem('peername') || '',
@@ -23,6 +24,25 @@ const [, ADD_SUCC] = apiActionTypes('add')
 
 export default (state = initialState, action: AnyAction) => {
   switch (action.type) {
+    case SELECTIONS_CLEAR:
+      localStore().setItem('peername', '')
+      localStore().setItem('name', '')
+      localStore().setItem('isLinked', 'false')
+      localStore().setItem('published', 'false')
+      localStore().setItem('activeTab', 'status')
+      localStore().setItem('component', '')
+      localStore().setItem('commit', '')
+      localStore().setItem('commitComponent', '')
+      return {
+        peername: '',
+        name: '',
+        isLinked: false,
+        published: false,
+        activeTab: 'status',
+        component: '',
+        commit: '',
+        commitComponent: ''
+      }
     case SELECTIONS_SET_ACTIVE_TAB:
       const { activeTab } = action.payload
       localStore().setItem('activeTab', activeTab)
