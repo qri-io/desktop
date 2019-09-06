@@ -161,6 +161,13 @@ const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction
       }
     case DATASET_BODY_SUCC:
       const fetchedAll = action.payload.data.data.length < state.components.body.pageInfo.pageSize
+
+      if (action.payload.request.pageInfo) {
+        if (action.payload.request.pageInfo.page <= state.components.body.pageInfo.page) {
+          return state
+        }
+      }
+
       return {
         ...state,
         components: {

@@ -213,7 +213,11 @@ export const apiMiddleware: Middleware = () => (next: Dispatch<AnyAction>) => as
     return next({
       type: SUCC_TYPE,
       payload: {
-        data: map(data.data)
+        data: map(data.data),
+        request: {
+          params,
+          pageInfo
+        }
       }
     })
   }

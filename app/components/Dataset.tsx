@@ -170,7 +170,6 @@ export default class Dataset extends React.Component<DatasetProps> {
         const { workingDataset, selections, setSelectedListItem } = nextProps
         const { component } = selections
         const { status } = workingDataset
-        console.log('STATUS', status)
         if (component === '' || !status[component]) {
           if (status['meta']) {
             setSelectedListItem('component', 'meta')
@@ -178,7 +177,6 @@ export default class Dataset extends React.Component<DatasetProps> {
           if (status['body']) {
             setSelectedListItem('component', 'body')
           }
-          console.log('HERE')
           setSelectedListItem('component', 'schema')
         }
       }
