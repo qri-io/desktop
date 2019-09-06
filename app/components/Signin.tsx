@@ -11,7 +11,7 @@ import { validateUsername, validatePassword } from '../utils/formValidation'
 
 export interface SigninProps {
   signin: (username: string, password: string) => Promise<ApiAction>
-  onSuccess: () => Action
+  onSuccess: () => Action | void
 }
 
 const Signin: React.FunctionComponent<SigninProps> = (props: SigninProps) => {
@@ -47,6 +47,10 @@ const Signin: React.FunctionComponent<SigninProps> = (props: SigninProps) => {
   const handleChange = (name: string, value: any) => {
     if (name === 'username') setUsername(value)
     if (name === 'password') setPassword(value)
+  }
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && acceptEnabled) handleSave()
   }
 
   const handleSave = async () => {
@@ -95,7 +99,8 @@ const Signin: React.FunctionComponent<SigninProps> = (props: SigninProps) => {
           maxLength={100}
           value={password}
           errorText={passwordError}
-          onChange={handleChange} />
+          onChange={handleChange}
+          onKeyDown={handleKeyDown} />
         <div className = 'error'> { serverError } </div>
       </div>
     </WelcomeTemplate>

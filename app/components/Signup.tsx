@@ -11,7 +11,7 @@ import { validateUsername, validateEmail, validatePassword } from '../utils/form
 
 export interface SignupProps {
   signup: (username: string, email: string, password: string) => Promise<ApiAction>
-  onSuccess: () => Action
+  onSuccess: () => Action | void
 }
 
 const Signup: React.FunctionComponent<SignupProps> = (props: SignupProps) => {

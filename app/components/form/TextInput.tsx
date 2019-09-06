@@ -9,12 +9,13 @@ export interface TextInputProps {
   errorText?: string
   helpText?: string
   showHelpText?: boolean
+  onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void | undefined
   onChange: (name: string, value: any) => void
   placeHolder?: string
   white?: boolean
 }
 
-const TextInput: React.FunctionComponent<TextInputProps> = ({ label, name, type, value, maxLength, errorText, helpText, showHelpText, onChange, placeHolder
+const TextInput: React.FunctionComponent<TextInputProps> = ({ label, name, type, value, maxLength, errorText, helpText, showHelpText, onChange, onKeyDown, placeHolder
 }) => {
   const feedbackColor = errorText ? 'error' : showHelpText && helpText ? 'textMuted' : ''
   const feedback = errorText || (showHelpText &&
@@ -33,6 +34,7 @@ const TextInput: React.FunctionComponent<TextInputProps> = ({ label, name, type,
           value={value || ''}
           placeholder={placeHolder}
           onChange={(e) => { onChange(name, e.target.value) }}
+          onKeyDown={onKeyDown}
         />
         <div style={{ height: 20 }}>
           <h6 style={{ textAlign: 'left', margin: 3 }} className={feedbackColor} >{feedback || ''}</h6>
