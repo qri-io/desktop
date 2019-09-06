@@ -1,5 +1,6 @@
 import * as React from 'react'
 import { Action } from 'redux'
+import * as _ from 'underscore'
 import classNames from 'classnames'
 import ReactTooltip from 'react-tooltip'
 import { remote, ipcRenderer, shell } from 'electron'
@@ -160,22 +161,26 @@ export default class Dataset extends React.Component<DatasetProps> {
       }
     }
 
-    // make sure that the component we are trying to show actually exists in this version of the dataset
-    // TODO (ramfox): there is a bug here when we try to switch to body, but body hasn't finished fetching yet
-    // this will prematurely decide to switch away from body.
-    if ((workingDatasetIsLoading && !nextProps.workingDataset.isLoading && nextProps.selections.activeTab === 'status') ||
-        (activeTab === 'history' && nextProps.selections.activeTab === 'status')) {
-      const { workingDataset, selections, setSelectedListItem } = nextProps
-      const { component } = selections
-      const { status } = workingDataset
-      if (component === '' || !status[component]) {
-        if (status['meta']) {
-          setSelectedListItem('component', 'meta')
+    if (!_.isEmpty(nextProps.workingDataset.status)) {
+      // make sure that the component we are trying to show actually exists in this version of the dataset
+      // TODO (ramfox): there is a bug here when we try to switch to body, but body hasn't finished fetching yet
+      // this will prematurely decide to switch away from body.
+      if ((workingDatasetIsLoading && !nextProps.workingDataset.isLoading && nextProps.selections.activeTab === 'status') ||
+          (activeTab === 'history' && nextProps.selections.activeTab === 'status')) {
+        const { workingDataset, selections, setSelectedListItem } = nextProps
+        const { component } = selections
+        const { status } = workingDataset
+        console.log('STATUS', status)
+        if (component === '' || !status[component]) {
+          if (status['meta']) {
+            setSelectedListItem('component', 'meta')
+          }
+          if (status['body']) {
+            setSelectedListItem('component', 'body')
+          }
+          console.log('HERE')
+          setSelectedListItem('component', 'schema')
         }
-        if (status['body']) {
-          setSelectedListItem('component', 'body')
-        }
-        setSelectedListItem('component', 'schema')
       }
     }
 

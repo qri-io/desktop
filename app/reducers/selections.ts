@@ -65,12 +65,12 @@ export default (state = initialState, action: AnyAction) => {
       // if there is no peername + name in selections, use the first one on the list
       if (state.peername === '' && state.name === '') {
         if (action.payload.data.length === 0) return state
-        const { peername: firstPeername, name: firstName, isLinked: firstIsLinked, published } = action.payload.data[0]
+        const { peername: firstPeername, name: firstName, fsipath: firstIsLinked, published } = action.payload.data[0]
         localStore().setItem('peername', firstPeername)
         localStore().setItem('name', firstName)
-        localStore().setItem('isLinked', firstIsLinked)
+        localStore().setItem('isLinked', JSON.stringify(!!firstIsLinked))
         localStore().setItem('published', published)
-        return Object.assign({}, state, { peername: firstPeername, name: firstName, isLinked: firstIsLinked, published })
+        return Object.assign({}, state, { peername: firstPeername, name: firstName, fsipath: firstIsLinked, published })
       } else {
         return state
       }

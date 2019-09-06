@@ -289,14 +289,14 @@ export function fetchWorkingHistory (page: number = 1, pageSize: number = pageSi
 
 export function fetchWorkingStatus (): ApiActionThunk {
   return async (dispatch, getState) => {
-    const { selections } = getState()
-    const { peername, name, isLinked } = selections
+    const { workingDataset } = getState()
+    const { peername, name, linkpath } = workingDataset
     const action = {
       type: 'status',
       [CALL_API]: {
         endpoint: 'status',
         method: 'GET',
-        params: { fsi: isLinked },
+        params: { fsi: linkpath !== '' },
         segments: {
           peername: peername,
           name: name
@@ -448,7 +448,7 @@ export function addDatasetAndFetch (peername: string, name: string): ApiActionTh
   }
 }
 
-export function initDataset (filepath: string, name: string, dir: string): ApiActionThunk {
+export function initDataset (sourcebodypath: string, name: string, dir: string, mkdir: string): ApiActionThunk {
   return async (dispatch) => {
     const action = {
       type: 'init',
@@ -456,9 +456,10 @@ export function initDataset (filepath: string, name: string, dir: string): ApiAc
         endpoint: 'init/',
         method: 'POST',
         params: {
-          filepath,
+          sourcebodypath,
           name,
-          dir
+          dir,
+          mkdir
         }
       }
     }
@@ -466,13 +467,13 @@ export function initDataset (filepath: string, name: string, dir: string): ApiAc
   }
 }
 
-export function initDatasetAndFetch (filepath: string, name: string, format: string): ApiActionThunk {
+export function initDatasetAndFetch (sourcebodypath: string, name: string, dir: string, mkdir: string): ApiActionThunk {
   return async (dispatch, getState) => {
     const whenOk = chainSuccess(dispatch, getState)
     let response: Action
 
     try {
-      response = await initDataset(filepath, name, format)(dispatch, getState)
+      response = await initDataset(sourcebodypath, name, dir, mkdir)(dispatch, getState)
       response = await whenOk(fetchMyDatasets())(response)
     } catch (action) {
       throw action
@@ -595,5 +596,22 @@ export function discardChanges (component: ComponentType): ApiActionThunk {
       throw action
     }
     return response
+  }
+}
+
+export function removeDataset (peername: string, name: string): ApiActionThunk {
+  return async (dispatch) => {
+    const action = {
+      type: 'add',
+      [CALL_API]: {
+        endpoint: 'add',
+        method: 'POST',
+        segments: {
+          peername,
+          name
+        }
+      }
+    }
+    return dispatch(action)
   }
 }

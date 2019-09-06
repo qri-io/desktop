@@ -128,7 +128,6 @@ export default class App extends React.Component<AppProps, AppState> {
             onSubmit={this.props.initDataset}
             onDismissed={async () => setModal(NoModal)}
             setWorkingDataset={this.props.setWorkingDataset}
-            fetchMyDatasets={this.props.fetchMyDatasets}
           />
         </CSSTransition>
         <CSSTransition
