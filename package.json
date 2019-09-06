@@ -64,7 +64,7 @@
     "files": [
       "dist/",
       "node_modules/",
-      "app.html",
+      "app.production.html",
       "main.js",
       "main.js.map",
       "package.json"
