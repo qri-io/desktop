@@ -34,6 +34,13 @@ app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') app.quit()
 })
 
+app.on('will-quit', () => {
+  if (backendProcess) {
+    backendProcess.close()
+    backendProcess = null
+  }
+})
+
 const installExtensions = () => {
   if (process.env.NODE_ENV === 'development') {
     const installer = require('electron-devtools-installer') // eslint-disable-line global-require
@@ -95,8 +102,6 @@ app.on('ready', () =>
 
       mainWindow.on('closed', () => {
         mainWindow = null
-        backendProcess.close()
-        backendProcess = null
       })
 
       if (process.env.NODE_ENV === 'development') {
