@@ -1,7 +1,6 @@
-const { app, BrowserWindow, Menu, shell } = require('electron')
+const { app, BrowserWindow, Menu, shell, ipcMain } = require('electron')
 const { autoUpdater } = require('electron-updater')
 const { BackendProcess } = require('./backend')
-const { ipcMain } = require('electron')
 
 let menu
 let template

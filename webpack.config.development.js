@@ -8,7 +8,6 @@ const webpack = require('webpack')
 const merge = require('webpack-merge')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 
-// const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const baseConfig = require('./webpack.config.base')
 
 const port = process.env.PORT || 1212
@@ -29,13 +28,6 @@ module.exports = merge(baseConfig, {
   },
 
   module: {
-    // preLoaders: [
-    //   {
-    //     test: /\.js$/,
-    //     loader: 'eslint-loader',
-    //     exclude: /node_modules/
-    //   }
-    // ],
     rules: [
       {
         test: /\.(js|ts|tsx)$/,
@@ -123,7 +115,6 @@ module.exports = merge(baseConfig, {
 
     new webpack.NoEmitOnErrorsPlugin(),
 
-    // NODE_ENV should be production so that modules do not perform certain development checks
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify('development')
     }),
