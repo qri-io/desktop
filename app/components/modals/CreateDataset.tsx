@@ -8,6 +8,7 @@ import Buttons from './Buttons'
 // import Tabs from './Tabs'
 import ButtonInput from '../form/ButtonInput'
 import { DatasetSummary } from '../../models/store'
+import { validateDatasetName } from '../../utils/formValidation'
 
 interface CreateDatasetProps {
   onDismissed: () => void
@@ -23,11 +24,16 @@ const CreateDataset: React.FunctionComponent<CreateDatasetProps> = ({ onDismisse
 
   const [dismissable, setDismissable] = React.useState(true)
   const [buttonDisabled, setButtonDisabled] = React.useState(true)
+  const [datasetNameError, setDatasetNameError] = React.useState('')
   const [alreadyDatasetError, setAlreadyDatasetError] = React.useState('')
 
   React.useEffect(() => {
-    // disable unless all fields have valid
-    const ready = path !== '' && filePath !== '' && datasetName !== ''
+    // validate datasetName and assign error
+    const datasetNameValidationError = validateDatasetName(datasetName)
+    datasetNameValidationError ? setDatasetNameError(datasetNameValidationError) : setDatasetNameError('')
+
+    // only ready when all three fields are not invalid
+    const ready = path !== '' && filePath !== '' && !datasetNameValidationError
     setButtonDisabled(!ready)
   }, [datasetName, path, filePath])
 
@@ -162,7 +168,7 @@ const CreateDataset: React.FunctionComponent<CreateDatasetProps> = ({ onDismisse
             value={datasetName}
             onChange={handleChanges}
             maxLength={600}
-            errorText={alreadyDatasetError}
+            errorText={datasetNameError}
           />
           <div className='flex-space-between'>
             <TextInput

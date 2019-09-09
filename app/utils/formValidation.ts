@@ -27,3 +27,14 @@ export const validatePassword = (password: string) => {
   }
   return null
 }
+
+export const validateDatasetName = (name: string): ValidationError => {
+  if (name) {
+    const invalidCharacters = !(/^[a-z0-9_]+$/.test(name))
+    if (invalidCharacters) return 'Dataset names may only include a-z, 0-9, and _'
+
+    const tooLong = name.length > 100
+    if (tooLong) return 'Username must be 100 characters or fewer'
+  }
+  return null
+}
