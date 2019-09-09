@@ -91,3 +91,11 @@
 .text-input-container {
   width: 100%
 }
+
+.text-input-tooltip {
+  svg {
+    path {
+      fill: #c1c1c1;
+    }
+  }
+}

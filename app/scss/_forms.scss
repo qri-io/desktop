@@ -497,11 +497,11 @@ button.input {
   -o-transition: all .2s ease-in;
   -webkit-transition: all .2s ease-in;
   transition: all .2s ease-in;
-  color: $primary-muted;
+  color: $primary;
   border: none;
   cursor: pointer;
   &:hover {
-    color: $primary;
+    color: $primary-dark;
   }
 }
 

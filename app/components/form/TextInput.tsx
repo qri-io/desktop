@@ -1,7 +1,10 @@
 import * as React from 'react'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faInfoCircle } from '@fortawesome/free-solid-svg-icons'
 
 export interface TextInputProps {
   label?: string
+  labelTooltip?: string
   name: string
   type: string
   value: any
@@ -15,8 +18,22 @@ export interface TextInputProps {
   white?: boolean
 }
 
-const TextInput: React.FunctionComponent<TextInputProps> = ({ label, name, type, value, maxLength, errorText, helpText, showHelpText, onChange, onKeyDown, placeHolder
-}) => {
+const TextInput: React.FunctionComponent<TextInputProps> = (props) => {
+  const {
+    label,
+    labelTooltip,
+    name,
+    type,
+    value,
+    maxLength,
+    errorText,
+    helpText,
+    showHelpText,
+    onChange,
+    onKeyDown,
+    placeHolder
+  } = props
+
   const feedbackColor = errorText ? 'error' : showHelpText && helpText ? 'textMuted' : ''
   const feedback = errorText || (showHelpText &&
     helpText)
@@ -24,7 +41,16 @@ const TextInput: React.FunctionComponent<TextInputProps> = ({ label, name, type,
   return (
     <>
       <div className='text-input-container'>
-        {label && <span className={labelColor}>{label}</span>}
+        {label && <><span className={labelColor}>{label}</span>&nbsp;&nbsp;</>}
+        {labelTooltip && (
+          <span
+            data-tip={labelTooltip}
+            data-for={'modal-tooltip'}
+            className='text-input-tooltip'
+          >
+            <FontAwesomeIcon icon={faInfoCircle} size='sm'/>
+          </span>
+        )}
         <input
           id={name}
           name={name}
