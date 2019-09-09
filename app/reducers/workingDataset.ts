@@ -74,7 +74,7 @@ const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction
         peername,
         published,
         linkpath: fsiPath || '',
-        structure: dataset.structure,
+        structure: dataset && dataset.structure ? dataset.structure : {},
         isLoading: false,
         components: {
           body: {
@@ -84,10 +84,10 @@ const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction
             value: state.components.body.value
           },
           meta: {
-            value: dataset.meta || {}
+            value: dataset && dataset.meta ? dataset.meta : {}
           },
           schema: {
-            value: dataset.structure.schema
+            value: dataset && dataset.structure && dataset.structure.schema ? dataset.structure.schema : {}
           }
         }
       }
