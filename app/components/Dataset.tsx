@@ -354,7 +354,7 @@ export default class Dataset extends React.Component<DatasetProps> {
           <div className='content-wrapper'>
             <div className='transition-group' >
               <CSSTransition
-                in={(activeTab === 'status') && !isLinked}
+                in={(activeTab === 'status') && !isLinked && !workingDataset.isLoading}
                 classNames='fade'
                 timeout={300}
                 mountOnEnter

@@ -15,7 +15,7 @@ const HeaderColumnButtonDropdown: React.FunctionComponent<HeaderColumnButtonDrop
   const dropdown: any = React.useRef(null)
 
   const handleClick = (e: MouseEvent) => {
-    if (dropdown.current.contains(e.target)) {
+    if (dropdown.current !== null && dropdown.current.contains(e.target)) {
       // inside click
       return
     }
