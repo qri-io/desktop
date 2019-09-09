@@ -158,7 +158,7 @@ app.on('ready', () =>
                 label: 'Quit Qri Desktop',
                 accelerator: 'Command+Q',
                 click () {
-                  quitting = true; app.quit()
+                  app.quit()
                 }
               }
             ]
@@ -507,5 +507,9 @@ app.on('ready', () =>
 
       app.on('activate', () => {
         mainWindow.show()
+      })
+
+      app.on('before-quit', () => {
+        quitting = true
       })
     }))
