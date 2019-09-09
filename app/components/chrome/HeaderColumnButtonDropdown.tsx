@@ -12,10 +12,30 @@ const HeaderColumnButtonDropdown: React.FunctionComponent<HeaderColumnButtonDrop
     setShowMenu(!showMenu)
     event.stopPropagation()
   }
+  const dropdown: any = React.useRef(null)
+
+  const handleClick = (e: MouseEvent) => {
+    if (dropdown.current.contains(e.target)) {
+      // inside click
+      return
+    }
+    // outside click
+    setShowMenu(false)
+  }
+
+  React.useEffect(() => {
+    document.addEventListener('mousedown', (e) => handleClick(e))
+
+    return () => {
+      document.removeEventListener('mousedown', (e) => handleClick(e))
+    }
+  })
+
   const { icon, label = '', tooltip, onClick = toggleMenu, items } = props
 
   return (
     <div
+      ref={dropdown}
       className='header-column header-column-dropdown'
       data-tip={tooltip}
       onClick={onClick}
