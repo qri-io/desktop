@@ -56,6 +56,18 @@ interface ApiQuery {
   [key: string]: string
 }
 
+interface ApiError {
+  code: number
+  message?: string
+}
+
+export interface ApiResponseAction {
+  type: string
+  payload: {
+    [key: string]: any
+  }
+}
+
 // ApiActionThunk is the return value of an Api action.
 // All api actions must return a promise that will be called with their result:
 // either a SUCCESS or FAILURE action. This allows callers to chain
@@ -98,7 +110,8 @@ async function getJSON<T> (url: string, options: FetchOptions): Promise<T> {
   const r = await fetch(url, options)
   const res = await r.json()
   if (res.meta.code !== 200) {
-    throw new Error(mapError(res.meta.error))
+    var err: ApiError = { code: res.meta.code, message: mapError(res.meta.error) }
+    throw err // eslint-disable-line
   }
   return res as T
 }
