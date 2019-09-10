@@ -170,12 +170,14 @@ export function fetchWorkingDataset (): ApiActionThunk {
         }
       }
     }
-
+    // the action being dispatched will be intercepted by api middleware and return a promise
+    // typescript requires we first cast to unknown to drop the stated return type of the dispatch function
     const result = (dispatch(action) as unknown) as Promise<AnyAction>
     return new Promise((resolve, reject) => {
       result.then(action => {
         if (getActionType(action) === 'failure') {
           if (action.payload.err.code === 404 || action.payload.err.code === 500) {
+            // if the working dataset isn't found, we have dataset selection that no longer exists. clear the selection.
             dispatch(clearSelection())
             reject(action)
           }
@@ -455,8 +457,7 @@ export function addDatasetAndFetch (peername: string, name: string): ApiActionTh
       response = await addDataset(peername, name)(dispatch, getState)
       response = await whenOk(fetchMyDatasets())(response)
       const action = response as ApiResponseAction
-      const { data } = action.payload
-      const { isLinked, published } = data.find((dataset: DatasetSummary) => dataset.name === name && dataset.peername === peername)
+      const { isLinked, published } = action.payload.data.find((dataset: DatasetSummary) => dataset.name === name && dataset.peername === peername)
       dispatch(setWorkingDataset(peername, name, isLinked, published))
       dispatch(setActiveTab('history'))
       dispatch(setSelectedListItem('component', 'meta'))

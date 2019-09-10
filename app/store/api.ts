@@ -56,16 +56,20 @@ interface ApiQuery {
   [key: string]: string
 }
 
+// ApiError is an interface for holding
+// information about an ApiError
 interface ApiError {
+  // HTTP response code
   code: number
+  // The error message returned from qri
   message?: string
 }
 
+// ApiResponseActions are emitted as side effects by api middleware. They come in type "success" and "failure" variations
+// a type "failure" will have an ApiError as it's payload
 export interface ApiResponseAction {
   type: string
-  payload: {
-    [key: string]: any
-  }
+  payload: Record<string,any>
 }
 
 // ApiActionThunk is the return value of an Api action.
