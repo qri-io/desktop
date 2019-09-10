@@ -66,12 +66,13 @@ export default (state = initialState, action: AnyAction) => {
 
     case SELECTIONS_SET_WORKING_DATASET:
       const { peername, name, isLinked, published } = action.payload
+      const newActiveTab = isLinked ? 'status' : 'history'
+
       localStore().setItem('peername', peername)
       localStore().setItem('name', name)
       localStore().setItem('isLinked', isLinked)
       localStore().setItem('published', published)
-
-      const newActiveTab = isLinked ? 'status' : 'history'
+      localStore().setItem('activeTab', newActiveTab)
 
       return Object.assign({}, state, {
         peername,

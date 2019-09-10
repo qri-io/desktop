@@ -1,6 +1,8 @@
 import * as React from 'react'
 import { remote } from 'electron'
+
 import Modal from './Modal'
+import ExternalLink from '../ExternalLink'
 import { ApiAction } from '../../store/api'
 import TextInput from '../form/TextInput'
 import Error from './Error'
@@ -8,6 +10,7 @@ import Buttons from './Buttons'
 // import Tabs from './Tabs'
 import ButtonInput from '../form/ButtonInput'
 import { DatasetSummary } from '../../models/store'
+import { validateDatasetName } from '../../utils/formValidation'
 
 interface CreateDatasetProps {
   onDismissed: () => void
@@ -23,11 +26,16 @@ const CreateDataset: React.FunctionComponent<CreateDatasetProps> = ({ onDismisse
 
   const [dismissable, setDismissable] = React.useState(true)
   const [buttonDisabled, setButtonDisabled] = React.useState(true)
+  const [datasetNameError, setDatasetNameError] = React.useState('')
   const [alreadyDatasetError, setAlreadyDatasetError] = React.useState('')
 
   React.useEffect(() => {
-    // disable unless all fields have valid
-    const ready = path !== '' && filePath !== '' && datasetName !== ''
+    // validate datasetName and assign error
+    const datasetNameValidationError = validateDatasetName(datasetName)
+    datasetNameValidationError ? setDatasetNameError(datasetNameValidationError) : setDatasetNameError('')
+
+    // only ready when all three fields are not invalid
+    const ready = path !== '' && filePath !== '' && !datasetNameValidationError
     setButtonDisabled(!ready)
   }, [datasetName, path, filePath])
 
@@ -141,12 +149,15 @@ const CreateDataset: React.FunctionComponent<CreateDatasetProps> = ({ onDismisse
       dismissable={dismissable}
       setDismissable={setDismissable}
     >
-      <div className='content-wrap'>
+      <div className='content-wrap' >
         <div className='content'>
+          <p>Qri will create a directory for your new dataset, containing files linked to each of the dataset&apos;s <ExternalLink href='https://qri.io/docs/concepts/dataset/'>components</ExternalLink>.</p>
+          <p>The data file you specify will become your new dataset&apos;s <ExternalLink href='https://qri.io/docs/reference/dataset/#body'>body</ExternalLink> component.</p>
           <div className='flex-space-between'>
             <TextInput
               name='path'
-              label='Data file'
+              label='Source data file'
+              labelTooltip='Select a CSV or JSON file on your file system.<br/>Qri will import the data and leave the file in place.'
               type=''
               value={filePath}
               onChange={handleChanges}
@@ -157,17 +168,19 @@ const CreateDataset: React.FunctionComponent<CreateDatasetProps> = ({ onDismisse
           </div>
           <TextInput
             name='datasetName'
-            label='Dataset Name'
+            label='Name'
+            labelTooltip='Name will be the primary<br/> way to refer to your dataset.'
             type=''
             value={datasetName}
             onChange={handleChanges}
             maxLength={600}
-            errorText={alreadyDatasetError}
+            errorText={datasetNameError}
           />
           <div className='flex-space-between'>
             <TextInput
               name='path'
-              label='Save Path'
+              label='Directory path'
+              labelTooltip='Qri will create a new directory for<br/>this dataset&apos;s files at this location.'
               type=''
               value={path}
               onChange={handleChanges}

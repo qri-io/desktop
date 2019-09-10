@@ -133,8 +133,11 @@ const ComponentList: React.FunctionComponent<ComponentListProps> = (props: Compo
         components.map(({ name, displayName, tooltip, icon }) => {
           if (status[name] && isLinked) {
             const { filepath, status: fileStatus } = status[name]
+
+            // if filepath is the same as the component name, we are looking at a
+            // a commit's component, and should not render a filename
             let filename = ''
-            if (filepath !== 'repo') {
+            if (filepath !== name) {
               filename = filepath.substring((filepath.lastIndexOf('/') + 1))
             }
 

@@ -143,7 +143,7 @@ $header-font-size: .9rem;
       display: flex;
       justify-content: center;
       background-color: rgba(0,0,0,0.1);
-      user-select: none; 
+      user-select: none;
     }
 
     &:hover {
@@ -194,7 +194,7 @@ $header-font-size: .9rem;
     overflow-y: auto;
     height: 100%;
 
-    #sidebar {
+    #sidebar, .sidebar {
       position: relative;
       flex: 0 0 auto;
       border-right: 1px solid $border-color;
@@ -319,7 +319,6 @@ $header-font-size: .9rem;
       white-space: nowrap;
       text-overflow: ellipsis;
       overflow: hidden;
-      line-height: 1.6rem;
     }
 
     .subtext {
@@ -404,6 +403,7 @@ $header-font-size: .9rem;
 .sidebar-list-item {
   border-bottom: $list-item-bottom-border;
   display: flex;
+  align-items: center;
 }
 
 .sidebar-list-header  {
@@ -426,7 +426,6 @@ $header-font-size: .9rem;
 
   .status-column {
     text-align: center;
-    line-height: 2.9rem;
     width: 30px;
   }
 
@@ -472,6 +471,10 @@ $header-font-size: .9rem;
     height: 60px;
     padding: $sidebar-item-padding;
     border-bottom: $list-item-bottom-border;
+  }
+
+  .commit-details-sidebar {
+    width: 200px;
   }
 }
 

@@ -219,6 +219,7 @@ export default class Dataset extends React.Component<DatasetProps> {
     const { peername: username, photo: userphoto } = session
     const { showDatasetList, datasetSidebarWidth } = ui
     const {
+      peername,
       name,
       activeTab,
       component: selectedComponent,
@@ -245,7 +246,6 @@ export default class Dataset extends React.Component<DatasetProps> {
     const linkButton = isLinked ? (
       <HeaderColumnButton
         icon={faFolderOpen}
-        tooltip={`Open ${workingDataset.linkpath}`}
         label='Show Files'
         onClick={this.openWorkingDirectory}
       />) : (
@@ -293,7 +293,6 @@ export default class Dataset extends React.Component<DatasetProps> {
           <div className='header-left'>
             <div
               className={classNames('current-dataset', 'header-column', 'sidebar-list-item', { 'expanded': showDatasetList })}
-              data-tip={`${workingDataset.peername}/${workingDataset.name}`}
               onClick={toggleDatasetList}
               style={{ width: datasetSidebarWidth }}
             >
@@ -302,7 +301,7 @@ export default class Dataset extends React.Component<DatasetProps> {
               </div>
               <div className='header-column-text'>
                 <div className="label">{name ? 'Current Dataset' : 'Choose a Dataset'}</div>
-                <div className="name">{name}</div>
+                <div className="name">{peername}/{name}</div>
               </div>
               <div className='header-column-arrow'>
                 {

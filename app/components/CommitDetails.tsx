@@ -1,6 +1,5 @@
 import * as React from 'react'
 import moment from 'moment'
-import { Resizable } from '../components/Resizable'
 import { Action } from 'redux'
 import ComponentList from '../components/ComponentList'
 import DatasetComponent from './DatasetComponent'
@@ -9,8 +8,6 @@ import SpinnerWithIcon from './chrome/SpinnerWithIcon'
 import { ApiAction } from '../store/api'
 import { Commit } from '../models/dataset'
 import { CommitDetails as ICommitDetails, ComponentType } from '../models/Store'
-
-import { defaultSidebarWidth } from '../reducers/ui'
 
 export interface CommitDetailsProps {
   peername: string
@@ -39,9 +36,7 @@ const CommitDetails: React.FunctionComponent<CommitDetailsProps> = ({
   selectedCommitPath,
   commit,
   selectedComponent,
-  sidebarWidth,
   setSelectedListItem,
-  setSidebarWidth,
   fetchCommitDetail,
   commitDetails
 }) => {
@@ -119,12 +114,8 @@ const CommitDetails: React.FunctionComponent<CommitDetailsProps> = ({
             </div>
           </div>
           <div className='columns'>
-            <Resizable
-              id='sidebar'
-              width={sidebarWidth}
-              onResize={(width) => { setSidebarWidth('commit', width) }}
-              onReset={() => { setSidebarWidth('commit', defaultSidebarWidth) }}
-              maximumWidth={348}
+            <div
+              className='commit-details-sidebar sidebar'
             >
               <ComponentList
                 status={status}
@@ -133,7 +124,7 @@ const CommitDetails: React.FunctionComponent<CommitDetailsProps> = ({
                 onComponentClick={setSelectedListItem}
                 isLinked
               />
-            </Resizable>
+            </div>
             <div className='content-wrapper'>
               <DatasetComponent isLoading={loading} component={selectedComponent} componentStatus={status[selectedComponent]} history />
             </div>

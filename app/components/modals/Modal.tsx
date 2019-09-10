@@ -1,6 +1,7 @@
 import * as React from 'react'
 import classNames from 'classnames'
 import ModalHeader from './header'
+import ReactTooltip from 'react-tooltip'
 
 /**
  * Title bar height in pixels. Values taken from 'app/styles/_variables.scss'.
@@ -224,6 +225,11 @@ const Modal: React.FunctionComponent<ModalProps> = ({ title, dismissable = false
     className
   )
 
+  // we are rendering a second instance of ReactTooltip here because the modal
+  // is displayed in a <dialog> element, which always wants to live above the
+  // rest of the page. To add tooltips in a modal, add data-tip='string' and
+  // data-for='modal-tooltip' (the id of the ReactTooltip instance)
+
   return (
     <dialog
       open={false}
@@ -238,6 +244,14 @@ const Modal: React.FunctionComponent<ModalProps> = ({ title, dismissable = false
           {children}
         </fieldset>
       </form>
+      <ReactTooltip
+        id='modal-tooltip'
+        place='top'
+        type='dark'
+        effect='solid'
+        delayShow={500}
+        multiline
+      />
     </dialog>
   )
 }
