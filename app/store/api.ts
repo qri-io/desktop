@@ -69,7 +69,7 @@ interface ApiError {
 // a type "failure" will have an ApiError as it's payload
 export interface ApiResponseAction {
   type: string
-  payload: Record<string,any>
+  payload: Record<string, any>
 }
 
 // ApiActionThunk is the return value of an Api action.
