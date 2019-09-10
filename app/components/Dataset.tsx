@@ -90,7 +90,7 @@ export default class Dataset extends React.Component<DatasetProps> {
 
   componentDidMount () {
     // poll for status
-    setInterval(() => { this.props.fetchWorkingStatus() }, 3000)
+    setInterval(() => { this.props.fetchWorkingStatus() }, 20000)
 
     this.openWorkingDirectory = this.openWorkingDirectory.bind(this)
     this.publishUnpublishDataset = this.publishUnpublishDataset.bind(this)
@@ -148,7 +148,7 @@ export default class Dataset extends React.Component<DatasetProps> {
   // working dataset is selected and trigger api call(s)
   static getDerivedStateFromProps (nextProps: DatasetProps, prevState: DatasetState) {
     const { peername: newPeername, name: newName } = nextProps.selections
-    const { peername, name, workingDatasetIsLoading, activeTab } = prevState
+    const { peername, name, activeTab } = prevState
     // when new props arrive, compare selections.peername and selections.name to
     // previous.  If either is different, fetch data
     if ((newPeername !== peername) || (newName !== name)) {
@@ -165,19 +165,19 @@ export default class Dataset extends React.Component<DatasetProps> {
       // make sure that the component we are trying to show actually exists in this version of the dataset
       // TODO (ramfox): there is a bug here when we try to switch to body, but body hasn't finished fetching yet
       // this will prematurely decide to switch away from body.
-      if ((workingDatasetIsLoading && !nextProps.workingDataset.isLoading && nextProps.selections.activeTab === 'status') ||
+      if ((nextProps.selections.activeTab === 'status' && nextProps.selections.component === '') ||
           (activeTab === 'history' && nextProps.selections.activeTab === 'status')) {
         const { workingDataset, selections, setSelectedListItem } = nextProps
         const { component } = selections
         const { status } = workingDataset
         if (component === '' || !status[component]) {
-          if (status['meta']) {
-            setSelectedListItem('component', 'meta')
+          if (status['status']) {
+            setSelectedListItem('component', 'status')
           }
           if (status['body']) {
             setSelectedListItem('component', 'body')
           }
-          setSelectedListItem('component', 'schema')
+          setSelectedListItem('component', 'meta')
         }
       }
     }
@@ -354,7 +354,7 @@ export default class Dataset extends React.Component<DatasetProps> {
           <div className='content-wrapper'>
             <div className='transition-group' >
               <CSSTransition
-                in={(activeTab === 'status') && !isLinked}
+                in={(activeTab === 'status') && !isLinked && !workingDataset.isLoading}
                 classNames='fade'
                 timeout={300}
                 mountOnEnter

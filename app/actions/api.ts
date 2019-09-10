@@ -1,12 +1,13 @@
-import { Action } from 'redux'
+import { Action, AnyAction } from 'redux'
 
-import { CALL_API, ApiAction, ApiActionThunk, chainSuccess } from '../store/api'
+import { CALL_API, ApiAction, ApiActionThunk, chainSuccess, ApiResponseAction } from '../store/api'
 import { DatasetSummary, ComponentStatus, ComponentState, WorkingDataset, ComponentType } from '../models/store'
 import { Dataset, Commit } from '../models/dataset'
 import { openToast } from './ui'
-import { setWorkingDataset, setSelectedListItem } from './selections'
+import { setWorkingDataset, setSelectedListItem, clearSelection, setActiveTab } from './selections'
 
 import { RESET_MY_DATASETS } from '../reducers/myDatasets'
+import getActionType from '../utils/actionType'
 
 const pageSizeDefault = 50
 const bodyPageSizeDefault = 100
@@ -122,6 +123,7 @@ export function fetchMyDatasets (page: number = 1, pageSize: number = pageSizeDe
           state.myDatasets.pageInfo.fetchedAll) {
       return new Promise(resolve => resolve())
     }
+
     const listAction: ApiAction = {
       type: 'list',
       [CALL_API]: {
@@ -168,8 +170,21 @@ export function fetchWorkingDataset (): ApiActionThunk {
         }
       }
     }
-
-    return dispatch(action)
+    // the action being dispatched will be intercepted by api middleware and return a promise
+    // typescript requires we first cast to unknown to drop the stated return type of the dispatch function
+    const result = (dispatch(action) as unknown) as Promise<AnyAction>
+    return new Promise((resolve, reject) => {
+      result.then(action => {
+        if (getActionType(action) === 'failure') {
+          if (action.payload.err.code === 404 || action.payload.err.code === 500) {
+            // if the working dataset isn't found, we have dataset selection that no longer exists. clear the selection.
+            dispatch(clearSelection())
+            reject(action)
+          }
+        }
+        resolve(action)
+      })
+    })
   }
 }
 
@@ -441,6 +456,11 @@ export function addDatasetAndFetch (peername: string, name: string): ApiActionTh
     try {
       response = await addDataset(peername, name)(dispatch, getState)
       response = await whenOk(fetchMyDatasets())(response)
+      const action = response as ApiResponseAction
+      const { isLinked, published } = action.payload.data.find((dataset: DatasetSummary) => dataset.name === name && dataset.peername === peername)
+      dispatch(setWorkingDataset(peername, name, isLinked, published))
+      dispatch(setActiveTab('history'))
+      dispatch(setSelectedListItem('component', 'meta'))
     } catch (action) {
       throw action
     }
@@ -475,6 +495,12 @@ export function initDatasetAndFetch (sourcebodypath: string, name: string, dir: 
     try {
       response = await initDataset(sourcebodypath, name, dir, mkdir)(dispatch, getState)
       response = await whenOk(fetchMyDatasets())(response)
+      const action = response as ApiResponseAction
+      const { data } = action.payload
+      const { peername, isLinked, published } = data.find((dataset: DatasetSummary) => dataset.name === name)
+      dispatch(setWorkingDataset(peername, name, isLinked, published))
+      dispatch(setActiveTab('status'))
+      dispatch(setSelectedListItem('component', 'meta'))
     } catch (action) {
       throw action
     }

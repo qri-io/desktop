@@ -127,7 +127,6 @@ export default class App extends React.Component<AppProps, AppState> {
           <CreateDataset
             onSubmit={this.props.initDataset}
             onDismissed={async () => setModal(NoModal)}
-            setWorkingDataset={this.props.setWorkingDataset}
           />
         </CSSTransition>
         <CSSTransition
@@ -140,8 +139,6 @@ export default class App extends React.Component<AppProps, AppState> {
           <AddDataset
             onSubmit={this.props.addDataset}
             onDismissed={async () => setModal(NoModal)}
-            setWorkingDataset={this.props.setWorkingDataset}
-            fetchMyDatasets={this.props.fetchMyDatasets}
           />
         </CSSTransition>
         <CSSTransition

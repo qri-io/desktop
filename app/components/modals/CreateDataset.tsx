@@ -7,19 +7,15 @@ import { ApiAction } from '../../store/api'
 import TextInput from '../form/TextInput'
 import Error from './Error'
 import Buttons from './Buttons'
-// import Tabs from './Tabs'
 import ButtonInput from '../form/ButtonInput'
-import { DatasetSummary } from '../../models/store'
 import { validateDatasetName } from '../../utils/formValidation'
 
 interface CreateDatasetProps {
   onDismissed: () => void
   onSubmit: (path: string, name: string, dir: string, mkdir: string) => Promise<ApiAction>
-  setWorkingDataset: (peername: string, name: string, isLinked: boolean, published: boolean) => Promise<ApiAction>
 }
 
-// setWorkingDataset
-const CreateDataset: React.FunctionComponent<CreateDatasetProps> = ({ onDismissed, onSubmit, setWorkingDataset }) => {
+const CreateDataset: React.FunctionComponent<CreateDatasetProps> = ({ onDismissed, onSubmit }) => {
   const [datasetName, setDatasetName] = React.useState('')
   const [path, setPath] = React.useState('')
   const [filePath, setFilePath] = React.useState('')
@@ -126,13 +122,7 @@ const CreateDataset: React.FunctionComponent<CreateDatasetProps> = ({ onDismisse
     error && setError('')
     if (!onSubmit) return
     onSubmit(filePath, datasetName, path, datasetName)
-      .then(({ payload }) => {
-        const { data } = payload
-        // make sure the dataset we just added is in the list
-        const { peername, name, fsipath, published } = data.find((dataset: DatasetSummary) => dataset.name === datasetName)
-        setWorkingDataset(peername, name, fsipath !== '', published)
-        onDismissed()
-      })
+      .then(() => onDismissed())
       .catch((action: any) => {
         setLoading(false)
         setDismissable(true)

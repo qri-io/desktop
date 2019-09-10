@@ -5,8 +5,6 @@ import Modal from './Modal'
 import TextInput from '../form/TextInput'
 import Error from './Error'
 import Buttons from './Buttons'
-import { fetchMyDatasets } from '../../actions/api'
-// import Tabs from './Tabs'
 
 interface AddByNameProps {
   datasetName: string
@@ -60,11 +58,9 @@ enum TabTypes {
 interface AddDatasetProps {
   onDismissed: () => void
   onSubmit: (peername: string, name: string) => Promise<ApiAction>
-  setWorkingDataset: (peername: string, name: string, isLinked: boolean) => Promise<ApiAction>
-  fetchMyDatasets: () => Promise<ApiAction>
 }
 
-const AddDataset: React.FunctionComponent<AddDatasetProps> = ({ onDismissed, onSubmit, setWorkingDataset }) => {
+const AddDataset: React.FunctionComponent<AddDatasetProps> = ({ onDismissed, onSubmit }) => {
   const [datasetName, setDatasetName] = React.useState('')
 
   // restore when you can add by URL
@@ -127,11 +123,7 @@ const AddDataset: React.FunctionComponent<AddDatasetProps> = ({ onDismissed, onS
     }
 
     onSubmit(names[0], names[1])
-      .then(() => {
-        fetchMyDatasets()
-        setWorkingDataset(names[0], names[1], false)
-          .then(() => onDismissed())
-      })
+      .then(() => onDismissed())
       .catch((action) => {
         setDismissable(true)
         setLoading(false)
