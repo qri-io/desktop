@@ -500,8 +500,10 @@ app.on('ready', () =>
 
       mainWindow.on('close', (e) => {
         if (!quitting) {
-          e.preventDefault()
-          Menu.sendActionToFirstResponder('hide:')
+          if (Menu && Menu.sendActionToFirstResponder) {
+            e.preventDefault()
+            Menu.sendActionToFirstResponder('hide:')
+          }
         }
       })
 
