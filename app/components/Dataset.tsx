@@ -216,11 +216,13 @@ export default class Dataset extends React.Component<DatasetProps> {
 
     const linkButton = isLinked ? (
       <HeaderColumnButton
+        id='linkButton'
         icon={faFolderOpen}
         label='Show Files'
         onClick={this.openWorkingDirectory}
       />) : (
       <HeaderColumnButton
+        id='linkButton'
         label='link to filesystem'
         tooltip='Link this dataset to a folder on your computer'
         icon={(
@@ -237,6 +239,7 @@ export default class Dataset extends React.Component<DatasetProps> {
     if (username === workingDataset.peername) {
       publishButton = published ? (
         <HeaderColumnButtonDropdown
+          id='publishButton'
           onClick={() => { shell.openExternal(`${QRI_CLOUD_URL}/${workingDataset.peername}/${workingDataset.name}`) }}
           icon={faCloud}
           label='View in Cloud'
@@ -247,6 +250,7 @@ export default class Dataset extends React.Component<DatasetProps> {
         />
       ) : (
         <HeaderColumnButton
+          id='publishButton'
           label='Publish'
           icon={faCloudUploadAlt}
           tooltip={'Publish this dataset on the Qri network'}

@@ -16,7 +16,7 @@ const ParseError: React.FunctionComponent<ParseErrorProps> = ({ component, filen
       <div>
         <h4>There are parsing errors in your {component}</h4>
         <p>Fix the errors in your <strong>{filename}</strong> file to be able to view it in Qri Desktop.</p>
-        <Button text="Show in Finder" color="primary" onClick={() => { shell.openItem(linkpath) }} />
+        <Button id='show_errors_in_finder' text="Show in Finder" color="primary" onClick={() => { shell.openItem(linkpath) }} />
       </div>
     </div>
   </div>

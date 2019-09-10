@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom'
 import Spinner from './Spinner'
 
 interface ButtonProps {
+  id: string
   text: string // the text written on the button
   downloadName?: string // the name of the file that will be downloaded.
   // color should be one of 4 options:
@@ -25,6 +26,7 @@ interface ButtonProps {
 
 // Button is a the basic button used throughout the app
 const Button: React.FunctionComponent<ButtonProps> = ({ color = 'primary',
+  id,
   onClick,
   full,
   loading,
@@ -36,6 +38,7 @@ const Button: React.FunctionComponent<ButtonProps> = ({ color = 'primary',
   large,
   text }) => {
   let options: { [key: string]: any } = {}
+  options['id'] = id
   options['className'] = classNames('btn', 'btn-' + color, { 'button-full': full, 'btn-large': large })
   options['disabled'] = loading || disabled
   options['onClick'] = onClick
