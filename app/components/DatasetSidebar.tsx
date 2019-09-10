@@ -2,6 +2,8 @@ import * as React from 'react'
 import { Action } from 'redux'
 import moment from 'moment'
 import { CSSTransition } from 'react-transition-group'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faTimes } from '@fortawesome/free-solid-svg-icons'
 
 import { ApiActionThunk } from '../store/api'
 import SaveFormContainer from '../containers/SaveFormContainer'
@@ -10,7 +12,7 @@ import ComponentList from './ComponentList'
 import classNames from 'classnames'
 import Spinner from './chrome/Spinner'
 
-import { WorkingDataset, ComponentType } from '../models/store'
+import { WorkingDataset, ComponentType, Selections } from '../models/store'
 
 interface HistoryListItemProps {
   path: string
@@ -39,33 +41,42 @@ const HistoryListItem: React.FunctionComponent<HistoryListItemProps> = (props) =
   )
 }
 
-interface DatasetSidebarProps {
-  activeTab: string
-  selectedComponent: string
-  selectedCommit: string
-  isLinked: boolean
-  onTabClick: (activeTab: string) => Action
-  onListItemClick: (type: ComponentType, activeTab: string) => Action
+export interface DatasetSidebarProps {
+  selections: Selections
+  workingDataset: WorkingDataset
+  hideCommitNudge: boolean
+  setActiveTab: (activeTab: string) => Action
+  setSelectedListItem: (type: ComponentType, activeTab: string) => Action
   fetchWorkingHistory: (page?: number, pageSize?: number) => ApiActionThunk
   discardChanges: (component: ComponentType) => ApiActionThunk
-  workingDataset: WorkingDataset
+  setHideCommitNudge: () => Action
 }
 
-const DatasetSidebar: React.FunctionComponent<DatasetSidebarProps> = ({
-  activeTab,
-  selectedComponent,
-  selectedCommit,
-  onTabClick,
-  onListItemClick,
-  fetchWorkingHistory,
-  isLinked,
-  discardChanges,
-  workingDataset
-}) => {
+const DatasetSidebar: React.FunctionComponent<DatasetSidebarProps> = (props) => {
+  const {
+    selections,
+    workingDataset,
+    hideCommitNudge,
+    setActiveTab,
+    setSelectedListItem,
+    fetchWorkingHistory,
+    discardChanges,
+    setHideCommitNudge
+  } = props
+
   const { path, linkpath, history, status } = workingDataset
+
+  const {
+    activeTab,
+    component: selectedComponent,
+    commitComponent: selectedCommit,
+    isLinked
+  } = selections
 
   const historyLoaded = !!history
   const statusLoaded = !!status
+
+  const noHistory = history.value.length === 0
 
   const handleHistoryScroll = (e: any) => {
     if (!(history && history.pageInfo)) {
@@ -76,12 +87,13 @@ const DatasetSidebar: React.FunctionComponent<DatasetSidebarProps> = ({
       fetchWorkingHistory(history.pageInfo.page + 1, history.pageInfo.pageSize)
     }
   }
+
   return (
     <div className='dataset-sidebar'>
       <div id='tabs' className='sidebar-list-item'>
         <div
           className={classNames('tab', { 'active': activeTab === 'status' })}
-          onClick={() => { onTabClick('status') }}
+          onClick={() => { setActiveTab('status') }}
           data-tip='View the latest version or working changes<br/> to this dataset&apos;s components'
         >
           Status
@@ -90,7 +102,7 @@ const DatasetSidebar: React.FunctionComponent<DatasetSidebarProps> = ({
           className={classNames('tab', { 'active': activeTab === 'history', 'disabled': history.pageInfo.error && history.pageInfo.error.includes('no history') })}
           onClick={() => {
             if (!(history.pageInfo.error && history.pageInfo.error.includes('no history'))) {
-              onTabClick('history')
+              setActiveTab('history')
             }
           }}
           data-tip={path ? 'Explore older versions of this dataset' : 'This dataset has no previous versions'}
@@ -119,7 +131,7 @@ const DatasetSidebar: React.FunctionComponent<DatasetSidebarProps> = ({
             <ComponentList
               status={status}
               selectedComponent={selectedComponent}
-              onComponentClick={onListItemClick}
+              onComponentClick={setSelectedListItem}
               selectionType={'component' as ComponentType}
               isLinked={isLinked}
               linkpath={linkpath}
@@ -150,14 +162,29 @@ const DatasetSidebar: React.FunctionComponent<DatasetSidebarProps> = ({
                     commitTitle={title}
                     timeMessage={timeMessage}
                     selected={selectedCommit === path}
-                    onClick={onListItemClick}
+                    onClick={setSelectedListItem}
                   />
                 )
               })
             }
           </div>
         </CSSTransition>
+        {
+          !hideCommitNudge && noHistory && (
+            <div className='commit-nudge'>
+              <div className='commit-nudge-text'>
+                You&apos;re ready to make your first commit on this dataset! Verify that the body and meta are accurate, enter a commit message below, and click Submit.
+              </div>
+              <a
+                className="close dark"
+                onClick={setHideCommitNudge}
+                aria-label="close"
+                role="button" >
+                <FontAwesomeIcon icon={faTimes} size='lg'/>
+              </a>
+            </div>
           )
+        }
       </div>
       {
         isLinked && activeTab === 'status' && <SaveFormContainer />

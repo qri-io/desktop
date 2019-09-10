@@ -10,11 +10,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faFile, faFolderOpen } from '@fortawesome/free-regular-svg-icons'
 import { faLink, faCloudUploadAlt, faCloud } from '@fortawesome/free-solid-svg-icons'
 
-import { ApiAction, ApiActionThunk } from '../store/api'
+import { ApiAction } from '../store/api'
 import ExternalLink from './ExternalLink'
 import { Resizable } from './Resizable'
 import { Session } from '../models/session'
-import DatasetSidebar from './DatasetSidebar'
 import UnlinkedDataset from './UnlinkedDataset'
 import DatasetComponent from './DatasetComponent'
 import { QRI_CLOUD_URL } from '../utils/registry'
@@ -23,24 +22,22 @@ import { defaultSidebarWidth } from '../reducers/ui'
 import HeaderColumnButton from './chrome/HeaderColumnButton'
 import DatasetListContainer from '../containers/DatasetListContainer'
 import CommitDetailsContainer from '../containers/CommitDetailsContainer'
+import DatasetSidebarContainer from '../containers/DatasetSidebarContainer'
 import HeaderColumnButtonDropdown from './chrome/HeaderColumnButtonDropdown'
 
 import {
   UI,
   Selections,
-  MyDatasets,
   WorkingDataset,
   Mutations,
   DatasetStatus,
-  SelectedComponent,
-  ComponentType
+  SelectedComponent
 } from '../models/store'
 
 export interface DatasetProps {
   // redux state
   ui: UI
   selections: Selections
-  myDatasets: MyDatasets
   workingDataset: WorkingDataset
   mutations: Mutations
   setModal: (modal: Modal) => void
@@ -50,18 +47,14 @@ export interface DatasetProps {
   toggleDatasetList: () => Action
   setActiveTab: (activeTab: string) => Action
   setSidebarWidth: (type: string, sidebarWidth: number) => Action
-  setFilter: (filter: string) => Action
   setSelectedListItem: (type: string, activeTab: string) => Action
-  setWorkingDataset: (peername: string, name: string, isLinked: boolean, published: boolean) => Action
   fetchWorkingDatasetDetails: () => Promise<ApiAction>
-  fetchWorkingHistory: (page?: number, pageSize?: number) => ApiActionThunk
   fetchWorkingStatus: () => Promise<ApiAction>
   resetBody: () => Promise<ApiAction>
   resetOtherComponents: () => Promise<ApiAction>
   publishDataset: (dataset: WorkingDataset) => Action
   unpublishDataset: (dataset: WorkingDataset) => Action
   signout: () => Action
-  discardChanges: (component: ComponentType) => ApiActionThunk
 }
 
 interface DatasetState {
@@ -223,7 +216,6 @@ export default class Dataset extends React.Component<DatasetProps> {
       name,
       activeTab,
       component: selectedComponent,
-      commit: selectedCommit,
       published
     } = selections
 
@@ -235,12 +227,8 @@ export default class Dataset extends React.Component<DatasetProps> {
     // actions
     const {
       toggleDatasetList,
-      setActiveTab,
       setSidebarWidth,
-      setSelectedListItem,
-      fetchWorkingHistory,
-      signout,
-      discardChanges
+      signout
     } = this.props
 
     const linkButton = isLinked ? (
@@ -339,17 +327,7 @@ export default class Dataset extends React.Component<DatasetProps> {
             onReset={() => { setSidebarWidth('dataset', defaultSidebarWidth) }}
             maximumWidth={495}
           >
-            <DatasetSidebar
-              isLinked={isLinked}
-              activeTab={activeTab}
-              selectedComponent={selectedComponent}
-              selectedCommit={selectedCommit}
-              workingDataset={workingDataset}
-              onTabClick={setActiveTab}
-              fetchWorkingHistory={fetchWorkingHistory}
-              onListItemClick={setSelectedListItem}
-              discardChanges={discardChanges}
-            />
+            <DatasetSidebarContainer setModal={setModal} />
           </Resizable>
           <div className='content-wrapper'>
             <div className='transition-group' >

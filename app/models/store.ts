@@ -57,6 +57,7 @@ export interface UI {
   commitSidebarWidth: number
   toast: Toast
   blockMenus: boolean
+  hideCommitNudge: boolean
 }
 
 export type SelectedComponent = 'meta' | 'body' | 'schema' | ''

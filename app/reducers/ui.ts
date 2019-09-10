@@ -14,10 +14,12 @@ export const UI_CLOSE_TOAST = 'UI_CLOSE_TOAST'
 export const UI_SET_API_CONNECTION = 'UI_SET_API_CONNECTION'
 export const UI_SET_MODAL = 'UI_SET_MODAL'
 export const UI_SIGNOUT = 'UI_SIGNOUT'
+export const UI_HIDE_COMMIT_NUDGE = 'UI_HIDE_COMMIT_NUDGE'
 
 export const defaultSidebarWidth = 250
 export const hasAcceptedTOSKey = 'acceptedTOS'
 export const qriCloudAuthenticatedKey = 'qriCloudAuthenticated'
+export const hideCommitNudge = 'hideCommitNudge'
 
 const [, HEALTH_SUCCESS] = apiActionTypes('health')
 
@@ -44,7 +46,8 @@ const initialState = {
   datasetSidebarWidth: getSidebarWidth('datasetSidebarWidth'),
   commitSidebarWidth: getSidebarWidth('commitSidebarWidth'),
   toast: defaultToast,
-  blockMenus: true
+  blockMenus: true,
+  hideCommitNudge: store().getItem(hideCommitNudge) === 'true'
 }
 
 // send an event to electron to block menus on first load
@@ -142,6 +145,13 @@ export default (state = initialState, action: AnyAction) => {
       return {
         ...state,
         qriCloudAuthenticated: false
+      }
+
+    case UI_HIDE_COMMIT_NUDGE:
+      store().setItem('hideCommitNudge', 'true')
+      return {
+        ...state,
+        hideCommitNudge: true
       }
 
     // close the dataset list when the user chooses a new dataset or adds a new dataset

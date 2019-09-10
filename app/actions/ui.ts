@@ -9,7 +9,8 @@ import {
   UI_CLOSE_TOAST,
   UI_SET_API_CONNECTION,
   UI_SET_MODAL,
-  UI_SIGNOUT
+  UI_SIGNOUT,
+  UI_HIDE_COMMIT_NUDGE
 } from '../reducers/ui'
 
 import { ToastType } from '../models/store'
@@ -73,5 +74,11 @@ export const signout = () => {
   ipcRenderer.send('block-menus', true)
   return {
     type: UI_SIGNOUT
+  }
+}
+
+export const setHideCommitNudge = () => {
+  return {
+    type: UI_HIDE_COMMIT_NUDGE
   }
 }

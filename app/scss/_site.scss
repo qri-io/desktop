@@ -606,6 +606,18 @@ a:hover {
   color: $primary-dark;
 }
 
+a.dark {
+  text-decoration: none;
+  transition: color 0.2s;
+  cursor: pointer;
+  color: $white;
+}
+
+a.dark:hover {
+  text-decoration: none;
+  color: $primary-muted;
+}
+
 b {
   font-weight: bold;
 }
