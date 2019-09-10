@@ -8,6 +8,10 @@ $sidebar-item-padding:  6px 10px;
   flex-direction: column;
   padding: 6px 0;
 
+  .btn {
+    width: 100%;
+  }
+
   input, textarea {
     width: 100%;
   }
@@ -36,9 +40,7 @@ $sidebar-item-padding:  6px 10px;
     padding: $sidebar-item-padding;
 
     svg {
-      height: 18px;
-      position: relative;
-      top: 3px;
+      margin-right: 6px;
       animation-name: spin;
       animation-duration: 1000ms;
       animation-iteration-count: infinite;

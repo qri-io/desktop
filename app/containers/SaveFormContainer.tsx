@@ -1,23 +1,19 @@
 import { connect } from 'react-redux'
 import SaveForm from '../components/SaveForm'
 import { saveWorkingDataset } from '../actions/api'
-import { setSaveValue } from '../actions/mutations'
 import Store from '../models/store'
 
 const mapStateToProps = (state: Store) => {
-  const { save } = state.mutations
-  const { isLoading } = save
-  const { title, message } = save.value
+  const { isLoading } = state.mutations.save
+  const { status } = state.workingDataset
   return {
-    title,
-    message,
-    isLoading
+    isLoading,
+    status
   }
 }
 
 const actions = {
-  saveWorkingDataset,
-  setSaveValue
+  saveWorkingDataset
 }
 
 export default connect(mapStateToProps, actions)(SaveForm)
