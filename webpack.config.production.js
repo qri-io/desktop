@@ -100,7 +100,7 @@ module.exports = merge(baseConfig, {
     new webpack.optimize.OccurrenceOrderPlugin(),
 
     new MiniCssExtractPlugin({ // define where to save the file
-      filename: '[name].bundle.css',
+      filename: 'bundle.css',
       allChunks: true
     })
   ],
