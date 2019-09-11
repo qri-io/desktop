@@ -3,6 +3,7 @@ import classNames from 'classnames'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSync } from '@fortawesome/free-solid-svg-icons'
 
+import { validateCommitState } from '../utils/formValidation'
 import { DatasetStatus } from '../models/store'
 import { ApiAction } from '../store/api'
 
@@ -25,21 +26,7 @@ const SaveForm: React.FunctionComponent<SaveFormProps> = (props: SaveFormProps) 
 
   React.useEffect(() => {
     // validate form -AND- make sure dataset status is in a commitable state
-    let valid = true
-    // commit message (title) must be more than 3 characters
-    if (title.length < 4) valid = false
-
-    const statuses: string[] = Object.keys(status).map((key) => status[key].status)
-
-    // status must include at least one 'modified'
-    const noModified = !statuses.includes('modified')
-    if (noModified) valid = false
-
-    const hasErrors = statuses.reduce((acc, status) => {
-      return status.match(/error/g) ? true : acc
-    }, false)
-    if (hasErrors) valid = false
-
+    const valid = validateCommitState(title, status)
     setIsValid(valid)
   }, [title, message, status])
 
@@ -54,6 +41,10 @@ const SaveForm: React.FunctionComponent<SaveFormProps> = (props: SaveFormProps) 
     event.preventDefault()
     if (isValid) {
       saveWorkingDataset()
+        .then(() => {
+          setTitle('')
+          setMessage('')
+        })
     }
   }
 

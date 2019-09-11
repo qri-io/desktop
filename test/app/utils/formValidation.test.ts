@@ -3,6 +3,7 @@ import {
   validateEmail,
   validatePassword,
   validateDatasetName,
+  validateCommitState,
   ERR_INVALID_USERNAME_CHARACTERS,
   ERR_INVALID_USERNAME_LENGTH,
   ERR_INVALID_EMAIL,
@@ -10,6 +11,8 @@ import {
   ERR_INVALID_DATASETNAME_CHARACTERS,
   ERR_INVALID_DATASETNAME_LENGTH
 } from '../../../app/utils/formValidation'
+
+import { DatasetStatus } from '../../../app/models/store'
 
 describe('formValidation', () => {
   const usernameGoodCases = [
@@ -134,6 +137,102 @@ describe('formValidation', () => {
     it(`validateDatasetName rejects ${string}`, () => {
       const got = validateDatasetName(string)
       expect(got).toBe(err)
+    })
+  })
+
+  interface commitStateCase {
+    name: string
+    title: string
+    status: DatasetStatus
+  }
+
+  const commitStateGoodCases: commitStateCase[] = [
+    {
+      name: 'title and one component modified',
+      title: 'First Commit',
+      status: {
+        body: {
+          filepath: '',
+          status: 'modified'
+        },
+        meta: {
+          filepath: '',
+          status: 'unmodified'
+        }
+      }
+    },
+    {
+      name: 'title and one component added',
+      title: 'First Commit',
+      status: {
+        body: {
+          filepath: '',
+          status: 'add'
+        },
+        meta: {
+          filepath: '',
+          status: 'unmodified'
+        }
+      }
+    }
+  ]
+
+  commitStateGoodCases.forEach(({ name, title, status }) => {
+    it(`validateCommitState accepts ${name}`, () => {
+      const got = validateCommitState(title, status)
+      expect(got).toBe(true)
+    })
+  })
+
+  const commitStateBadCases: commitStateCase[] = [
+    {
+      name: 'no title and one component modified',
+      title: '',
+      status: {
+        body: {
+          filepath: '',
+          status: 'modified'
+        },
+        meta: {
+          filepath: '',
+          status: 'unmodified'
+        }
+      }
+    },
+    {
+      name: 'no title and one component added',
+      title: '',
+      status: {
+        body: {
+          filepath: '',
+          status: 'add'
+        },
+        meta: {
+          filepath: '',
+          status: 'unmodified'
+        }
+      }
+    },
+    {
+      name: 'title and no added or modified components',
+      title: 'First Commit',
+      status: {
+        body: {
+          filepath: '',
+          status: 'unmodified'
+        },
+        meta: {
+          filepath: '',
+          status: 'unmodified'
+        }
+      }
+    }
+  ]
+
+  commitStateBadCases.forEach(({ name, title, status }) => {
+    it(`validateCommitState rejects ${name}`, () => {
+      const got = validateCommitState(title, status)
+      expect(got).toBe(false)
     })
   })
 })

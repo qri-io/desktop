@@ -1,3 +1,5 @@
+import { DatasetStatus } from '../models/store'
+
 type ValidationError = string | null
 
 export const ERR_INVALID_USERNAME_CHARACTERS: ValidationError = 'Usernames may only include a-z, 0-9, _ , and -'
@@ -47,4 +49,24 @@ export const validateDatasetName = (name: string): ValidationError => {
     if (tooLong) return ERR_INVALID_DATASETNAME_LENGTH
   }
   return null
+}
+
+export const validateCommitState = (title: string, status: DatasetStatus): boolean => {
+  let valid = true
+  // commit message (title) must be more than 3 characters
+  if (title.length < 4) valid = false
+
+  const statuses: string[] = Object.keys(status).map((key) => status[key].status)
+
+  // status must include at least one 'modified'
+  // not valid if there is not at least one 'add' or 'modified'
+  const noModified = !statuses.includes('modified')
+  const noAdd = !statuses.includes('add')
+  if (noModified && noAdd) valid = false
+
+  const hasErrors = statuses.reduce((acc, status) => {
+    return status.match(/error/g) ? true : acc
+  }, false)
+  if (hasErrors) valid = false
+  return valid
 }
