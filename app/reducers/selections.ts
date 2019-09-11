@@ -9,7 +9,7 @@ export const SELECTIONS_SET_SELECTED_LISTITEM = 'SELECTIONS_SET_SELECTED_LISTITE
 export const SELECTIONS_SET_WORKING_DATASET = 'SELECTIONS_SET_WORKING_DATASET'
 export const SELECTIONS_CLEAR = 'SELECTIONS_CLEAR'
 
-const initialState: Selections = {
+export const initialState: Selections = {
   peername: localStore().getItem('peername') || '',
   name: localStore().getItem('name') || '',
   isLinked: localStore().getItem('isLinked') === 'true',

@@ -267,7 +267,7 @@ export default class Dataset extends React.Component<DatasetProps> {
         />
       )
     }
-
+    const alias = (peername != '' && name != '') ? `${peername}/${name}` : ''
     return (
       <div id='dataset-container'>
         {/* Show the overlay to dim the rest of the app when the sidebar is open */}
@@ -284,7 +284,7 @@ export default class Dataset extends React.Component<DatasetProps> {
               </div>
               <div className='header-column-text'>
                 <div className="label">{name ? 'Current Dataset' : 'Choose a Dataset'}</div>
-                <div className="name">{peername !== '' && name !== '' ? `${peername}/${name}` : ''}</div>
+                <div className="name">{alias}</div>
               </div>
               <div className='header-column-arrow'>
                 {
