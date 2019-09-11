@@ -8,6 +8,8 @@ let template
 let mainWindow = null
 let backendProcess
 
+const isMac = process.platform === 'darwin'
+
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support'); // eslint-disable-line
   sourceMapSupport.install()
@@ -54,7 +56,6 @@ const installExtensions = () => {
 // it will set their enabled (working vs grayed out) status
 const setMenuItemEnabled = (menuItemIds, enabled) => {
   const menu = Menu.getApplicationMenu()
-
   menuItemIds.forEach(menuItemId => {
     let item = menu.getMenuItemById(menuItemId)
     if (item) {
@@ -116,358 +117,332 @@ app.on('ready', () =>
         })
       }
 
-      if (process.platform === 'darwin') {
-        template = [
+      const macAppMenu = {
+        label: 'Qri Desktop',
+        submenu: [
           {
-            label: 'Qri Desktop',
-            submenu: [
-              {
-                id: 'about-qri-desktop',
-                label: 'About Qri Desktop',
-                selector: 'orderFrontStandardAboutPanel:'
-              },
-              {
-                type: 'separator'
-              },
-              {
-                label: 'Services',
-                submenu: []
-              },
-              {
-                type: 'separator'
-              },
-              {
-                label: 'Hide Qri Desktop',
-                accelerator: 'Command+H',
-                selector: 'hide:'
-              },
-              {
-                label: 'Hide Others',
-                accelerator: 'Command+Shift+H',
-                selector: 'hideOtherApplications:'
-              },
-              {
-                id: 'show-all',
-                label: 'Show All',
-                selector: 'unhideAllApplications:'
-              },
-              {
-                type: 'separator'
-              },
-              {
-                label: 'Quit Qri Desktop',
-                accelerator: 'Command+Q',
-                click () {
-                  app.quit()
-                }
-              }
-            ]
+            id: 'about-qri-desktop',
+            label: 'About Qri Desktop',
+            selector: 'orderFrontStandardAboutPanel:'
           },
           {
-            label: 'File',
-            submenu: [
-              {
-                id: 'new-dataset',
-                label: 'New Dataset...',
-                accelerator: 'Command+N',
-                click () {
-                  mainWindow.webContents.send('create-dataset')
-                }
-              },
-              {
-                id: 'add-dataset',
-                label: 'Add a Dataset...',
-                accelerator: 'Command+D',
-                click () {
-                  mainWindow.webContents.send('add-dataset')
-                }
-              }
-            ]
+            type: 'separator'
           },
           {
-            label: 'Edit',
-            submenu: [
-              {
-                label: 'Undo',
-                accelerator: 'Command+Z',
-                selector: 'undo:'
-              },
-              {
-                label: 'Redo',
-                accelerator: 'Shift+Command+Z',
-                selector: 'redo:'
-              },
-              {
-                type: 'separator'
-              },
-              {
-                label: 'Cut',
-                accelerator: 'Command+X',
-                selector: 'cut:'
-              },
-              {
-                label: 'Copy',
-                accelerator: 'Command+C',
-                selector: 'copy:'
-              },
-              {
-                label: 'Paste',
-                accelerator: 'Command+V',
-                selector: 'paste:'
-              },
-              {
-                label: 'Select All',
-                accelerator: 'Command+A',
-                selector: 'selectAll:'
-              }
-            ]
+            label: 'Services',
+            role: 'services'
           },
           {
-            label: 'View',
-            submenu: [
-              {
-                id: 'show-status',
-                label: 'Show Status',
-                accelerator: 'Command+1',
-                click () {
-                  mainWindow.webContents.send('show-status')
-                }
-              },
-              {
-                id: 'show-history',
-                label: 'Show History',
-                accelerator: 'Command+2',
-                click () {
-                  mainWindow.webContents.send('show-history')
-                }
-              },
-              {
-                id: 'toggle-dataset-list',
-                label: 'Toggle Dataset List',
-                accelerator: 'Command+T',
-                click () {
-                  mainWindow.webContents.send('toggle-dataset-list')
-                }
-              },
-              {
-                type: 'separator'
-              },
-              {
-                label: 'Toggle Full Screen',
-                accelerator: 'Ctrl+Command+F',
-                role: 'togglefullscreen'
-              },
-              {
-                type: 'separator'
-              },
-              {
-                label: 'Reset Zoom',
-                accelerator: 'Command+0',
-                role: 'resetZoom'
-              },
-              {
-                label: 'Zoom In',
-                accelerator: 'Command+=',
-                role: 'zoomIn'
-              },
-              {
-                label: 'Zoom Out',
-                accelerator: 'Command+-',
-                role: 'zoomOut'
-              },
-              {
-                type: 'separator'
-              },
-              {
-                label: 'Reload',
-                accelerator: 'Command+R',
-                click () {
-                  mainWindow.webContents.send('reload')
-                }
-              },
-              {
-                label: 'Toggle Developer Tools',
-                accelerator: 'Option+Command+I',
-                role: 'toggleDevTools'
-              }
-            ]
+            type: 'separator'
           },
           {
-            label: 'Dataset',
-            submenu: [
-              {
-                id: 'publish-unpublish-dataset',
-                label: 'Publish/Unpublish Dataset',
-                accelerator: 'Shift+Command+P',
-                click () {
-                  mainWindow.webContents.send('publish-unpublish-dataset')
-                }
-              },
-              {
-                id: 'view-on-qri-cloud',
-                label: 'View on Qri Cloud',
-                accelerator: 'Shift+Command+C'
-              },
-              {
-                type: 'separator'
-              },
-              {
-                id: 'open-working-directory',
-                label: process.platform === 'darwin'
-                  ? 'Show in Finder'
-                  : process.platform === 'win32'
-                    ? 'Show in E&xplorer'
-                    : 'Show in your File Manager',
-                accelerator: 'Shift+Command+F',
-                click: () => {
-                  mainWindow.webContents.send('open-working-directory')
-                }
-              }
-            ]
+            label: 'Hide Qri Desktop',
+            accelerator: 'Command+H',
+            selector: 'hide:'
           },
           {
-            role: 'window',
-            submenu: [
-              {
-                label: 'Minimize',
-                accelerator: 'Command+M',
-                selector: 'performMiniaturize:'
-              },
-              {
-                label: 'Zoom',
-                selector: 'performZoom:'
-              },
-              {
-                label: 'Close',
-                accelerator: 'Command+W',
-                selector: 'performClose:'
-              },
-              {
-                type: 'separator'
-              },
-              {
-                label: 'Bring All to Front',
-                selector: 'arrangeInFront:'
-              }
-            ]
+            label: 'Hide Others',
+            accelerator: 'Command+Shift+H',
+            selector: 'hideOtherApplications:'
           },
           {
-            role: 'help',
-            submenu: [
-              {
-                label: 'Report an Issue...',
-                click: () => {
-                  shell.openExternal('https://github.com/qri-io/desktop/issues/new/')
-                }
-              },
-              {
-                label: 'View Documentation...',
-                click: () => {
-                  shell.openExternal('https://qri.io/')
-                }
-              },
-              {
-                label: 'Contact Us...',
-                click: () => {
-                  shell.openExternal('https://qri.io/contact/')
-                }
-              },
-              {
-                label: 'Chat with the community...',
-                click: () => {
-                  shell.openExternal('https://discord.gg/etap8Gb')
-                }
-              }
-            ]
+            id: 'show-all',
+            label: 'Show All',
+            selector: 'unhideAllApplications:'
+          },
+          {
+            type: 'separator'
+          },
+          {
+            label: 'Quit Qri Desktop',
+            accelerator: 'Command+Q',
+            click () {
+              app.quit()
+            }
           }
+        ]
+      }
+
+      const fileMenu = {
+        label: 'File',
+        submenu: [
+          {
+            id: 'new-dataset',
+            label: 'New Dataset...',
+            accelerator: 'CmdOrCtrl+N',
+            click () {
+              mainWindow.webContents.send('create-dataset')
+            }
+          },
+          {
+            id: 'add-dataset',
+            label: 'Add a Dataset...',
+            accelerator: 'CmdOrCtrl+D',
+            click () {
+              mainWindow.webContents.send('add-dataset')
+            }
+          }
+        ]
+      }
+
+      const windowsFileMenu = {
+        label: 'File',
+        submenu: [
+          {
+            id: 'new-dataset',
+            label: 'New Dataset...',
+            accelerator: 'CmdOrCtrl+N',
+            click () {
+              mainWindow.webContents.send('create-dataset')
+            }
+          },
+          {
+            id: 'add-dataset',
+            label: 'Add a Dataset...',
+            accelerator: 'CmdOrCtrl+D',
+            click () {
+              mainWindow.webContents.send('add-dataset')
+            }
+          },
+          {
+            type: 'separator'
+          },
+          {
+            label: 'Exit',
+            accelerator: 'Alt+F4',
+            click () {
+              app.quit()
+            }
+          }
+        ]
+      }
+
+      const editMenu = {
+        label: 'Edit',
+        submenu: [
+          {
+            label: 'Undo',
+            accelerator: 'CmdOrCtrl+Z',
+            selector: 'undo:',
+            role: 'undo'
+          },
+          {
+            label: 'Redo',
+            accelerator: 'Shift+CmdOrCtrl+Z',
+            selector: 'redo:',
+            role: 'redo'
+          },
+          {
+            type: 'separator'
+          },
+          {
+            label: 'Cut',
+            accelerator: 'CmdOrCtrl+X',
+            selector: 'cut:',
+            role: 'cut'
+          },
+          {
+            label: 'Copy',
+            accelerator: 'CmdOrCtrl+C',
+            selector: 'copy:',
+            role: 'copy'
+          },
+          {
+            label: 'Paste',
+            accelerator: 'CmdOrCtrl+V',
+            selector: 'paste:',
+            role: 'paste'
+          },
+          {
+            label: 'Select All',
+            accelerator: 'CmdOrCtrl+A',
+            selector: 'selectAll:',
+            role: 'selectAll'
+          }
+        ]
+      }
+
+      const viewMenu = {
+        label: 'View',
+        submenu: [
+          {
+            id: 'show-status',
+            label: 'Show Status',
+            accelerator: 'CmdOrCtrl+1',
+            click () {
+              mainWindow.webContents.send('show-status')
+            }
+          },
+          {
+            id: 'show-history',
+            label: 'Show History',
+            accelerator: 'CmdOrCtrl+2',
+            click () {
+              mainWindow.webContents.send('show-history')
+            }
+          },
+          {
+            id: 'toggle-dataset-list',
+            label: 'Toggle Dataset List',
+            accelerator: 'CmdOrCtrl+T',
+            click () {
+              mainWindow.webContents.send('toggle-dataset-list')
+            }
+          },
+          {
+            type: 'separator'
+          },
+          {
+            label: 'Toggle Full Screen',
+            accelerator: isMac ? 'Ctrl+Command+F' : 'F11',
+            role: 'togglefullscreen'
+          },
+          {
+            type: 'separator'
+          },
+          {
+            label: 'Reset Zoom',
+            accelerator: 'CmdOrCtrl+0',
+            role: 'resetZoom'
+          },
+          {
+            label: 'Zoom In',
+            accelerator: 'CmdOrCtrl+=',
+            role: 'zoomIn'
+          },
+          {
+            label: 'Zoom Out',
+            accelerator: 'CmdOrCtrl+-',
+            role: 'zoomOut'
+          },
+          {
+            type: 'separator'
+          },
+          {
+            label: 'Reload',
+            accelerator: 'CmdOrCtrl+R',
+            click () {
+              mainWindow.webContents.send('reload')
+            }
+          },
+          {
+            label: 'Toggle Developer Tools',
+            accelerator: isMac ? 'Option+Command+I' : 'Ctrl+Shift+I',
+            role: 'toggleDevTools'
+          }
+        ]
+      }
+
+      const datasetMenu = {
+        label: 'Dataset',
+        submenu: [
+          {
+            id: 'publish-unpublish-dataset',
+            label: 'Publish/Unpublish Dataset',
+            accelerator: 'Shift+CmdOrCtrl+P',
+            click () {
+              mainWindow.webContents.send('publish-unpublish-dataset')
+            }
+          },
+          {
+            id: 'view-on-qri-cloud',
+            label: 'View on Qri Cloud',
+            accelerator: 'Shift+CmdOrCtrl+C'
+          },
+          {
+            type: 'separator'
+          },
+          {
+            id: 'open-working-directory',
+            label: isMac ? 'Show in Finder' : 'Show in Explorer',
+            accelerator: isMac ? 'Shift+Command+F' : 'Ctrl+Shift+F',
+            click: () => {
+              mainWindow.webContents.send('open-working-directory')
+            }
+          }
+        ]
+      }
+
+      const windowMenu = {
+        role: 'window',
+        submenu: [
+          {
+            label: 'Minimize',
+            accelerator: 'Command+M',
+            selector: 'performMiniaturize:'
+          },
+          {
+            label: 'Zoom',
+            selector: 'performZoom:'
+          },
+          {
+            label: 'Close',
+            accelerator: 'Command+W',
+            selector: 'performClose:'
+          },
+          {
+            type: 'separator'
+          },
+          {
+            label: 'Bring All to Front',
+            selector: 'arrangeInFront:'
+          }
+        ]
+      }
+
+      const helpMenu = {
+        role: 'help',
+        submenu: [
+          {
+            label: 'Report an Issue...',
+            click: () => {
+              shell.openExternal('https://github.com/qri-io/desktop/issues/new/')
+            }
+          },
+          {
+            label: 'View Documentation...',
+            click: () => {
+              shell.openExternal('https://qri.io/')
+            }
+          },
+          {
+            label: 'Contact Us...',
+            click: () => {
+              shell.openExternal('https://qri.io/contact/')
+            }
+          },
+          {
+            label: 'Chat with the community...',
+            click: () => {
+              shell.openExternal('https://discord.gg/etap8Gb')
+            }
+          }
+        ]
+      }
+
+      if (isMac) {
+        template = [
+          macAppMenu,
+          fileMenu,
+          editMenu,
+          viewMenu,
+          datasetMenu,
+          windowMenu,
+          helpMenu
         ]
 
         menu = Menu.buildFromTemplate(template)
         Menu.setApplicationMenu(menu)
       } else {
         template = [
-          {
-            label: '&File',
-            submenu: [
-              {
-                label: '&Open',
-                accelerator: 'Ctrl+O'
-              },
-              {
-                label: '&Close',
-                accelerator: 'Ctrl+W',
-                click () {
-                  mainWindow.close()
-                }
-              }
-            ]
-          },
-          {
-            label: '&View',
-            submenu: (process.env.NODE_ENV === 'development') ? [
-              {
-                label: '&Reload',
-                accelerator: 'Ctrl+R',
-                click () {
-                  mainWindow.webContents.reload()
-                }
-              },
-              {
-                label: 'Toggle &Full Screen',
-                accelerator: 'F11',
-                click () {
-                  mainWindow.setFullScreen(!mainWindow.isFullScreen())
-                }
-              },
-              {
-                label: 'Toggle &Developer Tools',
-                accelerator: 'Alt+Ctrl+I',
-                click () {
-                  mainWindow.toggleDevTools()
-                }
-              }
-            ] : [
-              {
-                label: 'Toggle &Full Screen',
-                accelerator: 'F11',
-                click () {
-                  mainWindow.setFullScreen(!mainWindow.isFullScreen())
-                }
-              }
-            ]
-          },
-          {
-            label: 'Help',
-            submenu: [
-              {
-                label: 'Learn More',
-                click () {
-                  shell.openExternal('http://electron.atom.io')
-                }
-              },
-              {
-                label: 'Documentation',
-                click () {
-                  shell.openExternal('https://github.com/atom/electron/tree/master/docs#readme')
-                }
-              },
-              {
-                label: 'Community Discussions',
-                click () {
-                  shell.openExternal('https://discuss.atom.io/c/electron')
-                }
-              },
-              {
-                label: 'Search Issues',
-                click () {
-                  shell.openExternal('https://github.com/atom/electron/issues')
-                }
-              }
-            ]
-          }
+          windowsFileMenu,
+          editMenu,
+          viewMenu,
+          datasetMenu,
+          helpMenu
         ]
         menu = Menu.buildFromTemplate(template)
-        mainWindow.setMenu(menu)
+        Menu.setApplicationMenu(menu)
       }
 
       // listen for working dataset change
