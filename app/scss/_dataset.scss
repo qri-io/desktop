@@ -383,15 +383,35 @@ $header-font-size: .9rem;
 
   #content {
     flex: 1;
+    display: flex;
+    flex-direction: column;
     height: 100%;
     position: relative;
 
     .sidebar-content {
       overflow: auto;
-      position: absolute;
       width: 100%;
-      height: 100%;
       background:$appBackground;
+      flex: 1;
+    }
+
+    .commit-nudge {
+      flex: 0;
+      padding: $sidebar-item-padding;
+      padding-top: 14px;
+      padding-bottom: 14px;
+      background: $primary-dark;
+      color: $white;
+      display: flex;
+      font-size: .8rem;
+
+      a {
+        margin-left: 10px;
+      }
+
+      .commit-nudge-text {
+        flex: 1;
+      }
     }
   }
 }

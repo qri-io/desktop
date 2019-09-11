@@ -8,19 +8,14 @@ import { toggleDatasetList, setSidebarWidth, signout } from '../actions/ui'
 import {
   fetchWorkingDatasetDetails,
   fetchWorkingStatus,
-  fetchWorkingHistory,
   publishDataset,
-  unpublishDataset,
-  discardChanges
+  unpublishDataset
 } from '../actions/api'
 
 import {
   setActiveTab,
-  setSelectedListItem,
-  setWorkingDataset
+  setSelectedListItem
 } from '../actions/selections'
-
-import { setFilter } from '../actions/myDatasets'
 
 import {
   resetBody,
@@ -40,7 +35,6 @@ const DatasetContainer = connect(
     const {
       ui,
       selections,
-      myDatasets,
       workingDataset,
       mutations,
       session
@@ -50,7 +44,6 @@ const DatasetContainer = connect(
     return Object.assign({
       ui,
       selections,
-      myDatasets,
       workingDataset,
       mutations,
       setModal,
@@ -61,18 +54,14 @@ const DatasetContainer = connect(
     toggleDatasetList,
     setActiveTab,
     setSidebarWidth,
-    setFilter,
     setSelectedListItem,
-    setWorkingDataset,
     fetchWorkingDatasetDetails,
     fetchWorkingStatus,
-    fetchWorkingHistory,
     resetBody,
     resetOtherComponents,
     publishDataset,
     unpublishDataset,
-    signout,
-    discardChanges
+    signout
   },
   mergeProps
 )(Dataset)
