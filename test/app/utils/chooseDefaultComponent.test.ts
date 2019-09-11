@@ -14,6 +14,11 @@ describe('chooseDefaultComponent', () => {
       component: 'body', 
     },
     {
+      describe: 'dataset with bodyPath',
+      dataset: {bodyPath: 'bodyPath'},
+      component: 'body', 
+    },
+    {
       describe: 'dataset with schema',
       dataset: {schema: {$id:'test'}},
       component: 'schema', 

@@ -10,6 +10,7 @@ export default function chooseDefaultComponent (dataset: Dataset): string {
   if (!dataset) return ''
   if (dataset.meta) return 'meta'
   if (dataset.body) return 'body'
+  if (dataset.bodyPath) return 'body'
   if (dataset.schema) return 'schema'
   return ''
 }

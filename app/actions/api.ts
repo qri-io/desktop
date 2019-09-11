@@ -155,6 +155,10 @@ export function fetchWorkingDataset (): ApiActionThunk {
     const { selections } = getState()
     const { peername, name, isLinked } = selections
 
+    if (peername === '' || name === '') {
+      return Promise.reject(new Error('no peername or name selected'))
+    }
+
     const action = {
       type: 'dataset',
       [CALL_API]: {

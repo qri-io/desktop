@@ -2,7 +2,6 @@ import { connect } from 'react-redux'
 import CommitDetails from '../components/CommitDetails'
 import Store from '../models/store'
 import { setSidebarWidth } from '../actions/ui'
-import { setSelectedListItem } from '../actions/selections'
 import { fetchCommitDetail } from '../actions/api'
 
 const mapStateToProps = (state: Store) => {
@@ -32,7 +31,6 @@ const mapStateToProps = (state: Store) => {
 
 const actions = {
   setSidebarWidth,
-  setSelectedListItem,
   fetchCommitDetail
 }
 

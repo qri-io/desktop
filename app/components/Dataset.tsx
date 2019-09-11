@@ -1,6 +1,5 @@
 import * as React from 'react'
 import { Action } from 'redux'
-import * as _ from 'underscore'
 import classNames from 'classnames'
 import ReactTooltip from 'react-tooltip'
 import { remote, ipcRenderer, shell } from 'electron'
@@ -16,6 +15,7 @@ import { Resizable } from './Resizable'
 import { Session } from '../models/session'
 import DatasetSidebar from './DatasetSidebar'
 import UnlinkedDataset from './UnlinkedDataset'
+import NoDatasetSelected from './NoDatasetSelected'
 import DatasetComponent from './DatasetComponent'
 import { QRI_CLOUD_URL } from '../utils/registry'
 import { Modal, ModalType } from '../models/modals'
@@ -90,7 +90,11 @@ export default class Dataset extends React.Component<DatasetProps> {
 
   componentDidMount () {
     // poll for status
-    setInterval(() => { this.props.fetchWorkingStatus() }, 20000)
+    setInterval(() => {
+      if (this.props.workingDataset && (this.props.workingDataset.peername !== '' || this.props.workingDataset.name !== '')) {
+        this.props.fetchWorkingStatus()
+      }
+    }, 20000)
 
     this.openWorkingDirectory = this.openWorkingDirectory.bind(this)
     this.publishUnpublishDataset = this.publishUnpublishDataset.bind(this)
@@ -148,7 +152,7 @@ export default class Dataset extends React.Component<DatasetProps> {
   // working dataset is selected and trigger api call(s)
   static getDerivedStateFromProps (nextProps: DatasetProps, prevState: DatasetState) {
     const { peername: newPeername, name: newName } = nextProps.selections
-    const { peername, name, activeTab } = prevState
+    const { peername, name } = prevState
     // when new props arrive, compare selections.peername and selections.name to
     // previous.  If either is different, fetch data
     if ((newPeername !== peername) || (newName !== name)) {
@@ -158,27 +162,6 @@ export default class Dataset extends React.Component<DatasetProps> {
       return {
         peername: newPeername,
         name: newName
-      }
-    }
-
-    if (!_.isEmpty(nextProps.workingDataset.status)) {
-      // make sure that the component we are trying to show actually exists in this version of the dataset
-      // TODO (ramfox): there is a bug here when we try to switch to body, but body hasn't finished fetching yet
-      // this will prematurely decide to switch away from body.
-      if ((nextProps.selections.activeTab === 'status' && nextProps.selections.component === '') ||
-          (activeTab === 'history' && nextProps.selections.activeTab === 'status')) {
-        const { workingDataset, selections, setSelectedListItem } = nextProps
-        const { component } = selections
-        const { status } = workingDataset
-        if (component === '' || !status[component]) {
-          if (status['status']) {
-            setSelectedListItem('component', 'status')
-          }
-          if (status['body']) {
-            setSelectedListItem('component', 'body')
-          }
-          setSelectedListItem('component', 'meta')
-        }
       }
     }
 
@@ -301,7 +284,7 @@ export default class Dataset extends React.Component<DatasetProps> {
               </div>
               <div className='header-column-text'>
                 <div className="label">{name ? 'Current Dataset' : 'Choose a Dataset'}</div>
-                <div className="name">{peername}/{name}</div>
+                <div className="name">{peername !== '' && name !== '' ? `${peername}/${name}` : ''}</div>
               </div>
               <div className='header-column-arrow'>
                 {
@@ -354,6 +337,15 @@ export default class Dataset extends React.Component<DatasetProps> {
           <div className='content-wrapper'>
             <div className='transition-group' >
               <CSSTransition
+                in={peername === '' || name === ''}
+                classNames='fade'
+                timeout={300}
+                mountOnEnter
+                unmountOnExit
+              >
+                <NoDatasetSelected toggleDatasetList={toggleDatasetList}/>
+              </CSSTransition>
+              <CSSTransition
                 in={(activeTab === 'status') && !isLinked && !workingDataset.isLoading}
                 classNames='fade'
                 timeout={300}
@@ -378,7 +370,7 @@ export default class Dataset extends React.Component<DatasetProps> {
                 mountOnEnter
                 unmountOnExit
               >
-                <CommitDetailsContainer />
+                <CommitDetailsContainer setSelectedListItem={setSelectedListItem}/>
               </CSSTransition>
             </div>
           </div>
