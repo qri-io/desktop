@@ -135,7 +135,7 @@ export function fetchMyDatasets (page: number = 1, pageSize: number = pageSizeDe
         },
         map: (data: any[]): DatasetSummary[] => {
           return data.map((ref: any) => ({
-            title: (ref.dataset && ref.dataset.title) || `${ref.peername}/${ref.name}`,
+            title: (ref.dataset && ref.dataset.meta.title),
             peername: ref.peername,
             name: ref.name,
             path: ref.path,

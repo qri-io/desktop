@@ -4,7 +4,7 @@ import classNames from 'classnames'
 
 import { MyDatasets, WorkingDataset } from '../models/store'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faFolderOpen } from '@fortawesome/free-regular-svg-icons'
+import { faUnlink, faTimes } from '@fortawesome/free-solid-svg-icons'
 
 import { Modal, ModalType } from '../models/modals'
 
@@ -22,6 +22,7 @@ export default class DatasetList extends React.Component<DatasetListProps> {
   constructor (props: DatasetListProps) {
     super(props)
     this.handleEsc = this.handleEsc.bind(this)
+    this.clearFilter = this.clearFilter.bind(this)
   }
 
   handleEsc (e: KeyboardEvent) {
@@ -42,6 +43,10 @@ export default class DatasetList extends React.Component<DatasetListProps> {
     setFilter(filter)
   }
 
+  clearFilter () {
+    this.props.setFilter('')
+  }
+
   handleScroll (e: any) {
     const { myDatasets } = this.props
     // this assumes myDatasets is being called for the first time by the App component
@@ -56,13 +61,14 @@ export default class DatasetList extends React.Component<DatasetListProps> {
     const { setWorkingDataset } = this.props
     const { filter, value: datasets } = this.props.myDatasets
 
-    const filteredDatasets = datasets.filter(({ name, title }) => {
-      // if there's a non-empty filter string, only show matches on name and title
+    const filteredDatasets = datasets.filter(({ peername, name, title }) => {
+      // if there's a non-empty filter string, only show matches on peername, name, and title
       // TODO (chriswhong) replace this simple filtering with an API call for deeper matches
       if (filter !== '') {
         const lowercasedFilterString = filter.toLowerCase()
+        if (peername.toLowerCase().includes(lowercasedFilterString)) return true
         if (name.toLowerCase().includes(lowercasedFilterString)) return true
-        if (title.toLowerCase().includes(lowercasedFilterString)) return true
+        if (title && title.toLowerCase().includes(lowercasedFilterString)) return true
         return false
       }
 
@@ -79,16 +85,22 @@ export default class DatasetList extends React.Component<DatasetListProps> {
           onClick={() => setWorkingDataset(peername, name, isLinked, published)}
         >
           <div className='text-column'>
-            <div className='text'>{title}</div>
-            <div className='subtext'>{name}</div>
+            <div className='text'>{peername}/{name}</div>
+            <div className='subtext'>{title || <br/>}</div>
           </div>
-          <div className='status-column'>
-            {isLinked && <FontAwesomeIcon icon={faFolderOpen} size='sm'/>}
+          <div className='status-column' data-tip='unlinked'>
+            {!isLinked && (
+              <FontAwesomeIcon icon={faUnlink} size='sm'/>
+            )}
           </div>
 
         </div>
       ))
       : <div className='sidebar-list-item-text'>Oops, no matches found for <strong>&apos;{filter}&apos;</strong></div>
+
+    const countMessage = filteredDatasets.length !== datasets.length
+      ? `Showing ${filteredDatasets.length} local dataset${filteredDatasets.length > 1 ? 's' : ''}`
+      : `You have ${filteredDatasets.length} local dataset${datasets.length > 1 ? 's' : ''}`
 
     return (
       <div className='dataset-sidebar' >
@@ -110,19 +122,27 @@ export default class DatasetList extends React.Component<DatasetListProps> {
           </div>
         </div>
         <div id='dataset-list-header' className='sidebar-list-item'>
-          <div id='controls'>
-            <input
-              type='text'
-              name='filter'
-              placeholder='Filter'
-              value={filter}
-              onChange={(e) => this.handleFilterChange(e)}
-            />
-          </div>
-          <div className='strong-message'>You have {filteredDatasets.length} local datasets</div>
+          <input
+            type='text'
+            name='filter'
+            placeholder='Filter datasets'
+            value={filter}
+            onChange={(e) => this.handleFilterChange(e)}
+          />
+          { filter !== '' &&
+            <a
+              className='close'
+              onClick={this.clearFilter}
+              aria-label='close'
+              role='button' ><FontAwesomeIcon icon={faTimes} size='lg'/>
+            </a>
+          }
         </div>
         <div id='list' onScroll={(e) => this.handleScroll(e)}>
           {listContent}
+        </div>
+        <div id='list-footer'>
+          <div className='strong-message'>{countMessage}</div>
         </div>
       </div>
     )

@@ -1,19 +1,29 @@
 .dataset-list {
   #dataset-list-header {
-    display: flex;
-    flex-direction: column;
-    padding: 6px 10px;
+    input {
+      width: 100%;
+      border: none;
+      padding: 9px;
 
-    #controls {
-      display: flex;
-      flex-direction: column;
-      padding-bottom: 6px;
-
-      input {
-        margin-right: 10px;
-        flex: 1;
+      &:focus {
+        outline-width: 0;
       }
     }
+
+    a {
+      padding: 9px;
+    }
+  }
+
+  #list {
+    flex: 1;
+    border-bottom: $list-item-bottom-border;
+  }
+
+  #list-footer {
+    flex: 0;
+    text-align: center;
+    padding: 8px;
 
     .strong-message {
       font-weight: 500;
