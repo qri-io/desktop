@@ -8,7 +8,6 @@ import DatasetContainer from './containers/DatasetContainer'
 
 export default function Routes (props: any) {
   const {
-    firstDataset,
     hasAcceptedTOS,
     qriCloudAuthenticated,
     hasDatasets,
@@ -16,24 +15,8 @@ export default function Routes (props: any) {
     acceptTOS,
     signup,
     signin,
-    setWorkingDataset,
-    clearSelection,
     setModal
   } = props
-
-  // TODO (ramfox): create a new action that does all this
-  // also, we should wait until a user has been authorized before
-  // fetching any datasets
-  const onSuccess = () => {
-    new Promise(resolve => {
-      clearSelection()
-      resolve()
-    })
-      .then(async () => {
-        if (firstDataset) setWorkingDataset(firstDataset.peername, firstDataset.name, firstDataset.isLinked, firstDataset.published)
-      })
-      .then(async () => setQriCloudAuthenticated())
-  }
 
   return (
     <Switch>
@@ -49,14 +32,14 @@ export default function Routes (props: any) {
         <Route exact path='/signup' render={() => {
           if (!hasAcceptedTOS) return <Redirect to='/' />
           if (qriCloudAuthenticated) return <Redirect to='/dataset' />
-          return <Signup signup={signup} onSuccess={onSuccess} />
+          return <Signup signup={signup} onSuccess={setQriCloudAuthenticated} />
         }} />
 
         {/* Sign In */}
         <Route exact path='/signin' render={() => {
           if (!hasAcceptedTOS) return <Redirect to='/' />
           if (qriCloudAuthenticated) return <Redirect to='/dataset' />
-          return <Signin signin={signin} onSuccess={onSuccess} />
+          return <Signin signin={signin} onSuccess={setQriCloudAuthenticated} />
         }} />
 
         {/* Dataset */}

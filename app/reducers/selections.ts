@@ -2,13 +2,14 @@ import { AnyAction } from 'redux'
 import { Selections, SelectedComponent } from '../models/store'
 import localStore from '../utils/localStore'
 import { apiActionTypes } from '../store/api'
+import chooseDefaultComponent from '../utils/chooseDefaultComponent'
 
 export const SELECTIONS_SET_ACTIVE_TAB = 'SELECTIONS_SET_ACTIVE_TAB'
 export const SELECTIONS_SET_SELECTED_LISTITEM = 'SELECTIONS_SET_SELECTED_LISTITEM'
 export const SELECTIONS_SET_WORKING_DATASET = 'SELECTIONS_SET_WORKING_DATASET'
 export const SELECTIONS_CLEAR = 'SELECTIONS_CLEAR'
 
-const initialState: Selections = {
+export const initialState: Selections = {
   peername: localStore().getItem('peername') || '',
   name: localStore().getItem('name') || '',
   isLinked: localStore().getItem('isLinked') === 'true',
@@ -19,11 +20,20 @@ const initialState: Selections = {
   commitComponent: localStore().getItem('commitComponent') || ''
 }
 
-const [, LIST_SUCC] = apiActionTypes('list')
 const [, ADD_SUCC] = apiActionTypes('add')
+const [, INIT_SUCC] = apiActionTypes('init')
+const [, DATASET_SUCC, DATASET_FAIL] = apiActionTypes('dataset')
+const [, COMMIT_SUCC] = apiActionTypes('commit')
+const [, PUBLISH_SUCC] = apiActionTypes('publish')
+const [, UNPUBLISH_SUCC] = apiActionTypes('unpublish')
+const [, SIGNIN_SUCC] = apiActionTypes('signin')
+const [, SIGNUP_SUCC] = apiActionTypes('signup')
 
 export default (state = initialState, action: AnyAction) => {
   switch (action.type) {
+    case DATASET_FAIL:
+    case SIGNIN_SUCC:
+    case SIGNUP_SUCC:
     case SELECTIONS_CLEAR:
       localStore().setItem('peername', '')
       localStore().setItem('name', '')
@@ -82,29 +92,71 @@ export default (state = initialState, action: AnyAction) => {
         activeTab: newActiveTab
       })
 
-    case LIST_SUCC:
-      // if there is no peername + name in selections, use the first one on the list
-      if (state.peername === '' && state.name === '') {
-        if (action.payload.data.length === 0) return state
-        const { peername: firstPeername, name: firstName, fsipath: firstIsLinked, published } = action.payload.data[0]
-        localStore().setItem('peername', firstPeername)
-        localStore().setItem('name', firstName)
-        localStore().setItem('isLinked', JSON.stringify(!!firstIsLinked))
-        localStore().setItem('published', published)
-        return Object.assign({}, state, { peername: firstPeername, name: firstName, fsipath: firstIsLinked, published })
-      } else {
-        return state
-      }
-
-      // when a new dataset is added via the modal, make it the selected dataset
-    case ADD_SUCC:
-      const { peername: newPeername, name: newName } = action.payload.data
-      localStore().setItem('peername', newPeername)
-      localStore().setItem('name', newName)
+    case COMMIT_SUCC:
+      // if the selected commitComponent exists on dataset, no changes needed
+      if (action.payload.data.dataset[state.commitComponent] || (state.component === 'body' && action.payload.data.dataset['bodyPath'])) return state
+      //
       return {
         ...state,
-        peername: newPeername,
-        name: newName
+        // get the default component based on the components
+        // that exist in dataset
+        // can return with empty string
+        commitComponent: chooseDefaultComponent(action.payload.data.dataset)
+      }
+    case DATASET_SUCC:
+      // if the selected component exists on dataset, no changes needed
+      if (action.payload.data.dataset[state.component] || (state.component === 'body' && action.payload.data.dataset['bodyPath'])) return state
+      //
+      return {
+        ...state,
+        // get the default component based on the components
+        // that exist in dataset
+        // can return with empty string
+        component: chooseDefaultComponent(action.payload.data.dataset)
+      }
+      // when a dataset is successfully published, mark as published in the selections
+    case PUBLISH_SUCC:
+      localStore().setItem('published', 'true')
+      return {
+        ...state,
+        published: true
+      }
+      // when a dataset is successfully unpublished, mark as unpublished in the selections
+    case UNPUBLISH_SUCC:
+      localStore().setItem('published', 'false')
+      return {
+        ...state,
+        published: false
+      }
+      // when a new dataset is added from the network, make it the selected dataset
+    case ADD_SUCC:
+      localStore().setItem('peername', action.payload.data.peername)
+      localStore().setItem('name', action.payload.data.name)
+      localStore().setItem('isLinked', action.payload.data.isLinked)
+      localStore().setItem('published', action.payload.data.published)
+      localStore().setItem('activeTab', 'history')
+      return {
+        ...state,
+        peername: action.payload.data.peername,
+        name: action.payload.data.name,
+        isLinked: action.payload.data.isLinked,
+        published: action.payload.data.published,
+        activeTab: 'history'
+      }
+      // when a new dataset is created, make it the selected dataset
+    case INIT_SUCC:
+      localStore().setItem('peername', action.payload.data.peername)
+      localStore().setItem('name', action.payload.data.name)
+      localStore().setItem('isLinked', action.payload.data.isLinked)
+      localStore().setItem('published', action.payload.data.published)
+      localStore().setItem('activeTab', 'status')
+      return {
+        ...state,
+        peername: action.payload.data.peername,
+        name: action.payload.data.name,
+        isLinked: action.payload.data.isLinked,
+        published: action.payload.data.published,
+        activeTab: 'status'
       }
 
     default:
