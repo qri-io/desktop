@@ -41,7 +41,7 @@ const myDatasetsReducer: Reducer = (state = initialState, action: AnyAction): My
       return {
         ...state,
         pageInfo: withPagination(action, state.pageInfo),
-        value: state.value ? state.value.concat(action.payload.data) : action.payload.data,
+        value: state.value.concat(action.payload.data),
         filter: ''
       }
     case LIST_FAIL:
