@@ -20,7 +20,7 @@ module.exports = merge(baseConfig, {
 
   entry: [
     'react-hot-loader/patch',
-    `webpack-hot-middleware/client?path=http://localhost:${port}/__webpack_hmr&reload=true`,
+    `webpack-hot-middleware/client?path=http://localhost:${port}/__webpack_hmr`,
     './app/index'
   ],
 
@@ -51,7 +51,8 @@ module.exports = merge(baseConfig, {
           {
             loader: MiniCssExtractPlugin.loader,
             options: {
-              publicPath: '../'
+              publicPath: '../',
+              hmr: process.env.NODE_ENV === 'development'
             }
           },
           'css-loader',
