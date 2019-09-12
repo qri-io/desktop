@@ -2,19 +2,21 @@ import * as React from 'react'
 
 import CheckboxInput from '../form/CheckboxInput'
 import Modal from './Modal'
+import { RemoveDatasetModal } from '../../../app/models/modals'
 import { ApiAction } from '../../store/api'
 import Error from './Error'
 import Buttons from './Buttons'
 
 interface RemoveDatasetProps {
-  peername: string
-  name: string
-  linkpath: string
+  modal: RemoveDatasetModal
   onDismissed: () => void
-  onSubmit: (peername: string, name: string, dir: string) => Promise<ApiAction>
+  onSubmit: (peername: string, name: string, removeFiles: boolean) => Promise<ApiAction>
 }
 
-const RemoveDataset: React.FunctionComponent<RemoveDatasetProps> = ({ peername, name, onDismissed, onSubmit, linkpath }) => {
+const RemoveDataset: React.FunctionComponent<RemoveDatasetProps> = (props: RemoveDatasetProps) => {
+  const { modal, onDismissed, onSubmit } = props
+  const { peername, name, fsipath } = modal
+
   const [shouldRemoveFiles, setShouldRemoveFiles] = React.useState(false)
 
   const [dismissable, setDismissable] = React.useState(true)
@@ -31,7 +33,7 @@ const RemoveDataset: React.FunctionComponent<RemoveDatasetProps> = ({ peername, 
     setLoading(true)
     error && setError('')
     if (!onSubmit) return
-    onSubmit(peername, name, linkpath)
+    onSubmit(peername, name, shouldRemoveFiles)
       .then(onDismissed)
       .catch((action) => {
         setLoading(false)
@@ -51,8 +53,8 @@ const RemoveDataset: React.FunctionComponent<RemoveDatasetProps> = ({ peername, 
     >
       <div className='content-wrap'>
         <div className='content'>
-          <p>Are you sure you want to remove the dataset &quot;{peername}/{name}&quot;?</p>
-          { linkpath.length > 0 &&
+          <div className='content-main'>Are you sure you want to remove <br/> <div className='code-highlight'>{peername}/{name}</div>&nbsp;?</div>
+          { fsipath &&
             <CheckboxInput
               name='shouldRemoveFiles'
               checked={shouldRemoveFiles}
@@ -62,8 +64,8 @@ const RemoveDataset: React.FunctionComponent<RemoveDatasetProps> = ({ peername, 
           }
         </div>
       </div>
-      <p className='submit-message'>
-        { linkpath.length > 0 && shouldRemoveFiles && `Qri will delete dataset files in "${linkpath}"`}
+      <p className='content-bottom submit-message'>
+        { fsipath && shouldRemoveFiles && <span>Qri will delete dataset files in <strong>{fsipath}</strong></span>}
       </p>
       <Error text={error} />
       <Buttons

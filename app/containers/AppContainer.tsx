@@ -8,7 +8,7 @@ import {
   initDatasetAndFetch,
   linkDataset,
   pingApi,
-  removeDataset
+  removeDatasetAndFetch
 } from '../actions/api'
 
 import {
@@ -64,7 +64,7 @@ const AppContainer = connect(
     setApiConnection,
     setWorkingDataset,
     setModal,
-    removeDataset
+    removeDatasetAndFetch
   },
   mergeProps
 )(App)

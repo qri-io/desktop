@@ -81,10 +81,26 @@ export default class DatasetList extends React.Component<DatasetListProps> {
       return true
     })
 
+    console.log(filteredDatasets)
+
     const listContent = filteredDatasets.length > 0
       ? filteredDatasets.map(({ peername, name, title, fsipath, published }) => {
-        const menuItems: MenuItemConstructorOptions[] = fsipath
-          ? [
+        let menuItems: MenuItemConstructorOptions[] = [
+          {
+            label: 'Remove...',
+            click: () => {
+              setModal({
+                type: ModalType.RemoveDataset,
+                peername,
+                name,
+                fsipath
+              })
+            }
+          }
+        ]
+
+        if (fsipath) {
+          menuItems = [
             {
               label: 'Reveal in Finder',
               click: () => { shell.showItemInFolder(fsipath) }
@@ -92,17 +108,9 @@ export default class DatasetList extends React.Component<DatasetListProps> {
             {
               type: 'separator'
             },
-            {
-              label: 'Remove...',
-              click: () => { setModal({ type: ModalType.RemoveDataset }) }
-            }
+            ...menuItems
           ]
-          : [
-            {
-              label: 'Remove...',
-              click: () => { setModal({ type: ModalType.RemoveDataset }) }
-            }
-          ]
+        }
 
         return (<ContextMenuArea menuItems={menuItems} key={`${peername}/${name}`}>
           <div
@@ -117,7 +125,7 @@ export default class DatasetList extends React.Component<DatasetListProps> {
               <div className='subtext'>{title || <br/>}</div>
             </div>
             <div className='status-column' data-tip='unlinked'>
-              {!!fsipath && (
+              {!fsipath && (
                 <FontAwesomeIcon icon={faUnlink} size='sm'/>
               )}
             </div>
@@ -141,14 +149,14 @@ export default class DatasetList extends React.Component<DatasetListProps> {
               onClick={() => { setModal({ type: ModalType.AddDataset }) }}
               data-tip='Add an existing<br/>Qri dataset'
             >
-              <a href='#'>Add a Dataset</a>
+              <span>Add a Dataset</span>
             </div>
             <div
               className='dataset-list-button'
               onClick={() => { setModal({ type: ModalType.CreateDataset }) }}
               data-tip='Create a new Qri <br/>dataset from a data file'
             >
-              <a href='#'>New Dataset</a></div>
+              <span>New Dataset</span></div>
           </div>
         </div>
         <div id='dataset-list-header' className='sidebar-list-item'>

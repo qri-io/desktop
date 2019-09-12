@@ -82,15 +82,26 @@ dialog {
   // the correct tab is active
   // as you click through the tabs, they will transition
   .content-wrap {
-    min-height: 300px;
+    min-height: 180px;
     position: relative;
     display: flex;
     flex-direction: column;
+    padding-bottom: 15px;
 
     .content {
       width: 100%;
-      height: 100%;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
       background: $appBackground;
+
+      .content-main {
+        flex: 1;
+      }
+
+      .content-bottom {
+        flex: 0;
+      }
     }
 
     // #error {

@@ -6,24 +6,31 @@ export enum ModalType {
   RemoveDataset
 }
 
-export const NoModal = { type: ModalType.NoModal }
-
-export type Modal =
-| {
+interface CreateDatasetModal {
   type: ModalType.CreateDataset
   dirPath?: string
   bodyPath?: string
 }
-| {
+
+interface AddDatasetModal {
   type: ModalType.AddDataset
   initialURL?: string | null
 }
-| {
+
+interface LinkDatasetModal {
   type: ModalType.LinkDataset
   dirPath?: string
 }
-| {
+
+export interface RemoveDatasetModal {
   type: ModalType.RemoveDataset
-  dirPath?: string
+  peername: string
+  name: string
+  fsipath: string
 }
-| { type: ModalType.NoModal }
+
+export interface HideModal {
+  type: ModalType.NoModal
+}
+
+export type Modal = CreateDatasetModal | AddDatasetModal | LinkDatasetModal | RemoveDatasetModal | HideModal

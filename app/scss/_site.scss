@@ -730,3 +730,11 @@ b {
 .border {
   border: $border-color solid 2px;
 }
+
+.code-highlight {
+  padding: 2px 8px;
+  background: #f3f3f3;
+  display: inline-block;
+  border-radius: 3px;
+  margin-top: 8px;
+}
