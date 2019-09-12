@@ -1,4 +1,5 @@
 import * as React from 'react'
+import path from 'path'
 import { remote } from 'electron'
 
 import Modal from './Modal'
@@ -17,7 +18,7 @@ interface CreateDatasetProps {
 
 const CreateDataset: React.FunctionComponent<CreateDatasetProps> = ({ onDismissed, onSubmit }) => {
   const [datasetName, setDatasetName] = React.useState('')
-  const [path, setPath] = React.useState('')
+  const [datasetPath, setDatasetPath] = React.useState('')
   const [filePath, setFilePath] = React.useState('')
 
   const [dismissable, setDismissable] = React.useState(true)
@@ -31,16 +32,16 @@ const CreateDataset: React.FunctionComponent<CreateDatasetProps> = ({ onDismisse
     datasetNameValidationError ? setDatasetNameError(datasetNameValidationError) : setDatasetNameError('')
 
     // only ready when all three fields are not invalid
-    const ready = path !== '' && filePath !== '' && !datasetNameValidationError
+    const ready = datasetPath !== '' && filePath !== '' && !datasetNameValidationError
     setButtonDisabled(!ready)
-  }, [datasetName, path, filePath])
+  }, [datasetName, datasetPath, filePath])
 
   // should come from props
   const [error, setError] = React.useState('')
   const [loading, setLoading] = React.useState(false)
 
   // should come from props/actions that has us check if the directory already contains a qri dataset
-  const isQriDataset = (path: string) => !path
+  const isQriDataset = (datasetPath: string) => !datasetPath
 
   const showDirectoryPicker = () => {
     const window = remote.getCurrentWindow()
@@ -52,10 +53,10 @@ const CreateDataset: React.FunctionComponent<CreateDatasetProps> = ({ onDismisse
       return
     }
 
-    const path = directory[0]
+    const selectedPath = directory[0]
 
-    setPath(path)
-    const isDataset = isQriDataset(path)
+    setDatasetPath(selectedPath)
+    const isDataset = isQriDataset(selectedPath)
     if (isDataset) {
       setAlreadyDatasetError('A dataset already exists in this directory.')
       setButtonDisabled(true)
@@ -72,15 +73,14 @@ const CreateDataset: React.FunctionComponent<CreateDatasetProps> = ({ onDismisse
       return
     }
 
-    const path = filePath[0]
-    const splitOnSlash = path.split('/')
-    const file = splitOnSlash && splitOnSlash.pop()
-    const name = file && file.split('.')[0]
+    const selectedPath = filePath[0]
+    const basename = path.basename(selectedPath)
+    const name = basename.split('.')[0]
 
     name && datasetName === '' && setDatasetName(name)
 
-    setFilePath(path)
-    const isDataset = isQriDataset(path)
+    setFilePath(selectedPath)
+    const isDataset = isQriDataset(selectedPath)
     if (isDataset) {
       setAlreadyDatasetError('A dataset already exists in this directory.')
       setButtonDisabled(true)
@@ -121,7 +121,7 @@ const CreateDataset: React.FunctionComponent<CreateDatasetProps> = ({ onDismisse
     setLoading(true)
     error && setError('')
     if (!onSubmit) return
-    onSubmit(filePath, datasetName, path, datasetName)
+    onSubmit(filePath, datasetName, datasetPath, datasetName)
       .then(() => onDismissed())
       .catch((action: any) => {
         setLoading(false)
@@ -129,6 +129,8 @@ const CreateDataset: React.FunctionComponent<CreateDatasetProps> = ({ onDismisse
         setError(action.payload.err.message)
       })
   }
+
+  const fullPath = path.join(datasetPath, datasetName)
 
   return (
     <Modal
@@ -172,7 +174,7 @@ const CreateDataset: React.FunctionComponent<CreateDatasetProps> = ({ onDismisse
               label='Directory path'
               labelTooltip='Qri will create a new directory for<br/>this dataset&apos;s files at this location.'
               type=''
-              value={path}
+              value={datasetPath}
               onChange={handleChanges}
               maxLength={600}
               errorText={alreadyDatasetError}
@@ -184,7 +186,7 @@ const CreateDataset: React.FunctionComponent<CreateDatasetProps> = ({ onDismisse
 
       <p className='submit-message'>
         {!buttonDisabled && (
-          <span>Qri will create the directory {path}/{datasetName} and import your data file</span>
+          <span>Qri will create the directory {fullPath} and import your data file</span>
         )}
       </p>
       <Error text={error} />

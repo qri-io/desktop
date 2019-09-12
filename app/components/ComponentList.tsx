@@ -1,5 +1,6 @@
 import * as React from 'react'
 import { Action } from 'redux'
+import path from 'path'
 import classNames from 'classnames'
 import { clipboard, shell, MenuItemConstructorOptions } from 'electron'
 import ContextMenuArea from 'react-electron-contextmenu'
@@ -138,7 +139,7 @@ const ComponentList: React.FunctionComponent<ComponentListProps> = (props: Compo
             // a commit's component, and should not render a filename
             let filename = ''
             if (filepath !== name) {
-              filename = filepath.substring((filepath.lastIndexOf('/') + 1))
+              filename = path.basename(filepath)
             }
 
             const fileRow = (
