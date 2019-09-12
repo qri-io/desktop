@@ -40,6 +40,9 @@ const Body: React.FunctionComponent<BodyProps> = ({ value, pageInfo, headers, st
     if (pageInfo.page === 1 && pageInfo.isFetching) {
       isLoadingFirstPageRef.current = true
     }
+    if (isLoadingFirstPage && isLoadingFirstPageRef.current === false) {
+      setIsLoadingFirstPage(false)
+    }
   }, [pageInfo.page, pageInfo.isFetching])
 
   const handleScrollToBottom = () => {
