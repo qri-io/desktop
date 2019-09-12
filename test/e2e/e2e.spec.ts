@@ -89,8 +89,7 @@ describe('onboarding', function spec() {
     await delay(1000)
     const currentUrl = url.parse(await browserWindow.getURL())
     expect(currentUrl.hash).toBe('#/dataset')
-    // TODO (b5) - reenable once this bug is addressed
-    // expect(await app.client.element('#linkButton .label').getText()).toBe('Show Files');
+    expect(await app.client.element('#linkButton .label').getText()).toBe('Show Files');
   })
 
   // it('create initial commit', () => {
