@@ -1,23 +1,21 @@
 /* global describe, it, expect */
-import { Reducer, Selector } from 'redux-testkit'
+import { Reducer } from 'redux-testkit'
 import SelectionsReducer, { 
   initialState,
   SELECTIONS_SET_ACTIVE_TAB,
   SELECTIONS_SET_SELECTED_LISTITEM,
   SELECTIONS_SET_WORKING_DATASET,
-  SELECTIONS_CLEAR
+  SELECTIONS_CLEAR,
+  ADD_SUCC,
+  INIT_SUCC,
+  DATASET_SUCC,
+  DATASET_FAIL,
+  COMMIT_SUCC,
+  PUBLISH_SUCC,
+  UNPUBLISH_SUCC,
+  SIGNIN_SUCC,
+  SIGNUP_SUCC
 } from '../../../app/reducers/selections'
-
-import { apiActionTypes } from '../../../app/store/api'
-
-const [, ADD_SUCC] = apiActionTypes('add')
-const [, INIT_SUCC] = apiActionTypes('init')
-const [, DATASET_SUCC, DATASET_FAIL] = apiActionTypes('dataset')
-const [, COMMIT_SUCC] = apiActionTypes('commit')
-const [, PUBLISH_SUCC] = apiActionTypes('publish')
-const [, UNPUBLISH_SUCC] = apiActionTypes('unpublish')
-const [, SIGNIN_SUCC] = apiActionTypes('signin')
-const [, SIGNUP_SUCC] = apiActionTypes('signup')
 
 // TODO (ramfox): test local storage
 // TODO (ramfox): test on non-empty/not initialState

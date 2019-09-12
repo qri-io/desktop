@@ -20,14 +20,14 @@ export const initialState: Selections = {
   commitComponent: localStore().getItem('commitComponent') || ''
 }
 
-const [, ADD_SUCC] = apiActionTypes('add')
-const [, INIT_SUCC] = apiActionTypes('init')
-const [, DATASET_SUCC, DATASET_FAIL] = apiActionTypes('dataset')
-const [, COMMIT_SUCC] = apiActionTypes('commit')
-const [, PUBLISH_SUCC] = apiActionTypes('publish')
-const [, UNPUBLISH_SUCC] = apiActionTypes('unpublish')
-const [, SIGNIN_SUCC] = apiActionTypes('signin')
-const [, SIGNUP_SUCC] = apiActionTypes('signup')
+export const [, ADD_SUCC] = apiActionTypes('add')
+export const [, INIT_SUCC] = apiActionTypes('init')
+export const [, DATASET_SUCC, DATASET_FAIL] = apiActionTypes('dataset')
+export const [, COMMIT_SUCC] = apiActionTypes('commitdataset')
+export const [, PUBLISH_SUCC] = apiActionTypes('publish')
+export const [, UNPUBLISH_SUCC] = apiActionTypes('unpublish')
+export const [, SIGNIN_SUCC] = apiActionTypes('signin')
+export const [, SIGNUP_SUCC] = apiActionTypes('signup')
 
 export default (state = initialState, action: AnyAction) => {
   switch (action.type) {
@@ -94,7 +94,7 @@ export default (state = initialState, action: AnyAction) => {
 
     case COMMIT_SUCC:
       // if the selected commitComponent exists on dataset, no changes needed
-      if (action.payload.data.dataset[state.commitComponent] || (state.component === 'body' && action.payload.data.dataset['bodyPath'])) return state
+      if (action.payload.data.dataset[state.commitComponent] || (state.commitComponent === 'body' && action.payload.data.dataset['bodyPath'])) return state
       //
       return {
         ...state,
