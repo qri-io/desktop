@@ -1,4 +1,5 @@
 import * as React from 'react'
+import { hot } from 'react-hot-loader/root'
 import { Action } from 'redux'
 import { CSSTransition } from 'react-transition-group'
 import { HashRouter as Router } from 'react-router-dom'
@@ -55,7 +56,7 @@ interface AppState {
   peername: string
 }
 
-export default class App extends React.Component<AppProps, AppState> {
+class App extends React.Component<AppProps, AppState> {
   constructor (props: AppProps) {
     super(props)
 
@@ -216,3 +217,5 @@ export default class App extends React.Component<AppProps, AppState> {
     )
   }
 }
+
+export default hot(App)
