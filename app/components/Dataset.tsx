@@ -191,7 +191,7 @@ export default class Dataset extends React.Component<DatasetProps> {
 
   render () {
     // unpack all the things
-    const { ui, selections, workingDataset, setModal, session } = this.props
+    const { ui, selections, workingDataset, setModal, session, setSelectedListItem } = this.props
     const { peername: username, photo: userphoto } = session
     const { showDatasetList, datasetSidebarWidth } = ui
     const {
@@ -255,7 +255,7 @@ export default class Dataset extends React.Component<DatasetProps> {
         />
       )
     }
-    const alias = (peername != '' && name != '') ? `${peername}/${name}` : ''
+    const alias = (peername !== '' && name !== '') ? `${peername}/${name}` : ''
     return (
       <div id='dataset-container'>
         {/* Show the overlay to dim the rest of the app when the sidebar is open */}
