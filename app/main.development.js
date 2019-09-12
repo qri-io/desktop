@@ -1,7 +1,6 @@
-const { app, BrowserWindow, Menu, shell } = require('electron')
+const { app, BrowserWindow, Menu, shell, ipcMain } = require('electron')
 const { autoUpdater } = require('electron-updater')
 const { BackendProcess } = require('./backend')
-const { ipcMain } = require('electron')
 
 let menu
 let template
@@ -33,6 +32,13 @@ if (app.setAboutPanelOptions) {
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') app.quit()
+})
+
+app.on('will-quit', () => {
+  if (backendProcess) {
+    backendProcess.close()
+    backendProcess = null
+  }
 })
 
 const installExtensions = () => {
@@ -96,8 +102,6 @@ app.on('ready', () =>
 
       mainWindow.on('closed', () => {
         mainWindow = null
-        backendProcess.close()
-        backendProcess = null
       })
 
       if (process.env.NODE_ENV === 'development') {

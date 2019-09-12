@@ -85,7 +85,7 @@ const Signup: React.FunctionComponent<SignupProps> = (props: SignupProps) => {
       <h6>Already have account? <Link to='/signin'>Sign In</Link></h6>
       <div className='welcome-form'>
         <DebouncedTextInput
-          name= 'username'
+          name='username'
           label='Username'
           type='text'
           maxLength={100}
@@ -94,7 +94,7 @@ const Signup: React.FunctionComponent<SignupProps> = (props: SignupProps) => {
           onChange={handleChange}
         />
         <DebouncedTextInput
-          name= 'email'
+          name='email'
           label='Email'
           type='email'
           maxLength={100}
@@ -103,7 +103,7 @@ const Signup: React.FunctionComponent<SignupProps> = (props: SignupProps) => {
           onChange={handleChange}
         />
         <DebouncedTextInput
-          name= 'password'
+          name='password'
           label='Password'
           type='password'
           maxLength={100}
@@ -111,7 +111,7 @@ const Signup: React.FunctionComponent<SignupProps> = (props: SignupProps) => {
           errorText={passwordError}
           onChange={handleChange}
         />
-        <div className = 'error'> { serverError } </div>
+        <div className='error'> { serverError } </div>
       </div>
     </WelcomeTemplate>
   )

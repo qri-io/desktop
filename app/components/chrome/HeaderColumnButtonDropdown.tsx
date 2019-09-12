@@ -31,10 +31,11 @@ const HeaderColumnButtonDropdown: React.FunctionComponent<HeaderColumnButtonDrop
     }
   })
 
-  const { icon, label = '', tooltip, onClick = toggleMenu, items } = props
+  const { id = '', icon, label = '', tooltip, onClick = toggleMenu, items } = props
 
   return (
     <div
+      id={id}
       ref={dropdown}
       className='header-column header-column-dropdown'
       data-tip={tooltip}

@@ -145,7 +145,7 @@ const CreateDataset: React.FunctionComponent<CreateDatasetProps> = ({ onDismisse
           <p>The data file you specify will become your new dataset&apos;s <ExternalLink href='https://qri.io/docs/reference/dataset/#body'>body</ExternalLink> component.</p>
           <div className='flex-space-between'>
             <TextInput
-              name='path'
+              name='filePath'
               label='Source data file'
               labelTooltip='Select a CSV or JSON file on your file system.<br/>Qri will import the data and leave the file in place.'
               type=''
@@ -154,7 +154,7 @@ const CreateDataset: React.FunctionComponent<CreateDatasetProps> = ({ onDismisse
               maxLength={600}
               errorText={alreadyDatasetError}
             />
-            <div className='margin-left'><ButtonInput onClick={() => handleFilePickerDialog(showFilePicker)} >Choose...</ButtonInput></div>
+            <div className='margin-left'><ButtonInput id='chooseBodyFilePath' onClick={() => handleFilePickerDialog(showFilePicker)} >Choose...</ButtonInput></div>
           </div>
           <TextInput
             name='datasetName'
@@ -168,7 +168,7 @@ const CreateDataset: React.FunctionComponent<CreateDatasetProps> = ({ onDismisse
           />
           <div className='flex-space-between'>
             <TextInput
-              name='path'
+              name='savePath'
               label='Directory path'
               labelTooltip='Qri will create a new directory for<br/>this dataset&apos;s files at this location.'
               type=''
@@ -177,7 +177,7 @@ const CreateDataset: React.FunctionComponent<CreateDatasetProps> = ({ onDismisse
               maxLength={600}
               errorText={alreadyDatasetError}
             />
-            <div className='margin-left'><ButtonInput onClick={() => handlePathPickerDialog(showDirectoryPicker)} >Choose...</ButtonInput></div>
+            <div className='margin-left'><ButtonInput id='chooseSavePath' onClick={() => handlePathPickerDialog(showDirectoryPicker)} >Choose...</ButtonInput></div>
           </div>
         </div>
       </div>

@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { IconDefinition } from '@fortawesome/free-regular-svg-icons'
 
 export interface HeaderColumnButtonProps {
+  id?: string
   tooltip?: string
   label?: string
   icon: IconDefinition | React.ReactElement
@@ -12,10 +13,11 @@ export interface HeaderColumnButtonProps {
 }
 
 const HeaderColumnButton: React.FunctionComponent<HeaderColumnButtonProps> = (props) => {
-  const { icon, label, tooltip, disabled, onClick } = props
+  const { id = '', icon, label, tooltip, disabled, onClick } = props
 
   return (
     <div
+      id={id}
       className={classNames('header-column', { disabled })}
       data-tip={tooltip}
       onClick={onClick}

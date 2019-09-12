@@ -41,7 +41,7 @@ const WelcomeTemplate: React.FunctionComponent<WelcomeTemplateProps> = ({ onAcce
                 <Spinner/>
               </div>
               : !!onAccept && <div className='welcome-accept'>
-                <a className={classNames('linkLarge', { 'linkDisabled': !acceptEnabled })} onClick={handleOnClick}>
+                <a id='accept' className={classNames('linkLarge', { 'linkDisabled': !acceptEnabled })} onClick={handleOnClick}>
                   <span>{acceptText}</span>
                   &nbsp;<FontAwesomeIcon icon={faArrowRight} className={classNames({ 'linkDisabled': !acceptEnabled })} size='lg'/>
                 </a><br />
