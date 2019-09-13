@@ -1,8 +1,7 @@
 import { Action, AnyAction } from 'redux'
 
 import { CALL_API, ApiAction, ApiActionThunk, chainSuccess, ApiResponseAction } from '../store/api'
-import { DatasetSummary, ComponentStatus, ComponentState, ComponentType, PageInfo } from '../models/store'
-import { Dataset, Commit } from '../models/dataset'
+import { DatasetSummary, ComponentType, PageInfo } from '../models/store'
 import { openToast } from './ui'
 import { setWorkingDataset, setSelectedListItem, clearSelection, setActiveTab } from './selections'
 import {
@@ -495,7 +494,7 @@ export function publishDataset (): ApiActionThunk {
     try {
       let response: Action
       response = await dispatch(action)
-      await whenOk(fetchWorkingDataset())(response)
+      await whenOk(fetchWorkingDatasetDetails())(response)
       response = await dispatch(setWorkingDataset(peername, name, linkpath !== 'repo', true))
     } catch (action) {
       throw action
@@ -525,7 +524,7 @@ export function unpublishDataset (): ApiActionThunk {
     try {
       let response: Action
       response = await dispatch(action)
-      await whenOk(fetchWorkingDataset())(response)
+      await whenOk(fetchWorkingDatasetDetails())(response)
       response = await dispatch(setWorkingDataset(peername, name, linkpath !== 'repo', false))
     } catch (action) {
       throw action

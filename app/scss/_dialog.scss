@@ -1,19 +1,15 @@
 dialog {
+  padding: 0;
   border: solid 1px $border-color;
   border-radius: 5px;
-
   background: $appBackground;
-
   opacity: 1;
-
   position: absolute;
   top: 0;
   bottom: 0;
   right: 0;
   left: 0;
-
   z-index: $zindex-modal;
-
   width: 500px;
 
   &::backdrop {
@@ -23,13 +19,13 @@ dialog {
   }
 
   .dialog-header {
-    height: 50px;
+    padding: 0 1.5rem;
+    height: 60px;
     border-bottom: solid 1px $border-color;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    padding: $spacer $spacer $spacer $spacer;
 
     h1 {
       font-weight: $font-weight-bold;
@@ -45,8 +41,6 @@ dialog {
       border: 0;
       height: 18px;
       width: 18px;
-
-      margin: $spacer * -1.5 $spacer * -1 0 auto;
       padding: 0;
       background: transparent;
 
@@ -64,7 +58,7 @@ dialog {
   }
 
   form {
-    padding: $spacer;
+    padding: 1.5rem;
 
     .row {
       display: flex;
@@ -101,6 +95,10 @@ dialog {
 
       .content-bottom {
         flex: 0;
+      }
+
+      h4 {
+        font-weight: 600;
       }
     }
 

@@ -1,18 +1,64 @@
-.dataset-list {
-  #dataset-list-header {
-    input {
-      width: 100%;
-      border: none;
-      padding: 9px;
+#dataset-list {
+  display: flex;
+  flex-direction: column;
+  z-index: 110;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 250px;
+  background-color: #fff;
 
-      &:focus {
-        outline-width: 0;
+  #dataset-list-header {
+    height: 50px;
+  }
+
+  #dataset-list-filter {
+    display: flex;
+    flex-direction: column;
+    padding: 12px 10px;
+    margin: 0 -5px;
+
+    #dataset-list-buttons {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+
+      .dataset-list-button {
+        flex: 1;
+        text-align: center;
+        margin: 0 5px 10px 5px;
+        font-weight: 400;
+        font-size: .8rem;
+        padding: 0.5rem;
+        min-width: unset;
       }
     }
 
-    a {
-      padding: 9px;
+    .filter-input-container {
+      width: 100%;
+      display: flex;
+      input {
+        width: 100%;
+        border: 1px solid #e1e4e8;
+        border-radius: 3px;
+        padding: 2px 5px;
+        margin: 0 5px;
+
+        &:focus {
+          outline: none;
+          border-color: $primary;
+          box-shadow: 0 0 0 1px #afafaf4d;
+        }
+      }
     }
+  }
+
+  a {
+    position: absolute;
+    right: 18px;
+    line-height: 1.7rem;
   }
 
   #list {
@@ -28,23 +74,6 @@
     .strong-message {
       font-weight: 500;
       font-size: 0.8rem;
-    }
-  }
-
-  #buttons {
-    display: flex;
-    justify-content: space-between;
-    border-bottom: $list-item-bottom-border;
-
-    .dataset-list-button {
-      flex: 1;
-      text-align: center;
-      border-right: $list-item-bottom-border;
-      padding: 4px;
-
-      &:last-child {
-        border-right: none;
-      }
     }
   }
 }

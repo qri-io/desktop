@@ -2,7 +2,7 @@ import * as React from 'react'
 import { Action } from 'redux'
 import classNames from 'classnames'
 import ReactTooltip from 'react-tooltip'
-import { remote, ipcRenderer, shell } from 'electron'
+import { remote, ipcRenderer, shell, clipboard } from 'electron'
 import { CSSTransition } from 'react-transition-group'
 import { faDiscord } from '@fortawesome/free-brands-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -52,14 +52,12 @@ export interface DatasetProps {
   fetchWorkingStatus: () => Promise<ApiAction>
   resetBody: () => Promise<ApiAction>
   resetOtherComponents: () => Promise<ApiAction>
-  publishDataset: (dataset: WorkingDataset) => Action
-  unpublishDataset: (dataset: WorkingDataset) => Action
   signout: () => Action
 }
 
 interface DatasetState {
   peername: string
-  name: string
+  name: string | null
   saveIsLoading: boolean
   workingDatasetIsLoading: boolean
   activeTab: string
@@ -68,6 +66,42 @@ interface DatasetState {
 
 const logo = require('../assets/qri-blob-logo-tiny.png') //eslint-disable-line
 const defaultPhoto = require('../assets/default_46x46.png') //eslint-disable-line
+
+interface CurrentDatasetProps {
+  onClick: () => {}
+  expanded: boolean
+  width?: number
+  peername: string | null
+  name: string | null
+}
+
+export const CurrentDataset: React.FunctionComponent<CurrentDatasetProps> = (props) => {
+  const { onClick, expanded, width, peername, name } = props
+  const alias = (peername !== '' && name !== '') ? `${peername}/${name}` : ''
+
+  return (
+    <div
+      className={classNames('current-dataset', 'header-column', 'sidebar-list-item', { 'expanded': expanded })}
+      onClick={onClick}
+      style={{ width: width || '100%' }}
+    >
+      <div className='header-column-icon'>
+        <img className='app-loading-blob' src={logo} />
+      </div>
+      <div className='header-column-text'>
+        <div className="label">{name ? 'Current Dataset' : 'Choose a Dataset'}</div>
+        <div className="name">{alias}</div>
+      </div>
+      <div className='header-column-arrow'>
+        {
+          expanded
+            ? <div className="arrow collapse">&nbsp;</div>
+            : <div className="arrow expand">&nbsp;</div>
+        }
+      </div>
+    </div>
+  )
+}
 
 export default class Dataset extends React.Component<DatasetProps> {
   // component state is used to compare changes when a new dataset is selected
@@ -183,10 +217,12 @@ export default class Dataset extends React.Component<DatasetProps> {
   }
 
   publishUnpublishDataset () {
-    const { publishDataset, unpublishDataset, selections, workingDataset } = this.props
+    const { setModal, selections } = this.props
     const { published } = selections
 
-    published ? unpublishDataset(workingDataset) : publishDataset(workingDataset)
+    published
+      ? setModal({ type: ModalType.UnpublishDataset })
+      : setModal({ type: ModalType.PublishDataset })
   }
 
   render () {
@@ -244,8 +280,14 @@ export default class Dataset extends React.Component<DatasetProps> {
           icon={faCloud}
           label='View in Cloud'
           items={[
-            <a key={0} onClick={(e) => { shell.openExternal(`${QRI_CLOUD_URL}/${workingDataset.peername}/${workingDataset.name}`); e.stopPropagation() }}>Copy Link</a>,
-            <a key={1} onClick={this.publishUnpublishDataset}>Unpublish</a>
+            <li key={0} onClick={(e) => {
+              e.stopPropagation()
+              clipboard.writeText(`${QRI_CLOUD_URL}/${workingDataset.peername}/${workingDataset.name}`)
+            }}>Copy Link</li>,
+            <li key={1} onClick={(e) => {
+              e.stopPropagation()
+              setModal({ type: ModalType.UnpublishDataset })
+            }}>Unpublish</li>
           ]}
         />
       ) : (
@@ -255,37 +297,24 @@ export default class Dataset extends React.Component<DatasetProps> {
           icon={faCloudUploadAlt}
           tooltip={'Publish this dataset on the Qri network'}
           disabled={workingDataset.history.value.length === 0}
-          onClick={this.publishUnpublishDataset}
+          onClick={() => { setModal({ type: ModalType.PublishDataset }) }}
         />
       )
     }
-    const alias = (peername !== '' && name !== '') ? `${peername}/${name}` : ''
+
     return (
       <div id='dataset-container'>
         {/* Show the overlay to dim the rest of the app when the sidebar is open */}
         {showDatasetList && <div className='overlay' onClick={toggleDatasetList}></div>}
         <div className='header'>
           <div className='header-left'>
-            <div
-              className={classNames('current-dataset', 'header-column', 'sidebar-list-item', { 'expanded': showDatasetList })}
+            <CurrentDataset
               onClick={toggleDatasetList}
-              style={{ width: datasetSidebarWidth }}
-            >
-              <div className='header-column-icon'>
-                <img className='app-loading-blob' src={logo} />
-              </div>
-              <div className='header-column-text'>
-                <div className="label">{name ? 'Current Dataset' : 'Choose a Dataset'}</div>
-                <div className="name">{alias}</div>
-              </div>
-              <div className='header-column-arrow'>
-                {
-                  showDatasetList
-                    ? <div className="arrow collapse">&nbsp;</div>
-                    : <div className="arrow expand">&nbsp;</div>
-                }
-              </div>
-            </div>
+              expanded={showDatasetList}
+              width={datasetSidebarWidth}
+              peername={peername}
+              name={name}
+            />
             {linkButton}
             {publishButton}
           </div>
@@ -299,9 +328,9 @@ export default class Dataset extends React.Component<DatasetProps> {
               icon={<div className='header-column-icon' ><img src={userphoto || defaultPhoto} /></div>}
               label={username}
               items={[
-                <ExternalLink key={0} href={`${QRI_CLOUD_URL}/${username}`}>Public Profile</ExternalLink>,
-                <ExternalLink key={1} href={`${QRI_CLOUD_URL}/settings`}>Settings</ExternalLink>,
-                <a key={2} onClick={signout}>Sign Out</a>
+                <li key={0}><ExternalLink href={`${QRI_CLOUD_URL}/${username}`}>Public Profile</ExternalLink></li>,
+                <li key={1}><ExternalLink href={`${QRI_CLOUD_URL}/settings`}>Settings</ExternalLink></li>,
+                <li key={2}><a onClick={signout}>Sign Out</a></li>
               ]}
             />
           </div>
@@ -360,7 +389,7 @@ export default class Dataset extends React.Component<DatasetProps> {
         {
           showDatasetList && (
             <div
-              className='dataset-list'
+              id='dataset-list'
               style={{ width: datasetSidebarWidth }}
             >
               <DatasetListContainer setModal={setModal} />

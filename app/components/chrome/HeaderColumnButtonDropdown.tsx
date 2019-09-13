@@ -15,11 +15,16 @@ const HeaderColumnButtonDropdown: React.FunctionComponent<HeaderColumnButtonDrop
   const dropdown: any = React.useRef(null)
 
   const handleClick = (e: MouseEvent) => {
+    // check whether an app-wide click is in this component
     if (dropdown.current !== null && dropdown.current.contains(e.target)) {
+      // if it's in this component, but is a dropdown item, close the dropdown
+      const element = e.target as HTMLElement
+      if (element.tagName === 'LI') setShowMenu(false)
+
       // inside click
       return
     }
-    // outside click
+    // close the dropdown if the click happened outside of this component
     setShowMenu(false)
   }
 
@@ -58,9 +63,7 @@ const HeaderColumnButtonDropdown: React.FunctionComponent<HeaderColumnButtonDrop
       </div>
       {showMenu && (
         <ul className='dropdown'>
-          {items.map((elem, i) => (
-            <li key={i}>{elem}</li>
-          ))}
+          {items.map((elem) => (elem))}
         </ul>)
       }
     </div>
