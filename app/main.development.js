@@ -81,7 +81,7 @@ app.on('ready', () =>
 
       mainWindow = new BrowserWindow({
         show: false,
-        width: 1024,
+        width: process.env.NODE_ENV === 'development' ? 1424 : 1024,
         height: 728,
         minWidth: 960,
         minHeight: 660,
