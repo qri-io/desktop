@@ -13,6 +13,8 @@ import AddDataset from './modals/AddDataset'
 import LinkDataset from './modals/LinkDataset'
 import RemoveDataset from './modals/RemoveDataset'
 import CreateDataset from './modals/CreateDataset'
+import PublishDataset from './modals/PublishDataset'
+import UnpublishDataset from './modals/UnpublishDataset'
 import RoutesContainer from '../containers/RoutesContainer'
 
 // import models
@@ -50,7 +52,8 @@ export interface AppProps {
   pingApi: () => Promise<ApiAction>
   setModal: (modal: Modal) => Action
   removeDatasetAndFetch: (peername: string, name: string, removeFiles: boolean) => Promise<ApiAction>
-
+  publishDataset: () => Promise<ApiAction>
+  unpublishDataset: () => Promise<ApiAction>
 }
 
 interface AppState {
@@ -117,7 +120,6 @@ class App extends React.Component<AppProps, AppState> {
   private renderModal (): JSX.Element | null {
     const { modal, setModal } = this.props
     if (!modal) return null
-
     let modalComponent = <div />
 
     switch (modal.type) {
@@ -126,6 +128,32 @@ class App extends React.Component<AppProps, AppState> {
           <RemoveDataset
             modal={modal}
             onSubmit={this.props.removeDatasetAndFetch}
+            onDismissed={async () => setModal(noModalObject)}
+          />
+        )
+        break
+      }
+
+      case ModalType.PublishDataset: {
+        const { peername, name } = this.props.workingDataset
+        modalComponent = (
+          <PublishDataset
+            peername={peername}
+            name={name}
+            onSubmit={this.props.publishDataset}
+            onDismissed={async () => setModal(noModalObject)}
+          />
+        )
+        break
+      }
+
+      case ModalType.UnpublishDataset: {
+        const { peername, name } = this.props.workingDataset
+        modalComponent = (
+          <UnpublishDataset
+            peername={peername}
+            name={name}
+            onSubmit={this.props.unpublishDataset}
             onDismissed={async () => setModal(noModalObject)}
           />
         )
