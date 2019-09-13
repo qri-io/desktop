@@ -80,8 +80,8 @@ export default (state = initialState, action: AnyAction) => {
 
       localStore().setItem('peername', peername)
       localStore().setItem('name', name)
-      localStore().setItem('isLinked', isLinked)
-      localStore().setItem('published', published)
+      localStore().setItem('isLinked', JSON.stringify(!!isLinked))
+      localStore().setItem('published', JSON.stringify(!!published))
       localStore().setItem('activeTab', newActiveTab)
 
       return Object.assign({}, state, {
@@ -132,30 +132,30 @@ export default (state = initialState, action: AnyAction) => {
     case ADD_SUCC:
       localStore().setItem('peername', action.payload.data.peername)
       localStore().setItem('name', action.payload.data.name)
-      localStore().setItem('isLinked', action.payload.data.isLinked)
-      localStore().setItem('published', action.payload.data.published)
+      localStore().setItem('isLinked', JSON.stringify(!!action.payload.data.isLinked))
+      localStore().setItem('published', JSON.stringify(!!action.payload.data.published))
       localStore().setItem('activeTab', 'history')
       return {
         ...state,
         peername: action.payload.data.peername,
         name: action.payload.data.name,
-        isLinked: action.payload.data.isLinked,
-        published: action.payload.data.published,
+        isLinked: !!action.payload.data.isLinked,
+        published: !!action.payload.data.published,
         activeTab: 'history'
       }
       // when a new dataset is created, make it the selected dataset
     case INIT_SUCC:
       localStore().setItem('peername', action.payload.data.peername)
       localStore().setItem('name', action.payload.data.name)
-      localStore().setItem('isLinked', action.payload.data.isLinked)
-      localStore().setItem('published', action.payload.data.published)
+      localStore().setItem('isLinked', JSON.stringify(!!action.payload.data.isLinked))
+      localStore().setItem('published', JSON.stringify(!!action.payload.data.published))
       localStore().setItem('activeTab', 'status')
       return {
         ...state,
         peername: action.payload.data.peername,
         name: action.payload.data.name,
-        isLinked: action.payload.data.isLinked,
-        published: action.payload.data.published,
+        isLinked: !!action.payload.data.isLinked,
+        published: !!action.payload.data.published,
         activeTab: 'status'
       }
 

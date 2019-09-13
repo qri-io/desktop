@@ -94,17 +94,14 @@ class App extends React.Component<AppProps, AppState> {
       }, 750)
     }
     this.props.fetchSession()
-      .then(async () => this.props.fetchMyDatasets())
+      .then(async () => {
+        if (this.props.qriCloudAuthenticated) { this.props.fetchMyDatasets() }
+      })
   }
 
   static getDerivedStateFromProps (NextProps: AppProps, PrevState: AppState) {
     if (PrevState.sessionID !== NextProps.sessionID || PrevState.peername !== NextProps.peername) {
-      // clear selection if the sessionID has changed from one user to another
-      // if it has gone from no user (initial state) to a user, don't re-fetch
-      if (PrevState.sessionID !== '') {
-        NextProps.setWorkingDataset('', '', false)
-          .then(async () => NextProps.fetchMyDatasets(1))
-      }
+      NextProps.fetchMyDatasets()
       return { sessionID: NextProps.sessionID, peername: NextProps.peername }
     }
     return null

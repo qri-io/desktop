@@ -21,7 +21,7 @@ const initialState: WorkingDataset = {
       pageInfo: {
         isFetching: true,
         page: 0,
-        pageSize: 100,
+        pageSize: 0,
         fetchedAll: false
       }
     },
@@ -48,7 +48,6 @@ const [DATASET_HISTORY_REQ, DATASET_HISTORY_SUCC, DATASET_HISTORY_FAIL] = apiAct
 const [DATASET_STATUS_REQ, DATASET_STATUS_SUCC, DATASET_STATUS_FAIL] = apiActionTypes('status')
 const [DATASET_BODY_REQ, DATASET_BODY_SUCC, DATASET_BODY_FAIL] = apiActionTypes('body')
 const [RESETOTHERCOMPONENTS_REQ, RESETOTHERCOMPONENTS_SUCC, RESETOTHERCOMPONENTS_FAIL] = apiActionTypes('resetOtherComponents')
-const [, ADD_SUCC] = apiActionTypes('add')
 
 export const RESET_BODY = 'RESET_BODY'
 
@@ -56,7 +55,7 @@ const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction
   switch (action.type) {
     case DATASET_REQ:
       return initialState
-    case DATASET_SUCC || ADD_SUCC: // when adding a new dataset, set it as the new workingDataset
+    case DATASET_SUCC: // when adding a new dataset, set it as the new workingDataset
       const { name, path, peername, published, dataset, fsiPath } = action.payload.data
 
       // set electron menus
@@ -77,12 +76,7 @@ const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction
         structure: dataset && dataset.structure ? dataset.structure : {},
         isLoading: false,
         components: {
-          body: {
-            pageInfo: {
-              ...state.components.body.pageInfo
-            },
-            value: state.components.body.value
-          },
+          body: initialState.components.body,
           meta: {
             value: dataset && dataset.meta ? dataset.meta : {}
           },
@@ -103,7 +97,7 @@ const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction
         history: {
           ...state.history,
           pageInfo: withPagination(action, state.history.pageInfo),
-          value: action.pageInfo.page === 1 ? [] : [].concat(state.history.value)
+          value: action.pageInfo.page === 1 ? [] : state.history.value
         }
       }
     case DATASET_HISTORY_SUCC:
@@ -112,9 +106,10 @@ const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction
         hasHistory: true,
         history: {
           ...state.history,
-          value: state.history.value
-            ? state.history.value.concat(action.payload.data)
-            : action.payload.data,
+          value: [
+            ...state.history.value,
+            ...action.payload.data
+          ],
           pageInfo: withPagination(action, state.history.pageInfo)
         }
       }
@@ -150,24 +145,12 @@ const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction
         components: {
           ...state.components,
           body: {
-            ...state.components.body,
-            pageInfo: {
-              ...state.components.body.pageInfo,
-              isFetching: true,
-              fetchedAll: false
-            }
+            value: action.pageInfo.page === 1 ? [] : state.components.body.value,
+            pageInfo: withPagination(action, state.components.body.pageInfo)
           }
         }
       }
     case DATASET_BODY_SUCC:
-      const fetchedAll = action.payload.data.data.length < state.components.body.pageInfo.pageSize
-
-      if (action.payload.request.pageInfo) {
-        if (action.payload.request.pageInfo.page <= state.components.body.pageInfo.page) {
-          return state
-        }
-      }
-
       return {
         ...state,
         components: {
@@ -178,12 +161,7 @@ const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction
               ...state.components.body.value,
               ...action.payload.data.data
             ],
-            pageInfo: {
-              ...state.components.body.pageInfo,
-              page: state.components.body.pageInfo.page + 1, // eslint-disable-line
-              fetchedAll,
-              isFetching: false
-            }
+            pageInfo: withPagination(action, state.components.body.pageInfo)
           }
         }
       }
@@ -194,11 +172,7 @@ const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction
           ...state.components,
           body: {
             ...state.body,
-            error: action.payload.err,
-            pageInfo: {
-              ...state.components.body.pageInfo,
-              isFetching: false
-            }
+            pageInfo: withPagination(action, state.components.body.pageInfo)
           }
         }
       }

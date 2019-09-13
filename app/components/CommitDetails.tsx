@@ -75,6 +75,9 @@ const CommitDetails: React.FunctionComponent<CommitDetailsProps> = ({
     if (isLoadingRef.current !== commitDetails.isLoading) {
       isLoadingRef.current = commitDetails.isLoading
     }
+    if (loading && isLoadingRef.current === false) {
+      setLoading(false)
+    }
   }, [commitDetails.isLoading])
 
   const { status } = commitDetails

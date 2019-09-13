@@ -1,6 +1,7 @@
 import { Reducer, AnyAction } from 'redux'
 import { CommitDetails } from '../models/store'
 import { apiActionTypes } from '../store/api'
+import { withPagination } from './page'
 
 const initialState: CommitDetails = {
   path: '',
@@ -16,7 +17,7 @@ const initialState: CommitDetails = {
       pageInfo: {
         isFetching: true,
         page: 0,
-        pageSize: 100,
+        pageSize: 0,
         fetchedAll: false
       }
     },
@@ -48,9 +49,7 @@ const commitDetailsReducer: Reducer = (state = initialState, action: AnyAction):
         structure: dataset.structure,
         isLoading: false,
         components: {
-          body: {
-            ...state.components.body
-          },
+          body: initialState.components.body,
           meta: {
             value: dataset.meta
           },
@@ -83,16 +82,12 @@ const commitDetailsReducer: Reducer = (state = initialState, action: AnyAction):
         components: {
           ...state.components,
           body: {
-            ...state.components.body,
-            pageInfo: {
-              ...state.components.body.pageInfo,
-              isFetching: true
-            }
+            value: action.pageInfo.page === 1 ? [] : state.components.body.value,
+            pageInfo: withPagination(action, state.components.body.pageInfo)
           }
         }
       }
     case COMMITBODY_SUCC:
-      const fetchedAll = action.payload.data.data.length < state.components.body.pageInfo.pageSize
       return {
         ...state,
         components: {
@@ -103,12 +98,7 @@ const commitDetailsReducer: Reducer = (state = initialState, action: AnyAction):
               ...state.components.body.value,
               ...action.payload.data.data
             ],
-            pageInfo: {
-              ...state.components.body.pageInfo,
-              page: state.components.body.pageInfo.page + 1, // eslint-disable-line
-              fetchedAll,
-              isFetching: false
-            }
+            pageInfo: withPagination(action, state.components.body.pageInfo)
           }
         }
       }
@@ -119,11 +109,7 @@ const commitDetailsReducer: Reducer = (state = initialState, action: AnyAction):
           ...state.components,
           body: {
             ...state.body,
-            error: action.payload.err,
-            pageInfo: {
-              ...state.body.pageInfo,
-              isFetching: false
-            }
+            pageInfo: withPagination(action, state.components.body.pageInfo)
           }
         }
       }

@@ -21,47 +21,16 @@ export interface BodyProps {
   structure: Structure
 }
 
+function shouldDisplayTable (value: any[], structure: Structure) {
+  // if it's a CSV, or if JSON with depth of 2, render a table
+  return value && structure && (structure.format === 'csv' || structure.format === 'xlsx' || structure.depth === 2)
+}
+
 const Body: React.FunctionComponent<BodyProps> = ({ value, pageInfo, headers, structure, onFetch }) => {
-  if (!value || value.length === 0) {
-    return <SpinnerWithIcon loading={true} />
-  }
-
-  const [isLoadingFirstPage, setIsLoadingFirstPage] = React.useState(false)
-  const isLoadingFirstPageRef = React.useRef(pageInfo.page === 1 && pageInfo.isFetching)
-
-  const loadingTimeout = setTimeout(() => {
-    if (isLoadingFirstPageRef.current) {
-      setIsLoadingFirstPage(true)
-    }
-    clearTimeout(loadingTimeout)
-  }, 250)
-
-  React.useEffect(() => {
-    if (pageInfo.page === 1 && pageInfo.isFetching) {
-      isLoadingFirstPageRef.current = true
-    }
-  }, [pageInfo.page, pageInfo.isFetching])
+  const isLoadingFirstPage = (pageInfo.page === 1 && pageInfo.isFetching)
 
   const handleScrollToBottom = () => {
     onFetch(pageInfo.page + 1, pageInfo.pageSize)
-  }
-
-  let bodyContent
-  // if it's a CSV, or if JSON with depth of 2, render a table
-  if (value && structure && (structure.format === 'csv' || structure.depth === 2)) {
-    bodyContent = (
-      <HandsonTable
-        headers={headers}
-        body={value}
-        onScrollToBottom={() => { handleScrollToBottom() }}
-      />
-    )
-  } else { // otherwise use our nifty JSON renderer
-    bodyContent = <ReactJson
-      name={null}
-      src={value}
-      displayDataTypes={false}
-    />
   }
 
   return (
@@ -72,7 +41,18 @@ const Body: React.FunctionComponent<BodyProps> = ({ value, pageInfo, headers, st
         classNames='fade'
       >
         <div id='transition-wrap'>
-          {bodyContent}
+          {shouldDisplayTable(value, structure)
+            ? <HandsonTable
+              headers={headers}
+              body={value}
+              onScrollToBottom={handleScrollToBottom}
+            />
+            : <ReactJson
+              name={null}
+              src={value}
+              displayDataTypes={false}
+            />
+          }
           <Toast
             show={pageInfo.isFetching && pageInfo.page > 0}
             type={ToastTypes.message}

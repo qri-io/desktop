@@ -1,12 +1,17 @@
 import { Action, AnyAction } from 'redux'
 
 import { CALL_API, ApiAction, ApiActionThunk, chainSuccess, ApiResponseAction } from '../store/api'
-import { DatasetSummary, ComponentStatus, ComponentState, WorkingDataset, ComponentType } from '../models/store'
-import { Dataset, Commit } from '../models/dataset'
+import { DatasetSummary, WorkingDataset, ComponentType, PageInfo } from '../models/store'
 import { openToast } from './ui'
 import { setWorkingDataset, setSelectedListItem, clearSelection, setActiveTab } from './selections'
+import {
+  mapDataset,
+  mapRecord,
+  mapDatasetSummary,
+  mapStatus,
+  mapHistory
+} from './mappingFuncs'
 
-import { RESET_MY_DATASETS } from '../reducers/myDatasets'
 import getActionType from '../utils/actionType'
 
 const pageSizeDefault = 50
@@ -19,9 +24,7 @@ export function pingApi (): ApiActionThunk {
       [CALL_API]: {
         endpoint: 'health',
         method: 'GET',
-        map: (data: Record<string, string>): any => { //eslint-disable-line
-          return data
-        }
+        map: mapRecord
       }
     }
     return dispatch(pingAction)
@@ -70,9 +73,7 @@ export function fetchModifiedComponents (): ApiActionThunk {
           peername,
           name
         },
-        map: (data: Record<string, string>): Dataset => {
-          return data as Dataset
-        }
+        map: mapDataset
       }
     }
     response = await dispatch(resetComponents)
@@ -92,9 +93,7 @@ export function fetchModifiedComponents (): ApiActionThunk {
           name,
           path
         },
-        map: (data: Record<string, string>): Dataset => {
-          return data as Dataset
-        }
+        map: mapDataset
       }
     }
     response = await dispatch(resetBody)
@@ -103,26 +102,29 @@ export function fetchModifiedComponents (): ApiActionThunk {
   }
 }
 
-// clears the dataset list
-function resetMyDatasets (): Action {
-  return {
-    type: RESET_MY_DATASETS
+function actionWithPagination (invalidatePagination: boolean, page: number, pageInfo: PageInfo): ActionWithPaginationRes {
+  // if we aren't invalidating the pagination,
+  // and we have already fetched this page,
+  // or we've already fetched all the entries
+  // bail early!
+  if (
+    invalidatePagination && (
+      page <= pageInfo.page ||
+    pageInfo.fetchedAll)
+  ) {
+    return { page: 0, bailEarly: true }
   }
+  // if we are invalidating the pagination, start the pagination at 1!
+  if (invalidatePagination) return { page: 1, bailEarly: true }
+  return { page, bailEarly: false }
 }
 
 export function fetchMyDatasets (page: number = 1, pageSize: number = pageSizeDefault, invalidatePagination: boolean = false): ApiActionThunk {
   return async (dispatch, getState) => {
-    if (invalidatePagination) {
-      dispatch(resetMyDatasets())
-    }
     const state = getState()
-    if (page !== 1 &&
-          state &&
-          state.myDatasets &&
-          state.myDatasets.pageInfo &&
-          state.myDatasets.pageInfo.fetchedAll) {
-      return new Promise(resolve => resolve())
-    }
+    const { page: confirmedPage, bailEarly } = actionWithPagination(invalidatePagination, page, state.myDatasets.pageInfo)
+
+    if (bailEarly) return new Promise(resolve => resolve())
 
     const listAction: ApiAction = {
       type: 'list',
@@ -130,19 +132,10 @@ export function fetchMyDatasets (page: number = 1, pageSize: number = pageSizeDe
         endpoint: 'list',
         method: 'GET',
         pageInfo: {
-          page,
+          page: confirmedPage,
           pageSize
         },
-        map: (data: any[]): DatasetSummary[] => {
-          return data.map((ref: any) => ({
-            title: (ref.dataset && ref.dataset.meta && ref.dataset.meta.title),
-            peername: ref.peername,
-            name: ref.name,
-            path: ref.path,
-            isLinked: !!ref.fsiPath,
-            published: ref.published
-          }))
-        }
+        map: mapDatasetSummary
       }
     }
 
@@ -169,9 +162,7 @@ export function fetchWorkingDataset (): ApiActionThunk {
           peername,
           name
         },
-        map: (data: Record<string, string>): Dataset => {
-          return data as Dataset
-        }
+        map: mapDataset
       }
     }
     // the action being dispatched will be intercepted by api middleware and return a promise
@@ -220,9 +211,7 @@ export function fetchCommitDataset (): ApiActionThunk {
           name: selections.name,
           path: commit
         },
-        map: (data: Record<string, string>): Dataset => {
-          return data as Dataset
-        }
+        map: mapDataset
       }
     })
 
@@ -245,15 +234,7 @@ export function fetchCommitStatus (): ApiActionThunk {
           name: selections.name,
           path: commit
         },
-        map: (data: Array<Record<string, string>>): ComponentStatus[] => {
-          return data.map((d) => {
-            return {
-              filepath: d.sourceFile,
-              component: d.component,
-              status: d.type as ComponentState
-            }
-          })
-        }
+        map: mapStatus
       }
     })
 
@@ -261,18 +242,14 @@ export function fetchCommitStatus (): ApiActionThunk {
   }
 }
 
-export function fetchWorkingHistory (page: number = 1, pageSize: number = pageSizeDefault): ApiActionThunk {
+export function fetchWorkingHistory (page: number = 1, pageSize: number = pageSizeDefault, invalidatePagination: boolean = false): ApiActionThunk {
   return async (dispatch, getState) => {
     const state = getState()
-    // if page === 1, this is a new history
-    if (page !== 1 &&
-        state &&
-        state.workingDataset &&
-        state.workingDataset.history &&
-        state.workingDataset.history.pageInfo &&
-        state.workingDataset.history.pageInfo.fetchedAll) {
-      return new Promise(resolve => resolve())
-    }
+
+    const { page: confirmedPage, bailEarly } = actionWithPagination(invalidatePagination, page, state.workingDataset.history.pageInfo)
+
+    if (bailEarly) return new Promise(resolve => resolve())
+
     const { selections } = getState()
     const { peername, name, isLinked } = selections
     const action = {
@@ -286,19 +263,10 @@ export function fetchWorkingHistory (page: number = 1, pageSize: number = pageSi
           name: name
         },
         pageInfo: {
-          page,
+          page: confirmedPage,
           pageSize
         },
-        map: (data: any[]): Commit[] => data.map((ref): Commit => {
-          const { author, message, timestamp, title } = ref.dataset.commit
-          return {
-            author,
-            message,
-            timestamp,
-            title,
-            path: ref.path
-          }
-        })
+        map: mapHistory
       }
     }
 
@@ -320,16 +288,7 @@ export function fetchWorkingStatus (): ApiActionThunk {
           peername: peername,
           name: name
         },
-        map: (data: Array<Record<string, string>>): ComponentStatus[] => {
-          return data.map((d) => {
-            return {
-              filepath: d.sourceFile,
-              component: d.component,
-              status: d.type as ComponentState,
-              mtime: new Date(d.mtime)
-            }
-          })
-        }
+        map: mapStatus
       }
     }
 
@@ -337,15 +296,20 @@ export function fetchWorkingStatus (): ApiActionThunk {
   }
 }
 
-export function fetchBody (page: number = 1, pageSize: number = bodyPageSizeDefault): ApiActionThunk {
+interface ActionWithPaginationRes {
+  page: number
+  bailEarly: boolean
+}
+
+export function fetchBody (page: number = 1, pageSize: number = bodyPageSizeDefault, invalidatePagination: boolean = false): ApiActionThunk {
   return async (dispatch, getState) => {
     const { workingDataset, selections } = getState()
     const { peername, name, isLinked } = selections
     const { path } = workingDataset
 
-    if (workingDataset.components.body.pageInfo.fetchedAll) {
-      return new Promise(resolve => resolve())
-    }
+    const { page: confirmedPage, bailEarly } = actionWithPagination(invalidatePagination, page, workingDataset.components.body.pageInfo)
+
+    if (bailEarly) return new Promise(resolve => resolve())
 
     const action = {
       type: 'body',
@@ -353,7 +317,7 @@ export function fetchBody (page: number = 1, pageSize: number = bodyPageSizeDefa
         endpoint: 'body',
         method: 'GET',
         pageInfo: {
-          page,
+          page: confirmedPage,
           pageSize
         },
         params: { fsi: isLinked },
@@ -362,9 +326,7 @@ export function fetchBody (page: number = 1, pageSize: number = bodyPageSizeDefa
           name,
           path
         },
-        map: (data: Record<string, string>): Dataset => {
-          return data as Dataset
-        }
+        map: mapDataset
       }
     }
 
@@ -372,14 +334,14 @@ export function fetchBody (page: number = 1, pageSize: number = bodyPageSizeDefa
   }
 }
 
-export function fetchCommitBody (page: number = 1, pageSize: number = bodyPageSizeDefault): ApiActionThunk {
+export function fetchCommitBody (page: number = 1, pageSize: number = bodyPageSizeDefault, invalidatePagination: boolean = false): ApiActionThunk {
   return async (dispatch, getState) => {
     const { selections, commitDetails } = getState()
     let { peername, name, commit: path } = selections
 
-    if (commitDetails.components.body.pageInfo.fetchedAll) {
-      return new Promise(resolve => resolve())
-    }
+    const { page: confirmedPage, bailEarly } = actionWithPagination(invalidatePagination, page, commitDetails.components.body.pageInfo)
+
+    if (bailEarly) return new Promise(resolve => resolve())
 
     const action = {
       type: 'commitBody',
@@ -387,7 +349,7 @@ export function fetchCommitBody (page: number = 1, pageSize: number = bodyPageSi
         endpoint: 'body',
         method: 'GET',
         pageInfo: {
-          page,
+          page: confirmedPage,
           pageSize
         },
         segments: {
@@ -395,9 +357,7 @@ export function fetchCommitBody (page: number = 1, pageSize: number = bodyPageSi
           name,
           path
         },
-        map: (data: Record<string, string>): Dataset => {
-          return data as Dataset
-        }
+        map: mapDataset
       }
     }
 
@@ -445,7 +405,8 @@ export function addDataset (peername: string, name: string): ApiActionThunk {
         segments: {
           peername,
           name
-        }
+        },
+        map: mapDataset
       }
     }
     return dispatch(action)
@@ -484,7 +445,8 @@ export function initDataset (sourcebodypath: string, name: string, dir: string, 
           name,
           dir,
           mkdir
-        }
+        },
+        map: mapDataset
       }
     }
     return dispatch(action)
