@@ -11,12 +11,13 @@ import AppError from './AppError'
 import AppLoading from './AppLoading'
 import AddDataset from './modals/AddDataset'
 import LinkDataset from './modals/LinkDataset'
+import RemoveDataset from './modals/RemoveDataset'
 import CreateDataset from './modals/CreateDataset'
 import RoutesContainer from '../containers/RoutesContainer'
 
 // import models
 import { ApiAction } from '../store/api'
-import { Modal, ModalType, NoModal } from '../models/modals'
+import { Modal, ModalType, HideModal } from '../models/modals'
 import { Toast as IToast } from '../models/store'
 import { Dataset } from '../models/dataset'
 
@@ -48,6 +49,8 @@ export interface AppProps {
   setApiConnection: (status: number) => Action
   pingApi: () => Promise<ApiAction>
   setModal: (modal: Modal) => Action
+  removeDatasetAndFetch: (peername: string, name: string, removeFiles: boolean) => Promise<ApiAction>
+
 }
 
 interface AppState {
@@ -56,12 +59,16 @@ interface AppState {
   peername: string
 }
 
+const noModalObject: HideModal = {
+  type: ModalType.NoModal
+}
+
 class App extends React.Component<AppProps, AppState> {
   constructor (props: AppProps) {
     super(props)
 
     this.state = {
-      currentModal: NoModal,
+      currentModal: noModalObject,
       sessionID: this.props.sessionID,
       peername: this.props.peername
     }
@@ -108,50 +115,67 @@ class App extends React.Component<AppProps, AppState> {
   }
 
   private renderModal (): JSX.Element | null {
-    const { modal, setModal, workingDataset } = this.props
-    const { peername, name } = workingDataset
-    const Modal = modal
+    const { modal, setModal } = this.props
+    if (!modal) return null
 
-    if (!Modal) return null
-    return (
-      <div >
-        <CSSTransition
-          in={ModalType.CreateDataset === Modal.type}
-          classNames='fade'
-          component='div'
-          timeout={300}
-          unmountOnExit
-        >
+    let modalComponent = <div />
+
+    switch (modal.type) {
+      case ModalType.RemoveDataset: {
+        modalComponent = (
+          <RemoveDataset
+            modal={modal}
+            onSubmit={this.props.removeDatasetAndFetch}
+            onDismissed={async () => setModal(noModalObject)}
+          />
+        )
+        break
+      }
+
+      case ModalType.CreateDataset: {
+        modalComponent = (
           <CreateDataset
             onSubmit={this.props.initDataset}
-            onDismissed={async () => setModal(NoModal)}
+            onDismissed={async () => setModal(noModalObject)}
           />
-        </CSSTransition>
-        <CSSTransition
-          in={ModalType.AddDataset === Modal.type}
-          classNames='fade'
-          component='div'
-          timeout={300}
-          unmountOnExit
-        >
+        )
+        break
+      }
+
+      case ModalType.AddDataset: {
+        modalComponent = (
           <AddDataset
             onSubmit={this.props.addDataset}
-            onDismissed={async () => setModal(NoModal)}
+            onDismissed={async () => setModal(noModalObject)}
           />
-        </CSSTransition>
-        <CSSTransition
-          in={ModalType.LinkDataset === Modal.type}
-          classNames='fade'
-          component='div'
-          timeout={300}
-          unmountOnExit
-        >
+        )
+        break
+      }
+
+      case ModalType.LinkDataset: {
+        const { peername, name } = this.props.workingDataset
+        modalComponent = (
           <LinkDataset
             peername={peername}
             name={name}
             onSubmit={this.props.linkDataset}
-            onDismissed={async () => setModal(NoModal)}
+            onDismissed={async () => setModal(noModalObject)}
           />
+        )
+        break
+      }
+    }
+
+    return (
+      <div >
+        <CSSTransition
+          in={modal.type !== ModalType.NoModal}
+          classNames='fade'
+          component='div'
+          timeout={300}
+          unmountOnExit
+        >
+          {modalComponent}
         </CSSTransition>
       </div>
     )

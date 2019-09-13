@@ -591,19 +591,38 @@ export function discardChanges (component: ComponentType): ApiActionThunk {
   }
 }
 
-export function removeDataset (peername: string, name: string): ApiActionThunk {
+export function removeDataset (peername: string, name: string, removeFiles: boolean = false): ApiActionThunk {
   return async (dispatch) => {
     const action = {
-      type: 'add',
+      type: 'remove',
       [CALL_API]: {
-        endpoint: 'add',
-        method: 'POST',
+        endpoint: 'remove',
+        method: 'DELETE',
         segments: {
           peername,
           name
+        },
+        params: {
+          files: removeFiles
         }
       }
     }
     return dispatch(action)
+  }
+}
+
+// remove the specified dataset, then refresh the dataset list
+export function removeDatasetAndFetch (peername: string, name: string, removeFiles: boolean): ApiActionThunk {
+  return async (dispatch, getState) => {
+    const whenOk = chainSuccess(dispatch, getState)
+    let response: Action
+
+    try {
+      response = await removeDataset(peername, name, removeFiles)(dispatch, getState)
+      response = await whenOk(fetchMyDatasets())(response)
+    } catch (action) {
+      throw action
+    }
+    return response
   }
 }

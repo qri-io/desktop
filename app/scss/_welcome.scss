@@ -99,3 +99,15 @@
     }
   }
 }
+
+.checkbox-input-container {
+  display: flex;
+
+  input {
+    margin-right: 5px;
+  }
+
+  span {
+    font-size: 0.8rem;
+  }
+}
