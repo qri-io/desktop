@@ -1,7 +1,7 @@
 import { Action, AnyAction } from 'redux'
 
 import { CALL_API, ApiAction, ApiActionThunk, chainSuccess, ApiResponseAction } from '../store/api'
-import { DatasetSummary, WorkingDataset, ComponentType, PageInfo } from '../models/store'
+import { DatasetSummary, ComponentType, PageInfo } from '../models/store'
 import { openToast } from './ui'
 import { setWorkingDataset, setSelectedListItem, clearSelection, setActiveTab } from './selections'
 import {
@@ -474,9 +474,10 @@ export function initDatasetAndFetch (sourcebodypath: string, name: string, dir: 
   }
 }
 
-export function publishDataset (dataset: WorkingDataset): ApiActionThunk {
-  const { peername, name } = dataset
+export function publishDataset (): ApiActionThunk {
   return async (dispatch, getState) => {
+    const { workingDataset } = getState()
+    const { peername, name, linkpath } = workingDataset
     const whenOk = chainSuccess(dispatch, getState)
     const action = {
       type: 'publish',
@@ -493,8 +494,8 @@ export function publishDataset (dataset: WorkingDataset): ApiActionThunk {
     try {
       let response: Action
       response = await dispatch(action)
-      await whenOk(fetchWorkingDataset())(response)
-      response = await dispatch(setWorkingDataset(dataset.peername, dataset.name, dataset.linkpath !== 'repo', true))
+      await whenOk(fetchWorkingDatasetDetails())(response)
+      response = await dispatch(setWorkingDataset(peername, name, linkpath !== 'repo', true))
     } catch (action) {
       throw action
     }
@@ -503,9 +504,10 @@ export function publishDataset (dataset: WorkingDataset): ApiActionThunk {
   }
 }
 
-export function unpublishDataset (dataset: WorkingDataset): ApiActionThunk {
-  const { peername, name } = dataset
+export function unpublishDataset (): ApiActionThunk {
   return async (dispatch, getState) => {
+    const { workingDataset } = getState()
+    const { peername, name, linkpath } = workingDataset
     const whenOk = chainSuccess(dispatch, getState)
     const action = {
       type: 'unpublish',
@@ -522,8 +524,8 @@ export function unpublishDataset (dataset: WorkingDataset): ApiActionThunk {
     try {
       let response: Action
       response = await dispatch(action)
-      await whenOk(fetchWorkingDataset())(response)
-      response = await dispatch(setWorkingDataset(dataset.peername, dataset.name, dataset.linkpath !== 'repo', false))
+      await whenOk(fetchWorkingDatasetDetails())(response)
+      response = await dispatch(setWorkingDataset(peername, name, linkpath !== 'repo', false))
     } catch (action) {
       throw action
     }

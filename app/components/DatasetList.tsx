@@ -4,9 +4,10 @@ import classNames from 'classnames'
 import ContextMenuArea from 'react-electron-contextmenu'
 import { shell, MenuItemConstructorOptions } from 'electron'
 
+import { CurrentDataset } from './Dataset'
 import { MyDatasets, WorkingDataset } from '../models/store'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faUnlink, faTimes } from '@fortawesome/free-solid-svg-icons'
+import { faUnlink, faTimes, faDownload, faPlus, faFileAlt } from '@fortawesome/free-solid-svg-icons'
 
 import { Modal, ModalType } from '../models/modals'
 
@@ -63,9 +64,11 @@ export default class DatasetList extends React.Component<DatasetListProps> {
       workingDataset,
       setModal,
       setWorkingDataset,
+      toggleDatasetList,
       myDatasets
     } = this.props
     const { filter, value: datasets } = myDatasets
+    const { peername, name } = workingDataset
 
     const filteredDatasets = datasets.filter(({ peername, name, title }) => {
       // if there's a non-empty filter string, only show matches on peername, name, and title
@@ -80,8 +83,6 @@ export default class DatasetList extends React.Component<DatasetListProps> {
 
       return true
     })
-
-    console.log(filteredDatasets)
 
     const listContent = filteredDatasets.length > 0
       ? filteredDatasets.map(({ peername, name, title, fsipath, published }) => {
@@ -120,6 +121,9 @@ export default class DatasetList extends React.Component<DatasetListProps> {
             })}
             onClick={() => setWorkingDataset(peername, name, !!fsipath, published)}
           >
+            <div className='icon-column'>
+              <FontAwesomeIcon icon={faFileAlt} size='lg'/>
+            </div>
             <div className='text-column'>
               <div className='text'>{peername}/{name}</div>
               <div className='subtext'>{title || <br/>}</div>
@@ -141,48 +145,61 @@ export default class DatasetList extends React.Component<DatasetListProps> {
       : `You have ${filteredDatasets.length} local dataset${datasets.length > 1 ? 's' : ''}`
 
     return (
-      <div className='dataset-sidebar' >
-        <div>
-          <div id='buttons'>
-            <div
-              className='dataset-list-button'
-              onClick={() => { setModal({ type: ModalType.AddDataset }) }}
-              data-tip='Add an existing<br/>Qri dataset'
-            >
-              <span>Add a Dataset</span>
+      <>
+        <div id='dataset-list-header'>
+          <CurrentDataset
+            onClick={toggleDatasetList}
+            expanded={true}
+            peername={peername}
+            name={name}
+          />
+        </div>
+        <div className='dataset-sidebar' >
+          <div id='dataset-list-filter' className='sidebar-list-item'>
+            <div id='dataset-list-buttons'>
+              <div
+                className='dataset-list-button btn btn-primary'
+                onClick={() => { setModal({ type: ModalType.AddDataset }) }}
+                data-tip='Add an existing<br/>Qri dataset'
+              >
+                <FontAwesomeIcon icon={faDownload} />&nbsp;&nbsp;
+                <span>Add a Dataset</span>
+              </div>
+              <div
+                className='dataset-list-button btn btn-primary'
+                onClick={() => { setModal({ type: ModalType.CreateDataset }) }}
+                data-tip='Create a new Qri <br/>dataset from a data file'
+              >
+                <FontAwesomeIcon icon={faPlus} />&nbsp;&nbsp;
+                <span>New Dataset</span>
+              </div>
             </div>
-            <div
-              className='dataset-list-button'
-              onClick={() => { setModal({ type: ModalType.CreateDataset }) }}
-              data-tip='Create a new Qri <br/>dataset from a data file'
-            >
-              <span>New Dataset</span></div>
+            <div className='filter-input-container'>
+              <input
+                type='text'
+                name='filter'
+                placeholder='Filter datasets'
+                value={filter}
+                onChange={(e) => this.handleFilterChange(e)}
+              />
+              { filter !== '' &&
+                <a
+                  className='close'
+                  onClick={this.clearFilter}
+                  aria-label='close'
+                  role='button' ><FontAwesomeIcon icon={faTimes} size='lg'/>
+                </a>
+              }
+            </div>
+          </div>
+          <div id='list' onScroll={(e) => this.handleScroll(e)}>
+            {listContent}
+          </div>
+          <div id='list-footer'>
+            <div className='strong-message'>{countMessage}</div>
           </div>
         </div>
-        <div id='dataset-list-header' className='sidebar-list-item'>
-          <input
-            type='text'
-            name='filter'
-            placeholder='Filter datasets'
-            value={filter}
-            onChange={(e) => this.handleFilterChange(e)}
-          />
-          { filter !== '' &&
-            <a
-              className='close'
-              onClick={this.clearFilter}
-              aria-label='close'
-              role='button' ><FontAwesomeIcon icon={faTimes} size='lg'/>
-            </a>
-          }
-        </div>
-        <div id='list' onScroll={(e) => this.handleScroll(e)}>
-          {listContent}
-        </div>
-        <div id='list-footer'>
-          <div className='strong-message'>{countMessage}</div>
-        </div>
-      </div>
+      </>
     )
   }
 }

@@ -3,7 +3,9 @@ export enum ModalType {
   CreateDataset,
   AddDataset,
   LinkDataset,
-  RemoveDataset
+  RemoveDataset,
+  PublishDataset,
+  UnpublishDataset
 }
 
 interface CreateDatasetModal {
@@ -22,6 +24,14 @@ interface LinkDatasetModal {
   dirPath?: string
 }
 
+interface PublishDataset {
+  type: ModalType.PublishDataset
+}
+
+interface UnpublishDataset {
+  type: ModalType.UnpublishDataset
+}
+
 export interface RemoveDatasetModal {
   type: ModalType.RemoveDataset
   peername: string
@@ -33,4 +43,10 @@ export interface HideModal {
   type: ModalType.NoModal
 }
 
-export type Modal = CreateDatasetModal | AddDatasetModal | LinkDatasetModal | RemoveDatasetModal | HideModal
+export type Modal = CreateDatasetModal
+| AddDatasetModal
+| LinkDatasetModal
+| RemoveDatasetModal
+| PublishDataset
+| UnpublishDataset
+| HideModal

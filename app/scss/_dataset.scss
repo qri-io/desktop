@@ -31,6 +31,7 @@ $header-font-size: .9rem;
     flex-direction: row;
     flex-grow: 0;
     flex-shrink: 0;
+    z-index: 102;
 
     // Header Dropdown Menu
 
@@ -291,17 +292,6 @@ $header-font-size: .9rem;
     }
   }
 
-  .dataset-list {
-    z-index: 110;
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    width: 250px;
-    background-color: #fff;
-    padding-top: 50px;
-  }
-
   .user-image {
     height: 16px;
     width: 16px;
@@ -453,7 +443,6 @@ $header-font-size: .9rem;
   .icon-column {
     flex-basis: 27px;
     text-align: center;
-    color: #315379;
     display: flex;
     align-self: center;
   }
