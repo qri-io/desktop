@@ -2,9 +2,7 @@ import { Dataset, Commit } from '../models/dataset'
 import { DatasetSummary, ComponentStatus, ComponentState } from '../models/store'
 
 export function mapDataset (data: Record<string, string>): Dataset {
-  const dataset = data as Dataset
-  dataset.isLinked = !!dataset.fsiPath
-  return dataset
+  return data
 }
 
 export function mapRecord (data: any): Record<string, string> {
@@ -17,7 +15,7 @@ export function mapDatasetSummary (data: any[]): DatasetSummary[] {
     peername: ref.peername,
     name: ref.name,
     path: ref.path,
-    fsipath: ref.fsiPath,
+    fsiPath: ref.fsiPath,
     published: ref.published
   }))
 }

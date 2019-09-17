@@ -41,7 +41,7 @@ export interface AppProps {
   fetchMyDatasets: (page?: number, pageSize?: number) => Promise<ApiAction>
   addDataset: (peername: string, name: string) => Promise<ApiAction>
   linkDataset: (peername: string, name: string, dir: string) => Promise<ApiAction>
-  setWorkingDataset: (peername: string, name: string, isLinked: boolean) => Promise<ApiAction>
+  setWorkingDataset: (peername: string, name: string) => Promise<ApiAction>
   initDataset: (path: string, name: string, format: string) => Promise<ApiAction>
   acceptTOS: () => Action
   setQriCloudAuthenticated: () => Action

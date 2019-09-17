@@ -15,7 +15,7 @@ interface RemoveDatasetProps {
 
 const RemoveDataset: React.FunctionComponent<RemoveDatasetProps> = (props: RemoveDatasetProps) => {
   const { modal, onDismissed, onSubmit } = props
-  const { peername, name, fsipath } = modal
+  const { peername, name, fsiPath } = modal
 
   const [shouldRemoveFiles, setShouldRemoveFiles] = React.useState(false)
 
@@ -54,7 +54,7 @@ const RemoveDataset: React.FunctionComponent<RemoveDatasetProps> = (props: Remov
       <div className='content-wrap'>
         <div className='content'>
           <div className='content-main'>Are you sure you want to remove <br/> <div className='code-highlight'>{peername}/{name}</div>&nbsp;?</div>
-          { fsipath &&
+          { fsiPath &&
             <CheckboxInput
               name='shouldRemoveFiles'
               checked={shouldRemoveFiles}
@@ -65,7 +65,7 @@ const RemoveDataset: React.FunctionComponent<RemoveDatasetProps> = (props: Remov
         </div>
       </div>
       <p className='content-bottom submit-message'>
-        { fsipath && shouldRemoveFiles && <span>Qri will delete dataset files in <strong>{fsipath}</strong></span>}
+        { fsiPath && shouldRemoveFiles && <span>Qri will delete dataset files in <strong>{fsiPath}</strong></span>}
       </p>
       <Error text={error} />
       <Buttons

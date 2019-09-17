@@ -11,7 +11,7 @@ const initialState: WorkingDataset = {
   name: '',
   status: {},
   isLoading: true,
-  linkpath: '',
+  fsiPath: '',
   published: true,
   hasHistory: true,
   structure: null,
@@ -72,7 +72,7 @@ const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction
         path,
         peername,
         published,
-        linkpath: fsiPath || '',
+        fsiPath: fsiPath || '',
         structure: dataset && dataset.structure ? dataset.structure : {},
         isLoading: false,
         components: {

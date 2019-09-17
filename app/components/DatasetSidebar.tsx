@@ -64,13 +64,12 @@ const DatasetSidebar: React.FunctionComponent<DatasetSidebarProps> = (props) => 
     setHideCommitNudge
   } = props
 
-  const { path, linkpath, history, status } = workingDataset
+  const { path, fsiPath, history, status } = workingDataset
 
   const {
     activeTab,
     component: selectedComponent,
-    commitComponent: selectedCommit,
-    isLinked
+    commitComponent: selectedCommit
   } = selections
 
   const historyLoaded = !!history
@@ -133,8 +132,7 @@ const DatasetSidebar: React.FunctionComponent<DatasetSidebarProps> = (props) => 
               selectedComponent={selectedComponent}
               onComponentClick={setSelectedListItem}
               selectionType={'component' as ComponentType}
-              isLinked={isLinked}
-              linkpath={linkpath}
+              fsiPath={fsiPath}
               discardChanges={discardChanges}
             />
           </div>
@@ -187,7 +185,7 @@ const DatasetSidebar: React.FunctionComponent<DatasetSidebarProps> = (props) => 
         }
       </div>
       {
-        isLinked && activeTab === 'status' && <SaveFormContainer />
+        fsiPath && activeTab === 'status' && <SaveFormContainer />
       }
     </div>
   )

@@ -17,11 +17,11 @@ interface DatasetComponentProps {
   component: SelectedComponent
   componentStatus: ComponentStatus
   history?: boolean
-  linkpath?: string
+  fsiPath?: string
 }
 
 const DatasetComponent: React.FunctionComponent<DatasetComponentProps> = (props: DatasetComponentProps) => {
-  const { component: selectedComponent, componentStatus, isLoading, history = false, linkpath } = props
+  const { component: selectedComponent, componentStatus, isLoading, history = false, fsiPath } = props
 
   const hasParseError = componentStatus && componentStatus.status === 'parse error'
   const component = selectedComponent || 'meta'
@@ -50,7 +50,7 @@ const DatasetComponent: React.FunctionComponent<DatasetComponentProps> = (props:
           appear={true}
         >
           <div id='transition-wrap'>
-            <ParseError linkpath={linkpath || ''} filename={componentStatus && componentStatus.filepath} component={component} />
+            <ParseError fsiPath={fsiPath || ''} filename={componentStatus && componentStatus.filepath} component={component} />
           </div>
         </CSSTransition>
         <CSSTransition

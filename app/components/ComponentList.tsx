@@ -85,8 +85,7 @@ interface ComponentListProps {
   onComponentClick: (type: ComponentType, activeTab: string) => Action
   discardChanges?: (component: ComponentType) => ApiActionThunk
   selectionType: ComponentType
-  isLinked?: boolean
-  linkpath?: string
+  fsiPath?: string
 }
 
 const components = [
@@ -120,9 +119,8 @@ const ComponentList: React.FunctionComponent<ComponentListProps> = (props: Compo
     selectedComponent,
     onComponentClick,
     selectionType,
-    isLinked,
     discardChanges,
-    linkpath
+    fsiPath
   } = props
 
   return (
@@ -132,7 +130,7 @@ const ComponentList: React.FunctionComponent<ComponentListProps> = (props: Compo
       </div>
       {
         components.map(({ name, displayName, tooltip, icon }) => {
-          if (status[name] && isLinked) {
+          if (status[name] && !!fsiPath) {
             const { filepath, status: fileStatus } = status[name]
 
             // if filepath is the same as the component name, we are looking at a
@@ -157,15 +155,15 @@ const ComponentList: React.FunctionComponent<ComponentListProps> = (props: Compo
               />
             )
 
-            if (discardChanges && linkpath) {
+            if (discardChanges && fsiPath) {
               const menuItems: MenuItemConstructorOptions[] = [
                 {
                   label: 'Open in Finder',
-                  click: () => { shell.showItemInFolder(`${linkpath}/${filename}`) }
+                  click: () => { shell.showItemInFolder(`${fsiPath}/${filename}`) }
                 },
                 {
                   label: 'Copy File Path',
-                  click: () => { clipboard.writeText(`${linkpath}/${filename}`) }
+                  click: () => { clipboard.writeText(`${fsiPath}/${filename}`) }
                 }
               ]
 
