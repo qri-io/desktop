@@ -3,7 +3,7 @@ import { Action, AnyAction } from 'redux'
 import { CALL_API, ApiAction, ApiActionThunk, chainSuccess, ApiResponseAction } from '../store/api'
 import { DatasetSummary, ComponentType, PageInfo, MyDatasets } from '../models/store'
 import { openToast } from './ui'
-import { setWorkingDataset, setSelectedListItem, clearSelection, setActiveTab } from './selections'
+import { setWorkingDataset, setSelectedListItem, setActiveTab } from './selections'
 import {
   mapDataset,
   mapRecord,
@@ -11,7 +11,6 @@ import {
   mapStatus,
   mapHistory
 } from './mappingFuncs'
-
 import getActionType from '../utils/actionType'
 
 const pageSizeDefault = 50
@@ -44,23 +43,45 @@ export function pingApi (): ApiActionThunk {
 export function fetchWorkingDatasetDetails (): ApiActionThunk {
   return async (dispatch, getState) => {
     const whenOk = chainSuccess(dispatch, getState)
-    let response: Action
+    let response: AnyAction
 
-    response = await fetchWorkingDataset()(dispatch, getState)
-    response = await whenOk(fetchWorkingStatus())(response)
-    response = await whenOk(fetchBody())(response)
-    response = await whenOk(fetchWorkingHistory())(response)
+    // TODO (ramfox): this code smells, need to have a think on this
+    // at least a refactor to pull all the fetchWorkingHistory call business
+    // into it's own function so it isnt repeated
+    try {
+      response = await fetchWorkingDataset()(dispatch, getState)
+      response = await whenOk(fetchWorkingStatus())(response)
+      response = await whenOk(fetchBody())(response)
+      response = await whenOk(fetchWorkingHistory())(response)
+      const { workingDataset, selections } = getState()
+      const { history } = workingDataset
+      const { commit } = selections
 
-    // set selected commit to be the first on the list
-    const { workingDataset, selections } = getState()
-    const { history } = workingDataset
-    const { commit } = selections
+      // if history length changes, select the latest commit
+      if (history.value.length !== 0 && (commit === '' || !history.value.some(c => c.path === commit))) {
+        await dispatch(setSelectedListItem('commit', history.value[0].path))
+      }
+      return response
+    } catch (action) {
+      // if fetching the WorkingDatasets was a success, OR if the error was 422, meaning the dataset exists
+      // but is not linked to the filesystem, we still may have a history
+      if (action.payload.err.code === 422) {
+        response = await fetchWorkingHistory()(dispatch, getState)
+        if (response && getActionType(response) === 'success') {
+          // set selected commit to be the first on the list
+          const { workingDataset, selections } = getState()
+          const { history } = workingDataset
+          const { commit } = selections
 
-    // if history length changes, select the latest commit
-    if (history.value.length !== 0 && (commit === '' || !history.value.some(c => c.path === commit))) {
-      await dispatch(setSelectedListItem('commit', history.value[0].path))
+          // if history length changes, select the latest commit
+          if (history.value.length !== 0 && (commit === '' || !history.value.some(c => c.path === commit))) {
+            await dispatch(setSelectedListItem('commit', history.value[0].path))
+          }
+        }
+        return response
+      }
+      return action
     }
-    return response
   }
 }
 
@@ -154,10 +175,8 @@ export function fetchMyDatasets (page: number = 1, pageSize: number = pageSizeDe
 
 export function fetchWorkingDataset (): ApiActionThunk {
   return async (dispatch, getState) => {
-    const { selections, myDatasets } = getState()
+    const { selections } = getState()
     const { peername, name } = selections
-
-    const fsi = lookupFsi(peername, name, myDatasets)
 
     if (peername === '' || name === '') {
       return Promise.reject(new Error('no peername or name selected'))
@@ -168,7 +187,7 @@ export function fetchWorkingDataset (): ApiActionThunk {
       [CALL_API]: {
         endpoint: '',
         method: 'GET',
-        params: { fsi },
+        params: { fsi: true },
         segments: {
           peername,
           name
@@ -176,21 +195,7 @@ export function fetchWorkingDataset (): ApiActionThunk {
         map: mapDataset
       }
     }
-    // the action being dispatched will be intercepted by api middleware and return a promise
-    // typescript requires we first cast to unknown to drop the stated return type of the dispatch function
-    const result = (dispatch(action) as unknown) as Promise<AnyAction>
-    return new Promise((resolve, reject) => {
-      result.then(action => {
-        if (getActionType(action) === 'failure') {
-          if (action.payload.err.code === 404 || action.payload.err.code === 500) {
-            // if the working dataset isn't found, we have dataset selection that no longer exists. clear the selection.
-            dispatch(clearSelection())
-            reject(action)
-          }
-        }
-        resolve(action)
-      })
-    })
+    return dispatch(action)
   }
 }
 

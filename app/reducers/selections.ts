@@ -34,6 +34,11 @@ export default (state = initialState, action: AnyAction) => {
     case SIGNIN_SUCC:
     case SIGNUP_SUCC:
     case SELECTIONS_CLEAR:
+      // if the error code is 422, that means the dataset exists
+      // but is not linked to the filesystem.
+      if (action.type === DATASET_FAIL && action.payload.err.code === 422) {
+        return state
+      }
       localStore().setItem('peername', '')
       localStore().setItem('name', '')
       localStore().setItem('activeTab', 'status')

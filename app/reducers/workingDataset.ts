@@ -54,7 +54,11 @@ export const RESET_BODY = 'RESET_BODY'
 const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction): WorkingDataset | null => {
   switch (action.type) {
     case DATASET_REQ:
-      return initialState
+      return {
+        ...initialState,
+        peername: action.segments.peername,
+        name: action.segments.name
+      }
     case DATASET_SUCC: // when adding a new dataset, set it as the new workingDataset
       const { name, path, peername, published, dataset, fsiPath } = action.payload.data
 

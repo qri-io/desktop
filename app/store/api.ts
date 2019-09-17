@@ -195,7 +195,7 @@ export const apiMiddleware: Middleware = () => (next: Dispatch<AnyAction>) => as
     let { endpoint = '', method, map = identityFunc, segments, params, body, pageInfo } = action[CALL_API]
     const [REQ_TYPE, SUCC_TYPE, FAIL_TYPE] = apiActionTypes(action.type)
 
-    next({ type: REQ_TYPE, pageInfo })
+    next({ type: REQ_TYPE, pageInfo, segments })
 
     // TODO (chriswhong): Turn this into dev middleware
     // // to simulate an API failure response in development, add dummySuccess to the action object

@@ -30,14 +30,45 @@ describe('Body Reducer', () => {
     commitComponent: ''
   }
 
-  //
   // DATASET_FAIL
+  it(`DATASET_FAIL with 422 error`, () => {
+    const state = {
+      peername: 'foo',
+      name: 'bar',
+      fsiPath:'wooo'
+    }
+    const action = {
+      type: DATASET_FAIL,
+      payload: {
+        err: {
+          code: 422
+        }
+      }
+    }
+    Reducer(SelectionsReducer).withState(state).expect(action).toReturnState(state)
+  })
+  it(`DATASET_FAIL with any other error`, () => {
+    const state = {
+      peername: 'foo',
+      name: 'bar'
+    }
+    const action = {
+      type: DATASET_FAIL,
+      payload: {
+        err: {
+          code: 500
+        }
+      }
+    }
+    Reducer(SelectionsReducer).withState(state).expect(action).toReturnState(clearState)
+  })
+
+  //
   // SIGNIN_SUCC,
   // SIGNUP_SUCC,
   // SELECTIONS_CLEAR
   //
   const casesClearSelection = [
-    DATASET_FAIL,
     SIGNIN_SUCC,
     SIGNUP_SUCC,
     SELECTIONS_CLEAR
