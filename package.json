@@ -5,7 +5,8 @@
   "description": "Version your data with the Qri desktop app!",
   "main": "main.js",
   "scripts": {
-    "test": "cross-env NODE_ENV=test node --trace-warnings ./test/runTests.js",
+    "codecov": "./node_modules/.bin/codecov",
+    "test": "jest --testPathIgnorePatterns=.*\/e2e\/.* --coverage",
     "test-all": "npm run test && npm run build && npm run test-e2e",
     "test-watch": "npm test -- --watch",
     "test-e2e": "cross-env NODE_ENV=test node --trace-warnings ./test/runTests.js e2e",
@@ -19,7 +20,7 @@
     "dev": "npm run hot-server -- --start-hot",
     "pack": "npm run build && electron-builder --dir",
     "dist": "npm run build && electron-builder",
-    "lint": "./node_modules/.bin/eslint --fix --ext tsx --ext ts app/",
+    "lint": "./node_modules/.bin/eslint --ext tsx --ext ts app/",
     "cleanup": "mop -v"
   },
   "jest": {
@@ -117,6 +118,7 @@
   ],
   "homepage": "https://qri.io",
   "devDependencies": {
+    "codecov": "3.5.0",
     "@types/classnames": "2.2.9",
     "@types/enzyme": "3.10.2",
     "@types/history": "4.7.2",
