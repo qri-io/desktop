@@ -20,9 +20,12 @@
 #welcome-page { z-index: 199 }
 #signup-page { z-index: 198 }
 #signin-page { z-index: 197 }
-#no-datasets-page { z-index: 196 }
 
 #spinner-with-icon-wrap { width: 100%; height: 100%; position: absolute; }
+
+.welcome-no-logo {
+  max-height: 300px;
+}
 
 .welcome-center {
   width: 350px;

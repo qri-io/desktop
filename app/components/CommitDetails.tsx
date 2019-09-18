@@ -104,6 +104,7 @@ const CommitDetails: React.FunctionComponent<CommitDetailsProps> = ({
               className='commit-details-sidebar sidebar'
             >
               <ComponentList
+                datasetSelected={peername !== '' && name !== ''}
                 status={status}
                 selectedComponent={selectedComponent}
                 selectionType={'commitComponent' as ComponentType}

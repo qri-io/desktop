@@ -80,6 +80,7 @@ export const FileRow: React.FunctionComponent<FileRowProps> = (props) => (
 FileRow.displayName = 'FileRow'
 
 interface ComponentListProps {
+  datasetSelected: boolean
   status: DatasetStatus
   selectedComponent: string
   onComponentClick: (type: ComponentType, activeTab: string) => Action
@@ -120,12 +121,19 @@ const ComponentList: React.FunctionComponent<ComponentListProps> = (props: Compo
     onComponentClick,
     selectionType,
     discardChanges,
+    datasetSelected,
     fsiPath
   } = props
 
   return (
     <div>
-      <div className='sidebar-list-item sidebar-list-item-text sidebar-list-header'>
+      <div className={classNames(
+        'sidebar-list-item',
+        'sidebar-list-item-text',
+        'sidebar-list-header',
+        {
+          'sidebar-list-header-disabled': !datasetSelected
+        })}>
           Dataset Components
       </div>
       {

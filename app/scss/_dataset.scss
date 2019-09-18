@@ -423,6 +423,10 @@ $header-font-size: .9rem;
   font-size: .9rem;
 }
 
+.sidebar-list-header-disabled {
+  color: #646464;
+}
+
 .sidebar-list-item-text {
   padding: $sidebar-item-padding;
   flex-direction: row;

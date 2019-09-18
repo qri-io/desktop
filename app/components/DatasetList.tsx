@@ -26,6 +26,7 @@ export default class DatasetList extends React.Component<DatasetListProps> {
     super(props)
     this.handleEsc = this.handleEsc.bind(this)
     this.clearFilter = this.clearFilter.bind(this)
+    this.renderNoDatasets = this.renderNoDatasets.bind(this)
   }
 
   handleEsc (e: KeyboardEvent) {
@@ -57,6 +58,15 @@ export default class DatasetList extends React.Component<DatasetListProps> {
     if (e.target.scrollHeight === parseInt(e.target.scrollTop) + parseInt(e.target.offsetHeight)) {
       this.props.fetchMyDatasets(myDatasets.pageInfo.page + 1, myDatasets.pageInfo.pageSize)
     }
+  }
+
+  renderNoDatasets () {
+    const { myDatasets } = this.props
+    if (myDatasets.value.length !== 0) {
+      return <div className='sidebar-list-item-text'>Oops, no matches found for <strong>&apos;{myDatasets.filter}&apos;</strong></div>
+    }
+    return (
+      <div className='sidebar-list-item-text'>Your datasets will be listed here</div>)
   }
 
   render () {
@@ -138,11 +148,11 @@ export default class DatasetList extends React.Component<DatasetListProps> {
         </ContextMenuArea>)
       }
       )
-      : <div className='sidebar-list-item-text'>Oops, no matches found for <strong>&apos;{filter}&apos;</strong></div>
+      : this.renderNoDatasets()
 
     const countMessage = filteredDatasets.length !== datasets.length
-      ? `Showing ${filteredDatasets.length} local dataset${filteredDatasets.length > 1 ? 's' : ''}`
-      : `You have ${filteredDatasets.length} local dataset${datasets.length > 1 ? 's' : ''}`
+      ? `Showing ${filteredDatasets.length} local dataset${filteredDatasets.length !== 1 ? 's' : ''}`
+      : `You have ${filteredDatasets.length} local dataset${datasets.length !== 1 ? 's' : ''}`
 
     return (
       <>

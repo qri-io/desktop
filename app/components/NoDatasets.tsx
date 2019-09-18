@@ -9,8 +9,9 @@ interface NoDatasetsProps {
 const NoDatasets: React.FunctionComponent<NoDatasetsProps> = ({ setModal }) =>
   <WelcomeTemplate
     title='Let&apos;s get some datasets'
-    subtitle='Create a dataset in Qri or add a dataset that is already on Qri'
+    subtitle='Create a dataset in Qri or add a dataset that is already on the Qri network'
     id='no-datasets-page'
+    showLogo={false}
   >
     <div id='create_dataset' className='no-datasets-options' onClick={() => setModal({ type: ModalType.CreateDataset })}>
       <h5>Create a Dataset</h5>
