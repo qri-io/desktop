@@ -29,14 +29,14 @@ export const resetBody: any = () => {
 export const resetOtherComponents = (): ApiActionThunk => {
   return async (dispatch, getState) => {
     const { selections } = getState()
-    const { peername, name, isLinked } = selections
+    const { peername, name } = selections
 
     const action = {
       type: 'resetOtherComponents',
       [CALL_API]: {
         endpoint: '',
         method: 'GET',
-        params: { fsi: isLinked },
+        params: { fsi: true }, // isLinked
         segments: {
           peername,
           name

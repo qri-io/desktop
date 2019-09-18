@@ -121,7 +121,7 @@ export default class Dataset extends React.Component<DatasetProps> {
       if (this.props.workingDataset && (this.props.workingDataset.peername !== '' || this.props.workingDataset.name !== '')) {
         this.props.fetchWorkingStatus()
       }
-    }, 20000)
+    }, 1000)
 
     this.openWorkingDirectory = this.openWorkingDirectory.bind(this)
     this.publishUnpublishDataset = this.publishUnpublishDataset.bind(this)
@@ -213,12 +213,12 @@ export default class Dataset extends React.Component<DatasetProps> {
   }
 
   openWorkingDirectory () {
-    shell.openItem(this.props.workingDataset.linkpath)
+    shell.openItem(this.props.workingDataset.fsiPath)
   }
 
   publishUnpublishDataset () {
-    const { setModal, selections } = this.props
-    const { published } = selections
+    const { workingDataset, setModal } = this.props
+    const { published } = workingDataset
 
     published
       ? setModal({ type: ModalType.UnpublishDataset })
@@ -234,14 +234,13 @@ export default class Dataset extends React.Component<DatasetProps> {
       peername,
       name,
       activeTab,
-      component: selectedComponent,
-      published
+      component: selectedComponent
     } = selections
 
-    // don't use isLinked from selections
-    const isLinked = workingDataset.linkpath !== ''
+    const { status, published, fsiPath } = workingDataset
 
-    const { status } = workingDataset
+    // isLinked is derived from fsiPath and only used locally
+    const isLinked = fsiPath !== ''
 
     // actions
     const {
@@ -372,7 +371,7 @@ export default class Dataset extends React.Component<DatasetProps> {
                 mountOnEnter
                 unmountOnExit
               >
-                <DatasetComponent component={selectedComponent} componentStatus={status[selectedComponent]} isLoading={workingDataset.isLoading} linkpath={this.props.workingDataset.linkpath}/>
+                <DatasetComponent component={selectedComponent} componentStatus={status[selectedComponent]} isLoading={workingDataset.isLoading} fsiPath={this.props.workingDataset.fsiPath}/>
               </CSSTransition>
               <CSSTransition
                 in={activeTab === 'history'}

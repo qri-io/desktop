@@ -108,7 +108,7 @@ const CommitDetails: React.FunctionComponent<CommitDetailsProps> = ({
                 selectedComponent={selectedComponent}
                 selectionType={'commitComponent' as ComponentType}
                 onComponentClick={setSelectedListItem}
-                isLinked
+                fsiPath={'isLinked'}
               />
             </div>
             <div className='content-wrapper'>

@@ -1,6 +1,6 @@
 /* global describe, it, expect */
 import { Reducer } from 'redux-testkit'
-import SelectionsReducer, { 
+import SelectionsReducer, {
   initialState,
   SELECTIONS_SET_ACTIVE_TAB,
   SELECTIONS_SET_SELECTED_LISTITEM,
@@ -11,8 +11,6 @@ import SelectionsReducer, {
   DATASET_SUCC,
   DATASET_FAIL,
   COMMIT_SUCC,
-  PUBLISH_SUCC,
-  UNPUBLISH_SUCC,
   SIGNIN_SUCC,
   SIGNUP_SUCC
 } from '../../../app/reducers/selections'
@@ -26,49 +24,78 @@ describe('Body Reducer', () => {
   const clearState = {
     peername: '',
     name: '',
-    isLinked: false,
-    published: false,
     activeTab: 'status',
     component: '',
     commit: '',
     commitComponent: ''
   }
 
-  // 
   // DATASET_FAIL
+  it(`DATASET_FAIL with 422 error`, () => {
+    const state = {
+      peername: 'foo',
+      name: 'bar',
+      fsiPath:'wooo'
+    }
+    const action = {
+      type: DATASET_FAIL,
+      payload: {
+        err: {
+          code: 422
+        }
+      }
+    }
+    Reducer(SelectionsReducer).withState(state).expect(action).toReturnState(state)
+  })
+  it(`DATASET_FAIL with any other error`, () => {
+    const state = {
+      peername: 'foo',
+      name: 'bar'
+    }
+    const action = {
+      type: DATASET_FAIL,
+      payload: {
+        err: {
+          code: 500
+        }
+      }
+    }
+    Reducer(SelectionsReducer).withState(state).expect(action).toReturnState(clearState)
+  })
+
+  //
   // SIGNIN_SUCC,
   // SIGNUP_SUCC,
   // SELECTIONS_CLEAR
-  // 
+  //
   const casesClearSelection = [
-    DATASET_FAIL,
     SIGNIN_SUCC,
     SIGNUP_SUCC,
     SELECTIONS_CLEAR
   ]
 
   casesClearSelection.forEach(action => {
-    it (`case ${action}`, () => {
-      Reducer(SelectionsReducer).expect({type: action}).toReturnState(clearState)
+    it(`case ${action}`, () => {
+      Reducer(SelectionsReducer).expect({ type: action }).toReturnState(clearState)
     })
   })
 
-  // 
+  //
   // SELECTIONS_SET_ACTION_TAB
-  // 
-  it ('SELECTIONS_SET_ACTIVE_TAB', () => {
+  //
+  it('SELECTIONS_SET_ACTIVE_TAB', () => {
     const action = {
       type: SELECTIONS_SET_ACTIVE_TAB,
       payload: {
         activeTab: 'history'
       }
     }
-    Reducer(SelectionsReducer).withState(initialState).expect(action).toChangeInState({activeTab: 'history'})
+    Reducer(SelectionsReducer).withState(initialState).expect(action).toChangeInState({ activeTab: 'history' })
   })
 
-  // 
+  //
   // SELECTIONS_SET_SELECTED_LISTITEM
-  // 
+  //
   const casesSelectedListItem = [
     {
       type: 'component',
@@ -84,78 +111,63 @@ describe('Body Reducer', () => {
     }
   ]
 
-  casesSelectedListItem.forEach( c => {
+  casesSelectedListItem.forEach(c => {
     const action = {
       type: SELECTIONS_SET_SELECTED_LISTITEM,
       payload: c
     }
-    it (`case ${c.type} of SELECTIONS_SET_SELECTED_LISTITEM`, () => {
-      Reducer(SelectionsReducer).withState(initialState).expect(action).toChangeInState({[c.type]:c.selectedListItem})
+    it(`case ${c.type} of SELECTIONS_SET_SELECTED_LISTITEM`, () => {
+      Reducer(SelectionsReducer).withState(initialState).expect(action).toChangeInState({ [c.type]: c.selectedListItem })
     })
   })
 
-  // 
+  //
   // SELECTIONS_SET_ACTIVE_TAB
-  // 
-  it ('SELECTIONS_SET_ACTIVE_TAB', () => {
+  //
+  it('SELECTIONS_SET_ACTIVE_TAB', () => {
     const action = {
       type: SELECTIONS_SET_ACTIVE_TAB,
       payload: {
         activeTab: 'history'
       }
     }
-    Reducer(SelectionsReducer).withState(initialState).expect(action).toChangeInState({activeTab: 'history'})
+    Reducer(SelectionsReducer).withState(initialState).expect(action).toChangeInState({ activeTab: 'history' })
   })
 
-  // 
+  //
   // SELECTIONS_SET_WORKING_DATASET
-  // 
+  //
   const casesWorkingDataset = [
     {
-      describe: 'set linked dataset as working dataset',
+      describe: 'set peername and name',
       payload: {
         peername: 'foo',
-        name: 'bar',
-        isLinked: true,
-        published: true
+        name: 'bar'
       },
       expected: {
-        activeTab: 'status'
-      }
-    },
-    {
-      describe: 'set unlinked dataset as working dataset',
-      payload: {
         peername: 'foo',
-        name: 'bar',
-        isLinked: false,
-        published: false
-      },
-      expected: {
-        activeTab: 'history'
+        name: 'bar'
       }
-    },
+    }
   ]
 
-  casesWorkingDataset.forEach( ({describe, payload, expected}) => {
-    it (`case ${describe} of SELECTIONS_SET_WORKING_DATASET`, () => {
+  casesWorkingDataset.forEach(({ describe, payload, expected }) => {
+    it(`case ${describe} of SELECTIONS_SET_WORKING_DATASET`, () => {
       const action = {
         type: SELECTIONS_SET_WORKING_DATASET,
         payload
       }
-      Reducer(SelectionsReducer).withState(initialState).expect(action).toChangeInState({...payload, ...expected})
+      Reducer(SelectionsReducer).withState(initialState).expect(action).toChangeInState({ ...payload, ...expected })
     })
   })
-  
-  // 
+
+  //
   // ADD_SUCC
-  // 
-  it ('ADD_SUCC', () => {
+  //
+  it('ADD_SUCC', () => {
     const expected = {
       peername: 'foo',
-      name: 'bar',
-      isLinked: true,
-      published: false
+      name: 'bar'
     }
     const action = {
       type: ADD_SUCC,
@@ -163,18 +175,16 @@ describe('Body Reducer', () => {
         data: expected
       }
     }
-    Reducer(SelectionsReducer).withState(initialState).expect(action).toChangeInState({...expected, activeTab: 'history'})
+    Reducer(SelectionsReducer).withState(initialState).expect(action).toChangeInState({ ...expected, activeTab: 'history' })
   })
 
-  // 
+  //
   // INIT_SUCC
-  // 
-  it ('INIT_SUCC', () => {
+  //
+  it('INIT_SUCC', () => {
     const expected = {
       peername: 'foo',
-      name: 'bar',
-      isLinked: true,
-      published: false
+      name: 'bar'
     }
     const action = {
       type: INIT_SUCC,
@@ -182,13 +192,13 @@ describe('Body Reducer', () => {
         data: expected
       }
     }
-    Reducer(SelectionsReducer).withState(initialState).expect(action).toChangeInState({...expected, activeTab: 'status'})
+    Reducer(SelectionsReducer).withState(initialState).expect(action).toChangeInState({ ...expected, activeTab: 'status' })
   })
 
-  // 
+  //
   // COMMIT_SUCC
   // DATASET_SUCC
-  // 
+  //
   const datasetCommitCases = [
     {
       type: COMMIT_SUCC,
@@ -291,35 +301,13 @@ describe('Body Reducer', () => {
       }
     }
   ]
-  datasetCommitCases.forEach(({type, describe, payload, expected}) => {
+  datasetCommitCases.forEach(({ type, describe, payload, expected }) => {
     const action = {
       type,
       payload
     }
-    it (`case ${describe} of ${type}`, () => {
-      Reducer(SelectionsReducer).withState(initialState).expect(action).toChangeInState({...expected})
-    })
-  })
-
-  // PUBLISH_SUCC
-  // UNPUBLISH_SUCC
-  const pubCases = [
-    {
-      type: PUBLISH_SUCC,
-      expected: {
-        published: true
-      }
-    },
-    {
-      type: UNPUBLISH_SUCC,
-      expected: {
-        published: false
-      }
-    },
-  ]
-  pubCases.forEach(({type, expected}) => {
-    it (type, () => {
-      Reducer(SelectionsReducer).withState(initialState).expect({type}).toChangeInState({...expected})
+    it(`case ${describe} of ${type}`, () => {
+      Reducer(SelectionsReducer).withState(initialState).expect(action).toChangeInState({ ...expected })
     })
   })
 })

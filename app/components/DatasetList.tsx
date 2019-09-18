@@ -16,7 +16,7 @@ interface DatasetListProps {
   workingDataset: WorkingDataset
   toggleDatasetList: () => Action
   setFilter: (filter: string) => Action
-  setWorkingDataset: (peername: string, name: string, isLinked: boolean, published: boolean) => Action
+  setWorkingDataset: (peername: string, name: string) => Action
   fetchMyDatasets: (page: number, pageSize: number) => Promise<AnyAction>
   setModal: (modal: Modal) => void
 }
@@ -85,7 +85,7 @@ export default class DatasetList extends React.Component<DatasetListProps> {
     })
 
     const listContent = filteredDatasets.length > 0
-      ? filteredDatasets.map(({ peername, name, title, fsipath, published }) => {
+      ? filteredDatasets.map(({ peername, name, title, fsiPath }) => {
         let menuItems: MenuItemConstructorOptions[] = [
           {
             label: 'Remove...',
@@ -94,17 +94,17 @@ export default class DatasetList extends React.Component<DatasetListProps> {
                 type: ModalType.RemoveDataset,
                 peername,
                 name,
-                fsipath
+                fsiPath
               })
             }
           }
         ]
 
-        if (fsipath) {
+        if (fsiPath) {
           menuItems = [
             {
               label: 'Reveal in Finder',
-              click: () => { shell.showItemInFolder(fsipath) }
+              click: () => { shell.showItemInFolder(fsiPath) }
             },
             {
               type: 'separator'
@@ -119,7 +119,7 @@ export default class DatasetList extends React.Component<DatasetListProps> {
             className={classNames('sidebar-list-item', 'sidebar-list-item-text', {
               'selected': (peername === workingDataset.peername) && (name === workingDataset.name)
             })}
-            onClick={() => setWorkingDataset(peername, name, !!fsipath, published)}
+            onClick={() => setWorkingDataset(peername, name)}
           >
             <div className='icon-column'>
               <FontAwesomeIcon icon={faFileAlt} size='lg'/>
@@ -129,7 +129,7 @@ export default class DatasetList extends React.Component<DatasetListProps> {
               <div className='subtext'>{title || <br/>}</div>
             </div>
             <div className='status-column' data-tip='unlinked'>
-              {!fsipath && (
+              {!fsiPath && (
                 <FontAwesomeIcon icon={faUnlink} size='sm'/>
               )}
             </div>

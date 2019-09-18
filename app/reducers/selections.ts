@@ -12,8 +12,6 @@ export const SELECTIONS_CLEAR = 'SELECTIONS_CLEAR'
 export const initialState: Selections = {
   peername: localStore().getItem('peername') || '',
   name: localStore().getItem('name') || '',
-  isLinked: localStore().getItem('isLinked') === 'true',
-  published: localStore().getItem('published') === 'true',
   activeTab: localStore().getItem('activeTab') || 'status',
   component: localStore().getItem('component') as SelectedComponent || '',
   commit: localStore().getItem('commit') || '',
@@ -28,6 +26,7 @@ export const [, PUBLISH_SUCC] = apiActionTypes('publish')
 export const [, UNPUBLISH_SUCC] = apiActionTypes('unpublish')
 export const [, SIGNIN_SUCC] = apiActionTypes('signin')
 export const [, SIGNUP_SUCC] = apiActionTypes('signup')
+export const [, , HISTORY_FAIL] = apiActionTypes('history')
 
 export default (state = initialState, action: AnyAction) => {
   switch (action.type) {
@@ -35,10 +34,13 @@ export default (state = initialState, action: AnyAction) => {
     case SIGNIN_SUCC:
     case SIGNUP_SUCC:
     case SELECTIONS_CLEAR:
+      // if the error code is 422, that means the dataset exists
+      // but is not linked to the filesystem.
+      if (action.type === DATASET_FAIL && action.payload.err.code === 422) {
+        return state
+      }
       localStore().setItem('peername', '')
       localStore().setItem('name', '')
-      localStore().setItem('isLinked', 'false')
-      localStore().setItem('published', 'false')
       localStore().setItem('activeTab', 'status')
       localStore().setItem('component', '')
       localStore().setItem('commit', '')
@@ -46,8 +48,6 @@ export default (state = initialState, action: AnyAction) => {
       return {
         peername: '',
         name: '',
-        isLinked: false,
-        published: false,
         activeTab: 'status',
         component: '',
         commit: '',
@@ -75,21 +75,14 @@ export default (state = initialState, action: AnyAction) => {
       return state
 
     case SELECTIONS_SET_WORKING_DATASET:
-      const { peername, name, isLinked, published } = action.payload
-      const newActiveTab = isLinked ? 'status' : 'history'
+      const { peername, name } = action.payload
 
       localStore().setItem('peername', peername)
       localStore().setItem('name', name)
-      localStore().setItem('isLinked', JSON.stringify(!!isLinked))
-      localStore().setItem('published', JSON.stringify(!!published))
-      localStore().setItem('activeTab', newActiveTab)
 
       return Object.assign({}, state, {
         peername,
-        name,
-        isLinked,
-        published,
-        activeTab: newActiveTab
+        name
       })
 
     case COMMIT_SUCC:
@@ -106,7 +99,7 @@ export default (state = initialState, action: AnyAction) => {
     case DATASET_SUCC:
       // if the selected component exists on dataset, no changes needed
       if (action.payload.data.dataset[state.component] || (state.component === 'body' && action.payload.data.dataset['bodyPath'])) return state
-      //
+
       return {
         ...state,
         // get the default component based on the components
@@ -114,48 +107,34 @@ export default (state = initialState, action: AnyAction) => {
         // can return with empty string
         component: chooseDefaultComponent(action.payload.data.dataset)
       }
-      // when a dataset is successfully published, mark as published in the selections
-    case PUBLISH_SUCC:
-      localStore().setItem('published', 'true')
+
+    // if dataset history fails, set active tab to status
+    case HISTORY_FAIL:
       return {
         ...state,
-        published: true
+        activeTab: 'status'
       }
-      // when a dataset is successfully unpublished, mark as unpublished in the selections
-    case UNPUBLISH_SUCC:
-      localStore().setItem('published', 'false')
-      return {
-        ...state,
-        published: false
-      }
+
       // when a new dataset is added from the network, make it the selected dataset
     case ADD_SUCC:
       localStore().setItem('peername', action.payload.data.peername)
       localStore().setItem('name', action.payload.data.name)
-      localStore().setItem('isLinked', JSON.stringify(!!action.payload.data.isLinked))
-      localStore().setItem('published', JSON.stringify(!!action.payload.data.published))
       localStore().setItem('activeTab', 'history')
       return {
         ...state,
         peername: action.payload.data.peername,
         name: action.payload.data.name,
-        isLinked: !!action.payload.data.isLinked,
-        published: !!action.payload.data.published,
         activeTab: 'history'
       }
       // when a new dataset is created, make it the selected dataset
     case INIT_SUCC:
       localStore().setItem('peername', action.payload.data.peername)
       localStore().setItem('name', action.payload.data.name)
-      localStore().setItem('isLinked', JSON.stringify(!!action.payload.data.isLinked))
-      localStore().setItem('published', JSON.stringify(!!action.payload.data.published))
       localStore().setItem('activeTab', 'status')
       return {
         ...state,
         peername: action.payload.data.peername,
         name: action.payload.data.name,
-        isLinked: !!action.payload.data.isLinked,
-        published: !!action.payload.data.published,
         activeTab: 'status'
       }
 

@@ -1,9 +1,9 @@
 import { Action, AnyAction } from 'redux'
 
 import { CALL_API, ApiAction, ApiActionThunk, chainSuccess, ApiResponseAction } from '../store/api'
-import { DatasetSummary, ComponentType, PageInfo } from '../models/store'
+import { DatasetSummary, ComponentType, PageInfo, MyDatasets } from '../models/store'
 import { openToast } from './ui'
-import { setWorkingDataset, setSelectedListItem, clearSelection, setActiveTab } from './selections'
+import { setWorkingDataset, setSelectedListItem, setActiveTab } from './selections'
 import {
   mapDataset,
   mapRecord,
@@ -11,11 +11,19 @@ import {
   mapStatus,
   mapHistory
 } from './mappingFuncs'
-
 import getActionType from '../utils/actionType'
 
 const pageSizeDefault = 50
 const bodyPageSizeDefault = 100
+
+// look up the peername/name in myDatasets, return boolean for existence of fsiPath
+const lookupFsi = (peername: string | null, name: string | null, myDatasets: MyDatasets) => {
+  const dataset = myDatasets.value.find((dataset) => {
+    return dataset.peername === peername && dataset.name === name
+  })
+
+  return dataset && !!dataset.fsiPath
+}
 
 export function pingApi (): ApiActionThunk {
   return async (dispatch) => {
@@ -35,31 +43,53 @@ export function pingApi (): ApiActionThunk {
 export function fetchWorkingDatasetDetails (): ApiActionThunk {
   return async (dispatch, getState) => {
     const whenOk = chainSuccess(dispatch, getState)
-    let response: Action
+    let response: AnyAction
 
-    response = await fetchWorkingDataset()(dispatch, getState)
-    response = await whenOk(fetchWorkingStatus())(response)
-    response = await whenOk(fetchBody())(response)
-    response = await whenOk(fetchWorkingHistory())(response)
+    // TODO (ramfox): this code smells, need to have a think on this
+    // at least a refactor to pull all the fetchWorkingHistory call business
+    // into it's own function so it isnt repeated
+    try {
+      response = await fetchWorkingDataset()(dispatch, getState)
+      response = await whenOk(fetchWorkingStatus())(response)
+      response = await whenOk(fetchBody())(response)
+      response = await whenOk(fetchWorkingHistory())(response)
+      const { workingDataset, selections } = getState()
+      const { history } = workingDataset
+      const { commit } = selections
 
-    // set selected commit to be the first on the list
-    const { workingDataset, selections } = getState()
-    const { history } = workingDataset
-    const { commit } = selections
+      // if history length changes, select the latest commit
+      if (history.value.length !== 0 && (commit === '' || !history.value.some(c => c.path === commit))) {
+        await dispatch(setSelectedListItem('commit', history.value[0].path))
+      }
+      return response
+    } catch (action) {
+      // if fetching the WorkingDatasets was a success, OR if the error was 422, meaning the dataset exists
+      // but is not linked to the filesystem, we still may have a history
+      if (action.payload.err.code === 422) {
+        response = await fetchWorkingHistory()(dispatch, getState)
+        if (response && getActionType(response) === 'success') {
+          // set selected commit to be the first on the list
+          const { workingDataset, selections } = getState()
+          const { history } = workingDataset
+          const { commit } = selections
 
-    // if history length changes, select the latest commit
-    if (history.value.length !== 0 && (commit === '' || !history.value.some(c => c.path === commit))) {
-      await dispatch(setSelectedListItem('commit', history.value[0].path))
+          // if history length changes, select the latest commit
+          if (history.value.length !== 0 && (commit === '' || !history.value.some(c => c.path === commit))) {
+            await dispatch(setSelectedListItem('commit', history.value[0].path))
+          }
+        }
+        return response
+      }
+      return action
     }
-    return response
   }
 }
 
 export function fetchModifiedComponents (): ApiActionThunk {
   return async (dispatch, getState) => {
     const { selections, workingDataset } = getState()
-    const { path } = workingDataset
-    const { peername, name, isLinked } = selections
+    const { path, fsiPath } = workingDataset
+    const { peername, name } = selections
 
     let response: Action
 
@@ -68,7 +98,7 @@ export function fetchModifiedComponents (): ApiActionThunk {
       [CALL_API]: {
         endpoint: '',
         method: 'GET',
-        params: { fsi: isLinked },
+        params: { fsi: !!fsiPath },
         segments: {
           peername,
           name
@@ -87,7 +117,7 @@ export function fetchModifiedComponents (): ApiActionThunk {
           page: 1,
           pageSize: bodyPageSizeDefault
         },
-        params: { fsi: isLinked },
+        params: { fsi: !!fsiPath },
         segments: {
           peername,
           name,
@@ -146,7 +176,7 @@ export function fetchMyDatasets (page: number = 1, pageSize: number = pageSizeDe
 export function fetchWorkingDataset (): ApiActionThunk {
   return async (dispatch, getState) => {
     const { selections } = getState()
-    const { peername, name, isLinked } = selections
+    const { peername, name } = selections
 
     if (peername === '' || name === '') {
       return Promise.reject(new Error('no peername or name selected'))
@@ -157,7 +187,7 @@ export function fetchWorkingDataset (): ApiActionThunk {
       [CALL_API]: {
         endpoint: '',
         method: 'GET',
-        params: { fsi: isLinked },
+        params: { fsi: true },
         segments: {
           peername,
           name
@@ -165,21 +195,7 @@ export function fetchWorkingDataset (): ApiActionThunk {
         map: mapDataset
       }
     }
-    // the action being dispatched will be intercepted by api middleware and return a promise
-    // typescript requires we first cast to unknown to drop the stated return type of the dispatch function
-    const result = (dispatch(action) as unknown) as Promise<AnyAction>
-    return new Promise((resolve, reject) => {
-      result.then(action => {
-        if (getActionType(action) === 'failure') {
-          if (action.payload.err.code === 404 || action.payload.err.code === 500) {
-            // if the working dataset isn't found, we have dataset selection that no longer exists. clear the selection.
-            dispatch(clearSelection())
-            reject(action)
-          }
-        }
-        resolve(action)
-      })
-    })
+    return dispatch(action)
   }
 }
 
@@ -250,14 +266,17 @@ export function fetchWorkingHistory (page: number = 1, pageSize: number = pageSi
 
     if (bailEarly) return new Promise(resolve => resolve())
 
-    const { selections } = getState()
-    const { peername, name, isLinked } = selections
+    const { selections, myDatasets } = getState()
+    const { peername, name } = selections
+
+    const fsi = lookupFsi(peername, name, myDatasets)
+
     const action = {
       type: 'history',
       [CALL_API]: {
         endpoint: 'history',
         method: 'GET',
-        params: { fsi: isLinked },
+        params: { fsi },
         segments: {
           peername: peername,
           name: name
@@ -277,13 +296,13 @@ export function fetchWorkingHistory (page: number = 1, pageSize: number = pageSi
 export function fetchWorkingStatus (): ApiActionThunk {
   return async (dispatch, getState) => {
     const { workingDataset } = getState()
-    const { peername, name, linkpath } = workingDataset
+    const { peername, name, fsiPath } = workingDataset
     const action = {
       type: 'status',
       [CALL_API]: {
         endpoint: 'status',
         method: 'GET',
-        params: { fsi: linkpath !== '' },
+        params: { fsi: !!fsiPath },
         segments: {
           peername: peername,
           name: name
@@ -304,8 +323,8 @@ interface ActionWithPaginationRes {
 export function fetchBody (page: number = 1, pageSize: number = bodyPageSizeDefault, invalidatePagination: boolean = false): ApiActionThunk {
   return async (dispatch, getState) => {
     const { workingDataset, selections } = getState()
-    const { peername, name, isLinked } = selections
-    const { path } = workingDataset
+    const { peername, name } = selections
+    const { path, fsiPath } = workingDataset
 
     const { page: confirmedPage, bailEarly } = actionWithPagination(invalidatePagination, page, workingDataset.components.body.pageInfo)
 
@@ -320,7 +339,7 @@ export function fetchBody (page: number = 1, pageSize: number = bodyPageSizeDefa
           page: confirmedPage,
           pageSize
         },
-        params: { fsi: isLinked },
+        params: { fsi: !!fsiPath },
         segments: {
           peername,
           name,
@@ -421,9 +440,7 @@ export function addDatasetAndFetch (peername: string, name: string): ApiActionTh
     try {
       response = await addDataset(peername, name)(dispatch, getState)
       response = await whenOk(fetchMyDatasets())(response)
-      const action = response as ApiResponseAction
-      const { isLinked, published } = action.payload.data.find((dataset: DatasetSummary) => dataset.name === name && dataset.peername === peername)
-      dispatch(setWorkingDataset(peername, name, isLinked, published))
+      dispatch(setWorkingDataset(peername, name))
       dispatch(setActiveTab('history'))
       dispatch(setSelectedListItem('component', 'meta'))
     } catch (action) {
@@ -463,8 +480,8 @@ export function initDatasetAndFetch (sourcebodypath: string, name: string, dir: 
       response = await whenOk(fetchMyDatasets())(response)
       const action = response as ApiResponseAction
       const { data } = action.payload
-      const { peername, isLinked, published } = data.find((dataset: DatasetSummary) => dataset.name === name)
-      dispatch(setWorkingDataset(peername, name, isLinked, published))
+      const { peername } = data.find((dataset: DatasetSummary) => dataset.name === name)
+      dispatch(setWorkingDataset(peername, name))
       dispatch(setActiveTab('status'))
       dispatch(setSelectedListItem('component', 'meta'))
     } catch (action) {
@@ -477,7 +494,7 @@ export function initDatasetAndFetch (sourcebodypath: string, name: string, dir: 
 export function publishDataset (): ApiActionThunk {
   return async (dispatch, getState) => {
     const { workingDataset } = getState()
-    const { peername, name, linkpath } = workingDataset
+    const { peername, name } = workingDataset
     const whenOk = chainSuccess(dispatch, getState)
     const action = {
       type: 'publish',
@@ -495,7 +512,7 @@ export function publishDataset (): ApiActionThunk {
       let response: Action
       response = await dispatch(action)
       await whenOk(fetchWorkingDatasetDetails())(response)
-      response = await dispatch(setWorkingDataset(peername, name, linkpath !== 'repo', true))
+      response = await dispatch(setWorkingDataset(peername, name))
     } catch (action) {
       throw action
     }
@@ -507,7 +524,7 @@ export function publishDataset (): ApiActionThunk {
 export function unpublishDataset (): ApiActionThunk {
   return async (dispatch, getState) => {
     const { workingDataset } = getState()
-    const { peername, name, linkpath } = workingDataset
+    const { peername, name } = workingDataset
     const whenOk = chainSuccess(dispatch, getState)
     const action = {
       type: 'unpublish',
@@ -525,7 +542,7 @@ export function unpublishDataset (): ApiActionThunk {
       let response: Action
       response = await dispatch(action)
       await whenOk(fetchWorkingDatasetDetails())(response)
-      response = await dispatch(setWorkingDataset(peername, name, linkpath !== 'repo', false))
+      response = await dispatch(setWorkingDataset(peername, name))
     } catch (action) {
       throw action
     }

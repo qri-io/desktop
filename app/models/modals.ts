@@ -36,7 +36,7 @@ export interface RemoveDatasetModal {
   type: ModalType.RemoveDataset
   peername: string
   name: string
-  fsipath: string
+  fsiPath: string
 }
 
 export interface HideModal {

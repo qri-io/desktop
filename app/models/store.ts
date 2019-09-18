@@ -66,8 +66,6 @@ export type SelectedComponent = 'meta' | 'body' | 'schema' | ''
 export interface Selections {
   peername: string | null
   name: string | null
-  isLinked: boolean
-  published: boolean
   activeTab: string
   component: SelectedComponent
   commit: string
@@ -89,7 +87,7 @@ export interface DatasetSummary {
   peername: string
   name: string
   path: string
-  fsipath: string
+  fsiPath: string
   published: boolean
 }
 
@@ -143,7 +141,7 @@ export interface CommitDetails {
 }
 
 export interface WorkingDataset extends CommitDetails {
-  linkpath: string
+  fsiPath: string
   hasHistory: boolean
   published: boolean
   history: {

@@ -454,8 +454,7 @@ app.on('ready', () =>
         fsiPath,
         published
       }) => {
-        const isLinked = !!fsiPath
-        setMenuItemEnabled(['open-working-directory'], isLinked)
+        setMenuItemEnabled(['open-working-directory'], !!fsiPath)
 
         // enable/disable 'view in qri cloud' menu item
         setMenuItemEnabled(['view-on-qri-cloud'], published)
