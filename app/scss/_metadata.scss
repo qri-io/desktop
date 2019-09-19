@@ -3,12 +3,11 @@
 }
 
 .metadata-viewer-title {
-  margin-top: 30px;
 }
 
 .metadata-viewer-table-wrap {
   width: 100%;
-  margin-top: 10px;
+  margin-bottom: 20px;
   border-radius: 3px;
   border: 1px solid #eee;
   overflow: hidden;
@@ -16,6 +15,14 @@
 
 .metadata-viewer-table {
   width: 100%;
+}
+
+.array-items-table-container {
+  padding-top: 5px;
+  padding-right: 5px;
+  .metadata-viewer-table-wrap {
+    margin-bottom: 5px;
+  }
 }
 
 .metadata-viewer-row {
@@ -44,10 +51,49 @@
   padding-right: 15px;
 }
 
-.chip {
+.chip, .big-chip {
   background: #e4e4e4;
   border-radius: 4px;
   padding: 0px 8px;
   margin: 2px 2px;
   display: inline-block;
+}
+
+.big-chip {
+  padding: 4px 8px;
+}
+
+.multi-structured-input {
+  .add-item {
+    font-weight: 300;
+    font-size: .9rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .row {
+    display: flex;
+    padding-bottom: 9px;
+
+    .input-column {
+      flex: 1;
+      padding: 0 10px;
+    }
+
+    .remove-column, .handle-column {
+      width: 10px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+  }
+
+  .header-row {
+    font-weight: 500;
+    padding: 0;
+    margin-bottom: 9px;
+    border-bottom: 1px solid $border-color
+  }
 }

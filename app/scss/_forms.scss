@@ -459,20 +459,29 @@ select.form-control-lg {
 
 // custom input styles
 .input {
+  transition: all 100ms;
   display: inline-block;
   border: $border-color solid 1px;
   width: 100%;
   padding: 7px;
   border-radius: 5px;
-  margin-top: 5px;
   background-image: none;
   background: $white;
   background-clip: padding-box;
 }
 
-.input:active, .input:focus {
-  background: $primary-light;
+.react-select>div {
+  border: $border-color solid 1px;
+}
+
+.input:hover {
+  border-color: #0061a682;
+}
+
+.input:active,
+.input:focus {
   outline: none;
+  border-color: #0061a682;
 }
 
 select.input {
@@ -507,4 +516,42 @@ button.input {
 
 input#path, input#bodyPath {
   min-width: 250px;
+}
+
+// MultiTextInput (tags UI)
+.tag {
+  background: #e4e4e4;
+  border-radius: 4px;
+  padding: 4px 8px;
+  margin: 5px;
+  display: inline-block;
+
+  .tag-text {
+    flex: 1;
+  }
+
+  .tag-remove {
+    flex: 0;
+    padding-left: 7px;
+  }
+}
+
+.tag-input {
+  max-width: 180px;
+  display: inline-block;
+}
+
+// MultiStructuredInput
+
+.subform-container {
+  border: 1px solid $border-color;
+  padding: 15px;
+}
+
+.multi-structured-input-container {
+  display: flex;
+
+  .list, .form {
+    flex: 1;
+  }
 }

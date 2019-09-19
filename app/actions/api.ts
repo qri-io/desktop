@@ -622,3 +622,21 @@ export function removeDatasetAndFetch (peername: string, name: string, removeFil
     return response
   }
 }
+
+export function fsiWrite (peername: string, name: string, dataset: any): ApiActionThunk {
+  return async (dispatch) => {
+    const action = {
+      type: 'fsiWrite',
+      [CALL_API]: {
+        endpoint: 'fsi/write',
+        method: 'POST',
+        segments: {
+          peername,
+          name
+        },
+        body: dataset
+      }
+    }
+    return dispatch(action)
+  }
+}

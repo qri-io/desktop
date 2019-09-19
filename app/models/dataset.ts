@@ -3,15 +3,17 @@ import { JSONSchema7 } from 'json-schema'
 // meta.citations
 export interface Citation {
   name: string
-  URL: string
+  url: string
   email: string
+  [key: string]: any
 }
 
 // meta.contributors
 export interface User {
   id: string
-  fullName: string
+  name: string
   email: string
+  [key: string]: any
 }
 
 export interface License {

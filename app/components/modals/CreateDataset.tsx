@@ -155,6 +155,7 @@ const CreateDataset: React.FunctionComponent<CreateDatasetProps> = ({ onDismisse
               onChange={handleChanges}
               maxLength={600}
               errorText={alreadyDatasetError}
+              tooltipFor='modal-tooltip'
             />
             <div className='margin-left'><ButtonInput id='chooseBodyFilePath' onClick={() => handleFilePickerDialog(showFilePicker)} >Choose...</ButtonInput></div>
           </div>
@@ -167,6 +168,7 @@ const CreateDataset: React.FunctionComponent<CreateDatasetProps> = ({ onDismisse
             onChange={handleChanges}
             maxLength={600}
             errorText={datasetNameError}
+            tooltipFor='modal-tooltip'
           />
           <div className='flex-space-between'>
             <TextInput
@@ -178,6 +180,7 @@ const CreateDataset: React.FunctionComponent<CreateDatasetProps> = ({ onDismisse
               onChange={handleChanges}
               maxLength={600}
               errorText={alreadyDatasetError}
+              tooltipFor='modal-tooltip'
             />
             <div className='margin-left'><ButtonInput id='chooseSavePath' onClick={() => handlePathPickerDialog(showDirectoryPicker)} >Choose...</ButtonInput></div>
           </div>

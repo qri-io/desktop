@@ -301,9 +301,8 @@ $header-font-size: .9rem;
 
   .text-column {
     flex-direction: column;
-    flex: 1;
-    align-self: center;
     overflow-x: hidden;
+    flex: 1;
 
     .text {
       white-space: nowrap;
@@ -483,15 +482,16 @@ $header-font-size: .9rem;
 ////////////////////////////
 
 #commit-details {
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
-  height: 100%;
-  width: 100%;
-  position:relative;
+  #transition-wrap {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    height: 100%;
+    width: 100%;
+    position:relative;
+  }
 
   .commit-details-header {
-    height: 60px;
     padding: $sidebar-item-padding;
     border-bottom: $list-item-bottom-border;
   }

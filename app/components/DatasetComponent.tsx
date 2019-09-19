@@ -2,6 +2,7 @@ import * as React from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 import MetadataContainer from '../containers/MetadataContainer'
+import MetadataEditorContainer from '../containers/MetadataEditorContainer'
 import BodyContainer from '../containers/BodyContainer'
 import SchemaContainer from '../containers/SchemaContainer'
 import ParseError from './ParseError'
@@ -63,7 +64,11 @@ const DatasetComponent: React.FunctionComponent<DatasetComponentProps> = (props:
           appear={true}
         >
           <div id='transition-wrap'>
-            <MetadataContainer history={history}/>
+            {
+              history
+                ? <MetadataContainer />
+                : <MetadataEditorContainer />
+            }
           </div>
         </CSSTransition>
         <CSSTransition

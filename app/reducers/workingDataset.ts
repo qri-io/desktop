@@ -48,7 +48,7 @@ export const [DATASET_REQ, DATASET_SUCC, DATASET_FAIL] = apiActionTypes('dataset
 const [DATASET_HISTORY_REQ, DATASET_HISTORY_SUCC, DATASET_HISTORY_FAIL] = apiActionTypes('history')
 export const [DATASET_STATUS_REQ, DATASET_STATUS_SUCC, DATASET_STATUS_FAIL] = apiActionTypes('status')
 const [DATASET_BODY_REQ, DATASET_BODY_SUCC, DATASET_BODY_FAIL] = apiActionTypes('body')
-const [RESETOTHERCOMPONENTS_REQ, RESETOTHERCOMPONENTS_SUCC, RESETOTHERCOMPONENTS_FAIL] = apiActionTypes('resetOtherComponents')
+const [, RESETOTHERCOMPONENTS_SUCC, RESETOTHERCOMPONENTS_FAIL] = apiActionTypes('resetOtherComponents')
 
 export const RESET_BODY = 'RESET_BODY'
 
@@ -194,16 +194,6 @@ const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction
         components: {
           ...state.components,
           body: initialState.components.body
-        }
-      }
-
-    case RESETOTHERCOMPONENTS_REQ:
-      return {
-        ...state,
-        components: {
-          ...state.components,
-          meta: initialState.components.meta,
-          schema: initialState.components.schema
         }
       }
 

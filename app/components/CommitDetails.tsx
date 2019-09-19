@@ -90,12 +90,14 @@ const CommitDetails: React.FunctionComponent<CommitDetailsProps> = ({
         unmountOnExit
       >
         <div id='transition-wrap'>
-          <div className='commit-details-header text-column'>
-            <div className='text'>{commit && commit.title}</div>
-            <div className='subtext'>
-              {/* <img className= 'user-image' src = {'https://avatars0.githubusercontent.com/u/1154390?s=60&v=4'} /> */}
-              <div className='time-message'>
-                {commit && moment(commit.timestamp).fromNow()}
+          <div className='commit-details-header'>
+            <div className='text-column'>
+              <div className='text'>{commit && commit.title}</div>
+              <div className='subtext'>
+                {/* <img className= 'user-image' src = {'https://avatars0.githubusercontent.com/u/1154390?s=60&v=4'} /> */}
+                <div className='time-message'>
+                  {commit && moment(commit.timestamp).fromNow()}
+                </div>
               </div>
             </div>
           </div>
