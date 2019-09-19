@@ -12,7 +12,7 @@ import ComponentList from './ComponentList'
 import classNames from 'classnames'
 import Spinner from './chrome/Spinner'
 
-import { WorkingDataset, ComponentType, Selections } from '../models/store'
+import { WorkingDataset, ComponentType, Selections, CommitDetails } from '../models/store'
 
 interface HistoryListItemProps {
   path: string
@@ -45,6 +45,7 @@ export interface DatasetSidebarProps {
   selections: Selections
   workingDataset: WorkingDataset
   hideCommitNudge: boolean
+  commitDetails: CommitDetails
   setActiveTab: (activeTab: string) => Action
   setSelectedListItem: (type: ComponentType, activeTab: string) => Action
   fetchWorkingHistory: (page?: number, pageSize?: number) => ApiActionThunk
@@ -61,11 +62,13 @@ const DatasetSidebar: React.FunctionComponent<DatasetSidebarProps> = (props) => 
     setSelectedListItem,
     fetchWorkingHistory,
     discardChanges,
-    setHideCommitNudge
+    setHideCommitNudge,
+    commitDetails
   } = props
 
   const { path, fsiPath, history, status, components } = workingDataset
-
+  const { isLoading: commitIsLoading, components: commitComponents } = commitDetails
+  const { body: commitBody } = commitComponents
   const {
     activeTab,
     component: selectedComponent,
@@ -81,6 +84,9 @@ const DatasetSidebar: React.FunctionComponent<DatasetSidebarProps> = (props) => 
   const historyLoaded = !history.pageInfo.isFetching
   const statusLoaded = !!status
   const bodyLoaded = !body.pageInfo.isFetching
+  const commitLoaded = !commitIsLoading
+  const commitBodyLoaded = !commitBody.pageInfo.isFetching
+
   const noHistory = history.value.length === 0
 
   const handleHistoryScroll = (e: any) => {
@@ -185,7 +191,7 @@ const DatasetSidebar: React.FunctionComponent<DatasetSidebarProps> = (props) => 
           </div>
         </CSSTransition>
         {
-          !hideCommitNudge && bodyLoaded && statusLoaded && historyLoaded && noHistory && datasetSelected && (
+          !hideCommitNudge && bodyLoaded && commitLoaded && commitBodyLoaded && statusLoaded && historyLoaded && noHistory && datasetSelected && (
             <div className='commit-nudge'>
               <div className='commit-nudge-text'>
                 You&apos;re ready to make your first commit on this dataset! Verify that the body and meta are accurate, enter a commit message below, and click Submit.

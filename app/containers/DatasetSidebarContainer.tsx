@@ -31,6 +31,7 @@ const DatasetSidebarContainer = connect(
     const {
       selections,
       workingDataset,
+      commitDetails,
       ui
     } = state
 
@@ -41,7 +42,8 @@ const DatasetSidebarContainer = connect(
       selections,
       workingDataset,
       setModal,
-      hideCommitNudge
+      hideCommitNudge,
+      commitDetails
     }, ownProps)
   },
   {
