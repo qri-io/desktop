@@ -45,43 +45,28 @@ export function fetchWorkingDatasetDetails (): ApiActionThunk {
     const whenOk = chainSuccess(dispatch, getState)
     let response: AnyAction
 
-    // TODO (ramfox): this code smells, need to have a think on this
-    // at least a refactor to pull all the fetchWorkingHistory call business
-    // into it's own function so it isnt repeated
-    try {
-      response = await fetchWorkingDataset()(dispatch, getState)
-      response = await whenOk(fetchWorkingStatus())(response)
-      response = await whenOk(fetchBody())(response)
-      response = await whenOk(fetchWorkingHistory())(response)
-      const { workingDataset, selections } = getState()
-      const { history } = workingDataset
-      const { commit } = selections
+    response = await fetchWorkingDataset()(dispatch, getState)
 
-      // if history length changes, select the latest commit
-      if (history.value.length !== 0 && (commit === '' || !history.value.some(c => c.path === commit))) {
-        await dispatch(setSelectedListItem('commit', history.value[0].path))
-      }
-      return response
-    } catch (action) {
-      // if fetching the WorkingDatasets was a success, OR if the error was 422, meaning the dataset exists
-      // but is not linked to the filesystem, we still may have a history
-      if (action.payload.err.code === 422) {
-        response = await fetchWorkingHistory()(dispatch, getState)
-        if (response && getActionType(response) === 'success') {
-          // set selected commit to be the first on the list
-          const { workingDataset, selections } = getState()
-          const { history } = workingDataset
-          const { commit } = selections
-
-          // if history length changes, select the latest commit
-          if (history.value.length !== 0 && (commit === '' || !history.value.some(c => c.path === commit))) {
-            await dispatch(setSelectedListItem('commit', history.value[0].path))
-          }
-        }
+    // if the response returned in error, check the error
+    // if it's 422, it means the dataset exists, it's just not linked to the filesystem
+    if (getActionType(response) === 'failure') {
+      if (response.payload.err.code !== 422) {
         return response
       }
-      return action
+      response = await fetchWorkingDataset(false)(dispatch, getState)
     }
+    response = await whenOk(fetchWorkingStatus())(response)
+    response = await whenOk(fetchBody())(response)
+    response = await whenOk(fetchWorkingHistory())(response)
+    const { workingDataset, selections } = getState()
+    const { history } = workingDataset
+    const { commit } = selections
+
+    // if history length changes, select the latest commit
+    if (history.value.length !== 0 && (commit === '' || !history.value.some(c => c.path === commit))) {
+      await dispatch(setSelectedListItem('commit', history.value[0].path))
+    }
+    return response
   }
 }
 
@@ -173,7 +158,7 @@ export function fetchMyDatasets (page: number = 1, pageSize: number = pageSizeDe
   }
 }
 
-export function fetchWorkingDataset (): ApiActionThunk {
+export function fetchWorkingDataset (fsi: boolean = true): ApiActionThunk {
   return async (dispatch, getState) => {
     const { selections } = getState()
     const { peername, name } = selections
@@ -187,7 +172,7 @@ export function fetchWorkingDataset (): ApiActionThunk {
       [CALL_API]: {
         endpoint: '',
         method: 'GET',
-        params: { fsi: true },
+        params: { fsi },
         segments: {
           peername,
           name
@@ -379,7 +364,6 @@ export function fetchCommitBody (page: number = 1, pageSize: number = bodyPageSi
         map: mapDataset
       }
     }
-
     return dispatch(action)
   }
 }
