@@ -23,7 +23,7 @@ export interface BodyProps {
 
 function shouldDisplayTable (value: any[], structure: Structure) {
   // if it's a CSV, or if JSON with depth of 2, render a table
-  return value && structure && (structure.format === 'csv' || structure.format === 'xlsx' || structure.depth === 2)
+  return value && structure && structure.depth === 2
 }
 
 const Body: React.FunctionComponent<BodyProps> = ({ value, pageInfo, headers, structure, onFetch }) => {

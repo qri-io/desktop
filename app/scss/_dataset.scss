@@ -378,6 +378,15 @@ $header-font-size: .9rem;
     height: 100%;
     position: relative;
 
+    .spinner {
+      margin-top: $spacer;
+      width: 100%;
+      position: absolute;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
     .sidebar-content {
       overflow: auto;
       width: 100%;

@@ -2,6 +2,10 @@ import { Reducer, AnyAction } from 'redux'
 import { CommitDetails } from '../models/store'
 import { apiActionTypes } from '../store/api'
 import { withPagination } from './page'
+import bodyValue from '../utils/bodyValue'
+import {
+  DATASET_REQ
+} from './workingDataset'
 
 const initialState: CommitDetails = {
   path: '',
@@ -13,7 +17,7 @@ const initialState: CommitDetails = {
   structure: null,
   components: {
     body: {
-      value: [],
+      value: undefined,
       pageInfo: {
         isFetching: true,
         page: 0,
@@ -36,6 +40,11 @@ const [COMMITBODY_REQ, COMMITBODY_SUCC, COMMITBODY_FAIL] = apiActionTypes('commi
 
 const commitDetailsReducer: Reducer = (state = initialState, action: AnyAction): CommitDetails => {
   switch (action.type) {
+    case DATASET_REQ:
+      if (action.segments.peername !== state.peername || action.segments.name !== state.name) {
+        return initialState
+      }
+      return state
     case COMMITDATASET_REQ:
       return initialState
     case COMMITDATASET_SUCC:
@@ -82,7 +91,7 @@ const commitDetailsReducer: Reducer = (state = initialState, action: AnyAction):
         components: {
           ...state.components,
           body: {
-            value: action.pageInfo.page === 1 ? [] : state.components.body.value,
+            value: action.pageInfo.page === 1 ? undefined : state.components.body.value,
             pageInfo: withPagination(action, state.components.body.pageInfo)
           }
         }
@@ -94,10 +103,7 @@ const commitDetailsReducer: Reducer = (state = initialState, action: AnyAction):
           ...state.components,
           body: {
             ...state.components.body,
-            value: [
-              ...state.components.body.value,
-              ...action.payload.data.data
-            ],
+            value: bodyValue(state.components.body.value, action.payload.data.data),
             pageInfo: withPagination(action, state.components.body.pageInfo)
           }
         }

@@ -3,6 +3,7 @@ import { WorkingDataset, DatasetStatus, ComponentStatus } from '../models/store'
 import { apiActionTypes } from '../store/api'
 import { withPagination } from './page'
 import { ipcRenderer } from 'electron'
+import bodyValue from '../utils/bodyValue'
 
 const initialState: WorkingDataset = {
   path: '',
@@ -43,7 +44,7 @@ const initialState: WorkingDataset = {
   }
 }
 
-const [DATASET_REQ, DATASET_SUCC, DATASET_FAIL] = apiActionTypes('dataset')
+export const [DATASET_REQ, DATASET_SUCC, DATASET_FAIL] = apiActionTypes('dataset')
 const [DATASET_HISTORY_REQ, DATASET_HISTORY_SUCC, DATASET_HISTORY_FAIL] = apiActionTypes('history')
 const [DATASET_STATUS_REQ, DATASET_STATUS_SUCC, DATASET_STATUS_FAIL] = apiActionTypes('status')
 const [DATASET_BODY_REQ, DATASET_BODY_SUCC, DATASET_BODY_FAIL] = apiActionTypes('body')
@@ -91,7 +92,7 @@ const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction
       }
     case DATASET_FAIL:
       return {
-        ...state,
+        ...initialState,
         isLoading: false
       }
 
@@ -161,10 +162,7 @@ const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction
           ...state.components,
           body: {
             ...state.components.body,
-            value: [
-              ...state.components.body.value,
-              ...action.payload.data.data
-            ],
+            value: bodyValue(state.components.body.value, action.payload.data.data),
             pageInfo: withPagination(action, state.components.body.pageInfo)
           }
         }
