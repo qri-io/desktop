@@ -5,8 +5,11 @@ import AppContainer from './containers/AppContainer'
 
 import './app.global.scss'
 
-const { configureStore } = require('./store/configureStore') // eslint-disable-line
-const store = configureStore()
+if ((module as any).hot) {
+  (module as any).hot.accept()
+}
+
+const { store } = require('./store/configureStore') // eslint-disable-line
 
 ReactDOM.render(
   <Provider store={store}>

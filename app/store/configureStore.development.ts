@@ -42,17 +42,16 @@ const enhancer = composeEnhancers(
   applyMiddleware(thunk, router, apiMiddleware)
 )
 
-export = {
-  history,
-  configureStore (initialState: Object | void) {
-    const store = createStore(rootReducer, initialState as any, enhancer)
+const configureStore = (initialState: Object | void) => {
+  const store = createStore(rootReducer, initialState as any, enhancer)
 
-    if (module.hot) {
-      module.hot.accept('../reducers', () =>
-        store.replaceReducer(require('../reducers')) // eslint-disable-line global-require
-      )
-    }
-
-    return store
+  if (module.hot) {
+    module.hot.accept('../reducers', () =>
+      store.replaceReducer(require('../reducers')) // eslint-disable-line global-require
+    )
   }
-};
+
+  return store
+}
+
+export default configureStore()

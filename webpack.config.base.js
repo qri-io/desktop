@@ -8,13 +8,6 @@ const {
 } = require('./app/package.json');
 
 module.exports = {
-  module: {
-    rules: [{
-      test: /\.tsx?$/,
-      loaders: ['react-hot-loader/webpack', 'ts-loader'],
-      exclude: /node_modules/
-    }]
-  },
 
   output: {
     path: path.join(__dirname, 'app'),
