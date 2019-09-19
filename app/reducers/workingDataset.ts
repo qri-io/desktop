@@ -91,6 +91,11 @@ const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction
         }
       }
     case DATASET_FAIL:
+      // if the error is 422, we are going to rerequest this
+      // dataset using 'fsi=false'
+      if (action.payload.err.code === 422) {
+        return state
+      }
       return {
         ...initialState,
         isLoading: false
