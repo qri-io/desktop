@@ -1,5 +1,5 @@
-import * as React from 'react'
 import { hot } from 'react-hot-loader/root'
+import * as React from 'react'
 import { Action } from 'redux'
 import { CSSTransition } from 'react-transition-group'
 import { HashRouter as Router } from 'react-router-dom'
