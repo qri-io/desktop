@@ -69,8 +69,12 @@ const DatasetSidebar: React.FunctionComponent<DatasetSidebarProps> = (props) => 
   const {
     activeTab,
     component: selectedComponent,
-    commitComponent: selectedCommit
+    commitComponent: selectedCommit,
+    peername,
+    name
   } = selections
+
+  const datasetSelected = peername !== '' && name !== ''
 
   const historyLoaded = !!history
   const statusLoaded = !!status
@@ -87,24 +91,30 @@ const DatasetSidebar: React.FunctionComponent<DatasetSidebarProps> = (props) => 
     }
   }
 
+  const historyToolTip = path || !datasetSelected ? 'Explore older versions of this dataset' : 'This dataset has no previous versions'
+
   return (
     <div className='dataset-sidebar'>
       <div id='tabs' className='sidebar-list-item'>
         <div
-          className={classNames('tab', { 'active': activeTab === 'status' })}
-          onClick={() => { setActiveTab('status') }}
+          className={classNames('tab', { 'active': activeTab === 'status' && datasetSelected, 'disabled': !datasetSelected })}
+          onClick={() => {
+            if (datasetSelected) {
+              setActiveTab('status')
+            }
+          }}
           data-tip='View the latest version or working changes<br/> to this dataset&apos;s components'
         >
           Status
         </div>
         <div
-          className={classNames('tab', { 'active': activeTab === 'history', 'disabled': history.pageInfo.error && history.pageInfo.error.includes('no history') })}
+          className={classNames('tab', { 'active': activeTab === 'history', 'disabled': (history.pageInfo.error && history.pageInfo.error.includes('no history')) || !datasetSelected })}
           onClick={() => {
-            if (!(history.pageInfo.error && history.pageInfo.error.includes('no history'))) {
+            if ((!(history.pageInfo.error && history.pageInfo.error.includes('no history')) && datasetSelected)) {
               setActiveTab('history')
             }
           }}
-          data-tip={path ? 'Explore older versions of this dataset' : 'This dataset has no previous versions'}
+          data-tip={historyToolTip}
         >
           History
         </div>
@@ -128,6 +138,7 @@ const DatasetSidebar: React.FunctionComponent<DatasetSidebarProps> = (props) => 
         >
           <div id='status-content' className='sidebar-content'>
             <ComponentList
+              datasetSelected={datasetSelected}
               status={status}
               selectedComponent={selectedComponent}
               onComponentClick={setSelectedListItem}
@@ -168,7 +179,7 @@ const DatasetSidebar: React.FunctionComponent<DatasetSidebarProps> = (props) => 
           </div>
         </CSSTransition>
         {
-          !hideCommitNudge && noHistory && (
+          !hideCommitNudge && noHistory && datasetSelected && (
             <div className='commit-nudge'>
               <div className='commit-nudge-text'>
                 You&apos;re ready to make your first commit on this dataset! Verify that the body and meta are accurate, enter a commit message below, and click Submit.

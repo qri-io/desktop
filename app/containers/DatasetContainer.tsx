@@ -37,9 +37,10 @@ const DatasetContainer = connect(
       selections,
       workingDataset,
       mutations,
+      myDatasets,
       session
     } = state
-
+    const hasDatasets = myDatasets.value.length !== 0
     const { setModal } = ownProps
     return Object.assign({
       ui,
@@ -47,6 +48,7 @@ const DatasetContainer = connect(
       workingDataset,
       mutations,
       setModal,
+      hasDatasets,
       session
     }, ownProps)
   },

@@ -3,14 +3,12 @@ import { Switch, Route, Redirect } from 'react-router-dom'
 import Welcome from './components/Welcome'
 import Signup from './components/Signup'
 import Signin from './components/Signin'
-import NoDatasets from './components/NoDatasets'
 import DatasetContainer from './containers/DatasetContainer'
 
 export default function Routes (props: any) {
   const {
     hasAcceptedTOS,
     qriCloudAuthenticated,
-    hasDatasets,
     setQriCloudAuthenticated,
     acceptTOS,
     signup,
@@ -46,17 +44,7 @@ export default function Routes (props: any) {
         <Route exact path='/dataset' render={() => {
           if (!hasAcceptedTOS) return <Redirect to='/' />
           if (!qriCloudAuthenticated) return <Redirect to='/signup' />
-          if (!hasDatasets) return <Redirect to='/nodatasets' />
           return <DatasetContainer setModal={setModal} />
-        }}/>
-
-        {/* No Datasets */}
-        <Route exact path='/nodatasets' render={() => {
-          if (!hasAcceptedTOS) return <Redirect to='/' />
-          if (!qriCloudAuthenticated) return <Redirect to='/signup' />
-
-          if (hasDatasets) return <Redirect to='/dataset' />
-          return <NoDatasets setModal={setModal}/>
         }}/>
       </Route>
     </Switch>

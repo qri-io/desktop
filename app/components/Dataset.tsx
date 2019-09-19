@@ -33,6 +33,7 @@ import {
   DatasetStatus,
   SelectedComponent
 } from '../models/store'
+import NoDatasets from './NoDatasets'
 
 export interface DatasetProps {
   // redux state
@@ -42,6 +43,7 @@ export interface DatasetProps {
   mutations: Mutations
   setModal: (modal: Modal) => void
   session: Session
+  hasDatasets: boolean
 
   // actions
   toggleDatasetList: () => Action
@@ -77,7 +79,8 @@ interface CurrentDatasetProps {
 
 export const CurrentDataset: React.FunctionComponent<CurrentDatasetProps> = (props) => {
   const { onClick, expanded, width, peername, name } = props
-  const alias = (peername !== '' && name !== '') ? `${peername}/${name}` : ''
+  const datasetSelected = peername !== '' && name !== ''
+  const alias = datasetSelected ? `${peername}/${name}` : ''
 
   return (
     <div
@@ -227,7 +230,7 @@ export default class Dataset extends React.Component<DatasetProps> {
 
   render () {
     // unpack all the things
-    const { ui, selections, workingDataset, setModal, session, setSelectedListItem } = this.props
+    const { ui, selections, workingDataset, setModal, session, setSelectedListItem, hasDatasets } = this.props
     const { peername: username, photo: userphoto } = session
     const { showDatasetList, datasetSidebarWidth } = ui
     const {
@@ -237,6 +240,7 @@ export default class Dataset extends React.Component<DatasetProps> {
       component: selectedComponent
     } = selections
 
+    const datasetSelected = peername !== '' && name !== ''
     const { status, published, fsiPath } = workingDataset
 
     // isLinked is derived from fsiPath and only used locally
@@ -249,29 +253,31 @@ export default class Dataset extends React.Component<DatasetProps> {
       signout
     } = this.props
 
-    const linkButton = isLinked ? (
-      <HeaderColumnButton
-        id='linkButton'
-        icon={faFolderOpen}
-        label='Show Files'
-        onClick={this.openWorkingDirectory}
-      />) : (
-      <HeaderColumnButton
-        id='linkButton'
-        label='link to filesystem'
-        tooltip='Link this dataset to a folder on your computer'
-        icon={(
-          <span className='fa-layers fa-fw'>
-            <FontAwesomeIcon icon={faFile} size='lg'/>
-            <FontAwesomeIcon icon={faLink} transform="shrink-8" />
-          </span>
-        )}
-        onClick={() => { setModal({ type: ModalType.LinkDataset }) }}
-      />
-    )
+    let linkButton
+    if (datasetSelected) {
+      linkButton = isLinked ? (
+        <HeaderColumnButton
+          id='linkButton'
+          icon={faFolderOpen}
+          label='Show Files'
+          onClick={this.openWorkingDirectory}
+        />) : (
+        <HeaderColumnButton
+          id='linkButton'
+          label='link to filesystem'
+          tooltip='Link this dataset to a folder on your computer'
+          icon={(
+            <span className='fa-layers fa-fw'>
+              <FontAwesomeIcon icon={faFile} size='lg'/>
+              <FontAwesomeIcon icon={faLink} transform="shrink-8" />
+            </span>
+          )}
+          onClick={() => { setModal({ type: ModalType.LinkDataset }) }}
+        />)
+    }
 
     let publishButton
-    if (username === workingDataset.peername) {
+    if (username === peername && datasetSelected) {
       publishButton = published ? (
         <HeaderColumnButtonDropdown
           id='publishButton'
@@ -347,7 +353,16 @@ export default class Dataset extends React.Component<DatasetProps> {
           <div className='content-wrapper'>
             <div className='transition-group' >
               <CSSTransition
-                in={peername === '' || name === ''}
+                in={!hasDatasets}
+                classNames='fade'
+                timeout={300}
+                mountOnEnter
+                unmountOnExit
+              >
+                <NoDatasets setModal={setModal} />
+              </CSSTransition>
+              <CSSTransition
+                in={!datasetSelected && hasDatasets}
                 classNames='fade'
                 timeout={300}
                 mountOnEnter
@@ -356,7 +371,7 @@ export default class Dataset extends React.Component<DatasetProps> {
                 <NoDatasetSelected toggleDatasetList={toggleDatasetList}/>
               </CSSTransition>
               <CSSTransition
-                in={(activeTab === 'status') && !isLinked && !workingDataset.isLoading}
+                in={datasetSelected && (activeTab === 'status') && !isLinked && !workingDataset.isLoading}
                 classNames='fade'
                 timeout={300}
                 mountOnEnter
@@ -365,7 +380,7 @@ export default class Dataset extends React.Component<DatasetProps> {
                 <UnlinkedDataset setModal={setModal}/>
               </CSSTransition>
               <CSSTransition
-                in={activeTab === 'status' && isLinked}
+                in={datasetSelected && activeTab === 'status' && isLinked}
                 classNames='fade'
                 timeout={300}
                 mountOnEnter
@@ -374,7 +389,7 @@ export default class Dataset extends React.Component<DatasetProps> {
                 <DatasetComponent component={selectedComponent} componentStatus={status[selectedComponent]} isLoading={workingDataset.isLoading} fsiPath={this.props.workingDataset.fsiPath}/>
               </CSSTransition>
               <CSSTransition
-                in={activeTab === 'history'}
+                in={datasetSelected && activeTab === 'history'}
                 classNames='fade'
                 timeout={300}
                 mountOnEnter

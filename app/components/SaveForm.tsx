@@ -2,27 +2,34 @@ import * as React from 'react'
 import classNames from 'classnames'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSync } from '@fortawesome/free-solid-svg-icons'
+import { Action } from 'redux'
 
 import { validateCommitState } from '../utils/formValidation'
 import { DatasetStatus } from '../models/store'
 import { ApiAction } from '../store/api'
 
-interface SaveFormProps {
+export interface SaveFormProps {
   isLoading: boolean
   status: DatasetStatus
+  title: string
+  message: string
   saveWorkingDataset: () => Promise<ApiAction>
+  setCommitTitle: (title: string) => Action
+  setCommitMessage: (message: string) => Action
 }
 
 const SaveForm: React.FunctionComponent<SaveFormProps> = (props: SaveFormProps) => {
   const {
     isLoading,
     status,
-    saveWorkingDataset
+    saveWorkingDataset,
+    title,
+    message,
+    setCommitTitle,
+    setCommitMessage
   } = props
 
   const [isValid, setIsValid] = React.useState(false)
-  const [title, setTitle] = React.useState('')
-  const [message, setMessage] = React.useState('')
 
   React.useEffect(() => {
     // validate form -AND- make sure dataset status is in a commitable state
@@ -33,8 +40,8 @@ const SaveForm: React.FunctionComponent<SaveFormProps> = (props: SaveFormProps) 
   const handleChange = (e: any) => {
     const { name, value } = e.target
 
-    if (name === 'title') setTitle(value)
-    if (name === 'message') setMessage(value)
+    if (name === 'title') setCommitTitle(value)
+    if (name === 'message') setCommitMessage(value)
   }
 
   const handleSubmit = (event: any) => {
@@ -42,8 +49,8 @@ const SaveForm: React.FunctionComponent<SaveFormProps> = (props: SaveFormProps) 
     if (isValid) {
       saveWorkingDataset()
         .then(() => {
-          setTitle('')
-          setMessage('')
+          setCommitTitle('')
+          setCommitMessage('')
         })
     }
   }
