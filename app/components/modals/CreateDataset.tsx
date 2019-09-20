@@ -149,7 +149,7 @@ const CreateDataset: React.FunctionComponent<CreateDatasetProps> = ({ onDismisse
             <TextInput
               name='filePath'
               label='Source data file'
-              labelTooltip='Select a CSV or JSON file on your file system.<br/>Qri will import the data and leave the file in place.'
+              labelTooltip='Select a CSV or JSON file on your computer.<br/>Qri will import the data and leave the file in place.'
               type=''
               value={filePath}
               onChange={handleChanges}
@@ -160,8 +160,8 @@ const CreateDataset: React.FunctionComponent<CreateDatasetProps> = ({ onDismisse
           </div>
           <TextInput
             name='datasetName'
-            label='Name'
-            labelTooltip='Name will be the primary<br/> way to refer to your dataset.'
+            label='Dataset Name'
+            labelTooltip='Choose a descriptive name that is unique among your datasets'
             type=''
             value={datasetName}
             onChange={handleChanges}

@@ -34,7 +34,7 @@ export const StatusDot: React.FunctionComponent<StatusDotProps> = (props) => {
       statusTooltip = ''
   }
   if (props.status === 'parse error') {
-    return <FontAwesomeIcon icon={faExclamation} className='parse-error' style={{ color: '#e04f4f' }} data-tip='parsing error' size='sm' />
+    return <FontAwesomeIcon icon={faExclamation} className='parse-error' style={{ color: '#e04f4f' }} data-tip='Parsing Error' size='sm' />
   }
   return <div className='status-dot' style={{ backgroundColor: statusColor }} data-tip={statusTooltip}></div>
 }

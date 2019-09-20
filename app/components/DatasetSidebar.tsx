@@ -103,7 +103,7 @@ const DatasetSidebar: React.FunctionComponent<DatasetSidebarProps> = (props) => 
               setActiveTab('status')
             }
           }}
-          data-tip='View the latest version or working changes<br/> to this dataset&apos;s components'
+          data-tip='View the working changes<br/> to this dataset&apos;s components'
         >
           Status
         </div>
