@@ -7,7 +7,6 @@ import {
   UI_SET_QRI_CLOUD_AUTHENTICATED,
   UI_OPEN_TOAST,
   UI_CLOSE_TOAST,
-  UI_SET_API_CONNECTION,
   UI_SET_MODAL,
   UI_SIGNOUT,
   UI_HIDE_COMMIT_NUDGE
@@ -60,13 +59,6 @@ export const setModal = (modal: Modal) => {
   return {
     type: UI_SET_MODAL,
     payload: modal
-  }
-}
-
-export const setApiConnection = (status: number) => {
-  return {
-    type: UI_SET_API_CONNECTION,
-    status
   }
 }
 

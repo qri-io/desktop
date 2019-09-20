@@ -1,6 +1,6 @@
 import { Reducer, AnyAction } from 'redux'
 import { CommitDetails } from '../models/store'
-import { apiActionTypes } from '../store/api'
+import { apiActionTypes } from '../utils/actionType'
 import { withPagination } from './page'
 import bodyValue from '../utils/bodyValue'
 import {

@@ -6,6 +6,8 @@ import {
 import { ThunkDispatch } from 'redux-thunk'
 import Store from '../models/store'
 import mapError from './mapError'
+import { FAILED_TO_FETCH } from '../reducers/connection'
+import { apiActionTypes } from '../utils/actionType'
 
 // CALL_API is a global, unique constant for passing actions to API middleware
 export const CALL_API = Symbol('CALL_API')
@@ -102,11 +104,6 @@ interface APIResponseEnvelope {
   meta: object
   data: object|any[]
   pagination?: object
-}
-
-export function apiActionTypes (endpoint: string): [string, string, string] {
-  const name = endpoint.toUpperCase()
-  return [`API_${name}_REQUEST`, `API_${name}_SUCCESS`, `API_${name}_FAILURE`]
 }
 
 // getJSON fetches json data from a url
@@ -221,6 +218,11 @@ export const apiMiddleware: Middleware = () => (next: Dispatch<AnyAction>) => as
     try {
       data = await getAPIJSON(endpoint, method, segments, params, pageInfo, body)
     } catch (err) {
+      if (err && err.message && err.message.includes('Failed to fetch')) {
+        next({
+          type: FAILED_TO_FETCH
+        })
+      }
       return next({
         type: FAIL_TYPE,
         payload: { err }

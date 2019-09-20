@@ -1,6 +1,6 @@
 import { AnyAction } from 'redux'
 import { PageInfo } from '../models/store'
-import getActionType from '../utils/actionType'
+import { getActionType } from '../utils/actionType'
 
 const initialPageInfo = {
   isFetching: true,

@@ -11,7 +11,7 @@ import {
   mapStatus,
   mapHistory
 } from './mappingFuncs'
-import getActionType from '../utils/actionType'
+import { getActionType } from '../utils/actionType'
 
 const pageSizeDefault = 50
 const bodyPageSizeDefault = 100

@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 
 import WelcomeTemplate from './WelcomeTemplate'
 import DebouncedTextInput from './form/DebouncedTextInput'
-import getActionType from '../utils/actionType'
+import { getActionType } from '../utils/actionType'
 import { ApiAction } from '../store/api'
 
 import { validateUsername, validatePassword } from '../utils/formValidation'

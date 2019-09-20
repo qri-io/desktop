@@ -1,6 +1,6 @@
 import { Reducer, AnyAction } from 'redux'
 import { MyDatasets } from '../models/store'
-import { apiActionTypes } from '../store/api'
+import { apiActionTypes } from '../utils/actionType'
 import { withPagination } from './page'
 
 export const MYDATASETS_SET_FILTER = 'MYDATASETS_SET_FILTER'

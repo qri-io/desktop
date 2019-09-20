@@ -2,7 +2,7 @@ import { AnyAction } from 'redux'
 import { ipcRenderer } from 'electron'
 
 import store from '../utils/localStore'
-import { apiActionTypes } from '../store/api'
+import { apiActionTypes } from '../utils/actionType'
 import { SAVE_SUCC, SAVE_FAIL } from '../reducers/mutations'
 
 export const UI_TOGGLE_DATASET_LIST = 'UI_TOGGLE_DATASET_LIST'
@@ -11,7 +11,6 @@ export const UI_ACCEPT_TOS = 'UI_ACCEPT_TOS'
 export const UI_SET_QRI_CLOUD_AUTHENTICATED = 'UI_SET_QRI_CLOUD_AUTHENTICATED'
 export const UI_OPEN_TOAST = 'UI_OPEN_TOAST'
 export const UI_CLOSE_TOAST = 'UI_CLOSE_TOAST'
-export const UI_SET_API_CONNECTION = 'UI_SET_API_CONNECTION'
 export const UI_SET_MODAL = 'UI_SET_MODAL'
 export const UI_SIGNOUT = 'UI_SIGNOUT'
 export const UI_HIDE_COMMIT_NUDGE = 'UI_HIDE_COMMIT_NUDGE'
@@ -20,8 +19,6 @@ export const defaultSidebarWidth = 250
 export const hasAcceptedTOSKey = 'acceptedTOS'
 export const qriCloudAuthenticatedKey = 'qriCloudAuthenticated'
 export const hideCommitNudge = 'hideCommitNudge'
-
-const [, HEALTH_SUCCESS] = apiActionTypes('health')
 
 const getSidebarWidth = (key: string): number => {
   const width = store().getItem(key)
@@ -38,7 +35,6 @@ const defaultToast = {
 }
 
 const initialState = {
-  apiConnection: 0,
   showDatasetList: false,
   hasAcceptedTOS: store().getItem(hasAcceptedTOSKey) === 'true',
   qriCloudAuthenticated: store().getItem(qriCloudAuthenticatedKey) === 'true',
@@ -133,12 +129,6 @@ export default (state = initialState, action: AnyAction) => {
           visible: true
         }
       }
-
-    case HEALTH_SUCCESS:
-      if (state.apiConnection === 1) return state
-      return Object.assign({}, state, { apiConnection: 1 })
-    case UI_SET_API_CONNECTION:
-      return Object.assign({}, state, { apiConnection: action.status })
 
     case UI_SIGNOUT:
       store().setItem('qriCloudAuthenticated', 'false')

@@ -20,7 +20,7 @@ import RoutesContainer from '../containers/RoutesContainer'
 // import models
 import { ApiAction } from '../store/api'
 import { Modal, ModalType, HideModal } from '../models/modals'
-import { Toast as IToast } from '../models/store'
+import { Toast as IToast, Selections } from '../models/store'
 import { Dataset } from '../models/dataset'
 
 export const QRI_CLOUD_ROOT = 'https://qri.cloud'
@@ -30,6 +30,8 @@ export interface AppProps {
   loading: boolean
   sessionID: string
   peername: string
+  name: string
+  selections: Selections
   apiConnection?: number
   hasAcceptedTOS: boolean
   qriCloudAuthenticated: boolean
@@ -48,7 +50,6 @@ export interface AppProps {
   signup: (username: string, email: string, password: string) => Promise<ApiAction>
   signin: (username: string, password: string) => Promise<ApiAction>
   closeToast: () => Action
-  setApiConnection: (status: number) => Action
   pingApi: () => Promise<ApiAction>
   setModal: (modal: Modal) => Action
   removeDatasetAndFetch: (peername: string, name: string, removeFiles: boolean) => Promise<ApiAction>
@@ -91,18 +92,12 @@ class App extends React.Component<AppProps, AppState> {
       this.props.setModal({ type: ModalType.AddDataset })
     })
 
-    if (this.props.apiConnection === 0) {
-      var iter = 0
-      const backendLoadedCheck = setInterval(() => {
+    setInterval(() => {
+      if (this.props.apiConnection !== 1 || this.props.selections.peername === '' || this.props.selections.name === '') {
         this.props.pingApi()
-        iter++
-        if (this.props.apiConnection === 1) clearInterval(backendLoadedCheck)
-        if (iter > 20) {
-          this.props.setApiConnection(-1)
-          clearInterval(backendLoadedCheck)
-        }
-      }, 750)
-    }
+      }
+    }, 1000)
+
     this.props.fetchSession()
       .then(async () => {
         if (this.props.qriCloudAuthenticated) { this.props.fetchMyDatasets() }

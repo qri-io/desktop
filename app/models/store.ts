@@ -46,8 +46,12 @@ export interface Toast {
   visible: false
 }
 
-export interface UI {
+export interface Connection {
   apiConnection: ApiConnection
+  failedToFetchCount: number
+}
+
+export interface UI {
   showDatasetList: boolean
   hasAcceptedTOS: boolean
   qriCloudAuthenticated: boolean
@@ -152,6 +156,7 @@ export interface WorkingDataset extends CommitDetails {
 
 export default interface Store {
   session: Session
+  connection: Connection
   ui: UI
   selections: Selections
   myDatasets: MyDatasets
