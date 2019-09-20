@@ -11,5 +11,5 @@ export function apiActionTypes (endpoint: string): [string, string, string] {
 }
 
 export function isApiAction (endpoint: string): boolean {
-  return endpoint.includes('API')
+  return !!endpoint && endpoint.startsWith('API')
 }
