@@ -69,7 +69,7 @@ const DatasetSidebar: React.FunctionComponent<DatasetSidebarProps> = (props) => 
   const {
     activeTab,
     component: selectedComponent,
-    commitComponent: selectedCommit,
+    commit: selectedCommit,
     peername,
     name
   } = selections
@@ -162,7 +162,8 @@ const DatasetSidebar: React.FunctionComponent<DatasetSidebarProps> = (props) => 
             hidden = {activeTab === 'status'}
           >
             {
-              history.value.map(({ path, timestamp, title }) => {
+              history.value.map((props) => {
+                const { path, timestamp, title } = props
                 const timeMessage = moment(timestamp).fromNow()
                 return (
                   <HistoryListItem
