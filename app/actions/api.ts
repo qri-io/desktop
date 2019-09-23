@@ -1,7 +1,8 @@
 import { Action, AnyAction } from 'redux'
 
 import { CALL_API, ApiAction, ApiActionThunk, chainSuccess, ApiResponseAction } from '../store/api'
-import { DatasetSummary, ComponentType, PageInfo, MyDatasets } from '../models/store'
+import { DatasetSummary, ComponentType, MyDatasets } from '../models/store'
+import { actionWithPagination } from '../utils/pagination'
 import { openToast } from './ui'
 import { setWorkingDataset, setSelectedListItem, setActiveTab } from './selections'
 import {
@@ -115,23 +116,6 @@ export function fetchModifiedComponents (): ApiActionThunk {
 
     return response
   }
-}
-
-function actionWithPagination (invalidatePagination: boolean, page: number, pageInfo: PageInfo): ActionWithPaginationRes {
-  // if we aren't invalidating the pagination,
-  // and we have already fetched this page,
-  // or we've already fetched all the entries
-  // bail early!
-  if (
-    invalidatePagination && (
-      page <= pageInfo.page ||
-    pageInfo.fetchedAll)
-  ) {
-    return { page: 0, bailEarly: true }
-  }
-  // if we are invalidating the pagination, start the pagination at 1!
-  if (invalidatePagination) return { page: 1, bailEarly: true }
-  return { page, bailEarly: false }
 }
 
 export function fetchMyDatasets (page: number = 1, pageSize: number = pageSizeDefault, invalidatePagination: boolean = false): ApiActionThunk {
@@ -300,11 +284,6 @@ export function fetchWorkingStatus (): ApiActionThunk {
   }
 }
 
-interface ActionWithPaginationRes {
-  page: number
-  bailEarly: boolean
-}
-
 export function fetchBody (page: number = 1, pageSize: number = bodyPageSizeDefault, invalidatePagination: boolean = false): ApiActionThunk {
   return async (dispatch, getState) => {
     const { workingDataset, selections } = getState()
@@ -423,7 +402,7 @@ export function addDatasetAndFetch (peername: string, name: string): ApiActionTh
 
     try {
       response = await addDataset(peername, name)(dispatch, getState)
-      response = await whenOk(fetchMyDatasets())(response)
+      response = await whenOk(fetchMyDatasets(1, pageSizeDefault, true))(response)
       dispatch(setWorkingDataset(peername, name))
       dispatch(setActiveTab('history'))
       dispatch(setSelectedListItem('component', 'meta'))
@@ -461,7 +440,7 @@ export function initDatasetAndFetch (sourcebodypath: string, name: string, dir: 
 
     try {
       response = await initDataset(sourcebodypath, name, dir, mkdir)(dispatch, getState)
-      response = await whenOk(fetchMyDatasets())(response)
+      response = await whenOk(fetchMyDatasets(1, pageSizeDefault, true))(response)
       const action = response as ApiResponseAction
       const { data } = action.payload
       const { peername } = data.find((dataset: DatasetSummary) => dataset.name === name)
@@ -536,28 +515,34 @@ export function unpublishDataset (): ApiActionThunk {
 }
 
 export function linkDataset (peername: string, name: string, dir: string): ApiActionThunk {
+  return async (dispatch) => {
+    const action = {
+      type: 'checkout',
+      [CALL_API]: {
+        endpoint: 'checkout',
+        method: 'POST',
+        segments: {
+          peername,
+          name
+        },
+        params: {
+          dir
+        }
+      }
+    }
+    return dispatch(action)
+  }
+}
+
+export function linkDatasetAndFetch (peername: string, name: string, dir: string): ApiActionThunk {
   return async (dispatch, getState) => {
     const whenOk = chainSuccess(dispatch, getState)
     let response: Action
 
     try {
-      const action = {
-        type: 'checkout',
-        [CALL_API]: {
-          endpoint: 'checkout',
-          method: 'POST',
-          segments: {
-            peername,
-            name
-          },
-          params: {
-            dir
-          }
-        }
-      }
-      response = await dispatch(action)
+      response = await linkDataset(peername, name, dir)(dispatch, getState)
       response = await whenOk(fetchWorkingDatasetDetails())(response)
-      response = await whenOk(fetchMyDatasets(1, pageSizeDefault, true))(response) // non-paginated
+      response = await whenOk(fetchMyDatasets(1, pageSizeDefault, true))(response)
     } catch (action) {
       throw action
     }
@@ -622,7 +607,7 @@ export function removeDatasetAndFetch (peername: string, name: string, removeFil
 
     try {
       response = await removeDataset(peername, name, removeFiles)(dispatch, getState)
-      response = await whenOk(fetchMyDatasets())(response)
+      response = await whenOk(fetchMyDatasets(1, pageSizeDefault, true))(response)
     } catch (action) {
       throw action
     }

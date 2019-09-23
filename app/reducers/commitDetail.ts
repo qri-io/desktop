@@ -1,7 +1,7 @@
 import { Reducer, AnyAction } from 'redux'
 import { CommitDetails } from '../models/store'
 import { apiActionTypes } from '../utils/actionType'
-import { withPagination } from './page'
+import { reducerWithPagination } from '../utils/pagination'
 import bodyValue from '../utils/bodyValue'
 import {
   DATASET_REQ
@@ -92,7 +92,7 @@ const commitDetailsReducer: Reducer = (state = initialState, action: AnyAction):
           ...state.components,
           body: {
             value: action.pageInfo.page === 1 ? undefined : state.components.body.value,
-            pageInfo: withPagination(action, state.components.body.pageInfo)
+            pageInfo: reducerWithPagination(action, state.components.body.pageInfo)
           }
         }
       }
@@ -104,7 +104,7 @@ const commitDetailsReducer: Reducer = (state = initialState, action: AnyAction):
           body: {
             ...state.components.body,
             value: bodyValue(state.components.body.value, action.payload.data.data),
-            pageInfo: withPagination(action, state.components.body.pageInfo)
+            pageInfo: reducerWithPagination(action, state.components.body.pageInfo)
           }
         }
       }
@@ -115,7 +115,7 @@ const commitDetailsReducer: Reducer = (state = initialState, action: AnyAction):
           ...state.components,
           body: {
             ...state.body,
-            pageInfo: withPagination(action, state.components.body.pageInfo)
+            pageInfo: reducerWithPagination(action, state.components.body.pageInfo)
           }
         }
       }
