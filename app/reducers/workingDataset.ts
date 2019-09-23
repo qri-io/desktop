@@ -6,6 +6,10 @@ import { reducerWithPagination, initialPageInfo } from '../utils/pagination'
 import { ipcRenderer } from 'electron'
 import bodyValue from '../utils/bodyValue'
 
+import {
+  REMOVE_SUCC
+} from './selections'
+
 const initialState: WorkingDataset = {
   path: '',
   prevPath: '',
@@ -234,6 +238,11 @@ const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction
         }
       }
 
+    case REMOVE_SUCC:
+      if (state.peername === action.payload.segments.peername && state.name === action.payload.segments.name) {
+        return initialState
+      }
+      return state
     default:
       return state
   }

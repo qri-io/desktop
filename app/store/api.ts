@@ -236,7 +236,8 @@ export const apiMiddleware: Middleware = () => (next: Dispatch<AnyAction>) => as
         request: {
           params,
           pageInfo
-        }
+        },
+        segments
       }
     })
   }

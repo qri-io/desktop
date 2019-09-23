@@ -12,7 +12,8 @@ import SelectionsReducer, {
   DATASET_FAIL,
   COMMIT_SUCC,
   SIGNIN_SUCC,
-  SIGNUP_SUCC
+  SIGNUP_SUCC,
+  REMOVE_SUCC
 } from '../../../app/reducers/selections'
 
 // TODO (ramfox): test local storage
@@ -34,8 +35,7 @@ describe('Body Reducer', () => {
   it(`DATASET_FAIL with 422 error`, () => {
     const state = {
       peername: 'foo',
-      name: 'bar',
-      fsiPath:'wooo'
+      name: 'bar'
     }
     const action = {
       type: DATASET_FAIL,
@@ -57,6 +57,40 @@ describe('Body Reducer', () => {
       payload: {
         err: {
           code: 500
+        }
+      }
+    }
+    Reducer(SelectionsReducer).withState(state).expect(action).toReturnState(clearState)
+  })
+
+  // REMOVE_SUCC
+  it(`REMOVE_SUCC where removed dataset isn't the selected dataset`, () => {
+    const state = {
+      peername: 'foo',
+      name: 'bar'
+    }
+    const action = {
+      type: REMOVE_SUCC,
+      payload: {
+        segments: {
+          peername: 'baz',
+          name: 'qux'
+        }
+      }
+    }
+    Reducer(SelectionsReducer).withState(state).expect(action).toReturnState(state)
+  })
+  it(`REMOVE_SUCC where dataset is the currently selected dataset`, () => {
+    const state = {
+      peername: 'foo',
+      name: 'bar'
+    }
+    const action = {
+      type: REMOVE_SUCC,
+      payload: {
+        segments: {
+          peername: 'foo',
+          name: 'bar'
         }
       }
     }

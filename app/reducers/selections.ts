@@ -19,6 +19,7 @@ export const initialState: Selections = {
 }
 
 export const [, ADD_SUCC] = apiActionTypes('add')
+export const [, REMOVE_SUCC] = apiActionTypes('remove')
 export const [, INIT_SUCC] = apiActionTypes('init')
 export const [, DATASET_SUCC, DATASET_FAIL] = apiActionTypes('dataset')
 export const [, COMMIT_SUCC] = apiActionTypes('commitdataset')
@@ -30,12 +31,21 @@ export const [, , HISTORY_FAIL] = apiActionTypes('history')
 
 export default (state = initialState, action: AnyAction) => {
   switch (action.type) {
+    case REMOVE_SUCC:
     case DATASET_FAIL:
     case SIGNIN_SUCC:
     case SIGNUP_SUCC:
     case SELECTIONS_CLEAR:
+      // if the given peername and name don't match the selected peername and name return early
+      // otherwise, fall through to clearing the selection
+      if (action.type === REMOVE_SUCC) {
+        if (!(action.payload.segments.peername === state.peername && action.payload.segments.name === state.name)) {
+          return state
+        }
+      }
       // if the error code is 422, that means the dataset exists
       // but is not linked to the filesystem.
+      // otherwise fall through
       if (action.type === DATASET_FAIL && action.payload.err.code === 422) {
         return state
       }

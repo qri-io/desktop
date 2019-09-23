@@ -1,19 +1,13 @@
 import { Reducer, AnyAction } from 'redux'
 import { MyDatasets } from '../models/store'
 import { apiActionTypes } from '../utils/actionType'
-import { withPagination } from './page'
+import { reducerWithPagination, initialPageInfo } from '../utils/pagination'
 
 export const MYDATASETS_SET_FILTER = 'MYDATASETS_SET_FILTER'
 export const RESET_MY_DATASETS = 'RESET_MY_DATASETS'
 
 const initialState: MyDatasets = {
-  pageInfo: {
-    isFetching: false,
-    page: 0,
-    pageSize: 0,
-    fetchedAll: false,
-    error: ''
-  },
+  pageInfo: initialPageInfo,
   value: [],
   filter: ''
 }
@@ -30,24 +24,24 @@ const myDatasetsReducer: Reducer = (state = initialState, action: AnyAction): My
       if (action.pageInfo.page === 1) {
         return {
           ...initialState,
-          pageInfo: action.pageInfo
+          pageInfo: reducerWithPagination(action)
         }
       }
       return {
         ...state,
-        pageInfo: withPagination(action, state.pageInfo)
+        pageInfo: reducerWithPagination(action, state.pageInfo)
       }
     case LIST_SUCC:
       return {
         ...state,
-        pageInfo: withPagination(action, state.pageInfo),
+        pageInfo: reducerWithPagination(action, state.pageInfo),
         value: state.value.concat(action.payload.data),
         filter: ''
       }
     case LIST_FAIL:
       return {
         ...state,
-        pageInfo: withPagination(action, state)
+        pageInfo: reducerWithPagination(action, state)
       }
 
     case RESET_MY_DATASETS:
