@@ -1,6 +1,6 @@
 import { Reducer, AnyAction } from 'redux'
 import { Mutations } from '../models/store'
-import { apiActionTypes } from '../store/api'
+import { apiActionTypes } from '../utils/actionType'
 
 const initialState: Mutations = {
   save: {

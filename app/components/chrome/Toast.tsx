@@ -21,6 +21,8 @@ const Toast: React.FunctionComponent<ToastProps> = (props: ToastProps) => {
       in={show}
       classNames="body-toast"
       timeout={300}
+      mountOnEnter
+      unmountOnExit
     >
       <div className={classNames('body-toast', type)}>{text}</div>
     </CSSTransition>

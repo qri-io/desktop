@@ -121,7 +121,7 @@ export default class Dataset extends React.Component<DatasetProps> {
   componentDidMount () {
     // poll for status
     setInterval(() => {
-      if (this.props.workingDataset && (this.props.workingDataset.peername !== '' || this.props.workingDataset.name !== '')) {
+      if (this.props.workingDataset.peername !== '' || this.props.workingDataset.name !== '') {
         this.props.fetchWorkingStatus()
       }
     }, 1000)

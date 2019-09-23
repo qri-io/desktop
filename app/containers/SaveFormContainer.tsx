@@ -22,7 +22,7 @@ const actions = {
   setCommitMessage
 }
 
-const mergeProps = (props: any, actions: any): SaveFormProps => {
+const mergeProps = (props: any, actions: any): SaveFormProps => { //eslint-disable-line
   return { ...props, ...actions }
 }
 

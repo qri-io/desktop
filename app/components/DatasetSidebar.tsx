@@ -64,7 +64,7 @@ const DatasetSidebar: React.FunctionComponent<DatasetSidebarProps> = (props) => 
     setHideCommitNudge
   } = props
 
-  const { path, fsiPath, history, status } = workingDataset
+  const { path, fsiPath, history, status, components } = workingDataset
 
   const {
     activeTab,
@@ -74,11 +74,13 @@ const DatasetSidebar: React.FunctionComponent<DatasetSidebarProps> = (props) => 
     name
   } = selections
 
+  const { body } = components
+
   const datasetSelected = peername !== '' && name !== ''
 
-  const historyLoaded = !!history
+  const historyLoaded = !history.pageInfo.isFetching
   const statusLoaded = !!status
-
+  const bodyLoaded = !body.pageInfo.isFetching
   const noHistory = history.value.length === 0
 
   const handleHistoryScroll = (e: any) => {
@@ -119,21 +121,23 @@ const DatasetSidebar: React.FunctionComponent<DatasetSidebarProps> = (props) => 
           History
         </div>
       </div>
-      <div id='content'>
+      <div id='content' className='transition-group'>
         <CSSTransition
-          in={(!statusLoaded && activeTab === 'status') || (!historyLoaded && activeTab === 'history')}
           classNames='fade'
+          in={(!statusLoaded && activeTab === 'status') || (!historyLoaded && activeTab === 'history')}
           component='div'
           timeout={300}
+          mountOnEnter
           unmountOnExit
         >
-          <Spinner />
+          <div className='spinner'><Spinner /></div>
         </CSSTransition>
         <CSSTransition
           in={statusLoaded && activeTab === 'status'}
           classNames='fade'
           component='div'
           timeout={300}
+          mountOnEnter
           unmountOnExit
         >
           <div id='status-content' className='sidebar-content'>
@@ -153,6 +157,7 @@ const DatasetSidebar: React.FunctionComponent<DatasetSidebarProps> = (props) => 
           classNames='fade'
           component='div'
           timeout={300}
+          mountOnEnter
           unmountOnExit
         >
           <div
@@ -180,7 +185,7 @@ const DatasetSidebar: React.FunctionComponent<DatasetSidebarProps> = (props) => 
           </div>
         </CSSTransition>
         {
-          !hideCommitNudge && noHistory && datasetSelected && (
+          !hideCommitNudge && bodyLoaded && statusLoaded && historyLoaded && noHistory && datasetSelected && (
             <div className='commit-nudge'>
               <div className='commit-nudge-text'>
                 You&apos;re ready to make your first commit on this dataset! Verify that the body and meta are accurate, enter a commit message below, and click Submit.

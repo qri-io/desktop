@@ -1,7 +1,7 @@
 import { AnyAction } from 'redux'
 import { Selections, SelectedComponent } from '../models/store'
 import localStore from '../utils/localStore'
-import { apiActionTypes } from '../store/api'
+import { apiActionTypes } from '../utils/actionType'
 import chooseDefaultComponent from '../utils/chooseDefaultComponent'
 
 export const SELECTIONS_SET_ACTIVE_TAB = 'SELECTIONS_SET_ACTIVE_TAB'

@@ -17,7 +17,6 @@ import {
   acceptTOS,
   setQriCloudAuthenticated,
   closeToast,
-  setApiConnection,
   setModal
 } from '../actions/ui'
 
@@ -36,15 +35,17 @@ const mergeProps = (props: any, actions: any): AppProps => {
 
 const AppContainer = connect(
   (state: Store) => {
-    const { ui, myDatasets, session, workingDataset } = state
-    const loading = ui.apiConnection === 0
+    const { ui, myDatasets, session, workingDataset, connection, selections } = state
+    const { apiConnection } = connection
+    const loading = connection.apiConnection === 0
     const hasDatasets = myDatasets.value.length !== 0
     const { id: sessionID, peername } = session
-    const { apiConnection, toast, modal } = ui
+    const { toast, modal } = ui
     return {
       hasDatasets,
       loading,
       sessionID,
+      selections,
       peername,
       toast,
       modal,
@@ -63,7 +64,6 @@ const AppContainer = connect(
     linkDataset,
     closeToast,
     pingApi,
-    setApiConnection,
     setWorkingDataset,
     setModal,
     publishDataset,

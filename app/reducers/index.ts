@@ -1,7 +1,8 @@
 import { combineReducers, Reducer, AnyAction } from 'redux'
 import { routerReducer } from 'react-router-redux'
-import { apiActionTypes } from '../store/api'
+import { apiActionTypes } from '../utils/actionType'
 
+import connectionReducer from './connection'
 import uiReducer from './ui'
 import selectionsReducer from './selections'
 import myDatasetsReducer from './myDatasets'
@@ -46,6 +47,7 @@ const sessionReducer: Reducer = (state = initialSession, action: AnyAction) => {
 
 const rootReducer = combineReducers({
   session: sessionReducer,
+  connection: connectionReducer,
   ui: uiReducer,
   selections: selectionsReducer,
   myDatasets: myDatasetsReducer,
