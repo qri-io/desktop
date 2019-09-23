@@ -1,4 +1,5 @@
 import { Reducer, AnyAction } from 'redux'
+import deepEqual from 'deep-equal'
 import { WorkingDataset, DatasetStatus, ComponentStatus } from '../models/store'
 import { apiActionTypes } from '../store/api'
 import { withPagination } from './page'
@@ -136,10 +137,14 @@ const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction
           obj[component] = { filepath, status, mtime }
           return obj
         }, {})
-      return {
+
+      // if the new status deeply equals the current state, return current
+      // state to prevent unecessary re-rendering
+      return deepEqual(state.status, statusObject) ? state : {
         ...state,
         status: statusObject
       }
+
     case DATASET_STATUS_FAIL:
       return state
 
