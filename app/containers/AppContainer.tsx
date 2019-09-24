@@ -21,7 +21,7 @@ import {
 } from '../actions/ui'
 
 import {
-  fetchSession,
+  bootstrap,
   signup
 } from '../actions/session'
 
@@ -55,7 +55,7 @@ const AppContainer = connect(
     }
   },
   {
-    fetchSession,
+    bootstrap,
     fetchMyDatasets,
     acceptTOS,
     signup,

@@ -1,5 +1,7 @@
-import { CALL_API, ApiActionThunk } from '../store/api'
+import { CALL_API, ApiActionThunk, chainSuccess } from '../store/api'
 import { Session } from '../models/session'
+import { Action } from 'redux'
+import { fetchWorkingDatasetDetails, fetchMyDatasets } from './api'
 
 export function fetchSession (): ApiActionThunk {
   return async (dispatch) => {
@@ -14,6 +16,18 @@ export function fetchSession (): ApiActionThunk {
       }
     }
     return dispatch(action)
+  }
+}
+
+export function bootstrap (): ApiActionThunk {
+  return async (dispatch, getState) => {
+    const whenOk = chainSuccess(dispatch, getState)
+    let response: Action
+
+    response = await fetchSession()(dispatch, getState)
+    response = await whenOk(fetchMyDatasets(-1))(response)
+    response = await whenOk(fetchWorkingDatasetDetails())(response)
+    return response
   }
 }
 

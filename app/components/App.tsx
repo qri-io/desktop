@@ -25,6 +25,8 @@ import { Dataset } from '../models/dataset'
 
 export const QRI_CLOUD_ROOT = 'https://qri.cloud'
 
+export const defaultPollInterval = 5000
+
 export interface AppProps {
   hasDatasets: boolean
   loading: boolean
@@ -39,7 +41,7 @@ export interface AppProps {
   modal: Modal
   workingDataset: Dataset
   children: JSX.Element[] | JSX.Element
-  fetchSession: () => Promise<ApiAction>
+  bootstrap: () => Promise<ApiAction>
   fetchMyDatasets: (page?: number, pageSize?: number) => Promise<ApiAction>
   addDataset: (peername: string, name: string) => Promise<ApiAction>
   linkDataset: (peername: string, name: string, dir: string) => Promise<ApiAction>
@@ -97,20 +99,9 @@ class App extends React.Component<AppProps, AppState> {
       if (this.props.apiConnection !== 1 || this.props.selections.peername === '' || this.props.selections.name === '') {
         this.props.pingApi()
       }
-    }, 1000)
+    }, defaultPollInterval)
 
-    this.props.fetchSession()
-      .then(async () => {
-        if (this.props.qriCloudAuthenticated) { this.props.fetchMyDatasets() }
-      })
-  }
-
-  static getDerivedStateFromProps (NextProps: AppProps, PrevState: AppState) {
-    if (PrevState.sessionID !== NextProps.sessionID || PrevState.peername !== NextProps.peername) {
-      NextProps.fetchMyDatasets()
-      return { sessionID: NextProps.sessionID, peername: NextProps.peername }
-    }
-    return null
+    this.props.bootstrap()
   }
 
   private renderModal (): JSX.Element | null {

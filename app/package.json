@@ -2,6 +2,7 @@
   "name": "qri-desktop",
   "productName": "Qri Desktop",
   "version": "0.1.0-rc1",
+  "backendVersion": "0.9.0-alpha",
   "description": "Version your data with the Qri desktop app!",
   "main": "./main.js",
   "author": {
