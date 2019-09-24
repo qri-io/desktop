@@ -8,6 +8,7 @@ import Store from '../models/store'
 import mapError from './mapError'
 import { FAILED_TO_FETCH } from '../reducers/connection'
 import { apiActionTypes } from '../utils/actionType'
+import { UNAUTHORIZED } from '../reducers/ui'
 
 // CALL_API is a global, unique constant for passing actions to API middleware
 export const CALL_API = Symbol('CALL_API')
@@ -221,6 +222,11 @@ export const apiMiddleware: Middleware = () => (next: Dispatch<AnyAction>) => as
       if (err && err.message && err.message.includes('Failed to fetch')) {
         next({
           type: FAILED_TO_FETCH
+        })
+      }
+      if (err && err.code === 401) {
+        next({
+          type: UNAUTHORIZED
         })
       }
       return next({

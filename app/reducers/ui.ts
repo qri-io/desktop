@@ -15,6 +15,8 @@ export const UI_SET_MODAL = 'UI_SET_MODAL'
 export const UI_SIGNOUT = 'UI_SIGNOUT'
 export const UI_HIDE_COMMIT_NUDGE = 'UI_HIDE_COMMIT_NUDGE'
 
+export const UNAUTHORIZED = 'UNAUTHORIZED'
+
 export const defaultSidebarWidth = 250
 export const hasAcceptedTOSKey = 'acceptedTOS'
 export const qriCloudAuthenticatedKey = 'qriCloudAuthenticated'
@@ -142,6 +144,13 @@ export default (state = initialState, action: AnyAction) => {
       return {
         ...state,
         hideCommitNudge: true
+      }
+
+    case UNAUTHORIZED:
+      store().setItem(qriCloudAuthenticatedKey, 'true')
+      return {
+        ...state,
+        qriCloudAuthenticated: false
       }
 
     // close the dataset list when the user chooses a new dataset or adds a new dataset

@@ -34,6 +34,7 @@ import {
   SelectedComponent
 } from '../models/store'
 import NoDatasets from './NoDatasets'
+import { defaultPollInterval } from './App'
 
 export interface DatasetProps {
   // redux state
@@ -124,7 +125,7 @@ export default class Dataset extends React.Component<DatasetProps> {
       if (this.props.workingDataset.peername !== '' || this.props.workingDataset.name !== '') {
         this.props.fetchWorkingStatus()
       }
-    }, 1000)
+    }, defaultPollInterval)
 
     this.openWorkingDirectory = this.openWorkingDirectory.bind(this)
     this.publishUnpublishDataset = this.publishUnpublishDataset.bind(this)
