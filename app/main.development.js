@@ -2,6 +2,11 @@ const { app, BrowserWindow, Menu, shell, ipcMain } = require('electron')
 const { autoUpdater } = require('electron-updater')
 const { BackendProcess } = require('./backend')
 
+// versions
+// must be manually updated for now
+const desktopVersion = '0.1.0-rc1'
+const backendVersion = '0.9.0-alpha'
+
 let menu
 let template
 let mainWindow = null
@@ -25,7 +30,7 @@ if (app.setAboutPanelOptions) {
   // Mac only
   app.setAboutPanelOptions({
     applicationName: 'Qri Desktop',
-    applicationVersion: '0.1.0-rc1',
+    applicationVersion: desktopVersion,
     credits: 'https://qri.io',
     website: 'https://qri.io',
     iconPath: '../assets/qri-blob-logo-large.png'
@@ -420,6 +425,10 @@ app.on('ready', () =>
             click: () => {
               shell.openExternal('https://discord.gg/etap8Gb')
             }
+          },
+          { type: 'separator' },
+          {
+            label: `Qri backend ${backendVersion}`
           }
         ]
       }
