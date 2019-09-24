@@ -72,9 +72,11 @@ describe('Body Reducer', () => {
     const action = {
       type: REMOVE_SUCC,
       payload: {
-        segments: {
-          peername: 'baz',
-          name: 'qux'
+        request: {
+          segments: {
+            peername: 'baz',
+            name: 'qux'
+          }
         }
       }
     }
@@ -88,9 +90,11 @@ describe('Body Reducer', () => {
     const action = {
       type: REMOVE_SUCC,
       payload: {
-        segments: {
-          peername: 'foo',
-          name: 'bar'
+        request: {
+          segments: {
+            peername: 'foo',
+            name: 'bar'
+          }
         }
       }
     }

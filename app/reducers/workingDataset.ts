@@ -239,7 +239,7 @@ const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction
       }
 
     case REMOVE_SUCC:
-      if (state.peername === action.payload.segments.peername && state.name === action.payload.segments.name) {
+      if (state.peername === action.payload.request.segments.peername && state.name === action.payload.request.segments.name) {
         return initialState
       }
       return state

@@ -10,31 +10,37 @@ export const initialPageInfo: PageInfo = {
   pageSize: 0
 }
 
+export function fetchedAll (data: Object | any[] | undefined, pageSize: number): boolean {
+  if (!data || typeof data !== 'object') return false
+  return Object.keys(data).length < pageSize
+}
+
 export function reducerWithPagination (action: AnyAction, pageInfo: PageInfo = initialPageInfo): PageInfo {
   switch (getActionType(action)) {
     case 'request':
-      return Object.assign({},
-        pageInfo,
-        {
-          isFetching: true,
-          page: action.pageInfo.page,
-          pageSize: action.pageInfo.pageSize,
-          error: ''
-        })
+      return {
+        fetchedAll: false,
+        isFetching: true,
+        page: action.pageInfo.page,
+        pageSize: action.pageInfo.pageSize,
+        error: ''
+      }
     case 'success':
-      return Object.assign({},
-        pageInfo,
-        {
-          isFetching: false,
-          fetchedAll: action.payload.data.length < pageInfo.pageSize
-        })
+      return {
+        page: action.payload.request.pageInfo.page,
+        pageSize: action.payload.request.pageInfo.pageSize,
+        error: '',
+        isFetching: false,
+        fetchedAll: fetchedAll(action.payload.data, action.payload.request.pageInfo.pageSize)
+      }
     case 'failure':
-      return Object.assign({},
-        pageInfo,
-        {
-          isFetching: false,
-          error: action.payload.err.message
-        })
+      return {
+        page: action.payload.request.pageInfo.page,
+        pageSize: action.payload.request.pageInfo.pageSize,
+        isFetching: false,
+        error: action.payload.err.message,
+        fetchedAll: false
+      }
     default:
       return pageInfo
   }
@@ -42,22 +48,19 @@ export function reducerWithPagination (action: AnyAction, pageInfo: PageInfo = i
 
 interface ActionWithPaginationRes {
   page: number
-  bailEarly: boolean
+  doNotFetch: boolean
 }
 
-export function actionWithPagination (invalidatePagination: boolean, page: number, prevPageInfo: PageInfo): ActionWithPaginationRes {
-  // if we aren't invalidating the pagination,
+export function actionWithPagination (page: number, prevPageInfo: PageInfo): ActionWithPaginationRes {
+  // if page === -1
+  // then we are invalidating the pagination
+  if (page === -1) return { page: 1, doNotFetch: false }
+  //
   // and we have already fetched this page,
   // or we've already fetched all the entries
   // bail early!
-  if (
-    !invalidatePagination && (
-      page <= prevPageInfo.page ||
-    prevPageInfo.fetchedAll)
-  ) {
-    return { page: 0, bailEarly: true }
+  if (page <= prevPageInfo.page || prevPageInfo.fetchedAll) {
+    return { page, doNotFetch: true }
   }
-  // if we are invalidating the pagination, start the pagination at 1!
-  if (invalidatePagination) return { page: 1, bailEarly: false }
-  return { page, bailEarly: false }
+  return { page, doNotFetch: false }
 }
