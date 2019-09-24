@@ -617,12 +617,12 @@ a {
 // a:not([href]):not([tabindex]) {
 //   color: inherit;
 //   text-decoration: none;
-// 
+//
 //   @include hover-focus {
 //     color: inherit;
 //     text-decoration: none;
 //   }
-// 
+//
 //   &:focus {
 //     outline: none;
 //   }
@@ -783,7 +783,6 @@ input[type="month"] {
 
 textarea {
   // Textareas should really only resize vertically so they don't break their (horizontal) containers.
-  height: 256px;
   resize: vertical;
 }
 

@@ -2,45 +2,35 @@ import * as React from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faInfoCircle } from '@fortawesome/free-solid-svg-icons'
 
-export interface TextInputProps {
+export interface TextAreaInputProps {
   label?: string
   labelTooltip?: string
   name: string
-  type: string
   value: any
   maxLength: number
-  errorText?: string
-  helpText?: string
-  showHelpText?: boolean
   onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void | undefined
   onChange: (name: string, value: any) => void
-  onBlur?: () => void
+  onBlur?: (name: string, value: any) => void
   placeHolder?: string
+  rows?: number
   white?: boolean
   tooltipFor?: string
 }
 
-const TextInput: React.FunctionComponent<TextInputProps> = (props) => {
+const TextAreaInput: React.FunctionComponent<TextAreaInputProps> = (props) => {
   const {
     label,
     labelTooltip,
     name,
-    type,
     value,
     maxLength,
-    errorText,
-    helpText,
-    showHelpText,
     onChange,
     onBlur,
-    onKeyDown,
     placeHolder,
+    rows = 3,
     tooltipFor
   } = props
 
-  const feedbackColor = errorText ? 'error' : showHelpText && helpText ? 'textMuted' : ''
-  const feedback = errorText || (showHelpText &&
-    helpText)
   const labelColor = 'primary'
   return (
     <>
@@ -55,24 +45,22 @@ const TextInput: React.FunctionComponent<TextInputProps> = (props) => {
             <FontAwesomeIcon icon={faInfoCircle} size='sm'/>
           </span>
         )}
-        <input
+        <textarea
           id={name}
           name={name}
-          type={type}
           maxLength={maxLength}
           className='input'
           value={value || ''}
           placeholder={placeHolder}
           onChange={(e) => { onChange(name, e.target.value) }}
           onBlur={() => { onBlur && onBlur() }}
-          onKeyDown={onKeyDown}
+          rows={rows}
         />
-        <div style={{ height: 20 }}>
-          <h6 style={{ textAlign: 'left', margin: 3 }} className={feedbackColor} >{feedback || ''}</h6>
-        </div>
+        {/* placeholder for error text to match spacing with other form inputs */}
+        <div style={{ height: 20 }} />
       </div>
     </>
   )
 }
 
-export default TextInput
+export default TextAreaInput

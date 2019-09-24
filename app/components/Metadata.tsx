@@ -1,14 +1,17 @@
 import * as React from 'react'
-import ExternalLink from './ExternalLink'
-import { Meta, Citation, License } from '../models/dataset'
 
+import ExternalLink from './ExternalLink'
 import SpinnerWithIcon from './chrome/SpinnerWithIcon'
+import { standardFields } from './MetadataEditor'
+import { Meta, Citation, License, User } from '../models/dataset'
+
+import { isUserArray } from './form/MultiStructuredInput'
 
 interface MetadataProps {
   meta: Meta
 }
 
-const renderValue = (value: string | string[] | Citation[] | object) => {
+const renderValue = (value: string | string[] | object) => {
   switch (typeof value) {
     case 'string':
     case 'number':
@@ -22,7 +25,7 @@ const renderValue = (value: string | string[] | Citation[] | object) => {
 
 const renderChips = (value: string[] | undefined) => (
   <div>
-    {value && value.map((d) => (<span key={d} className='chip'>{d}</span>))}
+    {value && value.map((d, i) => (<span key={i} className='chip'>{d}</span>))}
   </div>
 )
 
@@ -36,6 +39,37 @@ const renderURL = (url: string) => (
   <ExternalLink href={url}>{url}</ExternalLink>
 )
 
+const renderArrayItemsTable = (value: any[]) => {
+  return (
+    <div className='array-items-table-container'>
+      {
+        value.map((item, i) => (
+          <div key={i} className='metadata-viewer-table-wrap'>
+            <table className='metadata-viewer-table '>
+              <tbody>
+                {Object.keys(item).map((key: string) => (
+                  <tr key={key} className='metadata-viewer-row'>
+                    <td className='metadata-viewer-key'>{key}</td>
+                    <td>{item[key]}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ))
+      }
+    </div>
+  )
+}
+
+const renderMultiStructured = (value: User[] | Citation[]) => {
+  if (isUserArray(value)) {
+    return renderArrayItemsTable(value)
+  }
+
+  return renderArrayItemsTable(value)
+}
+
 const renderTable = (keys: string[], data: Meta) => {
   return (
     <div className='metadata-viewer-table-wrap'>
@@ -47,6 +81,7 @@ const renderTable = (keys: string[], data: Meta) => {
             switch (key) {
               case 'theme':
               case 'keywords':
+              case 'language':
                 cellContent = renderChips(value)
                 break
               case 'license':
@@ -55,7 +90,12 @@ const renderTable = (keys: string[], data: Meta) => {
               case 'accessURL':
               case 'downloadURL':
               case 'readmeURL':
+              case 'homeURL':
                 cellContent = renderURL(value)
+                break
+              case 'contributors':
+              case 'citations':
+                cellContent = renderMultiStructured(value)
                 break
               default:
                 cellContent = renderValue(value)
@@ -81,24 +121,6 @@ const Metadata: React.FunctionComponent<MetadataProps> = (props: MetadataProps) 
     return <SpinnerWithIcon loading={true} />
   }
 
-  const standardFields = [
-    'title',
-    'theme',
-    'keywords',
-    'description',
-    'license',
-    'accessURL',
-    'language',
-    'citations',
-    'contributors',
-    'accrualPeriodicity',
-    'downloadURL',
-    'homePath',
-    'identifier',
-    'readmePath',
-    'version'
-  ]
-
   const ignoreFields = ['qri', 'path']
 
   const standard = standardFields.filter((key) => !!meta[key])
@@ -108,11 +130,11 @@ const Metadata: React.FunctionComponent<MetadataProps> = (props: MetadataProps) 
 
   return (
     <div className='content metadata-viewer-wrap'>
-      <h5 className='metadata-viewer-title'>Standard Metadata</h5>
+      <h4 className='metadata-viewer-title'>Standard Metadata</h4>
       {renderTable(standard, meta)}
 
       {(extra.length > 0) && <div>
-        <h5 className='metadata-viewer-title'>Additional Metadata</h5>
+        <h4 className='metadata-viewer-title'>Additional Metadata</h4>
         {renderTable(extra, meta)}
       </div>}
     </div>

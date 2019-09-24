@@ -738,3 +738,15 @@ b {
   border-radius: 3px;
   margin-top: 8px;
 }
+
+.pseudo-link {
+  color: #757575;
+  cursor: default;
+  &:hover {
+    color: #000;
+  }
+}
+
+.capitalize {
+  text-transform: capitalize 
+}

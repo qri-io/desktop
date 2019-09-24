@@ -8,7 +8,6 @@ const {
 } = require('./app/package.json');
 
 module.exports = {
-
   output: {
     path: path.join(__dirname, 'app'),
     filename: 'bundle.js',
