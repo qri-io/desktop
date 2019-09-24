@@ -2,9 +2,13 @@ import { Reducer, AnyAction } from 'redux'
 import deepEqual from 'deep-equal'
 import { WorkingDataset, DatasetStatus, ComponentStatus } from '../models/store'
 import { apiActionTypes } from '../utils/actionType'
-import { withPagination } from './page'
+import { reducerWithPagination, initialPageInfo } from '../utils/pagination'
 import { ipcRenderer } from 'electron'
 import bodyValue from '../utils/bodyValue'
+
+import {
+  REMOVE_SUCC
+} from './selections'
 
 const initialState: WorkingDataset = {
   path: '',
@@ -20,12 +24,7 @@ const initialState: WorkingDataset = {
   components: {
     body: {
       value: [],
-      pageInfo: {
-        isFetching: true,
-        page: 0,
-        pageSize: 0,
-        fetchedAll: false
-      }
+      pageInfo: initialPageInfo
     },
     meta: {
       value: {}
@@ -107,7 +106,7 @@ const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction
         ...state,
         history: {
           ...state.history,
-          pageInfo: withPagination(action, state.history.pageInfo),
+          pageInfo: reducerWithPagination(action, state.history.pageInfo),
           value: action.pageInfo.page === 1 ? [] : state.history.value
         }
       }
@@ -121,7 +120,7 @@ const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction
             ...state.history.value,
             ...action.payload.data
           ],
-          pageInfo: withPagination(action, state.history.pageInfo)
+          pageInfo: reducerWithPagination(action, state.history.pageInfo)
         }
       }
     case DATASET_HISTORY_FAIL:
@@ -130,7 +129,7 @@ const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction
         hasHistory: !action.payload.err.message.includes('no history'),
         history: {
           ...state.history,
-          pageInfo: withPagination(action, state.history.pageInfo)
+          pageInfo: reducerWithPagination(action, state.history.pageInfo)
         }
       }
 
@@ -161,7 +160,7 @@ const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction
           ...state.components,
           body: {
             value: action.pageInfo.page === 1 ? [] : state.components.body.value,
-            pageInfo: withPagination(action, state.components.body.pageInfo)
+            pageInfo: reducerWithPagination(action, state.components.body.pageInfo)
           }
         }
       }
@@ -173,7 +172,7 @@ const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction
           body: {
             ...state.components.body,
             value: bodyValue(state.components.body.value, action.payload.data.data),
-            pageInfo: withPagination(action, state.components.body.pageInfo)
+            pageInfo: reducerWithPagination(action, state.components.body.pageInfo)
           }
         }
       }
@@ -184,7 +183,7 @@ const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction
           ...state.components,
           body: {
             ...state.body,
-            pageInfo: withPagination(action, state.components.body.pageInfo)
+            pageInfo: reducerWithPagination(action, state.components.body.pageInfo)
           }
         }
       }
@@ -239,6 +238,11 @@ const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction
         }
       }
 
+    case REMOVE_SUCC:
+      if (state.peername === action.payload.request.segments.peername && state.name === action.payload.request.segments.name) {
+        return initialState
+      }
+      return state
     default:
       return state
   }

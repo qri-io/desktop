@@ -1,7 +1,8 @@
 import { Action, AnyAction } from 'redux'
 
 import { CALL_API, ApiAction, ApiActionThunk, chainSuccess, ApiResponseAction } from '../store/api'
-import { DatasetSummary, ComponentType, PageInfo, MyDatasets } from '../models/store'
+import { DatasetSummary, ComponentType, MyDatasets } from '../models/store'
+import { actionWithPagination } from '../utils/pagination'
 import { openToast } from './ui'
 import { setWorkingDataset, setSelectedListItem, setActiveTab } from './selections'
 import {
@@ -83,7 +84,7 @@ export function fetchModifiedComponents (): ApiActionThunk {
       [CALL_API]: {
         endpoint: '',
         method: 'GET',
-        params: { fsi: !!fsiPath },
+        query: { fsi: !!fsiPath },
         segments: {
           peername,
           name
@@ -102,7 +103,7 @@ export function fetchModifiedComponents (): ApiActionThunk {
           page: 1,
           pageSize: bodyPageSizeDefault
         },
-        params: { fsi: !!fsiPath },
+        query: { fsi: !!fsiPath },
         segments: {
           peername,
           name,
@@ -117,29 +118,13 @@ export function fetchModifiedComponents (): ApiActionThunk {
   }
 }
 
-function actionWithPagination (invalidatePagination: boolean, page: number, pageInfo: PageInfo): ActionWithPaginationRes {
-  // if we aren't invalidating the pagination,
-  // and we have already fetched this page,
-  // or we've already fetched all the entries
-  // bail early!
-  if (
-    invalidatePagination && (
-      page <= pageInfo.page ||
-    pageInfo.fetchedAll)
-  ) {
-    return { page: 0, bailEarly: true }
-  }
-  // if we are invalidating the pagination, start the pagination at 1!
-  if (invalidatePagination) return { page: 1, bailEarly: true }
-  return { page, bailEarly: false }
-}
-
-export function fetchMyDatasets (page: number = 1, pageSize: number = pageSizeDefault, invalidatePagination: boolean = false): ApiActionThunk {
+// to invalidate pagination, set page to -1
+export function fetchMyDatasets (page: number = 1, pageSize: number = pageSizeDefault): ApiActionThunk {
   return async (dispatch, getState) => {
     const state = getState()
-    const { page: confirmedPage, bailEarly } = actionWithPagination(invalidatePagination, page, state.myDatasets.pageInfo)
+    const { page: confirmedPage, doNotFetch } = actionWithPagination(page, state.myDatasets.pageInfo)
 
-    if (bailEarly) return new Promise(resolve => resolve())
+    if (doNotFetch) return new Promise(resolve => resolve())
 
     const listAction: ApiAction = {
       type: 'list',
@@ -172,7 +157,7 @@ export function fetchWorkingDataset (fsi: boolean = true): ApiActionThunk {
       [CALL_API]: {
         endpoint: '',
         method: 'GET',
-        params: { fsi },
+        query: { fsi },
         segments: {
           peername,
           name
@@ -243,13 +228,14 @@ export function fetchCommitStatus (): ApiActionThunk {
   }
 }
 
-export function fetchWorkingHistory (page: number = 1, pageSize: number = pageSizeDefault, invalidatePagination: boolean = false): ApiActionThunk {
+// to invalidate pagination, set page to -1
+export function fetchWorkingHistory (page: number = 1, pageSize: number = pageSizeDefault): ApiActionThunk {
   return async (dispatch, getState) => {
     const state = getState()
 
-    const { page: confirmedPage, bailEarly } = actionWithPagination(invalidatePagination, page, state.workingDataset.history.pageInfo)
+    const { page: confirmedPage, doNotFetch } = actionWithPagination(page, state.workingDataset.history.pageInfo)
 
-    if (bailEarly) return new Promise(resolve => resolve())
+    if (doNotFetch) return new Promise(resolve => resolve())
 
     const { selections, myDatasets } = getState()
     const { peername, name } = selections
@@ -261,7 +247,7 @@ export function fetchWorkingHistory (page: number = 1, pageSize: number = pageSi
       [CALL_API]: {
         endpoint: 'history',
         method: 'GET',
-        params: { fsi },
+        query: { fsi },
         segments: {
           peername: peername,
           name: name
@@ -287,7 +273,7 @@ export function fetchWorkingStatus (): ApiActionThunk {
       [CALL_API]: {
         endpoint: 'status',
         method: 'GET',
-        params: { fsi: !!fsiPath },
+        query: { fsi: !!fsiPath },
         segments: {
           peername: peername,
           name: name
@@ -300,20 +286,16 @@ export function fetchWorkingStatus (): ApiActionThunk {
   }
 }
 
-interface ActionWithPaginationRes {
-  page: number
-  bailEarly: boolean
-}
-
-export function fetchBody (page: number = 1, pageSize: number = bodyPageSizeDefault, invalidatePagination: boolean = false): ApiActionThunk {
+// to invalidate pagination, set page to -1
+export function fetchBody (page: number = 1, pageSize: number = bodyPageSizeDefault): ApiActionThunk {
   return async (dispatch, getState) => {
     const { workingDataset, selections } = getState()
     const { peername, name } = selections
     const { path, fsiPath } = workingDataset
 
-    const { page: confirmedPage, bailEarly } = actionWithPagination(invalidatePagination, page, workingDataset.components.body.pageInfo)
+    const { page: confirmedPage, doNotFetch } = actionWithPagination(page, workingDataset.components.body.pageInfo)
 
-    if (bailEarly) return new Promise(resolve => resolve())
+    if (doNotFetch) return new Promise(resolve => resolve())
 
     const action = {
       type: 'body',
@@ -324,7 +306,7 @@ export function fetchBody (page: number = 1, pageSize: number = bodyPageSizeDefa
           page: confirmedPage,
           pageSize
         },
-        params: { fsi: !!fsiPath },
+        query: { fsi: !!fsiPath },
         segments: {
           peername,
           name,
@@ -338,14 +320,15 @@ export function fetchBody (page: number = 1, pageSize: number = bodyPageSizeDefa
   }
 }
 
-export function fetchCommitBody (page: number = 1, pageSize: number = bodyPageSizeDefault, invalidatePagination: boolean = false): ApiActionThunk {
+// to invalidate pagination, set page to -1
+export function fetchCommitBody (page: number = 1, pageSize: number = bodyPageSizeDefault): ApiActionThunk {
   return async (dispatch, getState) => {
     const { selections, commitDetails } = getState()
     let { peername, name, commit: path } = selections
 
-    const { page: confirmedPage, bailEarly } = actionWithPagination(invalidatePagination, page, commitDetails.components.body.pageInfo)
+    const { page: confirmedPage, doNotFetch } = actionWithPagination(page, commitDetails.components.body.pageInfo)
 
-    if (bailEarly) return new Promise(resolve => resolve())
+    if (doNotFetch) return new Promise(resolve => resolve())
 
     const action = {
       type: 'commitBody',
@@ -382,7 +365,7 @@ export function saveWorkingDataset (): ApiActionThunk {
           peername,
           name
         },
-        params: {
+        query: {
           fsi: true
         },
         body: {
@@ -423,7 +406,8 @@ export function addDatasetAndFetch (peername: string, name: string): ApiActionTh
 
     try {
       response = await addDataset(peername, name)(dispatch, getState)
-      response = await whenOk(fetchMyDatasets())(response)
+      // reset pagination
+      response = await whenOk(fetchMyDatasets(-1))(response)
       dispatch(setWorkingDataset(peername, name))
       dispatch(setActiveTab('history'))
       dispatch(setSelectedListItem('component', 'meta'))
@@ -441,7 +425,7 @@ export function initDataset (sourcebodypath: string, name: string, dir: string, 
       [CALL_API]: {
         endpoint: 'init/',
         method: 'POST',
-        params: {
+        query: {
           sourcebodypath,
           name,
           dir,
@@ -461,7 +445,8 @@ export function initDatasetAndFetch (sourcebodypath: string, name: string, dir: 
 
     try {
       response = await initDataset(sourcebodypath, name, dir, mkdir)(dispatch, getState)
-      response = await whenOk(fetchMyDatasets())(response)
+      // reset pagination
+      response = await whenOk(fetchMyDatasets(-1))(response)
       const action = response as ApiResponseAction
       const { data } = action.payload
       const { peername } = data.find((dataset: DatasetSummary) => dataset.name === name)
@@ -536,28 +521,35 @@ export function unpublishDataset (): ApiActionThunk {
 }
 
 export function linkDataset (peername: string, name: string, dir: string): ApiActionThunk {
+  return async (dispatch) => {
+    const action = {
+      type: 'checkout',
+      [CALL_API]: {
+        endpoint: 'checkout',
+        method: 'POST',
+        segments: {
+          peername,
+          name
+        },
+        query: {
+          dir
+        }
+      }
+    }
+    return dispatch(action)
+  }
+}
+
+export function linkDatasetAndFetch (peername: string, name: string, dir: string): ApiActionThunk {
   return async (dispatch, getState) => {
     const whenOk = chainSuccess(dispatch, getState)
     let response: Action
 
     try {
-      const action = {
-        type: 'checkout',
-        [CALL_API]: {
-          endpoint: 'checkout',
-          method: 'POST',
-          segments: {
-            peername,
-            name
-          },
-          params: {
-            dir
-          }
-        }
-      }
-      response = await dispatch(action)
+      response = await linkDataset(peername, name, dir)(dispatch, getState)
       response = await whenOk(fetchWorkingDatasetDetails())(response)
-      response = await whenOk(fetchMyDatasets(1, pageSizeDefault, true))(response) // non-paginated
+      // reset pagination
+      response = await whenOk(fetchMyDatasets(-1))(response)
     } catch (action) {
       throw action
     }
@@ -581,7 +573,7 @@ export function discardChanges (component: ComponentType): ApiActionThunk {
             peername,
             name
           },
-          params: {
+          query: {
             component
           }
         }
@@ -605,7 +597,7 @@ export function removeDataset (peername: string, name: string, removeFiles: bool
           peername,
           name
         },
-        params: {
+        query: {
           files: removeFiles
         }
       }
@@ -622,7 +614,8 @@ export function removeDatasetAndFetch (peername: string, name: string, removeFil
 
     try {
       response = await removeDataset(peername, name, removeFiles)(dispatch, getState)
-      response = await whenOk(fetchMyDatasets())(response)
+      // reset pagination
+      response = await whenOk(fetchMyDatasets(-1))(response)
     } catch (action) {
       throw action
     }

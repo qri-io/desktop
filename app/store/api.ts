@@ -23,7 +23,7 @@ export interface ApiAction extends AnyAction {
     endpoint: string
     // method is the HTTP method used
     method: 'GET' | 'PUT' | 'POST' | 'DELETE' | 'OPTIONS'
-    // params is a list of parameters used to construct the API request
+    // segments is a list of parameters used to construct the API request
     segments?: ApiSegments
     // query is an object of query parameters to be appended to the API call URL
     query?: ApiQuery
@@ -40,7 +40,7 @@ export interface ApiAction extends AnyAction {
 // identityFunc is a function that returns the argument it's passed
 const identityFunc = <T>(a: T): T => a
 
-// ApiQueryParams is an interface for all possible query parameters passed to
+// ApiSegments is an interface for all possible query parameters passed to
 // the API
 export interface ApiSegments {
   peername?: string
@@ -189,7 +189,7 @@ async function getAPIJSON<T> (
 export const apiMiddleware: Middleware = () => (next: Dispatch<AnyAction>) => async (action: any): Promise<any> => {
   if (action[CALL_API]) {
     let data: APIResponseEnvelope
-    let { endpoint = '', method, map = identityFunc, segments, params, body, pageInfo } = action[CALL_API]
+    let { endpoint = '', method, map = identityFunc, segments, query, body, pageInfo } = action[CALL_API]
     const [REQ_TYPE, SUCC_TYPE, FAIL_TYPE] = apiActionTypes(action.type)
 
     next({ type: REQ_TYPE, pageInfo, segments })
@@ -216,7 +216,7 @@ export const apiMiddleware: Middleware = () => (next: Dispatch<AnyAction>) => as
     // }
 
     try {
-      data = await getAPIJSON(endpoint, method, segments, params, pageInfo, body)
+      data = await getAPIJSON(endpoint, method, segments, query, pageInfo, body)
     } catch (err) {
       if (err && err.message && err.message.includes('Failed to fetch')) {
         next({
@@ -234,8 +234,9 @@ export const apiMiddleware: Middleware = () => (next: Dispatch<AnyAction>) => as
       payload: {
         data: map(data.data),
         request: {
-          params,
-          pageInfo
+          query,
+          pageInfo,
+          segments
         }
       }
     })
