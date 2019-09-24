@@ -23,7 +23,7 @@ export interface BodyProps {
   structure: Structure
 }
 
-function shouldDisplayTable (value: any[], structure: Structure) {
+function shouldDisplayTable (value: any[] | Object, structure: Structure) {
   // if it's a CSV, or if JSON with depth of 2, render a table
   return value && structure && structure.depth === 2
 }

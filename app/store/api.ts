@@ -231,7 +231,14 @@ export const apiMiddleware: Middleware = () => (next: Dispatch<AnyAction>) => as
       }
       return next({
         type: FAIL_TYPE,
-        payload: { err }
+        payload: {
+          err,
+          request: {
+            query,
+            pageInfo,
+            segments
+          }
+        }
       })
     }
 
