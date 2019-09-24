@@ -26,7 +26,8 @@ import {
 } from '../actions/session'
 
 import {
-  setWorkingDataset
+  setWorkingDataset,
+  setDatasetPath
 } from '../actions/selections'
 
 const mergeProps = (props: any, actions: any): AppProps => {
@@ -68,7 +69,8 @@ const AppContainer = connect(
     setModal,
     publishDataset,
     unpublishDataset,
-    removeDatasetAndFetch
+    removeDatasetAndFetch,
+    setDatasetPath
   },
   mergeProps
 )(App)
