@@ -1,5 +1,6 @@
 import * as React from 'react'
 import path from 'path'
+import { Action } from 'redux'
 import { remote } from 'electron'
 
 import Modal from './Modal'
@@ -14,11 +15,19 @@ import { validateDatasetName } from '../../utils/formValidation'
 interface CreateDatasetProps {
   onDismissed: () => void
   onSubmit: (path: string, name: string, dir: string, mkdir: string) => Promise<ApiAction>
+  datasetPath: string
+  setDatasetPath: (path: string) => Action
 }
 
-const CreateDataset: React.FunctionComponent<CreateDatasetProps> = ({ onDismissed, onSubmit }) => {
+const CreateDataset: React.FunctionComponent<CreateDatasetProps> = (props) => {
+  const {
+    onDismissed,
+    onSubmit,
+    datasetPath: persistedDatasetPath,
+    setDatasetPath: saveDatasetPath
+  } = props
   const [datasetName, setDatasetName] = React.useState('')
-  const [datasetPath, setDatasetPath] = React.useState('')
+  const [datasetPath, setDatasetPath] = React.useState(persistedDatasetPath)
   const [filePath, setFilePath] = React.useState('')
 
   const [dismissable, setDismissable] = React.useState(true)
@@ -35,6 +44,11 @@ const CreateDataset: React.FunctionComponent<CreateDatasetProps> = ({ onDismisse
     const ready = datasetPath !== '' && filePath !== '' && !datasetNameValidationError
     setButtonDisabled(!ready)
   }, [datasetName, datasetPath, filePath])
+
+  React.useEffect(() => {
+    // persist the datasetPath
+    saveDatasetPath(datasetPath)
+  }, [datasetPath])
 
   // should come from props
   const [error, setError] = React.useState('')

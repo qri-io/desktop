@@ -55,6 +55,7 @@ export interface AppProps {
   removeDatasetAndFetch: (peername: string, name: string, removeFiles: boolean) => Promise<ApiAction>
   publishDataset: () => Promise<ApiAction>
   unpublishDataset: () => Promise<ApiAction>
+  setDatasetPath: (path: string) => Action
 }
 
 interface AppState {
@@ -158,8 +159,10 @@ class App extends React.Component<AppProps, AppState> {
       case ModalType.CreateDataset: {
         modalComponent = (
           <CreateDataset
+            datasetPath={this.props.selections.datasetPath}
             onSubmit={this.props.initDataset}
             onDismissed={async () => setModal(noModalObject)}
+            setDatasetPath={this.props.setDatasetPath}
           />
         )
         break
