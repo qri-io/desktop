@@ -84,7 +84,7 @@ const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction
         structure: dataset && dataset.structure ? dataset.structure : {},
         isLoading: false,
         components: {
-          body: initialState.components.body,
+          body: state.components.body,
           meta: {
             value: dataset && dataset.meta ? dataset.meta : {}
           },
