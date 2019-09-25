@@ -47,7 +47,7 @@ export interface AppProps {
   children: JSX.Element[] | JSX.Element
   bootstrap: () => Promise<ApiAction>
   fetchMyDatasets: (page?: number, pageSize?: number) => Promise<ApiAction>
-  addDataset: (peername: string, name: string) => Promise<ApiAction>
+  addDataset: (peername: string, name: string, path: string) => Promise<ApiAction>
   linkDataset: (peername: string, name: string, dir: string) => Promise<ApiAction>
   setWorkingDataset: (peername: string, name: string) => Promise<ApiAction>
   initDataset: (path: string, name: string, format: string) => Promise<ApiAction>
@@ -166,10 +166,10 @@ class App extends React.Component<AppProps, AppState> {
       case ModalType.AddDataset: {
         modalComponent = (
           <AddDataset
-            datasetPath={this.props.selections.datasetPath}
+            datasetDirPath={this.props.datasetDirPath}
             onSubmit={this.props.addDataset}
             onDismissed={async () => setModal(noModalObject)}
-            setDatasetPath={this.props.setDatasetPath}
+            setDatasetDirPath={this.props.setDatasetDirPath}
           />
         )
         break

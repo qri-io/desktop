@@ -16,17 +16,17 @@ import { validateDatasetReference } from '../../utils/formValidation'
 
 interface AddDatasetProps {
   onDismissed: () => void
-  onSubmit: (peername: string, name: string) => Promise<ApiAction>
-  datasetPath: string
-  setDatasetPath: (path: string) => Action
+  onSubmit: (peername: string, name: string, path: string) => Promise<ApiAction>
+  datasetDirPath: string
+  setDatasetDirPath: (path: string) => Action
 }
 
 const AddDataset: React.FunctionComponent<AddDatasetProps> = (props) => {
   const {
     onDismissed,
     onSubmit,
-    datasetPath: persistedDatasetPath,
-    setDatasetPath: saveDatasetPath
+    datasetDirPath: persistedDatasetPath,
+    setDatasetDirPath: saveDatasetDirPath
   } = props
 
   const [datasetReference, setDatasetReference] = React.useState('')
@@ -45,13 +45,15 @@ const AddDataset: React.FunctionComponent<AddDatasetProps> = (props) => {
     datasetReferenceValidationError ? setDatasetReferenceError(datasetReferenceValidationError) : setDatasetReferenceError('')
 
     // only ready when both fields are not invalid
-    const ready = datasetPath !== '' && datasetReference !== '' && !datasetReferenceError
+    const ready = datasetPath !== '' && datasetReference !== '' && !datasetReferenceValidationError
     setButtonDisabled(!ready)
   }, [datasetReference, datasetPath])
 
   React.useEffect(() => {
     // persist the datasetPath
-    saveDatasetPath(datasetPath)
+    if (datasetPath) {
+      saveDatasetDirPath(datasetPath)
+    }
   }, [datasetPath])
 
   // should come from props
@@ -72,7 +74,9 @@ const AddDataset: React.FunctionComponent<AddDatasetProps> = (props) => {
 
     if (!onSubmit) return
     const [peername, datasetName] = datasetReference.split('/')
-    onSubmit(peername, datasetName)
+    const datasetFolderPath = path.join(datasetPath, datasetName)
+
+    onSubmit(peername, datasetName, datasetFolderPath)
       .then(() => onDismissed())
       .catch((action) => {
         setDismissable(true)
@@ -114,7 +118,7 @@ const AddDataset: React.FunctionComponent<AddDatasetProps> = (props) => {
 
   if (datasetReference && !datasetReferenceError) {
     const [, datasetName] = datasetReference.split('/')
-    if (datasetName) {
+    if (datasetPath && datasetName) {
       fullPath = path.join(datasetPath, datasetName)
     }
   }
