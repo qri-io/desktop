@@ -14,7 +14,7 @@ interface AddByNameProps {
 const AddByName: React.FunctionComponent<AddByNameProps> = ({ datasetName, onChange }) => {
   return (
     <div className='content'>
-      <p>Add a dataset that already exists on Qri</p>
+      <p>Add a datasetthat already exists on the Qri network</p>
       <p>Qri dataset names have the following structure: <strong>peername/dataset name</strong>.</p>
       <p>For example: <strong>chriswhong/usgs_earthquakes</strong></p>
       <TextInput
@@ -37,7 +37,7 @@ interface AddByUrl {
 const AddByUrl: React.FunctionComponent<AddByUrl> = ({ url, onChange }) => {
   return (
     <div className='content'>
-      <p>Add a dataset that already exists on Qri using a <strong>url</strong></p>
+      <p>Add a dataset that already exists on the Qri Network using a <strong>url</strong></p>
       <TextInput
         name='url'
         label='Url'
@@ -167,7 +167,7 @@ const AddDataset: React.FunctionComponent<AddDatasetProps> = ({ onDismissed, onS
   return (
     <Modal
       id="addDataset"
-      title={'Add Dataset'}
+      title={'Add a Dataset from the Network'}
       onDismissed={onDismissed}
       onSubmit={() => {}}
       dismissable={dismissable}
