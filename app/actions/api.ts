@@ -45,9 +45,7 @@ export function fetchWorkingDatasetDetails (): ApiActionThunk {
   return async (dispatch, getState) => {
     const whenOk = chainSuccess(dispatch, getState)
     let response: AnyAction
-
     response = await fetchWorkingDataset()(dispatch, getState)
-
     // if the response returned in error, check the error
     // if it's 422, it means the dataset exists, it's just not linked to the filesystem
     if (getActionType(response) === 'failure') {
@@ -58,15 +56,8 @@ export function fetchWorkingDatasetDetails (): ApiActionThunk {
     }
     response = await whenOk(fetchWorkingStatus())(response)
     response = await whenOk(fetchBody())(response)
-    response = await whenOk(fetchWorkingHistory())(response)
-    const { workingDataset, selections } = getState()
-    const { history } = workingDataset
-    const { commit } = selections
+    response = await whenOk(fetchWorkingHistory(-1))(response)
 
-    // if history length changes, select the latest commit
-    if (history.value.length !== 0 && (commit === '' || !history.value.some(c => c.path === commit))) {
-      await dispatch(setSelectedListItem('commit', history.value[0].path))
-    }
     return response
   }
 }
@@ -124,7 +115,8 @@ export function fetchMyDatasets (page: number = 1, pageSize: number = pageSizeDe
     const state = getState()
     const { page: confirmedPage, doNotFetch } = actionWithPagination(page, state.myDatasets.pageInfo)
 
-    if (doNotFetch) return new Promise(resolve => resolve())
+    // we need to emit a 'success' type, or our chainSuccess functions will fail
+    if (doNotFetch) return new Promise(resolve => resolve({ type: 'SUCCESS' }))
 
     const listAction: ApiAction = {
       type: 'list',
@@ -235,7 +227,8 @@ export function fetchWorkingHistory (page: number = 1, pageSize: number = pageSi
 
     const { page: confirmedPage, doNotFetch } = actionWithPagination(page, state.workingDataset.history.pageInfo)
 
-    if (doNotFetch) return new Promise(resolve => resolve())
+    // we need to emit a 'success' type, or our chainSuccess functions will fail
+    if (doNotFetch) return new Promise(resolve => resolve({ type: 'SUCCESS' }))
 
     const { selections, myDatasets } = getState()
     const { peername, name } = selections
@@ -295,7 +288,8 @@ export function fetchBody (page: number = 1, pageSize: number = bodyPageSizeDefa
 
     const { page: confirmedPage, doNotFetch } = actionWithPagination(page, workingDataset.components.body.pageInfo)
 
-    if (doNotFetch) return new Promise(resolve => resolve())
+    // we need to emit a 'success' type, or our chainSuccess functions will fail
+    if (doNotFetch) return new Promise(resolve => resolve({ type: 'SUCCESS' }))
 
     const action = {
       type: 'body',
@@ -328,7 +322,8 @@ export function fetchCommitBody (page: number = 1, pageSize: number = bodyPageSi
 
     const { page: confirmedPage, doNotFetch } = actionWithPagination(page, commitDetails.components.body.pageInfo)
 
-    if (doNotFetch) return new Promise(resolve => resolve())
+    // we need to emit a 'success' type, or our chainSuccess functions will fail
+    if (doNotFetch) return new Promise(resolve => resolve({ type: 'SUCCESS' }))
 
     const action = {
       type: 'commitBody',
@@ -378,6 +373,18 @@ export function saveWorkingDataset (): ApiActionThunk {
     }
 
     return dispatch(action)
+  }
+}
+
+export function saveWorkingDatasetAndFetch (): ApiActionThunk {
+  return async (dispatch, getState) => {
+    const whenOk = chainSuccess(dispatch, getState)
+    let response: Action
+
+    response = await saveWorkingDataset()(dispatch, getState)
+    response = await whenOk(fetchWorkingDatasetDetails())(response)
+
+    return response
   }
 }
 
@@ -480,8 +487,7 @@ export function publishDataset (): ApiActionThunk {
     try {
       let response: Action
       response = await dispatch(action)
-      await whenOk(fetchWorkingDatasetDetails())(response)
-      response = await dispatch(setWorkingDataset(peername, name))
+      await whenOk(fetchWorkingDataset())(response)
     } catch (action) {
       throw action
     }
@@ -510,8 +516,7 @@ export function unpublishDataset (): ApiActionThunk {
     try {
       let response: Action
       response = await dispatch(action)
-      await whenOk(fetchWorkingDatasetDetails())(response)
-      response = await dispatch(setWorkingDataset(peername, name))
+      await whenOk(fetchWorkingDataset())(response)
     } catch (action) {
       throw action
     }
@@ -638,5 +643,17 @@ export function fsiWrite (peername: string, name: string, dataset: any): ApiActi
       }
     }
     return dispatch(action)
+  }
+}
+
+export function fsiWriteAndFetch (peername: string, name: string, dataset: any): ApiActionThunk {
+  return async (dispatch, getState) => {
+    const whenOk = chainSuccess(dispatch, getState)
+    let response: Action
+
+    response = await fsiWrite(peername, name, dataset)(dispatch, getState)
+    // reset pagination
+    response = await whenOk(fetchWorkingDataset())(response)
+    return response
   }
 }

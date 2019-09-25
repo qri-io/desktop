@@ -14,6 +14,7 @@ export const UI_CLOSE_TOAST = 'UI_CLOSE_TOAST'
 export const UI_SET_MODAL = 'UI_SET_MODAL'
 export const UI_SIGNOUT = 'UI_SIGNOUT'
 export const UI_HIDE_COMMIT_NUDGE = 'UI_HIDE_COMMIT_NUDGE'
+export const UI_SET_DATASET_DIR_PATH = 'UI_SET_DATASET_PATH'
 
 export const UNAUTHORIZED = 'UNAUTHORIZED'
 
@@ -45,7 +46,8 @@ const initialState = {
   commitSidebarWidth: getSidebarWidth('commitSidebarWidth'),
   toast: defaultToast,
   blockMenus: true,
-  hideCommitNudge: store().getItem(hideCommitNudge) === 'true'
+  hideCommitNudge: store().getItem(hideCommitNudge) === 'true',
+  datasetDirPath: store().getItem('datasetDirPath') || ''
 }
 
 // send an event to electron to block menus on first load
@@ -158,6 +160,13 @@ export default (state = initialState, action: AnyAction) => {
       return {
         ...state,
         showDatasetList: false
+      }
+
+    case UI_SET_DATASET_DIR_PATH:
+      store().setItem('datasetDirPath', action.path)
+      return {
+        ...state,
+        datasetDirPath: action.path
       }
 
     default:

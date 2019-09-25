@@ -17,7 +17,8 @@ import {
   acceptTOS,
   setQriCloudAuthenticated,
   closeToast,
-  setModal
+  setModal,
+  setDatasetDirPath
 } from '../actions/ui'
 
 import {
@@ -26,8 +27,7 @@ import {
 } from '../actions/session'
 
 import {
-  setWorkingDataset,
-  setDatasetPath
+  setWorkingDataset
 } from '../actions/selections'
 
 const mergeProps = (props: any, actions: any): AppProps => {
@@ -38,10 +38,10 @@ const AppContainer = connect(
   (state: Store) => {
     const { ui, myDatasets, session, workingDataset, connection, selections } = state
     const { apiConnection } = connection
-    const loading = connection.apiConnection === 0
+    const loading = connection.apiConnection === 0 || session.isLoading
     const hasDatasets = myDatasets.value.length !== 0
     const { id: sessionID, peername } = session
-    const { toast, modal } = ui
+    const { toast, modal, datasetDirPath } = ui
     return {
       hasDatasets,
       loading,
@@ -51,7 +51,8 @@ const AppContainer = connect(
       toast,
       modal,
       workingDataset,
-      apiConnection
+      apiConnection,
+      datasetDirPath
     }
   },
   {
@@ -70,7 +71,7 @@ const AppContainer = connect(
     publishDataset,
     unpublishDataset,
     removeDatasetAndFetch,
-    setDatasetPath
+    setDatasetDirPath
   },
   mergeProps
 )(App)

@@ -4,11 +4,15 @@ import localStore from '../utils/localStore'
 import { apiActionTypes } from '../utils/actionType'
 import chooseDefaultComponent from '../utils/chooseDefaultComponent'
 
+import {
+  HISTORY_REQ,
+  HISTORY_SUCC
+} from '../reducers/workingDataset'
+
 export const SELECTIONS_SET_ACTIVE_TAB = 'SELECTIONS_SET_ACTIVE_TAB'
 export const SELECTIONS_SET_SELECTED_LISTITEM = 'SELECTIONS_SET_SELECTED_LISTITEM'
 export const SELECTIONS_SET_WORKING_DATASET = 'SELECTIONS_SET_WORKING_DATASET'
 export const SELECTIONS_CLEAR = 'SELECTIONS_CLEAR'
-export const SELECTIONS_SET_DATASET_PATH = 'SELECTIONS_SET_DATASET_PATH'
 
 export const initialState: Selections = {
   peername: localStore().getItem('peername') || '',
@@ -16,8 +20,7 @@ export const initialState: Selections = {
   activeTab: localStore().getItem('activeTab') || 'status',
   component: localStore().getItem('component') as SelectedComponent || '',
   commit: localStore().getItem('commit') || '',
-  commitComponent: localStore().getItem('commitComponent') || '',
-  datasetPath: localStore().getItem('datasetPath') || ''
+  commitComponent: localStore().getItem('commitComponent') || ''
 }
 
 export const [, ADD_SUCC] = apiActionTypes('add')
@@ -97,6 +100,28 @@ export default (state = initialState, action: AnyAction) => {
         name
       })
 
+    case HISTORY_REQ:
+      if (action.pageInfo.page === 1) {
+        localStore().setItem('commit', '')
+        return {
+          ...state,
+          commit: ''
+        }
+      }
+      return state
+
+    case HISTORY_SUCC:
+      if (state.commit === '') {
+        if (action.payload.data && action.payload.data.length > 0) {
+          localStore().setItem('commit', action.payload.data[0].path)
+          return {
+            ...state,
+            commit: action.payload.data[0].path
+          }
+        }
+      }
+      return state
+
     case COMMIT_SUCC:
       // if the selected commitComponent exists on dataset, no changes needed
       if (action.payload.data.dataset[state.commitComponent] || (state.commitComponent === 'body' && action.payload.data.dataset['bodyPath'])) return state
@@ -148,14 +173,6 @@ export default (state = initialState, action: AnyAction) => {
         peername: action.payload.data.peername,
         name: action.payload.data.name,
         activeTab: 'status'
-      }
-
-    case SELECTIONS_SET_DATASET_PATH:
-      const { path: datasetPath } = action.payload
-      localStore().setItem('datasetPath', datasetPath)
-      return {
-        ...state,
-        datasetPath
       }
 
     default:

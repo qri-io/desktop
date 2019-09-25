@@ -38,6 +38,8 @@ export interface AppProps {
   selections: Selections
   apiConnection?: number
   hasAcceptedTOS: boolean
+  // the persited directory path to which the user last saved a dataset
+  datasetDirPath: string
   qriCloudAuthenticated: boolean
   toast: IToast
   modal: Modal
@@ -59,7 +61,7 @@ export interface AppProps {
   removeDatasetAndFetch: (peername: string, name: string, removeFiles: boolean) => Promise<ApiAction>
   publishDataset: () => Promise<ApiAction>
   unpublishDataset: () => Promise<ApiAction>
-  setDatasetPath: (path: string) => Action
+  setDatasetDirPath: (path: string) => Action
 }
 
 interface AppState {
@@ -152,10 +154,10 @@ class App extends React.Component<AppProps, AppState> {
       case ModalType.CreateDataset: {
         modalComponent = (
           <CreateDataset
-            datasetPath={this.props.selections.datasetPath}
+            datasetDirPath={this.props.datasetDirPath}
             onSubmit={this.props.initDataset}
             onDismissed={async () => setModal(noModalObject)}
-            setDatasetPath={this.props.setDatasetPath}
+            setDatasetDirPath={this.props.setDatasetDirPath}
           />
         )
         break
@@ -207,6 +209,7 @@ class App extends React.Component<AppProps, AppState> {
         classNames="fade"
         component="div"
         timeout={1000}
+        mountOnEnter
         unmountOnExit
       >
         <AppLoading />
@@ -231,8 +234,13 @@ class App extends React.Component<AppProps, AppState> {
   render () {
     const {
       toast,
-      closeToast
+      closeToast,
+      loading
     } = this.props
+
+    if (loading) {
+      return this.renderAppLoading()
+    }
 
     return (
       <div style={{
@@ -240,7 +248,6 @@ class App extends React.Component<AppProps, AppState> {
         position: 'relative',
         overflow: 'hidden'
       }}>
-        {this.renderAppLoading()}
         {this.renderAppError()}
         {this.renderModal()}
         <Router>

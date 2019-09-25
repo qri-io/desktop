@@ -30,7 +30,6 @@ import {
   Selections,
   WorkingDataset,
   Mutations,
-  DatasetStatus,
   SelectedComponent
 } from '../models/store'
 import NoDatasets from './NoDatasets'
@@ -56,15 +55,6 @@ export interface DatasetProps {
   fetchBody: (page: number) => Promise<ApiAction>
   fetchWorkingDataset: () => Promise<ApiAction>
   signout: () => Action
-}
-
-interface DatasetState {
-  peername: string
-  name: string | null
-  saveIsLoading: boolean
-  workingDatasetIsLoading: boolean
-  activeTab: string
-  status: DatasetStatus
 }
 
 const logo = require('../assets/qri-blob-logo-tiny.png') //eslint-disable-line
@@ -108,17 +98,6 @@ export const CurrentDataset: React.FunctionComponent<CurrentDatasetProps> = (pro
 }
 
 export default class Dataset extends React.Component<DatasetProps> {
-  // component state is used to compare changes when a new dataset is selected
-  // see getDerivedStateFromProps() below
-  state = {
-    peername: null,
-    name: null,
-    saveIsLoading: false,
-    workingDatasetIsLoading: true,
-    activeTab: this.props.selections.activeTab,
-    status: this.props.workingDataset.status
-  }
-
   componentDidMount () {
     // poll for status
     setInterval(() => {
@@ -157,11 +136,20 @@ export default class Dataset extends React.Component<DatasetProps> {
     const { workingDataset, fetchWorkingDataset, fetchBody } = this.props
     const { status } = workingDataset
     const { status: prevStatus } = prevProps.workingDataset
+
+    if ((this.props.selections.peername !== prevProps.selections.peername) || (this.props.selections.name !== prevProps.selections.name)) {
+      this.props.fetchWorkingDatasetDetails()
+      return
+    }
+
     if (status) {
       // create an array of components that need updating
       const componentsToReset: SelectedComponent[] = []
 
-      Object.keys(status).forEach((component: SelectedComponent) => {
+      const statusKeys = Object.keys(status)
+      const prevStatusKeys = Object.keys(prevStatus)
+
+      statusKeys.forEach((component: SelectedComponent) => {
         const currentMtime = status[component].mtime
         const prevMtime = prevStatus[component] && prevStatus[component].mtime
         if (currentMtime && prevMtime) {
@@ -171,6 +159,13 @@ export default class Dataset extends React.Component<DatasetProps> {
         }
       })
 
+      // if the number of files has changed,
+      // make sure we fetchWorkingDataset
+      const difference = statusKeys
+        .filter((component: SelectedComponent) => !prevStatusKeys.includes(component))
+        .concat(prevStatusKeys.filter((component: SelectedComponent) => !statusKeys.includes(component)))
+      difference.forEach((component: SelectedComponent) => componentsToReset.push(component))
+
       // reset components
       if (componentsToReset.includes('body')) fetchBody(-1)
       if (componentsToReset.includes('schema') || componentsToReset.includes('meta')) fetchWorkingDataset()
@@ -179,43 +174,6 @@ export default class Dataset extends React.Component<DatasetProps> {
     // this "wires up" all of the tooltips, must be called on update, as tooltips
     // in descendents can come and go
     ReactTooltip.rebuild()
-  }
-
-  // using component state + getDerivedStateFromProps to determine when a new
-  // working dataset is selected and trigger api call(s)
-  static getDerivedStateFromProps (nextProps: DatasetProps, prevState: DatasetState) {
-    const { peername: newPeername, name: newName } = nextProps.selections
-    const { peername, name } = prevState
-    // when new props arrive, compare selections.peername and selections.name to
-    // previous.  If either is different, fetch data
-    if ((newPeername !== peername) || (newName !== name)) {
-      nextProps.fetchWorkingDatasetDetails()
-      // close the dataset list if this is not the initial state comparison
-      if (peername !== null) nextProps.toggleDatasetList()
-      return {
-        peername: newPeername,
-        name: newName
-      }
-    }
-
-    // check state to see if there was a successful save
-    // successful save means mutations.save.isLoading was true and is now false,
-    // and mutations.save.error is falsy
-    const { isLoading: newSaveIsLoading, error: newSaveError } = nextProps.mutations.save
-    const { saveIsLoading } = prevState
-
-    if (
-      (saveIsLoading === true && newSaveIsLoading === false) &&
-      (!newSaveError)
-    ) {
-      nextProps.fetchWorkingDatasetDetails()
-    }
-
-    return {
-      saveIsLoading: newSaveIsLoading,
-      activeTab: nextProps.selections.activeTab,
-      workingDatasetIsLoading: nextProps.workingDataset.isLoading
-    }
   }
 
   openWorkingDirectory () {

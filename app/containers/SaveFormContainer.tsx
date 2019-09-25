@@ -1,6 +1,6 @@
 import { connect } from 'react-redux'
 import SaveForm, { SaveFormProps } from '../components/SaveForm'
-import { saveWorkingDataset } from '../actions/api'
+import { saveWorkingDatasetAndFetch } from '../actions/api'
 import Store from '../models/store'
 import { setCommitTitle, setCommitMessage } from '../actions/mutations'
 
@@ -17,7 +17,7 @@ const mapStateToProps = (state: Store) => {
 }
 
 const actions = {
-  saveWorkingDataset,
+  saveWorkingDataset: saveWorkingDatasetAndFetch,
   setCommitTitle,
   setCommitMessage
 }
