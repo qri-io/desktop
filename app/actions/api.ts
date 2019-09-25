@@ -45,7 +45,6 @@ export function fetchWorkingDatasetDetails (): ApiActionThunk {
   return async (dispatch, getState) => {
     const whenOk = chainSuccess(dispatch, getState)
     let response: AnyAction
-
     response = await fetchWorkingDataset()(dispatch, getState)
 
     // if the response returned in error, check the error
@@ -58,7 +57,7 @@ export function fetchWorkingDatasetDetails (): ApiActionThunk {
     }
     response = await whenOk(fetchWorkingStatus())(response)
     response = await whenOk(fetchBody())(response)
-    response = await whenOk(fetchWorkingHistory())(response)
+    response = await whenOk(fetchWorkingHistory(-1))(response)
     const { workingDataset, selections } = getState()
     const { history } = workingDataset
     const { commit } = selections
@@ -381,6 +380,18 @@ export function saveWorkingDataset (): ApiActionThunk {
   }
 }
 
+export function saveWorkingDatasetAndFetch (): ApiActionThunk {
+  return async (dispatch, getState) => {
+    const whenOk = chainSuccess(dispatch, getState)
+    let response: Action
+
+    response = await saveWorkingDataset()(dispatch, getState)
+    response = await whenOk(fetchWorkingDatasetDetails())(response)
+
+    return response
+  }
+}
+
 export function addDataset (peername: string, name: string): ApiActionThunk {
   return async (dispatch) => {
     const action = {
@@ -480,8 +491,7 @@ export function publishDataset (): ApiActionThunk {
     try {
       let response: Action
       response = await dispatch(action)
-      await whenOk(fetchWorkingDatasetDetails())(response)
-      response = await dispatch(setWorkingDataset(peername, name))
+      await whenOk(fetchWorkingDataset())(response)
     } catch (action) {
       throw action
     }
@@ -510,8 +520,7 @@ export function unpublishDataset (): ApiActionThunk {
     try {
       let response: Action
       response = await dispatch(action)
-      await whenOk(fetchWorkingDatasetDetails())(response)
-      response = await dispatch(setWorkingDataset(peername, name))
+      await whenOk(fetchWorkingDataset())(response)
     } catch (action) {
       throw action
     }
@@ -638,5 +647,17 @@ export function fsiWrite (peername: string, name: string, dataset: any): ApiActi
       }
     }
     return dispatch(action)
+  }
+}
+
+export function fsiWriteAndFetch (peername: string, name: string, dataset: any): ApiActionThunk {
+  return async (dispatch, getState) => {
+    const whenOk = chainSuccess(dispatch, getState)
+    let response: Action
+
+    response = await fsiWrite(peername, name, dataset)(dispatch, getState)
+    // reset pagination
+    response = await whenOk(fetchWorkingDataset())(response)
+    return response
   }
 }
