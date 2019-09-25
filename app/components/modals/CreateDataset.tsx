@@ -15,19 +15,19 @@ import { validateDatasetName } from '../../utils/formValidation'
 interface CreateDatasetProps {
   onDismissed: () => void
   onSubmit: (path: string, name: string, dir: string, mkdir: string) => Promise<ApiAction>
-  datasetPath: string
-  setDatasetPath: (path: string) => Action
+  datasetDirPath: string
+  setDatasetDirPath: (path: string) => Action
 }
 
 const CreateDataset: React.FunctionComponent<CreateDatasetProps> = (props) => {
   const {
     onDismissed,
     onSubmit,
-    datasetPath: persistedDatasetPath,
-    setDatasetPath: saveDatasetPath
+    datasetDirPath: persistedDatasetDirPath,
+    setDatasetDirPath: saveDatasetDirPath
   } = props
   const [datasetName, setDatasetName] = React.useState('')
-  const [datasetPath, setDatasetPath] = React.useState(persistedDatasetPath)
+  const [datasetDirPath, setDatasetDirPath] = React.useState(persistedDatasetDirPath)
   const [filePath, setFilePath] = React.useState('')
 
   const [dismissable, setDismissable] = React.useState(true)
@@ -41,21 +41,21 @@ const CreateDataset: React.FunctionComponent<CreateDatasetProps> = (props) => {
     datasetNameValidationError ? setDatasetNameError(datasetNameValidationError) : setDatasetNameError('')
 
     // only ready when all three fields are not invalid
-    const ready = datasetPath !== '' && filePath !== '' && !datasetNameValidationError
+    const ready = datasetDirPath !== '' && filePath !== '' && !datasetNameValidationError
     setButtonDisabled(!ready)
-  }, [datasetName, datasetPath, filePath])
+  }, [datasetName, datasetDirPath, filePath])
 
   React.useEffect(() => {
-    // persist the datasetPath
-    saveDatasetPath(datasetPath)
-  }, [datasetPath])
+    // persist the datasetDirPath
+    saveDatasetDirPath(datasetDirPath)
+  }, [datasetDirPath])
 
   // should come from props
   const [error, setError] = React.useState('')
   const [loading, setLoading] = React.useState(false)
 
   // should come from props/actions that has us check if the directory already contains a qri dataset
-  const isQriDataset = (datasetPath: string) => !datasetPath
+  const isQriDataset = (datasetDirPath: string) => !datasetDirPath
 
   const showDirectoryPicker = () => {
     const window = remote.getCurrentWindow()
@@ -69,7 +69,7 @@ const CreateDataset: React.FunctionComponent<CreateDatasetProps> = (props) => {
 
     const selectedPath = directory[0]
 
-    setDatasetPath(selectedPath)
+    setDatasetDirPath(selectedPath)
     const isDataset = isQriDataset(selectedPath)
     if (isDataset) {
       setAlreadyDatasetError('A dataset already exists in this directory.')
@@ -135,7 +135,7 @@ const CreateDataset: React.FunctionComponent<CreateDatasetProps> = (props) => {
     setLoading(true)
     error && setError('')
     if (!onSubmit) return
-    onSubmit(filePath, datasetName, datasetPath, datasetName)
+    onSubmit(filePath, datasetName, datasetDirPath, datasetName)
       .then(() => onDismissed())
       .catch((action: any) => {
         setLoading(false)
@@ -144,7 +144,7 @@ const CreateDataset: React.FunctionComponent<CreateDatasetProps> = (props) => {
       })
   }
 
-  const fullPath = path.join(datasetPath, datasetName)
+  const fullPath = path.join(datasetDirPath, datasetName)
 
   return (
     <Modal
@@ -190,7 +190,7 @@ const CreateDataset: React.FunctionComponent<CreateDatasetProps> = (props) => {
               label='Directory path'
               labelTooltip='Qri will create a new directory for<br/>this dataset&apos;s files at this location.'
               type=''
-              value={datasetPath}
+              value={datasetDirPath}
               onChange={handleChanges}
               maxLength={600}
               errorText={alreadyDatasetError}

@@ -2,8 +2,7 @@ import {
   SELECTIONS_SET_ACTIVE_TAB,
   SELECTIONS_SET_SELECTED_LISTITEM,
   SELECTIONS_SET_WORKING_DATASET,
-  SELECTIONS_CLEAR,
-  SELECTIONS_SET_DATASET_PATH
+  SELECTIONS_CLEAR
 } from '../reducers/selections'
 
 export const setActiveTab = (activeTab: string) => {
@@ -36,12 +35,5 @@ export const setWorkingDataset = (peername: string, name: string) => {
 export const clearSelection = () => {
   return {
     type: SELECTIONS_CLEAR
-  }
-}
-
-export const setDatasetPath = (path: string) => {
-  return {
-    type: SELECTIONS_SET_DATASET_PATH,
-    payload: { path }
   }
 }

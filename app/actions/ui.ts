@@ -9,7 +9,8 @@ import {
   UI_CLOSE_TOAST,
   UI_SET_MODAL,
   UI_SIGNOUT,
-  UI_HIDE_COMMIT_NUDGE
+  UI_HIDE_COMMIT_NUDGE,
+  UI_SET_DATASET_DIR_PATH
 } from '../reducers/ui'
 
 import { ToastType } from '../models/store'
@@ -72,5 +73,12 @@ export const signout = () => {
 export const setHideCommitNudge = () => {
   return {
     type: UI_HIDE_COMMIT_NUDGE
+  }
+}
+
+export const setDatasetDirPath = (path: string) => {
+  return {
+    type: UI_SET_DATASET_DIR_PATH,
+    path
   }
 }

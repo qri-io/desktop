@@ -62,6 +62,7 @@ export interface UI {
   toast: Toast
   blockMenus: boolean
   hideCommitNudge: boolean
+  datasetDirPath: string
 }
 
 export type SelectedComponent = 'meta' | 'body' | 'schema' | ''
@@ -74,7 +75,6 @@ export interface Selections {
   component: SelectedComponent
   commit: string
   commitComponent: string
-  datasetPath: string
 }
 
 // info about the current value of a list being paginated
