@@ -1,11 +1,11 @@
 import * as React from 'react'
+import TwoDSchemaLayout from './TwoDSchemaLayout'
 import ReactJson from 'react-json-view'
 
-import { Dataset } from '../models/dataset'
 import SpinnerWithIcon from './chrome/SpinnerWithIcon'
 
 interface SchemaProps {
-  schema: Dataset['schema']
+  schema: any
 }
 
 const Schema: React.FunctionComponent<SchemaProps> = ({ schema }) => {
@@ -13,14 +13,21 @@ const Schema: React.FunctionComponent<SchemaProps> = ({ schema }) => {
     return <SpinnerWithIcon loading={true} />
   }
 
+  // render TwoDSchemaLayout only if schema meets specific criteria
+  const is2D = schema && schema.items && schema.items.items
+
+  const schemaContent = is2D
+    ? <TwoDSchemaLayout schema={schema} />
+    : <ReactJson
+      name={null}
+      src={schema}
+      enableClipboard={false}
+      displayDataTypes={false}
+    />
+
   return (
     <div className='content'>
-      <ReactJson
-        name={null}
-        src={schema}
-        enableClipboard={false}
-        displayDataTypes={false}
-      />
+      {schemaContent}
     </div>
   )
 }

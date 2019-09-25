@@ -1,6 +1,7 @@
 import * as React from 'react'
 
 import ExternalLink from './ExternalLink'
+import KeyValueTable from './KeyValueTable'
 import SpinnerWithIcon from './chrome/SpinnerWithIcon'
 import { standardFields } from './MetadataEditor'
 import { Meta, Citation, License, User } from '../models/dataset'
@@ -43,20 +44,7 @@ const renderArrayItemsTable = (value: any[]) => {
   return (
     <div className='array-items-table-container'>
       {
-        value.map((item, i) => (
-          <div key={i} className='metadata-viewer-table-wrap'>
-            <table className='metadata-viewer-table '>
-              <tbody>
-                {Object.keys(item).map((key: string) => (
-                  <tr key={key} className='metadata-viewer-row'>
-                    <td className='metadata-viewer-key'>{key}</td>
-                    <td>{item[key]}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        ))
+        value.map((item, i) => (<div key={i}><KeyValueTable data={item} /></div>))
       }
     </div>
   )
@@ -72,8 +60,8 @@ const renderMultiStructured = (value: User[] | Citation[]) => {
 
 const renderTable = (keys: string[], data: Meta) => {
   return (
-    <div className='metadata-viewer-table-wrap'>
-      <table className='metadata-viewer-table'>
+    <div className='keyvalue-table-wrap'>
+      <table className='keyvalue-table'>
         <tbody>
           {keys.map((key) => {
             const value = data[key]
@@ -102,8 +90,8 @@ const renderTable = (keys: string[], data: Meta) => {
             }
 
             return (
-              <tr key={key} className='metadata-viewer-row'>
-                <td className='metadata-viewer-key'>{key}</td>
+              <tr key={key} className='keyvalue-table-row'>
+                <td className='keyvalue-table-key'>{key}</td>
                 <td>{cellContent}</td>
               </tr>
             )
