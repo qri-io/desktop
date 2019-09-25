@@ -38,7 +38,7 @@ const AppContainer = connect(
   (state: Store) => {
     const { ui, myDatasets, session, workingDataset, connection, selections } = state
     const { apiConnection } = connection
-    const loading = connection.apiConnection === 0
+    const loading = connection.apiConnection === 0 || session.isLoading
     const hasDatasets = myDatasets.value.length !== 0
     const { id: sessionID, peername } = session
     const { toast, modal } = ui

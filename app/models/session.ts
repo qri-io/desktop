@@ -14,4 +14,5 @@ export interface Session {
   poster?: string
   twitter?: string
   peerIDs?: string[]
+  isLoading?: boolean
 }

@@ -207,6 +207,7 @@ class App extends React.Component<AppProps, AppState> {
         classNames="fade"
         component="div"
         timeout={1000}
+        mountOnEnter
         unmountOnExit
       >
         <AppLoading />
@@ -231,8 +232,13 @@ class App extends React.Component<AppProps, AppState> {
   render () {
     const {
       toast,
-      closeToast
+      closeToast,
+      loading
     } = this.props
+
+    if (loading) {
+      return this.renderAppLoading()
+    }
 
     return (
       <div style={{
@@ -240,7 +246,6 @@ class App extends React.Component<AppProps, AppState> {
         position: 'relative',
         overflow: 'hidden'
       }}>
-        {this.renderAppLoading()}
         {this.renderAppError()}
         {this.renderModal()}
         <Router>
