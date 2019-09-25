@@ -1,80 +1,58 @@
 import * as React from 'react'
+import { Action } from 'redux'
+import { remote } from 'electron'
+import path from 'path'
+
 import { ApiAction } from '../../store/api'
 import { CSSTransition } from 'react-transition-group'
 import Modal from './Modal'
+import ExternalLink from '../ExternalLink'
 import TextInput from '../form/TextInput'
+import DebouncedTextInput from '../form/DebouncedTextInput'
 import Error from './Error'
 import Buttons from './Buttons'
-
-interface AddByNameProps {
-  datasetName: string
-  onChange: (name: string, value: any) => void
-}
-
-const AddByName: React.FunctionComponent<AddByNameProps> = ({ datasetName, onChange }) => {
-  return (
-    <div className='content'>
-      <p>Add a datasetthat already exists on the Qri network</p>
-      <p>Qri dataset names have the following structure: <strong>peername/dataset name</strong>.</p>
-      <p>For example: <strong>chriswhong/usgs_earthquakes</strong></p>
-      <TextInput
-        name='datasetName'
-        label='Peername/Dataset_Name:'
-        type=''
-        value={datasetName}
-        onChange={onChange}
-        maxLength={300}
-      />
-    </div>
-  )
-}
-
-interface AddByUrl {
-  url: string
-  onChange: (name: string, value: any) => void
-}
-
-const AddByUrl: React.FunctionComponent<AddByUrl> = ({ url, onChange }) => {
-  return (
-    <div className='content'>
-      <p>Add a dataset that already exists on the Qri Network using a <strong>url</strong></p>
-      <TextInput
-        name='url'
-        label='Url'
-        type=''
-        value={url}
-        onChange={onChange}
-        maxLength={600}
-      />
-    </div>
-  )
-}
-
-enum TabTypes {
-  ByName = 'By Name',
-  ByUrl = 'By Url',
-}
+import ButtonInput from '../form/ButtonInput'
+import { validateDatasetReference } from '../../utils/formValidation'
 
 interface AddDatasetProps {
   onDismissed: () => void
   onSubmit: (peername: string, name: string) => Promise<ApiAction>
+  datasetPath: string
+  setDatasetPath: (path: string) => Action
 }
 
-const AddDataset: React.FunctionComponent<AddDatasetProps> = ({ onDismissed, onSubmit }) => {
-  const [datasetName, setDatasetName] = React.useState('')
+const AddDataset: React.FunctionComponent<AddDatasetProps> = (props) => {
+  const {
+    onDismissed,
+    onSubmit,
+    datasetPath: persistedDatasetPath,
+    setDatasetPath: saveDatasetPath
+  } = props
 
-  // restore when you can add by URL
-  // const [url, setUrl] = React.useState('')
-  // const [activeTab, setActiveTab] = React.useState(TabTypes.ByName)
-  const activeTab = TabTypes.ByName
+  const [datasetReference, setDatasetReference] = React.useState('')
+  const [datasetPath, setDatasetPath] = React.useState(persistedDatasetPath)
 
   const [dismissable, setDismissable] = React.useState(true)
   const [buttonDisabled, setButtonDisabled] = React.useState(true)
+  const [alreadyDatasetError, setAlreadyDatasetError] = React.useState('')
+  const [datasetReferenceError, setDatasetReferenceError] = React.useState('')
+
+  // should come from props/actions that has us check if the directory already contains a qri dataset
+  const isQriDataset = (datasetPath: string) => !datasetPath
 
   React.useEffect(() => {
-    toggleButton(activeTab)
-    if (error !== '') setError('')
-  }, [datasetName, activeTab])
+    const datasetReferenceValidationError = validateDatasetReference(datasetReference)
+    datasetReferenceValidationError ? setDatasetReferenceError(datasetReferenceValidationError) : setDatasetReferenceError('')
+
+    // only ready when both fields are not invalid
+    const ready = datasetPath !== '' && datasetReference !== '' && !datasetReferenceError
+    setButtonDisabled(!ready)
+  }, [datasetReference, datasetPath])
+
+  React.useEffect(() => {
+    // persist the datasetPath
+    saveDatasetPath(datasetPath)
+  }, [datasetPath])
 
   // should come from props
   const [error, setError] = React.useState('')
@@ -84,45 +62,17 @@ const AddDataset: React.FunctionComponent<AddDatasetProps> = ({ onDismissed, onS
     if (value[value.length - 1] === ' ') {
       return
     }
-    if (name === 'datasetName') setDatasetName(value)
-    // restore when you can add by URL
-    // if (name === 'url') setUrl(value)
-  }
-
-  const toggleButton = (activeTab: TabTypes) => {
-    if (activeTab === TabTypes.ByName) {
-      if (datasetName) {
-        setButtonDisabled(false)
-      } else {
-        setButtonDisabled(true)
-      }
-    }
-    // restore when you can add by URL
-    // if (activeTab === TabTypes.ByUrl) {
-    //   if (url) {
-    //     setButtonDisabled(false)
-    //   } else {
-    //     setButtonDisabled(true)
-    //   }
-    // }
+    if (name === 'datasetName') setDatasetReference(value)
   }
 
   const handleSubmit = () => {
     setDismissable(false)
     setLoading(true)
     error && setError('')
-    // should fire off action and catch error response
-    // if success, fetchDatatsets
-    if (!onSubmit) return
-    const names = datasetName.split('/')
-    if (names.length !== 2) {
-      setError('dataset reference should be in the format [peername]/[dataset_name]')
-      setLoading(false)
-      setDismissable(true)
-      return
-    }
 
-    onSubmit(names[0], names[1])
+    if (!onSubmit) return
+    const [peername, datasetName] = datasetReference.split('/')
+    onSubmit(peername, datasetName)
       .then(() => onDismissed())
       .catch((action) => {
         setDismissable(true)
@@ -131,38 +81,43 @@ const AddDataset: React.FunctionComponent<AddDatasetProps> = ({ onDismissed, onS
       })
   }
 
-  const renderAddByName = () => {
-    return (
-      <CSSTransition
-        in={ activeTab === TabTypes.ByName }
-        classNames="fade"
-        component="div"
-        timeout={300}
-        unmountOnExit
-      >
-        <AddByName datasetName={datasetName} onChange={handleChanges}/>
-      </CSSTransition>
-    )
+  const handlePathPickerDialog = (showFunc: () => void) => {
+    new Promise(resolve => {
+      setDismissable(false)
+      resolve()
+    })
+      .then(() => showFunc())
+      .then(() => setDismissable(true))
   }
 
-  // restore when you can add by URL
-  // const renderAddByUrl = () => {
-  //   return (
-  //     <CSSTransition
-  //       in={ activeTab === TabTypes.ByUrl }
-  //       classNames="fade"
-  //       component="div"
-  //       timeout={300}
-  //       unmountOnExit
-  //     >
-  //       <AddByUrl url={url} onChange={handleChanges}/>
-  //     </CSSTransition>
-  //   )
-  // }
-  //
-  // const handleSetActiveTab = (activeTab: TabTypes) => {
-  //   setActiveTab(activeTab)
-  // }
+  const showDirectoryPicker = () => {
+    const window = remote.getCurrentWindow()
+    const directory: string[] | undefined = remote.dialog.showOpenDialog(window, {
+      properties: ['createDirectory', 'openDirectory']
+    })
+
+    if (!directory) {
+      return
+    }
+
+    const selectedPath = directory[0]
+
+    setDatasetPath(selectedPath)
+    const isDataset = isQriDataset(selectedPath)
+    if (isDataset) {
+      setAlreadyDatasetError('A dataset already exists in this directory.')
+      setButtonDisabled(true)
+    }
+  }
+
+  let fullPath = ''
+
+  if (datasetReference && !datasetReferenceError) {
+    const [, datasetName] = datasetReference.split('/')
+    if (datasetName) {
+      fullPath = path.join(datasetPath, datasetName)
+    }
+  }
 
   return (
     <Modal
@@ -173,14 +128,43 @@ const AddDataset: React.FunctionComponent<AddDatasetProps> = ({ onDismissed, onS
       dismissable={dismissable}
       setDismissable={setDismissable}
     >
-      {/* restore when you can add by URL */}
-      {/* <Tabs tabs={[TabTypes.ByName, TabTypes.ByUrl]} active={activeTab} onClick={handleSetActiveTab} id='add-dataset-tab'/> */}
       <div className='content-wrap'>
         <div>
-          {renderAddByName()}
-          {/* restore when you can add by URL */}
-          {/* {renderAddByUrl()} */}
+          <div className='content'>
+            <p>Add a dataset that already exists on Qri</p>
+            <p>Qri dataset references use <span className='code-highlight'>peername/datasetname</span> format.  Find datasets on <ExternalLink href='https://qri.cloud'>Qri Cloud</ExternalLink>.</p>
+            <DebouncedTextInput
+              name='datasetName'
+              label='Dataset Reference'
+              labelTooltip='Enter a dataset reference'
+              tooltipFor='modal-tooltip'
+              type=''
+              value={datasetReference}
+              onChange={handleChanges}
+              errorText={datasetReferenceError}
+              maxLength={300}
+            />
+            <div className='flex-space-between'>
+              <TextInput
+                name='savePath'
+                label='Directory Path'
+                labelTooltip='Qri will create a new directory for<br/>this dataset&apos;s files at this location.'
+                tooltipFor='modal-tooltip'
+                type=''
+                value={datasetPath}
+                onChange={handleChanges}
+                maxLength={600}
+                errorText={alreadyDatasetError}
+              />
+              <div className='margin-left'><ButtonInput id='chooseSavePath' onClick={() => handlePathPickerDialog(showDirectoryPicker)} >Choose...</ButtonInput></div>
+            </div>
+          </div>
         </div>
+        <p className='submit-message'>
+          {!buttonDisabled && (
+            <span>Qri will create the directory {fullPath} with files linked to this dataset</span>
+          )}
+        </p>
         <CSSTransition
           in={!!error}
           timeout={300}

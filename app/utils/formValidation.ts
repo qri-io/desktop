@@ -51,6 +51,16 @@ export const validateDatasetName = (name: string): ValidationError => {
   return null
 }
 
+export const ERR_INVALID_DATASETREFERENCE_PATTERN: ValidationError = 'Invalid dataset reference'
+
+export const validateDatasetReference = (datasetReference: string): ValidationError => {
+  if (datasetReference) {
+    const invalidPattern = !(/^[a-z0-9_-]{1,50}\/[a-z0-9_]{1,100}$/.test(datasetReference))
+    if (invalidPattern) return ERR_INVALID_DATASETREFERENCE_PATTERN
+  }
+  return null
+}
+
 export const validateCommitState = (title: string, status: DatasetStatus): boolean => {
   let valid = true
   // commit message (title) must be more than 3 characters

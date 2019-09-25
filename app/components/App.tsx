@@ -166,8 +166,10 @@ class App extends React.Component<AppProps, AppState> {
       case ModalType.AddDataset: {
         modalComponent = (
           <AddDataset
+            datasetPath={this.props.selections.datasetPath}
             onSubmit={this.props.addDataset}
             onDismissed={async () => setModal(noModalObject)}
+            setDatasetPath={this.props.setDatasetPath}
           />
         )
         break
