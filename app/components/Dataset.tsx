@@ -53,8 +53,8 @@ export interface DatasetProps {
   setSelectedListItem: (type: string, activeTab: string) => Action
   fetchWorkingDatasetDetails: () => Promise<ApiAction>
   fetchWorkingStatus: () => Promise<ApiAction>
-  resetBody: () => Promise<ApiAction>
-  resetOtherComponents: () => Promise<ApiAction>
+  fetchBody: (page: number) => Promise<ApiAction>
+  fetchWorkingDataset: () => Promise<ApiAction>
   signout: () => Action
 }
 
@@ -154,7 +154,7 @@ export default class Dataset extends React.Component<DatasetProps> {
 
   componentDidUpdate (prevProps: DatasetProps) {
     // map mtime deltas to a boolean to determine whether to update the workingDataset
-    const { workingDataset, resetBody, resetOtherComponents } = this.props
+    const { workingDataset, fetchWorkingDataset, fetchBody } = this.props
     const { status } = workingDataset
     const { status: prevStatus } = prevProps.workingDataset
     if (status) {
@@ -165,13 +165,15 @@ export default class Dataset extends React.Component<DatasetProps> {
         const currentMtime = status[component].mtime
         const prevMtime = prevStatus[component] && prevStatus[component].mtime
         if (currentMtime && prevMtime) {
-          if (currentMtime.getTime() !== prevMtime.getTime()) componentsToReset.push(component)
+          if (currentMtime.getTime() !== prevMtime.getTime()) {
+            componentsToReset.push(component)
+          }
         }
       })
 
       // reset components
-      if (componentsToReset.includes('body')) resetBody()
-      if (componentsToReset.includes('schema') || componentsToReset.includes('meta')) resetOtherComponents()
+      if (componentsToReset.includes('body')) fetchBody(-1)
+      if (componentsToReset.includes('schema') || componentsToReset.includes('meta')) fetchWorkingDataset()
     }
 
     // this "wires up" all of the tooltips, must be called on update, as tooltips

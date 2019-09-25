@@ -25,7 +25,9 @@ import { Dataset } from '../models/dataset'
 
 export const QRI_CLOUD_ROOT = 'https://qri.cloud'
 
-export const defaultPollInterval = 5000
+// 2800ms is quick enough for the app to feel responsive
+// but is slow enough to not clog up the ports
+export const defaultPollInterval = 2800
 
 export interface AppProps {
   hasDatasets: boolean
