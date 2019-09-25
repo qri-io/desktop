@@ -46,7 +46,6 @@ export function fetchWorkingDatasetDetails (): ApiActionThunk {
     const whenOk = chainSuccess(dispatch, getState)
     let response: AnyAction
     response = await fetchWorkingDataset()(dispatch, getState)
-
     // if the response returned in error, check the error
     // if it's 422, it means the dataset exists, it's just not linked to the filesystem
     if (getActionType(response) === 'failure') {
@@ -123,7 +122,8 @@ export function fetchMyDatasets (page: number = 1, pageSize: number = pageSizeDe
     const state = getState()
     const { page: confirmedPage, doNotFetch } = actionWithPagination(page, state.myDatasets.pageInfo)
 
-    if (doNotFetch) return new Promise(resolve => resolve())
+    // we need to emit a 'success' type, or our chainSuccess functions will fail
+    if (doNotFetch) return new Promise(resolve => resolve({ type: 'SUCCESS' }))
 
     const listAction: ApiAction = {
       type: 'list',
@@ -234,7 +234,8 @@ export function fetchWorkingHistory (page: number = 1, pageSize: number = pageSi
 
     const { page: confirmedPage, doNotFetch } = actionWithPagination(page, state.workingDataset.history.pageInfo)
 
-    if (doNotFetch) return new Promise(resolve => resolve())
+    // we need to emit a 'success' type, or our chainSuccess functions will fail
+    if (doNotFetch) return new Promise(resolve => resolve({ type: 'SUCCESS' }))
 
     const { selections, myDatasets } = getState()
     const { peername, name } = selections
@@ -294,7 +295,8 @@ export function fetchBody (page: number = 1, pageSize: number = bodyPageSizeDefa
 
     const { page: confirmedPage, doNotFetch } = actionWithPagination(page, workingDataset.components.body.pageInfo)
 
-    if (doNotFetch) return new Promise(resolve => resolve())
+    // we need to emit a 'success' type, or our chainSuccess functions will fail
+    if (doNotFetch) return new Promise(resolve => resolve({ type: 'SUCCESS' }))
 
     const action = {
       type: 'body',
@@ -327,7 +329,8 @@ export function fetchCommitBody (page: number = 1, pageSize: number = bodyPageSi
 
     const { page: confirmedPage, doNotFetch } = actionWithPagination(page, commitDetails.components.body.pageInfo)
 
-    if (doNotFetch) return new Promise(resolve => resolve())
+    // we need to emit a 'success' type, or our chainSuccess functions will fail
+    if (doNotFetch) return new Promise(resolve => resolve({ type: 'SUCCESS' }))
 
     const action = {
       type: 'commitBody',

@@ -201,7 +201,7 @@ const ComponentList: React.FunctionComponent<ComponentListProps> = (props: Compo
                 displayName={displayName}
                 name={displayName}
                 icon={icon}
-                disabled={true}
+                disabled={(name !== 'meta' && datasetSelected) && true}
                 tooltip={tooltip}
               />
             )

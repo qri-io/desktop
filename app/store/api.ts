@@ -7,7 +7,7 @@ import { ThunkDispatch } from 'redux-thunk'
 import Store from '../models/store'
 import mapError from './mapError'
 import { FAILED_TO_FETCH } from '../reducers/connection'
-import { apiActionTypes } from '../utils/actionType'
+import { apiActionTypes, getActionType } from '../utils/actionType'
 import { UNAUTHORIZED } from '../reducers/ui'
 
 // CALL_API is a global, unique constant for passing actions to API middleware
@@ -92,7 +92,7 @@ export function chainSuccess (
   getState: () => Store) {
   return (thunk: ApiActionThunk) => {
     return async (action: AnyAction) => {
-      if (action.type.indexOf(`_SUCCESS`) > 0) {
+      if (getActionType(action) === 'success') {
         return thunk(dispatch, getState)
       }
       throw action
@@ -192,7 +192,6 @@ export const apiMiddleware: Middleware = () => (next: Dispatch<AnyAction>) => as
     let data: APIResponseEnvelope
     let { endpoint = '', method, map = identityFunc, segments, query, body, pageInfo } = action[CALL_API]
     const [REQ_TYPE, SUCC_TYPE, FAIL_TYPE] = apiActionTypes(action.type)
-
     next({ type: REQ_TYPE, pageInfo, segments })
 
     // TODO (chriswhong): Turn this into dev middleware
