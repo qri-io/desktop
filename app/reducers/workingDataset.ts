@@ -45,7 +45,7 @@ const initialState: WorkingDataset = {
 }
 
 export const [DATASET_REQ, DATASET_SUCC, DATASET_FAIL] = apiActionTypes('dataset')
-const [DATASET_HISTORY_REQ, DATASET_HISTORY_SUCC, DATASET_HISTORY_FAIL] = apiActionTypes('history')
+export const [HISTORY_REQ, HISTORY_SUCC, HISTORY_FAIL] = apiActionTypes('history')
 export const [DATASET_STATUS_REQ, DATASET_STATUS_SUCC, DATASET_STATUS_FAIL] = apiActionTypes('status')
 const [DATASET_BODY_REQ, DATASET_BODY_SUCC, DATASET_BODY_FAIL] = apiActionTypes('body')
 const [, RESETOTHERCOMPONENTS_SUCC, RESETOTHERCOMPONENTS_FAIL] = apiActionTypes('resetOtherComponents')
@@ -104,7 +104,7 @@ const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction
         isLoading: false
       }
 
-    case DATASET_HISTORY_REQ:
+    case HISTORY_REQ:
       return {
         ...state,
         history: {
@@ -113,7 +113,8 @@ const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction
           value: action.pageInfo.page === 1 ? [] : state.history.value
         }
       }
-    case DATASET_HISTORY_SUCC:
+
+    case HISTORY_SUCC:
       return {
         ...state,
         hasHistory: true,
@@ -126,7 +127,7 @@ const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction
           pageInfo: reducerWithPagination(action, state.history.pageInfo)
         }
       }
-    case DATASET_HISTORY_FAIL:
+    case HISTORY_FAIL:
       return {
         ...state,
         hasHistory: !action.payload.err.message.includes('no history'),

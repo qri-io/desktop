@@ -57,14 +57,7 @@ export function fetchWorkingDatasetDetails (): ApiActionThunk {
     response = await whenOk(fetchWorkingStatus())(response)
     response = await whenOk(fetchBody())(response)
     response = await whenOk(fetchWorkingHistory(-1))(response)
-    const { workingDataset, selections } = getState()
-    const { history } = workingDataset
-    const { commit } = selections
 
-    // if history length changes, select the latest commit
-    if (history.value.length !== 0 && (commit === '' || !history.value.some(c => c.path === commit))) {
-      await dispatch(setSelectedListItem('commit', history.value[0].path))
-    }
     return response
   }
 }

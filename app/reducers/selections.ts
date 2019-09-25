@@ -4,6 +4,11 @@ import localStore from '../utils/localStore'
 import { apiActionTypes } from '../utils/actionType'
 import chooseDefaultComponent from '../utils/chooseDefaultComponent'
 
+import {
+  HISTORY_REQ,
+  HISTORY_SUCC
+} from '../reducers/workingDataset'
+
 export const SELECTIONS_SET_ACTIVE_TAB = 'SELECTIONS_SET_ACTIVE_TAB'
 export const SELECTIONS_SET_SELECTED_LISTITEM = 'SELECTIONS_SET_SELECTED_LISTITEM'
 export const SELECTIONS_SET_WORKING_DATASET = 'SELECTIONS_SET_WORKING_DATASET'
@@ -96,6 +101,28 @@ export default (state = initialState, action: AnyAction) => {
         peername,
         name
       })
+
+    case HISTORY_REQ:
+      if (action.pageInfo.page === 1) {
+        localStore().setItem('commit', '')
+        return {
+          ...state,
+          commit: ''
+        }
+      }
+      return state
+
+    case HISTORY_SUCC:
+      if (state.commit === '') {
+        if (action.payload.data && action.payload.data.length > 0) {
+          localStore().setItem('commit', action.payload.data[0].path)
+          return {
+            ...state,
+            commit: action.payload.data[0].path
+          }
+        }
+      }
+      return state
 
     case COMMIT_SUCC:
       // if the selected commitComponent exists on dataset, no changes needed
