@@ -115,7 +115,7 @@ const MultiStructuredInput: React.FunctionComponent<MultiStructuredInputProps> =
 
       <div className='multi-structured-input-container'>
         <div className='list'>
-          <div className='multi-structured-input'>
+          <div className='multi-structured-input flex-table'>
             <div className='row header-row'>
               {
                 headerRowValues.map((d: string) => (
