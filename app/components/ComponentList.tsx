@@ -202,8 +202,10 @@ const ComponentList: React.FunctionComponent<ComponentListProps> = (props: Compo
                 name={displayName}
                 icon={icon}
                 selectionType={selectionType}
+                // TODO (ramfox): we should create a 'isDisabled' function and add these specifications & test
                 disabled={!datasetSelected || name !== 'meta' || (name === 'meta' && selectionType !== 'component')}
                 tooltip={tooltip}
+                // ditto, this should relate to the above
                 onClick={(name === 'meta' && datasetSelected && selectionType === 'component') ? onComponentClick : undefined}
               />
             )
