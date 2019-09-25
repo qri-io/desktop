@@ -54,6 +54,7 @@ const initialState = {
 ipcRenderer.send('block-menus', true)
 
 const [, DATASET_SUCC] = apiActionTypes('dataset')
+const [, ADD_SUCC] = apiActionTypes('add')
 
 export default (state = initialState, action: AnyAction) => {
   switch (action.type) {
@@ -167,6 +168,17 @@ export default (state = initialState, action: AnyAction) => {
       return {
         ...state,
         datasetDirPath: action.path
+      }
+
+    case ADD_SUCC:
+      const { peername, name } = action.payload.data
+      return {
+        ...state,
+        toast: {
+          type: 'success',
+          message: `Added dataset ${peername}/${name}`,
+          visible: true
+        }
       }
 
     default:
