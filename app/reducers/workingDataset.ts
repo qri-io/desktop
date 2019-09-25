@@ -55,6 +55,9 @@ export const RESET_BODY = 'RESET_BODY'
 const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction): WorkingDataset | null => {
   switch (action.type) {
     case DATASET_REQ:
+      if (action.segments.peername === state.peername && action.segments.name === state.name) {
+        return state
+      }
       return {
         ...initialState,
         peername: action.segments.peername,

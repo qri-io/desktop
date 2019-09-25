@@ -9,18 +9,15 @@ import {
   fetchWorkingDatasetDetails,
   fetchWorkingStatus,
   publishDataset,
-  unpublishDataset
+  unpublishDataset,
+  fetchWorkingDataset,
+  fetchBody
 } from '../actions/api'
 
 import {
   setActiveTab,
   setSelectedListItem
 } from '../actions/selections'
-
-import {
-  resetBody,
-  resetOtherComponents
-} from '../actions/workingDataset'
 
 const mergeProps = (props: any, actions: any): DatasetProps => {
   return { ...props, ...actions }
@@ -59,8 +56,8 @@ const DatasetContainer = connect(
     setSelectedListItem,
     fetchWorkingDatasetDetails,
     fetchWorkingStatus,
-    resetBody,
-    resetOtherComponents,
+    fetchBody,
+    fetchWorkingDataset,
     publishDataset,
     unpublishDataset,
     signout
