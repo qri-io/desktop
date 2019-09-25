@@ -60,7 +60,7 @@ export const FileRow: React.FunctionComponent<FileRowProps> = (props) => (
     })}
     onClick={() => {
       if (props.onClick && props.selectionType && props.name) {
-        props.onClick(props.selectionType, props.name)
+        props.onClick(props.selectionType, props.name.toLowerCase())
       }
     }}
   >
@@ -201,8 +201,10 @@ const ComponentList: React.FunctionComponent<ComponentListProps> = (props: Compo
                 displayName={displayName}
                 name={displayName}
                 icon={icon}
-                disabled={(name !== 'meta' && datasetSelected) && true}
+                selectionType={selectionType}
+                disabled={!datasetSelected || name !== 'meta' || (name === 'meta' && selectionType !== 'component')}
                 tooltip={tooltip}
+                onClick={(name === 'meta' && datasetSelected && selectionType === 'component') ? onComponentClick : undefined}
               />
             )
           }
