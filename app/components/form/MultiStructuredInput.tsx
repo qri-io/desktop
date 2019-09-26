@@ -1,13 +1,14 @@
 import * as React from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faInfoCircle, faPlus } from '@fortawesome/free-solid-svg-icons'
+import { faPlus } from '@fortawesome/free-solid-svg-icons'
 
+import InputLabel from './InputLabel'
 import Row from './MultiStructuredInputRow'
 import { User, Citation } from '../../models/dataset'
 import PseudoLink from '../PseudoLink'
 
 export interface MultiStructuredInputProps {
-  label?: string
+  label: string
   labelTooltip?: string
   name: 'citations' | 'contributors'
   value: User[] | Citation[] | undefined
@@ -64,8 +65,6 @@ const MultiStructuredInput: React.FunctionComponent<MultiStructuredInputProps> =
     }
   }
 
-  const labelColor = 'primary'
-
   const addItem = () => {
     const clonedArray: User[] | Citation[] = Object.assign([], value)
     if (value) {
@@ -102,17 +101,11 @@ const MultiStructuredInput: React.FunctionComponent<MultiStructuredInputProps> =
 
   return (
     <div className='input-container'>
-      {label && <><span className={labelColor}>{label}</span>&nbsp;&nbsp;</>}
-      {labelTooltip && (
-        <span
-          data-tip={labelTooltip}
-          data-for={tooltipFor || null}
-          className='text-input-tooltip'
-        >
-          <FontAwesomeIcon icon={faInfoCircle} size='sm'/>
-        </span>
-      )}
-
+      <InputLabel
+        label={label}
+        tooltip={labelTooltip}
+        tooltipFor={tooltipFor}
+      />
       <div className='multi-structured-input-container'>
         <div className='list'>
           <div className='multi-structured-input flex-table'>

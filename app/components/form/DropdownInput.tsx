@@ -1,7 +1,7 @@
 import * as React from 'react'
 import Select from 'react-select'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faInfoCircle } from '@fortawesome/free-solid-svg-icons'
+
+import InputLabel from './InputLabel'
 
 interface Option {
   label: string
@@ -31,8 +31,6 @@ const TextInput: React.FunctionComponent<TextInputProps> = (props) => {
     tooltipFor
   } = props
 
-  const labelColor = 'primary'
-
   const control = (base: React.CSSProperties) => ({
     ...base,
     border: '1',
@@ -45,16 +43,11 @@ const TextInput: React.FunctionComponent<TextInputProps> = (props) => {
   return (
     <>
       <div className='text-input-container'>
-        {label && <><span className={labelColor}>{label}</span>&nbsp;&nbsp;</>}
-        {labelTooltip && (
-          <span
-            data-tip={labelTooltip}
-            data-for={tooltipFor || null}
-            className='text-input-tooltip'
-          >
-            <FontAwesomeIcon icon={faInfoCircle} size='sm'/>
-          </span>
-        )}
+        <InputLabel
+          label={label}
+          tooltip={labelTooltip}
+          tooltipFor={tooltipFor}
+        />
         <Select
           className='react-select'
           value={value}

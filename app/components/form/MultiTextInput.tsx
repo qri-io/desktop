@@ -1,10 +1,12 @@
 import * as React from 'react'
-import PseudoLink from '../PseudoLink'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faInfoCircle, faTimes } from '@fortawesome/free-solid-svg-icons'
+import { faTimes } from '@fortawesome/free-solid-svg-icons'
+
+import InputLabel from './InputLabel'
+import PseudoLink from '../PseudoLink'
 
 export interface MultiTextInputProps {
-  label?: string
+  label: string
   labelTooltip?: string
   name: string
   value: any
@@ -61,19 +63,13 @@ const MultiTextInput: React.FunctionComponent<MultiTextInputProps> = (props) => 
     onArrayChange(name, clonedValue)
   }
 
-  const labelColor = 'primary'
   return (
     <div className='multi-text-input-container'>
-      {label && <><span className={labelColor}>{label}</span>&nbsp;&nbsp;</>}
-      {labelTooltip && (
-        <span
-          data-tip={labelTooltip}
-          data-for={tooltipFor || null}
-          className='text-input-tooltip'
-        >
-          <FontAwesomeIcon icon={faInfoCircle} size='sm'/>
-        </span>
-      )}
+      <InputLabel
+        label={label}
+        tooltip={labelTooltip}
+        tooltipFor={tooltipFor}
+      />
       <div className='multi-text-input'>
         { value.map((d: string, i: number) => (
           <div key={i} className='tag'>
