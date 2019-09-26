@@ -599,6 +599,10 @@ a {
   transition: color 0.5s;
   cursor: pointer;
   color: $primary;
+
+  svg path {
+    fill: $primary !important;
+  }
 }
 
 a:hover {

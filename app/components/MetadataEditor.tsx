@@ -3,7 +3,7 @@ import deepEqual from 'deep-equal'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faInfoCircle } from '@fortawesome/free-solid-svg-icons'
 
-// import ExternalLink from './ExternalLink'
+import ExternalLink from './ExternalLink'
 import TextInput from './form/TextInput'
 import TextAreaInput from './form/TextAreaInput'
 import MultiTextInput from './form/MultiTextInput'
@@ -164,17 +164,19 @@ const MetadataEditor: React.FunctionComponent<MetadataEditorProps> = (props: Met
       <h4 className='metadata-viewer-title'>
         Standard Metadata
         &nbsp;
-        <span
-          data-tip={'Qri\'s common metadata fields.  <br/> Read more at https://qri.io/docs/reference/dataset/#meta'}
-          className='text-input-tooltip'
-        >
-          <FontAwesomeIcon icon={faInfoCircle} size='sm'/>
-        </span>
+        <ExternalLink href='https://qri.io/docs/reference/dataset/#meta'>
+          <span
+            data-tip={'Qri\'s common metadata fields.<br/>Click for more info.'}
+            className='text-input-tooltip'
+          >
+            <FontAwesomeIcon icon={faInfoCircle} size='sm'/>
+          </span>
+        </ExternalLink>
       </h4>
       <TextInput
         name='title'
         label='Title'
-        labelTooltip='A name given to the dataset'
+        labelTooltip='A single-line description of the dataset'
         type='text'
         value={stateMeta.title}
         placeHolder='Add a title'
@@ -185,7 +187,7 @@ const MetadataEditor: React.FunctionComponent<MetadataEditorProps> = (props: Met
       <TextAreaInput
         name='description'
         label='Description'
-        labelTooltip='Free-text account of the record'
+        labelTooltip={'A detailed summary of the dataset\'s contents'}
         value={stateMeta.description}
         placeHolder='Add a description'
         onChange={handleChange}
@@ -195,7 +197,7 @@ const MetadataEditor: React.FunctionComponent<MetadataEditorProps> = (props: Met
       <MultiTextInput
         name='theme'
         label='Theme'
-        labelTooltip='The main category of the dataset'
+        labelTooltip='The main category or categories of the dataset'
         value={stateMeta.theme}
         placeHolder='Add a theme'
         onArrayChange={handleImmediateWrite}
@@ -203,7 +205,7 @@ const MetadataEditor: React.FunctionComponent<MetadataEditorProps> = (props: Met
       <MultiTextInput
         name='keywords'
         label='Keywords'
-        labelTooltip='A keyword or tag describing the dataset'
+        labelTooltip='Keywords or tags describing the dataset (more specific than theme)'
         value={stateMeta.keywords}
         placeHolder='Add a new keyword'
         onArrayChange={handleImmediateWrite}
@@ -306,7 +308,7 @@ const MetadataEditor: React.FunctionComponent<MetadataEditorProps> = (props: Met
       <MultiTextInput
         name='language'
         label='Language'
-        labelTooltip='A language of the item. This refers to the natural language used for textual metadata of a dataset or the textual values of a dataset distribution'
+        labelTooltip='Languages of the dataset.<br/>This refers to the natural language<br/> used for textual metadata of a dataset or<br/>the textual values of a dataset distribution'
         value={stateMeta.language}
         placeHolder='Add a language'
         onArrayChange={handleImmediateWrite}
@@ -314,7 +316,7 @@ const MetadataEditor: React.FunctionComponent<MetadataEditorProps> = (props: Met
       <TextInput
         name='accrualPeriodicity'
         label='Accrual Periodicity'
-        labelTooltip='The frequency at which dataset is published.'
+        labelTooltip='The frequency at which dataset is published'
         type='text'
         value={stateMeta.accrualPeriodicity}
         placeHolder='Add Accrual Periodicity'
@@ -325,7 +327,7 @@ const MetadataEditor: React.FunctionComponent<MetadataEditorProps> = (props: Met
       <TextInput
         name='version'
         label='Version'
-        labelTooltip='The version identifier of the dataset'
+        labelTooltip='The version of the dataset'
         type='text'
         value={stateMeta.version}
         placeHolder='Add version'
