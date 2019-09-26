@@ -531,3 +531,20 @@ $header-font-size: .9rem;
   position: relative;
   top: 2px;
 }
+
+// beta flag
+#beta-flag {
+  background: #4FC7F3;
+
+  &:hover {
+    background: #28b6de !important;
+  }
+
+  .label {
+    font-weight: 600 !important;
+    position: relative;
+    left: -3px;
+    color: #fff;
+    letter-spacing: 2px;
+  }
+}

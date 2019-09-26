@@ -290,6 +290,11 @@ export default class Dataset extends React.Component<DatasetProps> {
           </div>
           <div className='header-right'>
             <HeaderColumnButton
+              id={'beta-flag'}
+              label={'BETA'}
+              onClick={() => { shell.openExternal('https://qri.io/beta') }}
+            />
+            <HeaderColumnButton
               icon={faCommentAlt}
               tooltip={'Need help? Ask questions<br/> in our Discord channel'}
               onClick={() => { shell.openExternal('https://discordapp.com/invite/thkJHKj') }}

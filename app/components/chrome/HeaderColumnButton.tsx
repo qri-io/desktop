@@ -7,7 +7,7 @@ export interface HeaderColumnButtonProps {
   id?: string
   tooltip?: string
   label?: string
-  icon: IconDefinition | React.ReactElement
+  icon?: IconDefinition | React.ReactElement
   disabled?: boolean
   onClick?: (event: React.MouseEvent) => void
 }
@@ -22,7 +22,7 @@ const HeaderColumnButton: React.FunctionComponent<HeaderColumnButtonProps> = (pr
       data-tip={tooltip}
       onClick={onClick}
     >
-      {React.isValidElement(icon)
+      {icon && React.isValidElement(icon)
         ? (<div className='header-column-icon'>{icon}</div>)
         : <div className='header-column-icon'><FontAwesomeIcon icon={icon} size='lg'/></div>
       }
