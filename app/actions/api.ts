@@ -18,6 +18,8 @@ import { getActionType } from '../utils/actionType'
 const pageSizeDefault = 50
 const bodyPageSizeDefault = 100
 
+const DEFAULT_SELECTED_COMPONENT = 'body'
+
 // look up the peername/name in myDatasets, return boolean for existence of fsiPath
 const lookupFsi = (peername: string | null, name: string | null, myDatasets: MyDatasets) => {
   const dataset = myDatasets.value.find((dataset) => {
@@ -421,7 +423,7 @@ export function addDatasetAndFetch (peername: string, name: string, path: string
       response = await whenOk(fetchMyDatasets(-1))(response)
       dispatch(setWorkingDataset(peername, name))
       dispatch(setActiveTab('history'))
-      dispatch(setSelectedListItem('component', 'meta'))
+      dispatch(setSelectedListItem('component', DEFAULT_COMPONENT))
     } catch (action) {
       throw action
     }
@@ -463,7 +465,7 @@ export function initDatasetAndFetch (sourcebodypath: string, name: string, dir: 
       const { peername } = data.find((dataset: DatasetSummary) => dataset.name === name)
       dispatch(setWorkingDataset(peername, name))
       dispatch(setActiveTab('status'))
-      dispatch(setSelectedListItem('component', 'meta'))
+      dispatch(setSelectedListItem('component', DEFAULT_SELECTED_COMPONENT))
     } catch (action) {
       throw action
     }
