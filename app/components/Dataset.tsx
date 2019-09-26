@@ -257,14 +257,19 @@ export default class Dataset extends React.Component<DatasetProps> {
           ]}
         />
       ) : (
-        <HeaderColumnButton
-          id='publishButton'
-          label='Publish'
-          icon={faCloudUploadAlt}
-          tooltip={'Publish this dataset to Qri Cloud'}
-          disabled={workingDataset.history.value.length === 0}
-          onClick={() => { setModal({ type: ModalType.PublishDataset }) }}
-        />
+        <span data-tip={
+          workingDataset.history.value.length === 0
+            ? 'The dataset must have at least one commit before you can publish'
+            : 'Publish this dataset to Qri Cloud'
+        }>
+          <HeaderColumnButton
+            id='publishButton'
+            label='Publish'
+            icon={faCloudUploadAlt}
+            disabled={workingDataset.history.value.length === 0}
+            onClick={() => { setModal({ type: ModalType.PublishDataset }) }}
+          />
+        </span>
       )
     }
 
