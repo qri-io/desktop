@@ -4,9 +4,8 @@ import classNames from 'classnames'
 import ReactTooltip from 'react-tooltip'
 import { remote, ipcRenderer, shell, clipboard } from 'electron'
 import { CSSTransition } from 'react-transition-group'
-import { faDiscord } from '@fortawesome/free-brands-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faFile, faFolderOpen } from '@fortawesome/free-regular-svg-icons'
+import { faFile, faFolderOpen, faCommentAlt } from '@fortawesome/free-regular-svg-icons'
 import { faLink, faCloudUploadAlt, faCloud } from '@fortawesome/free-solid-svg-icons'
 
 import { ApiAction } from '../store/api'
@@ -291,7 +290,7 @@ export default class Dataset extends React.Component<DatasetProps> {
           </div>
           <div className='header-right'>
             <HeaderColumnButton
-              icon={faDiscord}
+              icon={faCommentAlt}
               tooltip={'Need help? Ask questions<br/> in our Discord channel'}
               onClick={() => { shell.openExternal('https://discordapp.com/invite/thkJHKj') }}
             />

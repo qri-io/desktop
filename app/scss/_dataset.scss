@@ -525,3 +525,9 @@ $header-font-size: .9rem;
     border-radius: 5px;
   }
 }
+
+// special formatting for chat icon
+[data-icon="comment-alt"] {
+  position: relative;
+  top: 2px;
+}
