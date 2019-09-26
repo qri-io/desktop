@@ -77,7 +77,7 @@ const AddDataset: React.FunctionComponent<AddDatasetProps> = (props) => {
     const datasetFolderPath = path.join(datasetPath, datasetName)
 
     onSubmit(peername, datasetName, datasetFolderPath)
-      .then(() => onDismissed())
+      .then(() => { onDismissed() })
       .catch((action) => {
         setDismissable(true)
         setLoading(false)
@@ -126,7 +126,7 @@ const AddDataset: React.FunctionComponent<AddDatasetProps> = (props) => {
   return (
     <Modal
       id="addDataset"
-      title={'Add a Dataset from the Network'}
+      title={'Add an Existing Qri Dataset'}
       onDismissed={onDismissed}
       onSubmit={() => {}}
       dismissable={dismissable}
@@ -135,12 +135,12 @@ const AddDataset: React.FunctionComponent<AddDatasetProps> = (props) => {
       <div className='content-wrap'>
         <div>
           <div className='content'>
-            <p>Add a dataset that already exists on Qri</p>
-            <p>Qri dataset references use <span className='code-highlight'>peername/datasetname</span> format.  Find datasets on <ExternalLink href='https://qri.cloud'>Qri Cloud</ExternalLink>.</p>
+            <p>Add an existing dataset by entering its dataset reference, like <span className='code-highlight'>b5/world_bank_population</span></p>
+            <p>Search for datasets on <ExternalLink href='https://qri.cloud'>Qri Cloud</ExternalLink>.</p>
             <DebouncedTextInput
               name='datasetName'
               label='Dataset Reference'
-              labelTooltip='Enter a dataset reference'
+              labelTooltip={'Qri dataset references use [username]/[datasetname] format'}
               tooltipFor='modal-tooltip'
               type=''
               value={datasetReference}

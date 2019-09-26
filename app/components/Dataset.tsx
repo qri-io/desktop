@@ -4,9 +4,8 @@ import classNames from 'classnames'
 import ReactTooltip from 'react-tooltip'
 import { remote, ipcRenderer, shell, clipboard } from 'electron'
 import { CSSTransition } from 'react-transition-group'
-import { faDiscord } from '@fortawesome/free-brands-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faFile, faFolderOpen } from '@fortawesome/free-regular-svg-icons'
+import { faFile, faFolderOpen, faCommentAlt } from '@fortawesome/free-regular-svg-icons'
 import { faLink, faCloudUploadAlt, faCloud } from '@fortawesome/free-solid-svg-icons'
 
 import { ApiAction } from '../store/api'
@@ -257,14 +256,19 @@ export default class Dataset extends React.Component<DatasetProps> {
           ]}
         />
       ) : (
-        <HeaderColumnButton
-          id='publishButton'
-          label='Publish'
-          icon={faCloudUploadAlt}
-          tooltip={'Publish this dataset to Qri Cloud'}
-          disabled={workingDataset.history.value.length === 0}
-          onClick={() => { setModal({ type: ModalType.PublishDataset }) }}
-        />
+        <span data-tip={
+          workingDataset.history.value.length === 0
+            ? 'The dataset must have at least one commit before you can publish'
+            : 'Publish this dataset to Qri Cloud'
+        }>
+          <HeaderColumnButton
+            id='publishButton'
+            label='Publish'
+            icon={faCloudUploadAlt}
+            disabled={workingDataset.history.value.length === 0}
+            onClick={() => { setModal({ type: ModalType.PublishDataset }) }}
+          />
+        </span>
       )
     }
 
@@ -286,7 +290,12 @@ export default class Dataset extends React.Component<DatasetProps> {
           </div>
           <div className='header-right'>
             <HeaderColumnButton
-              icon={faDiscord}
+              id={'beta-flag'}
+              label={'BETA'}
+              onClick={() => { shell.openExternal('https://qri.io/beta') }}
+            />
+            <HeaderColumnButton
+              icon={faCommentAlt}
               tooltip={'Need help? Ask questions<br/> in our Discord channel'}
               onClick={() => { shell.openExternal('https://discordapp.com/invite/thkJHKj') }}
             />

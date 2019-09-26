@@ -388,7 +388,7 @@ $zindex-tooltip:                    1070 !default;
   * The z-index for modals. Nothing should be higher, but other z-indexes can
   * be defined in terms of it.
   *
-  * 100 seems arbitrary (because it is) 
+  * 100 seems arbitrary (because it is)
   */
 $modal-z-index: 100;
 $modal-overlay-z-index: calc($popup-z-index - 1);
@@ -466,9 +466,9 @@ $alert-danger-border:         $state-danger-border !default;
 
 
 // dataset nav links
-// 
+//
 // Define standards for the nav links on the dataset page
-// 
+//
 $nav-font-size: $font-size-base !default;
 $nav-font-color: $topbar !default;
 $nav-font-size-sm: $font-size-base * 1.15 !default;

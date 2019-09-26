@@ -1,6 +1,7 @@
 import * as React from 'react'
 
 import Modal from './Modal'
+import Error from './Error'
 import Buttons from './Buttons'
 
 import { ApiAction } from '../../store/api'
@@ -49,7 +50,7 @@ const PublishDataset: React.FunctionComponent<PublishDatasetProps> = (props) => 
           <p><i>Publishing will make your dataset visible to anyone on the internet</i></p>
         </div>
       </div>
-
+      <Error text={error} />
       <Buttons
         cancelText='cancel'
         onCancel={onDismissed}

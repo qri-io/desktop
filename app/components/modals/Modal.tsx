@@ -235,7 +235,7 @@ const Modal: React.FunctionComponent<ModalProps> = ({ title, dismissable = false
       open={false}
       ref={onModalRef}
       id={id}
-      onClick={onModalClick}
+      onMouseDown={onModalClick}
       className={modalClassName}
     >
       {renderHeader()}

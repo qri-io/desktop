@@ -391,7 +391,6 @@ $header-font-size: .9rem;
       width: 100%;
       background:$appBackground;
       flex: 1;
-      position: absolute;
     }
 
     .commit-nudge {
@@ -524,5 +523,28 @@ $header-font-size: .9rem;
     max-width: 475px;
     margin: 150px auto;
     border-radius: 5px;
+  }
+}
+
+// special formatting for chat icon
+[data-icon="comment-alt"] {
+  position: relative;
+  top: 2px;
+}
+
+// beta flag
+#beta-flag {
+  background: #4FC7F3;
+
+  &:hover {
+    background: #28b6de !important;
+  }
+
+  .label {
+    font-weight: 600 !important;
+    position: relative;
+    left: -3px;
+    color: #fff;
+    letter-spacing: 2px;
   }
 }

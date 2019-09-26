@@ -1,9 +1,9 @@
 import * as React from 'react'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faInfoCircle } from '@fortawesome/free-solid-svg-icons'
+
+import InputLabel from './InputLabel'
 
 export interface TextInputProps {
-  label?: string
+  label: string
   labelTooltip?: string
   name: string
   type: string
@@ -41,20 +41,14 @@ const TextInput: React.FunctionComponent<TextInputProps> = (props) => {
   const feedbackColor = errorText ? 'error' : showHelpText && helpText ? 'textMuted' : ''
   const feedback = errorText || (showHelpText &&
     helpText)
-  const labelColor = 'primary'
   return (
     <>
       <div className='text-input-container'>
-        {label && <><span className={labelColor}>{label}</span>&nbsp;&nbsp;</>}
-        {labelTooltip && (
-          <span
-            data-tip={labelTooltip}
-            data-for={tooltipFor || null}
-            className='text-input-tooltip'
-          >
-            <FontAwesomeIcon icon={faInfoCircle} size='sm'/>
-          </span>
-        )}
+        <InputLabel
+          label={label}
+          tooltip={labelTooltip}
+          tooltipFor={tooltipFor}
+        />
         <input
           id={name}
           name={name}

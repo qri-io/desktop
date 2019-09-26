@@ -85,6 +85,13 @@
   border: solid 1px $border-color;
   border-radius: 5px;
   padding: 12px;
+  text-align: center;
+  font-size: 0.8rem;
+
+  h5 {
+    padding: 10px 0px;
+    font-weight: 500;
+  }
 }
 .no-datasets-options:hover {
   background:$border-color;
@@ -105,6 +112,8 @@
 
 .checkbox-input-container {
   display: flex;
+  align-items: center;
+  font-size: .8rem;
 
   input {
     margin-right: 5px;

@@ -8,7 +8,6 @@ export interface CheckboxInputProps {
 }
 
 const CheckboxInput: React.FunctionComponent<CheckboxInputProps> = ({ label, name, checked, onChange }) => {
-  const labelColor = 'primary'
   return (
     <>
       <div className='checkbox-input-container'>
@@ -20,7 +19,7 @@ const CheckboxInput: React.FunctionComponent<CheckboxInputProps> = ({ label, nam
           checked={checked}
           onChange={ () => { onChange(name, !checked) }}
         />
-        {label && <span className={labelColor}>{label}</span>}
+        {label}
       </div>
     </>
   )

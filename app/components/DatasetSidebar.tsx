@@ -4,6 +4,7 @@ import moment from 'moment'
 import { CSSTransition } from 'react-transition-group'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTimes } from '@fortawesome/free-solid-svg-icons'
+import { faClock } from '@fortawesome/free-regular-svg-icons'
 
 import { ApiActionThunk } from '../store/api'
 import SaveFormContainer from '../containers/SaveFormContainer'
@@ -33,7 +34,7 @@ const HistoryListItem: React.FunctionComponent<HistoryListItemProps> = (props) =
         <div className='subtext'>
           {/* Bring back avatar later <img className= 'user-image' src = {props.avatarUrl} /> */}
           <div className='time-message'>
-            {props.timeMessage}
+            <FontAwesomeIcon icon={faClock} size='sm'/> {props.timeMessage}
           </div>
         </div>
       </div>
@@ -188,7 +189,7 @@ const DatasetSidebar: React.FunctionComponent<DatasetSidebarProps> = (props) => 
           !hideCommitNudge && bodyLoaded && statusLoaded && historyLoaded && noHistory && datasetSelected && (
             <div className='commit-nudge'>
               <div className='commit-nudge-text'>
-                You&apos;re ready to make your first commit on this dataset! Verify that the body and meta are accurate, enter a commit message below, and click Submit.
+                You&apos;re ready to make your first commit on this dataset! Verify that the body is accurate and add some metadata. When everything looks good, enter a commit message below, then click Submit.
               </div>
               <a
                 className="close dark"

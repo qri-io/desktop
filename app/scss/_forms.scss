@@ -109,7 +109,10 @@ select.form-control {
 // Labels
 //
 .input-label {
-  color: $input-color-placeholder
+  color: $black;
+  font-size: .9rem;
+  font-weight: 400;
+  margin-bottom: 4px;
 }
 
 
