@@ -5,6 +5,10 @@ export function mapDataset (data: Record<string, string>): Dataset {
   return data
 }
 
+export function mapBody (data: { data: [] }): [] {
+  return data.data
+}
+
 export function mapRecord (data: any): Record<string, string> {
   return data
 }

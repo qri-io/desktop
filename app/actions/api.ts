@@ -10,7 +10,8 @@ import {
   mapRecord,
   mapDatasetSummary,
   mapStatus,
-  mapHistory
+  mapHistory,
+  mapBody
 } from './mappingFuncs'
 import { getActionType } from '../utils/actionType'
 
@@ -306,7 +307,7 @@ export function fetchBody (page: number = 1, pageSize: number = bodyPageSizeDefa
           name,
           path
         },
-        map: mapDataset
+        map: mapBody
       }
     }
 
