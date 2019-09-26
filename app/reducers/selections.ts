@@ -134,8 +134,10 @@ export default (state = initialState, action: AnyAction) => {
         commitComponent: chooseDefaultComponent(action.payload.data.dataset)
       }
     case DATASET_SUCC:
+      // special handling for schema since it's not a top-level component
+      const selectedComponent = state.component === 'schema' ? 'structure' : state.component
       // if the selected component exists on dataset, no changes needed
-      if (action.payload.data.dataset[state.component] || (state.component === 'body' && action.payload.data.dataset['bodyPath'])) return state
+      if (action.payload.data.dataset[selectedComponent] || (state.component === 'body' && action.payload.data.dataset['bodyPath'])) return state
 
       return {
         ...state,

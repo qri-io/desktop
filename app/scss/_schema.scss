@@ -1,6 +1,6 @@
 //
 // SCSS for Schema components
-// 
+//
 // EditSchema
 // schema
 
@@ -25,4 +25,46 @@
   border-radius: 2px;
   border: 1px solid $primary-muted;
   margin: 5px 14px;
+}
+
+.twod-schema-layout {
+  .flex-table {
+    .cell {
+      display: inline-flex;
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .header-row {
+      font-weight: 500;
+      padding: 0;
+      margin-bottom: 9px;
+      border-bottom: 1px solid $border-color
+    }
+
+    .row {
+      display: flex;
+      padding: 10px 0;
+      border-bottom: 1px solid #eaeaea;
+    }
+
+    .other-keywords {
+      flex-basis: 20%;
+    }
+  }
+
+  .type-icon {
+    display: inline-block;
+    min-width: 20px;
+    display: inline-block;
+    min-width: 15px;
+    text-align: center;
+    color: #ababab;
+  }
+
+  .text-glyph {
+    font-size: 0.6rem;
+    font-weight: 700;
+  }
 }

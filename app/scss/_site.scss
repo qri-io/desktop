@@ -748,5 +748,30 @@ b {
 }
 
 .capitalize {
-  text-transform: capitalize 
+  text-transform: capitalize
+}
+
+// keyvalue table
+
+.keyvalue-table-wrap {
+  width: 100%;
+  border-radius: 3px;
+  border: 1px solid #eee;
+  overflow: hidden;
+
+  .keyvalue-table {
+    width: 100%;
+
+    .keyvalue-table-row {
+      border-bottom: 1px solid #eee;
+
+      .keyvalue-table-key {
+        padding: 8px 8px;
+        font-size: .8rem;
+        font-weight: 600;
+        width: 112px;
+        text-align: right;
+      }
+    }
+  }
 }
