@@ -2,7 +2,7 @@ import { DatasetStatus } from '../models/store'
 
 type ValidationError = string | null
 
-export const ERR_INVALID_USERNAME_CHARACTERS: ValidationError = 'Usernames may only include a-z, 0-9, _ , and -'
+export const ERR_INVALID_USERNAME_CHARACTERS: ValidationError = 'Usernames may only include lowercase letters, numbers, underscores, and hyphens'
 export const ERR_INVALID_USERNAME_LENGTH: ValidationError = 'Username must be 50 characters or fewer'
 
 // validators return an error message or null
@@ -37,7 +37,7 @@ export const validatePassword = (password: string) => {
   return null
 }
 
-export const ERR_INVALID_DATASETNAME_CHARACTERS: ValidationError = 'Dataset names may only include a-z, 0-9, and _'
+export const ERR_INVALID_DATASETNAME_CHARACTERS: ValidationError = 'Dataset names may only include lowercase letters, numbers, and underscores'
 export const ERR_INVALID_DATASETNAME_LENGTH: ValidationError = 'Username must be 100 characters or fewer'
 
 export const validateDatasetName = (name: string): ValidationError => {

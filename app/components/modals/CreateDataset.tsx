@@ -2,6 +2,7 @@ import * as React from 'react'
 import path from 'path'
 import { Action } from 'redux'
 import { remote } from 'electron'
+import changeCase from 'change-case'
 
 import Modal from './Modal'
 import ExternalLink from '../ExternalLink'
@@ -41,7 +42,7 @@ const CreateDataset: React.FunctionComponent<CreateDatasetProps> = (props) => {
     datasetNameValidationError ? setDatasetNameError(datasetNameValidationError) : setDatasetNameError('')
 
     // only ready when all three fields are not invalid
-    const ready = datasetDirPath !== '' && filePath !== '' && !datasetNameValidationError
+    const ready = datasetDirPath !== '' && filePath !== '' && datasetName !== '' && !datasetNameValidationError
     setButtonDisabled(!ready)
   }, [datasetName, datasetDirPath, filePath])
 
@@ -77,6 +78,16 @@ const CreateDataset: React.FunctionComponent<CreateDatasetProps> = (props) => {
     }
   }
 
+  const tryToSetValidName = (name: string) => {
+    // cast name to meet our specification
+    // make lower case, snakecase, and remove invalid characters
+    let coercedName = changeCase.lowerCase(name)
+    coercedName = changeCase.snakeCase(name)
+    coercedName = coercedName.replace(/^[^a-z0-9_]+$/g, '')
+
+    setDatasetName(coercedName)
+  }
+
   const showFilePicker = () => {
     const window = remote.getCurrentWindow()
     const filePath: string[] | undefined = remote.dialog.showOpenDialog(window, {
@@ -91,7 +102,7 @@ const CreateDataset: React.FunctionComponent<CreateDatasetProps> = (props) => {
     const basename = path.basename(selectedPath)
     const name = basename.split('.')[0]
 
-    name && datasetName === '' && setDatasetName(name)
+    name && datasetName === '' && tryToSetValidName(name)
 
     setFilePath(selectedPath)
     const isDataset = isQriDataset(selectedPath)
