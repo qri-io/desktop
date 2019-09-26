@@ -1,6 +1,9 @@
 import * as React from 'react'
 import moment from 'moment'
 import { Action } from 'redux'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faClock } from '@fortawesome/free-regular-svg-icons'
+
 import ComponentList from '../components/ComponentList'
 import DatasetComponent from './DatasetComponent'
 import { CSSTransition } from 'react-transition-group'
@@ -96,7 +99,8 @@ const CommitDetails: React.FunctionComponent<CommitDetailsProps> = ({
               <div className='subtext'>
                 {/* <img className= 'user-image' src = {'https://avatars0.githubusercontent.com/u/1154390?s=60&v=4'} /> */}
                 <div className='time-message'>
-                  {commit && moment(commit.timestamp).fromNow()}
+                  <FontAwesomeIcon icon={faClock} size='sm'/>&nbsp;
+                  {commit && moment(commit.timestamp).format('MMMM Do YYYY, h:mm:ss a')}
                 </div>
               </div>
             </div>

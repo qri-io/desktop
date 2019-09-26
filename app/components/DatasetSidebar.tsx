@@ -4,6 +4,7 @@ import moment from 'moment'
 import { CSSTransition } from 'react-transition-group'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTimes } from '@fortawesome/free-solid-svg-icons'
+import { faClock } from '@fortawesome/free-regular-svg-icons'
 
 import { ApiActionThunk } from '../store/api'
 import SaveFormContainer from '../containers/SaveFormContainer'
@@ -33,7 +34,7 @@ const HistoryListItem: React.FunctionComponent<HistoryListItemProps> = (props) =
         <div className='subtext'>
           {/* Bring back avatar later <img className= 'user-image' src = {props.avatarUrl} /> */}
           <div className='time-message'>
-            {props.timeMessage}
+            <FontAwesomeIcon icon={faClock} size='sm'/> {props.timeMessage}
           </div>
         </div>
       </div>
