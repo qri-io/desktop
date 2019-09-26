@@ -173,7 +173,7 @@ export default class DatasetList extends React.Component<DatasetListProps> {
                 data-tip='Copy an existing<br/>Qri dataset to your computer'
               >
                 <FontAwesomeIcon icon={faDownload} />&nbsp;&nbsp;
-                <span>Add from Network</span>
+                <span>Add Existing Dataset</span>
               </div>
               <div
                 className='dataset-list-button btn btn-primary'
@@ -181,7 +181,7 @@ export default class DatasetList extends React.Component<DatasetListProps> {
                 data-tip='Create a new Qri <br/>dataset from a data file'
               >
                 <FontAwesomeIcon icon={faPlus} />&nbsp;&nbsp;
-                <span>Create New</span>
+                <span>Create New Dataset</span>
               </div>
             </div>
             <div className='filter-input-container'>
