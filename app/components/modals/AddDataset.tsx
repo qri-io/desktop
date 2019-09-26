@@ -140,7 +140,7 @@ const AddDataset: React.FunctionComponent<AddDatasetProps> = (props) => {
             <DebouncedTextInput
               name='datasetName'
               label='Dataset Reference'
-              labelTooltip={'Qri dataset references use [peername]/[datasetname] format'}
+              labelTooltip={'Qri dataset references use [username]/[datasetname] format'}
               tooltipFor='modal-tooltip'
               type=''
               value={datasetReference}
