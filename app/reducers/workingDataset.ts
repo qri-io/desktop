@@ -175,7 +175,7 @@ const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction
           ...state.components,
           body: {
             ...state.components.body,
-            value: bodyValue(state.components.body.value, action.payload.data.data),
+            value: bodyValue(state.components.body.value, action.payload.data),
             pageInfo: reducerWithPagination(action, state.components.body.pageInfo)
           }
         }
