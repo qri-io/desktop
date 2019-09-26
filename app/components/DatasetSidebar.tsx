@@ -185,7 +185,6 @@ const DatasetSidebar: React.FunctionComponent<DatasetSidebarProps> = (props) => 
             }
           </div>
         </CSSTransition>
-        { console.log(!hideCommitNudge, bodyLoaded, statusLoaded, historyLoaded, noHistory, datasetSelected) }
         {
           !hideCommitNudge && bodyLoaded && statusLoaded && historyLoaded && noHistory && datasetSelected && (
             <div className='commit-nudge'>

@@ -423,7 +423,7 @@ export function addDatasetAndFetch (peername: string, name: string, path: string
       response = await whenOk(fetchMyDatasets(-1))(response)
       dispatch(setWorkingDataset(peername, name))
       dispatch(setActiveTab('history'))
-      dispatch(setSelectedListItem('component', DEFAULT_COMPONENT))
+      dispatch(setSelectedListItem('component', DEFAULT_SELECTED_COMPONENT))
     } catch (action) {
       throw action
     }
