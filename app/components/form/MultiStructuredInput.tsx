@@ -19,7 +19,7 @@ export interface MultiStructuredInputProps {
 }
 
 export const isUserArray = (array: any): array is User[] => {
-  return array[0].id !== undefined
+  return array[0] && array[0].id !== undefined
 }
 
 const MultiStructuredInput: React.FunctionComponent<MultiStructuredInputProps> = (props) => {

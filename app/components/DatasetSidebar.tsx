@@ -184,11 +184,12 @@ const DatasetSidebar: React.FunctionComponent<DatasetSidebarProps> = (props) => 
             }
           </div>
         </CSSTransition>
+        { console.log(!hideCommitNudge, bodyLoaded, statusLoaded, historyLoaded, noHistory, datasetSelected) }
         {
           !hideCommitNudge && bodyLoaded && statusLoaded && historyLoaded && noHistory && datasetSelected && (
             <div className='commit-nudge'>
               <div className='commit-nudge-text'>
-                You&apos;re ready to make your first commit on this dataset! Verify that the body and meta are accurate, enter a commit message below, and click Submit.
+                You&apos;re ready to make your first commit on this dataset! Verify that the body is accurate and add some metadata. When everything looks good, enter a commit message below, then click Submit.
               </div>
               <a
                 className="close dark"
