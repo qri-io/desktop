@@ -388,7 +388,7 @@ export function saveWorkingDatasetAndFetch (): ApiActionThunk {
   }
 }
 
-export function addDataset (peername: string, name: string): ApiActionThunk {
+export function addDataset (peername: string, name: string, path: string): ApiActionThunk {
   return async (dispatch) => {
     const action = {
       type: 'add',
@@ -399,6 +399,9 @@ export function addDataset (peername: string, name: string): ApiActionThunk {
           peername,
           name
         },
+        query: {
+          dir: path
+        },
         map: mapDataset
       }
     }
@@ -406,13 +409,13 @@ export function addDataset (peername: string, name: string): ApiActionThunk {
   }
 }
 
-export function addDatasetAndFetch (peername: string, name: string): ApiActionThunk {
+export function addDatasetAndFetch (peername: string, name: string, path: string): ApiActionThunk {
   return async (dispatch, getState) => {
     const whenOk = chainSuccess(dispatch, getState)
     let response: Action
 
     try {
-      response = await addDataset(peername, name)(dispatch, getState)
+      response = await addDataset(peername, name, path)(dispatch, getState)
       // reset pagination
       response = await whenOk(fetchMyDatasets(-1))(response)
       dispatch(setWorkingDataset(peername, name))

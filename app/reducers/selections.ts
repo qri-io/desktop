@@ -66,7 +66,8 @@ export default (state = initialState, action: AnyAction) => {
         activeTab: 'status',
         component: '',
         commit: '',
-        commitComponent: ''
+        commitComponent: '',
+        datasetPath: state.datasetPath || ''
       }
     case SELECTIONS_SET_ACTIVE_TAB:
       const { activeTab } = action.payload
