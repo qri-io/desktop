@@ -1,6 +1,6 @@
 import * as React from 'react'
 import WelcomeTemplate from './WelcomeTemplate'
-const version: string = require('../../version').default
+const version: string = require('../../version').desktopVersion
 
 export const AppLoading: React.FunctionComponent<any> = () =>
   <WelcomeTemplate

@@ -1,1 +1,2 @@
-export default '0.1.0-rc1'
+exports.desktopVersion = '0.1.1-dev'
+exports.backendVersion = '0.9.0'
