@@ -105,7 +105,15 @@ class App extends React.Component<AppProps, AppState> {
       }
     }, defaultPollInterval)
 
-    this.props.bootstrap()
+    if (this.props.apiConnection === 1) {
+      this.props.bootstrap()
+    }
+  }
+
+  componentDidUpdate (prevProps: AppProps) {
+    if (this.props.sessionID === '' && prevProps.apiConnection === 0 && this.props.apiConnection === 1) {
+      this.props.bootstrap()
+    }
   }
 
   private renderModal (): JSX.Element | null {
