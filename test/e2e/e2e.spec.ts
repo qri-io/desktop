@@ -47,7 +47,7 @@ describe('onboarding', function spec() {
     const { client, browserWindow } = app
     
     await client.waitUntilWindowLoaded()
-    await delay(1500)
+    await delay(2500)
     await client.click('#accept')
 
     await delay(1000)
@@ -55,7 +55,7 @@ describe('onboarding', function spec() {
     expect(currentUrl.hash).toBe('#/signup')
   })
 
-  it('create a new account, taken to no datasets', async () => {
+  it('create a new account, taken to datasets page', async () => {
     const { client, browserWindow } = app
     
     await client.waitUntilWindowLoaded()
@@ -67,7 +67,8 @@ describe('onboarding', function spec() {
 
     await delay(1000)
     const currentUrl = url.parse(await browserWindow.getURL())
-    expect(currentUrl.hash).toBe('#/nodatasets')
+    expect(currentUrl.hash).toBe('#/dataset')
+    expect(await app.client.element('#no-datasets-page .welcome-title h2').getText()).toBe('Let\'s get some datasets')
   })
 
   it('create new dataset from a data source', async () => {

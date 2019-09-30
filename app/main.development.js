@@ -4,8 +4,7 @@ const { BackendProcess } = require('./backend')
 
 // versions
 // must be manually updated for now
-const desktopVersion = '0.1.0'
-const backendVersion = '0.9.0'
+const { desktopVersion, backendVersion } = require('../version')
 
 let menu
 let template
