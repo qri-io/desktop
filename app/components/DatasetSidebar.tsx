@@ -65,7 +65,7 @@ const DatasetSidebar: React.FunctionComponent<DatasetSidebarProps> = (props) => 
     setHideCommitNudge
   } = props
 
-  const { path, fsiPath, history, status, components } = workingDataset
+  const { fsiPath, history, status, components } = workingDataset
 
   const {
     activeTab,
@@ -94,7 +94,7 @@ const DatasetSidebar: React.FunctionComponent<DatasetSidebarProps> = (props) => 
     }
   }
 
-  const historyToolTip = path || !datasetSelected ? 'Explore older versions of this dataset' : 'This dataset has no previous versions'
+  const historyToolTip = history.value.length !== 0 || !datasetSelected ? 'Explore older versions of this dataset' : 'This dataset has no previous versions'
 
   return (
     <div className='dataset-sidebar'>
