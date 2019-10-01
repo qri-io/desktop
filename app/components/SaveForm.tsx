@@ -59,6 +59,7 @@ const SaveForm: React.FunctionComponent<SaveFormProps> = (props: SaveFormProps) 
     <form id='save-form' onSubmit={handleSubmit}>
       <div className='title'>
         <input
+          id='commit_title'
           type='text'
           name='title'
           value={title}
@@ -68,6 +69,7 @@ const SaveForm: React.FunctionComponent<SaveFormProps> = (props: SaveFormProps) 
       </div>
       <div className='message'>
         <textarea
+          id='commit_message'
           name='message'
           value={message}
           onChange={handleChange}
@@ -78,7 +80,7 @@ const SaveForm: React.FunctionComponent<SaveFormProps> = (props: SaveFormProps) 
         {
           isLoading
             ? <button className='spinner btn btn-primary'><FontAwesomeIcon icon={faSync} /> Saving...</button>
-            : <button className={classNames('btn btn-primary', { 'disabled': !isValid })} type='submit'>Submit</button>
+            : <button id='commit_submit' className={classNames('btn btn-primary', { 'disabled': !isValid })} type='submit'>Submit</button>
         }
       </div>
     </form>

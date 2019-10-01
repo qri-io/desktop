@@ -476,6 +476,18 @@ $header-font-size: .9rem;
   display: inline-block;
 }
 
+.status-dot-modified {
+  background-color: #cab081;
+}
+
+.status-dot-removed {
+  background-color: #e04f4f;
+}
+
+.status-dot-added {
+  background-color: #83d683;
+}
+
 
 ////////////////////////////
 //     Commit Details     //
