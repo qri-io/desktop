@@ -74,6 +74,7 @@ export const CurrentDataset: React.FunctionComponent<CurrentDatasetProps> = (pro
 
   return (
     <div
+      id='current_dataset'
       className={classNames('current-dataset', 'header-column', 'sidebar-list-item', { 'expanded': expanded })}
       onClick={onClick}
       style={{ width: width || '100%' }}

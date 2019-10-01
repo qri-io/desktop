@@ -159,7 +159,7 @@ const CreateDataset: React.FunctionComponent<CreateDatasetProps> = (props) => {
 
   return (
     <Modal
-      id="CreateDataset"
+      id="create_modal"
       title={'Create a New Dataset'}
       onDismissed={onDismissed}
       onSubmit={() => {}}

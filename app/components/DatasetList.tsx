@@ -168,6 +168,7 @@ export default class DatasetList extends React.Component<DatasetListProps> {
           <div id='dataset-list-filter' className='sidebar-list-item'>
             <div id='dataset-list-buttons'>
               <div
+                id='dataset_list_add'
                 className='dataset-list-button btn btn-primary'
                 onClick={() => { setModal({ type: ModalType.AddDataset }) }}
                 data-tip='Copy an existing<br/>Qri dataset to your computer'
@@ -176,6 +177,7 @@ export default class DatasetList extends React.Component<DatasetListProps> {
                 <span>Add Existing Dataset</span>
               </div>
               <div
+                id='dataset_list_create'
                 className='dataset-list-button btn btn-primary'
                 onClick={() => { setModal({ type: ModalType.CreateDataset }) }}
                 data-tip='Create a new Qri <br/>dataset from a data file'

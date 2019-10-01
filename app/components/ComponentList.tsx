@@ -15,28 +15,24 @@ interface StatusDotProps {
 }
 
 export const StatusDot: React.FunctionComponent<StatusDotProps> = (props) => {
-  let statusColor, statusTooltip
+  let statusTooltip
   switch (props.status) {
     case 'modified':
-      statusColor = '#cab081'
       statusTooltip = 'modified'
       break
     case 'add':
-      statusColor = '#83d683'
       statusTooltip = 'added'
       break
     case 'removed':
-      statusColor = '#e04f4f'
       statusTooltip = 'removed'
       break
     default:
-      statusColor = 'transparent'
       statusTooltip = ''
   }
   if (props.status === 'parse error') {
     return <FontAwesomeIcon icon={faExclamation} className='parse-error' style={{ color: '#e04f4f' }} data-tip='Parsing Error' size='sm' />
   }
-  return <div className='status-dot' style={{ backgroundColor: statusColor }} data-tip={statusTooltip}></div>
+  return <div className={classNames('status-dot', { 'status-dot-modified': statusTooltip === 'modified', 'status-dot-removed': statusTooltip === 'removed', 'status-dot-added': statusTooltip === 'added', 'status-dot-transparent': statusTooltip === '' })} data-tip={statusTooltip}></div>
 }
 
 interface FileRowProps {
@@ -54,6 +50,7 @@ interface FileRowProps {
 
 export const FileRow: React.FunctionComponent<FileRowProps> = (props) => (
   <div
+    id={`${props.displayName.toLowerCase()}_status`}
     className={classNames('sidebar-list-item', 'sidebar-list-item-text', {
       'selected': props.selected,
       'disabled': props.disabled

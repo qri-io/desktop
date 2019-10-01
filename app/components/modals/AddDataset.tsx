@@ -64,6 +64,7 @@ const AddDataset: React.FunctionComponent<AddDatasetProps> = (props) => {
     if (value[value.length - 1] === ' ') {
       return
     }
+    if (error !== '') setError('')
     if (name === 'datasetName') setDatasetReference(value)
   }
 
@@ -125,7 +126,7 @@ const AddDataset: React.FunctionComponent<AddDatasetProps> = (props) => {
 
   return (
     <Modal
-      id="addDataset"
+      id="add_modal"
       title={'Add an Existing Qri Dataset'}
       onDismissed={onDismissed}
       onSubmit={() => {}}
@@ -175,7 +176,7 @@ const AddDataset: React.FunctionComponent<AddDatasetProps> = (props) => {
           classNames='slide'
           component='div'
         >
-          <div id='error'><Error text={error} /></div>
+          <div id='error'><Error id='add' text={error} /></div>
         </CSSTransition>
       </div>
       <Buttons

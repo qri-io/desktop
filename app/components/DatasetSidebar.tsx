@@ -100,6 +100,7 @@ const DatasetSidebar: React.FunctionComponent<DatasetSidebarProps> = (props) => 
     <div className='dataset-sidebar'>
       <div id='tabs' className='sidebar-list-item'>
         <div
+          id='status_tab'
           className={classNames('tab', { 'active': activeTab === 'status' && datasetSelected, 'disabled': !datasetSelected })}
           onClick={() => {
             if (datasetSelected) {
@@ -111,6 +112,7 @@ const DatasetSidebar: React.FunctionComponent<DatasetSidebarProps> = (props) => 
           Status
         </div>
         <div
+          id='history_tab'
           className={classNames('tab', { 'active': activeTab === 'history', 'disabled': (history.pageInfo.error && history.pageInfo.error.includes('no history')) || !datasetSelected })}
           onClick={() => {
             if ((!(history.pageInfo.error && history.pageInfo.error.includes('no history')) && datasetSelected)) {
@@ -162,7 +164,7 @@ const DatasetSidebar: React.FunctionComponent<DatasetSidebarProps> = (props) => 
           unmountOnExit
         >
           <div
-            id='history-content'
+            id='history_list'
             className='sidebar-content'
             onScroll={(e) => handleHistoryScroll(e)}
             hidden = {activeTab === 'status'}
@@ -187,7 +189,7 @@ const DatasetSidebar: React.FunctionComponent<DatasetSidebarProps> = (props) => 
         </CSSTransition>
         {
           !hideCommitNudge && bodyLoaded && statusLoaded && historyLoaded && noHistory && datasetSelected && (
-            <div className='commit-nudge'>
+            <div id='commit_nudge' className='commit-nudge'>
               <div className='commit-nudge-text'>
                 You&apos;re ready to make your first commit on this dataset! Verify that the body is accurate and add some metadata. When everything looks good, enter a commit message below, then click Submit.
               </div>
