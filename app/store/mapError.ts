@@ -5,7 +5,8 @@ const errors: {[key: string]: string} = {
   'working directory is already linked, .qri-ref exists': 'This directory already contains a linked dataset.',
   // this backend error seems like a mistake
   'error resolving ref: error 404: ': 'Dataset not found.',
-  'error resolving ref: p2p network responded with incomplete reference': 'Dataset not found.'
+  'error resolving ref: p2p network responded with incomplete reference': 'Dataset not found.',
+  'error resolving ref: resolving dataset ref from remote failed: repo: not found': 'Dataset not found.'
 }
 
 export default function mapError (err: string): string {

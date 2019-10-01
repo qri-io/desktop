@@ -9546,6 +9546,11 @@ spectron-fake-dialog@0.0.1:
   resolved "https://registry.yarnpkg.com/spectron-fake-dialog/-/spectron-fake-dialog-0.0.1.tgz#ffd5cfadcac64eb957340389f047529c4a68e23a"
   integrity sha512-ToNQH3MLVj7aw7oT3CjIvs+r3E2swhx4gNA9Utrorl46aiJetBm3WngK+TOcS15YBm9N1fF34vQP/wQWq99RwA==
 
+spectron-keys@0.0.1:
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/spectron-keys/-/spectron-keys-0.0.1.tgz#45c3aa535e85fe5f5c71fd18cfa43927826f65db"
+  integrity sha1-RcOqU16F/l9ccf0Yz6Q5J4JvZds=
+
 spectron@7.0.0:
   version "7.0.0"
   resolved "https://registry.yarnpkg.com/spectron/-/spectron-7.0.0.tgz#2a16ea2b2fbe6149f5fa9fa1a2be601f5878e00c"
