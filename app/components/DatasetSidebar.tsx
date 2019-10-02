@@ -14,6 +14,8 @@ import classNames from 'classnames'
 import Spinner from './chrome/Spinner'
 
 import { WorkingDataset, ComponentType, Selections } from '../models/store'
+import ContextMenuArea from 'react-electron-contextmenu'
+import { MenuItemConstructorOptions, ipcRenderer } from 'electron'
 
 interface HistoryListItemProps {
   path: string
@@ -173,15 +175,25 @@ const DatasetSidebar: React.FunctionComponent<DatasetSidebarProps> = (props) => 
               history.value.map((props) => {
                 const { path, timestamp, title } = props
                 const timeMessage = moment(timestamp).fromNow()
+                const menuItems: MenuItemConstructorOptions[] = [
+                  {
+                    label: 'Export this version',
+                    click: () => {
+                      ipcRenderer.send('export', `http://localhost:2503/export/${peername}/${name}/at/${path}?download=true&all=true`)
+                    }
+                  }
+                ]
                 return (
-                  <HistoryListItem
-                    key={path}
-                    path={path}
-                    commitTitle={title}
-                    timeMessage={timeMessage}
-                    selected={selectedCommit === path}
-                    onClick={setSelectedListItem}
-                  />
+                  <ContextMenuArea menuItems={menuItems} key={path}>
+                    <HistoryListItem
+                      key={path}
+                      path={path}
+                      commitTitle={title}
+                      timeMessage={timeMessage}
+                      selected={selectedCommit === path}
+                      onClick={setSelectedListItem}
+                    />
+                  </ContextMenuArea>
                 )
               })
             }

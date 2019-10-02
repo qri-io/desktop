@@ -1,6 +1,7 @@
 const { app, BrowserWindow, Menu, shell, ipcMain } = require('electron')
 const { autoUpdater } = require('electron-updater')
 const { BackendProcess } = require('./backend')
+const { download } = require('electron-dl')
 
 // versions
 // must be manually updated for now
@@ -466,6 +467,12 @@ app.on('ready', () =>
 
         // enable/disable 'view in qri cloud' menu item
         setMenuItemEnabled(['view-on-qri-cloud'], published)
+      })
+
+      // catch export events
+      ipcMain.on('export', async (e, exportPath) => {
+        const win = BrowserWindow.getFocusedWindow()
+        await download(win, exportPath, { saveAs: true })
       })
 
       ipcMain.on('block-menus', (e, blockMenus) => {
