@@ -15,7 +15,8 @@ import Spinner from './chrome/Spinner'
 
 import { WorkingDataset, ComponentType, Selections } from '../models/store'
 import ContextMenuArea from 'react-electron-contextmenu'
-import { MenuItemConstructorOptions, ipcRenderer } from 'electron'
+import { MenuItemConstructorOptions } from 'electron'
+import { ModalType, Modal } from '../models/modals'
 
 interface HistoryListItemProps {
   path: string
@@ -48,6 +49,7 @@ export interface DatasetSidebarProps {
   selections: Selections
   workingDataset: WorkingDataset
   hideCommitNudge: boolean
+  setModal: (modal: Modal) => void
   setActiveTab: (activeTab: string) => Action
   setSelectedListItem: (type: ComponentType, activeTab: string) => Action
   fetchWorkingHistory: (page?: number, pageSize?: number) => ApiActionThunk
@@ -64,7 +66,8 @@ const DatasetSidebar: React.FunctionComponent<DatasetSidebarProps> = (props) => 
     setSelectedListItem,
     fetchWorkingHistory,
     discardChanges,
-    setHideCommitNudge
+    setHideCommitNudge,
+    setModal
   } = props
 
   const { fsiPath, history, status, components } = workingDataset
@@ -179,7 +182,14 @@ const DatasetSidebar: React.FunctionComponent<DatasetSidebarProps> = (props) => 
                   {
                     label: 'Export this version',
                     click: () => {
-                      ipcRenderer.send('export', `http://localhost:2503/export/${peername}/${name}/at/${path}?download=true&all=true`)
+                      setModal({
+                        type: ModalType.ExportVersion,
+                        peername: peername || '',
+                        name: name || '',
+                        path: path || '',
+                        timestamp: timestamp,
+                        title: title
+                      })
                     }
                   }
                 ]

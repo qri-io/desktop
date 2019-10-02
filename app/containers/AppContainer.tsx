@@ -18,7 +18,8 @@ import {
   setQriCloudAuthenticated,
   closeToast,
   setModal,
-  setDatasetDirPath
+  setDatasetDirPath,
+  setExportPath
 } from '../actions/ui'
 
 import {
@@ -41,7 +42,7 @@ const AppContainer = connect(
     const loading = connection.apiConnection === 0 || session.isLoading
     const hasDatasets = myDatasets.value.length !== 0
     const { id: sessionID, peername } = session
-    const { toast, modal, datasetDirPath } = ui
+    const { toast, modal, datasetDirPath, exportPath } = ui
     return {
       hasDatasets,
       loading,
@@ -52,7 +53,8 @@ const AppContainer = connect(
       modal,
       workingDataset,
       apiConnection,
-      datasetDirPath
+      datasetDirPath,
+      exportPath
     }
   },
   {
@@ -67,6 +69,7 @@ const AppContainer = connect(
     closeToast,
     pingApi,
     setWorkingDataset,
+    setExportPath,
     setModal,
     publishDataset,
     unpublishDataset,

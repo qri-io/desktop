@@ -5,7 +5,8 @@ export enum ModalType {
   LinkDataset,
   RemoveDataset,
   PublishDataset,
-  UnpublishDataset
+  UnpublishDataset,
+  ExportVersion
 }
 
 interface CreateDatasetModal {
@@ -39,6 +40,15 @@ export interface RemoveDatasetModal {
   fsiPath: string
 }
 
+export interface ExportVersionModal {
+  type: ModalType.ExportVersion
+  peername: string
+  name: string
+  path: string
+  timestamp: Date
+  title: string
+}
+
 export interface HideModal {
   type: ModalType.NoModal
 }
@@ -50,3 +60,4 @@ export type Modal = CreateDatasetModal
 | PublishDataset
 | UnpublishDataset
 | HideModal
+| ExportVersionModal

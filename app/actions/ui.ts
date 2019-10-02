@@ -10,7 +10,8 @@ import {
   UI_SET_MODAL,
   UI_SIGNOUT,
   UI_HIDE_COMMIT_NUDGE,
-  UI_SET_DATASET_DIR_PATH
+  UI_SET_DATASET_DIR_PATH,
+  UI_SET_EXPORT_PATH
 } from '../reducers/ui'
 
 import { ToastType } from '../models/store'
@@ -79,6 +80,13 @@ export const setHideCommitNudge = () => {
 export const setDatasetDirPath = (path: string) => {
   return {
     type: UI_SET_DATASET_DIR_PATH,
+    path
+  }
+}
+
+export const setExportPath = (path: string) => {
+  return {
+    type: UI_SET_EXPORT_PATH,
     path
   }
 }
