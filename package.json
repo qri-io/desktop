@@ -209,6 +209,7 @@
     "classnames": "2.2.6",
     "deep-equal": "1.1.0",
     "electron-debug": "3.0.1",
+    "electron-dl": "1.14.0",
     "electron-updater": "4.1.2",
     "eslint-utils": "1.4.2",
     "font-awesome": "4.7.0",

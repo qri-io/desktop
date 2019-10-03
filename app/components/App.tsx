@@ -10,6 +10,7 @@ import Toast from './Toast'
 import AppError from './AppError'
 import AppLoading from './AppLoading'
 import AddDataset from './modals/AddDataset'
+import ExportVersion from './modals/ExportVersion'
 import LinkDataset from './modals/LinkDataset'
 import RemoveDataset from './modals/RemoveDataset'
 import CreateDataset from './modals/CreateDataset'
@@ -44,6 +45,8 @@ export interface AppProps {
   toast: IToast
   modal: Modal
   workingDataset: Dataset
+  exportPath: string
+  setExportPath: (path: string) => Action
   children: JSX.Element[] | JSX.Element
   bootstrap: () => Promise<ApiAction>
   fetchMyDatasets: (page?: number, pageSize?: number) => Promise<ApiAction>
@@ -178,6 +181,22 @@ class App extends React.Component<AppProps, AppState> {
             onSubmit={this.props.addDataset}
             onDismissed={async () => setModal(noModalObject)}
             setDatasetDirPath={this.props.setDatasetDirPath}
+          />
+        )
+        break
+      }
+
+      case ModalType.ExportVersion: {
+        modalComponent = (
+          <ExportVersion
+            peername={modal.peername}
+            name={modal.name}
+            path={modal.path}
+            title={modal.title}
+            timestamp={modal.timestamp}
+            exportPath={this.props.exportPath}
+            setExportPath={this.props.setExportPath}
+            onDismissed={async () => setModal(noModalObject)}
           />
         )
         break

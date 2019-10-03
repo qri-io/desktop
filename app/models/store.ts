@@ -63,6 +63,7 @@ export interface UI {
   blockMenus: boolean
   hideCommitNudge: boolean
   datasetDirPath: string
+  exportPath: string
 }
 
 export type SelectedComponent = 'meta' | 'body' | 'schema' | ''

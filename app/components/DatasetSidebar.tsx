@@ -14,6 +14,9 @@ import classNames from 'classnames'
 import Spinner from './chrome/Spinner'
 
 import { WorkingDataset, ComponentType, Selections } from '../models/store'
+import ContextMenuArea from 'react-electron-contextmenu'
+import { MenuItemConstructorOptions } from 'electron'
+import { ModalType, Modal } from '../models/modals'
 
 interface HistoryListItemProps {
   path: string
@@ -46,6 +49,7 @@ export interface DatasetSidebarProps {
   selections: Selections
   workingDataset: WorkingDataset
   hideCommitNudge: boolean
+  setModal: (modal: Modal) => void
   setActiveTab: (activeTab: string) => Action
   setSelectedListItem: (type: ComponentType, activeTab: string) => Action
   fetchWorkingHistory: (page?: number, pageSize?: number) => ApiActionThunk
@@ -62,7 +66,8 @@ const DatasetSidebar: React.FunctionComponent<DatasetSidebarProps> = (props) => 
     setSelectedListItem,
     fetchWorkingHistory,
     discardChanges,
-    setHideCommitNudge
+    setHideCommitNudge,
+    setModal
   } = props
 
   const { fsiPath, history, status, components } = workingDataset
@@ -173,15 +178,32 @@ const DatasetSidebar: React.FunctionComponent<DatasetSidebarProps> = (props) => 
               history.value.map((props) => {
                 const { path, timestamp, title } = props
                 const timeMessage = moment(timestamp).fromNow()
+                const menuItems: MenuItemConstructorOptions[] = [
+                  {
+                    label: 'Export this version',
+                    click: () => {
+                      setModal({
+                        type: ModalType.ExportVersion,
+                        peername: peername || '',
+                        name: name || '',
+                        path: path || '',
+                        timestamp: timestamp,
+                        title: title
+                      })
+                    }
+                  }
+                ]
                 return (
-                  <HistoryListItem
-                    key={path}
-                    path={path}
-                    commitTitle={title}
-                    timeMessage={timeMessage}
-                    selected={selectedCommit === path}
-                    onClick={setSelectedListItem}
-                  />
+                  <ContextMenuArea menuItems={menuItems} key={path}>
+                    <HistoryListItem
+                      key={path}
+                      path={path}
+                      commitTitle={title}
+                      timeMessage={timeMessage}
+                      selected={selectedCommit === path}
+                      onClick={setSelectedListItem}
+                    />
+                  </ContextMenuArea>
                 )
               })
             }
