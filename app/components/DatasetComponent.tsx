@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import MetadataContainer from '../containers/MetadataContainer'
 import MetadataEditorContainer from '../containers/MetadataEditorContainer'
 import BodyContainer from '../containers/BodyContainer'
-import SchemaContainer from '../containers/SchemaContainer'
+import StructureContainer from '../containers/StructureContainer'
 import ParseError from './ParseError'
 import { CSSTransition } from 'react-transition-group'
 import SpinnerWithIcon from './chrome/SpinnerWithIcon'
@@ -94,7 +94,7 @@ const DatasetComponent: React.FunctionComponent<DatasetComponentProps> = (props:
           appear={true}
         >
           <div id='transition-wrap'>
-            <SchemaContainer history={history}/>
+            <StructureContainer history={history}/>
           </div>
         </CSSTransition>
         <SpinnerWithIcon loading={isLoading}/>

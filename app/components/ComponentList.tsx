@@ -101,7 +101,7 @@ const components = [
   },
   {
     name: 'schema',
-    displayName: 'Schema',
+    displayName: 'Structure',
     tooltip: 'the structure of the dataset',
     icon: faTh
   }
