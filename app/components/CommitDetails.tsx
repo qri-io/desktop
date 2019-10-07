@@ -4,13 +4,47 @@ import { Action } from 'redux'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faClock } from '@fortawesome/free-regular-svg-icons'
 
+import Spinner from './chrome/Spinner'
 import ComponentList from '../components/ComponentList'
 import DatasetComponent from './DatasetComponent'
 import { CSSTransition } from 'react-transition-group'
 import SpinnerWithIcon from './chrome/SpinnerWithIcon'
 import { ApiAction } from '../store/api'
-import { Commit } from '../models/dataset'
+import { Structure, Commit } from '../models/dataset'
 import { CommitDetails as ICommitDetails, ComponentType } from '../models/Store'
+import fileSize from '../utils/fileSize'
+
+interface CommitDetailsHeaderProps {
+  structure: Structure
+  commit: Commit
+}
+
+const CommitDetailsHeader: React.FunctionComponent<CommitDetailsHeaderProps> = ({ structure, commit }) => {
+  return (
+    <div className='commit-details-header'>
+      {!structure || !commit
+        ? <Spinner />
+        : <div className='details-flex'>
+          <div className='text-column'>
+            <div className='text'>{commit.title}</div>
+            <div className='subtext'>
+              {/* <img className= 'user-image' src = {'https://avatars0.githubusercontent.com/u/1154390?s=60&v=4'} /> */}
+              <div className='time-message'>
+                <FontAwesomeIcon icon={faClock} size='sm'/>&nbsp;
+                {moment(commit.timestamp).format('MMMM Do YYYY, h:mm:ss a')}
+              </div>
+            </div>
+          </div>
+          <div className='details-column'>
+            <div className='detail'>{fileSize(structure.length)}</div>
+            <div className='detail'>{structure.format.toUpperCase()}</div>
+            <div className='detail'>{structure.entries.toLocaleString()} {structure.entries !== 1 ? 'entries' : 'entry'}</div>
+            <div className='detail'>{structure.errCount.toLocaleString()} {structure.errCount !== 1 ? 'errors' : 'error'}</div>
+          </div>
+        </div>}
+    </div>
+  )
+}
 
 export interface CommitDetailsProps {
   peername: string
@@ -19,19 +53,12 @@ export interface CommitDetailsProps {
   commit: Commit
   selectedComponent: 'meta' | 'body' | 'schema' | ''
   sidebarWidth: number
+  structure: Structure
   setSelectedListItem: (type: string, activeTab: string) => Action
   setSidebarWidth: (type: string, sidebarWidth: number) => Action
   fetchCommitDetail: () => Promise<ApiAction>
   commitDetails: ICommitDetails
 }
-
-// const isEmpty = (status: DatasetStatus) => {
-//   const { body, meta, schema } = status
-//   if (body) return false
-//   if (meta) return false
-//   if (schema) return false
-//   return true
-// }
 
 const CommitDetails: React.FunctionComponent<CommitDetailsProps> = ({
   peername,
@@ -41,7 +68,8 @@ const CommitDetails: React.FunctionComponent<CommitDetailsProps> = ({
   selectedComponent,
   setSelectedListItem,
   fetchCommitDetail,
-  commitDetails
+  commitDetails,
+  structure
 }) => {
   // we have to guard against an odd case when we look at history
   // it is possible that we can get the history of a dataset, but
@@ -84,6 +112,7 @@ const CommitDetails: React.FunctionComponent<CommitDetailsProps> = ({
   }, [commitDetails.isLoading])
 
   const { status } = commitDetails
+  console.log(structure)
   return (
     <div id='commit-details' className='dataset-content transition-group'>
       <CSSTransition
@@ -93,18 +122,7 @@ const CommitDetails: React.FunctionComponent<CommitDetailsProps> = ({
         unmountOnExit
       >
         <div id='transition-wrap'>
-          <div className='commit-details-header'>
-            <div className='text-column'>
-              <div className='text'>{commit && commit.title}</div>
-              <div className='subtext'>
-                {/* <img className= 'user-image' src = {'https://avatars0.githubusercontent.com/u/1154390?s=60&v=4'} /> */}
-                <div className='time-message'>
-                  <FontAwesomeIcon icon={faClock} size='sm'/>&nbsp;
-                  {commit && moment(commit.timestamp).format('MMMM Do YYYY, h:mm:ss a')}
-                </div>
-              </div>
-            </div>
-          </div>
+          {<CommitDetailsHeader structure={structure} commit={commit}/>}
           <div className='columns'>
             <div
               className='commit-details-sidebar sidebar'

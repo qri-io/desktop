@@ -1,5 +1,5 @@
 import { connect } from 'react-redux'
-import CommitDetails from '../components/CommitDetails'
+import CommitDetails, { CommitDetailsProps } from '../components/CommitDetails'
 import Store from '../models/store'
 import { setSidebarWidth } from '../actions/ui'
 import { fetchCommitDetail } from '../actions/api'
@@ -25,7 +25,8 @@ const mapStateToProps = (state: Store) => {
     commit: selectedCommit,
     selectedComponent,
     sidebarWidth: ui.commitSidebarWidth,
-    commitDetails
+    commitDetails,
+    structure: commitDetails.structure
   }
 }
 
@@ -34,4 +35,8 @@ const actions = {
   fetchCommitDetail
 }
 
-export default connect(mapStateToProps, actions)(CommitDetails)
+const mergeProps = (props: any, actions: any): CommitDetailsProps => {
+  return { ...props, ...actions }
+}
+
+export default connect(mapStateToProps, actions, mergeProps)(CommitDetails)

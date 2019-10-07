@@ -506,6 +506,20 @@ $header-font-size: .9rem;
   .commit-details-header {
     padding: $sidebar-item-padding;
     border-bottom: $list-item-bottom-border;
+    
+    .details-flex {
+      display: flex;
+      justify-content: space-between;
+
+      .details-column {
+        color: #999999;
+        align-items: center;
+        display: flex;
+        justify-content: space-around;
+        min-width: 350px;
+        max-width: 350px;
+      }
+    }
   }
 
   .commit-details-sidebar {

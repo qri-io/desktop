@@ -53,6 +53,7 @@ export interface Structure {
   entries: number
   format: string
   length: number
+  errCount: number
 }
 
 export type Schema = JSONSchema7
