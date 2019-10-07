@@ -4,7 +4,6 @@ import { Action } from 'redux'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faClock } from '@fortawesome/free-regular-svg-icons'
 
-import Spinner from './chrome/Spinner'
 import ComponentList from '../components/ComponentList'
 import DatasetComponent from './DatasetComponent'
 import { CSSTransition } from 'react-transition-group'
@@ -22,26 +21,24 @@ interface CommitDetailsHeaderProps {
 const CommitDetailsHeader: React.FunctionComponent<CommitDetailsHeaderProps> = ({ structure, commit }) => {
   return (
     <div className='commit-details-header'>
-      {!structure || !commit
-        ? <Spinner />
-        : <div className='details-flex'>
-          <div className='text-column'>
-            <div className='text'>{commit.title}</div>
-            <div className='subtext'>
-              {/* <img className= 'user-image' src = {'https://avatars0.githubusercontent.com/u/1154390?s=60&v=4'} /> */}
-              <div className='time-message'>
-                <FontAwesomeIcon icon={faClock} size='sm'/>&nbsp;
-                {moment(commit.timestamp).format('MMMM Do YYYY, h:mm:ss a')}
-              </div>
+      {structure && commit && <div className='details-flex'>
+        <div className='text-column'>
+          <div className='text'>{commit.title}</div>
+          <div className='subtext'>
+            {/* <img className= 'user-image' src = {'https://avatars0.githubusercontent.com/u/1154390?s=60&v=4'} /> */}
+            <div className='time-message'>
+              <FontAwesomeIcon icon={faClock} size='sm'/>&nbsp;
+              {moment(commit.timestamp).format('MMMM Do YYYY, h:mm:ss a')}
             </div>
           </div>
-          <div className='details-column'>
-            <div className='detail'>{fileSize(structure.length)}</div>
-            <div className='detail'>{structure.format.toUpperCase()}</div>
-            <div className='detail'>{structure.entries.toLocaleString()} {structure.entries !== 1 ? 'entries' : 'entry'}</div>
-            <div className='detail'>{structure.errCount.toLocaleString()} {structure.errCount !== 1 ? 'errors' : 'error'}</div>
-          </div>
-        </div>}
+        </div>
+        <div className='details-column'>
+          <div className='detail'>{fileSize(structure.length)}</div>
+          <div className='detail'>{structure.format.toUpperCase()}</div>
+          <div className='detail'>{structure.entries.toLocaleString()} {structure.entries !== 1 ? 'entries' : 'entry'}</div>
+          <div className='detail'>{structure.errCount.toLocaleString()} {structure.errCount !== 1 ? 'errors' : 'error'}</div>
+        </div>
+      </div>}
     </div>
   )
 }
@@ -53,11 +50,11 @@ export interface CommitDetailsProps {
   commit: Commit
   selectedComponent: 'meta' | 'body' | 'schema' | ''
   sidebarWidth: number
+  commitDetails: ICommitDetails
   structure: Structure
   setSelectedListItem: (type: string, activeTab: string) => Action
   setSidebarWidth: (type: string, sidebarWidth: number) => Action
   fetchCommitDetail: () => Promise<ApiAction>
-  commitDetails: ICommitDetails
 }
 
 const CommitDetails: React.FunctionComponent<CommitDetailsProps> = ({
@@ -112,7 +109,7 @@ const CommitDetails: React.FunctionComponent<CommitDetailsProps> = ({
   }, [commitDetails.isLoading])
 
   const { status } = commitDetails
-  console.log(structure)
+
   return (
     <div id='commit-details' className='dataset-content transition-group'>
       <CSSTransition

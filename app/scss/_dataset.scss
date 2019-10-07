@@ -506,6 +506,7 @@ $header-font-size: .9rem;
   .commit-details-header {
     padding: $sidebar-item-padding;
     border-bottom: $list-item-bottom-border;
+    height: 55px;
     
     .details-flex {
       display: flex;
@@ -527,6 +528,17 @@ $header-font-size: .9rem;
   }
 }
 
+
+////////////////////////////
+//       Structure        //
+////////////////////////////
+.input-checkbox {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  text-align: center;
+  padding: 0 0 $spacer $spacer;
+}
 
 ////////////////////////////
 //    Unlinked Dataset    //

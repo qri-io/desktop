@@ -48,12 +48,19 @@ export interface Commit {
   title: string
 }
 
+export interface formatConfig {
+  headerRow?: boolean
+  pretty?: boolean
+}
+
 export interface Structure {
   depth: number
   entries: number
   format: string
   length: number
   errCount: number
+  formatConfig: formatConfig
+  schema: Schema
 }
 
 export type Schema = JSONSchema7
