@@ -261,6 +261,7 @@ $header-font-size: .9rem;
           height: 100%;
           width: 100%;
           overflow-y: scroll;
+          position:relative;
         }
       }
 
@@ -391,6 +392,7 @@ $header-font-size: .9rem;
       width: 100%;
       background:$appBackground;
       flex: 1;
+      position: absolute;
     }
 
     .commit-nudge {
@@ -500,7 +502,7 @@ $header-font-size: .9rem;
     flex-grow: 1;
     height: 100%;
     width: 100%;
-    position:relative;
+    position: absolute;;
   }
 
   .commit-details-header {
