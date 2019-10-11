@@ -50,7 +50,7 @@ const DatasetComponent: React.FunctionComponent<DatasetComponentProps> = (props:
           unmountOnExit
           appear={true}
         >
-          <div id='transition-wrap'>
+          <div className='transition-wrap'>
             <ParseError fsiPath={fsiPath || ''} filename={componentStatus && componentStatus.filepath} component={component} />
           </div>
         </CSSTransition>
@@ -63,7 +63,7 @@ const DatasetComponent: React.FunctionComponent<DatasetComponentProps> = (props:
           unmountOnExit
           appear={true}
         >
-          <div id='transition-wrap'>
+          <div className='transition-wrap'>
             {
               history
                 ? <MetadataContainer />
@@ -72,7 +72,7 @@ const DatasetComponent: React.FunctionComponent<DatasetComponentProps> = (props:
           </div>
         </CSSTransition>
         <CSSTransition
-          in={component === 'body' && !hasParseError}
+          in={component === 'body' && !hasParseError && !isLoading}
           classNames='fade'
           component='div'
           timeout={300}
@@ -80,12 +80,12 @@ const DatasetComponent: React.FunctionComponent<DatasetComponentProps> = (props:
           unmountOnExit
           appear={true}
         >
-          <div id='transition-wrap'>
-            <BodyContainer history={history}/>
+          <div className='transition-wrap'>
+            <BodyContainer/>
           </div>
         </CSSTransition>
         <CSSTransition
-          in={component === 'schema' && !isLoading && !hasParseError}
+          in={component === 'structure' && !isLoading && !hasParseError}
           classNames='fade'
           component='div'
           timeout={300}
@@ -93,7 +93,7 @@ const DatasetComponent: React.FunctionComponent<DatasetComponentProps> = (props:
           unmountOnExit
           appear={true}
         >
-          <div id='transition-wrap'>
+          <div className='transition-wrap'>
             <StructureContainer history={history}/>
           </div>
         </CSSTransition>

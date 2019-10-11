@@ -100,7 +100,7 @@ const components = [
     icon: faArchive
   },
   {
-    name: 'schema',
+    name: 'structure',
     displayName: 'Structure',
     tooltip: 'the structure of the dataset',
     icon: faTh

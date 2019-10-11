@@ -11,7 +11,7 @@ const mapStateToProps = (state: Store) => {
   const { pageInfo, value } = dataset.components.body
 
   const { peername, name, commit: path } = selections
-  const { structure } = dataset
+  const structure = dataset.components.structure.value
 
   // get data for the currently selected component
   return {

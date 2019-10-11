@@ -251,7 +251,7 @@ describe('Body Reducer', () => {
         data: {
           dataset: {
             bodyPath: 'foo',
-            schema: {
+            structure: {
               id: 'bar'
             }
           }
@@ -284,14 +284,14 @@ describe('Body Reducer', () => {
       payload: {
         data: {
           dataset: {
-            schema: {
+            structure: {
               id: 'foo'
             }
           }
         }
       },
       expected: {
-        commitComponent: 'schema'
+        commitComponent: 'structure'
       }
     },
     {
@@ -301,7 +301,7 @@ describe('Body Reducer', () => {
         data: {
           dataset: {
             bodyPath: 'foo',
-            schema: {
+            structure: {
               id: 'bar'
             }
           }
@@ -334,14 +334,14 @@ describe('Body Reducer', () => {
       payload: {
         data: {
           dataset: {
-            schema: {
+            structure: {
               id: 'foo'
             }
           }
         }
       },
       expected: {
-        component: 'schema'
+        component: 'structure'
       }
     }
   ]

@@ -66,7 +66,7 @@ export interface UI {
   exportPath: string
 }
 
-export type SelectedComponent = 'meta' | 'body' | 'schema' | ''
+export type SelectedComponent = 'meta' | 'body' | 'structure' | ''
 
 // currently selected dataset, tab, dataset component, commit, etc
 export interface Selections {
@@ -131,7 +131,6 @@ export interface CommitDetails {
   name: string
   status: DatasetStatus
   isLoading: boolean
-  structure: Structure | null
   components: {
     body: {
       value: any[] | undefined
@@ -140,8 +139,8 @@ export interface CommitDetails {
     meta: {
       value: Meta
     }
-    schema: {
-      value: any
+    structure: {
+      value: Structure
     }
   }
 }

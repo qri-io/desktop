@@ -20,15 +20,15 @@ export interface BodyProps {
   history: boolean
   fetchBody: (page?: number, pageSize?: number) => Promise<ApiAction>
   fetchCommitBody: (page?: number, pageSize?: number) => Promise<ApiAction>
-  structure: Structure
 }
 
 function shouldDisplayTable (value: any[] | Object, structure: Structure) {
-  return value && structure && (structure.format === 'csv' || structure.format === 'xlsx' || structure.depth === 2)
+  return value && structure && (structure.format === 'csv' || structure.format === 'xlsx')
 }
 
 const extractColumnHeaders = (workingDataset: WorkingDataset): undefined | object => {
-  const schema = workingDataset.components.schema.value
+  const structure = workingDataset.components.structure.value
+  const schema = structure.schema
 
   if (!schema) {
     return undefined
@@ -45,7 +45,6 @@ const Body: React.FunctionComponent<BodyProps> = (props) => {
   const {
     value,
     pageInfo,
-    structure,
     workingDataset,
     history,
     fetchBody,
@@ -59,6 +58,8 @@ const Body: React.FunctionComponent<BodyProps> = (props) => {
   }
 
   const headers = extractColumnHeaders(workingDataset)
+
+  const structure = workingDataset.components.structure.value
 
   return (
     <div className='transition-group'>

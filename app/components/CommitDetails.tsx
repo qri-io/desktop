@@ -33,10 +33,10 @@ const CommitDetailsHeader: React.FunctionComponent<CommitDetailsHeaderProps> = (
           </div>
         </div>
         <div className='details-column'>
-          <div className='detail'>{fileSize(structure.length)}</div>
-          <div className='detail'>{structure.format.toUpperCase()}</div>
-          <div className='detail'>{structure.entries.toLocaleString()} {structure.entries !== 1 ? 'entries' : 'entry'}</div>
-          <div className='detail'>{structure.errCount.toLocaleString()} {structure.errCount !== 1 ? 'errors' : 'error'}</div>
+          {structure.length && <div className='detail'>{fileSize(structure.length)}</div>}
+          {structure.format && <div className='detail'>{structure.format.toUpperCase()}</div>}
+          {structure.entries && <div className='detail'>{structure.entries.toLocaleString()} {structure.entries !== 1 ? 'entries' : 'entry'}</div>}
+          {structure.errCount && <div className='detail'>{structure.errCount.toLocaleString()} {structure.errCount !== 1 ? 'errors' : 'error'}</div>}
         </div>
       </div>}
     </div>
@@ -48,7 +48,7 @@ export interface CommitDetailsProps {
   name: string
   selectedCommitPath: string
   commit: Commit
-  selectedComponent: 'meta' | 'body' | 'schema' | ''
+  selectedComponent: 'meta' | 'body' | 'structure' | ''
   sidebarWidth: number
   commitDetails: ICommitDetails
   structure: Structure

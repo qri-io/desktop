@@ -14,7 +14,6 @@ const initialState: CommitDetails = {
   name: '',
   status: {},
   isLoading: true,
-  structure: null,
   components: {
     body: {
       value: undefined,
@@ -28,7 +27,7 @@ const initialState: CommitDetails = {
     meta: {
       value: {}
     },
-    schema: {
+    structure: {
       value: {}
     }
   }
@@ -55,15 +54,14 @@ const commitDetailsReducer: Reducer = (state = initialState, action: AnyAction):
         path,
         peername,
         published,
-        structure: dataset.structure,
         isLoading: false,
         components: {
           body: initialState.components.body,
           meta: {
             value: dataset.meta
           },
-          schema: {
-            value: dataset.structure.schema
+          structure: {
+            value: dataset.structure
           }
         }
       }

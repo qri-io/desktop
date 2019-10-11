@@ -27,7 +27,7 @@ const mapStateToProps = (state: Store) => {
     selectedComponent,
     sidebarWidth: ui.commitSidebarWidth,
     commitDetails,
-    structure: commitDetails.structure
+    structure: commitDetails.components.structure.value
   }
 }
 
