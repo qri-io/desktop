@@ -1,20 +1,23 @@
 import { connect } from 'react-redux'
-import Structure from '../components/Structure'
+import Structure, { StructureProps } from '../components/Structure'
 import Store from '../models/store'
+import { fsiWriteAndFetch } from '../actions/api'
 
-interface StructureContainerProps {
-  history?: boolean
-}
-
-const mapStateToProps = (state: Store, ownProps: StructureContainerProps) => {
-  const { workingDataset, commitDetails } = state
+const mapStateToProps = (state: Store, ownProps: StructureProps) => {
+  const { workingDataset, commitDetails, selections } = state
 
   // get data for the currently selected component
-  const schema = ownProps.history ? commitDetails.components.schema.value : workingDataset.components.schema.value
-  const structure = ownProps.history ? commitDetails.structure : workingDataset.structure
-  return { schema, structure }
+  const structure = ownProps.history ? commitDetails.components.structure.value : workingDataset.components.structure.value
+  const schema = 'schema' in structure ? structure.schema : {}
+  return { schema, structure, peername: selections.peername, name: selections.name, history: selections.activeTab === 'history' }
 }
 
-const actions = {}
+const actions = {
+  write: fsiWriteAndFetch
+}
 
-export default connect(mapStateToProps, actions)(Structure)
+const mergeProps = (props: any, actions: any): StructureProps => {
+  return { ...props, ...actions }
+}
+
+export default connect(mapStateToProps, actions, mergeProps)(Structure)
