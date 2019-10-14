@@ -2,15 +2,13 @@ import * as React from 'react'
 import TwoDSchemaLayout from './TwoDSchemaLayout'
 import ReactJson from 'react-json-view'
 
-import SpinnerWithIcon from './chrome/SpinnerWithIcon'
-
 interface SchemaProps {
   schema: any
 }
 
 const Schema: React.FunctionComponent<SchemaProps> = ({ schema }) => {
   if (!schema) {
-    return <SpinnerWithIcon loading={true} />
+    return <div className='margin'>No schema specified</div>
   }
 
   // render TwoDSchemaLayout only if schema meets specific criteria

@@ -26,11 +26,19 @@ interface InputCheckboxProps {
 }
 
 const InputCheckbox: React.FunctionComponent<InputCheckboxProps> = ({ key, history, value, label, tooltip, onChange, name }) => {
+  const [checked, setChecked] = React.useState(value)
+
+  React.useEffect(() => {
+    if (checked !== value) setChecked(value)
+  }
+  , [value])
   return (
     <div className='input-checkbox' key={key}>
-      <div><input type="checkbox" id="headerRow" name={name} onClick={() => {
-        onChange(name, !value)
-      }} disabled={history} defaultChecked={value} />&nbsp;&nbsp;</div>
+      <div><input type="checkbox" id="headerRow" name={name} onChange={() => {
+        const val = checked
+        setChecked(!val)
+        onChange(name, !val)
+      }} disabled={history} checked={checked} />&nbsp;&nbsp;</div>
       <div>{label}&nbsp;</div>
       <span
         data-tip={tooltip}
@@ -46,6 +54,21 @@ interface FormatConfigOption {
   label: string
   tooltip: string
   type: string
+}
+
+const csvFormatConfig: {[key: string]: string | boolean} = {
+  headerRow: false,
+  variadicFields: false,
+  lazyQuotes: false
+  // separator: ","
+}
+
+const jsonFormatConfig: {[key: string]: string | boolean} = {
+  pretty: false
+}
+
+const xlsxFormatConfig: {[key: string]: string | boolean} = {
+  sheetName: ''
 }
 
 const formatConfigOptions: { [key: string]: FormatConfigOption } = {
@@ -72,15 +95,15 @@ const formatConfigOptions: { [key: string]: FormatConfigOption } = {
   //   tooltip: '',
   //   type: 'rune'
   // },
-  sheetName: {
-    label: 'Main sheet name:',
-    tooltip: 'The name of the sheet that has the content that you want to be the focus of this dataset',
-    type: 'string'
-  },
   pretty: {
     label: 'Pretty-print JSON',
     tooltip: 'Check this box if you want your JSON to display formatted.',
     type: 'boolean'
+  },
+  sheetName: {
+    label: 'Main sheet name:',
+    tooltip: 'The name of the sheet that has the content that you want to be the focus of this dataset',
+    type: 'string'
   }
 }
 
@@ -89,7 +112,7 @@ const Structure: React.FunctionComponent<StructureProps> = ({ peername, name, st
   // only show the config options that were set to true
   const renderInputCheckbox = (key: number, history: boolean, value: boolean, label: string, tooltip: string, onChange: (name: string, value: any) => void, name: string) => {
     if (history) {
-      if (value) return <div key={key} className='config-item'>{label}</div>
+      if (value) return <div key={key} className='config-item margin-bottom'>{label}</div>
       return undefined
     }
     return (
@@ -105,7 +128,7 @@ const Structure: React.FunctionComponent<StructureProps> = ({ peername, name, st
   }
 
   const renderTextInput = (key: number, history: boolean, value: string, label: string, tooltip: string, onChange: (name: string, value: any) => void, name: string) => {
-    if (history) return <div className='config-item'>{label}</div>
+    if (history) return <div className='config-item margin-bottom'>{label}: {value}</div>
     return (
       <TextInput
         key={key}
@@ -132,16 +155,41 @@ const Structure: React.FunctionComponent<StructureProps> = ({ peername, name, st
     })
   }
 
-  if (!structure) return <div></div>
-  const { schema, formatConfig } = structure
+  var formatConfig: { [key: string]: string | boolean }
+  const format = structure && structure.format
+  if (history) formatConfig = structure.formatConfig
+  else {
+    switch (format) {
+      case 'csv':
+        formatConfig = {
+          ...csvFormatConfig,
+          ...structure.formatConfig
+        }
+        break
+      case 'json':
+        formatConfig = {
+          ...jsonFormatConfig,
+          ...structure.formatConfig
+        }
+        break
+      case 'xlsx':
+        formatConfig = {
+          ...xlsxFormatConfig,
+          ...structure.formatConfig
+        }
+        break
+      default:
+        formatConfig = {}
+    }
+  }
   return (
     <div className='structure content'>
       <div>
         <h4 className='config-title'>
-          {structure.format ? structure.format.toUpperCase() + ' ' : ''}Configuration
+          {format ? format.toUpperCase() + ' ' : ''}Configuration
         </h4>
         <div>
-          { !(formatConfig && Object.keys(formatConfig).length !== 0) || (history && !Object.keys(formatConfig).some((key) => { !!formatConfig[key] })) // eslint-disable-line
+          { Object.keys(formatConfig).length === 0
             ? <div className='margin'>No configurations details</div>
             : Object.keys(formatConfigOptions).map((option: string, i) => {
               if (option in formatConfig) {
@@ -150,7 +198,7 @@ const Structure: React.FunctionComponent<StructureProps> = ({ peername, name, st
                     return renderInputCheckbox(
                       i,
                       history,
-                      formatConfig[option],
+                      !!formatConfig[option],
                       formatConfigOptions[option].label,
                       formatConfigOptions[option].tooltip,
                       handleWrite,
@@ -160,7 +208,7 @@ const Structure: React.FunctionComponent<StructureProps> = ({ peername, name, st
                     return renderTextInput(
                       i,
                       history,
-                      formatConfig[option],
+                      formatConfig[option].toString(),
                       formatConfigOptions[option].label,
                       formatConfigOptions[option].tooltip,
                       handleWrite,
@@ -185,7 +233,7 @@ const Structure: React.FunctionComponent<StructureProps> = ({ peername, name, st
             </span>
           </ExternalLink>
         </h4>
-        <Schema schema={schema} />
+        <Schema schema={structure ? structure.schema : undefined} />
       </div>
     </div>
   )

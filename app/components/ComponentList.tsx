@@ -122,6 +122,10 @@ const ComponentList: React.FunctionComponent<ComponentListProps> = (props: Compo
     fsiPath
   } = props
 
+  const isEnabled = (name: string): boolean => {
+    return (datasetSelected && selectionType === 'component' && (name === 'meta' || name === 'structure'))
+  }
+
   return (
     <div>
       <div className={classNames(
@@ -200,10 +204,10 @@ const ComponentList: React.FunctionComponent<ComponentListProps> = (props: Compo
                 icon={icon}
                 selectionType={selectionType}
                 // TODO (ramfox): we should create a 'isDisabled' function and add these specifications & test
-                disabled={!datasetSelected || name !== 'meta' || (name === 'meta' && selectionType !== 'component')}
+                disabled={!isEnabled(name)}
                 tooltip={tooltip}
                 // ditto, this should relate to the above
-                onClick={(name === 'meta' && datasetSelected && selectionType === 'component') ? onComponentClick : undefined}
+                onClick={isEnabled(name) ? onComponentClick : undefined}
               />
             )
           }
