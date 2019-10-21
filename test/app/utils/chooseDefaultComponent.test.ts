@@ -5,7 +5,7 @@ describe('chooseDefaultComponent', () => {
   const cases = [
     {
       describe: 'full dataset (has meta, body, and schema)',
-      dataset: {meta: {title: 'test'}, schema: {$id:'test'}, body: {foo: 'bar'}, structure: {foo: 'bar'}, commit: {foo: 'bar'}},
+      dataset: {meta: {title: 'test'}, body: {foo: 'bar'}, structure: {foo: 'bar'}, commit: {foo: 'bar'}},
       component: 'meta', 
     },
     {
@@ -19,14 +19,14 @@ describe('chooseDefaultComponent', () => {
       component: 'body', 
     },
     {
-      describe: 'dataset with schema',
+      describe: 'dataset with schema (should not return schema, "schema" is refactored to "structure")',
       dataset: {schema: {$id:'test'}},
-      component: 'schema', 
+      component: '', 
     },
     {
       describe: 'dataset with structure',
       dataset: {structure: {$id:'test'}},
-      component: '', 
+      component: 'structure', 
     },
     {
       describe: 'dataset is empty object',

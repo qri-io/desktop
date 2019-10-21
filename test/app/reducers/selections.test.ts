@@ -32,7 +32,6 @@ describe('Body Reducer', () => {
     name: '',
     activeTab: 'status',
     component: '',
-    datasetPath: '',
     commit: '',
     commitComponent: ''
   }
