@@ -1,5 +1,5 @@
-import { Dataset, Commit } from '../models/dataset'
-import { DatasetSummary, ComponentStatus, ComponentState } from '../models/store'
+import { Dataset } from '../models/dataset'
+import { DatasetSummary, ComponentStatus, ComponentState, HistoryItem } from '../models/store'
 
 export function mapDataset (data: Record<string, string>): Dataset {
   return data
@@ -35,15 +35,14 @@ export function mapStatus (data: Array<Record<string, string>>): ComponentStatus
   })
 }
 
-export function mapHistory (data: any[]): Commit[] {
-  return data.map((ref): Commit => {
-    const { author, message, timestamp, title } = ref.dataset.commit
+export function mapHistory (data: any[]): HistoryItem[] {
+  return data.map((historyItem): HistoryItem => {
+    const { username, path } = historyItem.ref
     return {
-      author,
-      message,
-      timestamp,
-      title,
-      path: ref.path
+      author: username,
+      timestamp: historyItem.timestamp,
+      title: historyItem.commitTitle,
+      path: path
     }
   })
 }

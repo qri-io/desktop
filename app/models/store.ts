@@ -1,5 +1,5 @@
 import { RouterState } from 'react-router-redux'
-import { Commit, Meta, Structure } from './dataset'
+import { Meta, Structure } from './dataset'
 import { Session } from './session'
 
 enum ApiConnection {
@@ -145,13 +145,22 @@ export interface CommitDetails {
   }
 }
 
+export interface HistoryItem {
+  author: string
+  // profileID: string
+  name: string
+  path: string
+  timestamp: Date
+  title: string
+}
+
 export interface WorkingDataset extends CommitDetails {
   fsiPath: string
   hasHistory: boolean
   published: boolean
   history: {
     pageInfo: PageInfo
-    value: Commit[]
+    value: HistoryItem[]
   }
 }
 
