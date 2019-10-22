@@ -15,9 +15,13 @@ import ButtonInput from '../form/ButtonInput'
 import { validateDatasetReference } from '../../utils/formValidation'
 
 interface AddDatasetProps {
+  // func to call when we cancel or click away from the modal
   onDismissed: () => void
+  // func to call when we hit submit, this adds the dataset from the network
   onSubmit: (peername: string, name: string, path: string) => Promise<ApiAction>
+  // default path that we store. Is the last dir path that the user has given us when trying to add a dataset fsi
   datasetDirPath: string
+  // sets the default path, fired off when the user chooses a path
   setDatasetDirPath: (path: string) => Action
 }
 
@@ -25,12 +29,12 @@ const AddDataset: React.FunctionComponent<AddDatasetProps> = (props) => {
   const {
     onDismissed,
     onSubmit,
-    datasetDirPath: persistedDatasetPath,
+    datasetDirPath: persistedDatasetDirPath,
     setDatasetDirPath: saveDatasetDirPath
   } = props
 
   const [datasetReference, setDatasetReference] = React.useState('')
-  const [datasetPath, setDatasetPath] = React.useState(persistedDatasetPath)
+  const [datasetDirPath, setDatasetDirPath] = React.useState(persistedDatasetDirPath)
 
   const [dismissable, setDismissable] = React.useState(true)
   const [buttonDisabled, setButtonDisabled] = React.useState(true)
@@ -38,23 +42,23 @@ const AddDataset: React.FunctionComponent<AddDatasetProps> = (props) => {
   const [datasetReferenceError, setDatasetReferenceError] = React.useState('')
 
   // should come from props/actions that has us check if the directory already contains a qri dataset
-  const isQriDataset = (datasetPath: string) => !datasetPath
+  const isQriDataset = (datasetDirPath: string) => !datasetDirPath
 
   React.useEffect(() => {
     const datasetReferenceValidationError = validateDatasetReference(datasetReference)
     datasetReferenceValidationError ? setDatasetReferenceError(datasetReferenceValidationError) : setDatasetReferenceError('')
 
     // only ready when both fields are not invalid
-    const ready = datasetPath !== '' && datasetReference !== '' && !datasetReferenceValidationError
+    const ready = datasetDirPath !== '' && datasetReference !== '' && !datasetReferenceValidationError
     setButtonDisabled(!ready)
-  }, [datasetReference, datasetPath])
+  }, [datasetReference, datasetDirPath])
 
   React.useEffect(() => {
-    // persist the datasetPath
-    if (datasetPath) {
-      saveDatasetDirPath(datasetPath)
+    // persist the datasetDirPath
+    if (datasetDirPath) {
+      saveDatasetDirPath(datasetDirPath)
     }
-  }, [datasetPath])
+  }, [datasetDirPath])
 
   // should come from props
   const [error, setError] = React.useState('')
@@ -75,7 +79,7 @@ const AddDataset: React.FunctionComponent<AddDatasetProps> = (props) => {
 
     if (!onSubmit) return
     const [peername, datasetName] = datasetReference.split('/')
-    const datasetFolderPath = path.join(datasetPath, datasetName)
+    const datasetFolderPath = path.join(datasetDirPath, datasetName)
 
     onSubmit(peername, datasetName, datasetFolderPath)
       .then(() => { onDismissed() })
@@ -107,7 +111,7 @@ const AddDataset: React.FunctionComponent<AddDatasetProps> = (props) => {
 
     const selectedPath = directory[0]
 
-    setDatasetPath(selectedPath)
+    setDatasetDirPath(selectedPath)
     const isDataset = isQriDataset(selectedPath)
     if (isDataset) {
       setAlreadyDatasetError('A dataset already exists in this directory.')
@@ -119,8 +123,8 @@ const AddDataset: React.FunctionComponent<AddDatasetProps> = (props) => {
 
   if (datasetReference && !datasetReferenceError) {
     const [, datasetName] = datasetReference.split('/')
-    if (datasetPath && datasetName) {
-      fullPath = path.join(datasetPath, datasetName)
+    if (datasetDirPath && datasetName) {
+      fullPath = path.join(datasetDirPath, datasetName)
     }
   }
 
@@ -156,7 +160,7 @@ const AddDataset: React.FunctionComponent<AddDatasetProps> = (props) => {
                 labelTooltip='Qri will create a new directory for<br/>this dataset&apos;s files at this location.'
                 tooltipFor='modal-tooltip'
                 type=''
-                value={datasetPath}
+                value={datasetDirPath}
                 onChange={handleChanges}
                 maxLength={600}
                 errorText={alreadyDatasetError}

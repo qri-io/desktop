@@ -4,13 +4,13 @@ import { Dataset } from '../models/dataset'
 // Order of preference:
 // 1) meta
 // 2) body
-// 3) schema
+// 3) structure
 // If none of these exist, or if the given dataset is empty, return an empty string
 export default function chooseDefaultComponent (dataset: Dataset): string {
   if (!dataset) return ''
   if (dataset.meta) return 'meta'
   if (dataset.body) return 'body'
   if (dataset.bodyPath) return 'body'
-  if (dataset.schema) return 'schema'
+  if (dataset.structure) return 'structure'
   return ''
 }

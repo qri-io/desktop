@@ -261,6 +261,7 @@ $header-font-size: .9rem;
           height: 100%;
           width: 100%;
           overflow-y: scroll;
+          position:relative;
         }
       }
 
@@ -391,6 +392,7 @@ $header-font-size: .9rem;
       width: 100%;
       background:$appBackground;
       flex: 1;
+      position: absolute;
     }
 
     .commit-nudge {
@@ -500,12 +502,27 @@ $header-font-size: .9rem;
     flex-grow: 1;
     height: 100%;
     width: 100%;
-    position:relative;
+    position: absolute;;
   }
 
   .commit-details-header {
     padding: $sidebar-item-padding;
     border-bottom: $list-item-bottom-border;
+    height: 55px;
+    
+    .details-flex {
+      display: flex;
+      justify-content: space-between;
+
+      .details-column {
+        color: #999999;
+        align-items: center;
+        display: flex;
+        justify-content: space-around;
+        min-width: 350px;
+        max-width: 350px;
+      }
+    }
   }
 
   .commit-details-sidebar {
@@ -513,6 +530,17 @@ $header-font-size: .9rem;
   }
 }
 
+
+////////////////////////////
+//       Structure        //
+////////////////////////////
+.input-checkbox {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  text-align: center;
+  padding: 0 0 $spacer $spacer;
+}
 
 ////////////////////////////
 //    Unlinked Dataset    //

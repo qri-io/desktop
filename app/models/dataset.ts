@@ -48,18 +48,37 @@ export interface Commit {
   title: string
 }
 
+export interface CSVFormatConfig {
+  headerRow: boolean
+  lazyQuotes: boolean
+  variadicFields: boolean
+  [key: string]: any
+}
+
+export interface JSONFormatConfig {
+  pretty: boolean
+  [key: string]: any
+}
+
+export interface XLSXFormatConfig {
+  sheetName: string
+  [key: string]: any
+}
+
 export interface Structure {
   depth: number
   entries: number
   format: string
   length: number
+  errCount: number
+  formatConfig: CSVFormatConfig | JSONFormatConfig | XLSXFormatConfig
+  schema: Schema
 }
 
 export type Schema = JSONSchema7
 
 export interface Dataset {
   meta?: Meta
-  schema?: Schema
   structure?: Structure
   body?: {
     [key: string]: any

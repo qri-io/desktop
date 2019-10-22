@@ -48,7 +48,6 @@ export interface DatasetProps {
   toggleDatasetList: () => Action
   setActiveTab: (activeTab: string) => Action
   setSidebarWidth: (type: string, sidebarWidth: number) => Action
-  setSelectedListItem: (type: string, activeTab: string) => Action
   fetchWorkingDatasetDetails: () => Promise<ApiAction>
   fetchWorkingStatus: () => Promise<ApiAction>
   fetchBody: (page: number) => Promise<ApiAction>
@@ -168,7 +167,7 @@ export default class Dataset extends React.Component<DatasetProps> {
 
       // reset components
       if (componentsToReset.includes('body')) fetchBody(-1)
-      if (componentsToReset.includes('schema') || componentsToReset.includes('meta')) fetchWorkingDataset()
+      if (componentsToReset.includes('structure') || componentsToReset.includes('meta')) fetchWorkingDataset()
     }
 
     // this "wires up" all of the tooltips, must be called on update, as tooltips
@@ -191,7 +190,7 @@ export default class Dataset extends React.Component<DatasetProps> {
 
   render () {
     // unpack all the things
-    const { ui, selections, workingDataset, setModal, session, setSelectedListItem, hasDatasets } = this.props
+    const { ui, selections, workingDataset, setModal, session, hasDatasets } = this.props
     const { peername: username, photo: userphoto } = session
     const { showDatasetList, datasetSidebarWidth } = ui
     const {
@@ -366,7 +365,7 @@ export default class Dataset extends React.Component<DatasetProps> {
                 mountOnEnter
                 unmountOnExit
               >
-                <CommitDetailsContainer setSelectedListItem={setSelectedListItem}/>
+                <CommitDetailsContainer />
               </CSSTransition>
             </div>
           </div>

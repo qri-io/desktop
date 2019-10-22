@@ -20,7 +20,6 @@ const initialState: WorkingDataset = {
   fsiPath: '',
   published: true,
   hasHistory: true,
-  structure: null,
   components: {
     body: {
       value: [],
@@ -29,7 +28,7 @@ const initialState: WorkingDataset = {
     meta: {
       value: {}
     },
-    schema: {
+    structure: {
       value: {}
     }
   },
@@ -88,8 +87,8 @@ const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction
           meta: {
             value: dataset && dataset.meta ? dataset.meta : {}
           },
-          schema: {
-            value: dataset && dataset.structure && dataset.structure.schema ? dataset.structure.schema : {}
+          structure: {
+            value: dataset && dataset.structure ? dataset.structure : {}
           }
         }
       }
@@ -210,8 +209,8 @@ const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction
           meta: {
             value: newDataset.meta || {}
           },
-          schema: {
-            value: newDataset.structure.schema
+          structure: {
+            value: newDataset.structure || {}
           }
         }
       }
@@ -225,8 +224,8 @@ const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction
             ...state.components.meta,
             error: action.payload.err
           },
-          schema: {
-            ...state.components.schema,
+          structure: {
+            ...state.components.structure,
             error: action.payload.err
           }
         }

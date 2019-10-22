@@ -58,7 +58,7 @@ export function fetchWorkingDatasetDetails (): ApiActionThunk {
       response = await fetchWorkingDataset(false)(dispatch, getState)
     }
     response = await whenOk(fetchWorkingStatus())(response)
-    response = await whenOk(fetchBody())(response)
+    response = await whenOk(fetchBody(-1))(response)
     response = await whenOk(fetchWorkingHistory(-1))(response)
 
     return response
@@ -659,7 +659,7 @@ export function fsiWriteAndFetch (peername: string, name: string, dataset: any):
 
     response = await fsiWrite(peername, name, dataset)(dispatch, getState)
     // reset pagination
-    response = await whenOk(fetchWorkingDataset())(response)
+    response = await whenOk(fetchWorkingDatasetDetails())(response)
     return response
   }
 }

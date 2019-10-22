@@ -217,7 +217,7 @@ const CreateDataset: React.FunctionComponent<CreateDatasetProps> = (props) => {
           <span>Qri will create the directory {fullPath} and import your data file</span>
         )}
       </p>
-      <Error text={error} />
+      <Error id={'create-modal-error'} text={error} />
       <Buttons
         cancelText='cancel'
         onCancel={onDismissed}

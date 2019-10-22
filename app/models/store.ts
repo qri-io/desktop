@@ -1,5 +1,5 @@
 import { RouterState } from 'react-router-redux'
-import { Commit, Meta, Structure } from './dataset'
+import { Meta, Structure } from './dataset'
 import { Session } from './session'
 
 enum ApiConnection {
@@ -66,7 +66,7 @@ export interface UI {
   exportPath: string
 }
 
-export type SelectedComponent = 'meta' | 'body' | 'schema' | ''
+export type SelectedComponent = 'meta' | 'body' | 'structure' | ''
 
 // currently selected dataset, tab, dataset component, commit, etc
 export interface Selections {
@@ -131,7 +131,6 @@ export interface CommitDetails {
   name: string
   status: DatasetStatus
   isLoading: boolean
-  structure: Structure | null
   components: {
     body: {
       value: any[] | undefined
@@ -140,10 +139,19 @@ export interface CommitDetails {
     meta: {
       value: Meta
     }
-    schema: {
-      value: any
+    structure: {
+      value: Structure
     }
   }
+}
+
+export interface HistoryItem {
+  author: string
+  // profileID: string
+  name: string
+  path: string
+  timestamp: Date
+  title: string
 }
 
 export interface WorkingDataset extends CommitDetails {
@@ -152,7 +160,7 @@ export interface WorkingDataset extends CommitDetails {
   published: boolean
   history: {
     pageInfo: PageInfo
-    value: Commit[]
+    value: HistoryItem[]
   }
 }
 

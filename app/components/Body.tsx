@@ -7,7 +7,6 @@ import SpinnerWithIcon from './chrome/SpinnerWithIcon'
 import HandsonTable from './HandsonTable'
 import { ApiAction } from '../store/api'
 
-import { Structure } from '../models/dataset'
 import { PageInfo, WorkingDataset } from '../models/store'
 
 export interface BodyProps {
@@ -18,17 +17,18 @@ export interface BodyProps {
   value: any[]
   pageInfo: PageInfo
   history: boolean
+  format: string
   fetchBody: (page?: number, pageSize?: number) => Promise<ApiAction>
   fetchCommitBody: (page?: number, pageSize?: number) => Promise<ApiAction>
-  structure: Structure
 }
 
-function shouldDisplayTable (value: any[] | Object, structure: Structure) {
-  return value && structure && (structure.format === 'csv' || structure.format === 'xlsx' || structure.depth === 2)
+function shouldDisplayTable (value: any[] | Object, format: string) {
+  return value && (format === 'csv' || format === 'xlsx')
 }
 
 const extractColumnHeaders = (workingDataset: WorkingDataset): undefined | object => {
-  const schema = workingDataset.components.schema.value
+  const structure = workingDataset.components.structure.value
+  const schema = structure.schema
 
   if (!schema) {
     return undefined
@@ -45,10 +45,10 @@ const Body: React.FunctionComponent<BodyProps> = (props) => {
   const {
     value,
     pageInfo,
-    structure,
     workingDataset,
     history,
     fetchBody,
+    format,
     fetchCommitBody
   } = props
   const isLoadingFirstPage = (pageInfo.page === 1 && pageInfo.isFetching)
@@ -68,7 +68,7 @@ const Body: React.FunctionComponent<BodyProps> = (props) => {
         classNames='fade'
       >
         <div id='transition-wrap'>
-          {shouldDisplayTable(value, structure)
+          {shouldDisplayTable(value, format)
             ? <HandsonTable
               headers={headers}
               body={value}
