@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { Structure as IStructure } from '../models/dataset'
-import { formatConfigOptions } from './structure'
+import { formatConfigOptions } from './Structure'
 
 export interface FormatConfigHistoryProps {
   structure: IStructure
