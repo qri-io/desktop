@@ -1,6 +1,6 @@
 import * as React from 'react'
 import classNames from 'classnames'
-import ModalHeader from './header'
+import ModalHeader from './Header'
 import ReactTooltip from 'react-tooltip'
 
 /**
