@@ -5,7 +5,6 @@ import { apiActionTypes } from '../utils/actionType'
 import chooseDefaultComponent from '../utils/chooseDefaultComponent'
 
 import {
-  HISTORY_REQ,
   HISTORY_SUCC
 } from '../reducers/workingDataset'
 
@@ -94,21 +93,13 @@ export default (state = initialState, action: AnyAction) => {
 
       localStore().setItem('peername', peername)
       localStore().setItem('name', name)
+      localStore().setItem('commit', '')
 
       return Object.assign({}, state, {
         peername,
-        name
+        name,
+        commit: ''
       })
-
-    case HISTORY_REQ:
-      if (action.pageInfo.page === 1) {
-        localStore().setItem('commit', '')
-        return {
-          ...state,
-          commit: ''
-        }
-      }
-      return state
 
     case HISTORY_SUCC:
       if (state.commit === '') {

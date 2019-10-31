@@ -79,7 +79,7 @@ const SaveForm: React.FunctionComponent<SaveFormProps> = (props: SaveFormProps) 
       <div className='submit'>
         {
           isLoading
-            ? <button className='spinner btn btn-primary'><FontAwesomeIcon icon={faSync} /> Saving...</button>
+            ? <button className='sync-spinner btn btn-primary'><FontAwesomeIcon icon={faSync} /> Saving...</button>
             : <button id='commit_submit' className={classNames('btn btn-primary', { 'disabled': !isValid })} type='submit'>Submit</button>
         }
       </div>

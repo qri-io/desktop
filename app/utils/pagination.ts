@@ -4,7 +4,7 @@ import { getActionType } from '../utils/actionType'
 
 export const initialPageInfo: PageInfo = {
   isFetching: true,
-  page: 0,
+  page: -1,
   fetchedAll: false,
   error: '',
   pageSize: 0
@@ -55,11 +55,13 @@ export function actionWithPagination (page: number, prevPageInfo: PageInfo): Act
   // if page === -1
   // then we are invalidating the pagination
   if (page === -1) return { page: 1, doNotFetch: false }
-  //
-  // and we have already fetched this page,
-  // or we've already fetched all the entries
+
+  // bail early if page is 0 (user scrolled up to top of body)
+  if (page === 0) return { page: 1, doNotFetch: true }
+
+  // we've already fetched all the entries
   // bail early!
-  if (page <= prevPageInfo.page || prevPageInfo.fetchedAll) {
+  if (prevPageInfo.fetchedAll && (page > prevPageInfo.page)) {
     return { page, doNotFetch: true }
   }
   return { page, doNotFetch: false }
