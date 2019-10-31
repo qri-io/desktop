@@ -6,6 +6,7 @@ import MetadataEditorContainer from '../containers/MetadataEditorContainer'
 import BodyContainer from '../containers/BodyContainer'
 import StructureContainer from '../containers/StructureContainer'
 import ParseError from './ParseError'
+import ReadmeContainer from '../containers/ReadmeContainer'
 import { CSSTransition } from 'react-transition-group'
 import SpinnerWithIcon from './chrome/SpinnerWithIcon'
 
@@ -52,6 +53,19 @@ const DatasetComponent: React.FunctionComponent<DatasetComponentProps> = (props:
         >
           <div className='transition-wrap'>
             <ParseError fsiPath={fsiPath || ''} filename={componentStatus && componentStatus.filepath} component={component} />
+          </div>
+        </CSSTransition>
+        <CSSTransition
+          in={(component === 'readme') && !isLoading && !hasParseError}
+          classNames='fade'
+          component='div'
+          timeout={300}
+          mountOnEnter
+          unmountOnExit
+          appear={true}
+        >
+          <div className='transition-wrap'>
+            <ReadmeContainer />
           </div>
         </CSSTransition>
         <CSSTransition

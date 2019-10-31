@@ -15,6 +15,9 @@ const initialState: CommitDetails = {
   status: {},
   isLoading: true,
   components: {
+    readme: {
+      value: ''
+    },
     body: {
       value: [],
       pageInfo: initialPageInfo
@@ -51,6 +54,9 @@ const commitDetailsReducer: Reducer = (state = initialState, action: AnyAction):
         published,
         isLoading: false,
         components: {
+          readme: {
+            value: dataset && dataset.readme ? atob(dataset.readme.scriptBytes) : ''
+          },
           body: initialState.components.body,
           meta: {
             value: dataset.meta
@@ -60,6 +66,7 @@ const commitDetailsReducer: Reducer = (state = initialState, action: AnyAction):
           }
         }
       }
+
     case COMMITDATASET_FAIL:
       return {
         ...initialState,

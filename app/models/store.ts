@@ -66,7 +66,7 @@ export interface UI {
   exportPath: string
 }
 
-export type SelectedComponent = 'meta' | 'body' | 'structure' | ''
+export type SelectedComponent = 'readme' | 'meta' | 'body' | 'structure' | ''
 
 // currently selected dataset, tab, dataset component, commit, etc
 export interface Selections {
@@ -132,6 +132,10 @@ export interface CommitDetails {
   status: DatasetStatus
   isLoading: boolean
   components: {
+    readme: {
+      value: string | undefined
+      preview: string | undefined
+    }
     body: {
       value: any[] | undefined
       pageInfo: PageInfo

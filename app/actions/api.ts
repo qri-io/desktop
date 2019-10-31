@@ -663,3 +663,21 @@ export function fsiWriteAndFetch (peername: string, name: string, dataset: any):
     return response
   }
 }
+
+export function fetchReadmePreview (peername: string, name: string): ApiActionThunk {
+  return async (dispatch) => {
+    const action = {
+      type: 'render',
+      [CALL_API]: {
+        endpoint: 'render',
+        method: 'GET',
+        query: { fsi: true },
+        segments: {
+          peername,
+          name
+        }
+      }
+    }
+    return dispatch(action)
+  }
+}

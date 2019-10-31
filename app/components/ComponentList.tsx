@@ -7,6 +7,7 @@ import ContextMenuArea from 'react-electron-contextmenu'
 import { ApiActionThunk } from '../store/api'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTags, faArchive, faTh, IconDefinition, faExclamation } from '@fortawesome/free-solid-svg-icons'
+import { faReadme } from '@fortawesome/free-brands-svg-icons'
 
 import { DatasetStatus, ComponentType } from '../models/store'
 
@@ -88,6 +89,12 @@ interface ComponentListProps {
 
 const components = [
   {
+    name: 'readme',
+    displayName: 'Readme',
+    tooltip: 'a markdown file to familiarize people with the dataset',
+    icon: faReadme
+  },
+  {
     name: 'meta',
     displayName: 'Meta',
     tooltip: 'the dataset\'s title, description, tags, etc',
@@ -123,7 +130,7 @@ const ComponentList: React.FunctionComponent<ComponentListProps> = (props: Compo
   } = props
 
   const isEnabled = (name: string): boolean => {
-    return (datasetSelected && selectionType === 'component' && (name === 'meta' || name === 'structure'))
+    return (datasetSelected && selectionType === 'component' && (name === 'meta' || name === 'structure' || name === 'readme'))
   }
 
   return (

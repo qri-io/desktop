@@ -21,6 +21,9 @@ const initialState: WorkingDataset = {
   published: true,
   hasHistory: true,
   components: {
+    readme: {
+      value: ''
+    },
     body: {
       value: [],
       pageInfo: initialPageInfo
@@ -83,6 +86,9 @@ const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction
         structure: dataset && dataset.structure ? dataset.structure : {},
         isLoading: false,
         components: {
+          readme: {
+            value: dataset && dataset.readme ? atob(dataset.readme.scriptBytes) : ''
+          },
           body: state.components.body,
           meta: {
             value: dataset && dataset.meta ? dataset.meta : {}

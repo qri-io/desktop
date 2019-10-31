@@ -76,7 +76,7 @@ const CommitDetails: React.FunctionComponent<CommitDetailsProps> = ({
   // version of the dataset.
   // for now, we will tell the user to run a command on the command line
   const [isLogError, setLogError] = React.useState(false)
-  const [loading, setLoading] = React.useState(false)
+  const [loading, setLoading] = React.useState(true)
   const isLoadingRef = React.useRef(commitDetails.isLoading)
 
   const isLoadingTimeout = setTimeout(() => {
