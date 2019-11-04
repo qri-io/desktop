@@ -29,7 +29,14 @@ const extractColumnHeaders = (workingDataset: WorkingDataset): undefined | objec
   const schema = structure.schema
 
   if (!schema) {
-    return undefined
+    // iterate over first row of body
+    const firstRow = workingDataset.components.body.value && workingDataset.components.body.value[0]
+    if (!firstRow) return undefined
+
+    // need to take a slice from index 1 because we have mutated the
+    // body to have each row[0] be a row number
+    // this row number does not get it's own header
+    return firstRow.slice(1).map((d: any, i: number) => `field_${i + 1}`)
   }
 
   if (schema && (!schema.items || (schema.items && !schema.items.items))) {
