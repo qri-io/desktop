@@ -162,7 +162,7 @@ const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction
         components: {
           ...state.components,
           body: {
-            value: action.pageInfo.page === 1 ? [] : state.components.body.value,
+            ...state.components.body,
             pageInfo: reducerWithPagination(action, state.components.body.pageInfo)
           }
         }
@@ -174,7 +174,7 @@ const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction
           ...state.components,
           body: {
             ...state.components.body,
-            value: bodyValue(state.components.body.value, action.payload.data),
+            value: bodyValue(state.components.body.value, action.payload.data, action.payload.request.pageInfo),
             pageInfo: reducerWithPagination(action, state.components.body.pageInfo)
           }
         }

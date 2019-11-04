@@ -16,7 +16,7 @@ import {
 import { getActionType } from '../utils/actionType'
 
 const pageSizeDefault = 50
-const bodyPageSizeDefault = 100
+export const bodyPageSizeDefault = 50
 
 const DEFAULT_SELECTED_COMPONENT = 'body'
 
@@ -171,7 +171,7 @@ export function fetchCommitDetail (): ApiActionThunk {
 
     response = await fetchCommitDataset()(dispatch, getState)
     response = await whenOk(fetchCommitStatus())(response)
-    response = await whenOk(fetchCommitBody())(response)
+    response = await whenOk(fetchCommitBody(-1))(response)
 
     return response
   }
@@ -342,7 +342,7 @@ export function fetchCommitBody (page: number = 1, pageSize: number = bodyPageSi
           name,
           path
         },
-        map: mapDataset
+        map: mapBody
       }
     }
     return dispatch(action)

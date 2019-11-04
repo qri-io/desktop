@@ -1,12 +1,10 @@
 import * as React from 'react'
-import { CSSTransition } from 'react-transition-group'
-import ReactJson from 'react-json-view'
 
-import Toast, { ToastTypes } from './chrome/Toast'
-import SpinnerWithIcon from './chrome/SpinnerWithIcon'
-import HandsonTable from './HandsonTable'
+import BodyTable from './BodyTable'
+import BodyJson from './BodyJson'
 import { ApiAction } from '../store/api'
 
+import Spinner from './chrome/Spinner'
 import { PageInfo, WorkingDataset } from '../models/store'
 
 export interface BodyProps {
@@ -31,7 +29,14 @@ const extractColumnHeaders = (workingDataset: WorkingDataset): undefined | objec
   const schema = structure.schema
 
   if (!schema) {
-    return undefined
+    // iterate over first row of body
+    const firstRow = workingDataset.components.body.value && workingDataset.components.body.value[0]
+    if (!firstRow) return undefined
+
+    // need to take a slice from index 1 because we have mutated the
+    // body to have each row[0] be a row number
+    // this row number does not get it's own header
+    return firstRow.slice(1).map((d: any, i: number) => `field_${i + 1}`)
   }
 
   if (schema && (!schema.items || (schema.items && !schema.items.items))) {
@@ -51,43 +56,39 @@ const Body: React.FunctionComponent<BodyProps> = (props) => {
     format,
     fetchCommitBody
   } = props
-  const isLoadingFirstPage = (pageInfo.page === 1 && pageInfo.isFetching)
 
-  const handleScrollToBottom = () => {
-    const onFetch = history ? fetchCommitBody : fetchBody
-    onFetch(pageInfo.page + 1, pageInfo.pageSize)
-  }
+  const onFetch = history ? fetchCommitBody : fetchBody
 
   const headers = extractColumnHeaders(workingDataset)
 
+  // if there's no value or format, don't show anything yet
+  const showSpinner = !(value && format)
+
   return (
     <div className='transition-group'>
-      <CSSTransition
-        in={!isLoadingFirstPage}
-        timeout={300}
-        classNames='fade'
-      >
-        <div id='transition-wrap'>
-          {shouldDisplayTable(value, format)
-            ? <HandsonTable
-              headers={headers}
-              body={value}
-              onScrollToBottom={handleScrollToBottom}
-            />
-            : <ReactJson
-              name={null}
-              src={value}
-              displayDataTypes={false}
-            />
-          }
-          <Toast
-            show={pageInfo.isFetching && pageInfo.page > 0}
-            type={ToastTypes.message}
-            text='Loading more rows...'
-          />
-        </div>
-      </CSSTransition>
-      <SpinnerWithIcon loading={isLoadingFirstPage}/>
+      <>
+        { showSpinner &&
+          <div className='spinner-container'>
+            <Spinner />
+          </div>
+        }
+        { !showSpinner &&
+          <>
+            {shouldDisplayTable(value, format)
+              ? <BodyTable
+                headers={headers}
+                body={value}
+                onFetch={onFetch}
+                pageInfo={pageInfo}
+              />
+              : <BodyJson
+                body={value}
+                pageInfo={pageInfo}
+              />
+            }
+          </>
+        }
+      </>
     </div>
   )
 }

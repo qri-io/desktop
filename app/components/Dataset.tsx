@@ -99,7 +99,7 @@ export const CurrentDataset: React.FunctionComponent<CurrentDatasetProps> = (pro
 export default class Dataset extends React.Component<DatasetProps> {
   componentDidMount () {
     // poll for status
-    setInterval(() => {
+    this.statusInterval = setInterval(() => {
       if (this.props.workingDataset.peername !== '' || this.props.workingDataset.name !== '') {
         this.props.fetchWorkingStatus()
       }
@@ -128,6 +128,10 @@ export default class Dataset extends React.Component<DatasetProps> {
     ipcRenderer.on('reload', () => {
       remote.getCurrentWindow().reload()
     })
+  }
+
+  componentWillUnmount () {
+    clearInterval(this.statusInterval)
   }
 
   componentDidUpdate (prevProps: DatasetProps) {
@@ -160,10 +164,13 @@ export default class Dataset extends React.Component<DatasetProps> {
 
       // if the number of files has changed,
       // make sure we fetchWorkingDataset
-      const difference = statusKeys
-        .filter((component: SelectedComponent) => !prevStatusKeys.includes(component))
-        .concat(prevStatusKeys.filter((component: SelectedComponent) => !statusKeys.includes(component)))
-      difference.forEach((component: SelectedComponent) => componentsToReset.push(component))
+      // ignore if prevStatusKeys is empty
+      if (prevStatusKeys.length > 0) {
+        const difference = statusKeys
+          .filter((component: SelectedComponent) => !prevStatusKeys.includes(component))
+          .concat(prevStatusKeys.filter((component: SelectedComponent) => !statusKeys.includes(component)))
+        difference.forEach((component: SelectedComponent) => componentsToReset.push(component))
+      }
 
       // reset components
       if (componentsToReset.includes('body')) fetchBody(-1)

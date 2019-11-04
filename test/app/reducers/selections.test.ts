@@ -365,19 +365,6 @@ describe('Body Reducer', () => {
 
   const historyCases = [
     {
-      describe: 'HISTORY_REQ & fetching first page',
-      state: fullState,
-      action: {
-        type: HISTORY_REQ,
-        pageInfo: {
-          page: 1
-        }
-      },
-      expectedChange: {
-        commit: ''
-      }
-    },
-    {
       describe: 'HISTORY_REQ & fetching not first page',
       state: fullState,
       action: {

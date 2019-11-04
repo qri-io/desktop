@@ -210,20 +210,6 @@ describe('reducerWithPagination', () => {
 describe('actionWithPagination', () => {
   const cases = [
     {
-      describe: 'do not fetch: already fetched this page',
-      page: 1,
-      prevPageInfo: {
-        isFetching: false,
-        pageSize: 10,
-        page: 2,
-        fetchedAll: false
-      },
-      expected: {
-        page: 1,
-        doNotFetch: true
-      }
-    },
-    {
       describe: 'do not fetch: already fetched all',
       page: 10,
       prevPageInfo: {
@@ -250,7 +236,7 @@ describe('actionWithPagination', () => {
         page: 1,
         doNotFetch: false
       }
-    }, 
+    },
     {
       describe: 'paginate as normal',
       page: 2,

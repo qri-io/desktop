@@ -18,6 +18,7 @@ module.exports = merge(baseConfig, {
   devtool: 'inline-source-map',
 
   entry: [
+    'babel-polyfill',
     'react-hot-loader/patch',
     `webpack-hot-middleware/client?path=http://localhost:${port}/__webpack_hmr`,
     './app/index'
