@@ -47,7 +47,9 @@
   "build": {
     "productName": "Qri Desktop",
     "appId": "io.github.qri-io.desktop",
+    "afterSign": "./notarize.js",
     "dmg": {
+      "sign": false,
       "contents": [
         {
           "x": 410,
@@ -76,6 +78,11 @@
     "directories": {
       "buildResources": "resources",
       "output": "release"
+    },
+    "mac": {
+      "hardenedRuntime": true,
+      "entitlements": "./entitlements.mac.inherit.plist",
+      "entitlementsInherit": "./entitlements.mac.inherit.plist"
     },
     "win": {
       "target": "nsis"
@@ -150,9 +157,10 @@
     "css-modules-require-hook": "4.2.3",
     "devtron": "1.4.0",
     "electron": "5.0.6",
-    "electron-builder": "21.0.15",
+    "electron-builder": "22.1.0",
     "electron-builder-http": "19.27.5",
     "electron-devtools-installer": "2.2.4",
+    "electron-notarize": "0.2.0",
     "enzyme": "3.10.0",
     "enzyme-adapter-react-16": "1.14.0",
     "eslint": "6.0.1",
