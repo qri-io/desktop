@@ -1,3 +1,45 @@
+# [0.2.0](https://github.com/qri-io/desktop/compare/v0.1.0...v0.2.0) (2019-11-06)
+
+Hello friends! This is our first major change to the Qri Desktop since release!
+
+This release comes packaged with the latest version of Qri (check out more about that in the [Qri v0.9.1 release docs](https://github.com/qri-io/qri/releases/tag/v0.9.1)).
+
+We've fixed some major bugs that our lovely betas have requested ([learn how to become an official beta here](https://qri.io/beta/)) and we've made improvements based on how we've seen the app get used.
+
+## Adding Structure to Schema
+We've moved the schema component into structure. This change lets you configure how formats like CSV are interpreted from within Qri Desktop!
+
+If you were having trouble with header rows showing up in Body before, you'll see new options in the structure component that let you fix the issue. We've also renamed the file where this is stored from schema.json to structure.json, and moved schema inside the structure.json file.
+
+## 🏎 Faster Data Views!
+We've updated our csv and json viewers to be snappier and better formatted! This should make working with large datasets much easier.
+
+
+You can now export your dataset (and get the underlying data and files) at any version by right-clicking the version, in the `History` and clicking `Export Version`
+
+The app is now notarized for macOS 10.15.1
+
+Thanks!
+
+### Bug Fixes
+
+* **App:** wait for apiConnection to come back true before bootstrapping the app ([e915bd7](https://github.com/qri-io/desktop/commit/e915bd7))
+* **body:** add default column names when no schema ([3e77c8b](https://github.com/qri-io/desktop/commit/3e77c8b))
+* **bodyValue:** adjust `bodyValue` func for case where we reset pagination ([7c91386](https://github.com/qri-io/desktop/commit/7c91386))
+* **css:** fix transition div styling ([6d83263](https://github.com/qri-io/desktop/commit/6d83263))
+* **DatasetSidebar:** history tab tooltip ([a73e18f](https://github.com/qri-io/desktop/commit/a73e18f))
+
+
+### Features
+
+* two-way table pagination, json preview ([f368def](https://github.com/qri-io/desktop/commit/f368def))
+* **export:** export a specific version of a dataset ([51544e1](https://github.com/qri-io/desktop/commit/51544e1))
+* **Export Modal:** `ExportVersion` modal component ([f38cad7](https://github.com/qri-io/desktop/commit/f38cad7))
+* **FormatConfig:** add `FormatConfigFSI` and `FormatConfigHistory` ([d633a9e](https://github.com/qri-io/desktop/commit/d633a9e))
+* **Structure:** wrap `Schema` in `Structure` ([cafe455](https://github.com/qri-io/desktop/commit/cafe455))
+
+
+
 # [0.1.0](https://github.com/qri-io/desktop/compare/v0.1.0-rc1...v0.1.0) (2019-09-26)
 
 

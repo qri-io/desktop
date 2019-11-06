@@ -1,2 +1,2 @@
-exports.desktopVersion = '0.1.1-dev'
-exports.backendVersion = '0.9.0'
+exports.desktopVersion = '0.2.0'
+exports.backendVersion = '0.9.1'
