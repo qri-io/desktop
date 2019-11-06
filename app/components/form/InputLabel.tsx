@@ -15,16 +15,16 @@ const InputLabel: React.FunctionComponent<InputLabelProps> = ({ label, tooltip, 
     <div className={classNames('input-label', { 'input-label-md': size === 'md' })}>
       {label}
       {tooltip && (
-            <>
+        <>
             &nbsp;
-            <span
-              data-tip={tooltip}
-              data-for={tooltipFor || null}
-              className={'text-input-tooltip'}
-            >
-              <FontAwesomeIcon icon={faInfoCircle} size={'sm'}/>
-            </span>
-            </>
+          <span
+            data-tip={tooltip}
+            data-for={tooltipFor || null}
+            className={'text-input-tooltip'}
+          >
+            <FontAwesomeIcon icon={faInfoCircle} size={'sm'}/>
+          </span>
+        </>
       )}
     </div>)
 }

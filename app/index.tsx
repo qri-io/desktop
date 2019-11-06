@@ -1,5 +1,6 @@
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
+import 'regenerator-runtime/runtime'
 import { Provider } from 'react-redux'
 import AppContainer from './containers/AppContainer'
 
