@@ -71,6 +71,7 @@ interface AppState {
   currentModal: Modal
   sessionID: string
   peername: string
+  showDragDrop: boolean
 }
 
 const noModalObject: HideModal = {
@@ -84,7 +85,8 @@ class App extends React.Component<AppProps, AppState> {
     this.state = {
       currentModal: noModalObject,
       sessionID: this.props.sessionID,
-      peername: this.props.peername
+      peername: this.props.peername,
+      showDragDrop: false
     }
 
     this.renderModal = this.renderModal.bind(this)
@@ -260,6 +262,41 @@ class App extends React.Component<AppProps, AppState> {
     )
   }
 
+  private renderDragDrop () {
+    return (
+      <div
+        onDragEnter={(event) => {
+          event.stopPropagation()
+          event.preventDefault()
+          this.setState({ showDragDrop: true })
+          console.log('enter')
+        }}
+        onDragOver={(event) => {
+          event.stopPropagation()
+          event.preventDefault()
+          this.setState({ showDragDrop: true })
+          console.log('over')
+        }}
+        onDragLeave={(event) => {
+          event.stopPropagation()
+          event.preventDefault()
+          this.setState({ showDragDrop: false })
+          console.log('leave')
+        }}
+        onDrop={(event) => {
+          this.setState({ showDragDrop: false })
+          console.log(event.dataTransfer.files[0].name)
+          event.preventDefault()
+          console.log('drop')
+        }}
+        className='drag-drop'
+        id='drag-drop'
+      >
+      DRAG AND DROP!
+      </div>
+    )
+  }
+
   render () {
     const {
       toast,
@@ -272,12 +309,17 @@ class App extends React.Component<AppProps, AppState> {
     }
 
     return (
-      <div style={{
-        height: '100%',
-        position: 'relative',
-        overflow: 'hidden'
-      }}>
+      <div className='drag'
+        onDragEnter={() => {
+          this.setState({ showDragDrop: true })
+        }}
+        style={{
+          height: '100%',
+          position: 'relative',
+          overflow: 'hidden'
+        }}>
         {this.renderAppError()}
+        {this.state.showDragDrop && this.renderDragDrop() }
         {this.renderModal()}
         <Router>
           <RoutesContainer />
