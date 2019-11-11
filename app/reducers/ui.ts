@@ -4,6 +4,7 @@ import { ipcRenderer } from 'electron'
 import store from '../utils/localStore'
 import { apiActionTypes } from '../utils/actionType'
 import { SAVE_SUCC, SAVE_FAIL } from '../reducers/mutations'
+import { ModalType } from '../models/modals'
 
 export const UI_TOGGLE_DATASET_LIST = 'UI_TOGGLE_DATASET_LIST'
 export const UI_SET_SIDEBAR_WIDTH = 'UI_SET_SIDEBAR_WIDTH'
@@ -49,7 +50,8 @@ const initialState = {
   blockMenus: true,
   hideCommitNudge: store().getItem(hideCommitNudge) === 'true',
   datasetDirPath: store().getItem('datasetDirPath') || '',
-  exportPath: store().getItem('exportPath') || ''
+  exportPath: store().getItem('exportPath') || '',
+  modal: { type: ModalType.NoModal }
 }
 
 // send an event to electron to block menus on first load

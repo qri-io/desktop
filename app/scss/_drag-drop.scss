@@ -1,13 +1,35 @@
 .drag-drop {
-  background: rgba($color: #000000, $alpha: .6);
+  background: rgba($color: #ffffff, $alpha: .8);
   position: absolute;
   width: 100%;
   height: 100%;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   top: 0;
   right: 0;
   left: 0;
   bottom: 0;
+
+  .inner {
+    width: 80%;
+    height: 70%;
+    border: .5rem dashed rgba($color: #000000, $alpha: .4);
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+    justify-content:center;
+    align-items: center;
+    
+    .icon {
+      color: rgba($color: #000000, $alpha: .4);
+    }
+  }
+  .footer {
+    position: relative;
+    bottom: -5%;
+    background: white;
+    color: rgba($color: #000000, $alpha: 1);
+  }
 }
