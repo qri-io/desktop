@@ -87,6 +87,7 @@ export default class BodyTable extends React.Component<BodyTableProps> {
 
   fetchNextPage (direction: 'up' | 'down') {
     const { body, pageInfo, onFetch } = this.props
+    if (direction === 'down' && pageInfo.fetchedAll === true) { return }
     const page = getNextPageNumber(direction, body, pageInfo.pageSize)
 
     onFetch(page, pageInfo.pageSize)
