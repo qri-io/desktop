@@ -38,13 +38,12 @@ const Readme: React.FunctionComponent<ReadmeProps> = (props) => {
     setInternalValue(value)
   }
 
-  const getPreview = (plainText: string, preview: any) => {
+  const getPreview = (plainText: string, preview: HTMLElement) => {
     fetch(`http://localhost:2503/render/${peername}/${name}?fsi=true`)
-      .then(async (d) => d.json())
-      .then(({ data: html }) => {
-        preview.innerHTML = html
+      .then(async (res) => res.text())
+      .then((render) => {
+        preview.innerHTML = render
       })
-
     return 'Loading...'
   }
 
