@@ -4,6 +4,10 @@ import { Action } from 'redux'
 import { CSSTransition } from 'react-transition-group'
 import { HashRouter as Router } from 'react-router-dom'
 import { ipcRenderer } from 'electron'
+import path from 'path'
+
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faFileMedical } from '@fortawesome/free-solid-svg-icons'
 
 // import components
 import Toast from './Toast'
@@ -21,8 +25,9 @@ import RoutesContainer from '../containers/RoutesContainer'
 // import models
 import { ApiAction } from '../store/api'
 import { Modal, ModalType, HideModal } from '../models/modals'
-import { Toast as IToast, Selections } from '../models/store'
+import { Toast as IToast, Selections, ToastType } from '../models/store'
 import { Dataset } from '../models/dataset'
+import { ToastTypes } from './chrome/Toast'
 
 export const QRI_CLOUD_ROOT = 'https://qri.cloud'
 
@@ -43,6 +48,7 @@ export interface AppProps {
   datasetDirPath: string
   qriCloudAuthenticated: boolean
   toast: IToast
+  openToast: (type: ToastType, message: string) => Action
   modal: Modal
   workingDataset: Dataset
   exportPath: string
@@ -71,6 +77,7 @@ interface AppState {
   currentModal: Modal
   sessionID: string
   peername: string
+  showDragDrop: boolean
 }
 
 const noModalObject: HideModal = {
@@ -84,7 +91,8 @@ class App extends React.Component<AppProps, AppState> {
     this.state = {
       currentModal: noModalObject,
       sessionID: this.props.sessionID,
-      peername: this.props.peername
+      peername: this.props.peername,
+      showDragDrop: false
     }
 
     this.renderModal = this.renderModal.bind(this)
@@ -169,6 +177,7 @@ class App extends React.Component<AppProps, AppState> {
             onSubmit={this.props.initDataset}
             onDismissed={async () => setModal(noModalObject)}
             setDatasetDirPath={this.props.setDatasetDirPath}
+            filePath={modal.bodyPath ? modal.bodyPath : ''}
           />
         )
         break
@@ -260,6 +269,52 @@ class App extends React.Component<AppProps, AppState> {
     )
   }
 
+  private renderDragDrop () {
+    return (
+      <div
+        onDragEnter={(event) => {
+          event.stopPropagation()
+          event.preventDefault()
+          this.setState({ showDragDrop: true })
+        }}
+        onDragOver={(event) => {
+          event.stopPropagation()
+          event.preventDefault()
+          this.setState({ showDragDrop: true })
+        }}
+        onDragLeave={(event) => {
+          event.stopPropagation()
+          event.preventDefault()
+          this.setState({ showDragDrop: false })
+        }}
+        onDrop={(event) => {
+          this.setState({ showDragDrop: false })
+          event.preventDefault()
+          const ext = path.extname(event.dataTransfer.files[0].path)
+          this.props.closeToast()
+          if (!(ext === '.csv' || ext === '.json')) {
+            // open toast for 1 second
+            this.props.openToast(ToastTypes.error, 'unsupported file format: only json and csv supported')
+            setTimeout(() => this.props.closeToast(), 2500)
+            return
+          }
+          this.props.setModal({
+            type: ModalType.CreateDataset,
+            bodyPath: event.dataTransfer.files[0].path
+          })
+        }}
+        className='drag-drop'
+        id='drag-drop'
+      >
+        <div className="inner">
+          <div className="spacer">Create a new dataset!</div>
+          <div className="icon"><FontAwesomeIcon size="5x" icon={faFileMedical} /></div>
+        </div>
+        <div className="footer">You can import csv and json files</div>
+      </div>
+    )
+  }
+
   render () {
     const {
       toast,
@@ -272,12 +327,19 @@ class App extends React.Component<AppProps, AppState> {
     }
 
     return (
-      <div style={{
-        height: '100%',
-        position: 'relative',
-        overflow: 'hidden'
-      }}>
+      <div className='drag'
+        onDragEnter={() => {
+          if (this.props.modal.type === ModalType.NoModal) {
+            this.setState({ showDragDrop: true })
+          }
+        }}
+        style={{
+          height: '100%',
+          position: 'relative',
+          overflow: 'hidden'
+        }}>
         {this.renderAppError()}
+        {this.state.showDragDrop && this.renderDragDrop() }
         {this.renderModal()}
         <Router>
           <RoutesContainer />

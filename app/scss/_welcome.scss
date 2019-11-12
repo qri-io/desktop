@@ -15,8 +15,9 @@
     bottom: 0;
   }
 
-#app-loading { z-index: 201 }
-#app-error { z-index: 200 }
+#app-loading { z-index: 250 }
+#app-error { z-index: 249 }
+#drag-drop { z-index: 200 }
 #welcome-page { z-index: 199 }
 #signup-page { z-index: 198 }
 #signin-page { z-index: 197 }

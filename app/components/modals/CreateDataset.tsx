@@ -18,6 +18,7 @@ interface CreateDatasetProps {
   onSubmit: (path: string, name: string, dir: string, mkdir: string) => Promise<ApiAction>
   datasetDirPath: string
   setDatasetDirPath: (path: string) => Action
+  filePath: string
 }
 
 const CreateDataset: React.FunctionComponent<CreateDatasetProps> = (props) => {
@@ -25,11 +26,21 @@ const CreateDataset: React.FunctionComponent<CreateDatasetProps> = (props) => {
     onDismissed,
     onSubmit,
     datasetDirPath: persistedDatasetDirPath,
-    setDatasetDirPath: saveDatasetDirPath
+    setDatasetDirPath: saveDatasetDirPath,
+    filePath: givenFilePath
   } = props
-  const [datasetName, setDatasetName] = React.useState('')
+
+  const validName = (name: string): string => {
+    // cast name to meet our specification
+    // make lower case, snakecase, and remove invalid characters
+    let coercedName = changeCase.lowerCase(name)
+    coercedName = changeCase.snakeCase(name)
+    return coercedName.replace(/^[^a-z0-9_]+$/g, '')
+  }
+
   const [datasetDirPath, setDatasetDirPath] = React.useState(persistedDatasetDirPath)
-  const [filePath, setFilePath] = React.useState('')
+  const [filePath, setFilePath] = React.useState(givenFilePath)
+  const [datasetName, setDatasetName] = React.useState(validName(path.basename(filePath, path.extname(filePath))))
 
   const [dismissable, setDismissable] = React.useState(true)
   const [buttonDisabled, setButtonDisabled] = React.useState(true)
@@ -78,16 +89,6 @@ const CreateDataset: React.FunctionComponent<CreateDatasetProps> = (props) => {
     }
   }
 
-  const tryToSetValidName = (name: string) => {
-    // cast name to meet our specification
-    // make lower case, snakecase, and remove invalid characters
-    let coercedName = changeCase.lowerCase(name)
-    coercedName = changeCase.snakeCase(name)
-    coercedName = coercedName.replace(/^[^a-z0-9_]+$/g, '')
-
-    setDatasetName(coercedName)
-  }
-
   const showFilePicker = () => {
     const window = remote.getCurrentWindow()
     const filePath: string[] | undefined = remote.dialog.showOpenDialog(window, {
@@ -102,7 +103,9 @@ const CreateDataset: React.FunctionComponent<CreateDatasetProps> = (props) => {
     const basename = path.basename(selectedPath)
     const name = basename.split('.')[0]
 
-    name && datasetName === '' && tryToSetValidName(name)
+    if (name && datasetName === '') {
+      setDatasetName(validName(name))
+    }
 
     setFilePath(selectedPath)
     const isDataset = isQriDataset(selectedPath)

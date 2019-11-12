@@ -16,6 +16,7 @@ import {
 import {
   acceptTOS,
   setQriCloudAuthenticated,
+  openToast,
   closeToast,
   setModal,
   setDatasetDirPath,
@@ -66,6 +67,7 @@ const AppContainer = connect(
     addDataset: addDatasetAndFetch,
     initDataset: initDatasetAndFetch,
     linkDataset: linkDatasetAndFetch,
+    openToast,
     closeToast,
     pingApi,
     setWorkingDataset,
