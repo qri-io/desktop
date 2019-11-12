@@ -5,17 +5,14 @@ import Store from '../models/store'
 import { fsiWriteAndFetch, fetchReadmePreview } from '../actions/api'
 
 const mapStateToProps = (state: Store) => {
-  const { workingDataset, commitDetails, selections } = state
-  const history = selections.activeTab === 'history'
-  const dataset = history ? commitDetails : workingDataset
-  const { value } = dataset.components.readme
+  const { workingDataset, selections } = state
+  const { value } = workingDataset.components.readme
 
-  const { peername, name, commit } = selections
+  const { peername, name } = selections
 
   // get data for the currently selected component
   return {
     peername,
-    path: commit,
     name,
     value,
     history,

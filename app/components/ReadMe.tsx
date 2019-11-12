@@ -9,7 +9,6 @@ const DEBOUNCE_TIMER = 1000
 
 export interface ReadmeProps {
   peername: string
-  path: string
   name: string
   value: string
   preview: string
