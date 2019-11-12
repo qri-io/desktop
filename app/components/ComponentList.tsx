@@ -9,7 +9,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTags, faArchive, faTh, IconDefinition, faExclamation } from '@fortawesome/free-solid-svg-icons'
 import { faReadme } from '@fortawesome/free-brands-svg-icons'
 
-import { DatasetStatus, ComponentType } from '../models/store'
+import { DatasetStatus, SelectedComponent, ComponentType } from '../models/store'
 
 interface StatusDotProps {
   status: string | undefined
@@ -82,7 +82,7 @@ interface ComponentListProps {
   status: DatasetStatus
   selectedComponent: string
   onComponentClick: (type: ComponentType, activeTab: string) => Action
-  discardChanges?: (component: ComponentType) => ApiActionThunk
+  discardChanges?: (component: SelectedComponent) => ApiActionThunk
   selectionType: ComponentType
   fsiPath?: string
 }
@@ -185,9 +185,10 @@ const ComponentList: React.FunctionComponent<ComponentListProps> = (props: Compo
 
               // add discard changes option of file is modified
               if (fileStatus !== 'unmodified') {
+                console.log(name)
                 menuItems.unshift({
                   label: 'Discard Changes...',
-                  click: () => { discardChanges(name as ComponentType) }
+                  click: () => { discardChanges(name as SelectedComponent) }
                 },
                 {
                   type: 'separator'
