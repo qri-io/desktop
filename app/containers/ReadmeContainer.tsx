@@ -20,7 +20,7 @@ const mapStateToProps = (state: Store) => {
   }
 }
 
-const mergeProps = (props: any, actions: any): ReadmeProps => {
+const mergeProps = (props: any, actions: any): ReadmeProps => { //eslint-disable-line
   return { ...props, ...actions }
 }
 
