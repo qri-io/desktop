@@ -598,6 +598,12 @@ export function discardChanges (component: SelectedComponent): ApiActionThunk {
 }
 
 export function removeDataset (peername: string, name: string, removeFiles: boolean = false): ApiActionThunk {
+  var query: {}
+  if (removeFiles) {
+    query = { 'force': true }
+  } else {
+    query = { 'keep-files': true }
+  }
   return async (dispatch) => {
     const action = {
       type: 'remove',
@@ -608,9 +614,7 @@ export function removeDataset (peername: string, name: string, removeFiles: bool
           peername,
           name
         },
-        query: {
-          files: removeFiles
-        }
+        query
       }
     }
     return dispatch(action)
