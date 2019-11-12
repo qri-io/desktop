@@ -60,6 +60,7 @@ const commitDetailsReducer: Reducer = (state = initialState, action: AnyAction):
           }
         }
       }
+
     case COMMITDATASET_FAIL:
       return {
         ...initialState,

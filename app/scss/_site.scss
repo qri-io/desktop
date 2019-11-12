@@ -780,3 +780,39 @@ b {
     }
   }
 }
+
+// override all markdown editor css
+#readme-editor-wrapper {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+
+  .editor-toolbar {
+    flex: 0;
+    border: none;
+    border-radius: 0;
+    background-color: #eaeaea;
+    display: flex;
+    padding: 6px;
+    justify-content: flex-end;
+
+    :first-child {
+      margin-right: auto;
+    }
+  }
+
+  .CodeMirror {
+    flex: 1;
+    border: none;
+    border-top: 1px solid #ddd;
+
+    .CodeMirror-lines * {
+      font-size: 1rem !important;
+      font-weight: normal !important;
+      font-style: normal !important;
+      line-height: normal !important;
+      color: inherit !important;
+      text-decoration: none !important;
+    }
+  }
+}

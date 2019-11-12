@@ -174,7 +174,11 @@ export default class Dataset extends React.Component<DatasetProps> {
 
       // reset components
       if (componentsToReset.includes('body')) fetchBody(-1)
-      if (componentsToReset.includes('structure') || componentsToReset.includes('meta')) fetchWorkingDataset()
+      if (
+        componentsToReset.includes('structure') ||
+        componentsToReset.includes('meta') ||
+        componentsToReset.includes('readme')
+      ) fetchWorkingDataset()
     }
 
     // this "wires up" all of the tooltips, must be called on update, as tooltips

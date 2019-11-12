@@ -1,7 +1,7 @@
 import { Action, AnyAction } from 'redux'
 
 import { CALL_API, ApiAction, ApiActionThunk, chainSuccess, ApiResponseAction } from '../store/api'
-import { DatasetSummary, ComponentType, MyDatasets } from '../models/store'
+import { DatasetSummary, SelectedComponent, MyDatasets } from '../models/store'
 import { actionWithPagination } from '../utils/pagination'
 import { openToast } from './ui'
 import { setWorkingDataset, setSelectedListItem, setActiveTab } from './selections'
@@ -568,7 +568,7 @@ export function linkDatasetAndFetch (peername: string, name: string, dir: string
   }
 }
 
-export function discardChanges (component: ComponentType): ApiActionThunk {
+export function discardChanges (component: SelectedComponent): ApiActionThunk {
   return async (dispatch, getState) => {
     const { selections } = getState()
     const { peername, name } = selections
@@ -661,5 +661,23 @@ export function fsiWriteAndFetch (peername: string, name: string, dataset: any):
     // reset pagination
     response = await whenOk(fetchWorkingDatasetDetails())(response)
     return response
+  }
+}
+
+export function fetchReadmePreview (peername: string, name: string): ApiActionThunk {
+  return async (dispatch) => {
+    const action = {
+      type: 'render',
+      [CALL_API]: {
+        endpoint: 'render',
+        method: 'GET',
+        query: { fsi: true },
+        segments: {
+          peername,
+          name
+        }
+      }
+    }
+    return dispatch(action)
   }
 }

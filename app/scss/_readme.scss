@@ -1,0 +1,28 @@
+.CodeMirror {
+  padding: 1rem;
+}
+
+.editor-preview {
+  padding: 1rem;
+}
+
+.editor-preview > blockquote {
+  margin: 1rem;
+  padding-left: .5rem;
+  border-left: solid #eaeaea;
+}
+
+.editor-preview > ol {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.editor-preview > ul {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.editor-preview > table {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
