@@ -1,6 +1,7 @@
 import { RouterState } from 'react-router-redux'
 import { Meta, Structure } from './dataset'
 import { Session } from './session'
+import { Details } from './details'
 
 enum ApiConnection {
   neverConnected = 0,
@@ -64,6 +65,7 @@ export interface UI {
   hideCommitNudge: boolean
   datasetDirPath: string
   exportPath: string
+  detailsBar: Details
 }
 
 export type SelectedComponent = 'readme' | 'meta' | 'body' | 'structure' | ''
@@ -147,6 +149,7 @@ export interface CommitDetails {
       value: Structure
     }
   }
+  stats: Array<{[key: string]: any}>
 }
 
 export interface HistoryItem {

@@ -59,6 +59,7 @@ export function fetchWorkingDatasetDetails (): ApiActionThunk {
     }
     response = await whenOk(fetchWorkingStatus())(response)
     response = await whenOk(fetchBody(-1))(response)
+    response = await whenOk(fetchStats())(response)
     response = await whenOk(fetchWorkingHistory(-1))(response)
 
     return response
@@ -172,6 +173,7 @@ export function fetchCommitDetail (): ApiActionThunk {
     response = await fetchCommitDataset()(dispatch, getState)
     response = await whenOk(fetchCommitStatus())(response)
     response = await whenOk(fetchCommitBody(-1))(response)
+    response = await whenOk(fetchCommitStats())(response)
 
     return response
   }
@@ -346,6 +348,55 @@ export function fetchCommitBody (page: number = 1, pageSize: number = bodyPageSi
       }
     }
     return dispatch(action)
+  }
+}
+
+export function fetchStats ():
+ApiActionThunk {
+  return async (dispatch, getState) => {
+    const { selections, workingDataset } = getState()
+
+    const response = await dispatch({
+      type: 'stats',
+      [CALL_API]: {
+        endpoint: 'stats',
+        method: 'GET',
+        segments: {
+          peername: selections.peername,
+          name: selections.name
+        },
+        query: {
+          fsi: !!workingDataset.fsiPath
+        }
+      }
+    })
+
+    return response
+  }
+}
+
+export function fetchCommitStats ():
+ApiActionThunk {
+  return async (dispatch, getState) => {
+    const { selections } = getState()
+
+    const response = await dispatch({
+      type: 'commitstats',
+      [CALL_API]: {
+        endpoint: 'stats',
+        method: 'GET',
+        segments: {
+          peername: selections.peername,
+          name: selections.name,
+          path: selections.commit
+        },
+        query: {
+          fsi: false
+        }
+      }
+    })
+
+    return response
   }
 }
 

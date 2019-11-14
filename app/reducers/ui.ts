@@ -5,6 +5,13 @@ import store from '../utils/localStore'
 import { apiActionTypes } from '../utils/actionType'
 import { SAVE_SUCC, SAVE_FAIL } from '../reducers/mutations'
 import { ModalType } from '../models/modals'
+import { DetailsType } from '../models/details'
+import {
+  SELECTIONS_SET_SELECTED_LISTITEM,
+  SELECTIONS_SET_WORKING_DATASET,
+  SELECTIONS_CLEAR,
+  SELECTIONS_SET_ACTIVE_TAB
+} from './selections'
 
 export const UI_TOGGLE_DATASET_LIST = 'UI_TOGGLE_DATASET_LIST'
 export const UI_SET_SIDEBAR_WIDTH = 'UI_SET_SIDEBAR_WIDTH'
@@ -17,6 +24,7 @@ export const UI_SIGNOUT = 'UI_SIGNOUT'
 export const UI_HIDE_COMMIT_NUDGE = 'UI_HIDE_COMMIT_NUDGE'
 export const UI_SET_DATASET_DIR_PATH = 'UI_SET_DATASET_DIR_PATH'
 export const UI_SET_EXPORT_PATH = 'UI_SET_EXPORT_PATH'
+export const UI_SET_DETAILS_BAR = 'UI_SET_DETAILS_BAR'
 
 export const UNAUTHORIZED = 'UNAUTHORIZED'
 
@@ -51,7 +59,8 @@ const initialState = {
   hideCommitNudge: store().getItem(hideCommitNudge) === 'true',
   datasetDirPath: store().getItem('datasetDirPath') || '',
   exportPath: store().getItem('exportPath') || '',
-  modal: { type: ModalType.NoModal }
+  modal: { type: ModalType.NoModal },
+  detailsBar: { type: DetailsType.NoDetails }
 }
 
 // send an event to electron to block menus on first load
@@ -117,6 +126,22 @@ export default (state = initialState, action: AnyAction) => {
       return {
         ...state,
         modal
+      }
+
+    case UI_SET_DETAILS_BAR:
+      return {
+        ...state,
+        detailsBar: action.details
+      }
+
+    // if we change screens
+    case SELECTIONS_SET_WORKING_DATASET:
+    case SELECTIONS_CLEAR:
+    case SELECTIONS_SET_ACTIVE_TAB:
+    case SELECTIONS_SET_SELECTED_LISTITEM:
+      return {
+        ...state,
+        detailsBar: { type: DetailsType.NoDetails }
       }
 
     // listen for SAVE_SUCC and SAVE_FAIL to set the toast
