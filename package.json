@@ -15,13 +15,15 @@
     "build-renderer": "cross-env NODE_ENV=production node ./node_modules/webpack/bin/webpack --mode=production --config webpack.config.production.js --progress --profile --colors",
     "build": "npm run build-main && npm run build-renderer",
     "start": "cross-env NODE_ENV=production electron ./app/",
+    "storybook": "start-storybook -p 6006",
     "start-hot": "cross-env HOT=1 NODE_ENV=development electron ./app/main.development",
     "postinstall": "electron-builder install-app-deps",
     "dev": "npm run hot-server -- --start-hot",
     "pack": "npm run build && electron-builder --dir",
     "dist": "npm run build && electron-builder",
     "lint": "./node_modules/.bin/eslint --ext tsx --ext ts app/",
-    "cleanup": "mop -v"
+    "cleanup": "mop -v",
+    "build-storybook": "build-storybook"
   },
   "jest": {
     "moduleNameMapper": {
@@ -125,6 +127,10 @@
   ],
   "homepage": "https://qri.io",
   "devDependencies": {
+    "@storybook/addon-actions": "^5.2.6",
+    "@storybook/addon-links": "^5.2.6",
+    "@storybook/addon-notes": "^5.2.6",
+    "@storybook/addons": "^5.2.6",
     "@types/classnames": "2.2.9",
     "@types/enzyme": "3.10.3",
     "@types/history": "4.7.3",
@@ -211,6 +217,9 @@
     "@fortawesome/free-regular-svg-icons": "5.11.2",
     "@fortawesome/free-solid-svg-icons": "5.11.2",
     "@fortawesome/react-fontawesome": "0.1.7",
+    "@nivo/bar": "^0.59.2",
+    "@storybook/cli": "^5.2.6",
+    "@storybook/react": "^5.2.6",
     "@types/webpack-env": "1.14.1",
     "babel-loader": "8.0.6",
     "change-case": "3.1.0",
