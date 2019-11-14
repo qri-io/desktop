@@ -588,3 +588,24 @@ $header-font-size: .9rem;
     letter-spacing: 2px;
   }
 }
+
+// DetailsBar
+.details-bar {
+  position: absolute;
+  left: 0;
+  height: 100%;
+  overflow-wrap: break-word;
+  height: 100%;
+  font-size: $header-font-size;
+  cursor: default;
+  display: flex;
+  flex-direction: column;
+  background: $appBackground;
+  border-right: 1px solid $border-color;
+}
+
+#details {
+  position: absolute;
+  left: 0;
+  height: 100%;
+}

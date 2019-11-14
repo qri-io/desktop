@@ -18,6 +18,7 @@ import {
   setActiveTab,
   setSelectedListItem
 } from '../actions/selections'
+import { DetailsType } from '../models/details'
 
 const mergeProps = (props: any, actions: any): DatasetProps => {
   return { ...props, ...actions }
@@ -39,6 +40,8 @@ const DatasetContainer = connect(
     } = state
     const hasDatasets = myDatasets.value.length !== 0
     const { setModal } = ownProps
+    const showDetailsBar = ui.detailsBar.type !== DetailsType.NoDetails
+
     return Object.assign({
       ui,
       selections,
@@ -46,7 +49,8 @@ const DatasetContainer = connect(
       mutations,
       setModal,
       hasDatasets,
-      session
+      session,
+      showDetailsBar
     }, ownProps)
   },
   {

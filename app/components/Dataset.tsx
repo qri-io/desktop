@@ -22,6 +22,7 @@ import HeaderColumnButton from './chrome/HeaderColumnButton'
 import DatasetListContainer from '../containers/DatasetListContainer'
 import CommitDetailsContainer from '../containers/CommitDetailsContainer'
 import DatasetSidebarContainer from '../containers/DatasetSidebarContainer'
+import DetailsBarContainer from '../containers/DetailsBarContainer'
 import HeaderColumnButtonDropdown from './chrome/HeaderColumnButtonDropdown'
 
 import {
@@ -43,6 +44,7 @@ export interface DatasetProps {
   setModal: (modal: Modal) => void
   session: Session
   hasDatasets: boolean
+  showDetailsBar: boolean
 
   // actions
   toggleDatasetList: () => Action
@@ -221,7 +223,8 @@ export default class Dataset extends React.Component<DatasetProps> {
     const {
       toggleDatasetList,
       setSidebarWidth,
-      signout
+      signout,
+      showDetailsBar
     } = this.props
 
     let linkButton
@@ -331,6 +334,23 @@ export default class Dataset extends React.Component<DatasetProps> {
           >
             <DatasetSidebarContainer setModal={setModal} />
           </Resizable>
+          <CSSTransition
+            in={showDetailsBar}
+            classNames='slide-from-left'
+            timeout={300}
+            mountOnEnter
+            unmountOnExit
+          >
+            <Resizable
+              id='details'
+              width={datasetSidebarWidth}
+              onResize={(width) => { setSidebarWidth('dataset', width) }}
+              onReset={() => { setSidebarWidth('dataset', defaultSidebarWidth) }}
+              maximumWidth={495}
+            >
+              <DetailsBarContainer />
+            </Resizable>
+          </CSSTransition>
           <div className='content-wrapper'>
             <div className='transition-group' >
               <CSSTransition

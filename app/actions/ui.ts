@@ -11,11 +11,13 @@ import {
   UI_SIGNOUT,
   UI_HIDE_COMMIT_NUDGE,
   UI_SET_DATASET_DIR_PATH,
-  UI_SET_EXPORT_PATH
+  UI_SET_EXPORT_PATH,
+  UI_SET_DETAILS_BAR
 } from '../reducers/ui'
 
 import { ToastType } from '../models/store'
 import { Modal } from '../models/modals'
+import { Details } from '../models/details'
 
 export const toggleDatasetList = () => {
   return {
@@ -88,5 +90,12 @@ export const setExportPath = (path: string) => {
   return {
     type: UI_SET_EXPORT_PATH,
     path
+  }
+}
+
+export const setDetailsBar = (details: Details) => {
+  return {
+    type: UI_SET_DETAILS_BAR,
+    details
   }
 }

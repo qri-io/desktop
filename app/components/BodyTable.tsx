@@ -11,6 +11,7 @@ interface BodyTableProps {
   headers?: any[]
   body: any[]
   onFetch: (page?: number, pageSize?: number) => Promise<ApiAction>
+  setDetailsBar: (index: number) => void
   pageInfo: PageInfo
 }
 
@@ -94,7 +95,7 @@ export default class BodyTable extends React.Component<BodyTableProps> {
   }
 
   render () {
-    const { body, headers, pageInfo } = this.props
+    const { body, headers, pageInfo, setDetailsBar } = this.props
     const { fetchedAll } = pageInfo
 
     const tableRows = body.map((row, i) => {
@@ -128,7 +129,7 @@ export default class BodyTable extends React.Component<BodyTableProps> {
               {headers && headers.map((d: any, j: number) => {
                 return (
                   <th key={j}>
-                    <div className='cell'>{d}</div>
+                    <div className='cell' onClick={() => setDetailsBar(j)}>{d}</div>
                   </th>
                 )
               })}

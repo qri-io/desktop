@@ -2,14 +2,17 @@ import { connect } from 'react-redux'
 import { bindActionCreators, Dispatch } from 'redux'
 import Body, { BodyProps } from '../components/Body'
 import Store from '../models/store'
+import { setDetailsBar } from '../actions/ui'
 import { fetchBody, fetchCommitBody } from '../actions/api'
 import path from 'path'
 
 const mapStateToProps = (state: Store) => {
-  const { workingDataset, commitDetails, selections } = state
+  const { workingDataset, commitDetails, selections, ui } = state
   const history = selections.activeTab === 'history'
   const dataset = history ? commitDetails : workingDataset
   const { pageInfo, value } = dataset.components.body
+
+  const details = ui.detailsBar
 
   var format = ''
   if (history) {
@@ -31,6 +34,7 @@ const mapStateToProps = (state: Store) => {
     structure,
     format,
     history,
+    details,
     workingDataset
   }
 }
@@ -40,7 +44,7 @@ const mergeProps = (props: any, actions: any): BodyProps => {
 }
 
 const mapDispatchToProps = (dispatch: Dispatch) => {
-  return bindActionCreators({ fetchBody, fetchCommitBody }, dispatch)
+  return bindActionCreators({ fetchBody, fetchCommitBody, setDetailsBar }, dispatch)
 }
 
 export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(Body)

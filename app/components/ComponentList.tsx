@@ -185,7 +185,6 @@ const ComponentList: React.FunctionComponent<ComponentListProps> = (props: Compo
 
               // add discard changes option of file is modified
               if (fileStatus !== 'unmodified') {
-                console.log(name)
                 menuItems.unshift({
                   label: 'Discard Changes...',
                   click: () => { discardChanges(name as SelectedComponent) }

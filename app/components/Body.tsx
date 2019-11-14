@@ -6,6 +6,8 @@ import { ApiAction } from '../store/api'
 
 import Spinner from './chrome/Spinner'
 import { PageInfo, WorkingDataset } from '../models/store'
+import { Action } from 'redux'
+import { DetailsType, Details } from '../models/details'
 
 export interface BodyProps {
   workingDataset: WorkingDataset
@@ -16,8 +18,12 @@ export interface BodyProps {
   pageInfo: PageInfo
   history: boolean
   format: string
+  details: Details
+  stats: Array<{[key: string]: any}>
+
   fetchBody: (page?: number, pageSize?: number) => Promise<ApiAction>
   fetchCommitBody: (page?: number, pageSize?: number) => Promise<ApiAction>
+  setDetailsBar: (details: {[key: string]: any}) => Action
 }
 
 function shouldDisplayTable (value: any[] | Object, format: string) {
@@ -54,7 +60,10 @@ const Body: React.FunctionComponent<BodyProps> = (props) => {
     history,
     fetchBody,
     format,
-    fetchCommitBody
+    fetchCommitBody,
+    details,
+    setDetailsBar
+    // stats
   } = props
 
   const onFetch = history ? fetchCommitBody : fetchBody
@@ -63,6 +72,23 @@ const Body: React.FunctionComponent<BodyProps> = (props) => {
 
   // if there's no value or format, don't show anything yet
   const showSpinner = !(value && format)
+
+  const handleToggleDetailsBar = (index: number) => {
+    if (details.type === DetailsType.NoDetails) {
+      setDetailsBar({ type: DetailsType.StatDetails, stat: { 'wooo': 'yay' }, index })
+      return
+    }
+    if (details.type === DetailsType.StatDetails) {
+      // if the index is the same, then the user has clicked
+      // on the header twice. The second time, we should
+      // remove the detailsbar
+      if (details.index === index) {
+        setDetailsBar({ type: DetailsType.NoDetails })
+        return
+      }
+      setDetailsBar({ type: DetailsType.StatDetails, stat: { 'wooo': 'yay' }, index })
+    }
+  }
 
   return (
     <div className='transition-group'>
@@ -80,6 +106,7 @@ const Body: React.FunctionComponent<BodyProps> = (props) => {
                 body={value}
                 onFetch={onFetch}
                 pageInfo={pageInfo}
+                setDetailsBar={handleToggleDetailsBar}
               />
               : <BodyJson
                 body={value}
