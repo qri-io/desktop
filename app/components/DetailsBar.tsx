@@ -2,6 +2,7 @@ import * as React from 'react'
 import { Details, DetailsType, StatsDetails } from '../models/details'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTimes } from '@fortawesome/free-solid-svg-icons'
+import Stat from './stats/Stat'
 
 export interface DetailsBarProps {
   details: Details
@@ -19,7 +20,8 @@ const DetailsBar: React.FunctionComponent<DetailsBarProps> = (props) => {
     return (
       <div>
         <h4>{statsDetails.title}</h4>
-        <p>{JSON.stringify(statsDetails.stats)}</p>
+        <p>{statsDetails.stats.type}</p>
+        <Stat data={details.stats} />
       </div>
     )
   }
