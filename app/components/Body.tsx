@@ -7,7 +7,7 @@ import { ApiAction } from '../store/api'
 import Spinner from './chrome/Spinner'
 import { PageInfo, WorkingDataset } from '../models/store'
 import { Action } from 'redux'
-import { DetailsType, Details } from '../models/details'
+import { DetailsType, Details, StatsDetails } from '../models/details'
 
 export interface BodyProps {
   workingDataset: WorkingDataset
@@ -62,8 +62,8 @@ const Body: React.FunctionComponent<BodyProps> = (props) => {
     format,
     fetchCommitBody,
     details,
-    setDetailsBar
-    // stats
+    setDetailsBar,
+    stats
   } = props
 
   const onFetch = history ? fetchCommitBody : fetchBody
@@ -73,12 +73,23 @@ const Body: React.FunctionComponent<BodyProps> = (props) => {
   // if there's no value or format, don't show anything yet
   const showSpinner = !(value && format)
 
+  const makeStatsDetails = (stats: {[key: string]: any}, title: string, index: number): StatsDetails => {
+    return {
+      type: DetailsType.StatsDetails,
+      title: title,
+      index: index,
+      stats: stats
+    }
+  }
+
   const handleToggleDetailsBar = (index: number) => {
+    if (!stats || stats.length === 0) return
+    const statsHeaders = headers as string[]
     if (details.type === DetailsType.NoDetails) {
-      setDetailsBar({ type: DetailsType.StatDetails, stat: { 'wooo': 'yay' }, index })
+      setDetailsBar(makeStatsDetails(stats[index], statsHeaders[index], index))
       return
     }
-    if (details.type === DetailsType.StatDetails) {
+    if (details.type === DetailsType.StatsDetails) {
       // if the index is the same, then the user has clicked
       // on the header twice. The second time, we should
       // remove the detailsbar
@@ -86,7 +97,7 @@ const Body: React.FunctionComponent<BodyProps> = (props) => {
         setDetailsBar({ type: DetailsType.NoDetails })
         return
       }
-      setDetailsBar({ type: DetailsType.StatDetails, stat: { 'wooo': 'yay' }, index })
+      setDetailsBar(makeStatsDetails(stats[index], statsHeaders[index], index))
     }
   }
 

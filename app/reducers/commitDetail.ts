@@ -25,12 +25,14 @@ const initialState: CommitDetails = {
     structure: {
       value: {}
     }
-  }
+  },
+  stats: []
 }
 
 const [COMMITDATASET_REQ, COMMITDATASET_SUCC, COMMITDATASET_FAIL] = apiActionTypes('commitdataset')
 const [COMMITSTATUS_REQ, COMMITSTATUS_SUCC, COMMITSTATUS_FAIL] = apiActionTypes('commitstatus')
 const [COMMITBODY_REQ, COMMITBODY_SUCC, COMMITBODY_FAIL] = apiActionTypes('commitbody')
+const [COMMITSTATS_REQ, COMMITSTATS_SUCC, COMMITSTATS_FAIL] = apiActionTypes('commitstats')
 
 const commitDetailsReducer: Reducer = (state = initialState, action: AnyAction): CommitDetails => {
   switch (action.type) {
@@ -112,6 +114,25 @@ const commitDetailsReducer: Reducer = (state = initialState, action: AnyAction):
             pageInfo: reducerWithPagination(action, state.components.body.pageInfo)
           }
         }
+      }
+
+    case COMMITSTATS_REQ:
+      if (state.peername === action.segments.peername && state.name === action.segments.name) {
+        return state
+      }
+      return {
+        ...state,
+        stats: []
+      }
+    case COMMITSTATS_SUCC:
+      return {
+        ...state,
+        stats: action.payload.data
+      }
+    case COMMITSTATS_FAIL:
+      return {
+        ...state,
+        stats: []
       }
 
     default:

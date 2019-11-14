@@ -1,18 +1,19 @@
 
 export enum DetailsType {
   NoDetails,
-  StatDetails
+  StatsDetails
 }
 
-interface StatDetails {
-  type: DetailsType.StatDetails
+export interface StatsDetails {
+  type: DetailsType.StatsDetails
   // eventually replace with a Stats interface
   index: number
-  details: Details
+  title: string
+  stats: {[key: string]: any}
 }
 
-interface NoDetails {
+export interface NoDetails {
   type: DetailsType.NoDetails
 }
 
-export type Details = StatDetails | NoDetails
+export type Details = StatsDetails | NoDetails

@@ -6,6 +6,12 @@ import { apiActionTypes } from '../utils/actionType'
 import { SAVE_SUCC, SAVE_FAIL } from '../reducers/mutations'
 import { ModalType } from '../models/modals'
 import { DetailsType } from '../models/details'
+import {
+  SELECTIONS_SET_SELECTED_LISTITEM,
+  SELECTIONS_SET_WORKING_DATASET,
+  SELECTIONS_CLEAR,
+  SELECTIONS_SET_ACTIVE_TAB
+} from './selections'
 
 export const UI_TOGGLE_DATASET_LIST = 'UI_TOGGLE_DATASET_LIST'
 export const UI_SET_SIDEBAR_WIDTH = 'UI_SET_SIDEBAR_WIDTH'
@@ -126,6 +132,16 @@ export default (state = initialState, action: AnyAction) => {
       return {
         ...state,
         detailsBar: action.details
+      }
+
+    // if we change screens
+    case SELECTIONS_SET_WORKING_DATASET:
+    case SELECTIONS_CLEAR:
+    case SELECTIONS_SET_ACTIVE_TAB:
+    case SELECTIONS_SET_SELECTED_LISTITEM:
+      return {
+        ...state,
+        detailsBar: { type: DetailsType.NoDetails }
       }
 
     // listen for SAVE_SUCC and SAVE_FAIL to set the toast

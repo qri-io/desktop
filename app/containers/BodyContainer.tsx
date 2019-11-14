@@ -10,6 +10,7 @@ const mapStateToProps = (state: Store) => {
   const { workingDataset, commitDetails, selections, ui } = state
   const history = selections.activeTab === 'history'
   const dataset = history ? commitDetails : workingDataset
+  const stats = history ? commitDetails.stats : workingDataset.stats
   const { pageInfo, value } = dataset.components.body
 
   const details = ui.detailsBar
@@ -35,7 +36,8 @@ const mapStateToProps = (state: Store) => {
     format,
     history,
     details,
-    workingDataset
+    workingDataset,
+    stats
   }
 }
 

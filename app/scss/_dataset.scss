@@ -607,3 +607,8 @@ $header-font-size: .9rem;
   -o-transition-duration: 0.6s;
   transition-duration: 0.6s;
 }
+
+.details-bar-content {
+  overflow-y: scroll;
+  overflow-wrap: break-word;
+}

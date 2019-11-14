@@ -149,6 +149,7 @@ export interface CommitDetails {
       value: Structure
     }
   }
+  stats: Array<{[key: string]: any}>
 }
 
 export interface HistoryItem {

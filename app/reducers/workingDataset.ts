@@ -43,7 +43,8 @@ const initialState: WorkingDataset = {
       pageSize: 0
     },
     value: []
-  }
+  },
+  stats: []
 }
 
 export const [DATASET_REQ, DATASET_SUCC, DATASET_FAIL] = apiActionTypes('dataset')
@@ -51,6 +52,7 @@ export const [HISTORY_REQ, HISTORY_SUCC, HISTORY_FAIL] = apiActionTypes('history
 export const [DATASET_STATUS_REQ, DATASET_STATUS_SUCC, DATASET_STATUS_FAIL] = apiActionTypes('status')
 const [DATASET_BODY_REQ, DATASET_BODY_SUCC, DATASET_BODY_FAIL] = apiActionTypes('body')
 const [, RESETOTHERCOMPONENTS_SUCC, RESETOTHERCOMPONENTS_FAIL] = apiActionTypes('resetOtherComponents')
+const [STATS_REQ, STATS_SUCC, STATS_FAIL] = apiActionTypes('stats')
 
 export const RESET_BODY = 'RESET_BODY'
 
@@ -242,6 +244,26 @@ const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction
         return initialState
       }
       return state
+
+    case STATS_REQ:
+      if (state.peername === action.segments.peername && state.name === action.segments.name) {
+        return state
+      }
+      return {
+        ...state,
+        stats: []
+      }
+    case STATS_SUCC:
+      return {
+        ...state,
+        stats: action.payload.data
+      }
+    case STATS_FAIL:
+      return {
+        ...state,
+        stats: []
+      }
+
     default:
       return state
   }
