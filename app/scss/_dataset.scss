@@ -612,3 +612,41 @@ $header-font-size: .9rem;
   overflow-y: scroll;
   overflow-wrap: break-word;
 }
+
+.details-bar-header {
+  padding-left: 0 1.5rem;
+  height: 60px;
+  border-bottom: solid 1px $border-color;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+
+  h3 {
+    margin: 0;
+    padding: 0;
+    padding-left: $spacer;
+  }
+
+  .close {
+    flex-shrink: 0;
+    position: absolute;
+    top: $spacer;
+    right: $spacer;
+    border: 0;
+    height: 18px;
+    width: 18px;
+    background: transparent;
+
+    color: black;
+    cursor: pointer;
+
+    &:hover {
+      color: $text;
+    }
+
+    &:focus {
+      outline: 0;
+    }
+  }
+}

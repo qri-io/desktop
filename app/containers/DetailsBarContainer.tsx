@@ -1,5 +1,6 @@
 import { connect } from 'react-redux'
 import DetailsBar from '../components/DetailsBar'
+import { setDetailsBar } from '../actions/ui'
 
 const mapStateToProps = (state: any) => {
   const { ui } = state
@@ -9,6 +10,7 @@ const mapStateToProps = (state: any) => {
 }
 
 const actions = {
+  setDetailsBar
 }
 
 export default connect(mapStateToProps, actions)(DetailsBar)
