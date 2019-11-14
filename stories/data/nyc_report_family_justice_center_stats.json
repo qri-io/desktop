@@ -1,0 +1,157 @@
+[
+  {
+    "count": 400,
+    "frequencies": {
+      "Blank": 5,
+      "Child Services (children's counseling/playroom)": 6,
+      "Civil Legal Services": 39,
+      "Civil Legal Services|Child Services (children's counseling/playroom)": 2,
+      "Counseling Services": 37,
+      "Counseling Services|Child Services (children's counseling/playroom)": 4,
+      "Counseling Services|Other (please specify)": 2,
+      "Criminal Justice/NYPD Services": 3,
+      "Economic Empowerment Services": 6,
+      "Housing Information/Advocacy": 7,
+      "Housing Information/Advocacy|Safety Planning": 2,
+      "Met with Case Manager": 75,
+      "Met with Case Manager|Child Services (children's counseling/playroom)": 2,
+      "Met with Case Manager|Civil Legal Services": 20,
+      "Met with Case Manager|Civil Legal Services|Counseling Services": 4,
+      "Met with Case Manager|Civil Legal Services|Housing Information/Advocacy": 5,
+      "Met with Case Manager|Civil Legal Services|Housing Information/Advocacy|Counseling Services": 3,
+      "Met with Case Manager|Civil Legal Services|Housing Information/Advocacy|Shelter Information/Advocacy|Safety Planning|Counseling Services|Psychiatric Services (medication management/Health and Hospital)|Child Services (children's counseling/playroom)|Economic Empowerment Services|Public Benefits Information/Services|Criminal Justice/NYPD Services|Practical Support (ex: clothing or food donations)": 2,
+      "Met with Case Manager|Civil Legal Services|Housing Information/Advocacy|Shelter Information/Advocacy|Safety Planning|Counseling Services|Psychiatric Services (medication management/Health and Hospital)|Child Services (children's counseling/playroom)|Economic Empowerment Services|Public Benefits Information/Services|Criminal Justice/NYPD Services|Practical Support (ex: clothing or food donations)|Spiritual Support Services": 3,
+      "Met with Case Manager|Civil Legal Services|Safety Planning": 3,
+      "Met with Case Manager|Civil Legal Services|Safety Planning|Counseling Services": 2,
+      "Met with Case Manager|Civil Legal Services|Shelter Information/Advocacy|Safety Planning|Practical Support (ex: clothing or food donations)": 2,
+      "Met with Case Manager|Counseling Services": 7,
+      "Met with Case Manager|Economic Empowerment Services": 2,
+      "Met with Case Manager|Housing Information/Advocacy": 7,
+      "Met with Case Manager|Housing Information/Advocacy|Shelter Information/Advocacy": 3,
+      "Met with Case Manager|Housing Information/Advocacy|Shelter Information/Advocacy|Safety Planning|Counseling Services|Economic Empowerment Services|Public Benefits Information/Services|Practical Support (ex: clothing or food donations)": 2,
+      "Met with Case Manager|Other (please specify)": 5,
+      "Met with Case Manager|Practical Support (ex: clothing or food donations)": 3,
+      "Met with Case Manager|Public Benefits Information/Services": 3,
+      "Met with Case Manager|Safety Planning": 3,
+      "Met with Case Manager|Shelter Information/Advocacy": 6,
+      "Met with Case Manager|Shelter Information/Advocacy|Safety Planning|Counseling Services": 2,
+      "Other (please specify)": 12,
+      "Psychiatric Services (medication management/Health and Hospital)": 2,
+      "Safety Planning": 5,
+      "Spiritual Support Services": 2
+    },
+    "maxLength": 479,
+    "minLength": 5,
+    "type": "string",
+    "unique": 102
+  },
+  {
+    "count": 400,
+    "frequencies": {
+      "": 367,
+      "Computer usage.": 2
+    },
+    "maxLength": 154,
+    "minLength": 0,
+    "type": "string",
+    "unique": 31
+  },
+  {
+    "count": 400,
+    "frequencies": {
+      "Blank": 44,
+      "No": 251,
+      "Yes": 105
+    },
+    "maxLength": 5,
+    "minLength": 2,
+    "type": "string"
+  },
+  {
+    "count": 400,
+    "frequencies": {
+      "": 293,
+      "Arabic": 2,
+      "Bengali": 2,
+      "French": 2,
+      "Mandarin": 5,
+      "Other": 7,
+      "Russian": 5,
+      "Spanish": 65,
+      "Unknown": 18
+    },
+    "maxLength": 8,
+    "minLength": 0,
+    "type": "string",
+    "unique": 1
+  },
+  {
+    "count": 400,
+    "frequencies": {
+      "": 388,
+      "Chinese": 2,
+      "English": 5,
+      "Polish": 2
+    },
+    "maxLength": 14,
+    "minLength": 0,
+    "type": "string",
+    "unique": 3
+  },
+  {
+    "count": 400,
+    "frequencies": {
+      "": 62,
+      "All.": 2,
+      "Case worker": 2,
+      "Everything": 3,
+      "Everything.": 2,
+      "Legal help": 2,
+      "The information we are seeking": 2,
+      "Yes": 2
+    },
+    "maxLength": 446,
+    "minLength": 0,
+    "type": "string",
+    "unique": 323
+  },
+  {
+    "count": 400,
+    "frequencies": {
+      "Blank": 22,
+      "No": 4,
+      "Yes": 374
+    },
+    "maxLength": 5,
+    "minLength": 2,
+    "type": "string"
+  },
+  {
+    "count": 400,
+    "frequencies": {
+      "Bronx": 142,
+      "Brooklyn": 84,
+      "Manhattan": 58,
+      "Queens": 89,
+      "Staten Island": 27
+    },
+    "maxLength": 13,
+    "minLength": 5,
+    "type": "string"
+  },
+  {
+    "count": 400,
+    "frequencies": {
+      "Arabic": 2,
+      "English": 270,
+      "Polish": 4,
+      "Russian": 5,
+      "Simplified Chinese": 17,
+      "Spanish": 100
+    },
+    "maxLength": 18,
+    "minLength": 6,
+    "type": "string",
+    "unique": 2
+  }
+]
