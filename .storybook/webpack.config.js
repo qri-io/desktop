@@ -1,4 +1,6 @@
-module.exports = ({ config }) => {
+const path = require('path')
+
+module.exports = async ({ config }) => {
   config.module.rules.push({
     test: /\.tsx?$/,
     exclude: /node_modules/,
@@ -24,6 +26,17 @@ module.exports = ({ config }) => {
       }
     }
   });
+
+  config.module.rules.push({
+    test: /\.scss$/,
+    use: [
+      'style-loader',
+      'css-loader',
+      'sass-loader',
+    ],
+    include: path.resolve(__dirname, '../app'),
+  })
+
   config.resolve.extensions.push('.ts', '.tsx');
   return config;
 };
