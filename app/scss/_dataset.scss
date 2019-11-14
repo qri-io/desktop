@@ -590,22 +590,20 @@ $header-font-size: .9rem;
 }
 
 // DetailsBar
-.details-bar {
+.details-bar-wrapper {
   position: absolute;
-  left: 0;
   height: 100%;
-  overflow-wrap: break-word;
-  height: 100%;
-  font-size: $header-font-size;
-  cursor: default;
-  display: flex;
-  flex-direction: column;
   background: $appBackground;
   border-right: 1px solid $border-color;
+  -webkit-transition-duration: 0.3s;
+  -moz-transition-duration: 0.3s;
+  -o-transition-duration: 0.3s;
+  transition-duration: 0.3s;
 }
 
-#details {
-  position: absolute;
-  left: 0;
-  height: 100%;
+.details-bar-inner {
+  -webkit-transition-duration: 0.6s;
+  -moz-transition-duration: 0.6s;
+  -o-transition-duration: 0.6s;
+  transition-duration: 0.6s;
 }

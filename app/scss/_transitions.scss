@@ -79,24 +79,6 @@
   transition: max-height 300ms, transform 300ms;
 }
 
-.slide-from-left-enter {
-  max-width: 0px;
-}
-
-.slide-from-left-enter-active {
-  max-width: 500px;
-  transition: max-width 300ms, transform 300ms;
-}
-
-.slide-from-left-exit {
-  max-width: 500px;
-}
-
-.slide-from-left-exit-active {
-  max-width: 0px;
-  transition: max-height 300ms, transform 300ms;
-}
-
 // outer div
 .transition-group {
   position:relative;

@@ -334,23 +334,23 @@ export default class Dataset extends React.Component<DatasetProps> {
           >
             <DatasetSidebarContainer setModal={setModal} />
           </Resizable>
-          <CSSTransition
-            in={showDetailsBar}
-            classNames='slide-from-left'
-            timeout={300}
-            mountOnEnter
-            unmountOnExit
+          <div className="details-bar-wrapper"
+            style={{ 'left': showDetailsBar ? 0 : datasetSidebarWidth * -1 }}
           >
-            <Resizable
-              id='details'
-              width={datasetSidebarWidth}
-              onResize={(width) => { setSidebarWidth('dataset', width) }}
-              onReset={() => { setSidebarWidth('dataset', defaultSidebarWidth) }}
-              maximumWidth={495}
+            <div className="details-bar-inner"
+              style={{ 'opacity': showDetailsBar ? 1 : 0 }}
             >
-              <DetailsBarContainer />
-            </Resizable>
-          </CSSTransition>
+              <Resizable
+                id='details'
+                width={datasetSidebarWidth}
+                onResize={(width) => { setSidebarWidth('dataset', width) }}
+                onReset={() => { setSidebarWidth('dataset', defaultSidebarWidth) }}
+                maximumWidth={495}
+              >
+                <DetailsBarContainer />
+              </Resizable>
+            </div>
+          </div>
           <div className='content-wrapper'>
             <div className='transition-group' >
               <CSSTransition
