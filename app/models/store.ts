@@ -68,7 +68,7 @@ export interface UI {
   detailsBar: Details
 }
 
-export type SelectedComponent = 'readme' | 'meta' | 'body' | 'structure' | ''
+export type SelectedComponent = 'readme' | 'meta' | 'body' | 'structure' | 'transform' | ''
 
 // currently selected dataset, tab, dataset component, commit, etc
 export interface Selections {
@@ -147,6 +147,9 @@ export interface CommitDetails {
     }
     structure: {
       value: Structure
+    }
+    transform: {
+      value: string | undefined
     }
   }
   stats: Array<{[key: string]: any}>
