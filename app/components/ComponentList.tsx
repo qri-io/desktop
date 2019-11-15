@@ -6,7 +6,7 @@ import { clipboard, shell, MenuItemConstructorOptions } from 'electron'
 import ContextMenuArea from 'react-electron-contextmenu'
 import { ApiActionThunk } from '../store/api'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faTags, faArchive, faTh, IconDefinition, faExclamation } from '@fortawesome/free-solid-svg-icons'
+import { faTags, faArchive, faTh, IconDefinition, faExclamation, faRobot } from '@fortawesome/free-solid-svg-icons'
 import { faReadme } from '@fortawesome/free-brands-svg-icons'
 
 import { DatasetStatus, SelectedComponent, ComponentType } from '../models/store'
@@ -111,8 +111,25 @@ const components = [
     displayName: 'Structure',
     tooltip: 'the structure of the dataset',
     icon: faTh
+  },
+  {
+    name: 'transform',
+    displayName: 'Transform',
+    tooltip: 'commit automation',
+    icon: faRobot
   }
 ]
+
+function removeHiddenComponents (status: DatasetStatus) {
+  const hideWhenMissing = {
+    'transform': true
+  }
+
+  return (component): boolean => {
+    console.log(status[component.name])
+    return status[component.name] || !hideWhenMissing[component.name]
+  }
+}
 
 export const getComponentDisplayProps = (name: string) => {
   return components.filter(d => d.name === name)[0]
@@ -130,7 +147,7 @@ const ComponentList: React.FunctionComponent<ComponentListProps> = (props: Compo
   } = props
 
   const isEnabled = (name: string): boolean => {
-    return (datasetSelected && selectionType === 'component' && (name === 'meta' || name === 'structure' || name === 'readme'))
+    return (datasetSelected && selectionType === 'component' && (name === 'meta' || name === 'structure' || name === 'readme' || name === 'transform'))
   }
 
   return (
@@ -145,7 +162,7 @@ const ComponentList: React.FunctionComponent<ComponentListProps> = (props: Compo
           Dataset Components
       </div>
       {
-        components.map(({ name, displayName, tooltip, icon }) => {
+        components.filter(removeHiddenComponents(status)).map(({ name, displayName, tooltip, icon }) => {
           if (status[name] && !!fsiPath) {
             const { filepath, status: fileStatus } = status[name]
 
