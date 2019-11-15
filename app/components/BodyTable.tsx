@@ -10,6 +10,7 @@ import { ApiAction } from '../store/api'
 interface BodyTableProps {
   headers?: any[]
   body: any[]
+  highlighedColumnIndex: number | undefined
   onFetch: (page?: number, pageSize?: number) => Promise<ApiAction>
   setDetailsBar: (index: number) => void
   pageInfo: PageInfo
@@ -95,7 +96,7 @@ export default class BodyTable extends React.Component<BodyTableProps> {
   }
 
   render () {
-    const { body, headers, pageInfo, setDetailsBar } = this.props
+    const { body, headers, pageInfo, highlighedColumnIndex, setDetailsBar } = this.props
     const { fetchedAll } = pageInfo
 
     const tableRows = body.map((row, i) => {
@@ -128,7 +129,7 @@ export default class BodyTable extends React.Component<BodyTableProps> {
               </th>
               {headers && headers.map((d: any, j: number) => {
                 return (
-                  <th key={j}>
+                  <th key={j} className={(j === highlighedColumnIndex) ? 'highlighted' : '' }>
                     <div className='cell' onClick={() => setDetailsBar(j)}>{d}</div>
                   </th>
                 )
