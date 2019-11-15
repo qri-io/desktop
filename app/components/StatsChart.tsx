@@ -1,20 +1,23 @@
 import { ResponsiveBar } from '@nivo/bar'
+import { ResponsivePie } from '@nivo/pie'
 import * as React from 'react'
 
 const primaryStatColor = '#0061A6'
 
-interface StatProps {
+interface StatsChartProps {
   height: number
   data: Record<string, any>
 }
 
-const Stat: React.FunctionComponent<StatProps> = (props: StatProps) => {
+const StatsChart: React.FunctionComponent<StatsChartProps> = (props: StatsChartProps) => {
   const { data, height = 250 } = props
   switch (data.type) {
     case 'string':
       return <StringStat data={data} height={height} />
     case 'numeric':
       return <NumericStat data={data} height={height} />
+    case 'boolean':
+      return <BooleanStat data={data} height={height} />
     default:
       return (
         <div>
@@ -26,9 +29,28 @@ const Stat: React.FunctionComponent<StatProps> = (props: StatProps) => {
   }
 }
 
-export default Stat
+export default StatsChart
 
-const NumericStat: React.FunctionComponent<StatProps> = (props: StatProps) => {
+interface StatValuesProps {
+  stats: Array<[string, any]>
+}
+
+const StatValues: React.FunctionComponent<StatValuesProps> = ({ stats }) => {
+  return (
+    <div className='stats-values'>
+      {stats.map((stat, i) => {
+        return (
+          <div key={i} className="stats-value" style={{ marginLeft: 15 }}>
+            <h4>{stat[1]}</h4>
+            <label className="label">{stat[0]}</label>
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
+const NumericStat: React.FunctionComponent<StatsChartProps> = (props: StatsChartProps) => {
   const { data, height } = props
   let histogram
 
@@ -91,26 +113,7 @@ const NumericStat: React.FunctionComponent<StatProps> = (props: StatProps) => {
   )
 }
 
-interface StatValuesProps {
-  stats: Array<[string, any]>
-}
-
-const StatValues: React.FunctionComponent<StatValuesProps> = ({ stats }) => {
-  return (
-    <div className='stats-values'>
-      {stats.map((stat, i) => {
-        return (
-          <div key={i} className="stats-value" style={{ marginLeft: 15 }}>
-            <h4>{stat[1]}</h4>
-            <label className="label">{stat[0]}</label>
-          </div>
-        )
-      })}
-    </div>
-  )
-}
-
-const StringStat: React.FunctionComponent<StatProps> = (props: StatProps) => {
+const StringStat: React.FunctionComponent<StatsChartProps> = (props: StatsChartProps) => {
   const { data, height } = props
   let frequencies
 
@@ -172,6 +175,71 @@ const StringStat: React.FunctionComponent<StatProps> = (props: StatProps) => {
         ['count', data.count.toLocaleString()],
         ['min length', data.minLength.toLocaleString()],
         ['max length', data.maxLength.toLocaleString()]
+      ]} />
+    </div>
+  )
+}
+
+const BooleanStat: React.FunctionComponent<StatsChartProps> = (props: StatsChartProps) => {
+  const { data, height } = props
+  let frequencies = [
+    {
+      id: 'false',
+      label: 'false',
+      value: data.falseCount,
+      color: '#EE325C'
+    },
+    {
+      id: 'true',
+      label: 'true',
+      value: data.trueCount,
+      color: primaryStatColor
+    }]
+
+  const other = data.count - data.trueCount - data.falseCount
+  if (other !== 0) {
+    frequencies.push({
+      id: 'other',
+      label: 'other',
+      value: other,
+      color: '#F4A935'
+    })
+  }
+
+  return (
+    <div>
+      {frequencies && <div style={{ height: height }}>
+        <div style={{ paddingLeft: 35 }}>
+          <b>frequencies</b>
+        </div>
+        <ResponsivePie
+          data={frequencies}
+          margin={{ top: 40, right: 80, bottom: 80, left: 80 }}
+          innerRadius={0.5}
+          padAngle={0.7}
+          colors={(d) => d.color }
+          cornerRadius={3}
+          borderWidth={1}
+          borderColor={{ from: 'color', modifiers: [ [ 'darker', 0.2 ] ] }}
+          radialLabelsSkipAngle={10}
+          radialLabelsTextXOffset={6}
+          radialLabelsTextColor="#333333"
+          radialLabelsLinkOffset={0}
+          radialLabelsLinkDiagonalLength={16}
+          radialLabelsLinkHorizontalLength={0}
+          radialLabelsLinkStrokeWidth={1}
+          radialLabelsLinkColor={{ from: 'color' }}
+          slicesLabelsSkipAngle={10}
+          slicesLabelsTextColor="#333333"
+          animate={true}
+          motionStiffness={90}
+          motionDamping={15}
+        />
+      </div>}
+      <StatValues stats={[
+        ['count', data.count.toLocaleString()],
+        ['true', data.trueCount.toLocaleString()],
+        ['false', data.falseCount.toLocaleString()]
       ]} />
     </div>
   )

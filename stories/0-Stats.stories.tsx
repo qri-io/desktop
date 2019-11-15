@@ -1,14 +1,36 @@
 import React from 'react'
-import Stat from '../app/components/stats/Stat.tsx'
+import StatsChart from '../app/components/StatsChart.tsx'
 import fjcReport from './data/stats_nyc_report_family_justice_center_stats.json'
+import allTypes from './data/stats_all_types.json'
 
 export default {
-  title: 'Stats',
+  title: 'Stats|Charts',
   parameters: {
     notes: `feeding different data to the stats component. 
     
 stats data from the [nyc fjc report](https://data.cityofnewyork.us/Social-Services/Annual-Report-on-Family-Justice-Center-Client-Sati/g62n-cz6a)`
   }
+}
+
+export const overview = () => {
+  return (
+    <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+      {allTypes.map((d, i) => {
+        return (
+          <div key={i} style={{ margin: 15, minWidth: 300 }}>
+            <p>{d.type}</p>
+            <hr />
+            <StatsChart data={d} />
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
+overview.story = {
+  name: 'All Stats',
+  parameters: { note: 'idealized overview of each stat' }
 }
 
 const wrap = (component) => {
@@ -19,29 +41,28 @@ const wrap = (component) => {
   )
 }
 
-export const zero = () => wrap(<Stat data={fjcReport[0]} />)
+export const languages = () => wrap(<StatsChart data={fjcReport[3]} />)
 
-zero.story = {
-  name: 'Many Long String',
+languages.story = {
+  name: 'String: Languages'
 }
 
-export const one = () => wrap(<Stat data={fjcReport[1]} />)
+export const manyLongStrings = () => wrap(<StatsChart data={fjcReport[0]} />)
 
-one.story = {
-  name: 'Empty String'
+manyLongStrings.story = {
+  name: 'String: Many Long',
 }
 
-export const two = () => wrap(<Stat data={fjcReport[2]} />)
+export const empty = () => wrap(<StatsChart data={fjcReport[1]} />)
 
-two.story = {
-  name: 'Yes/No/Blank String'
+empty.story = {
+  name: 'String: Empty'
 }
 
+export const yesNoBlank = () => wrap(<StatsChart data={fjcReport[2]} />)
 
-export const three = () => wrap(<Stat data={fjcReport[3]} />)
-
-three.story = {
-  name: 'Languages String'
+yesNoBlank.story = {
+  name: 'String: Yes/No/Blank'
 }
 
 const charityFdnGrant2016AmountStat =  {
@@ -80,9 +101,9 @@ const charityFdnGrant2016AmountStat =  {
   "type": "numeric"
 }
 
-export const four = () => wrap(<Stat data={charityFdnGrant2016AmountStat} />)
+export const lopsided = () => wrap(<StatsChart data={charityFdnGrant2016AmountStat} />)
 
-four.story = {
-  name: 'Lopsided Numeric',
+lopsided.story = {
+  name: 'Numeric: Lopsided',
   parameters: { notes: 'bonkers histogram from charitable foundation donations in 2016'}
 }

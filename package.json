@@ -218,6 +218,7 @@
     "@fortawesome/free-solid-svg-icons": "5.11.2",
     "@fortawesome/react-fontawesome": "0.1.7",
     "@nivo/bar": "^0.59.2",
+    "@nivo/pie": "^0.59.1",
     "@storybook/cli": "^5.2.6",
     "@storybook/react": "^5.2.6",
     "@types/webpack-env": "1.14.1",
