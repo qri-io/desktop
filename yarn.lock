@@ -1681,6 +1681,20 @@
     lodash "^4.17.11"
     recompose "^0.30.0"
 
+"@nivo/pie@^0.59.1":
+  version "0.59.1"
+  resolved "https://registry.yarnpkg.com/@nivo/pie/-/pie-0.59.1.tgz#08be965f877cabb96c14bb2eefbe6022d856877e"
+  integrity sha512-odQPqQ3CmAbqS9Te3N7VsbKKBByjxDPe3SqTCUPysqGC5f+/DrynKwDxRSqOSL0HG7s0mq+vvA5kaW5EIeIEPg==
+  dependencies:
+    "@nivo/colors" "0.59.0"
+    "@nivo/core" "0.59.1"
+    "@nivo/legends" "0.59.1"
+    "@nivo/tooltip" "0.59.1"
+    d3-shape "^1.3.5"
+    lodash "^4.17.11"
+    react-motion "^0.5.2"
+    recompose "^0.30.0"
+
 "@nivo/tooltip@0.59.1":
   version "0.59.1"
   resolved "https://registry.yarnpkg.com/@nivo/tooltip/-/tooltip-0.59.1.tgz#82e981d6af397b1f18a8a2906c8fd60da0234881"

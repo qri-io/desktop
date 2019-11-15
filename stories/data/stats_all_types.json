@@ -1,0 +1,97 @@
+[
+  {
+    "count": 5,
+    "falseCount": 3,
+    "key": "bool",
+    "trueCount": 2,
+    "type": "boolean"
+  },
+  {
+    "count": 5,
+    "histogram": {
+      "bins": [
+        1.1,
+        1.6400000000000001,
+        2.18,
+        2.72,
+        3.2600000000000002,
+        3.8000000000000003,
+        4.34,
+        4.880000000000001,
+        5.42,
+        5.960000000000001,
+        6.5
+      ],
+      "frequencies": [
+        2,
+        0,
+        0,
+        0,
+        1,
+        0,
+        1,
+        0,
+        1,
+        0
+      ]
+    },
+    "key": "float",
+    "max": 5.5,
+    "mean": 3.08,
+    "median": 3.3,
+    "min": 1.1,
+    "type": "numeric"
+  },
+  {
+    "count": 5,
+    "histogram": {
+      "bins": [
+        1,
+        1.5,
+        2,
+        2.5,
+        3,
+        3.5,
+        4,
+        4.5,
+        5,
+        5.5,
+        6
+      ],
+      "frequencies": [
+        2,
+        0,
+        0,
+        0,
+        1,
+        0,
+        1,
+        0,
+        1,
+        0
+      ]
+    },
+    "key": "int",
+    "max": 5,
+    "mean": 2.8,
+    "median": 3,
+    "min": 1,
+    "type": "numeric"
+  },
+  {
+    "count": 5,
+    "key": "nil",
+    "type": "null"
+  },
+  {
+    "count": 5,
+    "frequencies": {
+      "aaa": 2
+    },
+    "key": "string",
+    "maxLength": 5,
+    "minLength": 1,
+    "type": "string",
+    "unique": 3
+  }
+]
