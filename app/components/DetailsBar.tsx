@@ -18,8 +18,10 @@ const DetailsBar: React.FunctionComponent<DetailsBarProps> = (props) => {
     const statsDetails = details as StatsDetails
     return (
       <div>
-        <h4>{statsDetails.title}</h4>
-        <StatsChart data={statsDetails.stats} />
+        {renderHeader(statsDetails.title, statsDetails.stats.type)}
+        <div className="details-bar-content">
+          <StatsChart data={statsDetails.stats} />
+        </div>
       </div>
     )
   }
@@ -28,9 +30,10 @@ const DetailsBar: React.FunctionComponent<DetailsBarProps> = (props) => {
     setDetailsBar({ type: DetailsType.NoDetails })
   }
 
-  const renderHeader = () =>
-    <div className="details-bar-header">
-      <h3>Details</h3>
+  const renderHeader = (title: string, type: string) => {
+    return (<div className="details-bar-header">
+      <h3>{title}</h3>
+      <h4>{type}</h4>
       <a
         className="close"
         onClick={onDismiss}
@@ -39,13 +42,11 @@ const DetailsBar: React.FunctionComponent<DetailsBarProps> = (props) => {
       >
         <FontAwesomeIcon icon={faTimes} size='lg'/>
       </a>
-    </div>
+    </div>)
+  }
 
   return <div className='details-bar padding'>
-    {renderHeader()}
-    <div className="details-bar-content margin">
-      {details.type === DetailsType.StatsDetails && renderStatsDetails()}
-    </div>
+    {details.type === DetailsType.StatsDetails && renderStatsDetails()}
   </div>
 }
 
