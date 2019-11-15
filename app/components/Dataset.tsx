@@ -179,7 +179,8 @@ export default class Dataset extends React.Component<DatasetProps> {
       if (
         componentsToReset.includes('structure') ||
         componentsToReset.includes('meta') ||
-        componentsToReset.includes('readme')
+        componentsToReset.includes('readme') ||
+        componentsToReset.includes('transform')
       ) fetchWorkingDataset()
     }
 

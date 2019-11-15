@@ -33,6 +33,9 @@ const initialState: WorkingDataset = {
     },
     structure: {
       value: {}
+    },
+    transform: {
+      value: ''
     }
   },
   history: {
@@ -97,6 +100,9 @@ const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction
           },
           structure: {
             value: dataset && dataset.structure ? dataset.structure : {}
+          },
+          transform: {
+            value: dataset && dataset.transform ? atob(dataset.transform.scriptBytes) : ''
           }
         }
       }

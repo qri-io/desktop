@@ -7,6 +7,7 @@ import BodyContainer from '../containers/BodyContainer'
 import StructureContainer from '../containers/StructureContainer'
 import ParseError from './ParseError'
 import ReadmeContainer from '../containers/ReadmeContainer'
+import TransformContainer from '../containers/TransformContainer'
 import ReadmeHistoryContainer from '../containers/ReadmeHistoryContainer'
 import { CSSTransition } from 'react-transition-group'
 import SpinnerWithIcon from './chrome/SpinnerWithIcon'
@@ -112,6 +113,19 @@ const DatasetComponent: React.FunctionComponent<DatasetComponentProps> = (props:
         >
           <div className='transition-wrap'>
             <StructureContainer history={history}/>
+          </div>
+        </CSSTransition>
+        <CSSTransition
+          in={(component === 'transform') && !isLoading && !hasParseError}
+          classNames='fade'
+          component='div'
+          timeout={300}
+          mountOnEnter
+          unmountOnExit
+          appear={true}
+        >
+          <div className='transition-wrap'>
+            <TransformContainer />
           </div>
         </CSSTransition>
         <SpinnerWithIcon loading={isLoading}/>
