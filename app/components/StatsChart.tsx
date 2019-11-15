@@ -5,7 +5,7 @@ import * as React from 'react'
 const primaryStatColor = '#0061A6'
 
 interface StatsChartProps {
-  height: number
+  height?: number
   data: Record<string, any>
 }
 
