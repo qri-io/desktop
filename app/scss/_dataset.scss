@@ -611,21 +611,27 @@ $header-font-size: .9rem;
 .details-bar-content {
   overflow-y: scroll;
   overflow-wrap: break-word;
+  margin-right: $spacer;
 }
 
 .details-bar-header {
-  padding-left: 0 1.5rem;
-  height: 60px;
-  border-bottom: solid 1px $border-color;
+  padding: 2rem 1rem 1rem 1rem;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
+  z-index: 10;
 
   h3 {
     margin: 0;
+    font-weight: 500;
     padding: 0;
-    padding-left: $spacer;
+    overflow: auto;
+  }
+
+  h4 {
+    margin-top: $spacer;
   }
 
   .close {
