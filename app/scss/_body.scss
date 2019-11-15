@@ -42,6 +42,15 @@
 // body table
 
 #body-table-container {
+  th:hover:not(.highlighted) {
+    background: #dcdcdc;
+  }
+
+  .highlighted {
+    background: #cdcdcd;
+    font-weight: 600;
+    text-decoration: underline;
+  }
 
   .cell {
     display: block;
@@ -56,7 +65,7 @@
     white-space: nowrap;
   }
 
-  th:first-child .cell, td:first-child .cell {
+  th:first-child .cell, td:first-child .cell, td:nth-child(2) .cell {
     border-left: none;
   }
 
@@ -71,10 +80,7 @@
     top: 0;
     background: #e6e6e6;
     font-weight: 500;
-  }
-
-  thead .cell {
-    border-bottom: 1px solid #ECECEC;
+    cursor: pointer;
   }
 
   tfoot {

@@ -115,8 +115,9 @@ const Body: React.FunctionComponent<BodyProps> = (props) => {
               ? <BodyTable
                 headers={headers}
                 body={value}
-                onFetch={onFetch}
                 pageInfo={pageInfo}
+                highlighedColumnIndex={details.type !== DetailsType.NoDetails ? details.index : undefined}
+                onFetch={onFetch}
                 setDetailsBar={handleToggleDetailsBar}
               />
               : <BodyJson
