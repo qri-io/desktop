@@ -31,6 +31,13 @@ describe('bodyValue', () => {
       expected: []
     },
     {
+      describe: 'prev is undefined',
+      prev: undefined,
+      curr: [['a','b','c'],['d','e','f']],
+      pageInfo: initPageInfo,
+      expected: [[0, 'a','b','c'],[1, 'd','e','f']]
+    },
+    {
       describe: 'prev is empty',
       prev: [],
       curr: [['a','b','c'],['d','e','f']],

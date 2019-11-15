@@ -126,7 +126,6 @@ function removeHiddenComponents (status: DatasetStatus) {
   }
 
   return (component): boolean => {
-    console.log(status[component.name])
     return status[component.name] || !hideWhenMissing[component.name]
   }
 }
