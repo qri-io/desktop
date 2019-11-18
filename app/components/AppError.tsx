@@ -1,6 +1,7 @@
 import * as React from 'react'
 import WelcomeTemplate from './WelcomeTemplate'
 import ExternalLink from './ExternalLink'
+import { DISCORD_URL } from '../constants'
 
 export const AppError: React.FunctionComponent<any> = () =>
   <WelcomeTemplate
@@ -11,7 +12,7 @@ export const AppError: React.FunctionComponent<any> = () =>
   >
     <span>
       <p>Please try restarting the app.</p>
-      <p>For more help checkout out our <ExternalLink href='https://qri.io/docs'>documentation</ExternalLink>, our <ExternalLink href='https://github.com/qri-io/frontend'>github org</ExternalLink> or our <ExternalLink href='https://discord.gg/etap8Gb' >discord</ExternalLink>.</p>
+      <p>For more help checkout out our <ExternalLink href='https://qri.io/docs'>documentation</ExternalLink>, our <ExternalLink href='https://github.com/qri-io/frontend'>github org</ExternalLink> or our <ExternalLink href={DISCORD_URL} >discord</ExternalLink>.</p>
     </span>
   </WelcomeTemplate>
 

@@ -8,6 +8,7 @@ import ComponentList from '../components/ComponentList'
 import DatasetComponent from './DatasetComponent'
 import { CSSTransition } from 'react-transition-group'
 import SpinnerWithIcon from './chrome/SpinnerWithIcon'
+import SidebarLayout from './SidebarLayout'
 import { ApiAction } from '../store/api'
 import { Structure, Commit } from '../models/dataset'
 import { CommitDetails as ICommitDetails, ComponentType } from '../models/Store'
@@ -120,10 +121,9 @@ const CommitDetails: React.FunctionComponent<CommitDetailsProps> = ({
       >
         <div id='transition-wrap'>
           {<CommitDetailsHeader structure={structure} commit={commit}/>}
-          <div className='columns'>
-            <div
-              className='commit-details-sidebar sidebar'
-            >
+          <SidebarLayout
+            id={'commit-details'}
+            sidebarContent={(
               <ComponentList
                 datasetSelected={peername !== '' && name !== ''}
                 status={status}
@@ -132,11 +132,12 @@ const CommitDetails: React.FunctionComponent<CommitDetailsProps> = ({
                 onComponentClick={setSelectedListItem}
                 fsiPath={'isLinked'}
               />
-            </div>
-            <div className='content-wrapper'>
+            )}
+            sidebarWidth={250}
+            mainContent={(
               <DatasetComponent isLoading={loading} component={selectedComponent} componentStatus={status[selectedComponent]} history />
-            </div>
-          </div>
+            )}
+          />
         </div>
       </CSSTransition>
       <SpinnerWithIcon loading={loading} />

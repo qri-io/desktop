@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faFont, faToggleOn } from '@fortawesome/free-solid-svg-icons'
+import { faToggleOn } from '@fortawesome/free-solid-svg-icons'
 
 import KeyValueTable from './KeyValueTable'
 
@@ -14,15 +14,16 @@ const buildOtherKeywordsTable = (column: any) => {
   return hasOtherKeys ? <KeyValueTable data={column} filterKeys={filterKeys}/> : null
 }
 
-interface TypeLabelProps {
+export interface TypeLabelProps {
   type: string | undefined
+  showLabel?: boolean
 }
 
-const TypeLabel: React.FunctionComponent<TypeLabelProps> = ({ type }) => {
+export const TypeLabel: React.FunctionComponent<TypeLabelProps> = ({ type, showLabel = true }) => {
   let icon
   switch (type) {
     case 'string':
-      icon = <FontAwesomeIcon icon={faFont} size='xs'/>
+      icon = <div className='text-glyph'>T</div>
       break
     case 'number':
       icon = <div className='text-glyph'>1.0</div>
@@ -37,7 +38,18 @@ const TypeLabel: React.FunctionComponent<TypeLabelProps> = ({ type }) => {
       icon = ''
   }
 
-  return (<span className='type-label'><div className='type-icon'>{icon}</div>&nbsp;&nbsp;{type}</span>)
+  return (
+    <span className='type-label'>
+      <div className='type-icon'>{icon}</div>
+      {
+        showLabel && (
+          <>
+            &nbsp;&nbsp;{type}
+          </>
+        )
+      }
+    </span>
+  )
 }
 
 const Row: React.FunctionComponent<RowProps> = ({ column }) => {

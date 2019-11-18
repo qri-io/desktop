@@ -1,8 +1,12 @@
 import { ResponsiveBar } from '@nivo/bar'
 import { ResponsivePie } from '@nivo/pie'
 import * as React from 'react'
+import numeral from 'numeral'
 
 const primaryStatColor = '#0061A6'
+const labelSkipWidth = 10
+
+const labelFormat = (d: Number) => <tspan y={ -8 }>{ d >= 1000 ? numeral(d).format('0.0a') : d }</tspan>
 
 interface StatsChartProps {
   height?: number
@@ -74,7 +78,7 @@ const NumericStat: React.FunctionComponent<StatsChartProps> = (props: StatsChart
         <ResponsiveBar
           data={histogram}
           margin={{ top: 20, right: 10, bottom: 50, left: 60 }}
-          padding={0}
+          padding={0.03}
           colors={() => primaryStatColor}
           tooltip={({ value, color, data }) => (
             <strong style={{ color }}>
@@ -94,12 +98,13 @@ const NumericStat: React.FunctionComponent<StatsChartProps> = (props: StatsChart
             tickRotation: 0
           }}
           axisBottom={null}
-          labelSkipWidth={12}
-          labelSkipHeight={12}
+          labelSkipWidth={labelSkipWidth}
+          labelSkipHeight={0}
           labelTextColor={{ from: 'color', modifiers: [['darker', 1.6]] }}
           animate={true}
           motionStiffness={90}
           motionDamping={15}
+          labelFormat={labelFormat}
         />
       </div>}
       <StatValues stats={[
@@ -143,7 +148,7 @@ const StringStat: React.FunctionComponent<StatsChartProps> = (props: StatsChartP
         <ResponsiveBar
           data={frequencies}
           margin={{ top: 20, right: 10, bottom: 50, left: 40 }}
-          padding={0}
+          padding={0.03}
           colors={() => primaryStatColor}
           tooltip={({ value, color, data }) => (
             <strong style={{ color }}>
@@ -163,12 +168,13 @@ const StringStat: React.FunctionComponent<StatsChartProps> = (props: StatsChartP
             tickRotation: 0
           }}
           axisBottom={null}
-          labelSkipWidth={12}
-          labelSkipHeight={12}
+          labelSkipWidth={labelSkipWidth}
+          labelSkipHeight={0}
           labelTextColor={{ from: 'color', modifiers: [['darker', 1.6]] }}
           animate={true}
           motionStiffness={90}
           motionDamping={15}
+          labelFormat={labelFormat}
         />
       </div>}
       <StatValues stats={[

@@ -3,6 +3,7 @@ import * as _ from 'underscore'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSync } from '@fortawesome/free-solid-svg-icons'
 
+import { TypeLabel } from './TwoDSchemaLayout'
 import { bodyPageSizeDefault } from '../actions/api'
 import { PageInfo } from '../models/store'
 import { ApiAction } from '../store/api'
@@ -130,7 +131,9 @@ export default class BodyTable extends React.Component<BodyTableProps> {
               {headers && headers.map((d: any, j: number) => {
                 return (
                   <th key={j} className={(j === highlighedColumnIndex) ? 'highlighted' : '' }>
-                    <div className='cell' onClick={() => setDetailsBar(j)}>{d}</div>
+                    <div className='cell' onClick={() => setDetailsBar(j)}>
+                      <TypeLabel type={d.type} showLabel={false}/>&nbsp;{d.title}
+                    </div>
                   </th>
                 )
               })}

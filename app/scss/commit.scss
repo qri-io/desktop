@@ -1,0 +1,79 @@
+// TODO import this
+$sidebar-item-padding:  6px 10px;
+
+#commit-component {
+  padding: 20px 10px 0 10px;
+
+  h6 {
+    font-weight: 500;
+    font-size: 0.8rem;
+  }
+
+  .dataset-ref {
+    font-weight: 900;
+    font-size: 1.4rem;
+  }
+
+  .commit-section {
+    margin-bottom: 12px;
+  }
+
+  .submit {
+    display: flex;
+  }
+
+  .btn {
+    margin-left: auto;
+  }
+}
+
+// display commit sidebar item on the bottom of the list
+#commit_status {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  transition: background-color 0.2s;
+}
+
+#commit-details-sidebar {
+  #commit_status {
+    position: initial;
+    background-color: inherit;
+  }
+}
+
+.clear-to-commit {
+  #commit_status {
+    background-color: $light-blue-accent;
+
+    &.sidebar-list-item-text.selected {
+      border-left: 4px solid #FFF;
+    }
+  }
+}
+
+.sync-spinner {
+  border-color: rgb(216, 216, 216) rgb(209, 209, 209) rgb(186, 186, 186);
+  border-style: solid;
+  border-width: 1px;
+  text-align: center;
+  height: 33px;
+  padding: $sidebar-item-padding;
+
+  svg {
+    margin-right: 6px;
+    animation-name: spin;
+    animation-duration: 1000ms;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+  }
+}
+
+@keyframes spin {
+    from {
+        transform:rotate(0deg);
+    }
+    to {
+        transform:rotate(360deg);
+    }
+}

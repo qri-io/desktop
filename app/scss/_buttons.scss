@@ -7,7 +7,6 @@
 .btn {
   display: inline-block;
   font-weight: $btn-font-weight;
-  line-height: $btn-line-height;
   text-align: center;
   white-space: nowrap;
   vertical-align: middle;
@@ -17,7 +16,6 @@
   @include button-size($btn-padding-y, $btn-padding-x, $btn-font-size, $btn-border-radius);
   @include transition(all .2s ease-in-out);
   min-width: $btn-min-width;
-  height: $btn-height;
 
   &,
   &:active,
@@ -62,7 +60,7 @@ fieldset[disabled] a.btn {
 //
 
 .btn-primary {
-  @include button-variant($btn-primary-color, $btn-primary-bg, $btn-primary-border);
+  @include button-variant($btn-primary-color, $qri-blue, $qri-blue);
 }
 
 .btn-dark {
@@ -148,7 +146,6 @@ input[type="button"] {
 }
 
 .btn-large {
-  @include button-size($btn-padding-y * 2, $btn-padding-x * 2, $btn-font-size * 1.50, $btn-border-radius);
-  height: 100%;
-  font-weight: bold;
+  width: 254px;
+  height: 50px;
 }

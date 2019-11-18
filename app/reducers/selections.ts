@@ -127,7 +127,11 @@ export default (state = initialState, action: AnyAction) => {
 
     case DATASET_SUCC:
       // if the selected component exists on dataset, no changes needed
-      if (action.payload.data.dataset[state.component] || (state.component === 'body' && action.payload.data.dataset['bodyPath'])) return state
+      if (
+        action.payload.data.dataset[state.component] ||
+        (state.component === 'body' && action.payload.data.dataset['bodyPath']) ||
+        state.component === 'commit'
+      ) return state
       return {
         ...state,
         // get the default component based on the components

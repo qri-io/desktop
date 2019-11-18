@@ -2,43 +2,51 @@ import * as React from 'react'
 import { Action, AnyAction } from 'redux'
 import classNames from 'classnames'
 import ContextMenuArea from 'react-electron-contextmenu'
+import moment from 'moment'
+import { withRouter } from 'react-router-dom'
 import { shell, MenuItemConstructorOptions } from 'electron'
+import filesize from 'filesize'
 
-import { CurrentDataset } from './Dataset'
 import { MyDatasets, WorkingDataset } from '../models/store'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faUnlink, faTimes, faDownload, faPlus, faFileAlt } from '@fortawesome/free-solid-svg-icons'
+import { faTimes, faFileAlt } from '@fortawesome/free-solid-svg-icons'
+import { faFile, faClock } from '@fortawesome/free-regular-svg-icons'
 
 import { Modal, ModalType } from '../models/modals'
+
+// component for rendering dataset format, timestamp, size, etc
+export interface DatasetDetailsSubtextProps {
+  format?: string
+  lastCommit?: string
+  commitCount?: number
+  length?: number
+}
+
+export const DatasetDetailsSubtext: React.FunctionComponent<DatasetDetailsSubtextProps> = ({ format, lastCommit, commitCount, length }) => {
+  return (
+    <div className='dataset-details'>
+      {format && <span className='dataset-details-item'> {format}</span>}
+      {lastCommit && <span className='dataset-details-item'><FontAwesomeIcon icon={faClock} size='sm'/> {moment(lastCommit).fromNow()}</span>}
+      {commitCount && <span className='dataset-details-item'>{`${commitCount} commit${commitCount !== 1 ? 's' : ''}`}</span>}
+      {length && <span className='dataset-details-item'><FontAwesomeIcon icon={faFile} size='sm'/> {filesize(length)}</span>}
+    </div>
+  )
+}
 
 interface DatasetListProps {
   myDatasets: MyDatasets
   workingDataset: WorkingDataset
-  toggleDatasetList: () => Action
   setFilter: (filter: string) => Action
   setWorkingDataset: (peername: string, name: string) => Action
   fetchMyDatasets: (page: number, pageSize: number) => Promise<AnyAction>
   setModal: (modal: Modal) => void
 }
 
-export default class DatasetList extends React.Component<DatasetListProps> {
+class DatasetList extends React.Component<DatasetListProps> {
   constructor (props: DatasetListProps) {
     super(props)
-    this.handleEsc = this.handleEsc.bind(this)
     this.clearFilter = this.clearFilter.bind(this)
     this.renderNoDatasets = this.renderNoDatasets.bind(this)
-  }
-
-  handleEsc (e: KeyboardEvent) {
-    if (e.key === 'Escape') this.props.toggleDatasetList()
-  }
-
-  componentDidMount () {
-    document.addEventListener('keydown', this.handleEsc)
-  }
-
-  componentWillUnmount () {
-    document.removeEventListener('keydown', this.handleEsc)
   }
 
   handleFilterChange (e: any) {
@@ -74,11 +82,10 @@ export default class DatasetList extends React.Component<DatasetListProps> {
       workingDataset,
       setModal,
       setWorkingDataset,
-      toggleDatasetList,
       myDatasets
     } = this.props
+
     const { filter, value: datasets } = myDatasets
-    const { peername, name } = workingDataset
 
     const filteredDatasets = datasets.filter(({ peername, name, title }) => {
       // if there's a non-empty filter string, only show matches on peername, name, and title
@@ -90,12 +97,12 @@ export default class DatasetList extends React.Component<DatasetListProps> {
         if (title && title.toLowerCase().includes(lowercasedFilterString)) return true
         return false
       }
-
       return true
     })
 
     const listContent = filteredDatasets.length > 0
-      ? filteredDatasets.map(({ peername, name, title, fsiPath }) => {
+      ? filteredDatasets.map((dataset) => {
+        const { peername, name, fsiPath } = dataset
         let menuItems: MenuItemConstructorOptions[] = [
           {
             label: 'Remove...',
@@ -123,27 +130,40 @@ export default class DatasetList extends React.Component<DatasetListProps> {
           ]
         }
 
+        let subtext = <>&nbsp;</>
+
+        if (dataset.dataset) {
+          const { format, length } = dataset.dataset.structure
+          const { timestamp: lastCommit } = dataset.dataset.commit
+          subtext = (
+            <DatasetDetailsSubtext
+              format={format}
+              lastCommit={lastCommit}
+              length={length}
+            />
+          )
+        }
+
         return (<ContextMenuArea menuItems={menuItems} key={`${peername}/${name}`}>
           <div
             key={`${peername}/${name}`}
             className={classNames('sidebar-list-item', 'sidebar-list-item-text', {
               'selected': (peername === workingDataset.peername) && (name === workingDataset.name)
             })}
-            onClick={() => setWorkingDataset(peername, name)}
+            onClick={() => {
+              setWorkingDataset(peername, name)
+                .then(() => {
+                  this.props.history.push('/dataset')
+                })
+            }}
           >
             <div className='icon-column'>
               <FontAwesomeIcon icon={faFileAlt} size='lg'/>
             </div>
             <div className='text-column'>
               <div className='text'>{peername}/{name}</div>
-              <div className='subtext'>{title || <br/>}</div>
+              {subtext}
             </div>
-            <div className='status-column' data-tip='unlinked'>
-              {!fsiPath && (
-                <FontAwesomeIcon icon={faUnlink} size='sm'/>
-              )}
-            </div>
-
           </div>
         </ContextMenuArea>)
       }
@@ -155,37 +175,12 @@ export default class DatasetList extends React.Component<DatasetListProps> {
       : `You have ${filteredDatasets.length} local dataset${datasets.length !== 1 ? 's' : ''}`
 
     return (
-      <>
-        <div id='dataset-list-header'>
-          <CurrentDataset
-            onClick={toggleDatasetList}
-            expanded={true}
-            peername={peername}
-            name={name}
-          />
-        </div>
+      <div id='dataset-list'>
         <div className='dataset-sidebar' >
-          <div id='dataset-list-filter' className='sidebar-list-item'>
-            <div id='dataset-list-buttons'>
-              <div
-                id='dataset_list_add'
-                className='dataset-list-button btn btn-primary'
-                onClick={() => { setModal({ type: ModalType.AddDataset }) }}
-                data-tip='Copy an existing<br/>Qri dataset to your computer'
-              >
-                <FontAwesomeIcon icon={faDownload} />&nbsp;&nbsp;
-                <span>Add Existing Dataset</span>
-              </div>
-              <div
-                id='dataset_list_create'
-                className='dataset-list-button btn btn-primary'
-                onClick={() => { setModal({ type: ModalType.CreateDataset }) }}
-                data-tip='Create a new Qri <br/>dataset from a data file'
-              >
-                <FontAwesomeIcon icon={faPlus} />&nbsp;&nbsp;
-                <span>Create New Dataset</span>
-              </div>
-            </div>
+          <div className='dataset-sidebar-header sidebar-padded-container'>
+            <p className='pane-title'>Collection</p>
+          </div>
+          <div id='dataset-list-filter'>
             <div className='filter-input-container'>
               <input
                 type='text'
@@ -211,7 +206,9 @@ export default class DatasetList extends React.Component<DatasetListProps> {
             <div className='strong-message'>{countMessage}</div>
           </div>
         </div>
-      </>
+      </div>
     )
   }
 }
+
+export default withRouter(DatasetList)

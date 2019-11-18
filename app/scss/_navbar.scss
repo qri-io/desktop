@@ -1,0 +1,136 @@
+$icon-gray: #d2d2d2;
+$navbar-item-dimension: 32px;
+$navbar-item-margin: 6px;
+
+.navbar-container {
+  z-index: 3;
+  background-color: $qri-blue;
+}
+
+.navbar, {
+  width: 60px;
+  height: 100%;
+  padding: 48px 0 8px 0;
+  color: $icon-gray;
+  background-color: #00000017;
+  position: relative;
+
+  a {
+    color: $white;
+  }
+
+  .navbar-top, .navbar-bottom {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .navbar-bottom {
+    position: absolute;
+    width: 100%;
+    bottom: 0;
+  }
+
+  .navbar-item {
+    padding: 10px 0;
+    width: 100%;
+    text-align: center;
+    cursor: pointer;
+    transition: border $active-item-highlight-transition;
+    border-left: 4px solid transparent;
+
+    .navbar-icon {
+      line-height: 2.25rem;
+    }
+
+    svg {
+      font-size: 1.59rem;
+    }
+
+    &:hover {
+      border-left: 4px solid $light-blue-accent-subdued;
+    }
+
+    &.active {
+      border-left: 4px solid $light-blue-accent;
+    }
+
+    .userphoto {
+      height: 28px;
+      width: 28px;
+      background-size: cover;
+      border-radius: 4px;
+      display: inline-block;
+    }
+  }
+}
+
+.user-menu {
+  position: absolute;
+  background: #FFF;
+  z-index: 5;
+  bottom: 59px;
+  left: 18px;
+  width: 300px;
+  border-radius: 6px;
+  box-shadow: 0 0 0 1px var(--saf-0),0 4px 12px 0 rgba(0,0,0,.12);
+  padding: 10px 0;
+  font-size: .9rem;
+  font-weight: 500;
+
+  .user-menu-section {
+    padding: 0;
+
+    a {
+      color: inherit;
+    }
+
+    .user-menu-info {
+      padding: 10px 20px;
+      display: flex;
+
+      .userphoto {
+        height: 38px;
+        width: 38px;
+        background-size: cover;
+        border-radius: 4px;
+        flex-basis: 38px;
+        margin-right: 14px;
+      }
+
+      .text {
+        line-height: 1.2rem;
+        font-weight: 800;
+        font-size: 1.05rem;
+        flex: 1;
+
+
+        .name {
+          font-weight: 300;
+          font-size: .8rem;
+        }
+      }
+    }
+
+    .user-menu-item {
+      padding: 0 20px;
+      height: 28px;
+      line-height: 1.9rem;
+      cursor: pointer;
+      display: flex;
+
+      .label {
+        flex: 1;
+      }
+
+      .icon {
+        flex: 0;
+        line-height: 1.7rem;
+      }
+
+      &:hover {
+        background-color: $light-blue-accent;
+        color: #FFF;
+      }
+    }
+  }
+}

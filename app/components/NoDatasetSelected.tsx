@@ -1,10 +1,6 @@
 import * as React from 'react'
 
-interface NoDatasetSelectedProps {
-  toggleDatasetList: () => void
-}
-
-const NoDatasetSelected: React.FunctionComponent<NoDatasetSelectedProps> = ({ toggleDatasetList }) => (
+const NoDatasetSelected: React.FunctionComponent = () => (
   <div className={'unlinked-dataset'}>
     <div className={'message-container'}>
       <div>
@@ -12,7 +8,6 @@ const NoDatasetSelected: React.FunctionComponent<NoDatasetSelectedProps> = ({ to
         <p>Use {process.platform === 'darwin' ? 'Command + T' : 'Ctrl + T'} to toggle the dataset list open and closed</p>
         <a href='#' onClick={(e) => {
           e.preventDefault()
-          toggleDatasetList()
         }}>Or click here to open the dataset list</a>
       </div>
     </div>

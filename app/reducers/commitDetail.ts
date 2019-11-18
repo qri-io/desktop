@@ -15,6 +15,9 @@ const initialState: CommitDetails = {
   status: {},
   isLoading: true,
   components: {
+    // commit: {
+    //   value: {}
+    // },
     body: {
       value: [],
       pageInfo: initialPageInfo

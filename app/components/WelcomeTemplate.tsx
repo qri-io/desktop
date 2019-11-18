@@ -17,9 +17,11 @@ interface WelcomeTemplateProps {
   id?: string
   acceptEnabled?: boolean
   showLogo?: boolean
+  fullscreen?: boolean
 }
 
-const WelcomeTemplate: React.FunctionComponent<WelcomeTemplateProps> = ({ onAccept, acceptText, exit, title, subtitle, loading, id, acceptEnabled = true, children, showLogo = true }) => {
+const WelcomeTemplate: React.FunctionComponent<WelcomeTemplateProps> = (props) => {
+  const { onAccept, acceptText, exit, title, subtitle, loading, id, acceptEnabled = true, children, showLogo = true, fullscreen = true } = props
   const handleOnClick = () => {
     if (acceptEnabled && onAccept) {
       onAccept()
@@ -27,7 +29,7 @@ const WelcomeTemplate: React.FunctionComponent<WelcomeTemplateProps> = ({ onAcce
   }
 
   return (
-    <div className='welcome-page' id={id}>
+    <div className={classNames('welcome-page', { fullscreen })} id={id} >
       <div className={classNames('welcome-center', { 'welcome-no-logo': !showLogo })}>
         {showLogo && <img className='welcome-graphic' src={logo} />}
         <div className='welcome-title'>

@@ -1,3 +1,5 @@
+import { push } from 'connected-react-router'
+
 import {
   SELECTIONS_SET_ACTIVE_TAB,
   SELECTIONS_SET_SELECTED_LISTITEM,
@@ -37,3 +39,5 @@ export const clearSelection = () => {
     type: SELECTIONS_CLEAR
   }
 }
+
+export const setRoute = (route: string) => push(route)

@@ -53,18 +53,17 @@
       flex-basis: 20%;
     }
   }
+}
 
-  .type-icon {
-    display: inline-block;
-    min-width: 20px;
-    display: inline-block;
-    min-width: 15px;
-    text-align: center;
-    color: #ababab;
-  }
+.type-icon {
+  display: inline-block;
+  display: inline-block;
+  text-align: center;
+  color: #ababab;
+}
 
-  .text-glyph {
-    font-size: 0.6rem;
-    font-weight: 700;
-  }
+.text-glyph {
+  font-family: 'Georgia', serif;
+  font-size: 0.7rem;
+  font-weight: 700;
 }

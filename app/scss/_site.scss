@@ -28,9 +28,27 @@
 // TabPanel
 // TagList
 
+.titlebar {
+  -webkit-user-select: none;
+  -webkit-app-region: drag;
+  height: 30px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+}
+
 ////////////////////////////
 //          APP           //
 ////////////////////////////
+
+#app {
+  display: flex;
+}
+
+.route-content {
+  flex: 1;
+}
 
 .app {
   background: $appBackground;
@@ -599,10 +617,6 @@ a {
   transition: color 0.5s;
   cursor: pointer;
   color: $primary;
-
-  svg path {
-    fill: $primary !important;
-  }
 }
 
 a:hover {
@@ -632,36 +646,6 @@ b {
 
 .left {
   float: left;
-}
-
-.icon {
-  font-family: 'SSPika';
-  display: block;
-  text-align: center;
-  text-decoration: none;
-  font-size: 20px;
-  margin-top: 10px;
-  transition: all 0.25s;
-  // &:active {
-  //   color: palette.primary;
-  //   textDecoration: 'none'
-  // },
-  // ':focus': {
-  //   textDecoration: 'none'
-  // },
-  // ':hover': {
-  //   opacity: 1,
-  //   color: palette.primary
-  // }
-}
-
-.icon-inline {
-  font-family: 'SSPika';
-  display: inline-block;
-  text-align: center;
-  text-decoration: none;
-  transition: all 0.25s;
-  font-size: 16px;
 }
 
 // dataset nav links
@@ -814,5 +798,13 @@ b {
       color: inherit !important;
       text-decoration: none !important;
     }
+  }
+}
+
+// react tooltip overrides
+.__react_component_tooltip {
+  transition: opacity 0.1s;
+  &.show {
+    opacity: 1
   }
 }

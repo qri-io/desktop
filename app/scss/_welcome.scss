@@ -2,18 +2,27 @@
 //         Welcome        //
 ////////////////////////////
 .welcome-page {
-    background: $appBackground;
+  background: $appBackground;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+
+  &.fullscreen {
     position: absolute;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    top: 0;
-    right: 0;
-    left: 0;
-    bottom: 0;
   }
+
+  h2 {
+    font-size: 40px;
+    font-weight: 900;
+    line-height: 40px;
+  }
+}
 
 #app-loading { z-index: 250 }
 #app-error { z-index: 249 }
@@ -33,7 +42,7 @@
   height: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: space-evenly;
+  justify-content: center;
 }
 
 .welcome-content {
@@ -52,7 +61,7 @@
 .welcome-graphic {
   align-self: flex-start;
   margin: auto;
-  margin-bottom: 0;
+  margin-bottom: 34px;
   margin-top: 0;
   height: 150px;
   width: 150px;

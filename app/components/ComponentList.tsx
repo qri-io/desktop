@@ -6,9 +6,19 @@ import { clipboard, shell, MenuItemConstructorOptions } from 'electron'
 import ContextMenuArea from 'react-electron-contextmenu'
 import { ApiActionThunk } from '../store/api'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faTags, faArchive, faTh, IconDefinition, faExclamation, faRobot } from '@fortawesome/free-solid-svg-icons'
-import { faReadme } from '@fortawesome/free-brands-svg-icons'
+import {
+  faTags,
+  faUniversity,
+  faTh,
+  IconDefinition,
+  faExclamation,
+  faRobot,
+  faGlasses,
+  faSave,
+  faArrowRight
+} from '@fortawesome/free-solid-svg-icons'
 
+import { checkClearToCommit } from '../utils/formValidation'
 import { DatasetStatus, SelectedComponent, ComponentType } from '../models/store'
 
 interface StatusDotProps {
@@ -49,31 +59,39 @@ interface FileRowProps {
   onClick?: (type: ComponentType, activeTab: string) => Action
 }
 
-export const FileRow: React.FunctionComponent<FileRowProps> = (props) => (
-  <div
-    id={`${props.displayName.toLowerCase()}_status`}
-    className={classNames('sidebar-list-item', 'sidebar-list-item-text', {
-      'selected': props.selected,
-      'disabled': props.disabled
-    })}
-    onClick={() => {
-      if (props.onClick && props.selectionType && props.name) {
-        props.onClick(props.selectionType, props.name.toLowerCase())
-      }
-    }}
-  >
-    {props.icon && (<div className='icon-column'>
-      <FontAwesomeIcon icon={props.icon} size='sm'/>
-    </div>)}
-    <div className='text-column'>
-      <div className='text'>{props.displayName}</div>
-      <div className='subtext'>{props.filename}</div>
+export const FileRow: React.FunctionComponent<FileRowProps> = (props) => {
+  let statusIcon = <StatusDot status={props.status} />
+
+  if (props.name === 'commit') {
+    statusIcon = <FontAwesomeIcon icon={faArrowRight} style={{ color: '#FFF' }} size='lg' />
+  }
+
+  return (
+    <div
+      id={`${props.displayName.toLowerCase()}_status`}
+      className={classNames('sidebar-list-item', 'sidebar-list-item-text', {
+        'selected': props.selected,
+        'disabled': props.disabled
+      })}
+      onClick={() => {
+        if (props.onClick && props.selectionType && props.name) {
+          props.onClick(props.selectionType, props.name.toLowerCase())
+        }
+      }}
+    >
+      {props.icon && (<div className='icon-column'>
+        <FontAwesomeIcon icon={props.icon} size='sm'/>
+      </div>)}
+      <div className='text-column'>
+        <div className='text'>{props.displayName}</div>
+        <div className='subtext'>{props.filename}</div>
+      </div>
+      <div className='status-column'>
+        {statusIcon}
+      </div>
     </div>
-    <div className='status-column'>
-      <StatusDot status={props.status} />
-    </div>
-  </div>
-)
+  )
+}
 
 FileRow.displayName = 'FileRow'
 
@@ -89,10 +107,16 @@ interface ComponentListProps {
 
 const components = [
   {
+    name: 'commit',
+    displayName: 'Commit',
+    tooltip: 'info about the latest changes to the dataset',
+    icon: faSave
+  },
+  {
     name: 'readme',
     displayName: 'Readme',
     tooltip: 'a markdown file to familiarize people with the dataset',
-    icon: faReadme
+    icon: faGlasses
   },
   {
     name: 'meta',
@@ -104,13 +128,13 @@ const components = [
     name: 'body',
     displayName: 'Body',
     tooltip: 'the structured content of the dataset',
-    icon: faArchive
+    icon: faTh
   },
   {
     name: 'structure',
     displayName: 'Structure',
     tooltip: 'the structure of the dataset',
-    icon: faTh
+    icon: faUniversity
   },
   {
     name: 'transform',
@@ -146,22 +170,20 @@ const ComponentList: React.FunctionComponent<ComponentListProps> = (props: Compo
   } = props
 
   const isEnabled = (name: string): boolean => {
-    return (datasetSelected && selectionType === 'component' && (name === 'meta' || name === 'structure' || name === 'readme' || name === 'transform'))
+    return (datasetSelected && selectionType === 'component' &&
+      components.map(d => d.name).includes(name)
+    )
   }
 
+  const visibleComponents = components.filter(removeHiddenComponents(status))
+
+  // reduce visible component statuses into boolean indicating that there are changes ready to be committed
+  const clearToCommit = checkClearToCommit(status)
+
   return (
-    <div>
-      <div className={classNames(
-        'sidebar-list-item',
-        'sidebar-list-item-text',
-        'sidebar-list-header',
-        {
-          'sidebar-list-header-disabled': !datasetSelected
-        })}>
-          Dataset Components
-      </div>
+    <div className={classNames({ 'clear-to-commit': clearToCommit })}>
       {
-        components.filter(removeHiddenComponents(status)).map(({ name, displayName, tooltip, icon }) => {
+        visibleComponents.map(({ name, displayName, tooltip, icon }) => {
           if (status[name] && !!fsiPath) {
             const { filepath, status: fileStatus } = status[name]
 
@@ -219,12 +241,15 @@ const ComponentList: React.FunctionComponent<ComponentListProps> = (props: Compo
               return fileRow
             }
           } else {
+            if (name === 'commit' && selectionType === 'commitComponent') return null
+
             return (
               <FileRow
                 key={name}
                 displayName={displayName}
-                name={displayName}
+                name={name}
                 icon={icon}
+                selected={selectedComponent === name}
                 selectionType={selectionType}
                 // TODO (ramfox): we should create a 'isDisabled' function and add these specifications & test
                 disabled={!isEnabled(name)}

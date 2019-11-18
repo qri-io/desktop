@@ -1,31 +1,34 @@
 import { connect } from 'react-redux'
 import { setFilter } from '../actions/myDatasets'
+import Collection from '../components/Collection'
 import { fetchMyDatasets } from '../actions/api'
-import { toggleDatasetList } from '../actions/ui'
 import { setWorkingDataset } from '../actions/selections'
-import DatasetList from '../components/DatasetList'
+import { setSidebarWidth } from '../actions/ui'
 
 import { Modal } from '../models/modals'
 
-interface DatasetListContainerProps {
+interface CollectionContainerProps {
   setModal: (modal: Modal) => void
 }
 
-const mapStateToProps = (state: any, ownProps: DatasetListContainerProps) => {
-  const { myDatasets, workingDataset } = state
+const mapStateToProps = (state: any, ownProps: CollectionContainerProps) => {
+  const { myDatasets, workingDataset, ui } = state
+  const { collectionSidebarWidth: sidebarWidth } = ui
+
   const { setModal } = ownProps
   return {
     myDatasets,
     workingDataset,
-    setModal
+    setModal,
+    sidebarWidth
   }
 }
 
 const actions = {
-  toggleDatasetList,
   setFilter,
   setWorkingDataset,
+  setSidebarWidth,
   fetchMyDatasets
 }
 
-export default connect(mapStateToProps, actions)(DatasetList)
+export default connect(mapStateToProps, actions)(Collection)

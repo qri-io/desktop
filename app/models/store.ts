@@ -1,5 +1,5 @@
-import { RouterState } from 'react-router-redux'
-import { Meta, Structure } from './dataset'
+import { RouterState } from 'connected-react-router'
+import { Dataset, Meta, Structure } from './dataset'
 import { Session } from './session'
 import { Details } from './details'
 
@@ -14,7 +14,7 @@ enum ModalType {
   AddDataset,
 }
 
-export type ComponentType = 'component' | 'commit' | 'componentCommit'
+export type ComponentType = 'component' | 'commit' | 'commitComponent'
 
 type Modal =
 | {
@@ -53,13 +53,13 @@ export interface Connection {
 }
 
 export interface UI {
-  showDatasetList: boolean
   hasAcceptedTOS: boolean
   qriCloudAuthenticated: boolean
   modal?: Modal
   showDiff: boolean
   datasetSidebarWidth: number
   commitSidebarWidth: number
+  collectionSidebarWidth: number
   toast: Toast
   blockMenus: boolean
   hideCommitNudge: boolean
@@ -68,7 +68,7 @@ export interface UI {
   detailsBar: Details
 }
 
-export type SelectedComponent = 'readme' | 'meta' | 'body' | 'structure' | 'transform' | ''
+export type SelectedComponent = 'commit' | 'readme' | 'meta' | 'body' | 'structure' | 'transform' | ''
 
 // currently selected dataset, tab, dataset component, commit, etc
 export interface Selections {
@@ -91,7 +91,7 @@ export interface PageInfo {
 
 // dataset summary info to show in dataset list
 export interface DatasetSummary {
-  title: string
+  dataset: Dataset
   peername: string
   name: string
   path: string
@@ -153,6 +153,7 @@ export interface CommitDetails {
     }
   }
   stats: Array<{[key: string]: any}>
+  structure: Structure
 }
 
 export interface HistoryItem {

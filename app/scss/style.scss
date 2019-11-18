@@ -25,7 +25,7 @@
 
 @import "dataset";
 @import "drag-drop";
-@import "saveform";
+@import "commit";
 @import "dataset-list";
 @import "welcome";
 @import "flex";
@@ -34,6 +34,8 @@
 @import "metadata";
 @import "readme";
 @import "stats";
+@import "navbar";
+@import "sidebar-layout";
 
 @import '~easymde/dist/easymde.min.css';
 @import "dialog"
