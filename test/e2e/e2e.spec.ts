@@ -98,7 +98,7 @@ describe('Qri End to End tests', function spec() {
     // status dots are correct
     expect(await client.element('#meta_status .status-dot-added').isExisting()).toBe(true);
     expect(await client.element('#body_status .status-dot-added').isExisting()).toBe(true)
-    expect(await client.element('#schema_status .status-dot-transparent').isExisting()).toBe(true)
+    expect(await client.element('#structure_status .status-dot-added').isExisting()).toBe(true)
 
     // create commit
     expect(await client.element('#commit_nudge').getText()).toContain('ready to make your first commit')
@@ -163,7 +163,7 @@ describe('Qri End to End tests', function spec() {
     // status dots are correct
     expect(await client.element('#meta_status .status-dot-added').isExisting()).toBe(true);
     expect(await client.element('#body_status .status-dot-added').isExisting()).toBe(true)
-    expect(await client.element('#schema_status .status-dot-transparent').isExisting()).toBe(true)
+    expect(await client.element('#structure_status .status-dot-added').isExisting()).toBe(true)
 
     // create commit
     expect(await client.element('#commit_nudge').getText()).toContain('ready to make your first commit')
@@ -213,7 +213,10 @@ describe('Qri End to End tests', function spec() {
     expect(await client.element('[name="savePath"]').getValue()).toBe(backend.dir)
     await client.click('#submit')
     await delay(3500)
-    expect(await client.element("#add_error").getText()).toBe('Dataset not found.')
+    // implement mock registry server:
+    // expect(await client.element("#add_error").getText()).toBe('Dataset not found.')
+    expect(await client.element("#add_error").getText()).toBe('dataset name resolution currently only works over HTTP')
+
 
   })
 

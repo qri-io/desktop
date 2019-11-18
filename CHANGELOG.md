@@ -1,3 +1,39 @@
+## [0.2.1](https://github.com/qri-io/desktop/compare/v0.2.0...v0.2.1) (2019-11-18)
+
+This release cycle we focused on two features (Readmes and Stats), various bug fixes, and bringing storybook into desktop for development:
+
+## Readmes 
+Now you can create Readme markdown files with Qri Desktop! Qri Desktop will also automatically pick up a `readme.md` file that exists in the dataset folder, if you have connected the dataset to a folder. It will also pick up any changes to that file. You can also preview the rendered and formatted readme before saving your changes to the dataset.
+
+## Stats
+Qri can now automatically generate useful stats based on your dataset. If you're dataset is tabular, you can view these stats by clicking on a column header. Different column header types generate different stats, eg, numeric column types will generate averages and medians, string column types will generate a max length and min length, etc. These stats give you an overview of what is happening inside your dataset and can be used to spot check your data!
+
+### Bug Fixes
+
+* **BodyTable:** if we've fetchedAll, do not fetch another page ([2f5a954](https://github.com/qri-io/desktop/commit/2f5a954))
+* **bodyValue:** account for null or undefined previous body values ([afef2ed](https://github.com/qri-io/desktop/commit/afef2ed))
+* **ComponentList:** right-click to discard change from `ComponentList` works again ([d6dfef7](https://github.com/qri-io/desktop/commit/d6dfef7))
+* **DetailsBar:** fix transition ([97beb8b](https://github.com/qri-io/desktop/commit/97beb8b))
+* **readme:** fixes to get correct html from render response ([c28d49b](https://github.com/qri-io/desktop/commit/c28d49b))
+* **StatsChart:** fix rename bugs ([a7b05e2](https://github.com/qri-io/desktop/commit/a7b05e2))
+
+
+### Features
+
+* style selected column header when stats are displayed ([439cff5](https://github.com/qri-io/desktop/commit/439cff5))
+* **App:** drag and drop adds file to `CreateModal` ([a90e92b](https://github.com/qri-io/desktop/commit/a90e92b))
+* **Boolean Stat Chart:** add boolean stat, move Stat component out of directory ([cb3d5a7](https://github.com/qri-io/desktop/commit/cb3d5a7))
+* **detailsBar:** let's add a details bar on the dataset body page ([d346ed3](https://github.com/qri-io/desktop/commit/d346ed3))
+* **DetailsBar:** add stats component to details bar ([6149a11](https://github.com/qri-io/desktop/commit/6149a11))
+* **drag-and-drop:** drag and drop a data file to create a dataset ([1f121fe](https://github.com/qri-io/desktop/commit/1f121fe))
+* **fetchStats, fetchCommitStats:** add api call to get stats! ([aae9e29](https://github.com/qri-io/desktop/commit/aae9e29))
+* **ReadmeHistory:** create component that shows versioned `Readme`s ([0dd5619](https://github.com/qri-io/desktop/commit/0dd5619))
+* **stat:** add numeric stat, quick stats component ([ee26539](https://github.com/qri-io/desktop/commit/ee26539))
+* **storybook,Stat:** initial string Stat component with story ([2f9443d](https://github.com/qri-io/desktop/commit/2f9443d))
+* **transform:** initial support for transform display ([08464af](https://github.com/qri-io/desktop/commit/08464af))
+
+
+
 # [0.2.0](https://github.com/qri-io/desktop/compare/v0.1.0...v0.2.0) (2019-11-06)
 
 Hello friends! This is our first major change to the Qri Desktop since release!
