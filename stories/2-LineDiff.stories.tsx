@@ -7,7 +7,7 @@ export default {
 
 const wrap = (component) => {
   return (
-    <div style={{ maxWidth: 650, margin: '0 auto' }}>
+    <div style={{ maxWidth: 960, margin: '0 auto' }}>
       {component}
     </div>
   )
@@ -21,7 +21,7 @@ const patchReadmeThreeRemoveOneAdd = {
     "removed": 3
   },
   "patch": [
-    [[ [1,5], [1,5] ], "# World Bank Population"],
+    [[ [1,7], [1,5] ], "# World Bank Population"],
     [" ", "### Only Existing Territorial Regions"],
     [" ", ""],
     ["-", "The world Bank dataset of population is just silly!"],
@@ -33,11 +33,12 @@ const patchReadmeThreeRemoveOneAdd = {
     [" ", "Other than that, the datasets are exactly the same."],
   ]
 }
+
 export const threeRemoveOneAdd = () => wrap(<LineDiff data={patchReadmeThreeRemoveOneAdd} />)
 
 threeRemoveOneAdd.story = {
-  name: 'Transform: Basic Starlark',
+  name: 'LineDiff: +1-3',
   parameters: {
-    notes: `short code viewer`
+    notes: `hand-crafted diff showing three removes and one add in a single block`
   }
 }

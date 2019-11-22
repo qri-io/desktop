@@ -24,7 +24,7 @@ const LineDiff: React.FunctionComponent<LineDiffProps> = (props: LineDiffProps) 
             return (
               <tr key={i}>
                 <td colSpan="3" className='truncated'>
-                  <i>Additional Content Hidden</i>
+                  <span>Additional Content Hidden</span>
                 </td>
               </tr>
             )
@@ -46,7 +46,9 @@ const LineDiff: React.FunctionComponent<LineDiffProps> = (props: LineDiffProps) 
           return (<tr key={i} className={changeType}>
             <td className="line_count">{ changeType !== 'add' && leftCount}</td>
             <td className="line_count">{ changeType !== 'rem' && rightCount}</td>
-            <td className="text">{p[1]}</td>
+            <td className={changeType}>
+              <span className="text">{p[1]}</span>
+            </td>
           </tr>)
         })}
       </table>
@@ -63,8 +65,8 @@ const ChangeStat: React.FunctionComponent<ChangeStatProps> = (props: ChangeStatP
   const { added, removed } = props
   return (
     <span className="change_stat">
-      <b className="added">+{added}</b>
-      <b className="removed">-{removed}</b>
+      <b className="add">+{added}</b>
+      <b className="rem">-{removed}</b>
     </span>
   )
 }

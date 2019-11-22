@@ -1,6 +1,6 @@
 
 
-.line_diff {
+.table_diff {
   min-width: 600px;
   background: white;
   box-shadow: 0 0 4px #00000015;
@@ -36,36 +36,52 @@
   }
 
   table {
-    font-family: 'Courier New', Courier, monospace;
+    font-weight: 400;
     width: 100%;
-
-    tr {
-      height: 20px;
-
-      td .text {
-        margin-left: 20px;
-      }
-      
-      td.add:before {
-        position: absolute;
-        margin-left: 15px;
-        color: #aaa;
-        content: "+";
-      }
-
-      td.rem:before {
-        position: absolute;
-        margin-left: 15px;
-        color: #aaa;
-        content: "-";
-      }
-    }
 
     .add {
       background: #86FDA250;
     }
+    
     .rem {
       background: #FB9EA850;
+    }
+
+    .collapsed_row {
+      cursor: pointer;
+      height: 2px;
+      td {
+        height: 2px;
+        background: #A60000;
+        overflow: hidden;
+      }
+    }
+    .previous_row {
+      cursor: pointer;
+    }
+
+    .collapsed_cell {
+      cursor: pointer;
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      overflow: hidden;
+      width: 5px;
+      background: #A60000;
+      padding-left: 5px;
+    }
+    .previous_cell {
+      cursor: pointer;
+    }
+
+    tr {
+      height: 20px;
+      td {
+        position: relative;
+        border: 1px solid #eee;
+        padding: 2px 10px;
+      }
     }
   }
 }
