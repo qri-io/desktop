@@ -2,7 +2,7 @@ import React from 'react'
 import LineDiff from '../app/components/compare/LineDiff'
 
 export default {
-  title: 'Line Diff'
+  title: 'Diff|Line'
 }
 
 const wrap = (component) => {
