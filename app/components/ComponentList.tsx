@@ -105,7 +105,7 @@ interface ComponentListProps {
   fsiPath?: string
 }
 
-const components = [
+export const components = [
   {
     name: 'commit',
     displayName: 'Commit',
@@ -144,13 +144,13 @@ const components = [
   }
 ]
 
-function removeHiddenComponents (status: DatasetStatus) {
-  const hideWhenMissing = {
-    'transform': true
+function removeHiddenComponents (status: DatasetStatus, selectionType: ComponentType) {
+  const showWhenMissing = {
+    'readme': 'component',
+    'commit': true
   }
-
   return (component): boolean => {
-    return status[component.name] || !hideWhenMissing[component.name]
+    return !!status[component.name] || showWhenMissing[component.name] === selectionType || showWhenMissing[component.name] === true
   }
 }
 
@@ -175,7 +175,7 @@ const ComponentList: React.FunctionComponent<ComponentListProps> = (props: Compo
     )
   }
 
-  const visibleComponents = components.filter(removeHiddenComponents(status))
+  const visibleComponents = components.filter(removeHiddenComponents(status, selectionType))
 
   // reduce visible component statuses into boolean indicating that there are changes ready to be committed
   const clearToCommit = checkClearToCommit(status)
@@ -241,7 +241,7 @@ const ComponentList: React.FunctionComponent<ComponentListProps> = (props: Compo
               return fileRow
             }
           } else {
-            if (name === 'commit' && selectionType === 'commitComponent') return null
+            // if (name === 'commit' && selectionType === 'commitComponent') return null
 
             return (
               <FileRow

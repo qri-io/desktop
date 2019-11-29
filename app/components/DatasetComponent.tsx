@@ -11,6 +11,7 @@ import TransformContainer from '../containers/TransformContainer'
 import ReadmeHistoryContainer from '../containers/ReadmeHistoryContainer'
 import { CSSTransition } from 'react-transition-group'
 import SpinnerWithIcon from './chrome/SpinnerWithIcon'
+import CommitHistoryContainer from '../containers/CommitHistoryContainer'
 import CommitContainer from '../containers/CommitContainer'
 
 import { getComponentDisplayProps, StatusDot } from './ComponentList'
@@ -139,7 +140,11 @@ const DatasetComponent: React.FunctionComponent<DatasetComponentProps> = (props:
           appear={true}
         >
           <div className='transition-wrap'>
-            <CommitContainer />
+            {
+              history
+                ? <CommitHistoryContainer />
+                : <CommitContainer />
+            }
           </div>
         </CSSTransition>
         <SpinnerWithIcon loading={isLoading}/>

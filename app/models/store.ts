@@ -1,5 +1,5 @@
 import { RouterState } from 'connected-react-router'
-import { Dataset, Meta, Structure } from './dataset'
+import { Dataset, Meta, Structure, Commit } from './dataset'
 import { Session } from './session'
 import { Details } from './details'
 
@@ -134,6 +134,9 @@ export interface CommitDetails {
   status: DatasetStatus
   isLoading: boolean
   components: {
+    commit: {
+      value: Commit
+    }
     readme: {
       value: string | undefined
       preview: string | undefined

@@ -4,7 +4,7 @@ import { Action } from 'redux'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faClock } from '@fortawesome/free-regular-svg-icons'
 
-import ComponentList from '../components/ComponentList'
+import HistoryComponentList from '../components/HistoryComponentList'
 import DatasetComponent from './DatasetComponent'
 import { CSSTransition } from 'react-transition-group'
 import SpinnerWithIcon from './chrome/SpinnerWithIcon'
@@ -124,13 +124,13 @@ const CommitDetails: React.FunctionComponent<CommitDetailsProps> = ({
           <SidebarLayout
             id={'commit-details'}
             sidebarContent={(
-              <ComponentList
+              <HistoryComponentList
                 datasetSelected={peername !== '' && name !== ''}
                 status={status}
+                components={Object.keys(commitDetails.components)}
                 selectedComponent={selectedComponent}
                 selectionType={'commitComponent' as ComponentType}
                 onComponentClick={setSelectedListItem}
-                fsiPath={'isLinked'}
               />
             )}
             sidebarWidth={250}
