@@ -19,6 +19,7 @@ export interface CommitProps {
   saveWorkingDatasetAndFetch: () => Promise<ApiAction>
   setCommitTitle: (title: string) => Action
   setCommitMessage: (message: string) => Action
+  setSelectedListItem: (type: string, selectedListItem: string) => Action
 }
 
 const Commit: React.FunctionComponent<CommitProps> = (props: CommitProps) => {
@@ -30,7 +31,8 @@ const Commit: React.FunctionComponent<CommitProps> = (props: CommitProps) => {
     message,
     saveWorkingDatasetAndFetch,
     setCommitTitle,
-    setCommitMessage
+    setCommitMessage,
+    setSelectedListItem
   } = props
 
   const [isValid, setIsValid] = React.useState(false)
@@ -53,6 +55,8 @@ const Commit: React.FunctionComponent<CommitProps> = (props: CommitProps) => {
         .then(() => {
           setCommitTitle('')
           setCommitMessage('')
+          // set selected component to ''
+          setSelectedListItem('component', '')
         })
     }
   }

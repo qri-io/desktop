@@ -545,3 +545,12 @@ $header-font-size: .9rem;
   top: -2px;
   font-weight: 700;
 }
+
+// presentation-panel
+.presentation-panel {
+  padding: 10px 10px;
+
+  h3 {
+    font-weight: 600;
+  }
+}

@@ -29,7 +29,36 @@ const DatasetComponent: React.FunctionComponent<DatasetComponentProps> = (props:
   const { component: selectedComponent, componentStatus, isLoading, history = false, fsiPath } = props
 
   const hasParseError = componentStatus && componentStatus.status === 'parse error'
-  const component = selectedComponent || 'meta'
+
+  // no changes panel
+  if (selectedComponent === '') {
+    return (
+      <div className='presentation-panel'>
+        <h3>No local changes</h3>
+        <p>There are no uncommitted changes to this qri dataset.  Here are some things you can consider doing next:</p>
+
+        <div className='button-panel-container'>
+          <div className='button-panel'>
+            <div className='title'>
+              Publish the most recent changes to Qri Cloud.
+            </div>
+            <div className='text'>
+              Dataset menu or Shift-Cmd-P
+            </div>
+            <button>Do something</button>
+          </div>
+        </div>
+
+        <p>Publish the dataset to Qri Cloud</p>
+        <p>Inspect the latest commit in the history tab</p>
+        <p>Modify the dataset&apos;s readme or metadata</p>
+        <p>Open the dataset&apos;s working directory</p>
+
+      </div>
+    )
+  }
+
+  const component = selectedComponent
   const { displayName, icon, tooltip } = getComponentDisplayProps(component)
 
   return (
