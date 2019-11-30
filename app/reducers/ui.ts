@@ -51,7 +51,6 @@ const initialState = {
   qriCloudAuthenticated: store().getItem(qriCloudAuthenticatedKey) === 'true',
   showDiff: false,
   datasetSidebarWidth: getSidebarWidth('datasetSidebarWidth'),
-  commitSidebarWidth: getSidebarWidth('commitSidebarWidth'),
   collectionSidebarWidth: getSidebarWidth('collectionSidebarWidth'),
   toast: defaultToast,
   blockMenus: true,
@@ -72,14 +71,22 @@ export default (state = initialState, action: AnyAction) => {
   switch (action.type) {
     case UI_SET_SIDEBAR_WIDTH:
       const { type, sidebarWidth } = action.payload
-      let newState: {
-        [key: string]: any
+      switch (type) {
+        case 'dataset':
+          store().setItem('datasetSidebarWidth', sidebarWidth)
+          return {
+            ...state,
+            datasetSidebarWidth: sidebarWidth
+          }
+        case 'collection':
+          store().setItem('collectionSidebarWidth', sidebarWidth)
+          return {
+            ...state,
+            collectionSidebarWidth: sidebarWidth
+          }
+        default:
+          return state
       }
-      const key = `${type}SidebarWidth`
-      store().setItem(key, sidebarWidth)
-      newState = {}
-      newState[key] = sidebarWidth
-      return Object.assign({}, state, newState)
 
     case UI_ACCEPT_TOS:
       store().setItem(hasAcceptedTOSKey, 'true')

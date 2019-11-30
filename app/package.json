@@ -1,8 +1,8 @@
 {
   "name": "qri-desktop",
   "productName": "Qri Desktop",
-  "version": "0.2.1-dev",
-  "backendVersion": "0.9.2-dev",
+  "version": "0.2.1",
+  "backendVersion": "0.9.2",
   "description": "Version your data with the Qri desktop app!",
   "main": "./main.js",
   "author": {

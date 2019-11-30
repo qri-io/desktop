@@ -58,7 +58,6 @@ export interface UI {
   modal?: Modal
   showDiff: boolean
   datasetSidebarWidth: number
-  commitSidebarWidth: number
   collectionSidebarWidth: number
   toast: Toast
   blockMenus: boolean

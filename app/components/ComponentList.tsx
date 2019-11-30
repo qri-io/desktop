@@ -170,9 +170,7 @@ const ComponentList: React.FunctionComponent<ComponentListProps> = (props: Compo
   } = props
 
   const isEnabled = (name: string): boolean => {
-    return (datasetSelected && selectionType === 'component' &&
-      components.map(d => d.name).includes(name)
-    )
+    return (datasetSelected && selectionType === 'component' && (name === 'meta' || name === 'structure' || name === 'readme' || name === 'transform'))
   }
 
   const visibleComponents = components.filter(removeHiddenComponents(status, selectionType))
@@ -241,8 +239,6 @@ const ComponentList: React.FunctionComponent<ComponentListProps> = (props: Compo
               return fileRow
             }
           } else {
-            // if (name === 'commit' && selectionType === 'commitComponent') return null
-
             return (
               <FileRow
                 key={name}

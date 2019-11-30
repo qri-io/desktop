@@ -483,7 +483,6 @@ export function addDatasetAndFetch (peername: string, name: string, path: string
 }
 
 export function initDataset (sourcebodypath: string, name: string, dir: string, mkdir: string): ApiActionThunk {
-  console.log('fired init dataset')
   return async (dispatch) => {
     const action = {
       type: 'init',
