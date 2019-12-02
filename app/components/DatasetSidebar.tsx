@@ -3,16 +3,15 @@ import { Action } from 'redux'
 import moment from 'moment'
 import { CSSTransition } from 'react-transition-group'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faTimes } from '@fortawesome/free-solid-svg-icons'
 import { faClock } from '@fortawesome/free-regular-svg-icons'
 
 import { ApiActionThunk } from '../store/api'
-import SaveFormContainer from '../containers/SaveFormContainer'
 import ComponentList from './ComponentList'
 
 import classNames from 'classnames'
 import Spinner from './chrome/Spinner'
 
+import { DatasetDetailsSubtext } from './DatasetList'
 import { WorkingDataset, ComponentType, Selections } from '../models/store'
 import ContextMenuArea from 'react-electron-contextmenu'
 import { MenuItemConstructorOptions } from 'electron'
@@ -23,21 +22,38 @@ interface HistoryListItemProps {
   commitTitle: string
   timeMessage: string
   selected: boolean
+  first: boolean
+  last: boolean
   onClick: (type: string, selectedListItem: string) => Action
 }
 
 const HistoryListItem: React.FunctionComponent<HistoryListItemProps> = (props) => {
+  const { selected, path, commitTitle, timeMessage, first, last } = props
   return (
     <div
-      className={`sidebar-list-item sidebar-list-item-text ${props.selected && 'selected'}`}
-      onClick={() => { props.onClick('commit', props.path) }}
+      className={classNames(
+        'sidebar-list-item',
+        'sidebar-list-item-text',
+        'history-list-item',
+        {
+          selected,
+          first,
+          last
+        })
+      }
+      onClick={() => { props.onClick('commit', path) }}
     >
+      <div className='icon-column'>
+        <div className='history-timeline-line history-timeline-line-top' />
+        <div className='history-timeline-dot' />
+        <div className='history-timeline-line history-timeline-line-bottom' />
+      </div>
       <div className='text-column'>
-        <div className='text'>{props.commitTitle}</div>
+        <div className='text'>{commitTitle}</div>
         <div className='subtext'>
           {/* Bring back avatar later <img className= 'user-image' src = {props.avatarUrl} /> */}
           <div className='time-message'>
-            <FontAwesomeIcon icon={faClock} size='sm'/> {props.timeMessage}
+            <FontAwesomeIcon icon={faClock} size='sm'/> {timeMessage}
           </div>
         </div>
       </div>
@@ -61,16 +77,17 @@ const DatasetSidebar: React.FunctionComponent<DatasetSidebarProps> = (props) => 
   const {
     selections,
     workingDataset,
-    hideCommitNudge,
     setActiveTab,
     setSelectedListItem,
     fetchWorkingHistory,
     discardChanges,
-    setHideCommitNudge,
     setModal
   } = props
 
-  const { fsiPath, history, status, components } = workingDataset
+  const { fsiPath, history, status, structure } = workingDataset
+  const format = structure && structure.format
+  const commitCount = history.value.length
+  const lastCommit = history.value.length ? history.value[0].timestamp : ''
 
   const {
     activeTab,
@@ -80,14 +97,10 @@ const DatasetSidebar: React.FunctionComponent<DatasetSidebarProps> = (props) => 
     name
   } = selections
 
-  const { body } = components
-
   const datasetSelected = peername !== '' && name !== ''
 
   const historyLoaded = !history.pageInfo.isFetching
   const statusLoaded = !!status
-  const bodyLoaded = !body.pageInfo.isFetching
-  const noHistory = history.value.length === 0
 
   const handleHistoryScroll = (e: any) => {
     if (!(history && history.pageInfo)) {
@@ -103,7 +116,12 @@ const DatasetSidebar: React.FunctionComponent<DatasetSidebarProps> = (props) => 
 
   return (
     <div className='dataset-sidebar'>
-      <div id='tabs' className='sidebar-list-item'>
+      <div className='dataset-sidebar-header sidebar-padded-container'>
+        <p className='pane-title'>Dataset</p>
+        <p className='dataset-name'>{peername}/{name}</p>
+        <DatasetDetailsSubtext format={format} lastCommit={lastCommit} commitCount={commitCount} />
+      </div>
+      <div id='tabs' className='sidebar-padded-container'>
         <div
           id='status_tab'
           className={classNames('tab', { 'active': activeTab === 'status' && datasetSelected, 'disabled': !datasetSelected })}
@@ -126,7 +144,7 @@ const DatasetSidebar: React.FunctionComponent<DatasetSidebarProps> = (props) => 
           }}
           data-tip={historyToolTip}
         >
-          History
+          History {/* <div className='badge'>TODO (chriswhong): use this badge to show "new commits"</div> */}
         </div>
       </div>
       <div id='content' className='transition-group'>
@@ -138,7 +156,7 @@ const DatasetSidebar: React.FunctionComponent<DatasetSidebarProps> = (props) => 
           mountOnEnter
           unmountOnExit
         >
-          <div className='spinner'><Spinner /></div>
+          <div className='spinner'><Spinner white /></div>
         </CSSTransition>
         <CSSTransition
           in={statusLoaded && activeTab === 'status'}
@@ -175,7 +193,7 @@ const DatasetSidebar: React.FunctionComponent<DatasetSidebarProps> = (props) => 
             hidden = {activeTab === 'status'}
           >
             {
-              history.value.map((props) => {
+              history.value.map((props, i) => {
                 const { path, timestamp, title } = props
                 const timeMessage = moment(timestamp).fromNow()
                 const menuItems: MenuItemConstructorOptions[] = [
@@ -197,6 +215,8 @@ const DatasetSidebar: React.FunctionComponent<DatasetSidebarProps> = (props) => 
                   <ContextMenuArea menuItems={menuItems} key={path}>
                     <HistoryListItem
                       key={path}
+                      first={i === 0}
+                      last={i === history.value.length - 1}
                       path={path}
                       commitTitle={title}
                       timeMessage={timeMessage}
@@ -209,26 +229,7 @@ const DatasetSidebar: React.FunctionComponent<DatasetSidebarProps> = (props) => 
             }
           </div>
         </CSSTransition>
-        {
-          !hideCommitNudge && bodyLoaded && statusLoaded && historyLoaded && noHistory && datasetSelected && (
-            <div id='commit_nudge' className='commit-nudge'>
-              <div className='commit-nudge-text'>
-                You&apos;re ready to make your first commit on this dataset! Verify that the body is accurate and add some metadata. When everything looks good, enter a commit message below, then click Submit.
-              </div>
-              <a
-                className="close dark"
-                onClick={setHideCommitNudge}
-                aria-label="close"
-                role="button" >
-                <FontAwesomeIcon icon={faTimes} size='lg'/>
-              </a>
-            </div>
-          )
-        }
       </div>
-      {
-        fsiPath && activeTab === 'status' && <SaveFormContainer />
-      }
     </div>
   )
 }

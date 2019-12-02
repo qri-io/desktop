@@ -52,7 +52,11 @@ $text-muted: #646464;
 $text-light: #C9C9C9;
 $error: #EB0000;
 $connected: #F8CD1C;
-
+$qri-blue: #123459;
+$qri-blue-active: #355c86;
+$qri-blue-subdued: #12345994;
+$light-blue-accent: #4FC7F3;
+$light-blue-accent-subdued: #2f7791;
 
 $appBackground: $white;
 $topbar: $primary-light;
@@ -62,6 +66,9 @@ $border-color: rgba(0, 97, 166, .1);
 
 $success: $primary-muted;
 $error: #D00218;
+
+// used for css transitions when hovering/switching tabs and selectable items
+$active-item-highlight-transition: 0.2s;
 
 // Options
 //
@@ -166,7 +173,7 @@ $grid-gutter-width: 30px !default;
 //
 // Font, line-height, and color for body text, headings, and more.
 
-$font-family-sans-serif: "Rubik", "Avenir Next", "Avenir", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", Arial, sans-serif !default;
+$font-family-sans-serif: "Avenir", "Rubik", "Avenir Next", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", Arial, sans-serif !default;
 $font-family-serif:      Georgia, "Times New Roman", Times, serif !default;
 $font-family-monospace:  "Source Code Pro", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace !default;
 $font-family-base:       $font-family-sans-serif !default;
@@ -232,7 +239,7 @@ $list-inline-padding: 5px !default;
 $line-height-lg:         (4 / 3) !default;
 $line-height-sm:         1.5 !default;
 
-$border-radius:          .25rem !default;
+$border-radius:          .2rem !default;
 $border-radius-lg:       .3rem !default;
 $border-radius-sm:       .2rem !default;
 
@@ -266,7 +273,7 @@ $table-border-color:            $primary-light !default;
 $btn-padding-x:                  1rem !default;
 $btn-padding-y:                  .5rem !default;
 $btn-line-height:                .9rem !default;
-$btn-font-size:                  $font-size-base;
+$btn-font-size:                  0.78rem;
 
 $btn-font-weight:                bold !default;
 $btn-box-shadow:                 inset 0 1px 0 rgba(255,255,255,.15), 0 1px 1px rgba(0,0,0,.075) !default;

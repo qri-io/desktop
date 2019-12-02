@@ -2,6 +2,9 @@ const { app, BrowserWindow, Menu, shell, ipcMain } = require('electron')
 const { autoUpdater } = require('electron-updater')
 const { BackendProcess } = require('./backend')
 const { download } = require('electron-dl')
+const DISCORD_URL = require('./constants').DISCORD_URL
+
+process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = '1'
 
 // versions
 // must be manually updated for now
@@ -75,6 +78,19 @@ const setMenuItemEnabled = (menuItemIds, enabled) => {
   })
 }
 
+// pass in an array of menu item ids and true/false,
+// it will set their visible  status
+const setMenuItemVisible = (menuItemIds, visible) => {
+  const menu = Menu.getApplicationMenu()
+  menuItemIds.forEach(menuItemId => {
+    let item = menu.getMenuItemById(menuItemId)
+    if (item) {
+      item.visible = visible
+    }
+  })
+  Menu.setApplicationMenu(menu)
+}
+
 let quitting = false
 
 app.on('ready', () =>
@@ -92,7 +108,8 @@ app.on('ready', () =>
         minHeight: 660,
         webPreferences: {
           nodeIntegration: true
-        }
+        },
+        titleBarStyle: 'hidden'
       })
 
       if (process.env.NODE_ENV === 'development') {
@@ -275,27 +292,19 @@ app.on('ready', () =>
         label: 'View',
         submenu: [
           {
-            id: 'show-status',
-            label: 'Show Status',
+            id: 'show-dataset',
+            label: 'Dataset',
             accelerator: 'CmdOrCtrl+1',
             click () {
-              mainWindow.webContents.send('show-status')
+              mainWindow.webContents.send('select-route', '/dataset')
             }
           },
           {
-            id: 'show-history',
-            label: 'Show History',
+            id: 'show-collection',
+            label: 'Collection',
             accelerator: 'CmdOrCtrl+2',
             click () {
-              mainWindow.webContents.send('show-history')
-            }
-          },
-          {
-            id: 'toggle-dataset-list',
-            label: 'Toggle Dataset List',
-            accelerator: 'CmdOrCtrl+T',
-            click () {
-              mainWindow.webContents.send('toggle-dataset-list')
+              mainWindow.webContents.send('select-route', '/collection')
             }
           },
           {
@@ -343,8 +352,29 @@ app.on('ready', () =>
       }
 
       const datasetMenu = {
+        visible: false,
+        id: 'dataset-menu',
         label: 'Dataset',
         submenu: [
+          {
+            id: 'show-status',
+            label: 'Show Status',
+            accelerator: 'CmdOrCtrl+[',
+            click () {
+              mainWindow.webContents.send('show-status')
+            }
+          },
+          {
+            id: 'show-history',
+            label: 'Show History',
+            accelerator: 'CmdOrCtrl+]',
+            click () {
+              mainWindow.webContents.send('show-history')
+            }
+          },
+          {
+            type: 'separator'
+          },
           {
             id: 'publish-unpublish-dataset',
             label: 'Publish/Unpublish Dataset',
@@ -423,7 +453,7 @@ app.on('ready', () =>
           {
             label: 'Chat with the community...',
             click: () => {
-              shell.openExternal('https://discord.gg/etap8Gb')
+              shell.openExternal(DISCORD_URL)
             }
           },
           { type: 'separator' },
@@ -483,12 +513,16 @@ app.on('ready', () =>
           'add-dataset',
           'show-status',
           'show-history',
-          'toggle-dataset-list',
           'publish-unpublish-dataset',
           'view-on-qri-cloud',
           'open-working-directory'
         ]
         setMenuItemEnabled(blockableMenus, !blockMenus)
+      })
+
+      // used to show and hide the dataset menu
+      ipcMain.on('show-dataset-menu', (e, show) => {
+        setMenuItemVisible(['dataset-menu'], show)
       })
 
       mainWindow.on('close', (e) => {

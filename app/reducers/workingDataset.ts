@@ -7,7 +7,8 @@ import { ipcRenderer } from 'electron'
 import bodyValue from '../utils/bodyValue'
 
 import {
-  REMOVE_SUCC
+  REMOVE_SUCC,
+  SELECTIONS_SET_WORKING_DATASET
 } from './selections'
 
 const initialState: WorkingDataset = {
@@ -269,6 +270,9 @@ const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction
         ...state,
         stats: []
       }
+
+    case SELECTIONS_SET_WORKING_DATASET:
+      return initialState
 
     default:
       return state

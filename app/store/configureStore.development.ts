@@ -1,9 +1,9 @@
 import { createStore, applyMiddleware, compose } from 'redux'
 import thunk from 'redux-thunk'
 import { createHashHistory } from 'history'
-import { routerMiddleware, push } from 'react-router-redux'
+import { routerMiddleware, push } from 'connected-react-router'
 // import { createLogger } from 'redux-logger'
-import rootReducer from '../reducers'
+import createRootReducer from '../reducers'
 import { apiMiddleware } from './api'
 
 declare const window: Window & {
@@ -20,7 +20,7 @@ const actionCreators = Object.assign({},
   { push }
 )
 
-const history = createHashHistory()
+export const history = createHashHistory()
 const router = routerMiddleware(history)
 
 // If Redux DevTools Extension is installed use it, otherwise use Redux compose
@@ -43,7 +43,7 @@ const enhancer = composeEnhancers(
 )
 
 const configureStore = (initialState: Object | void) => {
-  const store = createStore(rootReducer, initialState as any, enhancer)
+  const store = createStore(createRootReducer(history), initialState as any, enhancer)
 
   if (module.hot) {
     module.hot.accept('../reducers', () =>

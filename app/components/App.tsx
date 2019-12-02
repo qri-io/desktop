@@ -1,16 +1,18 @@
-import { hot } from 'react-hot-loader/root'
 import * as React from 'react'
 import { Action } from 'redux'
 import { CSSTransition } from 'react-transition-group'
-import { HashRouter as Router } from 'react-router-dom'
+import { ConnectedRouter } from 'connected-react-router'
 import { ipcRenderer } from 'electron'
 import path from 'path'
+import ReactTooltip from 'react-tooltip'
+import { history } from '../store/configureStore.development'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faFileMedical } from '@fortawesome/free-solid-svg-icons'
 
 // import components
 import Toast from './Toast'
+import Navbar from './Navbar'
 import AppError from './AppError'
 import AppLoading from './AppLoading'
 import AddDataset from './modals/AddDataset'
@@ -38,8 +40,7 @@ export const defaultPollInterval = 3000
 export interface AppProps {
   hasDatasets: boolean
   loading: boolean
-  sessionID: string
-  peername: string
+  session: Session
   name: string
   selections: Selections
   apiConnection?: number
@@ -71,6 +72,8 @@ export interface AppProps {
   publishDataset: () => Promise<ApiAction>
   unpublishDataset: () => Promise<ApiAction>
   setDatasetDirPath: (path: string) => Action
+  signout: () => Action
+  setRoute: (route: string) => Action
 }
 
 interface AppState {
@@ -90,8 +93,8 @@ class App extends React.Component<AppProps, AppState> {
 
     this.state = {
       currentModal: noModalObject,
-      sessionID: this.props.sessionID,
-      peername: this.props.peername,
+      sessionID: this.props.session.sessionID,
+      peername: this.props.session.peername,
       showDragDrop: false
     }
 
@@ -110,6 +113,10 @@ class App extends React.Component<AppProps, AppState> {
       this.props.setModal({ type: ModalType.AddDataset })
     })
 
+    ipcRenderer.on('select-route', (e: any, route: string) => {
+      this.props.setRoute(route)
+    })
+
     setInterval(() => {
       if (this.props.apiConnection !== 1 || this.props.selections.peername === '' || this.props.selections.name === '') {
         this.props.pingApi()
@@ -122,9 +129,13 @@ class App extends React.Component<AppProps, AppState> {
   }
 
   componentDidUpdate (prevProps: AppProps) {
-    if (this.props.sessionID === '' && prevProps.apiConnection === 0 && this.props.apiConnection === 1) {
+    if (this.props.session.id === '' && prevProps.apiConnection === 0 && this.props.apiConnection === 1) {
       this.props.bootstrap()
     }
+
+    // this "wires up" all of the tooltips, must be called on update, as tooltips
+    // in descendents can come and go
+    ReactTooltip.rebuild()
   }
 
   private renderModal (): JSX.Element | null {
@@ -319,15 +330,19 @@ class App extends React.Component<AppProps, AppState> {
     const {
       toast,
       closeToast,
-      loading
+      loading,
+      session,
+      signout
     } = this.props
 
     if (loading) {
       return this.renderAppLoading()
     }
 
+    const { photo: userphoto, peername: username, name } = session
+
     return (
-      <div className='drag'
+      <div id='app' className='drag'
         onDragEnter={() => {
           if (this.props.modal.type === ModalType.NoModal) {
             this.setState({ showDragDrop: true })
@@ -341,9 +356,15 @@ class App extends React.Component<AppProps, AppState> {
         {this.renderAppError()}
         {this.state.showDragDrop && this.renderDragDrop() }
         {this.renderModal()}
-        <Router>
+        <ConnectedRouter history={history}>
+          <Navbar
+            userphoto={userphoto}
+            username={username}
+            name={name}
+            signout={signout}
+          />
           <RoutesContainer />
-        </Router>
+        </ConnectedRouter>
         <Toast
           type={toast.type}
           message={toast.message}
@@ -351,9 +372,21 @@ class App extends React.Component<AppProps, AppState> {
           timeout={3000}
           onClose={closeToast}
         />
+        {/*
+          This adds react-tooltip to all children of Dataset
+          To add a tooltip to any element, add a data-tip={'tooltip text'} attribute
+          See componentDidUpdate, which calls rebuild() to re-bind all tooltips
+        */}
+        <ReactTooltip
+          place='bottom'
+          type='dark'
+          effect='solid'
+          delayShow={200}
+          multiline
+        />
       </div>
     )
   }
 }
 
-export default hot(App)
+export default App

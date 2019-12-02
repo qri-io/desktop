@@ -1,29 +1,26 @@
 import * as React from 'react'
 import { Action } from 'redux'
-import classNames from 'classnames'
-import ReactTooltip from 'react-tooltip'
+import { withRouter } from 'react-router-dom'
 import { remote, ipcRenderer, shell, clipboard } from 'electron'
 import { CSSTransition } from 'react-transition-group'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faFile, faFolderOpen, faCommentAlt } from '@fortawesome/free-regular-svg-icons'
-import { faLink, faCloudUploadAlt, faCloud } from '@fortawesome/free-solid-svg-icons'
 
 import { ApiAction } from '../store/api'
-import ExternalLink from './ExternalLink'
 import { Resizable } from './Resizable'
 import { Session } from '../models/session'
+import SidebarLayout from './SidebarLayout'
 import UnlinkedDataset from './UnlinkedDataset'
-import NoDatasetSelected from './NoDatasetSelected'
+import { QRI_CLOUD_URL } from '../constants'
 import DatasetComponent from './DatasetComponent'
-import { QRI_CLOUD_URL } from '../utils/registry'
+import NoDatasetSelected from './NoDatasetSelected'
 import { Modal, ModalType } from '../models/modals'
 import { defaultSidebarWidth } from '../reducers/ui'
 import HeaderColumnButton from './chrome/HeaderColumnButton'
-import DatasetListContainer from '../containers/DatasetListContainer'
+import HeaderColumnButtonDropdown from './chrome/HeaderColumnButtonDropdown'
 import CommitDetailsContainer from '../containers/CommitDetailsContainer'
 import DatasetSidebarContainer from '../containers/DatasetSidebarContainer'
 import DetailsBarContainer from '../containers/DetailsBarContainer'
-import HeaderColumnButtonDropdown from './chrome/HeaderColumnButtonDropdown'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faFolderOpen, faFile, faLink, faCloud, faCloudUploadAlt } from '@fortawesome/free-solid-svg-icons'
 
 import {
   UI,
@@ -47,58 +44,17 @@ export interface DatasetProps {
   showDetailsBar: boolean
 
   // actions
-  toggleDatasetList: () => Action
   setActiveTab: (activeTab: string) => Action
   setSidebarWidth: (type: string, sidebarWidth: number) => Action
   fetchWorkingDatasetDetails: () => Promise<ApiAction>
   fetchWorkingStatus: () => Promise<ApiAction>
   fetchBody: (page: number) => Promise<ApiAction>
   fetchWorkingDataset: () => Promise<ApiAction>
-  signout: () => Action
 }
 
 const logo = require('../assets/qri-blob-logo-tiny.png') //eslint-disable-line
-const defaultPhoto = require('../assets/default_46x46.png') //eslint-disable-line
 
-interface CurrentDatasetProps {
-  onClick: () => {}
-  expanded: boolean
-  width?: number
-  peername: string | null
-  name: string | null
-}
-
-export const CurrentDataset: React.FunctionComponent<CurrentDatasetProps> = (props) => {
-  const { onClick, expanded, width, peername, name } = props
-  const datasetSelected = peername !== '' && name !== ''
-  const alias = datasetSelected ? `${peername}/${name}` : ''
-
-  return (
-    <div
-      id='current_dataset'
-      className={classNames('current-dataset', 'header-column', 'sidebar-list-item', { 'expanded': expanded })}
-      onClick={onClick}
-      style={{ width: width || '100%' }}
-    >
-      <div className='header-column-icon'>
-        <img className='app-loading-blob' src={logo} />
-      </div>
-      <div className='header-column-text'>
-        <div className="label">{name ? 'Current Dataset' : 'Choose a Dataset'}</div>
-        <div className="name">{alias}</div>
-      </div>
-      <div className='header-column-arrow'>
-        {
-          expanded
-            ? <div className="arrow collapse">&nbsp;</div>
-            : <div className="arrow expand">&nbsp;</div>
-        }
-      </div>
-    </div>
-  )
-}
-
-export default class Dataset extends React.Component<DatasetProps> {
+class Dataset extends React.Component<DatasetProps> {
   componentDidMount () {
     // poll for status
     this.statusInterval = setInterval(() => {
@@ -119,10 +75,6 @@ export default class Dataset extends React.Component<DatasetProps> {
       this.props.setActiveTab('history')
     })
 
-    ipcRenderer.on('toggle-dataset-list', () => {
-      this.props.toggleDatasetList()
-    })
-
     ipcRenderer.on('open-working-directory', this.openWorkingDirectory)
 
     ipcRenderer.on('publish-unpublish-dataset', this.publishUnpublishDataset)
@@ -130,6 +82,8 @@ export default class Dataset extends React.Component<DatasetProps> {
     ipcRenderer.on('reload', () => {
       remote.getCurrentWindow().reload()
     })
+
+    this.props.fetchWorkingDatasetDetails()
   }
 
   componentWillUnmount () {
@@ -183,10 +137,6 @@ export default class Dataset extends React.Component<DatasetProps> {
         componentsToReset.includes('transform')
       ) fetchWorkingDataset()
     }
-
-    // this "wires up" all of the tooltips, must be called on update, as tooltips
-    // in descendents can come and go
-    ReactTooltip.rebuild()
   }
 
   openWorkingDirectory () {
@@ -204,9 +154,9 @@ export default class Dataset extends React.Component<DatasetProps> {
 
   render () {
     // unpack all the things
-    const { ui, selections, workingDataset, setModal, session, hasDatasets } = this.props
-    const { peername: username, photo: userphoto } = session
-    const { showDatasetList, datasetSidebarWidth } = ui
+    const { ui, selections, workingDataset, setModal, hasDatasets, session } = this.props
+    const { peername: username } = session
+    const { datasetSidebarWidth } = ui
     const {
       peername,
       name,
@@ -222,11 +172,13 @@ export default class Dataset extends React.Component<DatasetProps> {
 
     // actions
     const {
-      toggleDatasetList,
       setSidebarWidth,
-      signout,
       showDetailsBar
     } = this.props
+
+    const sidebarContent = (
+      <DatasetSidebarContainer setModal={setModal} />
+    )
 
     let linkButton
     if (datasetSelected) {
@@ -287,144 +239,94 @@ export default class Dataset extends React.Component<DatasetProps> {
       )
     }
 
+    const mainContent = (
+      <>
+        <div className='main-content-header'>
+          {linkButton}
+          {publishButton}
+        </div>
+        <div className='main-content-flex'>
+          <div className='transition-group' >
+            <CSSTransition
+              in={!hasDatasets}
+              classNames='fade'
+              timeout={300}
+              mountOnEnter
+              unmountOnExit
+            >
+              <NoDatasets setModal={setModal} />
+            </CSSTransition>
+            <CSSTransition
+              in={!datasetSelected && hasDatasets}
+              classNames='fade'
+              timeout={300}
+              mountOnEnter
+              unmountOnExit
+            >
+              <NoDatasetSelected />
+            </CSSTransition>
+            <CSSTransition
+              in={datasetSelected && (activeTab === 'status') && !isLinked && !workingDataset.isLoading}
+              classNames='fade'
+              timeout={300}
+              mountOnEnter
+              unmountOnExit
+            >
+              <UnlinkedDataset setModal={setModal}/>
+            </CSSTransition>
+            <CSSTransition
+              in={datasetSelected && activeTab === 'status' && isLinked}
+              classNames='fade'
+              timeout={300}
+              mountOnEnter
+              unmountOnExit
+            >
+              <DatasetComponent component={selectedComponent} componentStatus={status[selectedComponent]} isLoading={workingDataset.isLoading} fsiPath={this.props.workingDataset.fsiPath}/>
+            </CSSTransition>
+            <CSSTransition
+              in={datasetSelected && activeTab === 'history'}
+              classNames='fade'
+              timeout={300}
+              mountOnEnter
+              unmountOnExit
+            >
+              <CommitDetailsContainer />
+            </CSSTransition>
+          </div>
+        </div>
+      </>
+    )
+
     return (
-      <div id='dataset-container'>
-        {/* Show the overlay to dim the rest of the app when the sidebar is open */}
-        {showDatasetList && <div className='overlay' onClick={toggleDatasetList}></div>}
-        <div className='header'>
-          <div className='header-left'>
-            <CurrentDataset
-              onClick={toggleDatasetList}
-              expanded={showDatasetList}
+      <>
+        <div className="details-bar-wrapper"
+          style={{ 'left': showDetailsBar ? 0 + 60 : datasetSidebarWidth * -1 }}
+        >
+          <div className="details-bar-inner"
+            style={{ 'opacity': showDetailsBar ? 1 : 0 }}
+          >
+            <Resizable
+              id='details'
               width={datasetSidebarWidth}
-              peername={peername}
-              name={name}
-            />
-            {linkButton}
-            {publishButton}
-          </div>
-          <div className='header-right'>
-            <HeaderColumnButton
-              id={'beta-flag'}
-              label={'BETA'}
-              onClick={() => { shell.openExternal('https://qri.io/beta') }}
-            />
-            <HeaderColumnButton
-              icon={faCommentAlt}
-              tooltip={'Need help? Ask questions<br/> in our Discord channel'}
-              onClick={() => { shell.openExternal('https://discordapp.com/invite/thkJHKj') }}
-            />
-            <HeaderColumnButtonDropdown
-              icon={<div className='header-column-icon' ><img src={userphoto || defaultPhoto} /></div>}
-              label={username}
-              items={[
-                <li key={0}><ExternalLink href={`${QRI_CLOUD_URL}/${username}`}>Public Profile</ExternalLink></li>,
-                <li key={1}><ExternalLink href={`${QRI_CLOUD_URL}/settings`}>Settings</ExternalLink></li>,
-                <li key={2}><a onClick={signout}>Sign Out</a></li>
-              ]}
-            />
+              onResize={(width) => { setSidebarWidth('dataset', width) }}
+              onReset={() => { setSidebarWidth('dataset', defaultSidebarWidth) }}
+              maximumWidth={495}
+            >
+              <DetailsBarContainer />
+            </Resizable>
           </div>
         </div>
-        <div className='columns'>
-          <Resizable
-            id='sidebar'
-            width={datasetSidebarWidth}
-            onResize={(width) => { setSidebarWidth('dataset', width) }}
-            onReset={() => { setSidebarWidth('dataset', defaultSidebarWidth) }}
-            maximumWidth={495}
-          >
-            <DatasetSidebarContainer setModal={setModal} />
-          </Resizable>
-          <div className="details-bar-wrapper"
-            style={{ 'left': showDetailsBar ? 0 : datasetSidebarWidth * -1 }}
-          >
-            <div className="details-bar-inner"
-              style={{ 'opacity': showDetailsBar ? 1 : 0 }}
-            >
-              <Resizable
-                id='details'
-                width={datasetSidebarWidth}
-                onResize={(width) => { setSidebarWidth('dataset', width) }}
-                onReset={() => { setSidebarWidth('dataset', defaultSidebarWidth) }}
-                maximumWidth={495}
-              >
-                <DetailsBarContainer />
-              </Resizable>
-            </div>
-          </div>
-          <div className='content-wrapper'>
-            <div className='transition-group' >
-              <CSSTransition
-                in={!hasDatasets}
-                classNames='fade'
-                timeout={300}
-                mountOnEnter
-                unmountOnExit
-              >
-                <NoDatasets setModal={setModal} />
-              </CSSTransition>
-              <CSSTransition
-                in={!datasetSelected && hasDatasets}
-                classNames='fade'
-                timeout={300}
-                mountOnEnter
-                unmountOnExit
-              >
-                <NoDatasetSelected toggleDatasetList={toggleDatasetList}/>
-              </CSSTransition>
-              <CSSTransition
-                in={datasetSelected && (activeTab === 'status') && !isLinked && !workingDataset.isLoading}
-                classNames='fade'
-                timeout={300}
-                mountOnEnter
-                unmountOnExit
-              >
-                <UnlinkedDataset setModal={setModal}/>
-              </CSSTransition>
-              <CSSTransition
-                in={datasetSelected && activeTab === 'status' && isLinked}
-                classNames='fade'
-                timeout={300}
-                mountOnEnter
-                unmountOnExit
-              >
-                <DatasetComponent component={selectedComponent} componentStatus={status[selectedComponent]} isLoading={workingDataset.isLoading} fsiPath={this.props.workingDataset.fsiPath}/>
-              </CSSTransition>
-              <CSSTransition
-                in={datasetSelected && activeTab === 'history'}
-                classNames='fade'
-                timeout={300}
-                mountOnEnter
-                unmountOnExit
-              >
-                <CommitDetailsContainer />
-              </CSSTransition>
-            </div>
-          </div>
-        </div>
-        {
-          showDatasetList && (
-            <div
-              id='dataset-list'
-              style={{ width: datasetSidebarWidth }}
-            >
-              <DatasetListContainer setModal={setModal} />
-            </div>
-          )
-        }
-        {/*
-          This adds react-tooltip to all children of Dataset
-          To add a tooltip to any element, add a data-tip={'tooltip text'} attribute
-          See componentDidUpdate, which calls rebuild() to re-bind all tooltips
-        */}
-        <ReactTooltip
-          place='bottom'
-          type='dark'
-          effect='solid'
-          delayShow={500}
-          multiline
+        <SidebarLayout
+          id='dataset-container'
+          sidebarContent={sidebarContent}
+          sidebarWidth={datasetSidebarWidth}
+          onSidebarResize={(width) => { setSidebarWidth('dataset', width) }}
+          maximumSidebarWidth={300}
+          mainContent={mainContent}
         />
-      </div>
+      </>
     )
   }
 }
+
+export default withRouter(Dataset)

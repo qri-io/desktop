@@ -15,6 +15,9 @@ const initialState: CommitDetails = {
   status: {},
   isLoading: true,
   components: {
+    commit: {
+      value: {}
+    },
     body: {
       value: [],
       pageInfo: initialPageInfo
@@ -59,6 +62,9 @@ const commitDetailsReducer: Reducer = (state = initialState, action: AnyAction):
           },
           structure: {
             value: dataset.structure
+          },
+          commit: {
+            value: dataset.commit
           }
         }
       }

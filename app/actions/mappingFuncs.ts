@@ -15,7 +15,7 @@ export function mapRecord (data: any): Record<string, string> {
 
 export function mapDatasetSummary (data: any[]): DatasetSummary[] {
   return data.map((ref: any) => ({
-    title: (ref.dataset && ref.dataset.meta && ref.dataset.meta.title),
+    dataset: ref.dataset,
     peername: ref.peername,
     name: ref.name,
     path: ref.path,

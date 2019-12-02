@@ -13,7 +13,6 @@ import {
   SELECTIONS_SET_ACTIVE_TAB
 } from './selections'
 
-export const UI_TOGGLE_DATASET_LIST = 'UI_TOGGLE_DATASET_LIST'
 export const UI_SET_SIDEBAR_WIDTH = 'UI_SET_SIDEBAR_WIDTH'
 export const UI_ACCEPT_TOS = 'UI_ACCEPT_TOS'
 export const UI_SET_QRI_CLOUD_AUTHENTICATED = 'UI_SET_QRI_CLOUD_AUTHENTICATED'
@@ -48,12 +47,11 @@ const defaultToast = {
 }
 
 const initialState = {
-  showDatasetList: false,
   hasAcceptedTOS: store().getItem(hasAcceptedTOSKey) === 'true',
   qriCloudAuthenticated: store().getItem(qriCloudAuthenticatedKey) === 'true',
   showDiff: false,
   datasetSidebarWidth: getSidebarWidth('datasetSidebarWidth'),
-  commitSidebarWidth: getSidebarWidth('commitSidebarWidth'),
+  collectionSidebarWidth: getSidebarWidth('collectionSidebarWidth'),
   toast: defaultToast,
   blockMenus: true,
   hideCommitNudge: store().getItem(hideCommitNudge) === 'true',
@@ -66,27 +64,29 @@ const initialState = {
 // send an event to electron to block menus on first load
 ipcRenderer.send('block-menus', true)
 
-const [, DATASET_SUCC] = apiActionTypes('dataset')
 const [, ADD_SUCC] = apiActionTypes('add')
 const [, INIT_SUCC] = apiActionTypes('init')
 
 export default (state = initialState, action: AnyAction) => {
   switch (action.type) {
-    case UI_TOGGLE_DATASET_LIST:
-      const showDatasetList = !state.showDatasetList
-      return Object.assign({}, state, { showDatasetList })
-
     case UI_SET_SIDEBAR_WIDTH:
       const { type, sidebarWidth } = action.payload
-      let newState
-      if (type === 'dataset') {
-        store().setItem('datasetSidebarWidth', sidebarWidth)
-        newState = { datasetSidebarWidth: sidebarWidth }
-      } else {
-        store().setItem('commitSidebarWidth', sidebarWidth)
-        newState = { commitSidebarWidth: sidebarWidth }
+      switch (type) {
+        case 'dataset':
+          store().setItem('datasetSidebarWidth', sidebarWidth)
+          return {
+            ...state,
+            datasetSidebarWidth: sidebarWidth
+          }
+        case 'collection':
+          store().setItem('collectionSidebarWidth', sidebarWidth)
+          return {
+            ...state,
+            collectionSidebarWidth: sidebarWidth
+          }
+        default:
+          return state
       }
-      return Object.assign({}, state, newState)
 
     case UI_ACCEPT_TOS:
       store().setItem(hasAcceptedTOSKey, 'true')
@@ -184,13 +184,6 @@ export default (state = initialState, action: AnyAction) => {
       return {
         ...state,
         qriCloudAuthenticated: false
-      }
-
-    // close the dataset list when the user chooses a new dataset or adds a new dataset
-    case DATASET_SUCC:
-      return {
-        ...state,
-        showDatasetList: false
       }
 
     case UI_SET_DATASET_DIR_PATH:

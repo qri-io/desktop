@@ -1,7 +1,6 @@
 import { ipcRenderer } from 'electron'
 
 import {
-  UI_TOGGLE_DATASET_LIST,
   UI_SET_SIDEBAR_WIDTH,
   UI_ACCEPT_TOS,
   UI_SET_QRI_CLOUD_AUTHENTICATED,
@@ -19,13 +18,7 @@ import { ToastType } from '../models/store'
 import { Modal } from '../models/modals'
 import { Details } from '../models/details'
 
-export const toggleDatasetList = () => {
-  return {
-    type: UI_TOGGLE_DATASET_LIST
-  }
-}
-
-type SidebarTypes = 'dataset' | 'commit'
+export type SidebarTypes = 'dataset' | 'commit' | 'collection'
 
 export const setSidebarWidth = (type: SidebarTypes, sidebarWidth: number) => {
   return {

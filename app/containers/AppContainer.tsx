@@ -20,7 +20,8 @@ import {
   closeToast,
   setModal,
   setDatasetDirPath,
-  setExportPath
+  setExportPath,
+  signout
 } from '../actions/ui'
 
 import {
@@ -29,7 +30,8 @@ import {
 } from '../actions/session'
 
 import {
-  setWorkingDataset
+  setWorkingDataset,
+  setRoute
 } from '../actions/selections'
 
 const mergeProps = (props: any, actions: any): AppProps => {
@@ -42,14 +44,13 @@ const AppContainer = connect(
     const { apiConnection } = connection
     const loading = connection.apiConnection === 0 || session.isLoading
     const hasDatasets = myDatasets.value.length !== 0
-    const { id: sessionID, peername } = session
     const { toast, modal, datasetDirPath, exportPath } = ui
+
     return {
       hasDatasets,
       loading,
-      sessionID,
+      session,
       selections,
-      peername,
       toast,
       modal,
       workingDataset,
@@ -76,7 +77,9 @@ const AppContainer = connect(
     publishDataset,
     unpublishDataset,
     removeDatasetAndFetch,
-    setDatasetDirPath
+    setDatasetDirPath,
+    signout,
+    setRoute
   },
   mergeProps
 )(App)

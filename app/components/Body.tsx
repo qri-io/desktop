@@ -30,6 +30,11 @@ function shouldDisplayTable (value: any[] | Object, format: string) {
   return value && (format === 'csv' || format === 'xlsx')
 }
 
+export interface Header {
+  title: string
+  type: string
+}
+
 const extractColumnHeaders = (workingDataset: WorkingDataset): undefined | object => {
   const structure = workingDataset.components.structure.value
   const schema = structure.schema
@@ -49,7 +54,9 @@ const extractColumnHeaders = (workingDataset: WorkingDataset): undefined | objec
     return undefined
   }
 
-  return schema && schema.items && schema.items.items.map((d: { title: string }): string => d.title)
+  return schema &&
+    schema.items &&
+    schema.items.items.map((d: { title: string }): string => d)
 }
 
 const Body: React.FunctionComponent<BodyProps> = (props) => {

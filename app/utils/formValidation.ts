@@ -61,22 +61,30 @@ export const validateDatasetReference = (datasetReference: string): ValidationEr
   return null
 }
 
+// infer readiness to commit from status
+export const checkClearToCommit = (status: DatasetStatus): boolean => {
+  const statuses: string[] = Object.keys(status).map((key) => status[key].status)
+
+  const hasErrors = statuses.reduce((acc, status) => {
+    return status.match(/error/g) ? true : acc
+  }, false)
+  if (hasErrors) return false
+
+  // not ready if all statuses are unmodified
+  const allUnmodified = statuses.reduce((acc, status) => {
+    return status === 'unmodified' ? acc : false
+  }, true)
+  if (allUnmodified) return false
+
+  return true
+}
+
 export const validateCommitState = (title: string, status: DatasetStatus): boolean => {
   let valid = true
   // commit message (title) must be more than 3 characters
   if (title.length < 4) valid = false
 
-  const statuses: string[] = Object.keys(status).map((key) => status[key].status)
-
-  // status must include at least one 'modified'
-  // not valid if there is not at least one 'add' or 'modified'
-  const noModified = !statuses.includes('modified')
-  const noAdd = !statuses.includes('add')
-  if (noModified && noAdd) valid = false
-
-  const hasErrors = statuses.reduce((acc, status) => {
-    return status.match(/error/g) ? true : acc
-  }, false)
-  if (hasErrors) valid = false
+  const clearToCommit = checkClearToCommit(status)
+  if (!clearToCommit) valid = false
   return valid
 }

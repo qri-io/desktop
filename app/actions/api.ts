@@ -4,7 +4,7 @@ import { CALL_API, ApiAction, ApiActionThunk, chainSuccess, ApiResponseAction } 
 import { DatasetSummary, SelectedComponent, MyDatasets } from '../models/store'
 import { actionWithPagination } from '../utils/pagination'
 import { openToast } from './ui'
-import { setWorkingDataset, setSelectedListItem, setActiveTab } from './selections'
+import { setWorkingDataset, setSelectedListItem, setActiveTab, setRoute } from './selections'
 import {
   mapDataset,
   mapRecord,
@@ -517,6 +517,7 @@ export function initDatasetAndFetch (sourcebodypath: string, name: string, dir: 
       dispatch(setWorkingDataset(peername, name))
       dispatch(setActiveTab('status'))
       dispatch(setSelectedListItem('component', DEFAULT_SELECTED_COMPONENT))
+      dispatch(setRoute('/dataset'))
     } catch (action) {
       throw action
     }

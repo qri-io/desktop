@@ -3,6 +3,8 @@ import { Details, DetailsType, StatsDetails } from '../models/details'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTimes } from '@fortawesome/free-solid-svg-icons'
 import StatsChart from './StatsChart'
+import { Header } from './Body'
+import { TypeLabel } from './TwoDSchemaLayout'
 
 export interface DetailsBarProps {
   details: Details
@@ -30,10 +32,10 @@ const DetailsBar: React.FunctionComponent<DetailsBarProps> = (props) => {
     setDetailsBar({ type: DetailsType.NoDetails })
   }
 
-  const renderHeader = (title: string, type: string) => {
+  const renderHeader = (header: Header) => {
     return (<div className="details-bar-header">
-      <h3>{title}</h3>
-      <h4>{type}</h4>
+      <h3>{header.title}</h3>
+      <h4><TypeLabel type={header.type} /></h4>
       <a
         className="close"
         onClick={onDismiss}

@@ -1,5 +1,5 @@
 import { combineReducers, Reducer, AnyAction } from 'redux'
-import { routerReducer } from 'react-router-redux'
+import { connectRouter } from 'connected-react-router'
 import { apiActionTypes } from '../utils/actionType'
 
 import connectionReducer from './connection'
@@ -54,7 +54,7 @@ const sessionReducer: Reducer = (state = initialSession, action: AnyAction) => {
   }
 }
 
-const rootReducer = combineReducers({
+const createRootReducer = (history) => combineReducers({
   session: sessionReducer,
   connection: connectionReducer,
   ui: uiReducer,
@@ -63,7 +63,7 @@ const rootReducer = combineReducers({
   workingDataset: workingDatasetReducer,
   commitDetails: commitDetailReducer,
   mutations: mutationsReducer,
-  router: routerReducer
+  router: connectRouter(history)
 })
 
-export default rootReducer
+export default createRootReducer
