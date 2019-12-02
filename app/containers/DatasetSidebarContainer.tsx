@@ -10,7 +10,8 @@ import {
 
 import {
   fetchWorkingHistory,
-  discardChanges
+  discardChanges,
+  renameDataset
 } from '../actions/api'
 
 import {
@@ -49,7 +50,8 @@ const DatasetSidebarContainer = connect(
     setSelectedListItem,
     fetchWorkingHistory,
     discardChanges,
-    setHideCommitNudge
+    setHideCommitNudge,
+    renameDataset
   },
   mergeProps
 )(DatasetSidebar)

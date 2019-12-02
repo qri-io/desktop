@@ -737,3 +737,33 @@ export function fetchReadmePreview (peername: string, name: string): ApiActionTh
     return dispatch(action)
   }
 }
+
+// peername and name are the dataset to be renamed
+// newName is the new dataset's name, which will be in the user's namespace
+export function renameDataset (peername: string, name: string, newName: string): ApiActionThunk {
+  return async (dispatch, getState) => {
+    const { peername: newPeername } = getState().session
+    const whenOk = chainSuccess(dispatch, getState)
+    const action = {
+      type: 'rename',
+      [CALL_API]: {
+        endpoint: 'rename',
+        method: 'POST',
+        body: {
+          current: `${peername}/${name}`,
+          new: `${newPeername}/${newName}`
+        }
+      }
+    }
+    let response: Action
+    try {
+      response = await dispatch(action)
+      response = await whenOk(fetchMyDatasets(-1))(response)
+      dispatch(openToast('success', `Dataset renamed`))
+    } catch (action) {
+      dispatch(openToast('error', action.payload.err.message))
+      throw action
+    }
+    return response
+  }
+}

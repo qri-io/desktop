@@ -96,11 +96,6 @@ class Dataset extends React.Component<DatasetProps> {
     const { status } = workingDataset
     const { status: prevStatus } = prevProps.workingDataset
 
-    if ((this.props.selections.peername !== prevProps.selections.peername) || (this.props.selections.name !== prevProps.selections.name)) {
-      this.props.fetchWorkingDatasetDetails()
-      return
-    }
-
     if (status) {
       // create an array of components that need updating
       const componentsToReset: SelectedComponent[] = []
@@ -321,7 +316,7 @@ class Dataset extends React.Component<DatasetProps> {
           sidebarContent={sidebarContent}
           sidebarWidth={datasetSidebarWidth}
           onSidebarResize={(width) => { setSidebarWidth('dataset', width) }}
-          maximumSidebarWidth={300}
+          maximumSidebarWidth={495}
           mainContent={mainContent}
         />
       </>
