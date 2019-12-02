@@ -57,6 +57,7 @@ export const [DATASET_STATUS_REQ, DATASET_STATUS_SUCC, DATASET_STATUS_FAIL] = ap
 const [DATASET_BODY_REQ, DATASET_BODY_SUCC, DATASET_BODY_FAIL] = apiActionTypes('body')
 const [, RESETOTHERCOMPONENTS_SUCC, RESETOTHERCOMPONENTS_FAIL] = apiActionTypes('resetOtherComponents')
 const [STATS_REQ, STATS_SUCC, STATS_FAIL] = apiActionTypes('stats')
+export const [, RENAME_SUCC] = apiActionTypes('rename')
 
 export const RESET_BODY = 'RESET_BODY'
 
@@ -273,6 +274,12 @@ const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction
 
     case SELECTIONS_SET_WORKING_DATASET:
       return initialState
+
+    case RENAME_SUCC:
+      return {
+        ...state,
+        name: action.payload.data.name
+      }
 
     default:
       return state

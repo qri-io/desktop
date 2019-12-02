@@ -32,6 +32,7 @@ export const [, UNPUBLISH_SUCC] = apiActionTypes('unpublish')
 export const [, SIGNIN_SUCC] = apiActionTypes('signin')
 export const [, SIGNUP_SUCC] = apiActionTypes('signup')
 export const [, , HISTORY_FAIL] = apiActionTypes('history')
+export const [, RENAME_SUCC] = apiActionTypes('rename')
 
 export default (state = initialState, action: AnyAction) => {
   switch (action.type) {
@@ -168,6 +169,13 @@ export default (state = initialState, action: AnyAction) => {
         peername: action.payload.data.peername,
         name: action.payload.data.name,
         activeTab: 'status'
+      }
+
+    case RENAME_SUCC:
+      localStore().setItem('name', action.payload.data.name)
+      return {
+        ...state,
+        name: action.payload.data.name
       }
 
     default:

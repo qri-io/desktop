@@ -208,12 +208,37 @@ $header-font-size: .9rem;
       font-weight: 900;
     }
 
-    .dataset-name {
+    .dataset-reference {
       font-size: 1.05rem;
+      display: flex;
+    }
+
+    .dataset-name {
+      flex: 1;
       white-space: nowrap;
       text-overflow: ellipsis;
-      display: block;
       overflow: hidden;
+
+      input {
+        background-color: #2f578c;
+        border: none;
+        border-radius: 5px;
+        color: #fff;
+        padding: 0 5px;
+        outline: none;
+        width: 100%;
+        transition: background 0.2s;
+
+        &.invalid {
+          background: #F43535;
+        }
+
+      }
+
+      &:hover {
+        cursor: pointer;
+        text-decoration: underline;
+      }
     }
   }
 
@@ -318,6 +343,13 @@ $header-font-size: .9rem;
 
 .status-dot-added {
   background-color: #38C629;
+}
+
+.edit-icon {
+  font-size: 0.75rem;
+  opacity: 0;
+  transition: opacity 0.1s;
+  color: $light-blue-accent;
 }
 
 

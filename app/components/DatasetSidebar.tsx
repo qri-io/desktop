@@ -7,6 +7,7 @@ import { faClock } from '@fortawesome/free-regular-svg-icons'
 
 import { ApiActionThunk } from '../store/api'
 import ComponentList from './ComponentList'
+import DatasetReference from './DatasetReference'
 
 import classNames from 'classnames'
 import Spinner from './chrome/Spinner'
@@ -71,6 +72,7 @@ export interface DatasetSidebarProps {
   fetchWorkingHistory: (page?: number, pageSize?: number) => ApiActionThunk
   discardChanges: (component: ComponentType) => ApiActionThunk
   setHideCommitNudge: () => Action
+  renameDataset: (peername: string, name: string, newName: string) => ApiActionThunk
 }
 
 const DatasetSidebar: React.FunctionComponent<DatasetSidebarProps> = (props) => {
@@ -81,7 +83,8 @@ const DatasetSidebar: React.FunctionComponent<DatasetSidebarProps> = (props) => 
     setSelectedListItem,
     fetchWorkingHistory,
     discardChanges,
-    setModal
+    setModal,
+    renameDataset
   } = props
 
   const { fsiPath, history, status, structure } = workingDataset
@@ -118,7 +121,7 @@ const DatasetSidebar: React.FunctionComponent<DatasetSidebarProps> = (props) => 
     <div className='dataset-sidebar'>
       <div className='dataset-sidebar-header sidebar-padded-container'>
         <p className='pane-title'>Dataset</p>
-        <p className='dataset-name'>{peername}/{name}</p>
+        <DatasetReference peername={peername} name={name} renameDataset={renameDataset}/>
         <DatasetDetailsSubtext format={format} lastCommit={lastCommit} commitCount={commitCount} />
       </div>
       <div id='tabs' className='sidebar-padded-container'>
