@@ -3,7 +3,7 @@ import { Action, AnyAction } from 'redux'
 import { CALL_API, ApiAction, ApiActionThunk, chainSuccess, ApiResponseAction } from '../store/api'
 import { DatasetSummary, SelectedComponent, MyDatasets } from '../models/store'
 import { actionWithPagination } from '../utils/pagination'
-import { openToast } from './ui'
+import { openToast, setImportFileDetails } from './ui'
 import { setWorkingDataset, setSelectedListItem, setActiveTab, setRoute } from './selections'
 import {
   mapDataset,
@@ -649,13 +649,21 @@ export function discardChanges (component: SelectedComponent): ApiActionThunk {
   }
 }
 
-export function removeDataset (peername: string, name: string, removeFiles: boolean = false): ApiActionThunk {
+export function removeDataset (
+  peername: string,
+  name: string,
+  isLinked: boolean = false,
+  keepFiles: boolean = true
+): ApiActionThunk {
   var query: {}
-  if (removeFiles) {
-    query = { 'force': true }
-  } else {
-    query = { 'keep-files': true }
+  if (isLinked) {
+    if (keepFiles) {
+      query = { 'keep-files': true }
+    } else {
+      query = { 'force': true }
+    }
   }
+
   return async (dispatch) => {
     const action = {
       type: 'remove',
@@ -669,18 +677,28 @@ export function removeDataset (peername: string, name: string, removeFiles: bool
         query
       }
     }
-    return dispatch(action)
+
+    let response: Action
+    try {
+      response = await dispatch(action)
+      dispatch(openToast('success', `Removed ${peername}/${name}`))
+    } catch (action) {
+      dispatch(openToast('error', action.payload.err.message))
+      throw action
+    }
+
+    return response
   }
 }
 
 // remove the specified dataset, then refresh the dataset list
-export function removeDatasetAndFetch (peername: string, name: string, removeFiles: boolean): ApiActionThunk {
+export function removeDatasetAndFetch (peername: string, name: string, isLinked: boolean, keepFiles: boolean): ApiActionThunk {
   return async (dispatch, getState) => {
     const whenOk = chainSuccess(dispatch, getState)
     let response: Action
 
     try {
-      response = await removeDataset(peername, name, removeFiles)(dispatch, getState)
+      response = await removeDataset(peername, name, isLinked, keepFiles)(dispatch, getState)
       // reset pagination
       response = await whenOk(fetchMyDatasets(-1))(response)
     } catch (action) {
@@ -761,6 +779,42 @@ export function renameDataset (peername: string, name: string, newName: string):
       response = await whenOk(fetchMyDatasets(-1))(response)
       dispatch(openToast('success', `Dataset renamed`))
     } catch (action) {
+      dispatch(openToast('error', action.payload.err.message))
+      throw action
+    }
+    return response
+  }
+}
+
+export function importFile (filePath: string, fileName: string, fileSize: number): ApiActionThunk {
+  return async (dispatch, getState) => {
+    const whenOk = chainSuccess(dispatch, getState)
+    const action = {
+      type: 'import',
+      [CALL_API]: {
+        endpoint: 'save',
+        method: 'POST',
+        query: {
+          bodypath: filePath,
+          new: true
+        },
+        body: {}
+      }
+    }
+    let response: Action
+    try {
+      dispatch(setImportFileDetails(fileName, fileSize))
+      response = await dispatch(action)
+      const { peername, name } = response.payload.data
+
+      response = await whenOk(fetchMyDatasets(-1))(response)
+      dispatch(setWorkingDataset(peername, name))
+      dispatch(setActiveTab('history'))
+      dispatch(setSelectedListItem('component', DEFAULT_SELECTED_COMPONENT))
+      dispatch(setRoute('/dataset'))
+      dispatch(setImportFileDetails('', 0))
+    } catch (action) {
+      dispatch(setImportFileDetails('', 0))
       dispatch(openToast('error', action.payload.err.message))
       throw action
     }

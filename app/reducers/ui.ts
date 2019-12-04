@@ -24,6 +24,7 @@ export const UI_HIDE_COMMIT_NUDGE = 'UI_HIDE_COMMIT_NUDGE'
 export const UI_SET_DATASET_DIR_PATH = 'UI_SET_DATASET_DIR_PATH'
 export const UI_SET_EXPORT_PATH = 'UI_SET_EXPORT_PATH'
 export const UI_SET_DETAILS_BAR = 'UI_SET_DETAILS_BAR'
+export const UI_SET_IMPORT_FILE_DETAILS = 'UI_SET_IMPORT_FILE_DETAILS'
 
 export const UNAUTHORIZED = 'UNAUTHORIZED'
 
@@ -58,7 +59,9 @@ const initialState = {
   datasetDirPath: store().getItem('datasetDirPath') || '',
   exportPath: store().getItem('exportPath') || '',
   modal: { type: ModalType.NoModal },
-  detailsBar: { type: DetailsType.NoDetails }
+  detailsBar: { type: DetailsType.NoDetails },
+  importFileName: '',
+  importFileSize: 0
 }
 
 // send an event to electron to block menus on first load
@@ -210,6 +213,14 @@ export default (state = initialState, action: AnyAction) => {
           message: `${action.type === ADD_SUCC ? 'Added' : 'Created new'} dataset ${peername}/${name}`,
           visible: true
         }
+      }
+
+    case UI_SET_IMPORT_FILE_DETAILS:
+      const { fileSize, fileName } = action
+      return {
+        ...state,
+        importFileSize: fileSize,
+        importFileName: fileName
       }
 
     default:

@@ -57,17 +57,22 @@
   #list {
     flex: 1;
     border-top: $list-item-bottom-border;
-    border-bottom: $list-item-bottom-border;
   }
 
   #list-footer {
     flex: 0;
-    text-align: center;
     padding: 8px;
+    border-top: $list-item-bottom-border;
 
     .strong-message {
+      text-align: center;
       font-weight: 500;
       font-size: 0.8rem;
+    }
+
+    .import-message {
+      text-align: left;
+      font-size: .7rem;
     }
   }
 }

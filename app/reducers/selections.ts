@@ -25,6 +25,7 @@ export const initialState: Selections = {
 export const [, ADD_SUCC] = apiActionTypes('add')
 export const [, REMOVE_SUCC] = apiActionTypes('remove')
 export const [, INIT_SUCC] = apiActionTypes('init')
+export const [, IMPORT_SUCC] = apiActionTypes('import')
 export const [, DATASET_SUCC, DATASET_FAIL] = apiActionTypes('dataset')
 export const [, COMMIT_SUCC] = apiActionTypes('commitdataset')
 export const [, PUBLISH_SUCC] = apiActionTypes('publish')

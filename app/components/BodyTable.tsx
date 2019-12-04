@@ -108,7 +108,7 @@ export default class BodyTable extends React.Component<BodyTableProps> {
             if (isFirstColumn) d = parseInt(d) + 1
             return (
               <td key={j} className={isFirstColumn ? 'first-column' : ''}>
-                <div className='cell'>{d}</div>
+                <div className='cell'>{typeof d === 'boolean' ? JSON.stringify(d) : d}</div>
               </td>
             )
           })}

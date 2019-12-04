@@ -111,6 +111,14 @@ const CommitDetails: React.FunctionComponent<CommitDetailsProps> = ({
 
   const { status } = commitDetails
 
+  const getComponents = () => {
+    const components = []
+    Object.keys(commitDetails.components).forEach((component) => {
+      if (commitDetails.components[component].value) components.push(component)
+    })
+    return components
+  }
+
   return (
     <div id='commit-details' className='dataset-content transition-group'>
       <CSSTransition
@@ -127,13 +135,13 @@ const CommitDetails: React.FunctionComponent<CommitDetailsProps> = ({
               <HistoryComponentList
                 datasetSelected={peername !== '' && name !== ''}
                 status={status}
-                components={Object.keys(commitDetails.components)}
+                components={getComponents()}
                 selectedComponent={selectedComponent}
                 selectionType={'commitComponent' as ComponentType}
                 onComponentClick={setSelectedListItem}
               />
             )}
-            sidebarWidth={250}
+            sidebarWidth={150}
             mainContent={(
               <DatasetComponent isLoading={loading} component={selectedComponent} componentStatus={status[selectedComponent]} history />
             )}
