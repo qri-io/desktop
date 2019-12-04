@@ -74,7 +74,11 @@ export interface AppProps {
   setDatasetDirPath: (path: string) => Action
   signout: () => Action
   setRoute: (route: string) => Action
+<<<<<<< HEAD
   importFile: (filePath: string, fileName: string, fileSize: number) => Promise<ApiAction>
+=======
+  importFile: (bodypath: string) => Promise<ApiAction>
+>>>>>>> wip: set up import action
 }
 
 interface AppState {
@@ -312,12 +316,17 @@ class App extends React.Component<AppProps, AppState> {
             return
           }
 
+<<<<<<< HEAD
           const {
             path: filePath,
             name: fileName,
             size: fileSize
           } = event.dataTransfer.files[0]
           importFile(filePath, fileName, fileSize)
+=======
+          const filePath = event.dataTransfer.files[0].path
+          importFile(filePath)
+>>>>>>> wip: set up import action
         }}
         className='drag-drop'
         id='drag-drop'
