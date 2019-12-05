@@ -806,7 +806,7 @@ export function importFile (filePath: string, fileName: string, fileSize: number
       dispatch(setImportFileDetails(fileName, fileSize))
       response = await dispatch(action)
       const { peername, name } = response.payload.data
-
+      
       response = await whenOk(fetchMyDatasets(-1))(response)
       dispatch(setWorkingDataset(peername, name))
       dispatch(setActiveTab('history'))

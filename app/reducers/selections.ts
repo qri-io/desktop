@@ -179,17 +179,6 @@ export default (state = initialState, action: AnyAction) => {
         name: action.payload.data.name
       }
 
-    case IMPORT_SUCC:
-      localStore().setItem('peername', action.payload.data.peername)
-      localStore().setItem('name', action.payload.data.name)
-      localStore().setItem('activeTab', 'history')
-      return {
-        ...state,
-        peername: action.payload.data.peername,
-        name: action.payload.data.name,
-        activeTab: 'history'
-      }
-
     default:
       return state
   }
