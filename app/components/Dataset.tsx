@@ -243,7 +243,7 @@ class Dataset extends React.Component<DatasetProps> {
         <div className='main-content-flex'>
           <div className='transition-group' >
             <CSSTransition
-              in={!hasDatasets}
+              in={!peername && !name}
               classNames='fade'
               timeout={300}
               mountOnEnter
