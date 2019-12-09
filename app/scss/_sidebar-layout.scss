@@ -132,6 +132,9 @@
   }
 
   .status-column {
+    &.disabled {
+      display: none;
+    }
     text-align: center;
     width: 30px;
   }
@@ -146,7 +149,12 @@
   }
 
   &.disabled {
+    cursor: default;
     color: #ccc;
+
+    &:hover {
+      border-left: 2px solid transparent;
+    }
 
     .icon-column {
       color: #ccc;
