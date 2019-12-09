@@ -15,8 +15,7 @@ import Spinner from './chrome/Spinner'
 import { DatasetDetailsSubtext } from './DatasetList'
 import { WorkingDataset, ComponentType, Selections } from '../models/store'
 import ContextMenuArea from 'react-electron-contextmenu'
-import { MenuItemConstructorOptions } from 'electron'
-import { ModalType, Modal } from '../models/modals'
+import { MenuItemConstructorOptions, remote, ipcRenderer } from 'electron'
 
 interface HistoryListItemProps {
   path: string
@@ -66,7 +65,6 @@ export interface DatasetSidebarProps {
   selections: Selections
   workingDataset: WorkingDataset
   hideCommitNudge: boolean
-  setModal: (modal: Modal) => void
   setActiveTab: (activeTab: string) => Action
   setSelectedListItem: (type: ComponentType, activeTab: string) => Action
   fetchWorkingHistory: (page?: number, pageSize?: number) => ApiActionThunk
@@ -83,7 +81,6 @@ const DatasetSidebar: React.FunctionComponent<DatasetSidebarProps> = (props) => 
     setSelectedListItem,
     fetchWorkingHistory,
     discardChanges,
-    setModal,
     renameDataset
   } = props
 
@@ -113,6 +110,19 @@ const DatasetSidebar: React.FunctionComponent<DatasetSidebarProps> = (props) => 
     if (e.target.scrollHeight === parseInt(e.target.scrollTop) + parseInt(e.target.offsetHeight)) {
       fetchWorkingHistory(history.pageInfo.page + 1, history.pageInfo.pageSize)
     }
+  }
+
+  const handleExport = (path: string) => {
+    const window = remote.getCurrentWindow()
+    const selectedPath: string | undefined = remote.dialog.showSaveDialog(window, {})
+
+    if (!selectedPath) {
+      return
+    }
+
+    const pathUrl = path === '' ? '' : `/at/${path}`
+    const exportUrl = `http://localhost:2503/export/${peername}/${name}${pathUrl}?download=true&all=true`
+    ipcRenderer.send('export', { url: exportUrl, directory: selectedPath })
   }
 
   const historyToolTip = history.value.length !== 0 || !datasetSelected ? 'Explore older versions of this dataset' : 'This dataset has no previous versions'
@@ -203,14 +213,7 @@ const DatasetSidebar: React.FunctionComponent<DatasetSidebarProps> = (props) => 
                   {
                     label: 'Export this version',
                     click: () => {
-                      setModal({
-                        type: ModalType.ExportVersion,
-                        peername: peername || '',
-                        name: name || '',
-                        path: path || '',
-                        timestamp: timestamp,
-                        title: title
-                      })
+                      handleExport(path)
                     }
                   }
                 ]

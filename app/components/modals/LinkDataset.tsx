@@ -6,16 +6,19 @@ import TextInput from '../form/TextInput'
 import Error from './Error'
 import Buttons from './Buttons'
 import ButtonInput from '../form/ButtonInput'
+import { Action } from 'redux'
 
 interface LinkDatasetProps {
   peername: string
   name: string
   onDismissed: () => void
   onSubmit: (peername: string, name: string, dir: string) => Promise<ApiAction>
+  setDatasetDirPath: (path: string) => Action
+  datasetDirPath: string
 }
 
-const LinkDataset: React.FunctionComponent<LinkDatasetProps> = ({ peername, name, onDismissed, onSubmit }) => {
-  const [path, setPath] = React.useState('')
+const LinkDataset: React.FunctionComponent<LinkDatasetProps> = ({ peername, name, onDismissed, onSubmit, datasetDirPath, setDatasetDirPath }) => {
+  const [path, setPath] = React.useState(datasetDirPath)
   const [datasetDirectory, setDatasetDirectory] = React.useState(name)
 
   const [dismissable, setDismissable] = React.useState(true)
@@ -25,6 +28,9 @@ const LinkDataset: React.FunctionComponent<LinkDatasetProps> = ({ peername, name
   React.useEffect(() => {
     // if path is empty, disable the button
     setButtonDisabled(!path)
+    if (!path) {
+      setDatasetDirPath(path)
+    }
   }, [path])
 
   // should come from props
