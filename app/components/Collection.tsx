@@ -20,6 +20,8 @@ interface CollectionProps {
   setSidebarWidth: (type: string, sidebarWidth: number) => Action
   fetchMyDatasets: (page: number, pageSize: number) => Promise<AnyAction>
   setModal: (modal: Modal) => void
+  importFileName: string
+  importFileSize: number
 }
 
 class Collection extends React.Component<CollectionProps> {
@@ -31,7 +33,9 @@ class Collection extends React.Component<CollectionProps> {
       setSidebarWidth,
       setFilter,
       setWorkingDataset,
-      setModal
+      setModal,
+      importFileName,
+      importFileSize
     } = this.props
 
     const mainContent = (
@@ -69,6 +73,8 @@ class Collection extends React.Component<CollectionProps> {
           setFilter={setFilter}
           setWorkingDataset={setWorkingDataset}
           setModal={setModal}
+          importFileName={importFileName}
+          importFileSize={importFileSize}
         />}
         sidebarWidth={sidebarWidth}
         onSidebarResize={(width) => { setSidebarWidth('collection', width) }}

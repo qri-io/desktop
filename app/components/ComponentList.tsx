@@ -147,6 +147,7 @@ export const components = [
 function removeHiddenComponents (status: DatasetStatus, selectionType: ComponentType) {
   const showWhenMissing = {
     'readme': 'component',
+    'meta': 'component',
     'commit': true
   }
   return (component): boolean => {
@@ -170,7 +171,7 @@ const ComponentList: React.FunctionComponent<ComponentListProps> = (props: Compo
   } = props
 
   const isEnabled = (name: string): boolean => {
-    return (datasetSelected && selectionType === 'component' && (name === 'meta' || name === 'structure' || name === 'readme' || name === 'transform'))
+    return (datasetSelected && selectionType === 'component' && (name === 'meta' || name === 'structure' || name === 'readme' || name === 'transform' || name === 'commit'))
   }
 
   const visibleComponents = components.filter(removeHiddenComponents(status, selectionType))

@@ -191,7 +191,7 @@ class Dataset extends React.Component<DatasetProps> {
           icon={(
             <span className='fa-layers fa-fw'>
               <FontAwesomeIcon icon={faFile} size='lg'/>
-              <FontAwesomeIcon icon={faLink} transform="shrink-8" />
+              <FontAwesomeIcon icon={faLink} transform='shrink-8' />
             </span>
           )}
           onClick={() => { setModal({ type: ModalType.LinkDataset }) }}
@@ -294,10 +294,10 @@ class Dataset extends React.Component<DatasetProps> {
 
     return (
       <>
-        <div className="details-bar-wrapper"
-          style={{ 'left': showDetailsBar ? 0 + 60 : datasetSidebarWidth * -1 }}
+        <div className='details-bar-wrapper'
+          style={{ 'left': showDetailsBar ? 0 : datasetSidebarWidth * -2 }}
         >
-          <div className="details-bar-inner"
+          <div className='details-bar-inner'
             style={{ 'opacity': showDetailsBar ? 1 : 0 }}
           >
             <Resizable

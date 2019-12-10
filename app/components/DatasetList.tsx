@@ -6,6 +6,7 @@ import moment from 'moment'
 import { withRouter } from 'react-router-dom'
 import { shell, MenuItemConstructorOptions } from 'electron'
 import filesize from 'filesize'
+import { Line } from 'rc-progress'
 
 import { MyDatasets, WorkingDataset } from '../models/store'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -13,6 +14,45 @@ import { faTimes, faFileAlt } from '@fortawesome/free-solid-svg-icons'
 import { faFile, faClock } from '@fortawesome/free-regular-svg-icons'
 
 import { Modal, ModalType } from '../models/modals'
+
+// for displaying a progress bar based on import file size
+// assumes an import rate of 4828 bytes per millisecond
+const IMPORT_BYTES_PER_MS = 4828
+
+interface ImportProgressBarProps {
+  duration: number
+  fileName: string
+}
+
+const ImportProgressBar: React.FunctionComponent<ImportProgressBarProps> = ({ duration, fileName }) => {
+  const timeForOnePercent = duration / 100 // milliseconds
+  const [ percent, setPercent ] = React.useState(0)
+
+  let timer = setTimeout(() => {})
+
+  const increase = () => {
+    setPercent(percent + 1)
+  }
+
+  React.useEffect(() => {
+    if (percent >= 100) {
+      clearTimeout(timer)
+      return
+    }
+    timer = setTimeout(increase, timeForOnePercent)
+  }, [ percent ])
+
+  React.useEffect(() => {
+    increase()
+  }, [])
+
+  return (
+    <div className=''>
+      <div className='import-message'>importing {fileName}...</div>
+      <Line percent={percent} strokeWidth={4} strokeColor='#4FC7F3' />
+    </div>
+  )
+}
 
 // component for rendering dataset format, timestamp, size, etc
 export interface DatasetDetailsSubtextProps {
@@ -40,6 +80,8 @@ interface DatasetListProps {
   setWorkingDataset: (peername: string, name: string) => Action
   fetchMyDatasets: (page: number, pageSize: number) => Promise<AnyAction>
   setModal: (modal: Modal) => void
+  importFileName: string
+  importFileSize: number
 }
 
 class DatasetList extends React.Component<DatasetListProps> {
@@ -82,7 +124,9 @@ class DatasetList extends React.Component<DatasetListProps> {
       workingDataset,
       setModal,
       setWorkingDataset,
-      myDatasets
+      myDatasets,
+      importFileName,
+      importFileSize
     } = this.props
 
     const { filter, value: datasets } = myDatasets
@@ -174,6 +218,15 @@ class DatasetList extends React.Component<DatasetListProps> {
       ? `Showing ${filteredDatasets.length} local dataset${filteredDatasets.length !== 1 ? 's' : ''}`
       : `You have ${filteredDatasets.length} local dataset${datasets.length !== 1 ? 's' : ''}`
 
+    // calculate the duration estimate based on the importFileSize
+    const importTimeEstimate = importFileSize / IMPORT_BYTES_PER_MS
+
+    const footerContent = importFileSize > 0 ? (
+      <ImportProgressBar duration={importTimeEstimate} fileName={importFileName} />
+    ) : (
+      <div className='strong-message'>{countMessage}</div>
+    )
+
     return (
       <div id='dataset-list'>
         <div className='dataset-sidebar' >
@@ -203,7 +256,7 @@ class DatasetList extends React.Component<DatasetListProps> {
             {listContent}
           </div>
           <div id='list-footer'>
-            <div className='strong-message'>{countMessage}</div>
+            {footerContent}
           </div>
         </div>
       </div>

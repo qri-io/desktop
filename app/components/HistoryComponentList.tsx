@@ -33,6 +33,7 @@ const HistoryComponentList: React.FunctionComponent<HistoryComponentListProps> =
             if (status[name]) {
               fileStatus = status[name].status
             }
+
             return (
               <FileRow
                 key={name}
@@ -47,7 +48,15 @@ const HistoryComponentList: React.FunctionComponent<HistoryComponentListProps> =
               />
             )
           }
-          return undefined
+          return (
+            <FileRow
+              key={name}
+              displayName={displayName}
+              name={name}
+              icon={icon}
+              disabled
+            />
+          )
         })
       }
     </div>

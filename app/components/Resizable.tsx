@@ -11,7 +11,7 @@ export class Resizable extends React.Component<IResizableProps, {}> {
   public static defaultProps: IResizableProps = {
     width: 250,
     maximumWidth: 350,
-    minimumWidth: 200
+    minimumWidth: 150
   }
 
   private startWidth: number | null = null

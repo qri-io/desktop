@@ -370,19 +370,21 @@ $header-font-size: .9rem;
   .commit-details-header {
     padding: $sidebar-item-padding;
     border-bottom: $list-item-bottom-border;
-    height: 55px;
 
     .details-flex {
       display: flex;
       justify-content: space-between;
 
+      .text-column {
+        flex: 1;
+      }
+
       .details-column {
+        flex: 1;
         color: #999999;
         align-items: center;
         display: flex;
         justify-content: space-around;
-        min-width: 350px;
-        max-width: 350px;
       }
     }
   }
@@ -392,6 +394,7 @@ $header-font-size: .9rem;
     border-right: $list-item-bottom-border;
   }
 }
+
 
 
 ////////////////////////////

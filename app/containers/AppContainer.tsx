@@ -10,7 +10,8 @@ import {
   pingApi,
   publishDataset,
   unpublishDataset,
-  removeDatasetAndFetch
+  removeDatasetAndFetch,
+  importFile
 } from '../actions/api'
 
 import {
@@ -79,7 +80,8 @@ const AppContainer = connect(
     removeDatasetAndFetch,
     setDatasetDirPath,
     signout,
-    setRoute
+    setRoute,
+    importFile
   },
   mergeProps
 )(App)

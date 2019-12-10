@@ -237,6 +237,7 @@
     "lodash-es": "4.17.15",
     "moment": "2.24.0",
     "numeral": "2.0.6",
+    "rc-progress": "2.5.2",
     "react": "16.11.0",
     "react-dnd": "9.4.0",
     "react-dnd-html5-backend": "9.4.0",

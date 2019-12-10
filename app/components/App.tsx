@@ -74,6 +74,7 @@ export interface AppProps {
   setDatasetDirPath: (path: string) => Action
   signout: () => Action
   setRoute: (route: string) => Action
+  importFile: (filePath: string, fileName: string, fileSize: number) => Promise<ApiAction>
 }
 
 interface AppState {
@@ -281,6 +282,7 @@ class App extends React.Component<AppProps, AppState> {
   }
 
   private renderDragDrop () {
+    const { importFile } = this.props
     return (
       <div
         onDragEnter={(event) => {
@@ -309,10 +311,13 @@ class App extends React.Component<AppProps, AppState> {
             setTimeout(() => this.props.closeToast(), 2500)
             return
           }
-          this.props.setModal({
-            type: ModalType.CreateDataset,
-            bodyPath: event.dataTransfer.files[0].path
-          })
+
+          const {
+            path: filePath,
+            name: fileName,
+            size: fileSize
+          } = event.dataTransfer.files[0]
+          importFile(filePath, fileName, fileSize)
         }}
         className='drag-drop'
         id='drag-drop'

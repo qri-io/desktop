@@ -11,7 +11,8 @@ import {
   UI_HIDE_COMMIT_NUDGE,
   UI_SET_DATASET_DIR_PATH,
   UI_SET_EXPORT_PATH,
-  UI_SET_DETAILS_BAR
+  UI_SET_DETAILS_BAR,
+  UI_SET_IMPORT_FILE_DETAILS
 } from '../reducers/ui'
 
 import { ToastType } from '../models/store'
@@ -90,5 +91,14 @@ export const setDetailsBar = (details: Details) => {
   return {
     type: UI_SET_DETAILS_BAR,
     details
+  }
+}
+
+// filesize in bytes, provided by drag n drop UI
+export const setImportFileDetails = (fileName: string, fileSize: number) => {
+  return {
+    type: UI_SET_IMPORT_FILE_DETAILS,
+    fileName,
+    fileSize
   }
 }

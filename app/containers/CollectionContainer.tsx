@@ -13,14 +13,20 @@ interface CollectionContainerProps {
 
 const mapStateToProps = (state: any, ownProps: CollectionContainerProps) => {
   const { myDatasets, workingDataset, ui } = state
-  const { collectionSidebarWidth: sidebarWidth } = ui
+  const {
+    collectionSidebarWidth: sidebarWidth,
+    importFileName,
+    importFileSize
+  } = ui
 
   const { setModal } = ownProps
   return {
     myDatasets,
     workingDataset,
     setModal,
-    sidebarWidth
+    sidebarWidth,
+    importFileName,
+    importFileSize
   }
 }
 

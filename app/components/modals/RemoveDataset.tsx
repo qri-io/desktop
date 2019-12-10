@@ -10,14 +10,14 @@ import Buttons from './Buttons'
 interface RemoveDatasetProps {
   modal: RemoveDatasetModal
   onDismissed: () => void
-  onSubmit: (peername: string, name: string, removeFiles: boolean) => Promise<ApiAction>
+  onSubmit: (peername: string, name: string, isLinked: boolean, keepFiles: boolean) => Promise<ApiAction>
 }
 
 const RemoveDataset: React.FunctionComponent<RemoveDatasetProps> = (props: RemoveDatasetProps) => {
   const { modal, onDismissed, onSubmit } = props
   const { peername, name, fsiPath } = modal
 
-  const [shouldRemoveFiles, setShouldRemoveFiles] = React.useState(false)
+  const [keepFiles, setKeepFiles] = React.useState(true)
 
   const [dismissable, setDismissable] = React.useState(true)
 
@@ -25,7 +25,7 @@ const RemoveDataset: React.FunctionComponent<RemoveDatasetProps> = (props: Remov
   const [loading, setLoading] = React.useState(false)
 
   const handleChanges = (name: string, value: any) => {
-    setShouldRemoveFiles(value)
+    setKeepFiles(!value)
   }
 
   const handleSubmit = () => {
@@ -33,7 +33,9 @@ const RemoveDataset: React.FunctionComponent<RemoveDatasetProps> = (props: Remov
     setLoading(true)
     error && setError('')
     if (!onSubmit) return
-    onSubmit(peername, name, shouldRemoveFiles)
+
+    const isLinked = !!fsiPath
+    onSubmit(peername, name, isLinked, keepFiles)
       .then(onDismissed)
       .catch((action) => {
         setLoading(false)
@@ -57,7 +59,7 @@ const RemoveDataset: React.FunctionComponent<RemoveDatasetProps> = (props: Remov
           { fsiPath &&
             <CheckboxInput
               name='shouldRemoveFiles'
-              checked={shouldRemoveFiles}
+              checked={!keepFiles}
               onChange={handleChanges}
               label={'Also remove the dataset\'s files'}
             />
@@ -65,7 +67,7 @@ const RemoveDataset: React.FunctionComponent<RemoveDatasetProps> = (props: Remov
         </div>
       </div>
       <p className='content-bottom submit-message'>
-        { fsiPath && shouldRemoveFiles && <span>Qri will delete dataset files in <strong>{fsiPath}</strong></span>}
+        { fsiPath && !keepFiles && <span>Qri will delete dataset files in <strong>{fsiPath}</strong></span>}
       </p>
       <Error text={error} />
       <Buttons
