@@ -82,7 +82,7 @@ const DatasetReference: React.FunctionComponent<DatasetReferenceProps> = (props)
     setNewName(value)
   }
 
-  // when the input is focused, set the cursor to the left, and scroll all the way to the left
+  // when the input is focused, scroll all the way to the left
   const onFocus = () => {
     const el = document.getElementById('dataset-name-input') as HTMLInputElement
     el.scrollLeft = 0
