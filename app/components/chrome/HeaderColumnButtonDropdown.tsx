@@ -29,10 +29,10 @@ const HeaderColumnButtonDropdown: React.FunctionComponent<HeaderColumnButtonDrop
   }
 
   React.useEffect(() => {
-    document.addEventListener('click', (e) => handleClick(e))
+    document.addEventListener('click', handleClick)
 
     return () => {
-      document.removeEventListener('click', (e) => handleClick(e))
+      document.removeEventListener('click', handleClick)
     }
   })
 

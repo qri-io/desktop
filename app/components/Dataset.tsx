@@ -82,8 +82,6 @@ class Dataset extends React.Component<DatasetProps> {
     ipcRenderer.on('reload', () => {
       remote.getCurrentWindow().reload()
     })
-
-    this.props.fetchWorkingDatasetDetails()
   }
 
   componentWillUnmount () {

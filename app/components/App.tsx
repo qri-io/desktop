@@ -74,6 +74,7 @@ export interface AppProps {
   signout: () => Action
   setRoute: (route: string) => Action
   importFile: (filePath: string, fileName: string, fileSize: number) => Promise<ApiAction>
+  fetchWorkingDatasetDetails: () => Promise<ApiAction>
 }
 
 interface AppState {
@@ -131,6 +132,14 @@ class App extends React.Component<AppProps, AppState> {
   componentDidUpdate (prevProps: AppProps) {
     if (this.props.session.id === '' && prevProps.apiConnection === 0 && this.props.apiConnection === 1) {
       this.props.bootstrap()
+    }
+
+    // listen for changes to current dataset, fetch data on change
+    if ((this.props.selections.peername !== prevProps.selections.peername) || (this.props.selections.name !== prevProps.selections.name)) {
+      // if the paths are the same, don't get data (dataset was renamed)
+      if (this.props.workingDataset.path === prevProps.workingDataset.path) return
+      this.props.fetchWorkingDatasetDetails()
+      return
     }
 
     // this "wires up" all of the tooltips, must be called on update, as tooltips

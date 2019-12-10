@@ -51,6 +51,7 @@ export function fetchWorkingDatasetDetails (): ApiActionThunk {
     response = await fetchWorkingDataset()(dispatch, getState)
     // if the response returned in error, check the error
     // if it's 422, it means the dataset exists, it's just not linked to the filesystem
+    // we still need the working dataset because it contains the history
     if (getActionType(response) === 'failure') {
       if (response.payload.err.code !== 422) {
         return response
@@ -139,21 +140,28 @@ export function fetchMyDatasets (page: number = 1, pageSize: number = pageSizeDe
   }
 }
 
-export function fetchWorkingDataset (fsi: boolean = true): ApiActionThunk {
+export function fetchWorkingDataset (): ApiActionThunk {
   return async (dispatch, getState) => {
-    const { selections } = getState()
+    const { selections, myDatasets } = getState()
     const { peername, name } = selections
 
     if (peername === '' || name === '') {
       return Promise.reject(new Error('no peername or name selected'))
     }
 
+    // look up the peername + name in myDatasets to determine whether it is FSI linked
+    const dataset = myDatasets.value.find((d) => (d.peername === peername) && (d.name === name))
+    if (!dataset) {
+      return Promise.reject(new Error('could not find dataset in list'))
+    }
+    const { fsiPath } = dataset
+
     const action = {
       type: 'dataset',
       [CALL_API]: {
         endpoint: '',
         method: 'GET',
-        query: { fsi },
+        query: { fsi: !!fsiPath },
         segments: {
           peername,
           name
