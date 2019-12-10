@@ -16,7 +16,6 @@ import Navbar from './Navbar'
 import AppError from './AppError'
 import AppLoading from './AppLoading'
 import AddDataset from './modals/AddDataset'
-import ExportVersion from './modals/ExportVersion'
 import LinkDataset from './modals/LinkDataset'
 import RemoveDataset from './modals/RemoveDataset'
 import CreateDataset from './modals/CreateDataset'
@@ -207,22 +206,6 @@ class App extends React.Component<AppProps, AppState> {
         break
       }
 
-      case ModalType.ExportVersion: {
-        modalComponent = (
-          <ExportVersion
-            peername={modal.peername}
-            name={modal.name}
-            path={modal.path}
-            title={modal.title}
-            timestamp={modal.timestamp}
-            exportPath={this.props.exportPath}
-            setExportPath={this.props.setExportPath}
-            onDismissed={async () => setModal(noModalObject)}
-          />
-        )
-        break
-      }
-
       case ModalType.LinkDataset: {
         const { peername, name } = this.props.workingDataset
         modalComponent = (
@@ -231,6 +214,8 @@ class App extends React.Component<AppProps, AppState> {
             name={name}
             onSubmit={this.props.linkDataset}
             onDismissed={async () => setModal(noModalObject)}
+            setDatasetDirPath={this.props.setDatasetDirPath}
+            datasetDirPath={this.props.datasetDirPath}
           />
         )
         break

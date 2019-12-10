@@ -86,7 +86,7 @@ export const FileRow: React.FunctionComponent<FileRowProps> = (props) => {
         <div className='text'>{props.displayName}</div>
         <div className='subtext'>{props.filename}</div>
       </div>
-      <div className='status-column'>
+      <div className={classNames('status-column', { 'disabled': props.disabled })}>
         {statusIcon}
       </div>
     </div>
@@ -169,6 +169,26 @@ const ComponentList: React.FunctionComponent<ComponentListProps> = (props: Compo
     datasetSelected,
     fsiPath
   } = props
+
+  if (!fsiPath) {
+    return (
+      <div>
+        {components.map(({ name, displayName, tooltip, icon }) => {
+          return <FileRow
+            key={name}
+            displayName={displayName}
+            name={name}
+            icon={icon}
+            selected={false}
+            disabled={true}
+            tooltip={tooltip}
+            onClick={undefined}
+          />
+        })}
+
+      </div>
+    )
+  }
 
   const isEnabled = (name: string): boolean => {
     return (datasetSelected && selectionType === 'component' && (name === 'meta' || name === 'structure' || name === 'readme' || name === 'transform' || name === 'commit'))

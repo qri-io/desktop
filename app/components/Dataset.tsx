@@ -186,8 +186,8 @@ class Dataset extends React.Component<DatasetProps> {
         />) : (
         <HeaderColumnButton
           id='linkButton'
-          label='link to filesystem'
-          tooltip='Link this dataset to a folder on your computer'
+          label='checkout'
+          tooltip='Checkout this dataset to a folder on your computer'
           icon={(
             <span className='fa-layers fa-fw'>
               <FontAwesomeIcon icon={faFile} size='lg'/>
@@ -243,7 +243,7 @@ class Dataset extends React.Component<DatasetProps> {
         <div className='main-content-flex'>
           <div className='transition-group' >
             <CSSTransition
-              in={!hasDatasets}
+              in={!peername && !name}
               classNames='fade'
               timeout={300}
               mountOnEnter

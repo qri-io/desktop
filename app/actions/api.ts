@@ -694,16 +694,17 @@ export function removeDataset (
 // remove the specified dataset, then refresh the dataset list
 export function removeDatasetAndFetch (peername: string, name: string, isLinked: boolean, keepFiles: boolean): ApiActionThunk {
   return async (dispatch, getState) => {
-    const whenOk = chainSuccess(dispatch, getState)
     let response: Action
 
     try {
       response = await removeDataset(peername, name, isLinked, keepFiles)(dispatch, getState)
-      // reset pagination
-      response = await whenOk(fetchMyDatasets(-1))(response)
     } catch (action) {
-      throw action
+      if (!action.payload.err.message.contains('directory not empty')) {
+        throw action
+      }
     }
+    // reset pagination
+    response = await fetchMyDatasets(-1)(dispatch, getState)
     return response
   }
 }
@@ -806,7 +807,6 @@ export function importFile (filePath: string, fileName: string, fileSize: number
       dispatch(setImportFileDetails(fileName, fileSize))
       response = await dispatch(action)
       const { peername, name } = response.payload.data
-
       response = await whenOk(fetchMyDatasets(-1))(response)
       dispatch(setWorkingDataset(peername, name))
       dispatch(setActiveTab('history'))
