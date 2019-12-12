@@ -27,6 +27,9 @@ const initialState: CommitDetails = {
     },
     structure: {
       value: {}
+    },
+    readme: {
+      value: {}
     }
   },
   stats: []
@@ -65,6 +68,9 @@ const commitDetailsReducer: Reducer = (state = initialState, action: AnyAction):
           },
           commit: {
             value: dataset.commit
+          },
+          readme: {
+            value: dataset.readme
           }
         }
       }
