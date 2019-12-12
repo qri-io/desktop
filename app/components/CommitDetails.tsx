@@ -88,7 +88,8 @@ const CommitDetails: React.FunctionComponent<CommitDetailsProps> = ({
   }, 250)
 
   React.useEffect(() => {
-    if (selectedCommitPath !== '') {
+    // only fetch data if the workingCommit does not match selected path
+    if (selectedCommitPath !== commitDetails.path) {
       fetchCommitDetail()
         .then(() => {
           if (isLogError) setLogError(false)

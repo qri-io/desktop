@@ -17,7 +17,7 @@ const initialState: WorkingDataset = {
   peername: '',
   name: '',
   status: {},
-  isLoading: true,
+  isLoading: false,
   fsiPath: '',
   published: true,
   hasHistory: true,
@@ -69,8 +69,7 @@ const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction
       }
       return {
         ...initialState,
-        peername: action.segments.peername,
-        name: action.segments.name
+        isLoading: true
       }
     case DATASET_SUCC: // when adding a new dataset, set it as the new workingDataset
       const { name, path, peername, published, dataset, fsiPath } = action.payload.data
@@ -115,8 +114,7 @@ const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction
         return state
       }
       return {
-        ...initialState,
-        isLoading: false
+        ...initialState
       }
 
     case HISTORY_REQ:
