@@ -293,7 +293,7 @@ class Dataset extends React.Component<DatasetProps> {
     return (
       <>
         <div className='details-bar-wrapper'
-          style={{ 'left': showDetailsBar ? 0 : datasetSidebarWidth * -2 }}
+          style={{ 'left': showDetailsBar ? 59 : datasetSidebarWidth * -3 }}
         >
           <div className='details-bar-inner'
             style={{ 'opacity': showDetailsBar ? 1 : 0 }}

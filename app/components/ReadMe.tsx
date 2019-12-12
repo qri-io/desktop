@@ -19,9 +19,19 @@ export interface ReadmeProps {
 
 const Readme: React.FunctionComponent<ReadmeProps> = (props) => {
   const { value, peername, name, write } = props
-
   const [internalValue, setInternalValue] = React.useState(value)
   const [debouncedValue] = useDebounce(internalValue, DEBOUNCE_TIMER)
+
+  React.useEffect(() => {
+    window.addEventListener('focus', onFocus)
+    return () => {
+      window.removeEventListener('focus', onFocus)
+    }
+  })
+
+  const onFocus = () => {
+    setInternalValue(value)
+  }
 
   React.useEffect(() => {
     if (debouncedValue !== value) {
@@ -49,7 +59,7 @@ const Readme: React.FunctionComponent<ReadmeProps> = (props) => {
   return (
     <SimpleMDE
       id="readme-editor"
-      value={value}
+      value={internalValue}
       onChange={handleChange}
       options={{
         spellChecker: false,
