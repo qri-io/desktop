@@ -1,3 +1,35 @@
+# [0.3.0](https://github.com/qri-io/desktop/compare/v0.2.1...v0.3.0) (2019-12-12)
+
+Welcome to Qri Desktop 0.3.0! We've made a huge overhaul on our UI and UX design in this release as well as streamlined some key flows in the app.
+
+## Redesign
+We've changed the layout of our app to switch between two main views: the Collections view and the Dataset view. On the Collections page, you can view a list of all your datasets, get important key details about them, and use drag and drop functionality to create a new dataset from an existing file easily. The Dataset page is where you can view and edit a specific dataset. The 'Status' pane reflects the status of the dataset as it exists now, highlighting changes you have made since your last commit and allowing you to make edits to the structure, metadata, and readme portions of your dataset. The 'History' pane allows you to explore previous versions of your dataset, so you can see what has changed over time.
+
+We've also adjusted the commit message view. We want to encourage you to write detailed messages that describe the work that went into creating the latest version of the dataset and what has changed. To help that, we've moved the commit message to its own page to give you the room to write down all the helpful information that's in your head.
+
+## Import
+One important flow that has been redesigned and streamlined is the import flow. It's incredibly easy to add a dataset to Qri: all you need to do is drag and drop the main file over the app and Qri Desktop will add the file to Qri and create an initial commit, giving you a starting point as you work on your dataset. We now have a progress bar that estimates the time needed to add your dataset. Once it has been imported, if you want to edit the dataset and make further changes or improvements, you can do so on the 'Status' pane. Just 'Checkout' the dataset to a folder on your computer and you can make edits in the Qri Desktop app, or in any other program. As long as those files remain in that folder, Qri can pick up those changes for you and display them in the Qri Desktop app.
+
+## Rename
+We wanted to make changing your dataset's name as easy as possible. Once you import a dataset using the drag and drop functionality, Qri will guess the dataset name based on the file name. You can easily re-name it when you are on the Dataset page by clicking on the name!
+
+### Bug Fixes
+
+* **bodyValue:** account for null or undefined previous body values ([f9a93e0](https://github.com/qri-io/desktop/commit/f9a93e0))
+* **readme:** add readme to commitDetails reducer ([38e545d](https://github.com/qri-io/desktop/commit/38e545d))
+* **StatsChart:** fix rename bugs ([ccadc62](https://github.com/qri-io/desktop/commit/ccadc62))
+
+
+### Features
+
+* add dataset rename ([a505582](https://github.com/qri-io/desktop/commit/a505582))
+* add dataset rename ([6f993f4](https://github.com/qri-io/desktop/commit/6f993f4))
+* add streamlined import flow ([2de9a51](https://github.com/qri-io/desktop/commit/2de9a51))
+* **commit:** add commit tab and page to display commit message in history view ([8ad25a0](https://github.com/qri-io/desktop/commit/8ad25a0))
+* **transform:** initial support for transform display ([7797cad](https://github.com/qri-io/desktop/commit/7797cad))
+
+
+
 ## [0.2.1](https://github.com/qri-io/desktop/compare/v0.2.0...v0.2.1) (2019-11-18)
 
 This release cycle we focused on two features (Readmes and Stats), various bug fixes, and bringing storybook into desktop for development:
