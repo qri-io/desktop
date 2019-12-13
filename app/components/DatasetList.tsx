@@ -40,6 +40,9 @@ const ImportProgressBar: React.FunctionComponent<ImportProgressBarProps> = ({ du
       return
     }
     timer = setTimeout(increase, timeForOnePercent)
+    return () => {
+      clearTimeout(timer)
+    }
   }, [ percent ])
 
   React.useEffect(() => {
