@@ -49,6 +49,7 @@ export interface DatasetProps {
   fetchWorkingDatasetDetails: () => Promise<ApiAction>
   fetchWorkingStatus: () => Promise<ApiAction>
   fetchBody: (page: number) => Promise<ApiAction>
+  setRoute: (route: string) => Action
   fetchWorkingDataset: () => Promise<ApiAction>
 }
 
@@ -167,7 +168,7 @@ class Dataset extends React.Component<DatasetProps> {
 
   render () {
     // unpack all the things
-    const { ui, selections, workingDataset, setModal, hasDatasets, session } = this.props
+    const { ui, selections, workingDataset, setModal, hasDatasets, session, setRoute } = this.props
     const { peername: username } = session
     const { datasetSidebarWidth } = ui
     const {
@@ -267,7 +268,7 @@ class Dataset extends React.Component<DatasetProps> {
               mountOnEnter
               unmountOnExit
             >
-              <NoDatasets setModal={setModal} />
+              <NoDatasets setModal={setModal} setRoute={setRoute} />
             </CSSTransition>
             <CSSTransition
               in={!datasetSelected && hasDatasets}

@@ -4,7 +4,7 @@ import { CALL_API, ApiAction, ApiActionThunk, chainSuccess, ApiResponseAction } 
 import { DatasetSummary, SelectedComponent, MyDatasets } from '../models/store'
 import { actionWithPagination } from '../utils/pagination'
 import { openToast, setImportFileDetails } from './ui'
-import { setWorkingDataset, setSelectedListItem, setActiveTab, setRoute } from './selections'
+import { setWorkingDataset, setSelectedListItem, setActiveTab, setRoute, clearSelection } from './selections'
 import {
   mapDataset,
   mapRecord,
@@ -712,6 +712,7 @@ export function removeDatasetAndFetch (peername: string, name: string, isLinked:
       }
     }
     // reset pagination
+    dispatch(clearSelection())
     response = await fetchMyDatasets(-1)(dispatch, getState)
     return response
   }
