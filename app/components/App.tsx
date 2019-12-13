@@ -102,21 +102,30 @@ class App extends React.Component<AppProps, AppState> {
     this.renderModal = this.renderModal.bind(this)
     this.renderAppLoading = this.renderAppLoading.bind(this)
     this.renderAppError = this.renderAppError.bind(this)
+    this.handleCreateDataset = this.handleCreateDataset.bind(this)
+    this.handleAddDataset = this.handleAddDataset.bind(this)
+    this.handleSelectRoute = this.handleSelectRoute.bind(this)
+  }
+
+  private handleCreateDataset () {
+    this.props.setModal({ type: ModalType.CreateDataset })
+  }
+
+  private handleAddDataset () {
+    this.props.setModal({ type: ModalType.AddDataset })
+  }
+
+  private handleSelectRoute (e: any, route: string) {
+    this.props.setRoute(route)
   }
 
   componentDidMount () {
     // handle ipc events from electron menus
-    ipcRenderer.on('create-dataset', () => {
-      this.props.setModal({ type: ModalType.CreateDataset })
-    })
+    ipcRenderer.on('create-dataset', this.handleCreateDataset)
 
-    ipcRenderer.on('add-dataset', () => {
-      this.props.setModal({ type: ModalType.AddDataset })
-    })
+    ipcRenderer.on('add-dataset', this.handleAddDataset)
 
-    ipcRenderer.on('select-route', (e: any, route: string) => {
-      this.props.setRoute(route)
-    })
+    ipcRenderer.on('select-route', this.handleSelectRoute)
 
     setInterval(() => {
       if (this.props.apiConnection !== 1 || this.props.selections.peername === '' || this.props.selections.name === '') {
@@ -127,6 +136,14 @@ class App extends React.Component<AppProps, AppState> {
     if (this.props.apiConnection === 1) {
       this.props.bootstrap()
     }
+  }
+
+  componentWillUnmount () {
+    ipcRenderer.removeListener('create-dataset', this.handleCreateDataset)
+
+    ipcRenderer.on('add-dataset', this.handleAddDataset)
+
+    ipcRenderer.on('select-route', this.handleSelectRoute)
   }
 
   componentDidUpdate (prevProps: AppProps) {

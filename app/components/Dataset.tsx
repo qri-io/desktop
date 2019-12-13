@@ -55,6 +55,14 @@ export interface DatasetProps {
 const logo = require('../assets/qri-blob-logo-tiny.png') //eslint-disable-line
 
 class Dataset extends React.Component<DatasetProps> {
+  super () {
+    this.openWorkingDirectory = this.openWorkingDirectory.bind(this)
+    this.publishUnpublishDataset = this.publishUnpublishDataset.bind(this)
+    this.handleShowStatus = this.handleShowStatus.bind(this)
+    this.handleShowHistory = this.handleShowHistory.bind(this)
+    this.handleReload = this.handleReload.bind(this)
+  }
+
   componentDidMount () {
     // poll for status
     this.statusInterval = setInterval(() => {
@@ -63,29 +71,41 @@ class Dataset extends React.Component<DatasetProps> {
       }
     }, defaultPollInterval)
 
-    this.openWorkingDirectory = this.openWorkingDirectory.bind(this)
-    this.publishUnpublishDataset = this.publishUnpublishDataset.bind(this)
-
     // electron menu events
-    ipcRenderer.on('show-status', () => {
-      this.props.setActiveTab('status')
-    })
+    ipcRenderer.on('show-status', this.handleShowStatus)
 
-    ipcRenderer.on('show-history', () => {
-      this.props.setActiveTab('history')
-    })
+    ipcRenderer.on('show-history', this.handleShowHistory)
 
     ipcRenderer.on('open-working-directory', this.openWorkingDirectory)
 
     ipcRenderer.on('publish-unpublish-dataset', this.publishUnpublishDataset)
 
-    ipcRenderer.on('reload', () => {
-      remote.getCurrentWindow().reload()
-    })
+    ipcRenderer.on('reload', this.handleReload)
   }
 
   componentWillUnmount () {
     clearInterval(this.statusInterval)
+    ipcRenderer.removeListener('show-status', this.handleShowStatus)
+
+    ipcRenderer.removeListener('show-history', this.handleShowHistory)
+
+    ipcRenderer.removeListener('open-working-directory', this.openWorkingDirectory)
+
+    ipcRenderer.removeListener('publish-unpublish-dataset', this.publishUnpublishDataset)
+
+    ipcRenderer.removeListener('reload', this.handleReload)
+  }
+
+  handleShowStatus () {
+    this.props.setActiveTab('status')
+  }
+
+  handleShowHistory () {
+    this.props.setActiveTab('history')
+  }
+
+  handleReload () {
+    remote.getCurrentWindow().reload()
   }
 
   componentDidUpdate (prevProps: DatasetProps) {
