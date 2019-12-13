@@ -56,7 +56,7 @@ export function fetchWorkingDatasetDetails (): ApiActionThunk {
       if (response.payload.err.code !== 422) {
         return response
       }
-      response = await fetchWorkingDataset(false)(dispatch, getState)
+      response = await fetchWorkingDataset()(dispatch, getState)
     }
     response = await whenOk(fetchWorkingStatus())(response)
     response = await whenOk(fetchBody(-1))(response)

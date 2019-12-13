@@ -30,6 +30,9 @@ const initialState: CommitDetails = {
     },
     readme: {
       value: {}
+    },
+    transform: {
+      value: {}
     }
   },
   stats: []
