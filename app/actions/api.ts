@@ -442,9 +442,17 @@ export function saveWorkingDatasetAndFetch (): ApiActionThunk {
     const whenOk = chainSuccess(dispatch, getState)
     let response: Action
 
-    response = await saveWorkingDataset()(dispatch, getState)
-    response = await whenOk(fetchWorkingDatasetDetails())(response)
-
+    try {
+      response = await saveWorkingDataset()(dispatch, getState)
+      const path = response.payload.data.dataset.path
+      response = await whenOk(fetchWorkingDatasetDetails())(response)
+      dispatch(setSelectedListItem('commit', path))
+      dispatch(setActiveTab('history'))
+      dispatch(setSelectedListItem('commitComponent', DEFAULT_SELECTED_COMPONENT))
+    } catch (action) {
+      dispatch(openToast('error', action.payload.err.message))
+      throw action
+    }
     return response
   }
 }
