@@ -9,7 +9,8 @@ import {
   ERR_INVALID_EMAIL,
   ERR_INVALID_PASSWORD_LENGTH,
   ERR_INVALID_DATASETNAME_CHARACTERS,
-  ERR_INVALID_DATASETNAME_LENGTH
+  ERR_INVALID_DATASETNAME_LENGTH,
+  ERR_INVALID_DATASETNAME_START
 } from '../../../app/utils/formValidation'
 
 import { DatasetStatus } from '../../../app/models/store'
@@ -108,7 +109,7 @@ describe('formValidation', () => {
   const datasetNameGoodCases = [
     'a',
     'hello_world',
-    'pmfqbx5bhe7w4nbonqj6zu2abb15txq7vc5yfgysawjbdiqaxghvt4iy3rdyhvxg2v52mcsqeh1yymxe6ciz1lsxwmfsqyzdkh'
+    'pmfqbx5bhe7w4nbonqj6zu2abb15txq7vc5yfgysawjbdiqaxghvt4iy3rdyhvxg2v52mcsqeh1yymxe6ciz1lsxwmfsqyzdkhfjdksajfiejfijeilsdjafijdsilafjdkmciejntiesail'
   ]
 
   datasetNameGoodCases.forEach((string) => {
@@ -124,12 +125,16 @@ describe('formValidation', () => {
       err: ERR_INVALID_DATASETNAME_CHARACTERS
     },
     {
-      string: '👋🏻',
+      string: 'hi👋🏻',
       err: ERR_INVALID_DATASETNAME_CHARACTERS
     },
     {
-      string: 'pmfqbx5bhe7w4nbonqj6zu2abb15txq7vc5yfgysawjbdiqaxghvt4iy3rdyhvxg2v52mcsqeh1yymxe6ciz1lsxwmfsqyzdkhsdf3182',
+      string: 'pmfqbx5bhe7w4nbonqj6zu2abb15txq7vc5yfgysawjbdiqaxghvt4iy3rdyhvxg2v52mcsqeh1yymxe6ciz1lsxwmfsqyzdkhfjdksajfiejfijeilsdjafijdsilafjdkmciejntiesailj',
       err: ERR_INVALID_DATASETNAME_LENGTH
+    },
+    {
+      string: '911calls',
+      err: ERR_INVALID_DATASETNAME_START
     }
   ]
 

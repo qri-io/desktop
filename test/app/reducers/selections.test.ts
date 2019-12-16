@@ -205,40 +205,6 @@ describe('Body Reducer', () => {
   })
 
   //
-  // ADD_SUCC
-  //
-  it('ADD_SUCC', () => {
-    const expected = {
-      peername: 'foo',
-      name: 'bar'
-    }
-    const action = {
-      type: ADD_SUCC,
-      payload: {
-        data: expected
-      }
-    }
-    Reducer(SelectionsReducer).withState(initialState).expect(action).toChangeInState({ ...expected, activeTab: 'history' })
-  })
-
-  //
-  // INIT_SUCC
-  //
-  it('INIT_SUCC', () => {
-    const expected = {
-      peername: 'foo',
-      name: 'bar'
-    }
-    const action = {
-      type: INIT_SUCC,
-      payload: {
-        data: expected
-      }
-    }
-    Reducer(SelectionsReducer).withState(initialState).expect(action).toChangeInState({ ...expected, activeTab: 'status' })
-  })
-
-  //
   // COMMIT_SUCC
   // DATASET_SUCC
   //
