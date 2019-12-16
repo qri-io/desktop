@@ -101,7 +101,7 @@ const LinkDataset: React.FunctionComponent<LinkDatasetProps> = ({ peername, name
   return (
     <Modal
       id="LinkDataset"
-      title={`Link ${peername}/${name}`}
+      title={`Checkout ${peername}/${name}`}
       onDismissed={onDismissed}
       onSubmit={() => {}}
       dismissable={dismissable}

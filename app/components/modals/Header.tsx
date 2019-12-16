@@ -76,7 +76,7 @@ const DialogHeader: React.FunctionComponent<IDialogHeaderProps> = ({ onDismissed
   }
 
   const renderTitle = () => {
-    return <h1 id={titleId}>{title}</h1>
+    return <div className='title' id={titleId}>{title}</div>
   }
 
   const spinner = loading ? <Spinner /> : null
