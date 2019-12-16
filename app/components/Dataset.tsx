@@ -202,7 +202,7 @@ class Dataset extends React.Component<DatasetProps> {
           icon={faFolderOpen}
           label='Show Files'
           onClick={this.openWorkingDirectory}
-        />) : (
+        />) : username === peername && (
         <HeaderColumnButton
           id='linkButton'
           label='checkout'
@@ -286,7 +286,7 @@ class Dataset extends React.Component<DatasetProps> {
               mountOnEnter
               unmountOnExit
             >
-              <UnlinkedDataset setModal={setModal}/>
+              <UnlinkedDataset setModal={setModal} inNamespace={username === peername}/>
             </CSSTransition>
             <CSSTransition
               in={datasetSelected && activeTab === 'status' && isLinked}
