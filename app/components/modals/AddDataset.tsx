@@ -1,64 +1,37 @@
 import * as React from 'react'
-import { Action } from 'redux'
-import { remote } from 'electron'
-import path from 'path'
 
 import { ApiAction } from '../../store/api'
 import { CSSTransition } from 'react-transition-group'
 import Modal from './Modal'
 import ExternalLink from '../ExternalLink'
-import TextInput from '../form/TextInput'
 import DebouncedTextInput from '../form/DebouncedTextInput'
 import Error from './Error'
 import Buttons from './Buttons'
-import ButtonInput from '../form/ButtonInput'
 import { validateDatasetReference } from '../../utils/formValidation'
 
 interface AddDatasetProps {
   // func to call when we cancel or click away from the modal
   onDismissed: () => void
   // func to call when we hit submit, this adds the dataset from the network
-  onSubmit: (peername: string, name: string, path: string) => Promise<ApiAction>
-  // default path that we store. Is the last dir path that the user has given us when trying to add a dataset fsi
-  datasetDirPath: string
-  // sets the default path, fired off when the user chooses a path
-  setDatasetDirPath: (path: string) => Action
+  onSubmit: (peername: string, name: string) => Promise<ApiAction>
 }
 
 const AddDataset: React.FunctionComponent<AddDatasetProps> = (props) => {
   const {
     onDismissed,
-    onSubmit,
-    datasetDirPath: persistedDatasetDirPath,
-    setDatasetDirPath: saveDatasetDirPath
+    onSubmit
   } = props
 
   const [datasetReference, setDatasetReference] = React.useState('')
-  const [datasetDirPath, setDatasetDirPath] = React.useState(persistedDatasetDirPath)
 
   const [dismissable, setDismissable] = React.useState(true)
   const [buttonDisabled, setButtonDisabled] = React.useState(true)
-  const [alreadyDatasetError, setAlreadyDatasetError] = React.useState('')
   const [datasetReferenceError, setDatasetReferenceError] = React.useState('')
-
-  // should come from props/actions that has us check if the directory already contains a qri dataset
-  const isQriDataset = (datasetDirPath: string) => !datasetDirPath
 
   React.useEffect(() => {
     const datasetReferenceValidationError = validateDatasetReference(datasetReference)
     datasetReferenceValidationError ? setDatasetReferenceError(datasetReferenceValidationError) : setDatasetReferenceError('')
-
-    // only ready when both fields are not invalid
-    const ready = datasetDirPath !== '' && datasetReference !== '' && !datasetReferenceValidationError
-    setButtonDisabled(!ready)
-  }, [datasetReference, datasetDirPath])
-
-  React.useEffect(() => {
-    // persist the datasetDirPath
-    if (datasetDirPath) {
-      saveDatasetDirPath(datasetDirPath)
-    }
-  }, [datasetDirPath])
+  }, [datasetReference])
 
   // should come from props
   const [error, setError] = React.useState('')
@@ -70,6 +43,7 @@ const AddDataset: React.FunctionComponent<AddDatasetProps> = (props) => {
     }
     if (error !== '') setError('')
     if (name === 'datasetName') setDatasetReference(value)
+    setButtonDisabled(value === '')
   }
 
   const handleSubmit = () => {
@@ -79,53 +53,14 @@ const AddDataset: React.FunctionComponent<AddDatasetProps> = (props) => {
 
     if (!onSubmit) return
     const [peername, datasetName] = datasetReference.split('/')
-    const datasetFolderPath = path.join(datasetDirPath, datasetName)
 
-    onSubmit(peername, datasetName, datasetFolderPath)
+    onSubmit(peername, datasetName)
       .then(() => { onDismissed() })
       .catch((action) => {
         setDismissable(true)
         setLoading(false)
         setError(action.payload.err.message)
       })
-  }
-
-  const handlePathPickerDialog = (showFunc: () => void) => {
-    new Promise(resolve => {
-      setDismissable(false)
-      resolve()
-    })
-      .then(() => showFunc())
-      .then(() => setDismissable(true))
-  }
-
-  const showDirectoryPicker = () => {
-    const window = remote.getCurrentWindow()
-    const directory: string[] | undefined = remote.dialog.showOpenDialog(window, {
-      properties: ['createDirectory', 'openDirectory']
-    })
-
-    if (!directory) {
-      return
-    }
-
-    const selectedPath = directory[0]
-
-    setDatasetDirPath(selectedPath)
-    const isDataset = isQriDataset(selectedPath)
-    if (isDataset) {
-      setAlreadyDatasetError('A dataset already exists in this directory.')
-      setButtonDisabled(true)
-    }
-  }
-
-  let fullPath = ''
-
-  if (datasetReference && !datasetReferenceError) {
-    const [, datasetName] = datasetReference.split('/')
-    if (datasetDirPath && datasetName) {
-      fullPath = path.join(datasetDirPath, datasetName)
-    }
   }
 
   return (
@@ -153,27 +88,8 @@ const AddDataset: React.FunctionComponent<AddDatasetProps> = (props) => {
               errorText={datasetReferenceError}
               maxLength={300}
             />
-            <div className='flex-space-between'>
-              <TextInput
-                name='savePath'
-                label='Directory Path'
-                labelTooltip='Qri will create a new directory for<br/>this dataset&apos;s files at this location.'
-                tooltipFor='modal-tooltip'
-                type=''
-                value={datasetDirPath}
-                onChange={handleChanges}
-                maxLength={600}
-                errorText={alreadyDatasetError}
-              />
-              <div className='margin-left'><ButtonInput id='chooseSavePath' onClick={() => handlePathPickerDialog(showDirectoryPicker)} >Choose...</ButtonInput></div>
-            </div>
           </div>
         </div>
-        <p className='submit-message'>
-          {!buttonDisabled && (
-            <span>Qri will create the directory {fullPath} with files linked to this dataset</span>
-          )}
-        </p>
         <CSSTransition
           in={!!error}
           timeout={300}

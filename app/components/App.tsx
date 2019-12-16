@@ -56,10 +56,9 @@ export interface AppProps {
   children: JSX.Element[] | JSX.Element
   bootstrap: () => Promise<ApiAction>
   fetchMyDatasets: (page?: number, pageSize?: number) => Promise<ApiAction>
-  addDataset: (peername: string, name: string, path: string) => Promise<ApiAction>
+  addDataset: (peername: string, name: string) => Promise<ApiAction>
   linkDataset: (peername: string, name: string, dir: string) => Promise<ApiAction>
   setWorkingDataset: (peername: string, name: string) => Promise<ApiAction>
-  initDataset: (path: string, name: string, format: string) => Promise<ApiAction>
   acceptTOS: () => Action
   setQriCloudAuthenticated: () => Action
   signup: (username: string, email: string, password: string) => Promise<ApiAction>
@@ -216,10 +215,8 @@ class App extends React.Component<AppProps, AppState> {
       case ModalType.CreateDataset: {
         modalComponent = (
           <CreateDataset
-            datasetDirPath={this.props.datasetDirPath}
-            onSubmit={this.props.initDataset}
+            onSubmit={this.props.importFile}
             onDismissed={async () => setModal(noModalObject)}
-            setDatasetDirPath={this.props.setDatasetDirPath}
             filePath={modal.bodyPath ? modal.bodyPath : ''}
           />
         )
@@ -229,10 +226,8 @@ class App extends React.Component<AppProps, AppState> {
       case ModalType.AddDataset: {
         modalComponent = (
           <AddDataset
-            datasetDirPath={this.props.datasetDirPath}
             onSubmit={this.props.addDataset}
             onDismissed={async () => setModal(noModalObject)}
-            setDatasetDirPath={this.props.setDatasetDirPath}
           />
         )
         break

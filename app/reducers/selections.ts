@@ -149,29 +149,6 @@ export default (state = initialState, action: AnyAction) => {
         activeTab: 'status'
       }
 
-      // when a new dataset is added from the network, make it the selected dataset
-    case ADD_SUCC:
-      localStore().setItem('peername', action.payload.data.peername)
-      localStore().setItem('name', action.payload.data.name)
-      localStore().setItem('activeTab', 'history')
-      return {
-        ...state,
-        peername: action.payload.data.peername,
-        name: action.payload.data.name,
-        activeTab: 'history'
-      }
-      // when a new dataset is created, make it the selected dataset
-    case INIT_SUCC:
-      localStore().setItem('peername', action.payload.data.peername)
-      localStore().setItem('name', action.payload.data.name)
-      localStore().setItem('activeTab', 'status')
-      return {
-        ...state,
-        peername: action.payload.data.peername,
-        name: action.payload.data.name,
-        activeTab: 'status'
-      }
-
     case RENAME_SUCC:
       localStore().setItem('name', action.payload.data.name)
       return {
