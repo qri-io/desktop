@@ -56,22 +56,19 @@ export interface DatasetProps {
 const logo = require('../assets/qri-blob-logo-tiny.png') //eslint-disable-line
 
 class Dataset extends React.Component<DatasetProps> {
-  super () {
-    this.openWorkingDirectory = this.openWorkingDirectory.bind(this)
-    this.publishUnpublishDataset = this.publishUnpublishDataset.bind(this)
-    this.handleShowStatus = this.handleShowStatus.bind(this)
-    this.handleShowHistory = this.handleShowHistory.bind(this)
-    this.handleReload = this.handleReload.bind(this)
+  constructor (props: DatasetProps) {
+    super(props);
+
+    [
+      'openWorkingDirectory',
+      'publishUnpublishDataset',
+      'handleShowStatus',
+      'handleShowHistory',
+      'handleReload'
+    ].forEach((m) => { this[m] = this[m].bind(this) })
   }
 
   componentDidMount () {
-    // poll for status
-    this.statusInterval = setInterval(() => {
-      if (this.props.workingDataset.peername !== '' || this.props.workingDataset.name !== '') {
-        this.props.fetchWorkingStatus()
-      }
-    }, defaultPollInterval)
-
     // electron menu events
     ipcRenderer.on('show-status', this.handleShowStatus)
 
@@ -96,6 +93,12 @@ class Dataset extends React.Component<DatasetProps> {
 
     ipcRenderer.removeListener('reload', this.handleReload)
   }
+
+  statusInterval = setInterval(() => {
+    if (this.props.workingDataset.peername !== '' || this.props.workingDataset.name !== '') {
+      this.props.fetchWorkingStatus()
+    }
+  }, defaultPollInterval)
 
   handleShowStatus () {
     this.props.setActiveTab('status')
