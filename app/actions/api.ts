@@ -1,10 +1,10 @@
 import { Action, AnyAction } from 'redux'
 
-import { CALL_API, ApiAction, ApiActionThunk, chainSuccess, ApiResponseAction } from '../store/api'
-import { DatasetSummary, SelectedComponent, MyDatasets } from '../models/store'
+import { CALL_API, ApiAction, ApiActionThunk, chainSuccess } from '../store/api'
+import { SelectedComponent, MyDatasets } from '../models/store'
 import { actionWithPagination } from '../utils/pagination'
 import { openToast, setImportFileDetails } from './ui'
-import { setWorkingDataset, setSelectedListItem, setActiveTab, setRoute } from './selections'
+import { setWorkingDataset, setSelectedListItem, setActiveTab, setRoute, clearSelection } from './selections'
 import {
   mapDataset,
   mapRecord,
@@ -56,7 +56,7 @@ export function fetchWorkingDatasetDetails (): ApiActionThunk {
       if (response.payload.err.code !== 422) {
         return response
       }
-      response = await fetchWorkingDataset(false)(dispatch, getState)
+      response = await fetchWorkingDataset()(dispatch, getState)
     }
     response = await whenOk(fetchWorkingStatus())(response)
     response = await whenOk(fetchBody(-1))(response)
@@ -148,7 +148,6 @@ export function fetchWorkingDataset (): ApiActionThunk {
     if (peername === '' || name === '') {
       return Promise.reject(new Error('no peername or name selected'))
     }
-
     // look up the peername + name in myDatasets to determine whether it is FSI linked
     const dataset = myDatasets.value.find((d) => (d.peername === peername) && (d.name === name))
     if (!dataset) {
@@ -443,14 +442,22 @@ export function saveWorkingDatasetAndFetch (): ApiActionThunk {
     const whenOk = chainSuccess(dispatch, getState)
     let response: Action
 
-    response = await saveWorkingDataset()(dispatch, getState)
-    response = await whenOk(fetchWorkingDatasetDetails())(response)
-
+    try {
+      response = await saveWorkingDataset()(dispatch, getState)
+      const path = response.payload.data.dataset.path
+      response = await whenOk(fetchWorkingDatasetDetails())(response)
+      dispatch(setSelectedListItem('commit', path))
+      dispatch(setActiveTab('history'))
+      dispatch(setSelectedListItem('commitComponent', DEFAULT_SELECTED_COMPONENT))
+    } catch (action) {
+      dispatch(openToast('error', action.payload.err.message))
+      throw action
+    }
     return response
   }
 }
 
-export function addDataset (peername: string, name: string, path: string): ApiActionThunk {
+export function addDataset (peername: string, name: string): ApiActionThunk {
   return async (dispatch) => {
     const action = {
       type: 'add',
@@ -461,9 +468,6 @@ export function addDataset (peername: string, name: string, path: string): ApiAc
           peername,
           name
         },
-        query: {
-          dir: path
-        },
         map: mapDataset
       }
     }
@@ -471,62 +475,21 @@ export function addDataset (peername: string, name: string, path: string): ApiAc
   }
 }
 
-export function addDatasetAndFetch (peername: string, name: string, path: string): ApiActionThunk {
+export function addDatasetAndFetch (peername: string, name: string): ApiActionThunk {
   return async (dispatch, getState) => {
     const whenOk = chainSuccess(dispatch, getState)
     let response: Action
 
     try {
-      response = await addDataset(peername, name, path)(dispatch, getState)
+      response = await addDataset(peername, name)(dispatch, getState)
       // reset pagination
       response = await whenOk(fetchMyDatasets(-1))(response)
       dispatch(setWorkingDataset(peername, name))
       dispatch(setActiveTab('history'))
       dispatch(setSelectedListItem('component', DEFAULT_SELECTED_COMPONENT))
-    } catch (action) {
-      throw action
-    }
-    return response
-  }
-}
-
-export function initDataset (sourcebodypath: string, name: string, dir: string, mkdir: string): ApiActionThunk {
-  return async (dispatch) => {
-    const action = {
-      type: 'init',
-      [CALL_API]: {
-        endpoint: 'init/',
-        method: 'POST',
-        query: {
-          sourcebodypath,
-          name,
-          dir,
-          mkdir
-        },
-        map: mapDataset
-      }
-    }
-    return dispatch(action)
-  }
-}
-
-export function initDatasetAndFetch (sourcebodypath: string, name: string, dir: string, mkdir: string): ApiActionThunk {
-  return async (dispatch, getState) => {
-    const whenOk = chainSuccess(dispatch, getState)
-    let response: Action
-
-    try {
-      response = await initDataset(sourcebodypath, name, dir, mkdir)(dispatch, getState)
-      // reset pagination
-      response = await whenOk(fetchMyDatasets(-1))(response)
-      const action = response as ApiResponseAction
-      const { data } = action.payload
-      const { peername } = data.find((dataset: DatasetSummary) => dataset.name === name)
-      dispatch(setWorkingDataset(peername, name))
-      dispatch(setActiveTab('status'))
-      dispatch(setSelectedListItem('component', DEFAULT_SELECTED_COMPONENT))
       dispatch(setRoute('/dataset'))
     } catch (action) {
+      dispatch(openToast('error', action.payload.err.message))
       throw action
     }
     return response
@@ -712,6 +675,7 @@ export function removeDatasetAndFetch (peername: string, name: string, isLinked:
       }
     }
     // reset pagination
+    dispatch(clearSelection())
     response = await fetchMyDatasets(-1)(dispatch, getState)
     return response
   }

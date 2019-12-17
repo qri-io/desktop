@@ -16,7 +16,8 @@ import {
 
 import {
   setActiveTab,
-  setSelectedListItem
+  setSelectedListItem,
+  setRoute
 } from '../actions/selections'
 import { DetailsType } from '../models/details'
 
@@ -62,6 +63,7 @@ const DatasetContainer = connect(
     fetchBody,
     fetchWorkingDataset,
     publishDataset,
+    setRoute,
     unpublishDataset
   },
   mergeProps

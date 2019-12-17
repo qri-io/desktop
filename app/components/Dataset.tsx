@@ -49,43 +49,67 @@ export interface DatasetProps {
   fetchWorkingDatasetDetails: () => Promise<ApiAction>
   fetchWorkingStatus: () => Promise<ApiAction>
   fetchBody: (page: number) => Promise<ApiAction>
+  setRoute: (route: string) => Action
   fetchWorkingDataset: () => Promise<ApiAction>
 }
 
 const logo = require('../assets/qri-blob-logo-tiny.png') //eslint-disable-line
 
 class Dataset extends React.Component<DatasetProps> {
+  constructor (props: DatasetProps) {
+    super(props);
+
+    [
+      'openWorkingDirectory',
+      'publishUnpublishDataset',
+      'handleShowStatus',
+      'handleShowHistory',
+      'handleReload'
+    ].forEach((m) => { this[m] = this[m].bind(this) })
+  }
+
   componentDidMount () {
-    // poll for status
-    this.statusInterval = setInterval(() => {
-      if (this.props.workingDataset.peername !== '' || this.props.workingDataset.name !== '') {
-        this.props.fetchWorkingStatus()
-      }
-    }, defaultPollInterval)
-
-    this.openWorkingDirectory = this.openWorkingDirectory.bind(this)
-    this.publishUnpublishDataset = this.publishUnpublishDataset.bind(this)
-
     // electron menu events
-    ipcRenderer.on('show-status', () => {
-      this.props.setActiveTab('status')
-    })
+    ipcRenderer.on('show-status', this.handleShowStatus)
 
-    ipcRenderer.on('show-history', () => {
-      this.props.setActiveTab('history')
-    })
+    ipcRenderer.on('show-history', this.handleShowHistory)
 
     ipcRenderer.on('open-working-directory', this.openWorkingDirectory)
 
     ipcRenderer.on('publish-unpublish-dataset', this.publishUnpublishDataset)
 
-    ipcRenderer.on('reload', () => {
-      remote.getCurrentWindow().reload()
-    })
+    ipcRenderer.on('reload', this.handleReload)
   }
 
   componentWillUnmount () {
     clearInterval(this.statusInterval)
+    ipcRenderer.removeListener('show-status', this.handleShowStatus)
+
+    ipcRenderer.removeListener('show-history', this.handleShowHistory)
+
+    ipcRenderer.removeListener('open-working-directory', this.openWorkingDirectory)
+
+    ipcRenderer.removeListener('publish-unpublish-dataset', this.publishUnpublishDataset)
+
+    ipcRenderer.removeListener('reload', this.handleReload)
+  }
+
+  statusInterval = setInterval(() => {
+    if (this.props.workingDataset.peername !== '' || this.props.workingDataset.name !== '') {
+      this.props.fetchWorkingStatus()
+    }
+  }, defaultPollInterval)
+
+  handleShowStatus () {
+    this.props.setActiveTab('status')
+  }
+
+  handleShowHistory () {
+    this.props.setActiveTab('history')
+  }
+
+  handleReload () {
+    remote.getCurrentWindow().reload()
   }
 
   componentDidUpdate (prevProps: DatasetProps) {
@@ -147,7 +171,7 @@ class Dataset extends React.Component<DatasetProps> {
 
   render () {
     // unpack all the things
-    const { ui, selections, workingDataset, setModal, hasDatasets, session } = this.props
+    const { ui, selections, workingDataset, setModal, hasDatasets, session, setRoute } = this.props
     const { peername: username } = session
     const { datasetSidebarWidth } = ui
     const {
@@ -181,7 +205,7 @@ class Dataset extends React.Component<DatasetProps> {
           icon={faFolderOpen}
           label='Show Files'
           onClick={this.openWorkingDirectory}
-        />) : (
+        />) : username === peername && (
         <HeaderColumnButton
           id='linkButton'
           label='checkout'
@@ -247,7 +271,7 @@ class Dataset extends React.Component<DatasetProps> {
               mountOnEnter
               unmountOnExit
             >
-              <NoDatasets setModal={setModal} />
+              <NoDatasets setModal={setModal} setRoute={setRoute} />
             </CSSTransition>
             <CSSTransition
               in={!datasetSelected && hasDatasets}
@@ -265,7 +289,7 @@ class Dataset extends React.Component<DatasetProps> {
               mountOnEnter
               unmountOnExit
             >
-              <UnlinkedDataset setModal={setModal}/>
+              <UnlinkedDataset setModal={setModal} inNamespace={username === peername}/>
             </CSSTransition>
             <CSSTransition
               in={datasetSelected && activeTab === 'status' && isLinked}

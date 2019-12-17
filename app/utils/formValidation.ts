@@ -37,15 +37,19 @@ export const validatePassword = (password: string) => {
   return null
 }
 
+export const ERR_INVALID_DATASETNAME_START: ValidationError = 'Dataset names must start with a letter'
 export const ERR_INVALID_DATASETNAME_CHARACTERS: ValidationError = 'Dataset names may only include lowercase letters, numbers, and underscores'
-export const ERR_INVALID_DATASETNAME_LENGTH: ValidationError = 'Username must be 100 characters or fewer'
+export const ERR_INVALID_DATASETNAME_LENGTH: ValidationError = 'Username must be 144 characters or fewer'
 
 export const validateDatasetName = (name: string): ValidationError => {
   if (name) {
-    const invalidCharacters = !(/^[a-z0-9_]+$/.test(name))
+    const invalidStart = !(/[a-z]/).test(name[0])
+    if (invalidStart) return ERR_INVALID_DATASETNAME_START
+
+    const invalidCharacters = !(/^(?![0-9])[a-z0-9_]+$/.test(name))
     if (invalidCharacters) return ERR_INVALID_DATASETNAME_CHARACTERS
 
-    const tooLong = name.length > 100
+    const tooLong = name.length > 144
     if (tooLong) return ERR_INVALID_DATASETNAME_LENGTH
   }
   return null

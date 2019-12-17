@@ -414,13 +414,15 @@ $header-font-size: .9rem;
 
 .unlinked-dataset {
   height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 
   .message-container {
     display: flex;
     flex-direction: row;
-    padding: 19px;
+    padding: $spacer * 2;
     max-width: 475px;
-    margin: 150px auto;
     border-radius: 5px;
   }
 }

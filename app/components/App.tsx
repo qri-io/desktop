@@ -56,10 +56,9 @@ export interface AppProps {
   children: JSX.Element[] | JSX.Element
   bootstrap: () => Promise<ApiAction>
   fetchMyDatasets: (page?: number, pageSize?: number) => Promise<ApiAction>
-  addDataset: (peername: string, name: string, path: string) => Promise<ApiAction>
+  addDataset: (peername: string, name: string) => Promise<ApiAction>
   linkDataset: (peername: string, name: string, dir: string) => Promise<ApiAction>
   setWorkingDataset: (peername: string, name: string) => Promise<ApiAction>
-  initDataset: (path: string, name: string, format: string) => Promise<ApiAction>
   acceptTOS: () => Action
   setQriCloudAuthenticated: () => Action
   signup: (username: string, email: string, password: string) => Promise<ApiAction>
@@ -102,21 +101,30 @@ class App extends React.Component<AppProps, AppState> {
     this.renderModal = this.renderModal.bind(this)
     this.renderAppLoading = this.renderAppLoading.bind(this)
     this.renderAppError = this.renderAppError.bind(this)
+    this.handleCreateDataset = this.handleCreateDataset.bind(this)
+    this.handleAddDataset = this.handleAddDataset.bind(this)
+    this.handleSelectRoute = this.handleSelectRoute.bind(this)
+  }
+
+  private handleCreateDataset () {
+    this.props.setModal({ type: ModalType.CreateDataset })
+  }
+
+  private handleAddDataset () {
+    this.props.setModal({ type: ModalType.AddDataset })
+  }
+
+  private handleSelectRoute (e: any, route: string) {
+    this.props.setRoute(route)
   }
 
   componentDidMount () {
     // handle ipc events from electron menus
-    ipcRenderer.on('create-dataset', () => {
-      this.props.setModal({ type: ModalType.CreateDataset })
-    })
+    ipcRenderer.on('create-dataset', this.handleCreateDataset)
 
-    ipcRenderer.on('add-dataset', () => {
-      this.props.setModal({ type: ModalType.AddDataset })
-    })
+    ipcRenderer.on('add-dataset', this.handleAddDataset)
 
-    ipcRenderer.on('select-route', (e: any, route: string) => {
-      this.props.setRoute(route)
-    })
+    ipcRenderer.on('select-route', this.handleSelectRoute)
 
     setInterval(() => {
       if (this.props.apiConnection !== 1 || this.props.selections.peername === '' || this.props.selections.name === '') {
@@ -129,15 +137,29 @@ class App extends React.Component<AppProps, AppState> {
     }
   }
 
+  componentWillUnmount () {
+    ipcRenderer.removeListener('create-dataset', this.handleCreateDataset)
+
+    ipcRenderer.on('add-dataset', this.handleAddDataset)
+
+    ipcRenderer.on('select-route', this.handleSelectRoute)
+  }
+
   componentDidUpdate (prevProps: AppProps) {
     if (this.props.session.id === '' && prevProps.apiConnection === 0 && this.props.apiConnection === 1) {
       this.props.bootstrap()
     }
 
     // listen for changes to current dataset, fetch data on change
-    if ((this.props.selections.peername !== prevProps.selections.peername) || (this.props.selections.name !== prevProps.selections.name)) {
+    if (!(this.props.selections.peername === '' || this.props.selections.name === '') && (
+      (this.props.selections.peername !== prevProps.selections.peername) || (this.props.selections.name !== prevProps.selections.name))
+    ) {
       // if the paths are the same, don't get data (dataset was renamed)
-      if (this.props.workingDataset.path === prevProps.workingDataset.path) return
+      if (
+        !(this.props.workingDataset.peername === '' || this.props.workingDataset.name === '') && (this.props.workingDataset.path === prevProps.workingDataset.path)
+      ) {
+        return
+      }
       this.props.fetchWorkingDatasetDetails()
       return
     }
@@ -193,10 +215,8 @@ class App extends React.Component<AppProps, AppState> {
       case ModalType.CreateDataset: {
         modalComponent = (
           <CreateDataset
-            datasetDirPath={this.props.datasetDirPath}
-            onSubmit={this.props.initDataset}
+            onSubmit={this.props.importFile}
             onDismissed={async () => setModal(noModalObject)}
-            setDatasetDirPath={this.props.setDatasetDirPath}
             filePath={modal.bodyPath ? modal.bodyPath : ''}
           />
         )
@@ -206,10 +226,8 @@ class App extends React.Component<AppProps, AppState> {
       case ModalType.AddDataset: {
         modalComponent = (
           <AddDataset
-            datasetDirPath={this.props.datasetDirPath}
             onSubmit={this.props.addDataset}
             onDismissed={async () => setModal(noModalObject)}
-            setDatasetDirPath={this.props.setDatasetDirPath}
           />
         )
         break

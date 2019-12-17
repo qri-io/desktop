@@ -27,8 +27,11 @@ dialog {
     justify-content: space-between;
     align-items: center;
 
-    h1 {
+    .title {
       font-weight: $font-weight-medium;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
       font-size: $font-size-lg;
       margin: 0;
       padding: 0;

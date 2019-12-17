@@ -5,7 +5,6 @@ import Store from '../models/store'
 import {
   fetchMyDatasets,
   addDatasetAndFetch,
-  initDatasetAndFetch,
   linkDatasetAndFetch,
   pingApi,
   publishDataset,
@@ -68,7 +67,6 @@ const AppContainer = connect(
     signup,
     setQriCloudAuthenticated,
     addDataset: addDatasetAndFetch,
-    initDataset: initDatasetAndFetch,
     linkDataset: linkDatasetAndFetch,
     openToast,
     closeToast,

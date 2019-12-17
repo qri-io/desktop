@@ -101,7 +101,7 @@ const DatasetReference: React.FunctionComponent<DatasetReferenceProps> = (props)
           onChange={handleInputChange}
           autoFocus
           onFocus={onFocus}
-          pattern='^[a-z0-9_]+$'
+          pattern='^(?![0_9])[a-z0-9_]{1,144}$'
         /> }
         { !nameEditing && (<>{name}</>)}
       </div>
