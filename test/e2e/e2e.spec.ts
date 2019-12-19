@@ -4,11 +4,11 @@ import fs from 'fs'
 import TestBackendProcess from '../utils/testQriBackend'
 import fakeDialog from 'spectron-fake-dialog'
 
-const { Application } = require('spectron');
+const { Application } = require('spectron')
 
 const delay = (time: number) => new Promise(resolve => setTimeout(resolve, time))
 
-describe('Qri End to End tests', function spec() {
+describe('Qri End to End tests', function spec () {
   let app: any
   let backend: any
 
@@ -16,11 +16,22 @@ describe('Qri End to End tests', function spec() {
     // spin up a new mock backend with a mock registry server attached
     backend = new TestBackendProcess()
     await backend.start()
-    
     // use spectron to launch desktop with programmatic control
+
+    // check the environment variables to determine whether to run headless chrome
+    const headless = process.env.HEADLESS_CHROME === 'true'
+
     app = new Application({
       path: path.join(__dirname, '..', '..', 'node_modules', '.bin', 'electron'),
-      args: [path.join(__dirname, '..', '..', 'app')]
+      args: [path.join(__dirname, '..', '..', 'app')],
+
+      // When running in circleci or in, for example, a docker container with no
+      // display, we must run spectron on headless chrome and use xvfb to mock a
+      // display. Check the .circleci configuration: the '-browsers' extension on
+      // the docker image type gives us an image that contains chrome and xvfb.
+      // The `chromeDriverArgs` options configure chrome driver correctly for
+      // headless use.
+      chromeDriverArgs: headless ? ['headless', 'no-sandbox', 'disable-dev-shm-usage'] : []
     })
     fakeDialog.apply(app)
     return app.start()
@@ -35,19 +46,18 @@ describe('Qri End to End tests', function spec() {
   })
 
   it('open window', async () => {
-    const { client, browserWindow } = app;
+    const { client, browserWindow } = app
 
     await client.waitUntilWindowLoaded()
-    await delay(500)
     const title = await browserWindow.getTitle()
     expect(title).toBe('Qri Desktop')
   })
 
   it('accept terms by clicking enter, taken to signup', async () => {
     const { client, browserWindow } = app
-    
+
     await client.waitUntilWindowLoaded()
-    await delay(2500)
+    await delay(10000)
     await client.click('#accept')
 
     await delay(1000)
@@ -57,7 +67,7 @@ describe('Qri End to End tests', function spec() {
 
   it('create a new account, taken to datasets page', async () => {
     const { client, browserWindow } = app
-    
+
     await client.waitUntilWindowLoaded()
     await client.element('[name="username"]').setValue('fred')
     await client.element('[name="email"]').setValue('fred@qri.io')
@@ -65,10 +75,9 @@ describe('Qri End to End tests', function spec() {
     await delay(550) // wait for validation debounce
     await client.click('#accept')
 
-    await delay(1000)
+    await delay(2000)
     const currentUrl = url.parse(await browserWindow.getURL())
-    expect(currentUrl.hash).toBe('#/dataset')
-    expect(await app.client.element('#no-datasets-page .welcome-title h2').getText()).toBe('Let\'s get some datasets')
+    expect(currentUrl.hash).toBe('#/collection')
   })
 
   it('create new CSV dataset from a data source', async () => {
@@ -83,7 +92,7 @@ describe('Qri End to End tests', function spec() {
     await client.click('#chooseBodyFilePath')
 
     fakeDialog.mock([ { method: 'showOpenDialog', value: [backend.dir] } ])
-    await client.click('#chooseSavePath')
+
     await delay(550) // wait for validation debounce
     await client.click('#submit')
 
@@ -96,7 +105,7 @@ describe('Qri End to End tests', function spec() {
     expect(await client.element('#current_dataset .header-column-text .name').getText()).toBe('fred/e2e_test_csv_dataset')
 
     // status dots are correct
-    expect(await client.element('#meta_status .status-dot-added').isExisting()).toBe(true);
+    expect(await client.element('#meta_status .status-dot-added').isExisting()).toBe(true)
     expect(await client.element('#body_status .status-dot-added').isExisting()).toBe(true)
     expect(await client.element('#structure_status .status-dot-added').isExisting()).toBe(true)
 
@@ -114,74 +123,9 @@ describe('Qri End to End tests', function spec() {
     const bodyPath = path.join(backend.dir, 'e2e_test_csv_dataset', 'body.csv')
     fs.writeFileSync(bodyPath, 'e2e_test_bool_col,a,b,c\nfalse,1,2,3\ntrue,4,5,6\ntrue,7,8,9')
     await delay(3000)
-    expect(await client.element('#body_status .status-dot-modified').isExisting()).toBe(true);
+    expect(await client.element('#body_status .status-dot-modified').isExisting()).toBe(true)
     // add title to meta
-    // 
-    await client.click('#meta_status')
-    await delay(2000)
-    await client.click('#title')
-    await client.element('#title').setValue('Title of e2e test dataset')
-    await client.click('#description')
-    await delay(3000) // time to save change and status to fetch changes
-    // add commit
-    expect(await client.element('#meta_status .status-dot-modified').isExisting()).toBe(true)
-    await client.element('#commit_title').setValue('Changed body and added meta data')
-    await client.click('#commit_submit')
-    await delay(2000)
-    // history list should have two commits
-    await client.click('#history_tab')
-    history_list_items = await client.$$('#history_list .sidebar-list-item')
-    await expect(history_list_items.length).toBe(2)
-    await delay(1000)
-  })
-
-  it('create new JSON dataset from a data source', async () => {
-    const { client, browserWindow } = app
-    await client.click('#current_dataset')
-    await delay(300) // wait for dataset list render
-    await client.click('#dataset_list_create')
-    await delay(600) // wait for modal render
-
-    const jsonPath = path.join(backend.dir, 'e2e_test_json_dataset.json')
-    fs.writeFileSync(jsonPath, '{"first_row":[1,2,3],"second_row":[4,5,6],"third_row":[7,8,9]}')
-    fakeDialog.mock([ { method: 'showOpenDialog', value: [jsonPath] } ])
-    await client.click('#chooseBodyFilePath')
-
-    fakeDialog.mock([ { method: 'showOpenDialog', value: [backend.dir] } ])
-    await client.click('#chooseSavePath')
-    await delay(550) // wait for validation debounce
-    await client.click('#submit')
-
-    await delay(3000)
-    const currentUrl = url.parse(await browserWindow.getURL())
-    expect(currentUrl.hash).toBe('#/dataset')
-    expect(await client.element('#linkButton .label').getText()).toBe('Show Files')
-
-    // dataset name is fred/e2e_test_csv_dataset
-    expect(await client.element('#current_dataset .header-column-text .name').getText()).toBe('fred/e2e_test_json_dataset')
-
-    // status dots are correct
-    expect(await client.element('#meta_status .status-dot-added').isExisting()).toBe(true);
-    expect(await client.element('#body_status .status-dot-added').isExisting()).toBe(true)
-    expect(await client.element('#structure_status .status-dot-added').isExisting()).toBe(true)
-
-    // create commit
-    expect(await client.element('#commit_nudge').getText()).toContain('ready to make your first commit')
-    await client.element('#commit_title').setValue('Created Dataset')
-    await client.click('#commit_submit')
-    await delay(2000)
-    // history list should have one commit
-    await client.click('#history_tab')
-    var history_list_items = await client.$$('#history_list .sidebar-list-item')
-    await expect(history_list_items.length).toBe(1)
-    // change body file and check to see if status changed
-    await client.click('#status_tab')
-    const bodyPath = path.join(backend.dir, 'e2e_test_json_dataset', 'body.json')
-    fs.writeFileSync(bodyPath, '{"first_row":[1,2,3],"second_row":[4,5,6]}')
-    await delay(3000)
-    expect(await client.element('#body_status .status-dot-modified').isExisting()).toBe(true);
-    // add title to meta
-    // 
+    //
     await client.click('#meta_status')
     await delay(2000)
     await client.click('#title')
@@ -203,33 +147,15 @@ describe('Qri End to End tests', function spec() {
   it('return an error when trying to add a dataset that does not exist', async () => {
     const { client } = app
 
-    await client.click('#current_dataset')
+    await client.click('#collection')
     await delay(300) // wait for dataset list render
-    await client.click('#dataset_list_add')
+    await client.click('#add_dataset')
     await delay(600) // wait for modal render
     await client.element('[name="datasetName"]').setValue('b5/not_a_real_dataset')
     await delay(600) // wait for modal render
-    // should have saved the savePath of the previously used directory
-    expect(await client.element('[name="savePath"]').getValue()).toBe(backend.dir)
-    await client.click('#submit')
-    await delay(3500)
+
     // implement mock registry server:
     // expect(await client.element("#add_error").getText()).toBe('Dataset not found.')
-    expect(await client.element("#add_error").getText()).toBe('dataset name resolution currently only works over HTTP')
-
-
-  })
-
-  // TODO (b5) - we should be dropping console output to zero
-  it('logs in console of main window should be at most 5', async () => {
-    const { client } = app;
-    const logs = await client.getRenderProcessLogs();
-    // Print renderer process logs
-    logs.forEach((log: any) => {
-      console.log(log.level, log.message)
-    });
-    // TODO (b5) - currently can't figure out how to eliminate the ""'electron.screen' is deprecated"
-    // once we get rid of that error, drop this to zero
-    expect(logs.length).toBeLessThan(7)
+    expect(await client.element('#add_error').getText()).toBe('dataset name resolution currently only works over HTTP')
   })
 })

@@ -9,7 +9,7 @@
     "test": "jest --testPathIgnorePatterns=.*/e2e/.* --coverage",
     "test-all": "npm run test && npm run build && npm run test-e2e",
     "test-watch": "npm test -- --watch",
-    "test-e2e": "cross-env NODE_ENV=test node --trace-warnings ./test/runTests.js e2e",
+    "test-e2e": "./node_modules/xvfb-maybe/src/xvfb-maybe.js cross-env NODE_ENV=test node --trace-warnings ./test/runTests.js e2e",
     "hot-server": "cross-env NODE_ENV=development node --max_old_space_size=2096 server.js",
     "build-main": "cross-env NODE_ENV=production node ./node_modules/webpack/bin/webpack --mode=production --config webpack.config.electron.js --progress --profile --colors",
     "build-renderer": "cross-env NODE_ENV=production node ./node_modules/webpack/bin/webpack --mode=production --config webpack.config.production.js --progress --profile --colors",
@@ -160,7 +160,7 @@
     "css-loader": "3.2.0",
     "css-modules-require-hook": "4.2.3",
     "devtron": "1.4.0",
-    "electron": "5.0.6",
+    "electron": "7.1.7",
     "electron-builder": "22.1.0",
     "electron-builder-http": "19.27.5",
     "electron-devtools-installer": "2.2.4",
@@ -190,7 +190,7 @@
     "rimraf": "3.0.0",
     "sass-loader": "8.0.0",
     "sinon": "7.5.0",
-    "spectron": "7.0.0",
+    "spectron": "9.0.0",
     "spectron-fake-dialog": "0.0.1",
     "style-loader": "1.0.0",
     "ts-loader": "6.2.1",
@@ -257,7 +257,8 @@
     "regenerator-runtime": "0.13.3",
     "source-map-support": "0.5.16",
     "underscore": "1.9.1",
-    "use-debounce": "3.1.0"
+    "use-debounce": "3.1.0",
+    "xvfb-maybe": "0.2.1"
   },
   "devEngines": {
     "node": ">=6.x",

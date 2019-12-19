@@ -92,11 +92,13 @@ const Navbar: React.FunctionComponent<NavbarProps> = (props: NavbarProps) => {
   const navItems = [
     {
       icon: faFileAlt,
+      id: 'dataset',
       link: '/dataset',
       tooltip: 'Dataset - Work with the active dataset'
     },
     {
       icon: faCopy,
+      id: 'collection',
       link: '/collection',
       tooltip: 'Collection - Local Datasets'
     }
@@ -126,8 +128,9 @@ const Navbar: React.FunctionComponent<NavbarProps> = (props: NavbarProps) => {
       <div className='navbar'>
         <div className='navbar-top'>
           {
-            navItems.map(({ icon, link, tooltip }, i) => (
+            navItems.map(({ icon, link, tooltip, id }, i) => (
               <NavbarItem
+                id={id}
                 key={i}
                 icon={icon}
                 link={link}
