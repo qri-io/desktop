@@ -1,3 +1,18 @@
+## [0.3.1](https://github.com/qri-io/desktop/compare/v0.3.0...v0.3.1) (2019-12-20)
+
+We've got a patch release! This patch release cleans up some bugs around fetching, event listeners, dataset naming, and general app flow!
+
+### Bug Fixes
+
+* **App:** fix fetching issues ([4354ba2](https://github.com/qri-io/desktop/commit/4354ba2))
+* **App, Dataset:** event listener leak ([d5a464d](https://github.com/qri-io/desktop/commit/d5a464d))
+* **Commit:** redirect to the commit after saving a version ([53f1774](https://github.com/qri-io/desktop/commit/53f1774))
+* **remove:** if you successfully remove a dataset, clear the selection ([37b2b4d](https://github.com/qri-io/desktop/commit/37b2b4d))
+* **transform:** transforms are json objects ([3bfb88b](https://github.com/qri-io/desktop/commit/3bfb88b))
+* **validateDatasetName:** adjust regex to be inline with backend ([972a96c](https://github.com/qri-io/desktop/commit/972a96c))
+
+
+
 # [0.3.0](https://github.com/qri-io/desktop/compare/v0.2.1...v0.3.0) (2019-12-12)
 
 Welcome to Qri Desktop 0.3.0! We've made a huge overhaul on our UI and UX design in this release as well as streamlined some key flows in the app.
