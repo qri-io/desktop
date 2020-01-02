@@ -68,7 +68,7 @@ export const FileRow: React.FunctionComponent<FileRowProps> = (props) => {
 
   return (
     <div
-      id={`${props.displayName.toLowerCase()}_status`}
+      id={`${props.displayName.toLowerCase()}-status`}
       className={classNames('sidebar-list-item', 'sidebar-list-item-text', {
         'selected': props.selected,
         'disabled': props.disabled

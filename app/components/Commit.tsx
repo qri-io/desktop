@@ -92,7 +92,7 @@ const Commit: React.FunctionComponent<CommitProps> = (props: CommitProps) => {
           {
             isLoading
               ? <button className='sync-spinner btn btn-primary'><FontAwesomeIcon icon={faSync} /> Saving...</button>
-              : <button id='commit_submit' className={classNames('btn btn-primary btn-large', { 'disabled': !isValid })} type='submit'>Commit</button>
+              : <button id='submit' className={classNames('btn btn-primary btn-large', { 'disabled': !isValid })} type='submit'>Commit</button>
           }
         </div>
       </form>

@@ -9,6 +9,7 @@ import { faCheck, faExclamationTriangle } from '@fortawesome/free-solid-svg-icon
 import { ToastType } from '../models/store'
 
 interface ToastProps {
+  name: string
   type: ToastType
   message: string
   isVisible: boolean
@@ -17,7 +18,7 @@ interface ToastProps {
 }
 
 const Toast: React.FunctionComponent<ToastProps> = (props: ToastProps) => {
-  const { type, message, isVisible, timeout, onClose } = props
+  const { type, message, isVisible, timeout, onClose, name } = props
   const icon = type === 'success'
     ? <FontAwesomeIcon icon={faCheck} size='lg'/>
     : <FontAwesomeIcon icon={faExclamationTriangle} size='lg'/>
@@ -37,7 +38,7 @@ const Toast: React.FunctionComponent<ToastProps> = (props: ToastProps) => {
       classNames="toast"
       timeout={300}
     >
-      <div className={classNames('toast', {
+      <div id={`toast-${name}`} className={classNames('toast', {
         'success': type === 'success',
         'error': type === 'error'
       })}>

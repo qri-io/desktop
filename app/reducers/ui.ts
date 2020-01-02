@@ -43,6 +43,7 @@ const getSidebarWidth = (key: string): number => {
 
 const defaultToast = {
   type: 'success',
+  name: 'default',
   message: '',
   visible: false
 }
@@ -100,12 +101,10 @@ export default (state = initialState, action: AnyAction) => {
       return Object.assign({}, state, { qriCloudAuthenticated: true })
 
     case UI_OPEN_TOAST:
-      const { type: toastType, message } = action.payload
       return {
         ...state,
         toast: {
-          type: toastType,
-          message,
+          ...action.payload,
           visible: true
         }
       }

@@ -1,10 +1,12 @@
 import { Action, AnyAction } from 'redux'
 
+import { push } from 'connected-react-router'
+
 import { CALL_API, ApiAction, ApiActionThunk, chainSuccess } from '../store/api'
 import { SelectedComponent, MyDatasets } from '../models/store'
 import { actionWithPagination } from '../utils/pagination'
 import { openToast, setImportFileDetails } from './ui'
-import { setWorkingDataset, setSelectedListItem, setActiveTab, setRoute, clearSelection } from './selections'
+import { setWorkingDataset, setSelectedListItem, setActiveTab, clearSelection } from './selections'
 import {
   mapDataset,
   mapRecord,
@@ -450,7 +452,7 @@ export function saveWorkingDatasetAndFetch (): ApiActionThunk {
       dispatch(setActiveTab('history'))
       dispatch(setSelectedListItem('commitComponent', DEFAULT_SELECTED_COMPONENT))
     } catch (action) {
-      dispatch(openToast('error', action.payload.err.message))
+      dispatch(openToast('error', 'commit', action.payload.err.message))
       throw action
     }
     return response
@@ -487,9 +489,9 @@ export function addDatasetAndFetch (peername: string, name: string): ApiActionTh
       dispatch(setWorkingDataset(peername, name))
       dispatch(setActiveTab('history'))
       dispatch(setSelectedListItem('component', DEFAULT_SELECTED_COMPONENT))
-      dispatch(setRoute('/dataset'))
+      dispatch(push('dataset'))
     } catch (action) {
-      dispatch(openToast('error', action.payload.err.message))
+      dispatch(openToast('error', 'add', action.payload.err.message))
       throw action
     }
     return response
@@ -521,7 +523,7 @@ export function publishDataset (): ApiActionThunk {
       throw action
     }
     // return response
-    return dispatch(openToast('success', 'dataset published'))
+    return dispatch(openToast('success', 'publish', 'dataset published'))
   }
 }
 
@@ -550,7 +552,7 @@ export function unpublishDataset (): ApiActionThunk {
       throw action
     }
     // return response
-    return dispatch(openToast('success', 'dataset unpublished'))
+    return dispatch(openToast('success', 'unpublish', 'dataset unpublished'))
   }
 }
 
@@ -652,9 +654,9 @@ export function removeDataset (
     let response: Action
     try {
       response = await dispatch(action)
-      dispatch(openToast('success', `Removed ${peername}/${name}`))
+      dispatch(openToast('success', 'remove', `Removed ${peername}/${name}`))
     } catch (action) {
-      dispatch(openToast('error', action.payload.err.message))
+      dispatch(openToast('error', 'remove', action.payload.err.message))
       throw action
     }
 
@@ -750,9 +752,9 @@ export function renameDataset (peername: string, name: string, newName: string):
     try {
       response = await dispatch(action)
       response = await whenOk(fetchMyDatasets(-1))(response)
-      dispatch(openToast('success', `Dataset renamed`))
+      dispatch(openToast('success', 'rename', `Dataset renamed`))
     } catch (action) {
-      dispatch(openToast('error', action.payload.err.message))
+      dispatch(openToast('error', 'rename', action.payload.err.message))
       throw action
     }
     return response
@@ -781,15 +783,15 @@ export function importFile (filePath: string, fileName: string, fileSize: number
       const { peername, name } = response.payload.data
       response = await whenOk(fetchMyDatasets(-1))(response)
       dispatch(setWorkingDataset(peername, name))
-      dispatch(setActiveTab('history'))
-      dispatch(setSelectedListItem('component', DEFAULT_SELECTED_COMPONENT))
-      dispatch(setRoute('/dataset'))
-      dispatch(setImportFileDetails('', 0))
     } catch (action) {
       dispatch(setImportFileDetails('', 0))
-      dispatch(openToast('error', action.payload.err.message))
+      dispatch(openToast('error', 'import', action.payload.err.message))
       throw action
     }
+    dispatch(setActiveTab('history'))
+    dispatch(setSelectedListItem('component', DEFAULT_SELECTED_COMPONENT))
+    dispatch(push('dataset'))
+    dispatch(setImportFileDetails('', 0))
     return response
   }
 }

@@ -6,6 +6,7 @@ interface ToastProps {
   show: boolean
   type: ToastTypes
   text: string
+  name: string
 }
 
 export enum ToastTypes {
@@ -15,7 +16,7 @@ export enum ToastTypes {
 }
 
 const Toast: React.FunctionComponent<ToastProps> = (props: ToastProps) => {
-  const { show, type, text } = props
+  const { show, type, text, name } = props
   return (
     <CSSTransition
       in={show}
@@ -24,7 +25,7 @@ const Toast: React.FunctionComponent<ToastProps> = (props: ToastProps) => {
       mountOnEnter
       unmountOnExit
     >
-      <div className={classNames('body-toast', type)}>{text}</div>
+      <div id={`toast-${name}`} className={classNames('body-toast', type)}>{text}</div>
     </CSSTransition>
   )
 }

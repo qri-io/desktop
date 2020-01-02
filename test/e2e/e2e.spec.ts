@@ -91,8 +91,6 @@ describe('Qri End to End tests', function spec () {
     fakeDialog.mock([ { method: 'showOpenDialog', value: [csvPath] } ])
     await client.click('#chooseBodyFilePath')
 
-    fakeDialog.mock([ { method: 'showOpenDialog', value: [backend.dir] } ])
-
     await delay(550) // wait for validation debounce
     await client.click('#submit')
 

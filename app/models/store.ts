@@ -43,6 +43,7 @@ export type ToastType = 'success' | 'error'
 
 export interface Toast {
   type: ToastType
+  name: string
   message: string
   visible: false
 }

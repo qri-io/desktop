@@ -18,6 +18,7 @@ import ContextMenuArea from 'react-electron-contextmenu'
 import { MenuItemConstructorOptions, remote, ipcRenderer } from 'electron'
 
 interface HistoryListItemProps {
+  id: string
   path: string
   commitTitle: string
   timeMessage: string
@@ -28,9 +29,10 @@ interface HistoryListItemProps {
 }
 
 const HistoryListItem: React.FunctionComponent<HistoryListItemProps> = (props) => {
-  const { selected, path, commitTitle, timeMessage, first, last } = props
+  const { id, selected, path, commitTitle, timeMessage, first, last } = props
   return (
     <div
+      id={id}
       className={classNames(
         'sidebar-list-item',
         'sidebar-list-item-text',
@@ -136,7 +138,7 @@ const DatasetSidebar: React.FunctionComponent<DatasetSidebarProps> = (props) => 
       </div>
       <div id='tabs' className='sidebar-padded-container'>
         <div
-          id='status_tab'
+          id='status-tab'
           className={classNames('tab', { 'active': activeTab === 'status' && datasetSelected, 'disabled': !datasetSelected })}
           onClick={() => {
             if (datasetSelected) {
@@ -148,7 +150,7 @@ const DatasetSidebar: React.FunctionComponent<DatasetSidebarProps> = (props) => 
           Status
         </div>
         <div
-          id='history_tab'
+          id='history-tab'
           className={classNames('tab', { 'active': activeTab === 'history', 'disabled': (history.pageInfo.error && history.pageInfo.error.includes('no history')) || !datasetSelected })}
           onClick={() => {
             if ((!(history.pageInfo.error && history.pageInfo.error.includes('no history')) && datasetSelected)) {
@@ -221,6 +223,7 @@ const DatasetSidebar: React.FunctionComponent<DatasetSidebarProps> = (props) => 
                   <ContextMenuArea menuItems={menuItems} key={path}>
                     <HistoryListItem
                       key={path}
+                      id={`HEAD~${i + 1}`}
                       first={i === 0}
                       last={i === history.value.length - 1}
                       path={path}

@@ -40,10 +40,10 @@ export const setQriCloudAuthenticated = () => {
   }
 }
 
-export const openToast = (type: ToastType, message: string) => {
+export const openToast = (type: ToastType, name: string, message: string) => {
   return {
     type: UI_OPEN_TOAST,
-    payload: { type, message }
+    payload: { type, name, message }
   }
 }
 

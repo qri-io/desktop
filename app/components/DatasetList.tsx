@@ -193,6 +193,7 @@ class DatasetList extends React.Component<DatasetListProps> {
 
         return (<ContextMenuArea menuItems={menuItems} key={`${peername}/${name}`}>
           <div
+            id={`${peername}/${name}`}
             key={`${peername}/${name}`}
             className={classNames('sidebar-list-item', 'sidebar-list-item-text', {
               'selected': (peername === workingDataset.peername) && (name === workingDataset.name)

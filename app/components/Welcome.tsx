@@ -21,7 +21,7 @@ const Welcome: React.FunctionComponent<WelcomeProps> = ({ onAccept }) =>
       <div>
           A few notes before we get started:<br />
         <ul>
-          <li>By using Qri you agree to our <ExternalLink href='https://qri.io/legal/tos'>Terms of Service</ExternalLink></li>
+          <li>By using Qri you agree to our <ExternalLink id='tos' href='https://qri.io/legal/tos'>Terms of Service</ExternalLink></li>
           <li>All Data on Qri is Public</li>
         </ul>
       </div>

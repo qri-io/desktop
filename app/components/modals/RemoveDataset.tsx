@@ -46,7 +46,7 @@ const RemoveDataset: React.FunctionComponent<RemoveDatasetProps> = (props: Remov
 
   return (
     <Modal
-      id='RemoveDataset'
+      id='remove-dataset'
       title={`Remove Dataset`}
       onDismissed={onDismissed}
       onSubmit={() => {}}
@@ -58,7 +58,7 @@ const RemoveDataset: React.FunctionComponent<RemoveDatasetProps> = (props: Remov
           <div className='content-main'>Are you sure you want to remove <br/> <div className='code-highlight'>{peername}/{name}</div>&nbsp;?</div>
           { fsiPath &&
             <CheckboxInput
-              name='shouldRemoveFiles'
+              name='should-remove-files'
               checked={!keepFiles}
               onChange={handleChanges}
               label={'Also remove the dataset\'s files'}

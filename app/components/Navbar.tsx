@@ -18,6 +18,7 @@ import NavbarItem from './chrome/NavbarItem'
 const defaultPhoto = require('../assets/default_46x46.png') //eslint-disable-line
 
 interface MenuItemProps {
+  id: string
   label: string
   icon?: IconDefinition
   link?: string
@@ -25,9 +26,9 @@ interface MenuItemProps {
 }
 
 const MenuItem: React.FunctionComponent<MenuItemProps> = (props: MenuItemProps) => {
-  const { label, icon, link, onClick } = props
+  const { label, icon, link, onClick, id } = props
   const menuItem = (
-    <div className='user-menu-item' onClick={onClick}>
+    <div id={id} className='user-menu-item' onClick={onClick}>
       <div className='label'>{label}</div>
       {
         icon &&
@@ -37,7 +38,7 @@ const MenuItem: React.FunctionComponent<MenuItemProps> = (props: MenuItemProps) 
   )
 
   return link ? (
-    <ExternalLink href={link}>
+    <ExternalLink id={id} href={link}>
       {menuItem}
     </ExternalLink>
   )
@@ -119,9 +120,9 @@ const Navbar: React.FunctionComponent<NavbarProps> = (props: NavbarProps) => {
                 <div className='name'>{name}</div>
               </div>
             </div>
-            <MenuItem label='User Settings' icon={faExternalLinkAlt} link={`${QRI_CLOUD_URL}/settings`} />
-            <MenuItem label='Public Profile'icon={faExternalLinkAlt} link={`${QRI_CLOUD_URL}/${username}`} />
-            <MenuItem label='Sign out' onClick={signout} />
+            <MenuItem id='settings' label='User Settings' icon={faExternalLinkAlt} link={`${QRI_CLOUD_URL}/settings`} />
+            <MenuItem id='profile' label='Public Profile'icon={faExternalLinkAlt} link={`${QRI_CLOUD_URL}/${username}`} />
+            <MenuItem id='signout' label='Sign out' onClick={signout} />
           </div>
         </div>)
       }
@@ -147,6 +148,7 @@ const Navbar: React.FunctionComponent<NavbarProps> = (props: NavbarProps) => {
             onClick={() => { shell.openExternal(DISCORD_URL) }}
           />
           <NavbarItem
+            id='nav-options'
             icon={
               <div className='userphoto' style={{
                 backgroundImage: `url(${userphoto})`
