@@ -6,11 +6,13 @@ import fakeDialog from 'spectron-fake-dialog'
 
 const { Application } = require('spectron')
 
-const delay = (time: number) => new Promise(resolve => setTimeout(resolve, time))
+const delay = async (time: number) => new Promise(resolve => setTimeout(resolve, time))
 
 describe('Qri End to End tests', function spec () {
   let app: any
   let backend: any
+  const filename = 'e2e_test_csv_dataset.csv'
+  const datasetName = 'e2e_test_csv_datasetcsv'
 
   beforeAll(async () => {
     // spin up a new mock backend with a mock registry server attached
@@ -53,107 +55,152 @@ describe('Qri End to End tests', function spec () {
     expect(title).toBe('Qri Desktop')
   })
 
-  it('accept terms by clicking enter, taken to signup', async () => {
-    const { client, browserWindow } = app
+  it('accept terms of service by clicking accept and get taken to signup', async () => {
+    // Make sure the page is loaded
+    await waitForExist('#welcome-page')
 
-    await client.waitUntilWindowLoaded()
-    await delay(10000)
-    await client.click('#accept')
+    // expected ids
+    await exists(['#tos', '#accept'])
 
-    await delay(1000)
-    const currentUrl = url.parse(await browserWindow.getURL())
-    expect(currentUrl.hash).toBe('#/signup')
+    // click to accept the tos
+    await click('#accept')
+
+    // make sure we navigated to the correct page
+    await atLocation('#/signup')
   })
 
   it('create a new account, taken to datasets page', async () => {
-    const { client, browserWindow } = app
+    // Make sure the page is loaded
+    await waitForExist('#signup-page')
 
-    await client.waitUntilWindowLoaded()
-    await client.element('[name="username"]').setValue('fred')
-    await client.element('[name="email"]').setValue('fred@qri.io')
-    await client.element('[name="password"]').setValue('1234567890!!')
-    await delay(550) // wait for validation debounce
-    await client.click('#accept')
+    // expected ids
+    await exists(['#username', '#email', '#password', '#accept'])
 
-    await delay(2000)
-    const currentUrl = url.parse(await browserWindow.getURL())
-    expect(currentUrl.hash).toBe('#/collection')
+    // Input username, email, and password
+    await setValue('#username', 'fred')
+    await setValue('#email', 'fred@qri.io')
+    await setValue('#password', '1234567890!!')
+
+    // click accept
+    await click('#accept')
+
+    // make sure we are on the collection page
+    await atLocation('#/collection')
   })
 
   it('create new CSV dataset from a data source', async () => {
-    const { client, browserWindow } = app
+    // make sure we are on the collection page
+    await atLocation('#/collection')
 
-    await client.click('#create_dataset')
-    await delay(600) // wait for modal render
+    // click create-dataset to open up the Create Dataset modal
+    await click('#create-dataset')
 
-    const csvPath = path.join(backend.dir, 'e2e_test_csv_dataset.csv')
+    // mock the dialog and create a temp csv file
+    // clicking the '#chooseBodyFilePath' button will connect the fakeDialog
+    // to the correct input
+    const csvPath = path.join(backend.dir, filename)
     fs.writeFileSync(csvPath, 'e2e_test_bool_col,a,b,c\nfalse,1,2,3\ntrue,4,5,6')
-    fakeDialog.mock([ { method: 'showOpenDialog', value: [csvPath] } ])
-    await client.click('#chooseBodyFilePath')
+    await fakeDialog.mock([ { method: 'showOpenDialogSync', value: [csvPath] } ])
+    await click('#chooseBodyFilePath')
 
-    await delay(550) // wait for validation debounce
-    await client.click('#submit')
+    // submit to create a new dataset
+    await click('#submit')
 
-    await delay(3000)
-    const currentUrl = url.parse(await browserWindow.getURL())
-    expect(currentUrl.hash).toBe('#/dataset')
-    expect(await client.element('#linkButton .label').getText()).toBe('Show Files')
+    // ensure we have redirected to the dataset page
+    await atLocation('#/dataset')
 
-    // dataset name is fred/e2e_test_csv_dataset
-    expect(await client.element('#current_dataset .header-column-text .name').getText()).toBe('fred/e2e_test_csv_dataset')
+    // ensure we have navigated to the correct dataset
+    // TODO (ramfox): it's weird that we have to pass in this newline character
+    // to get the reference to match. It looks like because the #dataset-reference
+    // div divides the peername and name among multiple divs, we get this odd
+    // whitespace character
+    const reference = `fred/\n${datasetName}`
+    await expectTextToBe('#dataset-reference', reference)
 
-    // status dots are correct
-    expect(await client.element('#meta_status .status-dot-added').isExisting()).toBe(true)
-    expect(await client.element('#body_status .status-dot-added').isExisting()).toBe(true)
-    expect(await client.element('#structure_status .status-dot-added').isExisting()).toBe(true)
+    // enure we are on the history tab
+    await onHistoryTab()
 
-    // create commit
-    expect(await client.element('#commit_nudge').getText()).toContain('ready to make your first commit')
-    await client.element('#commit_title').setValue('Created Dataset')
-    await client.click('#commit_submit')
-    await delay(2000)
-    // history list should have one commit
-    await client.click('#history_tab')
-    var history_list_items = await client.$$('#history_list .sidebar-list-item')
-    await expect(history_list_items.length).toBe(1)
-    // change body file and check to see if status changed
-    await client.click('#status_tab')
-    const bodyPath = path.join(backend.dir, 'e2e_test_csv_dataset', 'body.csv')
-    fs.writeFileSync(bodyPath, 'e2e_test_bool_col,a,b,c\nfalse,1,2,3\ntrue,4,5,6\ntrue,7,8,9')
-    await delay(3000)
-    expect(await client.element('#body_status .status-dot-modified').isExisting()).toBe(true)
-    // add title to meta
-    //
-    await client.click('#meta_status')
-    await delay(2000)
-    await client.click('#title')
-    await client.element('#title').setValue('Title of e2e test dataset')
-    await client.click('#description')
-    await delay(3000) // time to save change and status to fetch changes
-    // add commit
-    expect(await client.element('#meta_status .status-dot-modified').isExisting()).toBe(true)
-    await client.element('#commit_title').setValue('Changed body and added meta data')
-    await client.click('#commit_submit')
-    await delay(2000)
-    // history list should have two commits
-    await client.click('#history_tab')
-    history_list_items = await client.$$('#history_list .sidebar-list-item')
-    await expect(history_list_items.length).toBe(2)
-    await delay(1000)
+    // ensure the body and structure indicate that they were 'added'
+    await checkStatus('body', 'added')
+    await checkStatus('structure', 'added')
   })
 
-  it('return an error when trying to add a dataset that does not exist', async () => {
+  // atLocation checks to see if the given hash location is where we expected it.
+  // Use this after a click that should have directed the user to a different
+  // route
+  const atLocation = async (expected: string) => {
+    const { client, browserWindow } = app
+    await client.waitUntil(async () => {
+      const currUrl: string = await browserWindow.getURL()
+      const location = new url.URL(currUrl).hash
+      return location === expected
+    }, 10000, `expected url to be '${expected}'`)
+  }
+
+  // waitForExist checks to see if an element exists on the page. If it does not
+  // exists after the timeout, it sends an error
+  const waitForExist = async (element: string) => {
     const { client } = app
+    await client.waitUntil(async () => {
+      return client.element(element).isExisting()
+    }, 10000, `element '${element}' cannot be found`)
+  }
 
-    await client.click('#collection')
-    await delay(300) // wait for dataset list render
-    await client.click('#add_dataset')
-    await delay(600) // wait for modal render
-    await client.element('[name="datasetName"]').setValue('b5/not_a_real_dataset')
-    await delay(600) // wait for modal render
+  // click waits until the link is enabled and then clicks the element
+  const click = async (element: string) => {
+    await app.client.waitUntil(async () => {
+      const classes = await app.client.element(element).getAttribute('class')
+      return !(classes.includes('linkDisabled') || classes.includes('disabled'))
+    }, 10000)
+    await app.client.click(element)
+  }
 
-    // implement mock registry server:
-    // expect(await client.element("#add_error").getText()).toBe('Dataset not found.')
-    expect(await client.element('#add_error').getText()).toBe('dataset name resolution currently only works over HTTP')
-  })
+  // setValue sets the value of the element and waits for any debouncing
+  const setValue = async (element: string, value: any) => {
+    await app.client.element(element).setValue(value)
+  }
+
+  // exists iterates through the given selectors and checks to see that they
+  // exist on the pagge
+  const exists = async (elements: string[]) => {
+    elements.forEach(async (element: string) => {
+      expect(await app.client.element(element)).toBeDefined()
+    })
+  }
+
+  // doesNotExist checks that the element does not exist on the page
+  // specifically useful for when you want an element with an id to no longer
+  // have a particular class eg '#status-tab.disabled'
+  const doesNotExist = async (selector: string) => {
+    const err = await app.client.element(selector)
+    expect(err.type).toBe('NoSuchElement')
+  }
+
+  // expectTextToBe wraps expect().toBe()
+  const expectTextToBe = async (selector: string, text: string) => {
+    // await app.client.waitUntil(async () => {
+    //   return !!await app.client.element(selector)
+    // }, 10000, `element '${selector}' does not exist`)
+    expect(await app.client.element(selector).getText()).toBe(text)
+  }
+
+  // onHistoryTab uses onTab to check if the we are on the history tab
+  const onHistoryTab = async () => {
+    await onTab('history')
+  }
+
+  // onStatusTab uses onTab to check if the we are on the history tab
+  const onStatusTab = async () => {
+    await onTab('status')
+  }
+
+  // onTab checks to see if the element exists with the 'active' class
+  const onTab = async (tab: string) => {
+    expect(await app.client.element(`#${tab}-tab.active`)).toBeDefined()
+  }
+
+  // checkStatus ensures that component exists with the correct status dot class
+  const checkStatus = async (component: string, status: string) => {
+    expect(await app.client.element(`#${component}-status.status-dot-${status}`)).toBeDefined()
+  }
 })

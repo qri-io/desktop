@@ -258,6 +258,7 @@
     "source-map-support": "0.5.16",
     "underscore": "1.9.1",
     "use-debounce": "3.1.0",
+    "webdriverio": "4.14.4",
     "xvfb-maybe": "0.2.1"
   },
   "devEngines": {
