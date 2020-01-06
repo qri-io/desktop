@@ -18,6 +18,10 @@ describe('Qri End to End tests', function spec () {
   const filename = 'e2e_test_csv_dataset.csv'
   const datasetName = 'e2e_test_csv_datasetcsv'
 
+  const username = 'fred'
+  const email = 'fred@qri.io'
+  const password = '1234567890!!'
+
   beforeAll(async () => {
     jest.setTimeout(20000);
 
@@ -119,14 +123,41 @@ describe('Qri End to End tests', function spec () {
     await exists(['#username', '#email', '#password', '#accept'])
 
     // Input username, email, and password
-    await setValue('#username', 'fred')
-    await setValue('#email', 'fred@qri.io')
-    await setValue('#password', '1234567890!!')
+    await setValue('#username', username)
+    await setValue('#email', email)
+    await setValue('#password', password)
 
     // click accept
     await click('#accept')
 
     // make sure we are on the collection page
+    await atLocation('#/collection')
+  })
+
+  // signout and sign in
+  it('signout and sign in', async () => {
+    const {
+      click,
+      setValue,
+      atLocation
+    } = utils
+
+    // click profile
+    await click('#nav-options')
+    // click signout
+    await click('#signout')
+    // on signup page
+    await atLocation('#/signup')
+    // navigate to signin page
+    await click('#signin')
+    // ensure we are on signin page
+    await atLocation('#/signin')
+    // set username and password
+    await setValue('#username', username)
+    await setValue('#password', password)
+    // submit
+    await click('#accept')
+    // we are left on the collection page
     await atLocation('#/collection')
   })
 
@@ -164,7 +195,7 @@ describe('Qri End to End tests', function spec () {
     // to get the reference to match. It looks like because the #dataset-reference
     // div divides the peername and name among multiple divs, we get this odd
     // whitespace character
-    const reference = `fred/\n${datasetName}`
+    const reference = `${username}/\n${datasetName}`
     await expectTextToBe('#dataset-reference', reference)
 
     // enure we are on the history tab
@@ -174,4 +205,186 @@ describe('Qri End to End tests', function spec () {
     await checkStatus('body', 'added')
     await checkStatus('structure', 'added')
   })
+
+  // checkout
+  it('checkout a dataset', async () => {
+    const {
+      atLocation,
+      click,
+      onStatusTab,
+      exists,
+      doesNotExist
+    } = utils
+
+    // at dataset
+    await click('#dataset')
+    // body is disabled
+    await exists(['#body-status.disabled'])
+    // click #checkout to open checkout modal
+    await click('#checkout')
+    // create filepath
+    const savePath = path.join(backend.dir, datasetName)
+    // mock the dialog
+    await fakeDialog.mock([ { method: 'showOpenDialogSync', value: [savePath] } ])
+    // click #chooseSavePath to open dialog
+    await click('#chooseSavePath')
+    // click #submit
+    await click('#submit')
+    // expect modal to be gone
+    await doesNotExist('#remove-dataset')
+    // atLocation
+    await atLocation('#/dataset')
+    // check we are at status tab
+    await onStatusTab()
+    // expect Body to now be active
+    await doesNotExist('#body-status.disabled')
+  })
+
+  // body write & commit
+  it('write the body to the filesystem & commit', async () => {
+    const {
+      click,
+      checkStatus,
+      doesNotExist,
+      setValue,
+      expectTextToBe,
+      onHistoryTab,
+      exists
+    } = utils
+
+    // on dataset page
+    await click('#dataset')
+    // on status tab
+    await click('#status-tab')
+    // no changes, so cannot commit
+    await doesNotExist('.clear-to-commit #commit-status')
+    // create file in memory and save over the previous body.csv
+    const csvPath = path.join(backend.dir, datasetName, 'body.csv')
+    fs.writeFileSync(csvPath, 'e2e_test_bool_col,a,b,c\nfalse,1,2,3\ntrue,4,5,6\ntrue,7,8,9')
+    // body status should be modified
+    await checkStatus('body', 'modified')
+    // commit should be active
+    await exists(['.clear-to-commit #commit-status'])
+    // navigate to commit
+    await click('#commit-status')
+    // set value of title & message
+    const commitTitle = 'modified body'
+    const commitMessage = 'modified body using fsi'
+    await setValue('#title', commitTitle)
+    await setValue('#message', commitMessage)
+    // send accept
+    await click('#submit')
+    // should be on the history tab
+    await onHistoryTab()
+    // body status should be modified
+    await checkStatus('body', 'modified')
+    // title should be the same as title we added
+    await expectTextToBe('#commit-title', commitTitle)
+  })
+
+  // meta write and commit
+  it('create a meta & commit', async () => {
+    const {
+      click,
+      exists,
+      onHistoryTab,
+      setValue,
+      checkStatus,
+      expectTextToBe,
+      doesNotExist
+    } = utils
+
+    // on dataset page
+    await click('#dataset')
+    // on status tab
+    await click('#status-tab')
+    // commit should be disabled
+    await doesNotExist('.clear-to-commit #commit-status')
+    // click #meta-status
+    await click('#meta-status')
+    // set value for title and description
+    const metaTitle = 'new dataset title'
+    const metaDescription = 'new dataset description'
+    await setValue('#title', metaTitle)
+    await setValue('#description', metaDescription)
+    // meta status should be 'added'
+    await checkStatus('meta', 'added')
+    // commit should be enabled
+    await exists(['.clear-to-commit #commit-status'])
+    // click #commit-status
+    await click('#commit-status')
+    // set title and message
+    const commitTitle = 'yay we made a commit'
+    await setValue('#title', commitTitle)
+    await setValue('#message', 'commit message')
+    // submit
+    await click('#submit')
+    // on history tab
+    await onHistoryTab()
+    // meta status should be 'added'
+    await checkStatus('meta', 'added')
+    // commit title should be the same
+    await expectTextToBe('#commit-title', commitTitle)
+    // verify meta title and description should be correct
+    await click('#meta-status')
+    await expectTextToBe('#meta-title', metaTitle)
+    await expectTextToBe('#meta-description', metaDescription)
+  })
+
+  // rename
+  it('rename a dataset', async () => {
+    const {
+      click,
+      exists,
+      atLocation,
+      setValue,
+      doesNotExist
+    } = utils
+
+    // on dataset
+    await click('#dataset')
+    // ensure we are on dataset
+    await atLocation('#/dataset')
+    // click #dataset-name
+    await click('#dataset-name')
+    // make sure the input exists
+    await exists(['#dataset-name-input'])
+    // setValue as a bad name
+    await setValue('#dataset-name-input', '9test')
+    // class should be error
+    await exists(['#dataset-name-input.invalid'])
+    // setValue as good name
+    await setValue('#dataset-name-input', 'test_dataset')
+    // get correct class
+    await doesNotExist('#dataset-name-input.invalid')
+  })
+
+  // remove a dataset is commented out until we have a keyboard command in
+  // place to open the remove modal
+  // we also must create a `keyboard` function that takes a string
+  // and mocks the user typing that string into the keyboard
+  // it must handle both windows and mac defaults (ctrl vs cmd)
+  // it('remove a dataset', async () => {
+  //   const {
+  //     click,
+  //     exists,
+  //     atLocation,
+  //     keyboard
+  //   } = utils
+
+  //   // on dataset
+  //   click('#dataset')
+  //   // type command (control) shift r to get remove dataset modal
+  //   keyboard('')
+  //   // ensure we are on the remove modal
+  //   exists(['#remove'])
+  //   // select to remove files
+  //   click('#should-remove-files')
+  //   // click submit
+  //   click('#submit')
+  //   // end up on collection page
+  //   atLocation('#/collection')
+  //   // no datasets
+  //   exists(['#no-datasets'])
+  // })
 })
