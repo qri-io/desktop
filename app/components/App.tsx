@@ -2,7 +2,8 @@ import * as React from 'react'
 import { Action } from 'redux'
 import { CSSTransition } from 'react-transition-group'
 import { ConnectedRouter } from 'connected-react-router'
-import { ipcRenderer } from 'electron'
+import { ipcRenderer, remote } from 'electron'
+import fs from 'fs'
 import path from 'path'
 import ReactTooltip from 'react-tooltip'
 import { history } from '../store/configureStore.development'
@@ -81,6 +82,7 @@ interface AppState {
   sessionID: string
   peername: string
   showDragDrop: boolean
+  debugLogPath: string
 }
 
 const noModalObject: HideModal = {
@@ -95,7 +97,8 @@ class App extends React.Component<AppProps, AppState> {
       currentModal: noModalObject,
       sessionID: this.props.session.sessionID,
       peername: this.props.session.peername,
-      showDragDrop: false
+      showDragDrop: false,
+      debugLogPath: ''
     }
 
     this.renderModal = this.renderModal.bind(this)
@@ -104,6 +107,8 @@ class App extends React.Component<AppProps, AppState> {
     this.handleCreateDataset = this.handleCreateDataset.bind(this)
     this.handleAddDataset = this.handleAddDataset.bind(this)
     this.handleSelectRoute = this.handleSelectRoute.bind(this)
+    this.handleSetDebugLogPath = this.handleSetDebugLogPath.bind(this)
+    this.handleExportDebugLog = this.handleExportDebugLog.bind(this)
   }
 
   private handleCreateDataset () {
@@ -118,6 +123,27 @@ class App extends React.Component<AppProps, AppState> {
     this.props.setRoute(route)
   }
 
+  private handleSetDebugLogPath (_e: any, path: string) {
+    this.setState({ debugLogPath: path })
+  }
+
+  private handleExportDebugLog () {
+    const window = remote.getCurrentWindow()
+    const exportFilename: string | undefined = remote.dialog.showSaveDialogSync(window, {
+      defaultPath: 'qri-debug.log'
+    })
+    if (!exportFilename) {
+      // Dialog cancelled, do nothing
+      return
+    }
+    if (!this.state.debugLogPath) {
+      // Don't have a log file, log and do nothing
+      console.log('debugLogsPath not set, cannot export!')
+      return
+    }
+    fs.copyFileSync(this.state.debugLogPath, exportFilename)
+  }
+
   componentDidMount () {
     // handle ipc events from electron menus
     ipcRenderer.on('create-dataset', this.handleCreateDataset)
@@ -125,6 +151,10 @@ class App extends React.Component<AppProps, AppState> {
     ipcRenderer.on('add-dataset', this.handleAddDataset)
 
     ipcRenderer.on('select-route', this.handleSelectRoute)
+
+    ipcRenderer.on('set-debug-log-path', this.handleSetDebugLogPath)
+
+    ipcRenderer.on('export-debug-log', this.handleExportDebugLog)
 
     setInterval(() => {
       if (this.props.apiConnection !== 1 || this.props.selections.peername === '' || this.props.selections.name === '') {

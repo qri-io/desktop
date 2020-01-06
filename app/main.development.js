@@ -121,6 +121,7 @@ app.on('ready', () =>
       mainWindow.webContents.on('did-finish-load', () => {
         mainWindow.show()
         mainWindow.focus()
+        mainWindow.webContents.send('set-debug-log-path', backendProcess.debugLogPath)
       })
 
       mainWindow.on('closed', () => {
@@ -459,6 +460,12 @@ app.on('ready', () =>
           { type: 'separator' },
           {
             label: `Qri backend ${backendVersion}`
+          },
+          {
+            label: 'Export debug log',
+            click () {
+              mainWindow.webContents.send('export-debug-log')
+            }
           }
         ]
       }
