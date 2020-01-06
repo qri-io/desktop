@@ -92,7 +92,7 @@ const renderTable = (keys: string[], data: Meta) => {
             return (
               <tr key={key} className='keyvalue-table-row'>
                 <td className='keyvalue-table-key'>{key}</td>
-                <td>{cellContent}</td>
+                <td id={`meta-${key}`}>{cellContent}</td>
               </tr>
             )
           })}
