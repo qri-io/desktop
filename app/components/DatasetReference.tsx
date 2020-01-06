@@ -84,16 +84,16 @@ const DatasetReference: React.FunctionComponent<DatasetReferenceProps> = (props)
 
   // when the input is focused, set the cursor to the left, and scroll all the way to the left
   const onFocus = () => {
-    const el = document.getElementById('dataset-name-input') as HTMLInputElement
+    const el = document.getElementById('dataset-name') as HTMLInputElement
     el.scrollLeft = 0
   }
 
   return (
-    <div className='dataset-reference'>
+    <div id='dataset-reference' className='dataset-reference'>
       <div className='dataset-peername'>{peername}/</div>
       <div className='dataset-name' ref={nameRef}>
         { nameEditing && <input
-          id='dataset-name-input'
+          id='dataset-name'
           className={classNames({ invalid: inValid })}
           type='text'
           value={newName}

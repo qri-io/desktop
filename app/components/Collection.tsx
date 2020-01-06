@@ -42,12 +42,14 @@ class Collection extends React.Component<CollectionProps> {
       <>
         <div className='main-content-header'>
           <HeaderColumnButton
+            id='create-dataset'
             icon={faPlus}
             label='Create new Dataset'
             onClick={() => { setModal({ type: ModalType.CreateDataset }) }}
           />
           <HeaderColumnButton
             icon={faDownload}
+            id='add-dataset'
             label='Add existing Dataset'
             onClick={() => { setModal({ type: ModalType.AddDataset }) }}
           />

@@ -42,7 +42,7 @@ const LinkDataset: React.FunctionComponent<LinkDatasetProps> = ({ peername, name
 
   const showDirectoryPicker = () => {
     const window = remote.getCurrentWindow()
-    const directory: string[] | undefined = remote.dialog.showOpenDialog(window, {
+    const directory: string[] | undefined = remote.dialog.showOpenDialogSync(window, {
       properties: ['createDirectory', 'openDirectory']
     })
 
@@ -128,7 +128,7 @@ const LinkDataset: React.FunctionComponent<LinkDatasetProps> = ({ peername, name
               maxLength={600}
               errorText={alreadyDatasetError}
             />
-            <div className='margin-left'><ButtonInput onClick={() => handlePickerDialog(showDirectoryPicker)} >Choose...</ButtonInput></div>
+            <div className='margin-left'><ButtonInput id='chooseSavePath' onClick={() => handlePickerDialog(showDirectoryPicker)} >Choose...</ButtonInput></div>
           </div>
         </div>
       </div>

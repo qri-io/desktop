@@ -28,7 +28,7 @@ $sidebar-item-padding:  6px 10px;
 }
 
 // display commit sidebar item on the bottom of the list
-#commit_status {
+#commit-status {
   position: absolute;
   bottom: 0;
   width: 100%;
@@ -36,14 +36,14 @@ $sidebar-item-padding:  6px 10px;
 }
 
 #commit-details-sidebar {
-  #commit_status {
+  #commit-status {
     position: initial;
     background-color: inherit;
   }
 }
 
 .clear-to-commit {
-  #commit_status {
+  #commit-status {
     background-color: $light-blue-accent;
 
     &.sidebar-list-item-text.selected {

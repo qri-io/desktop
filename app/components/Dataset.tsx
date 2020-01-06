@@ -201,13 +201,13 @@ class Dataset extends React.Component<DatasetProps> {
     if (datasetSelected) {
       linkButton = isLinked ? (
         <HeaderColumnButton
-          id='linkButton'
+          id='show-files'
           icon={faFolderOpen}
           label='Show Files'
           onClick={this.openWorkingDirectory}
         />) : username === peername && (
         <HeaderColumnButton
-          id='linkButton'
+          id='checkout'
           label='checkout'
           tooltip='Checkout this dataset to a folder on your computer'
           icon={(

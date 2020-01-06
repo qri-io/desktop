@@ -48,7 +48,7 @@ export interface AppProps {
   datasetDirPath: string
   qriCloudAuthenticated: boolean
   toast: IToast
-  openToast: (type: ToastType, message: string) => Action
+  openToast: (type: ToastType, name: string, message: string) => Action
   modal: Modal
   workingDataset: Dataset
   exportPath: string
@@ -319,7 +319,7 @@ class App extends React.Component<AppProps, AppState> {
           this.props.closeToast()
           if (!(ext === '.csv' || ext === '.json')) {
             // open toast for 1 second
-            this.props.openToast(ToastTypes.error, 'unsupported file format: only json and csv supported')
+            this.props.openToast(ToastTypes.error, 'drag-drop', 'unsupported file format: only json and csv supported')
             setTimeout(() => this.props.closeToast(), 2500)
             return
           }

@@ -31,14 +31,14 @@ export default function Routes (props: any) {
           {/* Sign Up */}
           <Route exact path='/signup' render={() => {
             if (!hasAcceptedTOS) return <Redirect to='/' />
-            if (qriCloudAuthenticated) return <Redirect to='/dataset' />
+            if (qriCloudAuthenticated) return <Redirect to='/collection' />
             return <Signup signup={signup} onSuccess={setQriCloudAuthenticated} />
           }} />
 
           {/* Sign In */}
           <Route exact path='/signin' render={() => {
             if (!hasAcceptedTOS) return <Redirect to='/' />
-            if (qriCloudAuthenticated) return <Redirect to='/dataset' />
+            if (qriCloudAuthenticated) return <Redirect to='/collection' />
             return <Signin signin={signin} onSuccess={setQriCloudAuthenticated} />
           }} />
 

@@ -53,7 +53,7 @@ const CreateDataset: React.FunctionComponent<CreateDatasetProps> = (props) => {
 
   const showFilePicker = () => {
     const window = remote.getCurrentWindow()
-    const filePath: string[] | undefined = remote.dialog.showOpenDialog(window, {
+    const filePath: string[] | undefined = remote.dialog.showOpenDialogSync(window, {
       properties: ['openFile']
     })
 

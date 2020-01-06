@@ -2,7 +2,9 @@ version: 2
 jobs:
   build:
     docker:
-      - image: circleci/node:10.13.0
+      - image: circleci/golang:1.13.1-node-browsers
+        environment:
+          GO111MODULE: "on"
     working_directory: ~/desktop
     steps:
       - checkout
@@ -26,6 +28,17 @@ jobs:
       - run:
           name: publish to codecov
           command: yarn codecov
+      - run:
+          name: install qri backend
+          command: go get github.com/qri-io/qri
+      - run:
+          name: build
+          command: yarn build
+      - run:
+          name: test e2e
+          command: yarn test-e2e
+          environment:
+            HEADLESS_CHROME: 'true'
       - store_artifacts:
           path: test-results.xml
           prefix: tests
