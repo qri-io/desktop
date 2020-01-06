@@ -82,6 +82,7 @@ interface AppState {
   sessionID: string
   peername: string
   showDragDrop: boolean
+  debugLogPath: string
 }
 
 const noModalObject: HideModal = {
@@ -128,7 +129,7 @@ class App extends React.Component<AppProps, AppState> {
 
   private handleExportDebugLog () {
     const window = remote.getCurrentWindow()
-    const exportFilename: string | undefined = remote.dialog.showSaveDialog(window, {
+    const exportFilename: string | undefined = remote.dialog.showSaveDialogSync(window, {
       defaultPath: 'qri-debug.log'
     })
     if (!exportFilename) {
@@ -137,7 +138,7 @@ class App extends React.Component<AppProps, AppState> {
     }
     if (!this.state.debugLogPath) {
       // Don't have a log file, log and do nothing
-      console.log('debugLogPath not set, cannot export!')
+      console.log('debugLogsPath not set, cannot export!')
       return
     }
     fs.copyFileSync(this.state.debugLogPath, exportFilename)
