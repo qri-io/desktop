@@ -1,15 +1,14 @@
 import * as React from 'react'
-import classNames from 'classnames'
 
 import { FontAwesomeIcon, FontAwesomeIconProps } from '@fortawesome/react-fontawesome'
-import { 
-  faQuestionCircle, 
-  faFont, 
-  faHashtag, 
-  faCode, 
-  faGlasses, 
-  faLock, 
-  faTh, 
+import {
+  faQuestionCircle,
+  faFont,
+  faHashtag,
+  faCode,
+  faGlasses,
+  faLock,
+  faTh,
   faSearch,
   faQuestion,
   faComment,
@@ -20,7 +19,9 @@ import {
   faPlus,
   faDownload,
   faFileAlt,
-  faCopy
+  faCopy,
+  faTimes,
+  faCheck
 } from '@fortawesome/free-solid-svg-icons'
 
 interface IconProps {
@@ -29,11 +30,11 @@ interface IconProps {
   // size sm: .875em
   // md: 1.33em
   // lg: 2em
-  size: 'sm' | 'md' | 'lg'
-  color: 'light' | 'medium' | 'dark'
+  size?: 'xs' | 'sm' | 'md' | 'lg'
+  color?: 'light' | 'medium' | 'dark'
 }
 
-const icons: {[key:  string]: any} = {
+const icons: {[key: string]: any} = {
   'search': faSearch,
   'any': faQuestion,
   'string': faFont,
@@ -60,17 +61,19 @@ const icons: {[key:  string]: any} = {
   'commit': faQuestionCircle,
   'lock': faLock,
   'transform': faCode,
+  'close': faTimes,
+  'check': faCheck
 }
 
 export const iconsList = Object.keys(icons)
 
 const Icon: React.FunctionComponent<IconProps> = ({
-  icon = 'any',
+  icon = 'unknown',
   size = 'md',
-  color = 'light'
+  color = 'dark'
 }) => {
-
   const sizes: {[key: string]: FontAwesomeIconProps['size']} = {
+    'xs': 'xs',
     'sm': 'sm',
     'md': 'lg',
     'lg': '2x'
