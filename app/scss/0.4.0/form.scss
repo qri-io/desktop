@@ -1,0 +1,17 @@
+.dynamic-edit-field {
+  border: solid 1px #fff;
+  background: #fff;
+  padding: 5px;
+  border-radius: 3px;
+
+  &:focus {
+    border-color: #D8DFE6;
+    box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.19);
+    outline: none;
+  } 
+
+  &.invalid {
+    background-color: #FFB3B3;
+    border-color: #FF9696;
+  }
+}
