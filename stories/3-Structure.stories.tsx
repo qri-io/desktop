@@ -5,12 +5,28 @@ import TabPicker from '../app/components/nav/TabPicker'
 import DataType from '../app/components/item/DataType'
 import TypePickerOverlay from '../app/components/overlay/TypePickerOverlay'
 import TypePicker, { typesAndDescriptions } from '../app/components/structure/TypePicker'
+import SchemaItem from '../app/components/item/SchemaItem'
 
 export default {
   title: 'Structure',
   parameters: {
     notes: ''
   }
+}
+
+export const schemaItem = () => {
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', margin: 20, width: 700 }}>
+      <SchemaItem
+        onAccept={(field: string) => { return (value: string) => console.log(field, value) }}
+        title='the title'
+        type='string'
+        description='here is my description yay!'
+        validation=''
+        row={1}
+      />
+    </div>
+  )
 }
 
 export const typePickerList = () => {
@@ -31,7 +47,7 @@ export const typePickerList = () => {
 export const typePicker = () => {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', marginTop: 20 }}>
-      <TypePicker onPickType={() => {}} type='string' name='column1'/>
+      <TypePicker onPickType={() => {}} type='string' name='column1' expanded />
     </div>
   )
 }

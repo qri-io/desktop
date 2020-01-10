@@ -10,14 +10,22 @@ interface DynamicEditFieldProps {
   onAccept: (value: string) => void
   value: string
   allowEmpty: boolean
+  width?: number
+  maxLength?: number
+  expanded?: boolean
+  name: string
 }
 
 const DynamicEditField: React.FunctionComponent<DynamicEditFieldProps> = ({
   placeholder = '',
   value,
+  name,
   validate,
   onAccept,
-  allowEmpty = true
+  allowEmpty = true,
+  width,
+  maxLength,
+  expanded = false
 }) => {
   const [ newValue, setNewValue ] = React.useState(value)
   const [ isValid, setIsValid ] = React.useState(true)
@@ -52,7 +60,6 @@ const DynamicEditField: React.FunctionComponent<DynamicEditFieldProps> = ({
   }
 
   const handleKeyDown = (e: any) => {
-    console.log(e.keyCode)
     // cancel on esc
     if (e.keyCode === 27) {
       cancelEdit()
@@ -102,8 +109,31 @@ const DynamicEditField: React.FunctionComponent<DynamicEditFieldProps> = ({
     setNewValue(value)
   }
 
+  const handleInput = (e) => {
+    console.log(e.target.style)
+    console.log(e.target.scrollHeight)
+    e.target.style.height = `${e.target.scrollHeight}px`
+  }
+
+  if (expanded) {
+    return (<textarea
+      // style={{ height: ref.current.scrollHeight }}
+      onInput={handleInput}
+      onChange={handleChange}
+      ref={ref}
+      id={name}
+      className={classNames('dynamic-edit-field', { 'invalid': !isValid })}
+      placeholder={placeholder}
+      value={newValue}
+      onFocus={() => setFocused(true)}
+      onBlur={() => setFocused(false)}
+      maxLength={maxLength}
+    />)
+  }
+
   return (
     <input
+      style={{ width }}
       onChange={handleChange}
       type='text'
       ref={ref}
@@ -113,6 +143,7 @@ const DynamicEditField: React.FunctionComponent<DynamicEditFieldProps> = ({
       value={newValue}
       onFocus={() => setFocused(true)}
       onBlur={() => setFocused(false)}
+      maxLength={maxLength}
     />
   )
 }

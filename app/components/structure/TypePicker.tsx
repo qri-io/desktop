@@ -6,9 +6,10 @@ import { DataTypes } from '../item/DataType'
 import TabPicker from '../nav/TabPicker'
 
 interface TypePickerProps {
-  name: string
+  name: string | number
   type: DataTypes | DataTypes[]
-  onPickType: () => void
+  onPickType: (type: string | string[]) => void
+  expanded: boolean
 }
 
 export const typesAndDescriptions: Array<{ type: DataTypes, description: string }> = [
@@ -25,7 +26,8 @@ export const typesAndDescriptions: Array<{ type: DataTypes, description: string 
 const TypePicker: React.FunctionComponent<TypePickerProps> = ({
   name,
   type = 'any',
-  onPickType
+  onPickType,
+  expanded
 }) => {
   const [pickedType, setPickedType] = React.useState(type)
   const [isOverlayOpen, setOverlayOpen] = React.useState(false)
@@ -37,9 +39,12 @@ const TypePicker: React.FunctionComponent<TypePickerProps> = ({
     setOverlayOpen(false)
   }
   const handlePickType = (e: MouseEvent<HTMLDivElement, MouseEvent>) => {
-    if (activeTab === 'single') setPickedType(e.target.getAttribute('data-value'))
+    let picked = e.target.getAttribute('data-value')
+    if (activeTab === 'single') {
+      setPickedType(picked)
+      onPickType(picked)
+    }
     if (activeTab === 'multi') {
-      const picked = e.target.getAttribute('data-value')
       let pickedTypeList
       if (pickedType.includes(picked)) {
         pickedTypeList = pickedType.filter((type) => type !== picked)
@@ -49,8 +54,8 @@ const TypePicker: React.FunctionComponent<TypePickerProps> = ({
         })
       }
       setPickedType(pickedTypeList)
+      onPickType(pickedTypeList)
     }
-    onPickType()
   }
 
   const handleToggleOverlay = (e: MouseEvent<HTMLDivElement, MouseEvent>) => {
@@ -89,6 +94,7 @@ const TypePicker: React.FunctionComponent<TypePickerProps> = ({
         type={pickedType}
         active={isOverlayOpen}
         onClick={handleToggleOverlay}
+        expanded={expanded}
       />
       <div className='type-picker-overlay'>
         <TypePickerOverlay

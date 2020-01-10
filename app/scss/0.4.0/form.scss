@@ -3,6 +3,13 @@
   background: #fff;
   padding: 5px;
   border-radius: 3px;
+  text-overflow: ellipsis;
+
+  font-family: 'Avenir Next';
+  font-size: 14px;
+  font-weight: 300;
+
+  resize: none;
 
   &:focus {
     border-color: #D8DFE6;

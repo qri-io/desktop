@@ -8,12 +8,14 @@ export interface ColumnTypeProps {
   type: DataTypes | DataTypes[]
   onClick: (e) => void
   active?: boolean
+  expanded?: boolean
 }
 
 const ColumnType: React.FunctionComponent<ColumnTypeProps> = ({
   type = 'any',
   onClick,
-  active = false
+  active = false,
+  expanded = false
 }) => {
   let shownType = ''
   if (Array.isArray(type)) {
@@ -29,12 +31,25 @@ const ColumnType: React.FunctionComponent<ColumnTypeProps> = ({
     }
   } else shownType = type
 
+  const renderColumnType = (type: string, i: number, className: string) => {
+    return (
+      <div key={i} className={className}>
+        <span className='label large'>{type}</span> <Icon icon={type === 'multi' ? 'unknown' : type} size='sm' color='medium'/>
+      </div>
+    )
+  }
+
   return <div
     className={classNames('column-type', { 'clickable': !!onClick, 'active': active })}
     onClick={onClick}
     tabIndex={0}
   >
-    <span className='label large'>{shownType}</span> <Icon icon={shownType === 'multi' ? 'unknown' : shownType} size='sm' color='medium'/>
+    { typeof type === 'string' || expanded === false
+      ? renderColumnType(shownType, 0, '')
+      : type.map((t: string, i: number) => {
+        return renderColumnType(t, i, 'multi')
+      })
+    }
   </div>
 }
 

@@ -12,12 +12,13 @@ export const dynamicEditField = () => {
   const [val, setVal] = React.useState('start')
 
   const validate = (value: string) => {
-    return !value.includes(' ')
+    // return !value.includes(' ')
+    return true
   }
   return (
     <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', marginTop: 20 }}>
       <DynamicEditField
-        placeholder='hmmm'
+        placeholder='enter text...'
         value={val}
         onAccept={setVal}
         allowEmpty={false}

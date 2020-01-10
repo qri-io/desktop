@@ -14,12 +14,16 @@
   padding: 5px;
   width: 100px;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   border: solid 1px #fff;
   border-radius: 3px;
   transition: 200ms;
+
+  .multi {
+    padding-bottom: 3px;
+  }
 
   span {
     margin-right: 5px;

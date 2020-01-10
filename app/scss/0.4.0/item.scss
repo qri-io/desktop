@@ -12,3 +12,23 @@
     align-items: center;
   }
 }
+
+.schema-item {
+  width: 100%;
+  padding: 4px 10px;
+  border: solid 1px #E8E9ED;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 45px;
+
+
+  .schema-item-icon {
+    flex: 0 0 14px;
+  }
+
+  &.expanded {
+    align-items: flex-start 
+  }
+}
