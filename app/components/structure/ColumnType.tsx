@@ -19,8 +19,11 @@ const ColumnType: React.FunctionComponent<ColumnTypeProps> = ({
   if (Array.isArray(type)) {
     if (type.length > 1) {
       shownType = 'multi'
+<<<<<<< HEAD
     } else if (type.length === 0) {
       shownType = 'any'
+=======
+>>>>>>> feat(components): add components that build to create TypePicker
     } else {
       shownType = type[0]
     }
