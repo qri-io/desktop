@@ -1,0 +1,46 @@
+.type-picker {
+  position: relative;
+
+  .type-picker-overlay {
+    position: absolute;
+    right: 0;
+    margin-top: 5px;
+    z-index: 99;
+  }
+}
+
+.column-type {
+  background: #fff;
+  padding: 5px;
+  width: 100px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  border: solid 1px #fff;
+  border-radius: 3px;
+  transition: 200ms;
+
+  span {
+    margin-right: 5px;
+    width: 60px;
+  }
+
+  &:focus {
+    outline: none;
+  }
+}
+
+.column-type.clickable:hover {
+  cursor: pointer;
+  border: solid 1px #D8DFE6;
+  border-radius: 3px;
+  box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.1)
+}
+
+.column-type.clickable.active {
+  // transition: all 1000s;
+  border: solid 1px #D8DFE6;
+  border-radius: 3px;
+  box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.1)
+}
