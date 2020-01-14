@@ -1,6 +1,5 @@
 import * as React from 'react'
 import classNames from 'classnames'
-import { max } from 'moment'
 
 interface DynamicEditFieldProps {
   placeholder: string
@@ -8,7 +7,7 @@ interface DynamicEditFieldProps {
   // called when user changes input value
   // true means the input is valid, false means it's invalid
   validate?: (value: string) => boolean
-  onAccept: (value: string) => void
+  onAccept?: (value: string) => void
   value: string
   allowEmpty: boolean
   width?: number
@@ -40,7 +39,7 @@ const DynamicEditField: React.FunctionComponent<DynamicEditFieldProps> = ({
     // state value is by hacking into the `setNewValue` function, which passes
     // the previous value into a function
     // wtf do i have to do this?!?
-    let newValueHack = ''
+    let newValueHack = newValue
     setNewValue((prev) => {
       newValueHack = prev
       return prev
@@ -61,13 +60,14 @@ const DynamicEditField: React.FunctionComponent<DynamicEditFieldProps> = ({
 
   const cancelEdit = () => {
     setNewValue(value)
+    ref.current.innerHTML = value
     setIsValid(true)
+    ref.current.blur()
   }
 
   const handleKeyDown = (e: any) => {
     // cancel on esc
     if (e.keyCode === 27) {
-      console.log('hitting escape')
       cancelEdit()
     }
 
@@ -108,7 +108,7 @@ const DynamicEditField: React.FunctionComponent<DynamicEditFieldProps> = ({
   }, [focused])
 
   const handleChange = async (e: any) => {
-    let { value } = e.target
+    let value = e.target.innerHTML
     if (maxLength && value.length > maxLength) {
       return
     }
@@ -134,13 +134,13 @@ const DynamicEditField: React.FunctionComponent<DynamicEditFieldProps> = ({
         suppressContentEditableWarning={true}
         className={classNames({ 'expanded': expanded })}
         contentEditable={true}
-        onChange={handleChange}
+        onInput={handleChange}
         ref={ref}
         id={`${name}-${row}`}
         data-placeholder={placeholder}
         onFocus={onFocus}
         onBlur={onBlur}
-      >{newValue}</div>
+      >{value}</div>
     </div>
   )
 }

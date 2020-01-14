@@ -3,7 +3,7 @@ import { Schema as ISchema } from '../../models/dataset'
 import SchemaItem from '../item/SchemaItem'
 
 interface SchemaProps {
-  schema: ISchema
+  schema: ISchema | undefined
   onAccept: (row: number) => (field: string) => any
 }
 
@@ -11,7 +11,10 @@ const Schema: React.FunctionComponent<SchemaProps> = ({
   schema,
   onAccept
 }) => {
-  if (!schema || !schema.items || !schema.items.items) {s
+  if (!schema) {
+    return <div className='margin'>No schema specified</div>
+  }
+  if (!schema.items || !schema.items.items) {
     return <div>Invalid schema</div>
   }
 

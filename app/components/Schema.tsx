@@ -1,9 +1,9 @@
 import * as React from 'react'
-import TwoDSchemaLayout from './TwoDSchemaLayout'
+import Schema as EditableSchema from './structure/schema'
 import ReactJson from 'react-json-view'
 
 interface SchemaProps {
-  schema: any
+  schema: any | undefined
 }
 
 const Schema: React.FunctionComponent<SchemaProps> = ({ schema }) => {
@@ -15,7 +15,7 @@ const Schema: React.FunctionComponent<SchemaProps> = ({ schema }) => {
   const is2D = schema && schema.items && schema.items.items
 
   const schemaContent = is2D
-    ? <TwoDSchemaLayout schema={schema} />
+    ? <EditableSchema schema={schema} />
     : <ReactJson
       name={null}
       src={schema}
