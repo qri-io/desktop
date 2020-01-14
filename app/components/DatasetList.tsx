@@ -119,7 +119,7 @@ class DatasetList extends React.Component<DatasetListProps> {
       return <div className='sidebar-list-item-text'>Oops, no matches found for <strong>&apos;{myDatasets.filter}&apos;</strong></div>
     }
     return (
-      <div className='sidebar-list-item-text'>Your datasets will be listed here</div>)
+      <div id='no-datasets' className='sidebar-list-item-text'>Your datasets will be listed here</div>)
   }
 
   render () {

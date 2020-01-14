@@ -91,9 +91,9 @@ const DatasetReference: React.FunctionComponent<DatasetReferenceProps> = (props)
   return (
     <div id='dataset-reference' className='dataset-reference'>
       <div className='dataset-peername'>{peername}/</div>
-      <div className='dataset-name' ref={nameRef}>
+      <div className='dataset-name' id='dataset-name' ref={nameRef}>
         { nameEditing && <input
-          id='dataset-name'
+          id='dataset-name-input'
           className={classNames({ invalid: inValid })}
           type='text'
           value={newName}
