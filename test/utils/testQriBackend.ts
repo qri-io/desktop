@@ -79,9 +79,22 @@ export default class TestBackendProcess {
 
   findQriBin () {
     const { stdout = '' } = childProcess.spawnSync('which', ['qri'])
-    return stdout.toString().trim()
+    let filename = stdout.toString().trim()
+    if (fs.existsSync(filename)) {
+      return filename
+    }
+    // In Win32, end the binary with .exe extension.
+    filename += '.exe'
+    if (fs.existsSync(filename)) {
+      return filename
+    }
+    // In Win32, certain shells need to use Windows-style mount points, instead of cygwin-style.
+    filename = filename.replace('/c/', 'c:/')
+    if (fs.existsSync(filename)) {
+      return filename
+    }
+    throw 'Could not find qri binary'
   }
-
 
   setupRepo() {
     this.dir = path.join(os.tmpdir(), 'qri_desktop_test_backend')

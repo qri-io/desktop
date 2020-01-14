@@ -19,6 +19,8 @@ describe('Qri End to End tests', function spec () {
   const datasetName = 'e2e_test_csv_datasetcsv'
 
   beforeAll(async () => {
+    jest.setTimeout(20000);
+
     // spin up a new mock backend with a mock registry server attached
     backend = new TestBackendProcess()
     await backend.start()
@@ -27,8 +29,19 @@ describe('Qri End to End tests', function spec () {
     // check the environment variables to determine whether to run headless chrome
     const headless = process.env.HEADLESS_CHROME === 'true'
 
+    // path to the electron application to run with spectron
+    // TODO(dlong): The default path here does not work under Windows (WebDriverIO will stall
+    // in the `init` fuction, and the app opens multiple times in a retry loop). The path ending
+    // in ".exe" will work under Windows. Perhaps other platforms, such as OSX, should also be
+    // using the binary in the "dist" folder.
+    let electronAppPath = path.join(__dirname, '..', '..', 'node_modules', '.bin', 'electron');
+    if (process.platform == 'win32') {
+      electronAppPath = path.join(__dirname, '..', '..', 'node_modules', 'electron',
+                                  'dist', 'electron.exe');
+    }
+
     app = new Application({
-      path: path.join(__dirname, '..', '..', 'node_modules', '.bin', 'electron'),
+      path: electronAppPath,
       args: [path.join(__dirname, '..', '..', 'app')],
 
       // When running in circleci or in, for example, a docker container with no
@@ -37,7 +50,16 @@ describe('Qri End to End tests', function spec () {
       // the docker image type gives us an image that contains chrome and xvfb.
       // The `chromeDriverArgs` options configure chrome driver correctly for
       // headless use.
-      chromeDriverArgs: headless ? ['headless', 'no-sandbox', 'disable-dev-shm-usage'] : []
+      chromeDriverArgs: headless ? ['headless', 'no-sandbox', 'disable-dev-shm-usage'] : [],
+      // Logging will make it easier to debug problems.
+      env: {
+        ELECTRON_ENABLE_LOGGING: true,
+        ELECTRON_ENABLE_STACK_DUMPING: true,
+      },
+      chromeDriverLogPath: path.join(__dirname, '../log/chromedriverlog.txt'),
+      webdriverLogPath: path.join(__dirname, '../log/webdriverlog.txt'),
+      waitTimeout: 10e3,
+      connectionRetryCount: 1,
     })
     fakeDialog.apply(app)
     utils = newE2ETestUtils(app)

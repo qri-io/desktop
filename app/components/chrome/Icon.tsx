@@ -1,15 +1,14 @@
 import * as React from 'react'
-import classNames from 'classnames'
 
 import { FontAwesomeIcon, FontAwesomeIconProps } from '@fortawesome/react-fontawesome'
-import { 
-  faQuestionCircle, 
-  faFont, 
-  faHashtag, 
-  faCode, 
-  faGlasses, 
-  faLock, 
-  faTh, 
+import {
+  faQuestionCircle,
+  faFont,
+  faHashtag,
+  faCode,
+  faGlasses,
+  faLock,
+  faTh,
   faSearch,
   faQuestion,
   faComment,
@@ -33,7 +32,7 @@ interface IconProps {
   color: 'light' | 'medium' | 'dark'
 }
 
-const icons: {[key:  string]: any} = {
+const icons: {[key: string]: any} = {
   'search': faSearch,
   'any': faQuestion,
   'string': faFont,
@@ -59,7 +58,7 @@ const icons: {[key:  string]: any} = {
   'readme': faGlasses,
   'commit': faQuestionCircle,
   'lock': faLock,
-  'transform': faCode,
+  'transform': faCode
 }
 
 export const iconsList = Object.keys(icons)
@@ -69,7 +68,6 @@ const Icon: React.FunctionComponent<IconProps> = ({
   size = 'md',
   color = 'light'
 }) => {
-
   const sizes: {[key: string]: FontAwesomeIconProps['size']} = {
     'sm': 'sm',
     'md': 'lg',
