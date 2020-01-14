@@ -5,14 +5,17 @@
   border-radius: 3px;
   overflow: hidden;
   display: inline-block;
-  cursor: text;
   line-height: 18px;
-  
+
   font-family: 'Avenir Next';
   font-size: 14px;
   font-weight: 300;
 
   resize: none;
+
+  &.dynamic-edit-field-editable {
+    cursor: text;
+  }
 
   &.dynamic-edit-field-large {
     font-size: 17px;

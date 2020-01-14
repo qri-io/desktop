@@ -6,6 +6,7 @@ import DataType from '../app/components/item/DataType'
 import TypePickerOverlay from '../app/components/overlay/TypePickerOverlay'
 import TypePicker, { typesAndDescriptions } from '../app/components/structure/TypePicker'
 import SchemaItem from '../app/components/item/SchemaItem'
+import { Schema as ISchema } from '../app/models/dataset'
 import Schema from '../app/components/structure/Schema'
 
 export default {
@@ -15,30 +16,32 @@ export default {
   }
 }
 
+const sampleSchema: ISchema = {
+  type: 'array',
+  items: {
+    items: [
+      {
+        'title': 'Numerical',
+        'description': 'The integer as represented by a number',
+        'type': ['integer', 'number']
+      },
+      {
+        'title': 'English',
+        'description': 'The numerical value, in english',
+        'type': 'string'
+      },
+      {
+        'title': 'Spanish',
+        'description': 'The numerical value, in spanish',
+        'type': 'string'
+      }
+    ],
+    type: 'array'
+  }
+}
+
 export const schema = () => {
-  const [schema, setSchema] = React.useState({
-    type: 'array',
-    items: {
-      items: [
-        {
-          'title': 'Numerical',
-          'description': 'The integer as represented by a number',
-          'type': 'integer'
-        },
-        {
-          'title': 'English',
-          'description': 'The numerical value, in english',
-          'type': 'string'
-        },
-        {
-          'title': 'Spanish',
-          'description': 'The numerical value, in spanish',
-          'type': 'string'
-        }
-      ],
-      type: 'array'
-    }
-  })
+  const [schema, setSchema] = React.useState(sampleSchema)
 
   const onAccept = (row: number) => {
     return (field: string) => {
@@ -58,6 +61,14 @@ export const schema = () => {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', margin: 20, width: 700 }}>
       <Schema schema={schema} onAccept={onAccept} />
+    </div>
+  )
+}
+
+export const nonEditableSchema = () => {
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', margin: 20, width: 700 }}>
+      <Schema schema={sampleSchema} editable={false}/>
     </div>
   )
 }
@@ -94,8 +105,15 @@ export const typePickerList = () => {
 
 export const typePicker = () => {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', marginTop: 20 }}>
-      <TypePicker onPickType={() => {}} type='string' name='column1' expanded />
+    <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center', marginTop: 20 }}>
+      <div>
+        Non-editable
+        <TypePicker type='string' name='column1' expanded editable={false}/>
+      </div>
+      <div>
+        Editable
+        <TypePicker onPickType={() => {}} type='string' name='column1' expanded />
+      </div>
     </div>
   )
 }

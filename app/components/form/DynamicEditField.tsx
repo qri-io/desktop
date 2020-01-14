@@ -2,7 +2,7 @@ import * as React from 'react'
 import classNames from 'classnames'
 
 interface DynamicEditFieldProps {
-  placeholder: string
+  placeholder?: string
   // validate function expects a value string and returns a boolean
   // called when user changes input value
   // true means the input is valid, false means it's invalid
@@ -14,8 +14,10 @@ interface DynamicEditFieldProps {
   maxLength?: number
   expanded?: boolean
   name: string
-  row: number
+  row?: number
   large?: boolean
+  // editable defaults to true
+  editable?: boolean
 }
 
 const DynamicEditField: React.FunctionComponent<DynamicEditFieldProps> = ({
@@ -29,7 +31,8 @@ const DynamicEditField: React.FunctionComponent<DynamicEditFieldProps> = ({
   maxLength,
   expanded = false,
   row = 0,
-  large = false
+  large = false,
+  editable = true
 }) => {
   const [ newValue, setNewValue ] = React.useState(value)
   const [ isValid, setIsValid ] = React.useState(true)
@@ -129,11 +132,11 @@ const DynamicEditField: React.FunctionComponent<DynamicEditFieldProps> = ({
   }
 
   return (
-    <div style={{ width }} className={classNames('dynamic-edit-field', { 'invalid': !isValid, 'dynamic-edit-field-large': large, 'focused': focused })} >
+    <div style={{ width }} className={classNames('dynamic-edit-field', { 'invalid': !isValid, 'dynamic-edit-field-large': large, 'focused': focused, 'dynamic-edit-field-editable': editable })} >
       <div
         suppressContentEditableWarning={true}
         className={classNames({ 'expanded': expanded })}
-        contentEditable={true}
+        contentEditable={editable}
         onInput={handleChange}
         ref={ref}
         id={`${name}-${row}`}

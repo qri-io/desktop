@@ -4,12 +4,15 @@ import SchemaItem from '../item/SchemaItem'
 
 interface SchemaProps {
   schema: ISchema | undefined
-  onAccept: (row: number) => (field: string) => any
+  onAccept?: (row: number) => (field: string) => any
+  // defaults to true
+  editable: boolean
 }
 
 const Schema: React.FunctionComponent<SchemaProps> = ({
   schema,
-  onAccept
+  onAccept,
+  editable = true
 }) => {
   if (!schema) {
     return <div className='margin'>No schema specified</div>
@@ -33,11 +36,12 @@ const Schema: React.FunctionComponent<SchemaProps> = ({
           <div key={i}>
             <SchemaItem
               row={i}
-              onAccept={onAccept(i)}
+              onAccept={onAccept ? onAccept(i) : undefined}
               title={item.title || ''}
               type={item.type || 'any'}
               description={item.description || ''}
               validation={item.validation || ''}
+              editable={editable}
             />
           </div>
         )

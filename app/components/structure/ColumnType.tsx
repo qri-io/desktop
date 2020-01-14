@@ -6,7 +6,8 @@ import Icon from '../chrome/Icon'
 
 export interface ColumnTypeProps {
   type: DataTypes | DataTypes[]
-  onClick: (e) => void
+  // to make the ColumnType not editable, do not pass in an onClick
+  onClick?: (e) => void
   active?: boolean
   expanded: boolean
 }

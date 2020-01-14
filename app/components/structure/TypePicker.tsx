@@ -8,8 +8,10 @@ import TabPicker from '../nav/TabPicker'
 interface TypePickerProps {
   name: string | number
   type: DataTypes | DataTypes[]
-  onPickType: (type: string | string[]) => void
-  expanded: boolean
+  onPickType?: (type: string | string[]) => void
+  expanded?: boolean
+  // editable defaults to true
+  editable?: boolean
 }
 
 export const typesAndDescriptions: Array<{ type: DataTypes, description: string }> = [
@@ -27,13 +29,14 @@ const TypePicker: React.FunctionComponent<TypePickerProps> = ({
   name,
   type = 'any',
   onPickType,
-  expanded
+  expanded = false,
+  editable = true
 }) => {
   const [pickedType, setPickedType] = React.useState(type)
   const [isOverlayOpen, setOverlayOpen] = React.useState(false)
 
   const tabs = ['single', 'multi']
-  const [activeTab, setActiveTab] = React.useState('single')
+  const [activeTab, setActiveTab] = React.useState(Array.isArray(type) ? 'multi' : 'single')
 
   const handleCancel = () => {
     setOverlayOpen(false)
@@ -42,7 +45,7 @@ const TypePicker: React.FunctionComponent<TypePickerProps> = ({
     let picked = e.target.getAttribute('data-value')
     if (activeTab === 'single') {
       setPickedType(picked)
-      onPickType(picked)
+      if (onPickType) onPickType(picked)
     }
     if (activeTab === 'multi') {
       let pickedTypeList
@@ -56,17 +59,15 @@ const TypePicker: React.FunctionComponent<TypePickerProps> = ({
         })
       }
       setPickedType(pickedTypeList)
-      onPickType(pickedTypeList)
+      if (onPickType) onPickType(pickedTypeList)
     }
   }
 
-  const handleToggleOverlay = (e: MouseEvent<HTMLDivElement, MouseEvent>) => {
-    e.stopPropagation()
+  const handleToggleOverlay = () => {
     setOverlayOpen(!isOverlayOpen)
   }
 
   const handleTabClick = (e: MouseEvent<HTMLDivElement, MouseEvent>) => {
-    e.stopPropagation()
     const tab = e.target.getAttribute('data-value')
     setActiveTab(tab)
   }
@@ -95,7 +96,7 @@ const TypePicker: React.FunctionComponent<TypePickerProps> = ({
       <ColumnType
         type={pickedType}
         active={isOverlayOpen}
-        onClick={handleToggleOverlay}
+        onClick={editable ? handleToggleOverlay : undefined}
         expanded={expanded}
       />
       <div className='type-picker-overlay'>

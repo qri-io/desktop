@@ -123,6 +123,7 @@ const Structure: React.FunctionComponent<StructureProps> = ({ peername, name, st
         <Schema
           schema={structure ? structure.schema : undefined}
           onAccept={handleWriteSchema}
+          editable={!history}
         />
       </div>
     </div>
