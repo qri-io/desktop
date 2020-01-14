@@ -1,6 +1,7 @@
 import * as React from 'react'
 import Overlay from './Overlay'
-import DataType, { DataTypes } from '../item/DataType'
+import { typesAndDescriptions } from '../structure/TypePicker'
+import DataType from '../item/DataType'
 import Icon from '../chrome/Icon'
 
 interface TypePickerOverlayProps {
@@ -17,21 +18,6 @@ interface TypePickerOverlayProps {
   // navigation component, if it exists
   navigation: Element | undefined
 }
-
-// TODO (ramfox):
-// help with descriptions please
-// this should be turned into a type and be moved into models
-// then imported when needed
-export const typesAndDescriptions: Array<{ type: DataTypes, description: string }> = [
-  { type: 'any', description: 'accept any value type' },
-  { type: 'string', description: 'text values' },
-  { type: 'number', description: 'floating point numbers' },
-  { type: 'integer', description: 'whole numbers' },
-  { type: 'array', description: 'list of items' },
-  { type: 'object', description: 'key/value pairs' },
-  { type: 'boolean', description: 'true or false values' },
-  { type: 'null', description: 'empty values' }
-]
 
 const TypePickerOverlay: React.FunctionComponent<TypePickerOverlayProps> = ({
   onCancel,

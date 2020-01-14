@@ -19,6 +19,8 @@ const ColumnType: React.FunctionComponent<ColumnTypeProps> = ({
   if (Array.isArray(type)) {
     if (type.length > 1) {
       shownType = 'multi'
+    } else if (type.length === 0) {
+      shownType = 'any'
     } else {
       shownType = type[0]
     }

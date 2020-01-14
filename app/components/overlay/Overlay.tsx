@@ -44,7 +44,7 @@ const Overlay: React.FunctionComponent<OverlayProps> = ({
     }
 
     window.addEventListener('click', isInOverlay)
-    return (
+    return () => (
       window.addEventListener('click', isInOverlay)
     )
   })

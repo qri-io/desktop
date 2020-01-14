@@ -2,9 +2,9 @@ import React from 'react'
 import ColumnType from '../app/components/structure/ColumnType'
 import Overlay from '../app/components/overlay/Overlay'
 import TabPicker from '../app/components/nav/TabPicker'
-import DataType, { DataTypes } from '../app/components/item/DataType'
-import TypePickerOverlay, { typesAndDescriptions } from '../app/components/overlay/TypePickerOverlay'
-import TypePicker from '../app/components/structure/TypePicker'
+import DataType from '../app/components/item/DataType'
+import TypePickerOverlay from '../app/components/overlay/TypePickerOverlay'
+import TypePicker, { typesAndDescriptions } from '../app/components/structure/TypePicker'
 
 export default {
   title: 'Structure',
@@ -13,16 +13,14 @@ export default {
   }
 }
 
-const allColumnTypes: DataTypes[] = ['string', 'integer', 'number', 'boolean', 'null', 'any']
-
 export const typePickerList = () => {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', marginTop: 20 }}>
       List of TypePickers:
-      {allColumnTypes.map((type, i) => {
+      {typesAndDescriptions.map((el, i) => {
         return (
           <div key={i} style={{ margin: 20 }}>
-            <TypePicker onPickType={() => {}} type={type} name={`column-${i}`} />
+            <TypePicker onPickType={() => {}} type={el.type} name={`column-${i}`} />
           </div>
         )
       })}
@@ -51,10 +49,10 @@ export const columnTypes = () => {
     <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-around' }}>
       <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
         <div style={{ fontWeight: 'bold' }}>Active</div>
-        {allColumnTypes.map((type, i) => {
+        {typesAndDescriptions.map((el, i) => {
           return (
             <div key={i} style={{ margin: 15 }}>
-              <ColumnType type={type} onClick={() => {}} />
+              <ColumnType type={el.type} onClick={() => {}} />
             </div>
           )
         })}
@@ -94,7 +92,7 @@ export const tabPicker = () => {
 
 tabPicker.story = {
   name: 'Tab Picker',
-  parameters: { note: 'used in picker pop-over, but also can be used whereever we need tabs' }
+  parameters: { note: 'used in picker pop-over, but also can be used wherever we need tabs' }
 }
 
 export const dataType = () => {

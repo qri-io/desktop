@@ -11,15 +11,15 @@ interface TypePickerProps {
   onPickType: () => void
 }
 
-const order = [
-  'any',
-  'string',
-  'number',
-  'integer',
-  'object',
-  'array',
-  'boolean',
-  'null'
+export const typesAndDescriptions: Array<{ type: DataTypes, description: string }> = [
+  { type: 'any', description: 'accept any value type' },
+  { type: 'string', description: 'text values' },
+  { type: 'number', description: 'floating point numbers' },
+  { type: 'integer', description: 'whole numbers' },
+  { type: 'array', description: 'list of items' },
+  { type: 'object', description: 'key/value pairs' },
+  { type: 'boolean', description: 'true or false values' },
+  { type: 'null', description: 'empty values' }
 ]
 
 const TypePicker: React.FunctionComponent<TypePickerProps> = ({
@@ -44,8 +44,8 @@ const TypePicker: React.FunctionComponent<TypePickerProps> = ({
       if (pickedType.includes(picked)) {
         pickedTypeList = pickedType.filter((type) => type !== picked)
       } else {
-        pickedTypeList = order.filter((type: DataTypes) => {
-          return type === picked || pickedType.includes(type)
+        pickedTypeList = typesAndDescriptions.filter((el: any) => {
+          return el.type === picked || pickedType.includes(el.type)
         })
       }
       setPickedType(pickedTypeList)
