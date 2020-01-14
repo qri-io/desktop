@@ -1,0 +1,52 @@
+.overlay {
+  border-radius: 2px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0px 0px 6px rgba(0,0,0,0.20);
+  background: #fff;
+
+  .title-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 9px 7px;
+    background: #F5F7FA;
+    text-transform: uppercase;
+    height: 25px;
+    filter: none;
+  }
+
+  .content {
+    padding: 0;
+    overflow-x: auto;
+    overflow-y: auto;
+    height: 100%;
+  }
+}
+
+.overlay.closed {
+  display: none;
+}
+
+.type-picker-overlay-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 3px 7px 3px 7px;
+  align-items: center;
+  // border: solid 1px #fff;
+
+  &:hover {
+    cursor: pointer;
+    background-color: #F5F7FA;
+  }
+
+  &> * {
+    pointer-events: none;
+  }
+
+  .icon-wrap {
+    margin-right: 5px;
+  }
+}

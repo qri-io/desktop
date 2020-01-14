@@ -17,6 +17,11 @@ export const allIcons = () => {
           'column', justifyContent: 'center', alignItems: 'space-between' }}>
             <p>{icon}</p>
             <p style={{display: 'flex', justifyContent:'space-between'}}>
+              <Icon icon={icon} size='xs' color='dark' />
+              <Icon icon={icon} size='xs' color='medium' />
+              <span style={{background: '#000'}}><Icon icon={icon} size='xs' color='light' /></span>
+            </p>
+            <p style={{display: 'flex', justifyContent:'space-between'}}>
               <Icon icon={icon} size='sm' color='dark' />
               <Icon icon={icon} size='sm' color='medium' />
               <span style={{background: '#000'}}><Icon icon={icon} size='sm' color='light' /></span>
