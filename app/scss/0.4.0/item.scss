@@ -15,20 +15,28 @@
 
 .schema-item {
   width: 100%;
-  padding: 4px 10px;
+  padding: 10px 10px 4px 10px;
   border: solid 1px #E8E9ED;
+  border-top: none;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   min-height: 45px;
 
 
   .schema-item-icon {
+    padding-top: 4px;
+    padding-left: 7px;
+    width: 14px;
     flex: 0 0 14px;
   }
 
   &.expanded {
     align-items: flex-start 
+  }
+
+  &.top {
+    border-top: solid 1px #E8E9ED;
   }
 }

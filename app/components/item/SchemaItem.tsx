@@ -25,23 +25,53 @@ const SchemaItemProps: React.FunctionComponent<SchemaItemProps> = ({
   const [expanded, setExpanded] = React.useState(false)
 
   // TODO (ramfox): do we have max lengths for title, description?
-
   return (
-    <div className={classNames('schema-item', { 'expanded': expanded })}>
+    <div className={classNames('schema-item', { 'expanded': expanded, 'top': row === 0 })} row={row}>
       <div className='schema-item-icon' onClick={() => setExpanded((prev) => !prev)} >
         <Icon icon={expanded ? 'down' : 'right'} size='md' color='medium'/>
       </div>
       <div>
-        <DynamicEditField placeholder='title' value={title} onAccept={onAccept('title')} allowEmpty={false} />
+        <DynamicEditField
+          row={row}
+          name='title'
+          placeholder='title'
+          value={title}
+          onAccept={onAccept('title')}
+          allowEmpty={false}
+          large
+          width={150}
+          expanded={expanded}
+        />
       </div>
       <div>
-        <TypePicker name={row} onPickType={onAccept('type')} type={type} expanded={expanded} />
+        <TypePicker
+          name={row}
+          onPickType={onAccept('type')}
+          type={type}
+          expanded={expanded}
+        />
       </div>
       <div>
-        <DynamicEditField name='description' placeholder='description' value={description} onAccept={onAccept('description')} allowEmpty expanded={expanded}/>
+        <DynamicEditField
+          row={row}
+          name='description'
+          placeholder='description'
+          value={description}
+          onAccept={onAccept('description')}
+          allowEmpty expanded={expanded}
+          width={200}
+        />
       </div>
       <div>
-        <DynamicEditField placeholder='validation' value={validation} onAccept={onAccept('validation')} allowEmpty expanded={expanded}/>
+        <DynamicEditField
+          row={row}
+          name='validation'
+          placeholder='validation'
+          value={validation}
+          onAccept={onAccept('validation')}
+          allowEmpty expanded={expanded}
+          width={100}
+        />
       </div>
     </div>
   )

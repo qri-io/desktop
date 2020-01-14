@@ -49,8 +49,10 @@ const TypePicker: React.FunctionComponent<TypePickerProps> = ({
       if (pickedType.includes(picked)) {
         pickedTypeList = pickedType.filter((type) => type !== picked)
       } else {
-        pickedTypeList = typesAndDescriptions.filter((el: any) => {
-          return el.type === picked || pickedType.includes(el.type)
+        pickedTypeList = typesAndDescriptions.map((el: any): DataTypes => {
+          return el.type
+        }).filter((type: DataTypes) => {
+          return type === picked || pickedType.includes(type)
         })
       }
       setPickedType(pickedTypeList)

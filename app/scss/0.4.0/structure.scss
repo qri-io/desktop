@@ -21,6 +21,13 @@
   border-radius: 3px;
   transition: 200ms;
 
+  div {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+  }
+
   .multi {
     padding-bottom: 3px;
   }
@@ -47,4 +54,31 @@
   border: solid 1px #D8DFE6;
   border-radius: 3px;
   box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.1)
+}
+
+.schema-wrap {
+  width: 100%;
+  
+  .schema-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'Rubik';
+    font-size: 10px;
+    font-weight: 500;
+    color: #4D4D4D;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    padding: 10px;
+    border: solid 1px #E8E9ED;
+    border-bottom: none;
+  
+    div:first-child {
+      margin-left: 40px;
+    }
+    div:last-child {
+      margin-right: 20px;
+    }
+  }
 }

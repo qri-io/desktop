@@ -6,12 +6,60 @@ import DataType from '../app/components/item/DataType'
 import TypePickerOverlay from '../app/components/overlay/TypePickerOverlay'
 import TypePicker, { typesAndDescriptions } from '../app/components/structure/TypePicker'
 import SchemaItem from '../app/components/item/SchemaItem'
+import Schema from '../app/components/structure/Schema'
 
 export default {
   title: 'Structure',
   parameters: {
     notes: ''
   }
+}
+
+export const schema = () => {
+  const [schema, setSchema] = React.useState({
+    type: 'array',
+    items: {
+      items: [
+        {
+          'title': 'Numerical',
+          'description': 'The integer as represented by a number',
+          'type': 'integer'
+        },
+        {
+          'title': 'English',
+          'description': 'The numerical value, in english',
+          'type': 'string'
+        },
+        {
+          'title': 'Spanish',
+          'description': 'The numerical value, in spanish',
+          'type': 'string'
+        }
+      ],
+      type: 'array'
+    }
+  })
+
+  const onAccept = (row: number) => {
+    return (field: string) => {
+      return (value: string) => {
+        setSchema((prev) => {
+          let s = { ...prev }
+          try {
+            s.items.items[row][field] = value
+          } catch (e) {
+            throw e
+          }
+          return s
+        })
+      }
+    }
+  }
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', margin: 20, width: 700 }}>
+      <Schema schema={schema} onAccept={onAccept} />
+    </div>
+  )
 }
 
 export const schemaItem = () => {

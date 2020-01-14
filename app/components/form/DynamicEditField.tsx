@@ -1,5 +1,6 @@
 import * as React from 'react'
 import classNames from 'classnames'
+import { max } from 'moment'
 
 interface DynamicEditFieldProps {
   placeholder: string
@@ -14,6 +15,8 @@ interface DynamicEditFieldProps {
   maxLength?: number
   expanded?: boolean
   name: string
+  row: number
+  large?: boolean
 }
 
 const DynamicEditField: React.FunctionComponent<DynamicEditFieldProps> = ({
@@ -25,7 +28,9 @@ const DynamicEditField: React.FunctionComponent<DynamicEditFieldProps> = ({
   allowEmpty = true,
   width,
   maxLength,
-  expanded = false
+  expanded = false,
+  row = 0,
+  large = false
 }) => {
   const [ newValue, setNewValue ] = React.useState(value)
   const [ isValid, setIsValid ] = React.useState(true)
@@ -62,6 +67,7 @@ const DynamicEditField: React.FunctionComponent<DynamicEditFieldProps> = ({
   const handleKeyDown = (e: any) => {
     // cancel on esc
     if (e.keyCode === 27) {
+      console.log('hitting escape')
       cancelEdit()
     }
 
@@ -103,48 +109,39 @@ const DynamicEditField: React.FunctionComponent<DynamicEditFieldProps> = ({
 
   const handleChange = async (e: any) => {
     let { value } = e.target
+    if (maxLength && value.length > maxLength) {
+      return
+    }
     if (validate) {
       setIsValid(validate(value))
     }
     setNewValue(value)
   }
 
-  const handleInput = (e) => {
-    console.log(e.target.style)
-    console.log(e.target.scrollHeight)
-    e.target.style.height = `${e.target.scrollHeight}px`
+  const onFocus = () => {
+    setFocused(true)
+    ref.current.scrollLeft = 0
   }
 
-  if (expanded) {
-    return (<textarea
-      // style={{ height: ref.current.scrollHeight }}
-      onInput={handleInput}
-      onChange={handleChange}
-      ref={ref}
-      id={name}
-      className={classNames('dynamic-edit-field', { 'invalid': !isValid })}
-      placeholder={placeholder}
-      value={newValue}
-      onFocus={() => setFocused(true)}
-      onBlur={() => setFocused(false)}
-      maxLength={maxLength}
-    />)
+  const onBlur = () => {
+    setFocused(false)
+    ref.current.scrollLeft = 0
   }
 
   return (
-    <input
-      style={{ width }}
-      onChange={handleChange}
-      type='text'
-      ref={ref}
-      id={name}
-      className={classNames('dynamic-edit-field', { 'invalid': !isValid })}
-      placeholder={placeholder}
-      value={newValue}
-      onFocus={() => setFocused(true)}
-      onBlur={() => setFocused(false)}
-      maxLength={maxLength}
-    />
+    <div style={{ width }} className={classNames('dynamic-edit-field', { 'invalid': !isValid, 'dynamic-edit-field-large': large, 'focused': focused })} >
+      <div
+        suppressContentEditableWarning={true}
+        className={classNames({ 'expanded': expanded })}
+        contentEditable={true}
+        onChange={handleChange}
+        ref={ref}
+        id={`${name}-${row}`}
+        data-placeholder={placeholder}
+        onFocus={onFocus}
+        onBlur={onBlur}
+      >{newValue}</div>
+    </div>
   )
 }
 
