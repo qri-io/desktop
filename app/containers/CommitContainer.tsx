@@ -13,7 +13,7 @@ const mapStateToProps = (state: Store) => {
 
   // get data for the currently selected component
   return {
-    isLoading: false,
+    isLoading: mutations.save.isLoading,
     datasetRef: `${peername}/${name}`,
     title,
     message,

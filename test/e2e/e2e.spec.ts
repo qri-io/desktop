@@ -23,7 +23,7 @@ describe('Qri End to End tests', function spec () {
   const password = '1234567890!!'
 
   beforeAll(async () => {
-    jest.setTimeout(20000);
+    jest.setTimeout(30000)
 
     // spin up a new mock backend with a mock registry server attached
     backend = new TestBackendProcess()
@@ -38,10 +38,10 @@ describe('Qri End to End tests', function spec () {
     // in the `init` fuction, and the app opens multiple times in a retry loop). The path ending
     // in ".exe" will work under Windows. Perhaps other platforms, such as OSX, should also be
     // using the binary in the "dist" folder.
-    let electronAppPath = path.join(__dirname, '..', '..', 'node_modules', '.bin', 'electron');
-    if (process.platform == 'win32') {
+    let electronAppPath = path.join(__dirname, '..', '..', 'node_modules', '.bin', 'electron')
+    if (process.platform === 'win32') {
       electronAppPath = path.join(__dirname, '..', '..', 'node_modules', 'electron',
-                                  'dist', 'electron.exe');
+        'dist', 'electron.exe')
     }
 
     app = new Application({
@@ -58,12 +58,12 @@ describe('Qri End to End tests', function spec () {
       // Logging will make it easier to debug problems.
       env: {
         ELECTRON_ENABLE_LOGGING: true,
-        ELECTRON_ENABLE_STACK_DUMPING: true,
+        ELECTRON_ENABLE_STACK_DUMPING: true
       },
       chromeDriverLogPath: path.join(__dirname, '../log/chromedriverlog.txt'),
       webdriverLogPath: path.join(__dirname, '../log/webdriverlog.txt'),
       waitTimeout: 10e3,
-      connectionRetryCount: 1,
+      connectionRetryCount: 1
     })
     fakeDialog.apply(app)
     utils = newE2ETestUtils(app)
@@ -213,7 +213,8 @@ describe('Qri End to End tests', function spec () {
       click,
       onStatusTab,
       exists,
-      doesNotExist
+      doesNotExist,
+      waitForNotExist
     } = utils
 
     // at dataset
@@ -222,16 +223,14 @@ describe('Qri End to End tests', function spec () {
     await exists(['#body-status.disabled'])
     // click #checkout to open checkout modal
     await click('#checkout')
-    // create filepath
-    const savePath = path.join(backend.dir, datasetName)
     // mock the dialog
-    await fakeDialog.mock([ { method: 'showOpenDialogSync', value: [savePath] } ])
+    await fakeDialog.mock([ { method: 'showOpenDialogSync', value: [backend.dir] } ])
     // click #chooseSavePath to open dialog
     await click('#chooseSavePath')
     // click #submit
     await click('#submit')
     // expect modal to be gone
-    await doesNotExist('#remove-dataset')
+    await waitForNotExist('#checkout-dataset')
     // atLocation
     await atLocation('#/dataset')
     // check we are at status tab
@@ -307,7 +306,6 @@ describe('Qri End to End tests', function spec () {
     const metaDescription = 'new dataset description'
     await setValue('#title', metaTitle)
     await setValue('#description', metaDescription)
-    // meta status should be 'added'
     await checkStatus('meta', 'added')
     // commit should be enabled
     await exists(['.clear-to-commit #commit-status'])
@@ -357,6 +355,8 @@ describe('Qri End to End tests', function spec () {
     await setValue('#dataset-name-input', 'test_dataset')
     // get correct class
     await doesNotExist('#dataset-name-input.invalid')
+    // submit by clicking away
+    await click('#dataset-reference')
   })
 
   // remove a dataset is commented out until we have a keyboard command in

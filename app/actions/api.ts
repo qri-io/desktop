@@ -6,6 +6,7 @@ import { CALL_API, ApiAction, ApiActionThunk, chainSuccess } from '../store/api'
 import { SelectedComponent, MyDatasets } from '../models/store'
 import { actionWithPagination } from '../utils/pagination'
 import { openToast, setImportFileDetails } from './ui'
+import { setSaveComplete } from './mutations'
 import { setWorkingDataset, setSelectedListItem, setActiveTab, clearSelection } from './selections'
 import {
   mapDataset,
@@ -443,17 +444,22 @@ export function saveWorkingDatasetAndFetch (): ApiActionThunk {
   return async (dispatch, getState) => {
     const whenOk = chainSuccess(dispatch, getState)
     let response: Action
-
+    let path: string
     try {
       response = await saveWorkingDataset()(dispatch, getState)
-      const path = response.payload.data.dataset.path
+      path = response.payload.data.path
       response = await whenOk(fetchWorkingDatasetDetails())(response)
+    } catch (action) {
+      dispatch(setSaveComplete(action.payload.err.message))
+      dispatch(openToast('error', 'commit', action.payload.err.message))
+      throw action
+    }
+    if (getActionType(response) === 'success') {
+      dispatch(setSaveComplete())
+      dispatch(openToast('success', 'commit', 'commit success!'))
       dispatch(setSelectedListItem('commit', path))
       dispatch(setActiveTab('history'))
       dispatch(setSelectedListItem('commitComponent', DEFAULT_SELECTED_COMPONENT))
-    } catch (action) {
-      dispatch(openToast('error', 'commit', action.payload.err.message))
-      throw action
     }
     return response
   }

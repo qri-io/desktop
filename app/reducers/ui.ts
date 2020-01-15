@@ -3,7 +3,6 @@ import { ipcRenderer } from 'electron'
 
 import store from '../utils/localStore'
 import { apiActionTypes } from '../utils/actionType'
-import { SAVE_SUCC, SAVE_FAIL } from '../reducers/mutations'
 import { ModalType } from '../models/modals'
 import { DetailsType } from '../models/details'
 import {
@@ -144,27 +143,6 @@ export default (state = initialState, action: AnyAction) => {
       return {
         ...state,
         detailsBar: { type: DetailsType.NoDetails }
-      }
-
-    // listen for SAVE_SUCC and SAVE_FAIL to set the toast
-    case SAVE_SUCC:
-      return {
-        ...state,
-        toast: {
-          type: 'success',
-          message: 'Commit Successful!',
-          visible: true
-        }
-      }
-
-    case SAVE_FAIL:
-      return {
-        ...state,
-        toast: {
-          type: 'error',
-          message: 'Oops, something went wrong with this commit',
-          visible: true
-        }
       }
 
     case UI_SIGNOUT:

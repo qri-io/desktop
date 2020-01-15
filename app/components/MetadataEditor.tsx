@@ -82,12 +82,6 @@ const MetadataEditor: React.FunctionComponent<MetadataEditorProps> = (props: Met
   const [stateMeta, setStateMeta] = React.useState(meta)
   const [previousMeta, setPreviousMeta] = React.useState(meta)
 
-  // when new meta comes from above, reset local state
-  React.useEffect(() => {
-    setStateMeta(meta)
-    setPreviousMeta(meta)
-  }, [meta])
-
   if (!meta) {
     return <SpinnerWithIcon loading={true} />
   }

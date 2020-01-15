@@ -18,6 +18,7 @@ const initialState: WorkingDataset = {
   name: '',
   status: {},
   isLoading: false,
+  isCommiting: false,
   fsiPath: '',
   published: true,
   hasHistory: true,
