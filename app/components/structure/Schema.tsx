@@ -1,6 +1,8 @@
 import * as React from 'react'
 import { Schema as ISchema } from '../../models/dataset'
 import SchemaItem from '../item/SchemaItem'
+import { typesAndDescriptions } from './TypePicker'
+import { DataTypes } from '../item/DataType'
 
 interface SchemaProps {
   schema: ISchema | undefined
@@ -23,6 +25,18 @@ const Schema: React.FunctionComponent<SchemaProps> = ({
 
   const items = schema.items.items
 
+  const typeList = typesAndDescriptions.map((el) => el.type)
+
+  const handleTypes = (types: DataTypes): DataTypes => {
+    // if there is an unknown type, return 'any'
+    if (!types ||
+        (typeof types === 'string' && !typeList.includes(types)) ||
+        (Array.isArray(types) && (types.length === 0 || types.some((el) => !typeList.includes(el))))) {
+      return 'any'
+    }
+    return types
+  }
+
   return (
     <div className='schema-wrap'>
       <div className='schema-header'>
@@ -38,7 +52,7 @@ const Schema: React.FunctionComponent<SchemaProps> = ({
               row={i}
               onAccept={onAccept ? onAccept(i) : undefined}
               title={item.title || ''}
-              type={item.type || 'any'}
+              type={handleTypes(item.type)}
               description={item.description || ''}
               validation={item.validation || ''}
               editable={editable}

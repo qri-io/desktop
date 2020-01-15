@@ -49,12 +49,17 @@ const TypePicker: React.FunctionComponent<TypePickerProps> = ({
     }
     if (activeTab === 'multi') {
       let pickedTypeList
-      if (pickedType.includes(picked)) {
+      // if they picked 'any', only 'any' should be picked
+      // since 'any' emcompasses all types
+      if (picked === 'any') {
+        pickedTypeList = ['any']
+      } else if (pickedType.includes(picked)) {
         pickedTypeList = pickedType.filter((type) => type !== picked)
       } else {
         pickedTypeList = typesAndDescriptions.map((el: any): DataTypes => {
           return el.type
         }).filter((type: DataTypes) => {
+          if (type === 'any') return false
           return type === picked || pickedType.includes(type)
         })
       }

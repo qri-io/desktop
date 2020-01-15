@@ -80,14 +80,23 @@ const Structure: React.FunctionComponent<StructureProps> = ({ peername, name, st
 
   const handleWriteSchema = (row: number) => {
     return (field: string) => {
-      return (value: string) => {
+      return (value: DataTypes) => {
+        let val = value
+        if (Array.isArray(value) && value.length === 1) {
+          val = value[0]
+        }
+        // if the value is 'any', we don't want to make
+        // any type assertions, let's remove 'type' from this
+        // row and field
+        if (val === 'any') {
+          val = undefined
+        }
         const s = { ...structure.schema }
         try {
-          s.items.items[row][field] = value
+          s.items.items[row][field] = val
         } catch (e) {
           throw e
         }
-        console.log('writing')
         write(peername, name, {
           structure: {
             ...structure,

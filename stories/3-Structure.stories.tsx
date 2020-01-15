@@ -33,7 +33,11 @@ const sampleSchema: ISchema = {
       {
         'title': 'Spanish',
         'description': 'The numerical value, in spanish',
-        'type': 'string'
+        'type': 'not a type'
+      },
+      {
+        'title': 'Misc',
+        'description': 'Can be anything'
       }
     ],
     type: 'array'
@@ -63,6 +67,11 @@ export const schema = () => {
       <Schema schema={schema} onAccept={onAccept} />
     </div>
   )
+}
+
+schema.story = {
+  name: 'Schema',
+  parameters: { note: 'The initial schema given has 1) multiple types, 2) a single type, 3) an unknown type, and 4) no type' }
 }
 
 export const nonEditableSchema = () => {
