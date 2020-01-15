@@ -2,7 +2,7 @@ import React from 'react'
 import { BrowserRouter as Router } from 'react-router-dom'
 
 import Navbar from '../app/components/nav/Navbar'
-import DatasetOverview from '../app/components/network/DatasetOverview'
+import DatasetPreview from '../app/components/dataset/DatasetPreview'
 
 const cities = require('./data/cities.dataset.json')
 
@@ -15,11 +15,11 @@ export default {
 
 export const std = () => {
   return (
-    <div style={{ margin: 0, padding: 30, height: '100%', background: '#F5F7FA' }}>
+    <div style={{ margin: 0, padding: 30, minHeight: '100%', background: '#F5F7FA' }}>
       <div style={{ width: 800, margin: '2em auto' }}>
         <Router>
           <Navbar location='foo/bar' />
-          <DatasetOverview
+          <DatasetPreview
             dataset={cities}
             peername='galgamesh'
             name='world_bank_population'

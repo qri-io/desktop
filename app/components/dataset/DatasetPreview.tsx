@@ -5,20 +5,21 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faInfoCircle, faExternalLinkAlt, faGlasses, faTh, faTags } from '@fortawesome/free-solid-svg-icons'
 import { faClipboard } from '@fortawesome/free-regular-svg-icons'
 
-// import { Dataset } from '../models/schema'
-// import BodyPreview from './BodyPreview'
+import Dataset from '../models/dataset'
+import BodySegment from './BodySegment'
+import ReadmeSegment from './ReadmeSegment'
 // import DatasetHeader from '../ui/DatasetHeader'
 // import { fileSize } from '../util/humanize'
 
-interface DatasetOverviewProps {
-  dataset: Record<string, any>
+interface DatasetPreviewProps {
+  dataset: Dataset
   peername?: string
   name?: string
   hash?: string
   readme?: HTMLElement
 }
 
-const DatasetOverview: React.FunctionComponent<DatasetOverviewProps> = (props) => {
+const DatasetPreview: React.FunctionComponent<DatasetPreviewProps> = (props) => {
   const { peername, name, dataset, readme } = props
   const { meta, structure, commit } = dataset
 
@@ -107,10 +108,8 @@ const DatasetOverview: React.FunctionComponent<DatasetOverviewProps> = (props) =
           </div>
         </div>
 
-        <div className='border-top border-right border-left rounded-top p-3'>
-          <FontAwesomeIcon icon={faTh}/>   <strong className='ml-2'>Body Preview</strong>
-        </div>
-        {/* {body && <BodyPreview body={body} structure={structure} />} */}
+        <BodySegment data={dataset} />
+        <ReadmeSegment data={dataset} />
 
         <div id='popover-content' style={{ display: 'none' }}>
           <div className='popover-section popover-section-top'>
@@ -138,4 +137,4 @@ const DatasetOverview: React.FunctionComponent<DatasetOverviewProps> = (props) =
   )
 }
 
-export default DatasetOverview
+export default DatasetPreview
