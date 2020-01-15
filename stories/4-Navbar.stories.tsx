@@ -1,9 +1,10 @@
 import React from 'react'
-import Navbar from '../app/components/nav/Navbar'
 import { BrowserRouter as Router } from 'react-router-dom'
 
+import Navbar from '../app/components/nav/Navbar'
+
 export default {
-  title: 'Navbar',
+  title: 'Chrome | Navbar',
   parameters: {
     notes: ''
   }

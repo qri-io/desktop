@@ -1,20 +1,14 @@
 import * as React from 'react'
 import moment from 'moment'
 import numeral from 'numeral'
-import Dataset from '../../models/dataset'
+import { SearchResult } from '../../models/search'
 
-interface DatasetItemProps {
-  path?: string
-  peername?: string
-  name?: string
-
-  dataset: Dataset
-  hideUsername?: boolean
+interface SearchResultItemProps {
+  data: SearchResult
 }
 
-const DatasetItem: React.FunctionComponent<DatasetItemProps> = (props) => {
-  const { path, peername, name, dataset, hideUsername } = props
-  const { meta, structure = {}, commit = {} } = dataset
+const DatasetResult: React.FunctionComponent<SearchResultItemProps> = ({ data }) => {
+  const { name, path, peername, meta, structure = {}, commit = {} } = data.Value
   const title = (meta && meta.title) ? meta.title : `No Title - ${name}`
 
   const { entries = 0, length = 0 } = structure
@@ -22,7 +16,7 @@ const DatasetItem: React.FunctionComponent<DatasetItemProps> = (props) => {
 
   return (
     <div className='dataset_item' key={path}>
-      <a className='reference-link' href={`/${peername}/${name}`}>{hideUsername ? `${name}` : `${peername}/${name}`}</a>
+      <a className='reference-link' href={`/${peername}/${name}`}>{peername}/{name}</a>
       {meta && meta.theme && <div className='themes'>
         {meta.theme.map((keyword: string) => (
           <div key='theme' className='theme badge badge-secondary ml-2'>{keyword}</div>
@@ -38,4 +32,13 @@ const DatasetItem: React.FunctionComponent<DatasetItemProps> = (props) => {
   )
 }
 
-export default DatasetItem
+const SearchResultItem: React.FunctionComponent<SearchResultItemProps> = ({ data }) => {
+  switch (data.Type) {
+    case 'dataset':
+      return <DatasetResult data={data} />
+    default:
+      return <div><i>unknown search result type</i></div>
+  }
+}
+
+export default SearchResultItem
