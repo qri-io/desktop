@@ -44,3 +44,28 @@
     color: #CBCBCB;
   }
 }
+
+.dataset_item {
+  padding: 10px;
+  background: white;
+  border-radius: 5px;
+  border: 1px solid #E8EDF2;
+  max-width: 600px;
+
+  .reference-link a {
+    font-family: $font-family-sans-serif;
+  }
+  
+  .title {
+    font-weight: bold;
+    margin-top: 6px;
+  }
+
+  .detail {
+    font-size: .9rem;
+    display: inline-block;
+    font-weight: $font-weight-regular;
+    color: #B1B1B1;
+    margin-right: 10px;
+  }
+}
