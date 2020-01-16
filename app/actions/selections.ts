@@ -15,9 +15,6 @@ export const setActiveTab = (activeTab: string) => {
 }
 
 export const setSelectedListItem = (type: string, selectedListItem: string) => {
-  if (type === 'commit') {
-    console.log('setting to', selectedListItem)
-  }
   return {
     type: SELECTIONS_SET_SELECTED_LISTITEM,
     payload: {

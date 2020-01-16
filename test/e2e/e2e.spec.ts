@@ -23,7 +23,7 @@ describe('Qri End to End tests', function spec () {
   const password = '1234567890!!'
 
   beforeAll(async () => {
-    jest.setTimeout(30000)
+    jest.setTimeout(60000)
 
     // spin up a new mock backend with a mock registry server attached
     backend = new TestBackendProcess()
@@ -206,6 +206,31 @@ describe('Qri End to End tests', function spec () {
     await checkStatus('structure', 'added')
   })
 
+  it ('navigate to collection and back to dataset', async () => {
+    const {
+      atLocation,
+      click,
+      expectTextToBe,
+      onHistoryTab
+    } = utils
+
+    await click('#history-tab')
+    await onHistoryTab()
+
+    await click('#collection')
+    // ensure we have redirected to the collection page
+    await atLocation('#/collection')
+    // click the dataset
+    const ref = `#${username}-${datasetName}`
+    await click(ref)
+    // ensure we have redirected to the dataset page
+    await atLocation('#/dataset')
+    // ensure we are still at the history tab
+    await onHistoryTab()
+    // ensure we have a commit title
+    await expectTextToBe('#commit-title', 'created dataset')
+  })
+
   // checkout
   it('checkout a dataset', async () => {
     const {
@@ -219,6 +244,9 @@ describe('Qri End to End tests', function spec () {
 
     // at dataset
     await click('#dataset')
+    // at status
+    await click('#status-tab')
+    await onStatusTab()
     // body is disabled
     await exists(['#body-status.disabled'])
     // click #checkout to open checkout modal

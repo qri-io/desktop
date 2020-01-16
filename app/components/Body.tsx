@@ -3,8 +3,8 @@ import * as React from 'react'
 import BodyTable from './BodyTable'
 import BodyJson from './BodyJson'
 import { ApiAction } from '../store/api'
+import { Structure } from '../models/dataset'
 
-import Spinner from './chrome/Spinner'
 import { PageInfo, WorkingDataset } from '../models/store'
 import { Action } from 'redux'
 import { DetailsType, Details, StatsDetails } from '../models/details'
@@ -15,6 +15,7 @@ export interface BodyProps {
   name: string
   path: string
   value: any[]
+  structure: Structure
   pageInfo: PageInfo
   history: boolean
   format: string
@@ -35,13 +36,12 @@ export interface Header {
   type: string
 }
 
-const extractColumnHeaders = (workingDataset: WorkingDataset): undefined | object => {
-  const structure = workingDataset.components.structure.value
+const extractColumnHeaders = (structure: any, value: any): undefined | object => {
   const schema = structure.schema
 
   if (!schema) {
     // iterate over first row of body
-    const firstRow = workingDataset.components.body.value && workingDataset.components.body.value[0]
+    const firstRow = value && value[0]
     if (!firstRow) return undefined
 
     // need to take a slice from index 1 because we have mutated the
@@ -63,22 +63,19 @@ const Body: React.FunctionComponent<BodyProps> = (props) => {
   const {
     value,
     pageInfo,
-    workingDataset,
     history,
     fetchBody,
     format,
     fetchCommitBody,
     details,
     setDetailsBar,
-    stats
+    stats,
+    structure
   } = props
 
   const onFetch = history ? fetchCommitBody : fetchBody
 
-  const headers = extractColumnHeaders(workingDataset)
-
-  // if there's no value or format, don't show anything yet
-  const showSpinner = !(value && format)
+  const headers = extractColumnHeaders(structure, value)
 
   const makeStatsDetails = (stats: {[key: string]: any}, title: string, index: number): StatsDetails => {
     return {
@@ -110,31 +107,20 @@ const Body: React.FunctionComponent<BodyProps> = (props) => {
 
   return (
     <div className='transition-group'>
-      <>
-        { showSpinner &&
-          <div className='spinner-container'>
-            <Spinner />
-          </div>
-        }
-        { !showSpinner &&
-          <>
-            {shouldDisplayTable(value, format)
-              ? <BodyTable
-                headers={headers}
-                body={value}
-                pageInfo={pageInfo}
-                highlighedColumnIndex={details.type !== DetailsType.NoDetails ? details.index : undefined}
-                onFetch={onFetch}
-                setDetailsBar={handleToggleDetailsBar}
-              />
-              : <BodyJson
-                body={value}
-                pageInfo={pageInfo}
-              />
-            }
-          </>
-        }
-      </>
+      {shouldDisplayTable(value, format)
+        ? <BodyTable
+          headers={headers}
+          body={value}
+          pageInfo={pageInfo}
+          highlighedColumnIndex={details.type !== DetailsType.NoDetails ? details.index : undefined}
+          onFetch={onFetch}
+          setDetailsBar={handleToggleDetailsBar}
+        />
+        : <BodyJson
+          body={value}
+          pageInfo={pageInfo}
+        />
+      }
     </div>
   )
 }
