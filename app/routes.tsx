@@ -1,3 +1,4 @@
+// globals __BUILD__
 import * as React from 'react'
 import { Switch, Route, Redirect } from 'react-router-dom'
 import { ipcRenderer } from 'electron'
@@ -6,6 +7,7 @@ import Signup from './components/Signup'
 import Signin from './components/Signin'
 import CollectionContainer from './containers/CollectionContainer'
 import DatasetContainer from './containers/DatasetContainer'
+import NetworkContainer from './containers/NetworkContainer'
 
 export default function Routes (props: any) {
   const {
@@ -41,6 +43,15 @@ export default function Routes (props: any) {
             if (qriCloudAuthenticated) return <Redirect to='/collection' />
             return <Signin signin={signin} onSuccess={setQriCloudAuthenticated} />
           }} />
+
+          { __BUILD__.ENABLE_NETWORK_SECTION &&
+            <Route exact path='/network' render={() => {
+              ipcRenderer.send('show-dataset-menu', false)
+              if (!hasAcceptedTOS) return <Redirect to='/' />
+              if (!qriCloudAuthenticated) return <Redirect to='/signup' />
+              return <NetworkContainer setModal={setModal} />
+            }} />
+          }
 
           {/* Datasets */}
           <Route exact path='/collection' render={() => {

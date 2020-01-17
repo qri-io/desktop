@@ -13,7 +13,7 @@ import { Modal } from '../models/modals'
 import classNames from 'classnames'
 import Spinner from './chrome/Spinner'
 
-import { DatasetDetailsSubtext } from './DatasetList'
+import DatasetDetailsSubtext from './dataset/DatasetDetailsSubtext'
 import { WorkingDataset, ComponentType, Selections, History, SelectedComponent } from '../models/store'
 import ContextMenuArea from 'react-electron-contextmenu'
 import { MenuItemConstructorOptions, remote, ipcRenderer } from 'electron'

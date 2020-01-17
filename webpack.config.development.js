@@ -141,7 +141,19 @@ module.exports = merge(baseConfig, {
     new webpack.NoEmitOnErrorsPlugin(),
 
     new webpack.DefinePlugin({
-      'process.env.NODE_ENV': JSON.stringify('development')
+      // manually set NODE_ENV
+      // TODO (b5) - is this even a good idea?
+      'process.env.NODE_ENV': JSON.stringify('development'),
+
+      /**
+       * compile-time flags are stored under a global __BUILD__ constant. 
+       * Useful for allowing different behaviour between development builds and
+       * release builds. These should be synted with
+       *
+       */
+      '__BUILD__': {
+        'ENABLE_NETWORK_SECTION': JSON.stringify(true),
+      }
     }),
 
     new webpack.LoaderOptionsPlugin({

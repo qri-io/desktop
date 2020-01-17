@@ -123,6 +123,18 @@ module.exports = merge(baseConfig, {
     // https://github.com/webpack/webpack/issues/864
     new webpack.optimize.OccurrenceOrderPlugin(),
 
+    new webpack.DefinePlugin({
+      /**
+       * compile-time flags are stored under a global __BUILD__ constant. 
+       * Useful for allowing different behaviour between development builds and
+       * release builds. These should be synted with
+       *
+       */
+      '__BUILD__': {
+        'ENABLE_NETWORK_SECTION': JSON.stringify(false),
+      }
+    })
+
     new MiniCssExtractPlugin({ // define where to save the file
       filename: 'bundle.css',
       allChunks: true

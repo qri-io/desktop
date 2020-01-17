@@ -3,6 +3,8 @@ import { ResponsivePie } from '@nivo/pie'
 import * as React from 'react'
 import numeral from 'numeral'
 
+import LabelledStats from './viz/LabelledStats'
+
 const primaryStatColor = '#0061A6'
 const labelSkipWidth = 10
 
@@ -25,7 +27,7 @@ const StatsChart: React.FunctionComponent<StatsChartProps> = (props: StatsChartP
     default:
       return (
         <div>
-          {data.count && <StatValues stats={[
+          {data.count && <LabelledStats data={[
             ['count', data.count.toLocaleString()]
           ]} />}
         </div>
@@ -34,25 +36,6 @@ const StatsChart: React.FunctionComponent<StatsChartProps> = (props: StatsChartP
 }
 
 export default StatsChart
-
-interface StatValuesProps {
-  stats: Array<[string, any]>
-}
-
-const StatValues: React.FunctionComponent<StatValuesProps> = ({ stats }) => {
-  return (
-    <div className='stats-values'>
-      {stats.map((stat, i) => {
-        return (
-          <div key={i} className="stats-value" style={{ marginLeft: 15 }}>
-            <h4>{stat[1]}</h4>
-            <label className="label">{stat[0]}</label>
-          </div>
-        )
-      })}
-    </div>
-  )
-}
 
 const NumericStat: React.FunctionComponent<StatsChartProps> = (props: StatsChartProps) => {
   const { data, height } = props
@@ -107,7 +90,7 @@ const NumericStat: React.FunctionComponent<StatsChartProps> = (props: StatsChart
           labelFormat={labelFormat}
         />
       </div>}
-      <StatValues stats={[
+      <LabelledStats data={[
         ['count', data.count.toLocaleString()],
         ['min', data.min.toLocaleString()],
         ['max', data.max.toLocaleString()],
@@ -177,7 +160,7 @@ const StringStat: React.FunctionComponent<StatsChartProps> = (props: StatsChartP
           labelFormat={labelFormat}
         />
       </div>}
-      <StatValues stats={[
+      <LabelledStats data={[
         ['count', data.count.toLocaleString()],
         ['min length', data.minLength.toLocaleString()],
         ['max length', data.maxLength.toLocaleString()]
@@ -242,7 +225,7 @@ const BooleanStat: React.FunctionComponent<StatsChartProps> = (props: StatsChart
           motionDamping={15}
         />
       </div>}
-      <StatValues stats={[
+      <LabelledStats data={[
         ['count', data.count.toLocaleString()],
         ['true', data.trueCount.toLocaleString()],
         ['false', data.falseCount.toLocaleString()]
