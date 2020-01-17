@@ -2,18 +2,15 @@ import * as React from 'react'
 import { Action, AnyAction } from 'redux'
 import classNames from 'classnames'
 import ContextMenuArea from 'react-electron-contextmenu'
-import moment from 'moment'
 import { withRouter } from 'react-router-dom'
 import { shell, MenuItemConstructorOptions } from 'electron'
-import filesize from 'filesize'
 import { Line } from 'rc-progress'
-
-import { MyDatasets, WorkingDataset } from '../models/store'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTimes, faFileAlt } from '@fortawesome/free-solid-svg-icons'
-import { faFile, faClock } from '@fortawesome/free-regular-svg-icons'
 
 import { Modal, ModalType } from '../models/modals'
+import { MyDatasets, WorkingDataset } from '../models/store'
+import DatasetDetailsSubtext from './dataset/DatasetDetailsSubtext'
 
 // for displaying a progress bar based on import file size
 // assumes an import rate of 4828 bytes per millisecond
@@ -53,25 +50,6 @@ const ImportProgressBar: React.FunctionComponent<ImportProgressBarProps> = ({ du
     <div className=''>
       <div className='import-message'>importing {fileName}...</div>
       <Line percent={percent} strokeWidth={4} strokeColor='#4FC7F3' />
-    </div>
-  )
-}
-
-// component for rendering dataset format, timestamp, size, etc
-export interface DatasetDetailsSubtextProps {
-  format?: string
-  lastCommit?: string
-  commitCount?: number
-  length?: number
-}
-
-export const DatasetDetailsSubtext: React.FunctionComponent<DatasetDetailsSubtextProps> = ({ format, lastCommit, commitCount, length }) => {
-  return (
-    <div className='dataset-details'>
-      {format && <span className='dataset-details-item'> {format}</span>}
-      {lastCommit && <span className='dataset-details-item'><FontAwesomeIcon icon={faClock} size='sm'/> {moment(lastCommit).fromNow()}</span>}
-      {commitCount && <span className='dataset-details-item'>{`${commitCount} commit${commitCount !== 1 ? 's' : ''}`}</span>}
-      {length && <span className='dataset-details-item'><FontAwesomeIcon icon={faFile} size='sm'/> {filesize(length)}</span>}
     </div>
   )
 }
@@ -177,20 +155,6 @@ class DatasetList extends React.Component<DatasetListProps> {
           ]
         }
 
-        let subtext = <>&nbsp;</>
-
-        if (dataset.dataset) {
-          const { format, length } = dataset.dataset.structure
-          const { timestamp: lastCommit } = dataset.dataset.commit
-          subtext = (
-            <DatasetDetailsSubtext
-              format={format}
-              lastCommit={lastCommit}
-              length={length}
-            />
-          )
-        }
-
         return (<ContextMenuArea menuItems={menuItems} key={`${peername}/${name}`}>
           <div
             id={`${peername}-${name}`}
@@ -210,7 +174,7 @@ class DatasetList extends React.Component<DatasetListProps> {
             </div>
             <div className='text-column'>
               <div className='text'>{peername}/{name}</div>
-              {subtext}
+              {dataset.dataset && <DatasetDetailsSubtext data={dataset.dataset} />}
             </div>
           </div>
         </ContextMenuArea>)

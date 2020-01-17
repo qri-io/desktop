@@ -1,5 +1,7 @@
 {
   "qri": "ds:0",
+  "peername" : "some_user",
+  "name" : "cities",
   "commit": {
     "qri": "cm:0",
     "timestamp": "2017-01-01T01:00:00.000Z",

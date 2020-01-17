@@ -1,24 +1,19 @@
 import * as React from 'react'
-import moment from 'moment'
-import numeral from 'numeral'
+
 import Dataset from '../../models/dataset'
+import DatasetDetailsSubtext from '../dataset/DatasetDetailsSubtext'
 
 interface DatasetItemProps {
-  path?: string
-  peername?: string
-  name?: string
+  data: Dataset
 
-  dataset: Dataset
+  path?: string
   hideUsername?: boolean
 }
 
-const DatasetItem: React.FunctionComponent<DatasetItemProps> = (props) => {
-  const { path, peername, name, dataset, hideUsername } = props
-  const { meta, structure = {}, commit = {} } = dataset
+const DatasetItem: React.FunctionComponent<DatasetItemProps> = ({ data, path, hideUsername }) => {
+  if (!data) { return null }
+  const { meta, peername, name } = data
   const title = (meta && meta.title) ? meta.title : `No Title - ${name}`
-
-  const { entries = 0, length = 0 } = structure
-  const { timestamp = 0 } = commit
 
   return (
     <div className='dataset_item' key={path}>
@@ -29,11 +24,7 @@ const DatasetItem: React.FunctionComponent<DatasetItemProps> = (props) => {
         ))}
       </div>}
       <div className='title'>{ title }</div>
-      <div className='details'>
-        <span className='detail'>{moment(timestamp).fromNow()}</span>
-        <span className='detail'>{numeral(length).format('0.0b')}</span>
-        <span className='detail'>{numeral(entries).format('0,0')} Entries</span>
-      </div>
+      <DatasetDetailsSubtext data={data} />
     </div>
   )
 }

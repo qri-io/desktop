@@ -1,5 +1,5 @@
 import React from 'react'
-import numeral from 'numeral'
+// import numeral from 'numeral'
 
 import Dataset from '../../models/dataset'
 import Segment from '../chrome/Segment'
@@ -9,7 +9,7 @@ interface BodyPreviewProps {
 }
 
 const BodyPreviewTable: React.FunctionComponent<BodyPreviewProps> = ({ data }) => {
-  const { body, structure } = data
+  const { body } = data
 
   const bdy = addRowNumbers(body)
   console.log(bdy)
@@ -51,12 +51,12 @@ const BodyPreviewTable: React.FunctionComponent<BodyPreviewProps> = ({ data }) =
       <tbody>
         {tableRows}
       </tbody>
-  </table>)
+    </table>)
 }
 
-const previewLength = (body: Body) => {
-  return Array.isArray(body) ? body.length : Object.keys(body).length
-}
+// const previewLength = (body: Body) => {
+//   return Array.isArray(body) ? body.length : Object.keys(body).length
+// }
 
 // adds row numbers to an array of objects
 const addRowNumbers = (body: Body) => {

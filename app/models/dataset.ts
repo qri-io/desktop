@@ -46,6 +46,8 @@ export interface Commit {
   path: string
   timestamp: Date
   title: string
+
+  count: number // commit chain height
 }
 
 export interface CSVFormatConfig {

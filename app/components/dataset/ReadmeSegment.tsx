@@ -1,18 +1,21 @@
 import React from 'react'
 import Segment from '../chrome/Segment'
-import Dataset from '../../models/dataset'
+import Readme from '../../models/dataset'
 
 interface ReadmeSegmentProps {
+  data: Readme
   subhead?: string
-  data: Dataset
 }
 
 const ReadmeSegment: React.FunctionComponent<ReadmeSegmentProps> = ({ subhead, data }) => {
-  if (!data.readme) {
-    return null
-  }
+  if (!data) { return null }
 
-  return <Segment icon='readme' name='readme' subhead={subhead} content={<h3>Huh?</h3>} />
+  return <Segment
+    icon='readme'
+    name='readme'
+    subhead={subhead}
+    content={<h3>Huh?</h3>}
+  />
 }
 
 export default ReadmeSegment
