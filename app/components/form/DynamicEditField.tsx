@@ -7,7 +7,7 @@ interface DynamicEditFieldProps {
   // called when user changes input value
   // true means the input is valid, false means it's invalid
   validate?: (value: string) => boolean
-  onAccept?: (value: string) => void
+  onChange?: (name: string, value: string, e?: React.SyntheticEvent) => void
   value: string
   allowEmpty: boolean
   width?: number
@@ -25,7 +25,7 @@ const DynamicEditField: React.FunctionComponent<DynamicEditFieldProps> = ({
   value,
   name,
   validate,
-  onAccept,
+  onChange,
   allowEmpty = true,
   width,
   maxLength,
@@ -37,7 +37,7 @@ const DynamicEditField: React.FunctionComponent<DynamicEditFieldProps> = ({
   const [ newValue, setNewValue ] = React.useState(value)
   const [ isValid, setIsValid ] = React.useState(true)
 
-  const commitEdit = () => {
+  const commitEdit = (e: React.SyntheticEvent) => {
     // TODO (ramfox): for some reason, the only way I can get the actual updated
     // state value is by hacking into the `setNewValue` function, which passes
     // the previous value into a function
@@ -54,8 +54,8 @@ const DynamicEditField: React.FunctionComponent<DynamicEditFieldProps> = ({
     })
     if ((value === newValueHack) || !isValidHack || (!allowEmpty && newValueHack === '')) {
       cancelEdit()
-    } else if (onAccept) {
-      onAccept(newValueHack)
+    } else if (onChange) {
+      onChange(name, newValueHack, e)
     }
     // drop focus
     ref.current.blur()
@@ -68,7 +68,7 @@ const DynamicEditField: React.FunctionComponent<DynamicEditFieldProps> = ({
     ref.current.blur()
   }
 
-  const handleKeyDown = (e: any) => {
+  const handleKeyDown = (e: React.KeyboardEvent) => {
     // cancel on esc
     if (e.keyCode === 27) {
       cancelEdit()
@@ -76,20 +76,20 @@ const DynamicEditField: React.FunctionComponent<DynamicEditFieldProps> = ({
 
     // submit on enter or tab
     if ((e.keyCode === 13) || (e.keyCode === 9)) {
-      commitEdit()
+      commitEdit(e)
     }
   }
 
   // use a ref so we can set up a click handler
   const ref: any = React.useRef()
 
-  const handleMousedown = (e: MouseEvent) => {
+  const handleMousedown = (e: React.MouseEvent) => {
     const { target } = e
     // allows the user to resize the sidebar when editing the dataset name
     if (target.classList.contains('resize-handle')) return
 
     if (!ref.current.contains(target)) {
-      commitEdit()
+      commitEdit(e)
     }
   }
 

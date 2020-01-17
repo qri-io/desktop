@@ -1,40 +1,33 @@
 import * as React from 'react'
 import { Schema as ISchema } from '../../models/dataset'
-import SchemaItem from '../item/SchemaItem'
-import { typesAndDescriptions } from './TypePicker'
-import { DataTypes } from '../item/DataType'
+import SchemaItem, { SchemaItemType } from '../item/SchemaItem'
 
 interface SchemaProps {
-  schema: ISchema | undefined
-  onAccept?: (row: number) => (field: string) => any
+  data: ISchema | undefined
+  onChange?: (schema: ISchema, e: React.ChangeEvent) => void
   // defaults to true
   editable: boolean
 }
 
 const Schema: React.FunctionComponent<SchemaProps> = ({
-  schema,
-  onAccept,
+  data,
+  onChange,
   editable = true
 }) => {
-  if (!schema) {
+  if (!data) {
     return <div className='margin'>No schema specified</div>
   }
-  if (!schema.items || !schema.items.items) {
+  if (!data.items || !data.items.items) {
     return <div>Invalid schema</div>
   }
 
-  const items = schema.items.items
+  const items = data.items.items
 
-  const typeList = typesAndDescriptions.map((el) => el.type)
-
-  const handleTypes = (types: DataTypes): DataTypes => {
-    // if there is an unknown type, return 'any'
-    if (!types ||
-        (typeof types === 'string' && !typeList.includes(types)) ||
-        (Array.isArray(types) && (types.length === 0 || types.some((el) => !typeList.includes(el))))) {
-      return 'any'
-    }
-    return types
+  const onChangeHandler = (schemaItem: SchemaItemType, e: React.ChangeEvent) => {
+    const s = { ...data }
+    // don't pass back 'row'
+    s.items.items[schemaItem.row] = { ...schemaItem, row: undefined }
+    if (onChange) onChange(s, e)
   }
 
   return (
@@ -45,16 +38,12 @@ const Schema: React.FunctionComponent<SchemaProps> = ({
         <div>description</div>
         <div>validation</div>
       </div>
-      {items.map((item, i: number) => {
+      {items.map((item: SchemaItemType, i: number) => {
         return (
           <div key={i}>
             <SchemaItem
-              row={i}
-              onAccept={onAccept ? onAccept(i) : undefined}
-              title={item.title || ''}
-              type={handleTypes(item.type)}
-              description={item.description || ''}
-              validation={item.validation || ''}
+              onChange={onChange ? onChangeHandler : undefined}
+              data={{ ...item, row: i }}
               editable={editable}
             />
           </div>

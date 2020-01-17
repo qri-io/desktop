@@ -6,40 +6,63 @@ import TypePicker from '../structure/TypePicker'
 import classNames from 'classnames'
 
 interface SchemaItemProps {
-  onAccept?: (field: string) => (value: string) => void
+  onChange?: (schemaItem: SchemaItemType, e: React.SyntheticEvent) => void
+  // editable defaults to true
+  editable?: boolean
+  data: SchemaItemType
+}
+
+export interface SchemaItemType {
+  row: number
   title: string
   type: DataTypes | DataTypes[]
   description: string
   validation: string
-  row: number
-  // editable defaults to true
-  editable?: boolean
 }
 
 const SchemaItemProps: React.FunctionComponent<SchemaItemProps> = ({
-  onAccept,
-  row,
-  title,
-  type,
-  description,
-  validation,
+  onChange,
+  data,
   editable = true
 }) => {
   const [expanded, setExpanded] = React.useState(false)
 
+  const handleDynamicEditChange = (name: string, value: string, e: React.SyntheticEvent) => {
+    const d = { ...data }
+    switch (name) {
+      case 'title':
+        d.title = value
+        break
+      case 'description':
+        d.description = value
+        break
+      case 'validation':
+        d.validation = value
+        break
+    }
+
+    if (onChange) onChange(d, e)
+  }
+
+  const handleTypePickerChange = (value: DataTypes, e: React.SyntheticEvent) => {
+    const d = { ...data }
+    d.type = value
+    if (onChange) onChange(d, e)
+  }
+
   // TODO (ramfox): do we have max lengths for title, description?
   return (
-    <div className={classNames('schema-item', { 'expanded': expanded, 'top': row === 0 })} row={row}>
+    <div className={classNames('schema-item', { 'expanded': expanded, 'top': data.row === 0 })} key={data.row}>
       <div className='schema-item-icon' onClick={() => setExpanded((prev) => !prev)} >
         <Icon icon={expanded ? 'down' : 'right'} size='md' color='medium'/>
       </div>
       <div>
         <DynamicEditField
-          row={row}
+          row={data.row}
           name='title'
           placeholder='title'
-          value={title}
-          onAccept={onAccept && editable ? onAccept('title') : undefined}
+          value={data.title || ''}
+          onChange={onChange && editable ? handleDynamicEditChange : undefined}
           allowEmpty={false}
           large
           width={150}
@@ -49,20 +72,20 @@ const SchemaItemProps: React.FunctionComponent<SchemaItemProps> = ({
       </div>
       <div>
         <TypePicker
-          name={row}
-          onPickType={onAccept && editable ? onAccept('type') : undefined}
-          type={type}
+          name={data.row}
+          onPickType={onChange && editable ? handleTypePickerChange : undefined}
+          type={data.type}
           expanded={expanded}
           editable={editable}
         />
       </div>
       <div>
         <DynamicEditField
-          row={row}
+          row={data.row}
           name='description'
           placeholder='description'
-          value={description}
-          onAccept={onAccept && editable ? onAccept('description') : undefined}
+          value={data.description || ''}
+          onChange={onChange && editable ? handleDynamicEditChange : undefined}
           allowEmpty expanded={expanded}
           width={200}
           editable={editable}
@@ -70,11 +93,11 @@ const SchemaItemProps: React.FunctionComponent<SchemaItemProps> = ({
       </div>
       <div>
         <DynamicEditField
-          row={row}
+          row={data.row}
           name='validation'
           placeholder='validation'
-          value={validation}
-          onAccept={onAccept && editable ? onAccept('validation') : undefined}
+          value={data.validation || ''}
+          onChange={onChange && editable ? handleDynamicEditChange : undefined}
           allowEmpty expanded={expanded}
           width={100}
           editable={editable}

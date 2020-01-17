@@ -8,7 +8,7 @@ import TabPicker from '../nav/TabPicker'
 interface TypePickerProps {
   name: string | number
   type: DataTypes | DataTypes[]
-  onPickType?: (type: string | string[]) => void
+  onPickType?: (value: DataTypes | DataTypes[] | undefined, e: React.SyntheticEvent) => void
   expanded?: boolean
   // editable defaults to true
   editable?: boolean
@@ -25,6 +25,17 @@ export const typesAndDescriptions: Array<{ type: DataTypes, description: string 
   { type: 'null', description: 'empty values' }
 ]
 
+const handleUnknownTypes = (types: DataTypes | DataTypes[]): DataTypes | DataTypes[] => {
+  // if there is an unknown type, return 'any'
+  const typeList = typesAndDescriptions.map((el) => el.type)
+  if (!types ||
+      (typeof types === 'string' && !typeList.includes(types)) ||
+      (Array.isArray(types) && (types.length === 0 || types.some((el) => !typeList.includes(el))))) {
+    return 'any'
+  }
+  return types
+}
+
 const TypePicker: React.FunctionComponent<TypePickerProps> = ({
   name,
   type = 'any',
@@ -32,7 +43,7 @@ const TypePicker: React.FunctionComponent<TypePickerProps> = ({
   expanded = false,
   editable = true
 }) => {
-  const [pickedType, setPickedType] = React.useState(type)
+  const [pickedType, setPickedType] = React.useState(handleUnknownTypes(type))
   const [isOverlayOpen, setOverlayOpen] = React.useState(false)
 
   const tabs = ['single', 'multi']
@@ -41,30 +52,52 @@ const TypePicker: React.FunctionComponent<TypePickerProps> = ({
   const handleCancel = () => {
     setOverlayOpen(false)
   }
-  const handlePickType = (e: MouseEvent<HTMLDivElement, MouseEvent>) => {
+  const handlePickType = (e: React.MouseEvent) => {
     let picked = e.target.getAttribute('data-value')
-    if (activeTab === 'single') {
+    if (typeof pickedType === 'string') {
       setPickedType(picked)
-      if (onPickType) onPickType(picked)
-    }
-    if (activeTab === 'multi') {
-      let pickedTypeList
-      // if they picked 'any', only 'any' should be picked
-      // since 'any' emcompasses all types
+      if (onPickType) {
+        let val = picked
+        if (val === 'any') {
+          val = undefined
+        }
+        onPickType(val, e)
+      }
+    } else {
+      let pickedTypeList: DataTypes[]
       if (picked === 'any') {
+        //
+        // if they picked 'any', only 'any' should be picked
+        // since 'any' emcompasses all types
         pickedTypeList = ['any']
       } else if (pickedType.includes(picked)) {
-        pickedTypeList = pickedType.filter((type) => type !== picked)
+        //
+        // if an item was already picked and the user clicks it again
+        // we should remove the item from the list
+        pickedTypeList = pickedType.filter((type: DataTypes) => type !== picked)
       } else {
-        pickedTypeList = typesAndDescriptions.map((el: any): DataTypes => {
-          return el.type
-        }).filter((type: DataTypes) => {
-          if (type === 'any') return false
-          return type === picked || pickedType.includes(type)
-        })
+        //
+        // otherwise iterate through the list, filtering out 'any'
+        // in the list, including the one just picked
+        pickedTypeList = pickedType.filter((el: DataTypes) => el !== 'any')
+        pickedTypeList.push(picked)
       }
+
       setPickedType(pickedTypeList)
-      if (onPickType) onPickType(pickedTypeList)
+      if (onPickType) {
+        // if there is only one item choosen,
+        let val: DataTypes | DataTypes[] | undefined = pickedTypeList
+        if (val.length === 1) {
+          val = val[0]
+        }
+        // if the value is 'any', we don't want to make
+        // any type assertions, let's remove 'type' from this
+        // row and field
+        if (val === 'any') {
+          val = undefined
+        }
+        onPickType(val, e)
+      }
     }
   }
 
@@ -72,7 +105,7 @@ const TypePicker: React.FunctionComponent<TypePickerProps> = ({
     setOverlayOpen(!isOverlayOpen)
   }
 
-  const handleTabClick = (e: MouseEvent<HTMLDivElement, MouseEvent>) => {
+  const handleTabClick = (e: React.MouseEvent) => {
     const tab = e.target.getAttribute('data-value')
     setActiveTab(tab)
   }

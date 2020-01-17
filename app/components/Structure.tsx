@@ -1,6 +1,6 @@
 import * as React from 'react'
 import Schema from './structure/Schema'
-import { Structure as IStructure } from '../models/dataset'
+import { Structure as IStructure, Schema as ISchema } from '../models/dataset'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faInfoCircle } from '@fortawesome/free-solid-svg-icons'
 import ExternalLink from './ExternalLink'
@@ -78,34 +78,10 @@ const Structure: React.FunctionComponent<StructureProps> = ({ peername, name, st
     })
   }
 
-  const handleWriteSchema = (row: number) => {
-    return (field: string) => {
-      return (value: DataTypes) => {
-        let val = value
-        if (Array.isArray(value) && value.length === 1) {
-          val = value[0]
-        }
-        // if the value is 'any', we don't want to make
-        // any type assertions, let's remove 'type' from this
-        // row and field
-        if (val === 'any') {
-          val = undefined
-        }
-        const s = { ...structure.schema }
-        try {
-          s.items.items[row][field] = val
-        } catch (e) {
-          throw e
-        }
-        write(peername, name, {
-          structure: {
-            ...structure,
-            schema: s
-          }
-        })
-      }
-    }
+  const handleOnChange = (schema: ISchema) => {
+    write(peername, name, { structure: { ...structure, schema } })
   }
+
   return (
     <div className='structure content'>
       { history
@@ -120,7 +96,7 @@ const Structure: React.FunctionComponent<StructureProps> = ({ peername, name, st
         <h4 className='schema-title'>
           Schema
           &nbsp;
-          <ExternalLink href='https://json-schema.org/'>
+          <ExternalLink id='json-schema' href='https://json-schema.org/'>
             <span
               data-tip={'JSON schema that describes the structure of the dataset. Click here to learn more about JSON schemas'}
               className='text-input-tooltip'
@@ -130,8 +106,8 @@ const Structure: React.FunctionComponent<StructureProps> = ({ peername, name, st
           </ExternalLink>
         </h4>
         <Schema
-          schema={structure ? structure.schema : undefined}
-          onAccept={handleWriteSchema}
+          data={structure ? structure.schema : undefined}
+          onChange={handleOnChange}
           editable={!history}
         />
       </div>
