@@ -1,0 +1,70 @@
+.dynamic-edit-field {
+  border: solid 1px #fff;
+  background: #fff;
+  padding: 5px;
+  border-radius: 3px;
+  overflow: hidden;
+  display: inline-block;
+  line-height: 18px;
+
+  font-family: 'Avenir Next';
+  font-size: 14px;
+  font-weight: 300;
+
+  resize: none;
+
+  &.dynamic-edit-field-editable {
+    cursor: text;
+  }
+
+  &.dynamic-edit-field-large {
+    font-size: 17px;
+    font-weight: 600;
+  }
+
+  &.focused, &.v.focused {
+    border-color: #D8DFE6;
+    box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.19);
+    outline: none;
+    font-size: 14px;
+    font-weight: 300;
+  } 
+
+  &.invalid {
+    background-color: #FFB3B3;
+    border-color: #FF9696;
+  }
+
+  div {
+    overflow: hidden;
+    white-space: pre;
+    min-height: 100%;
+    text-overflow: ellipsis;
+    &:focus {
+      overflow: auto;
+      outline: none;
+      text-overflow: unset;
+    }
+    br {
+      display: none;
+    }
+
+    &[data-placeholder]:empty:before {
+      content: attr(data-placeholder);
+      // float: left;
+      color: gray;
+    }
+  }
+
+  div.expanded {
+    white-space: normal;
+    overflow: visible;
+    br {
+      display: unset;
+    }
+  }
+
+  div::-webkit-scrollbar{
+    display: none;
+  }
+}

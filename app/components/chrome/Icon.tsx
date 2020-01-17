@@ -21,7 +21,11 @@ import {
   faFileAlt,
   faCopy,
   faTimes,
-  faCheck
+  faCheck,
+  faCaretLeft,
+  faCaretRight,
+  faCaretUp,
+  faCaretDown
 } from '@fortawesome/free-solid-svg-icons'
 
 interface IconProps {
@@ -62,7 +66,11 @@ const icons: {[key: string]: any} = {
   'lock': faLock,
   'transform': faCode,
   'close': faTimes,
-  'check': faCheck
+  'check': faCheck,
+  'left': faCaretLeft,
+  'right': faCaretRight,
+  'up': faCaretUp,
+  'down': faCaretDown
 }
 
 export const iconsList = Object.keys(icons)

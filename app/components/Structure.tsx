@@ -1,6 +1,6 @@
 import * as React from 'react'
-import Schema from './Schema'
-import { Structure as IStructure } from '../models/dataset'
+import Schema from './structure/Schema'
+import { Structure as IStructure, Schema as ISchema } from '../models/dataset'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faInfoCircle } from '@fortawesome/free-solid-svg-icons'
 import ExternalLink from './ExternalLink'
@@ -61,7 +61,7 @@ export const formatConfigOptions: { [key: string]: FormatConfigOption } = {
 
 const Structure: React.FunctionComponent<StructureProps> = ({ peername, name, structure, history, write, fsiBodyFormat }) => {
   const format = history ? structure.format : fsiBodyFormat
-  const handleWrite = (option: string, value: any) => {
+  const handleWriteFormat = (option: string, value: any) => {
     // TODO (ramfox): sending over format since a user can replace the body with a body of a different
     // format. Let's pass in whatever the current format is, so that we have unity between
     // what the desktop is seeing and the backend. This can be removed when we have the fsi
@@ -77,6 +77,11 @@ const Structure: React.FunctionComponent<StructureProps> = ({ peername, name, st
       }
     })
   }
+
+  const handleOnChange = (schema: ISchema) => {
+    write(peername, name, { structure: { ...structure, schema } })
+  }
+
   return (
     <div className='structure content'>
       { history
@@ -84,14 +89,14 @@ const Structure: React.FunctionComponent<StructureProps> = ({ peername, name, st
         : <FormatConfigFSI
           structure={structure}
           format={format}
-          write={handleWrite}
+          write={handleWriteFormat}
         />
       }
       <div>
         <h4 className='schema-title'>
           Schema
           &nbsp;
-          <ExternalLink href='https://json-schema.org/'>
+          <ExternalLink id='json-schema' href='https://json-schema.org/'>
             <span
               data-tip={'JSON schema that describes the structure of the dataset. Click here to learn more about JSON schemas'}
               className='text-input-tooltip'
@@ -100,7 +105,11 @@ const Structure: React.FunctionComponent<StructureProps> = ({ peername, name, st
             </span>
           </ExternalLink>
         </h4>
-        <Schema schema={structure ? structure.schema : undefined} />
+        <Schema
+          data={structure ? structure.schema : undefined}
+          onChange={handleOnChange}
+          editable={!history}
+        />
       </div>
     </div>
   )

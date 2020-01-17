@@ -23,31 +23,35 @@ const Overlay: React.FunctionComponent<OverlayProps> = ({
 }) => {
   const overlayRef = React.useRef()
 
-  React.useEffect(() => {
-    const isInOverlay = (e: MouseEvent<HTMLDivElement, MouseEvent>) => {
-      if (!onCancel || !overlayRef || !overlayRef.current) return
+  const isInOverlay = (e: MouseEvent<HTMLDivElement, MouseEvent>) => {
+    if (!onCancel || !overlayRef || !overlayRef.current) return
 
-      // figure out if the user clicking inside the overlay
-      const rect = overlayRef.current.getBoundingClientRect()
+    // figure out if the user clicking inside the overlay
+    const rect = overlayRef.current.getBoundingClientRect()
 
-      // http://stackoverflow.com/a/26984690/2114
-      const isIn =
-        rect.top <= e.clientY &&
-        e.clientY <= rect.top + rect.height &&
-        rect.left <= e.clientX &&
-        e.clientX <= rect.left + rect.width
+    // http://stackoverflow.com/a/26984690/2114
+    const isIn =
+      rect.top <= e.clientY &&
+      e.clientY <= rect.top + rect.height &&
+      rect.left <= e.clientX &&
+      e.clientX <= rect.left + rect.width
 
-      if (!isIn) {
-        e.stopPropagation()
-        onCancel()
-      }
+    if (!isIn) {
+      e.stopPropagation()
+      onCancel()
     }
+  }
 
-    window.addEventListener('click', isInOverlay)
-    return () => (
+  React.useEffect(() => {
+    if (open) {
       window.addEventListener('click', isInOverlay)
+    } else {
+      window.removeEventListener('click', isInOverlay)
+    }
+    return () => (
+      window.removeEventListener('click', isInOverlay)
     )
-  })
+  }, [open])
 
   return (
     <div
