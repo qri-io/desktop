@@ -19,8 +19,8 @@ const DatasetItem: React.FunctionComponent<DatasetItemProps> = ({ data, path, hi
     <div className='dataset_item' key={path}>
       <a className='reference-link' href={`/${peername}/${name}`}>{hideUsername ? `${name}` : `${peername}/${name}`}</a>
       {meta && meta.theme && <div className='themes'>
-        {meta.theme.map((keyword: string) => (
-          <div key='theme' className='theme badge badge-secondary ml-2'>{keyword}</div>
+        {meta.theme.map((keyword: string, i: number) => (
+          <div key={i} className='theme badge badge-secondary ml-2'>{keyword}</div>
         ))}
       </div>}
       <div className='title'>{ title }</div>

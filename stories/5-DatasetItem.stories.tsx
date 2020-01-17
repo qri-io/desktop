@@ -2,7 +2,7 @@ import React from 'react'
 import DatasetItem from '../app/components/item/Dataset'
 
 export default {
-  title: 'List Items | Dataset',
+  title: 'Dataset List Item',
   parameters: {
     notes: ''
   }
