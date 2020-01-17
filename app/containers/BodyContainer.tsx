@@ -17,7 +17,7 @@ const mapStateToProps = (state: Store) => {
 
   var format = ''
   if (history) {
-    format = workingDataset.components.structure.value.format
+    format = dataset.components.structure.value.format
   } else {
     format = state.workingDataset.status && state.workingDataset.status.body && state.workingDataset.status.body.filepath
       ? path.extname(state.workingDataset.status.body.filepath).slice(1)
@@ -36,7 +36,6 @@ const mapStateToProps = (state: Store) => {
     format,
     history,
     details,
-    workingDataset,
     stats
   }
 }

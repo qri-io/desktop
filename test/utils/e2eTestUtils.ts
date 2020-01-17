@@ -1,8 +1,12 @@
 import url from 'url'
 
+const headless = false
+const delayTime = 300
+
 export interface E2ETestUtils {
   atLocation: (expected: string) => Promise<void>
   waitForExist: (selector: string) => Promise<void>
+  waitForNotExist: (selector: string) => Promise<void>
   click: (selector: string) => Promise<void>
   setValue: (selector: string, value: any) => Promise<void>
   exists: (selectors: string[]) => Promise<void>
@@ -19,6 +23,7 @@ export function newE2ETestUtils (app: any): E2ETestUtils {
     delay: delay,
     atLocation: atLocation(app),
     waitForExist: waitForExist(app),
+    waitForNotExist: waitForNotExist(app),
     click: click(app),
     setValue: setValue(app),
     exists: exists(app),
@@ -43,6 +48,7 @@ function atLocation (app: any) {
       const location = new url.URL(currUrl).hash
       return location === expected
     }, 10000, `expected url to be '${expected}'`)
+    if (!headless) await delay(delayTime)
   }
 }
 
@@ -54,6 +60,20 @@ function waitForExist (app: any) {
     await client.waitUntil(async () => {
       return client.element(selector).isExisting()
     }, 10000, `element '${selector}' cannot be found`)
+    if (!headless) await delay(delayTime)
+  }
+}
+
+// waitForNotExist checks to see if an element does not exist on the page.
+// If it does exist after the timeout, it sends an error
+function waitForNotExist (app: any) {
+  return async (selector: string) => {
+    const { client } = app
+    await client.waitUntil(async () => {
+      const err = await app.client.element(selector)
+      return err.type === 'NoSuchElement'
+    }, 10000, `element ${selector} should not exist, but is existing`)
+    if (!headless) await delay(delayTime)
   }
 }
 
@@ -66,6 +86,7 @@ function click (app: any) {
       return !(classes.includes('linkDisabled') || classes.includes('disabled'))
     }, 10000)
     await client.click(selector)
+    if (!headless) await delay(delayTime)
   }
 }
 
@@ -73,6 +94,7 @@ function click (app: any) {
 function setValue (app: any) {
   return async (selector: string, value: any) => {
     await app.client.element(selector).setValue(value)
+    // if (!headless) await delay(delayTime)
   }
 }
 
@@ -83,6 +105,7 @@ function exists (app: any) {
     selectors.forEach(async (selector: string) => {
       expect(await app.client.element(selector)).toBeDefined()
     })
+    if (!headless) await delay(delayTime)
   }
 }
 
@@ -93,6 +116,7 @@ function doesNotExist (app: any) {
   return async (selector: string) => {
     const err = await app.client.element(selector)
     expect(err.type).toBe('NoSuchElement')
+    if (!headless) await delay(delayTime)
   }
 }
 
@@ -103,6 +127,7 @@ function expectTextToBe (app: any) {
     //   return !!await app.client.element(selector)
     // }, 10000, `element '${selector}' does not exist`)
     expect(await app.client.element(selector).getText()).toBe(text)
+    if (!headless) await delay(delayTime)
   }
 }
 
@@ -110,6 +135,7 @@ function expectTextToBe (app: any) {
 function onHistoryTab (app: any) {
   return async () => {
     await onTab(app, 'history')
+    if (!headless) await delay(delayTime)
   }
 }
 
@@ -117,17 +143,20 @@ function onHistoryTab (app: any) {
 function onStatusTab (app: any) {
   return async () => {
     await onTab(app, 'status')
+    if (!headless) await delay(delayTime)
   }
 }
 
 // onTab checks to see if the element exists with the 'active' class
 async function onTab (app: any, tab: string) {
   expect(await app.client.element(`#${tab}-tab.active`)).toBeDefined()
+  if (!headless) await delay(delayTime)
 }
 
 // checkStatus ensures that component exists with the correct status dot class
 function checkStatus (app: any) {
   return async (component: string, status: string) => {
     expect(await app.client.element(`#${component}-status.status-dot-${status}`)).toBeDefined()
+    if (!headless) await delay(delayTime)
   }
 }

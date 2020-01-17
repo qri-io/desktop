@@ -6,7 +6,7 @@ import { setSelectedListItem } from '../actions/selections'
 import { fetchCommitDetail } from '../actions/api'
 
 const mapStateToProps = (state: Store) => {
-  const { workingDataset, selections, commitDetails } = state
+  const { selections, commitDetails } = state
 
   const {
     peername,
@@ -15,18 +15,15 @@ const mapStateToProps = (state: Store) => {
     commitComponent: selectedComponent
   } = selections
 
-  // find the currently selected commit
-  const selectedCommit = workingDataset.history.value
-    .find(d => d.path === selectedCommitPath)
-
   return {
     peername,
     name,
     selectedCommitPath: selectedCommitPath,
-    commit: selectedCommit,
+    commit: commitDetails.components.commit.value,
     selectedComponent,
     commitDetails,
-    structure: commitDetails.components.structure.value
+    structure: commitDetails.components.structure.value,
+    isLoading: commitDetails.isLoading
   }
 }
 

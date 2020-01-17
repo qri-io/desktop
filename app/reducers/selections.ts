@@ -93,6 +93,8 @@ export default (state = initialState, action: AnyAction) => {
     case SELECTIONS_SET_WORKING_DATASET:
       const { peername, name } = action.payload
 
+      if (peername === state.peername && name === state.name) return state
+
       localStore().setItem('peername', peername)
       localStore().setItem('name', name)
       localStore().setItem('commit', '')

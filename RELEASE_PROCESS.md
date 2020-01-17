@@ -24,3 +24,4 @@ This will only work if you are internal to Qri and have the correct keys
   - take the updated file into from size, sha512 and blockMapSize
   - update the `/release/latest-mac.yml` with that info
   - replace `FILENAME.zip` to the release page
+12) **remember to change website link give details of where here** 

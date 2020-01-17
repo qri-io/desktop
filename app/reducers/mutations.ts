@@ -13,7 +13,8 @@ const initialState: Mutations = {
   }
 }
 
-export const [SAVE_REQ, SAVE_SUCC, SAVE_FAIL] = apiActionTypes('save')
+export const [SAVE_REQ] = apiActionTypes('save')
+export const SAVE_COMPLETE = 'SAVE_COMPLETE'
 export const SET_COMMIT_TITLE = 'SET_COMMIT_TITLE'
 export const SET_COMMIT_MESSAGE = 'SET_COMMIT_MESSAGE'
 
@@ -50,22 +51,15 @@ const mutationsReducer: Reducer = (state = initialState, action: AnyAction): Mut
           error: null
         }
       }
-    case SAVE_SUCC:
-      return {
-        ...state,
-        save: {
-          value: initialState.save.value,
-          isLoading: false,
-          error: null
-        }
-      }
-    case SAVE_FAIL:
+
+    case SAVE_COMPLETE:
       return {
         ...state,
         save: {
           ...state.save,
           isLoading: false,
-          error: action.payload.err
+          error: action.err,
+          value: initialState.save.value
         }
       }
 
