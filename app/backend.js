@@ -74,7 +74,7 @@ class BackendProcess {
     try {
       let processResult = childProcess.execSync(this.qriBinPath + ' version')
       let qriBinVersion = processResult.toString().trim();
-      this.process = childProcess.spawn(this.qriBinPath, ['connect', '--setup'], { stdio: ['ignore', this.out, this.err] })
+      this.process = childProcess.spawn(this.qriBinPath, ['connect', '--setup', '--log-all'], { stdio: ['ignore', this.out, this.err] })
       this.process.on('error', (err) => { this.handleEvent('error', err) })
       this.process.on('exit', (err) => { this.handleEvent('exit', err) })
       this.process.on('close', (err) => { this.handleEvent('close', err) })
