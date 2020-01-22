@@ -40,4 +40,8 @@ export const clearSelection = () => {
   }
 }
 
+export const setCommit = (path: string) => {
+  return setSelectedListItem('commit', path)
+}
+
 export const setRoute = (route: string) => push(route)

@@ -18,7 +18,7 @@ export const initialState: Selections = {
   name: localStore().getItem('name') || '',
   activeTab: localStore().getItem('activeTab') || 'status',
   component: localStore().getItem('component') as SelectedComponent || '',
-  commit: localStore().getItem('commit') || '',
+  commit: '',
   commitComponent: localStore().getItem('commitComponent') || ''
 }
 
@@ -59,7 +59,6 @@ export default (state = initialState, action: AnyAction) => {
       localStore().setItem('name', '')
       localStore().setItem('activeTab', 'status')
       localStore().setItem('component', '')
-      localStore().setItem('commit', '')
       localStore().setItem('commitComponent', '')
       return {
         peername: '',
@@ -81,7 +80,6 @@ export default (state = initialState, action: AnyAction) => {
         return Object.assign({}, state, { component: selectedListItem })
       }
       if (type === 'commit') {
-        localStore().setItem('commit', selectedListItem)
         return Object.assign({}, state, { commit: selectedListItem })
       }
       if (type === 'commitComponent') {
@@ -97,7 +95,6 @@ export default (state = initialState, action: AnyAction) => {
 
       localStore().setItem('peername', peername)
       localStore().setItem('name', name)
-      localStore().setItem('commit', '')
 
       return Object.assign({}, state, {
         peername,
@@ -108,7 +105,6 @@ export default (state = initialState, action: AnyAction) => {
     case HISTORY_SUCC:
       if (state.commit === '') {
         if (action.payload.data && action.payload.data.length > 0) {
-          localStore().setItem('commit', action.payload.data[0].path)
           return {
             ...state,
             commit: action.payload.data[0].path

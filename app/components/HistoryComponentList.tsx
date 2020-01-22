@@ -6,7 +6,7 @@ import { FileRow, components as componentsInfo } from './ComponentList'
 
 interface HistoryComponentListProps {
   datasetSelected: boolean
-  components: string[]
+  components?: string[]
   status: DatasetStatus
   selectedComponent: SelectedComponent
   onComponentClick: (type: ComponentType, activeTab: string) => Action
@@ -17,13 +17,13 @@ const HistoryComponentList: React.FunctionComponent<HistoryComponentListProps> =
   const {
     datasetSelected,
     status,
-    components,
+    components = [],
     selectedComponent,
     onComponentClick,
     selectionType
   } = props
 
-  if (!datasetSelected) return undefined
+  if (!datasetSelected) return null
   return (
     <div>
       {

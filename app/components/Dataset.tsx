@@ -4,7 +4,7 @@ import { withRouter } from 'react-router-dom'
 import { remote, ipcRenderer, shell, clipboard } from 'electron'
 import { CSSTransition } from 'react-transition-group'
 
-import { ApiAction } from '../store/api'
+import { ApiActionThunk } from '../store/api'
 import { Resizable } from './Resizable'
 import { Session } from '../models/session'
 import SidebarLayout from './SidebarLayout'
@@ -16,41 +16,64 @@ import { Modal, ModalType } from '../models/modals'
 import { defaultSidebarWidth } from '../reducers/ui'
 import HeaderColumnButton from './chrome/HeaderColumnButton'
 import HeaderColumnButtonDropdown from './chrome/HeaderColumnButtonDropdown'
-import CommitDetailsContainer from '../containers/CommitDetailsContainer'
-import DatasetSidebarContainer from '../containers/DatasetSidebarContainer'
+import DatasetSidebar from '../components/DatasetSidebar'
 import DetailsBarContainer from '../containers/DetailsBarContainer'
+import CommitDetails from './CommitDetails'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faFolderOpen, faFile, faLink, faCloud, faCloudUploadAlt } from '@fortawesome/free-solid-svg-icons'
 
 import {
-  UI,
   Selections,
   WorkingDataset,
-  Mutations,
+  CommitDetails as ICommitDetails,
+  History,
+  ComponentType,
   SelectedComponent
 } from '../models/store'
 import NoDatasets from './NoDatasets'
 import { defaultPollInterval } from './App'
 
-export interface DatasetProps {
-  // redux state
-  ui: UI
-  selections: Selections
+export interface DatasetData {
   workingDataset: WorkingDataset
-  mutations: Mutations
-  setModal: (modal: Modal) => void
+  head: ICommitDetails
+  history: History
+}
+
+export interface DatasetProps {
+  data: DatasetData
+
+  // display details
+  selections: Selections
   session: Session
   hasDatasets: boolean
   showDetailsBar: boolean
+  sidebarWidth: number
 
-  // actions
+  // setting actions
+  setModal: (modal: Modal) => void
   setActiveTab: (activeTab: string) => Action
   setSidebarWidth: (type: string, sidebarWidth: number) => Action
-  fetchWorkingDatasetDetails: () => Promise<ApiAction>
-  fetchWorkingStatus: () => Promise<ApiAction>
-  fetchBody: (page: number) => Promise<ApiAction>
   setRoute: (route: string) => Action
-  fetchWorkingDataset: () => Promise<ApiAction>
+  setCommit: (path: string) => Action
+  setComponent: (type: ComponentType, activeComponent: string) => Action
+
+  // fetching actions
+  fetchHistory: (page?: number, pageSize?: number) => ApiActionThunk
+  fetchWorkingDataset: () => ApiActionThunk
+  fetchWorkingStatus: () => ApiActionThunk
+  fetchStats: () => ApiActionThunk
+  fetchBody: (page: number) => ApiActionThunk
+
+  fetchCommitDataset: () => ApiActionThunk
+  fetchCommitStatus: () => ApiActionThunk
+  fetchCommitBody: (page: number) => ApiActionThunk
+  fetchCommitStats: () => ApiActionThunk
+
+  // api actions (that aren't fetching)
+  publishDataset: () => ApiActionThunk
+  unpublishDataset: () => ApiActionThunk
+  discardChanges: (component: SelectedComponent) => ApiActionThunk
+  renameDataset: (peername: string, name: string, newName: string) => ApiActionThunk
 }
 
 const logo = require('../assets/qri-blob-logo-tiny.png') //eslint-disable-line
@@ -79,6 +102,46 @@ class Dataset extends React.Component<DatasetProps> {
     ipcRenderer.on('publish-unpublish-dataset', this.publishUnpublishDataset)
 
     ipcRenderer.on('reload', this.handleReload)
+
+    const {
+      data,
+      selections,
+      fetchWorkingDataset,
+      fetchHistory,
+      fetchStats,
+      fetchWorkingStatus,
+      fetchBody,
+      fetchCommitDataset,
+      fetchCommitStats,
+      fetchCommitStatus,
+      fetchCommitBody,
+      setCommit
+    } = this.props
+    const { workingDataset, head, history } = data
+
+    if (!workingDataset.isLoading &&
+        (selections.peername !== workingDataset.peername ||
+        selections.name !== workingDataset.name)) {
+      fetchHistory()
+      fetchWorkingDataset()
+      fetchStats()
+      fetchBody(-1)
+      fetchWorkingStatus()
+      return
+    }
+    if (!head.isLoading &&
+        (selections.peername !== head.peername ||
+        selections.name !== head.name ||
+        selections.commit !== head.path)) {
+      fetchCommitDataset()
+      fetchCommitStats()
+      fetchCommitStatus()
+      fetchCommitBody(-1)
+      return
+    }
+    if (selections.commit === '' && history.value.length !== 0) {
+      setCommit(history.value[0].path)
+    }
   }
 
   componentWillUnmount () {
@@ -95,7 +158,7 @@ class Dataset extends React.Component<DatasetProps> {
   }
 
   statusInterval = setInterval(() => {
-    if (this.props.workingDataset.peername !== '' || this.props.workingDataset.name !== '') {
+    if (this.props.data.workingDataset.peername !== '' || this.props.data.workingDataset.name !== '') {
       this.props.fetchWorkingStatus()
     }
   }, defaultPollInterval)
@@ -113,10 +176,49 @@ class Dataset extends React.Component<DatasetProps> {
   }
 
   componentDidUpdate (prevProps: DatasetProps) {
+    const {
+      data,
+      selections,
+      fetchWorkingDataset,
+      fetchHistory,
+      fetchStats,
+      fetchWorkingStatus,
+      fetchBody,
+      fetchCommitDataset,
+      fetchCommitStats,
+      fetchCommitStatus,
+      fetchCommitBody,
+      setCommit
+    } = this.props
+    const { workingDataset, head, history } = data
+
+    if (!workingDataset.isLoading &&
+        (selections.peername !== workingDataset.peername ||
+        selections.name !== workingDataset.name)) {
+      fetchHistory()
+      fetchWorkingDataset()
+      fetchStats()
+      fetchBody(-1)
+      fetchWorkingStatus()
+      return
+    }
+    if (!head.isLoading &&
+        (selections.peername !== head.peername ||
+        selections.name !== head.name ||
+        selections.commit !== head.path)) {
+      fetchCommitDataset()
+      fetchCommitStats()
+      fetchCommitStatus()
+      fetchCommitBody(-1)
+      return
+    }
+    if (selections.commit === '' && history.value.length !== 0) {
+      setCommit(history.value[0].path)
+    }
+
     // map mtime deltas to a boolean to determine whether to update the workingDataset
-    const { workingDataset, fetchWorkingDataset, fetchBody } = this.props
     const { status } = workingDataset
-    const { status: prevStatus } = prevProps.workingDataset
+    const { status: prevStatus } = prevProps.data.workingDataset
 
     if (status) {
       // create an array of components that need updating
@@ -157,12 +259,12 @@ class Dataset extends React.Component<DatasetProps> {
   }
 
   openWorkingDirectory () {
-    shell.openItem(this.props.workingDataset.fsiPath)
+    shell.openItem(this.props.data.workingDataset.fsiPath)
   }
 
   publishUnpublishDataset () {
-    const { workingDataset, setModal } = this.props
-    const { published } = workingDataset
+    const { data, setModal } = this.props
+    const { published } = data.workingDataset
 
     published
       ? setModal({ type: ModalType.UnpublishDataset })
@@ -171,9 +273,26 @@ class Dataset extends React.Component<DatasetProps> {
 
   render () {
     // unpack all the things
-    const { ui, selections, workingDataset, setModal, hasDatasets, session, setRoute } = this.props
+    const {
+      data,
+
+      selections,
+      hasDatasets,
+      sidebarWidth,
+      session,
+
+      setModal,
+      setActiveTab,
+      setCommit,
+      setComponent,
+      setRoute,
+
+      fetchHistory,
+
+      discardChanges,
+      renameDataset
+    } = this.props
     const { peername: username } = session
-    const { datasetSidebarWidth } = ui
     const {
       peername,
       name,
@@ -182,7 +301,7 @@ class Dataset extends React.Component<DatasetProps> {
     } = selections
 
     const datasetSelected = peername !== '' && name !== ''
-    const { status, published, fsiPath } = workingDataset
+    const { status, published, fsiPath } = data.workingDataset
 
     // isLinked is derived from fsiPath and only used locally
     const isLinked = fsiPath !== ''
@@ -194,7 +313,17 @@ class Dataset extends React.Component<DatasetProps> {
     } = this.props
 
     const sidebarContent = (
-      <DatasetSidebarContainer setModal={setModal} />
+      <DatasetSidebar
+        data= {{ workingDataset: data.workingDataset, history: data.history }}
+        selections={selections}
+        setModal={setModal}
+        setActiveTab={setActiveTab}
+        setCommit={setCommit}
+        setComponent={setComponent}
+        fetchHistory={fetchHistory}
+        discardChanges={discardChanges}
+        renameDataset={renameDataset}
+      />
     )
 
     let linkButton
@@ -225,13 +354,13 @@ class Dataset extends React.Component<DatasetProps> {
       publishButton = published ? (
         <HeaderColumnButtonDropdown
           id='publishButton'
-          onClick={() => { shell.openExternal(`${QRI_CLOUD_URL}/${workingDataset.peername}/${workingDataset.name}`) }}
+          onClick={() => { shell.openExternal(`${QRI_CLOUD_URL}/${data.workingDataset.peername}/${data.workingDataset.name}`) }}
           icon={faCloud}
           label='View in Cloud'
           items={[
             <li key={0} onClick={(e) => {
               e.stopPropagation()
-              clipboard.writeText(`${QRI_CLOUD_URL}/${workingDataset.peername}/${workingDataset.name}`)
+              clipboard.writeText(`${QRI_CLOUD_URL}/${data.workingDataset.peername}/${data.workingDataset.name}`)
             }}>Copy Link</li>,
             <li key={1} onClick={(e) => {
               e.stopPropagation()
@@ -241,7 +370,7 @@ class Dataset extends React.Component<DatasetProps> {
         />
       ) : (
         <span data-tip={
-          workingDataset.history.value.length === 0
+          data.workingDataset.history.value.length === 0
             ? 'The dataset must have at least one commit before you can publish'
             : 'Publish this dataset to Qri Cloud'
         }>
@@ -249,7 +378,7 @@ class Dataset extends React.Component<DatasetProps> {
             id='publishButton'
             label='Publish'
             icon={faCloudUploadAlt}
-            disabled={workingDataset.history.value.length === 0}
+            disabled={data.workingDataset.history.value.length === 0}
             onClick={() => { setModal({ type: ModalType.PublishDataset }) }}
           />
         </span>
@@ -283,7 +412,7 @@ class Dataset extends React.Component<DatasetProps> {
               <NoDatasetSelected />
             </CSSTransition>
             <CSSTransition
-              in={datasetSelected && (activeTab === 'status') && !isLinked && !workingDataset.isLoading}
+              in={datasetSelected && (activeTab === 'status') && !isLinked && !data.workingDataset.isLoading}
               classNames='fade'
               timeout={300}
               mountOnEnter
@@ -298,7 +427,7 @@ class Dataset extends React.Component<DatasetProps> {
               mountOnEnter
               unmountOnExit
             >
-              <DatasetComponent component={selectedComponent} componentStatus={status[selectedComponent]} isLoading={workingDataset.isLoading} fsiPath={this.props.workingDataset.fsiPath}/>
+              <DatasetComponent component={selectedComponent} componentStatus={status[selectedComponent]} isLoading={data.workingDataset.isLoading} fsiPath={this.props.data.workingDataset.fsiPath}/>
             </CSSTransition>
             <CSSTransition
               in={datasetSelected && activeTab === 'history'}
@@ -307,7 +436,11 @@ class Dataset extends React.Component<DatasetProps> {
               mountOnEnter
               unmountOnExit
             >
-              <CommitDetailsContainer />
+              <CommitDetails
+                data={data.head}
+                selections={selections}
+                setComponent={setComponent}
+              />
             </CSSTransition>
           </div>
         </div>
@@ -317,14 +450,14 @@ class Dataset extends React.Component<DatasetProps> {
     return (
       <>
         <div className='details-bar-wrapper'
-          style={{ 'left': showDetailsBar ? 59 : datasetSidebarWidth * -3 }}
+          style={{ 'left': showDetailsBar ? 59 : sidebarWidth * -3 }}
         >
           <div className='details-bar-inner'
             style={{ 'opacity': showDetailsBar ? 1 : 0 }}
           >
             <Resizable
               id='details'
-              width={datasetSidebarWidth}
+              width={sidebarWidth}
               onResize={(width) => { setSidebarWidth('dataset', width) }}
               onReset={() => { setSidebarWidth('dataset', defaultSidebarWidth) }}
               maximumWidth={495}
@@ -336,7 +469,7 @@ class Dataset extends React.Component<DatasetProps> {
         <SidebarLayout
           id='dataset-container'
           sidebarContent={sidebarContent}
-          sidebarWidth={datasetSidebarWidth}
+          sidebarWidth={sidebarWidth}
           onSidebarResize={(width) => { setSidebarWidth('dataset', width) }}
           maximumSidebarWidth={495}
           mainContent={mainContent}

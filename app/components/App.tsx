@@ -180,20 +180,6 @@ class App extends React.Component<AppProps, AppState> {
       this.props.bootstrap()
     }
 
-    // listen for changes to current dataset, fetch data on change
-    if (!(this.props.selections.peername === '' || this.props.selections.name === '') && (
-      (this.props.selections.peername !== prevProps.selections.peername) || (this.props.selections.name !== prevProps.selections.name))
-    ) {
-      // if the paths are the same, don't get data (dataset was renamed)
-      if (
-        !(this.props.workingDataset.peername === '' || this.props.workingDataset.name === '') && (this.props.workingDataset.path === prevProps.workingDataset.path)
-      ) {
-        return
-      }
-      this.props.fetchWorkingDatasetDetails()
-      return
-    }
-
     // this "wires up" all of the tooltips, must be called on update, as tooltips
     // in descendents can come and go
     ReactTooltip.rebuild()

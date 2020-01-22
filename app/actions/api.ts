@@ -18,6 +18,8 @@ import {
 } from './mappingFuncs'
 import { getActionType } from '../utils/actionType'
 
+import { CLEAR_DATASET_HEAD } from '../reducers/commitDetail'
+
 const pageSizeDefault = 50
 export const bodyPageSizeDefault = 50
 
@@ -64,7 +66,7 @@ export function fetchWorkingDatasetDetails (): ApiActionThunk {
     response = await whenOk(fetchWorkingStatus())(response)
     response = await whenOk(fetchBody(-1))(response)
     response = await whenOk(fetchStats())(response)
-    response = await whenOk(fetchWorkingHistory(-1))(response)
+    response = await whenOk(fetchHistory(-1))(response)
 
     return response
   }
@@ -194,6 +196,14 @@ export function fetchCommitDataset (): ApiActionThunk {
     const { selections } = getState()
     const { commit } = selections
 
+    if (commit === '') {
+      return dispatch({
+        type: CLEAR_DATASET_HEAD,
+        peername: selections.peername,
+        name: selections.name
+      })
+    }
+
     const response = await dispatch({
       type: 'commitdataset',
       [CALL_API]: {
@@ -217,6 +227,14 @@ export function fetchCommitStatus (): ApiActionThunk {
     const { selections } = getState()
     const { commit } = selections
 
+    if (commit === '') {
+      return dispatch({
+        type: CLEAR_DATASET_HEAD,
+        peername: selections.peername,
+        name: selections.name
+      })
+    }
+
     const response = await dispatch({
       type: 'commitstatus',
       [CALL_API]: {
@@ -236,7 +254,7 @@ export function fetchCommitStatus (): ApiActionThunk {
 }
 
 // to invalidate pagination, set page to -1
-export function fetchWorkingHistory (page: number = 1, pageSize: number = pageSizeDefault): ApiActionThunk {
+export function fetchHistory (page: number = 1, pageSize: number = pageSizeDefault): ApiActionThunk {
   return async (dispatch, getState) => {
     const state = getState()
 
@@ -335,6 +353,14 @@ export function fetchCommitBody (page: number = 1, pageSize: number = bodyPageSi
     const { selections, commitDetails } = getState()
     let { peername, name, commit: path } = selections
 
+    if (path === '') {
+      return dispatch({
+        type: CLEAR_DATASET_HEAD,
+        peername: selections.peername,
+        name: selections.name
+      })
+    }
+
     const { page: confirmedPage, doNotFetch } = actionWithPagination(page, commitDetails.components.body.pageInfo)
 
     // we need to emit a 'success' type, or our chainSuccess functions will fail
@@ -389,6 +415,14 @@ export function fetchCommitStats ():
 ApiActionThunk {
   return async (dispatch, getState) => {
     const { selections } = getState()
+
+    if (selections.commit === '') {
+      return dispatch({
+        type: CLEAR_DATASET_HEAD,
+        peername: selections.peername,
+        name: selections.name
+      })
+    }
 
     const response = await dispatch({
       type: 'commitstats',
@@ -704,18 +738,6 @@ export function fsiWrite (peername: string, name: string, dataset: any): ApiActi
       }
     }
     return dispatch(action)
-  }
-}
-
-export function fsiWriteAndFetch (peername: string, name: string, dataset: any): ApiActionThunk {
-  return async (dispatch, getState) => {
-    const whenOk = chainSuccess(dispatch, getState)
-    let response: Action
-
-    response = await fsiWrite(peername, name, dataset)(dispatch, getState)
-    // reset pagination
-    response = await whenOk(fetchWorkingDatasetDetails())(response)
-    return response
   }
 }
 

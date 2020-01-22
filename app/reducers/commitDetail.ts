@@ -13,7 +13,7 @@ const initialState: CommitDetails = {
   peername: '',
   name: '',
   status: {},
-  isLoading: true,
+  isLoading: false,
   components: {
     commit: {
       value: {}
@@ -43,6 +43,8 @@ const [COMMITSTATUS_REQ, COMMITSTATUS_SUCC, COMMITSTATUS_FAIL] = apiActionTypes(
 const [COMMITBODY_REQ, COMMITBODY_SUCC, COMMITBODY_FAIL] = apiActionTypes('commitbody')
 const [COMMITSTATS_REQ, COMMITSTATS_SUCC, COMMITSTATS_FAIL] = apiActionTypes('commitstats')
 
+export const CLEAR_DATASET_HEAD = 'CLEAR_DATASET_HEAD'
+
 const commitDetailsReducer: Reducer = (state = initialState, action: AnyAction): CommitDetails => {
   switch (action.type) {
     case DATASET_REQ:
@@ -51,7 +53,10 @@ const commitDetailsReducer: Reducer = (state = initialState, action: AnyAction):
       }
       return state
     case COMMITDATASET_REQ:
-      return initialState
+      return {
+        ...state,
+        isLoading: true
+      }
     case COMMITDATASET_SUCC:
       const { name, path, peername, published, dataset } = action.payload.data
       return {
@@ -79,10 +84,7 @@ const commitDetailsReducer: Reducer = (state = initialState, action: AnyAction):
       }
 
     case COMMITDATASET_FAIL:
-      return {
-        ...initialState,
-        isLoading: false
-      }
+      return initialState
 
     case COMMITSTATUS_REQ:
       return state
@@ -148,6 +150,13 @@ const commitDetailsReducer: Reducer = (state = initialState, action: AnyAction):
       return {
         ...state,
         stats: []
+      }
+
+    case CLEAR_DATASET_HEAD:
+      return {
+        ...initialState,
+        peername: action.peername,
+        name: action.name
       }
 
     default:

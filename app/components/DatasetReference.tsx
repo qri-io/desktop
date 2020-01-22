@@ -90,7 +90,7 @@ const DatasetReference: React.FunctionComponent<DatasetReferenceProps> = (props)
 
   return (
     <div id='dataset-reference' className='dataset-reference'>
-      <div className='dataset-peername'>{peername}/</div>
+      <div className='dataset-peername'>{peername || ''}/</div>
       <div className='dataset-name' id='dataset-name' ref={nameRef}>
         { nameEditing && <input
           id='dataset-name-input'
@@ -103,7 +103,7 @@ const DatasetReference: React.FunctionComponent<DatasetReferenceProps> = (props)
           onFocus={onFocus}
           pattern='^(?![0_9])[a-z0-9_]{1,144}$'
         /> }
-        { !nameEditing && (<>{name}</>)}
+        { !nameEditing && (<>{name || ''}</>)}
       </div>
     </div>
   )
