@@ -1,3 +1,37 @@
+## [0.3.2](https://github.com/qri-io/desktop/compare/v0.3.1...v0.3.2) (2020-01-22)
+
+This release brings a two new features and some fixes that address bugs that occured while navigating through the app.
+
+## Schema Editor
+You can now edit a schema straight from the app! You can change the title, type, and description of your columns by using our new Schema Editor. Validation is also included in this Schema Editor, but future refinements will be made to get it to be more functional.
+
+## Bug logging
+If you are having a problem with the app and you want to file an issue, you can now get a copy of your app's debug log by navigating to `help` -> `Export debug log`. This will give the developers more insight into what may have gone wrong.
+
+## Routing and Fetching
+There were a whole slew of bugs that arose when we switched the way we route the app. This release fixes those bugs and brings back a smooth user experience. Also, additional tests have been added so that we will catch any routing bugs quicker during future changes
+
+
+### Bug Fixes
+
+* hashHistory & add/adjust id's for e2e tests ([f568db6](https://github.com/qri-io/desktop/commit/f568db6))
+* **commit, MetadataEditor:** fix meta editing and the flow after you commit ([#394](https://github.com/qri-io/desktop/issues/394)) ([120192b](https://github.com/qri-io/desktop/commit/120192b))
+* **log export:** replace showSaveDialog with showSaveDialogSync ([a6414e3](https://github.com/qri-io/desktop/commit/a6414e3))
+
+
+### Features
+
+* **icon:** `Icon` component ([67fba53](https://github.com/qri-io/desktop/commit/67fba53))
+* **LineDiff:** initial line diff component & storybook story ([8d4825c](https://github.com/qri-io/desktop/commit/8d4825c))
+* **log:** Set the --log-all flag when starting our own backend ([#401](https://github.com/qri-io/desktop/issues/401)) ([9c53a43](https://github.com/qri-io/desktop/commit/9c53a43))
+* **logging:** Log to a file, menu item to export it ([a436b81](https://github.com/qri-io/desktop/commit/a436b81))
+* **main process logging:** add logging for main process ([71a7c2e](https://github.com/qri-io/desktop/commit/71a7c2e))
+* **Schema:** create a schema editor ([#392](https://github.com/qri-io/desktop/issues/392)) ([4d9b4f1](https://github.com/qri-io/desktop/commit/4d9b4f1))
+* **tableDiff:** initial tableDiff component and story ([5f21579](https://github.com/qri-io/desktop/commit/5f21579))
+* **TypePicker:** create TypePicker and other needed components ([#390](https://github.com/qri-io/desktop/issues/390)) ([a9b1c61](https://github.com/qri-io/desktop/commit/a9b1c61))
+
+
+
 ## [0.3.1](https://github.com/qri-io/desktop/compare/v0.3.0...v0.3.1) (2019-12-20)
 
 We've got a patch release! This patch release cleans up some bugs around fetching, event listeners, dataset naming, and general app flow!
