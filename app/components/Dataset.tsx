@@ -35,7 +35,7 @@ import { defaultPollInterval } from './App'
 
 export interface DatasetData {
   workingDataset: WorkingDataset
-  versionedDataset: ICommitDetails
+  head: ICommitDetails
   history: History
 }
 
@@ -117,7 +117,7 @@ class Dataset extends React.Component<DatasetProps> {
       fetchCommitBody,
       setCommit
     } = this.props
-    const { workingDataset, versionedDataset, history } = data
+    const { workingDataset, head, history } = data
 
     if (!workingDataset.isLoading &&
         (selections.peername !== workingDataset.peername ||
@@ -129,10 +129,10 @@ class Dataset extends React.Component<DatasetProps> {
       fetchWorkingStatus()
       return
     }
-    if (!versionedDataset.isLoading &&
-        (selections.peername !== versionedDataset.peername ||
-        selections.name !== versionedDataset.name ||
-        selections.commit !== versionedDataset.path)) {
+    if (!head.isLoading &&
+        (selections.peername !== head.peername ||
+        selections.name !== head.name ||
+        selections.commit !== head.path)) {
       fetchCommitDataset()
       fetchCommitStats()
       fetchCommitStatus()
@@ -190,7 +190,7 @@ class Dataset extends React.Component<DatasetProps> {
       fetchCommitBody,
       setCommit
     } = this.props
-    const { workingDataset, versionedDataset, history } = data
+    const { workingDataset, head, history } = data
 
     if (!workingDataset.isLoading &&
         (selections.peername !== workingDataset.peername ||
@@ -202,10 +202,10 @@ class Dataset extends React.Component<DatasetProps> {
       fetchWorkingStatus()
       return
     }
-    if (!versionedDataset.isLoading &&
-        (selections.peername !== versionedDataset.peername ||
-        selections.name !== versionedDataset.name ||
-        selections.commit !== versionedDataset.path)) {
+    if (!head.isLoading &&
+        (selections.peername !== head.peername ||
+        selections.name !== head.name ||
+        selections.commit !== head.path)) {
       fetchCommitDataset()
       fetchCommitStats()
       fetchCommitStatus()
@@ -437,7 +437,7 @@ class Dataset extends React.Component<DatasetProps> {
               unmountOnExit
             >
               <CommitDetails
-                data={data.versionedDataset}
+                data={data.head}
                 selections={selections}
                 setComponent={setComponent}
               />

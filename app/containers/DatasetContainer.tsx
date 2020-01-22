@@ -50,7 +50,7 @@ const DatasetContainer = connect(
 
     const data: DatasetData = {
       workingDataset: workingDataset,
-      versionedDataset: commitDetails,
+      head: commitDetails,
       // TODO (ramfox): refactor so that history has it's own place in the state tree
       history: workingDataset.history
     }

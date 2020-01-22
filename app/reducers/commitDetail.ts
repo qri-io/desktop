@@ -43,7 +43,7 @@ const [COMMITSTATUS_REQ, COMMITSTATUS_SUCC, COMMITSTATUS_FAIL] = apiActionTypes(
 const [COMMITBODY_REQ, COMMITBODY_SUCC, COMMITBODY_FAIL] = apiActionTypes('commitbody')
 const [COMMITSTATS_REQ, COMMITSTATS_SUCC, COMMITSTATS_FAIL] = apiActionTypes('commitstats')
 
-export const CLEAR_VERSIONED_DATASET = 'CLEAR_VERSIONED_DATASET'
+export const CLEAR_DATASET_HEAD = 'CLEAR_DATASET_HEAD'
 
 const commitDetailsReducer: Reducer = (state = initialState, action: AnyAction): CommitDetails => {
   switch (action.type) {
@@ -152,7 +152,7 @@ const commitDetailsReducer: Reducer = (state = initialState, action: AnyAction):
         stats: []
       }
 
-    case CLEAR_VERSIONED_DATASET:
+    case CLEAR_DATASET_HEAD:
       return {
         ...initialState,
         peername: action.peername,

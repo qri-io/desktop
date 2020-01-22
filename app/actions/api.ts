@@ -18,7 +18,7 @@ import {
 } from './mappingFuncs'
 import { getActionType } from '../utils/actionType'
 
-import { CLEAR_VERSIONED_DATASET } from '../reducers/commitDetail'
+import { CLEAR_DATASET_HEAD } from '../reducers/commitDetail'
 
 const pageSizeDefault = 50
 export const bodyPageSizeDefault = 50
@@ -198,7 +198,7 @@ export function fetchCommitDataset (): ApiActionThunk {
 
     if (commit === '') {
       return dispatch({
-        type: CLEAR_VERSIONED_DATASET,
+        type: CLEAR_DATASET_HEAD,
         peername: selections.peername,
         name: selections.name
       })
@@ -229,7 +229,7 @@ export function fetchCommitStatus (): ApiActionThunk {
 
     if (commit === '') {
       return dispatch({
-        type: CLEAR_VERSIONED_DATASET,
+        type: CLEAR_DATASET_HEAD,
         peername: selections.peername,
         name: selections.name
       })
@@ -355,7 +355,7 @@ export function fetchCommitBody (page: number = 1, pageSize: number = bodyPageSi
 
     if (path === '') {
       return dispatch({
-        type: CLEAR_VERSIONED_DATASET,
+        type: CLEAR_DATASET_HEAD,
         peername: selections.peername,
         name: selections.name
       })
@@ -418,7 +418,7 @@ ApiActionThunk {
 
     if (selections.commit === '') {
       return dispatch({
-        type: CLEAR_VERSIONED_DATASET,
+        type: CLEAR_DATASET_HEAD,
         peername: selections.peername,
         name: selections.name
       })
