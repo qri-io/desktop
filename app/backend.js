@@ -1,3 +1,4 @@
+const log = require('electron-log')
 const childProcess = require('child_process')
 const fs = require('fs')
 const path = require('path')
@@ -10,7 +11,7 @@ class BackendProcess {
   constructor () {
     this.qriBinPath = null
     this.process = null
-    this.debugLogPath = null;
+    this.debugLogPath = null
 
     // Default to writing to stdout & stderr
     this.out = process.stdout
@@ -19,7 +20,7 @@ class BackendProcess {
       // Create a log whose filename contains the current day.
       const nowTime = new Date();
       const nowString = nowTime.toISOString();
-      const filename = 'qri_' + nowString.substring(0, nowString.indexOf('T')) + '.log';
+      const filename = `qri_${nowString.substring(0, nowString.indexOf('T'))}.log`
 
       // Log to this file in a temporary directory named after our app
       const dirPath = path.join(os.tmpdir(), 'io.qri.desktop')
@@ -27,8 +28,8 @@ class BackendProcess {
       if (!fs.existsSync(dirPath)) {
         fs.mkdirSync(dirPath)
       }
-      console.log('Logging to ' + logPath);
-      this.debugLogPath = logPath;
+      log.info(`logging backend output to ${logPath}`)
+      this.debugLogPath = logPath
 
       this.out = fs.openSync(logPath, 'a')
       this.err = fs.openSync(logPath, 'a')
@@ -50,16 +51,19 @@ class BackendProcess {
       if (fs.existsSync(whichBin)) {
         this.qriBinPath = whichBin;
       }
+      log.info(`because we're in dev mode, looking for qri binary on $PATH. found: ${this.qriBinPath}`)
     }
     // Locate the binary for the qri backend command-line in common paths
     if (!this.qriBinPath) {
       this.qriBinPath = this.findQriBin([process.resourcesPath, path.join(__dirname, '../')])
     }
+
     if (!this.qriBinPath) {
+      log.warn('no qri bin path found, backend launch')
       return
     }
     // Run the binary if it is found
-    console.log('Found qri binary at path ' + this.qriBinPath);
+    log.info(`found qri binary at path: ${this.qriBinPath}`)
     this.launchProcess()
   }
 
@@ -72,24 +76,24 @@ class BackendProcess {
 
   launchProcess () {
     try {
-      let processResult = childProcess.execSync(this.qriBinPath + ' version')
+      let processResult = childProcess.execSync(`"${this.qriBinPath}" version`)
       let qriBinVersion = processResult.toString().trim();
       this.process = childProcess.spawn(this.qriBinPath, ['connect', '--setup', '--log-all'], { stdio: ['ignore', this.out, this.err] })
       this.process.on('error', (err) => { this.handleEvent('error', err) })
       this.process.on('exit', (err) => { this.handleEvent('exit', err) })
       this.process.on('close', (err) => { this.handleEvent('close', err) })
       this.process.on('disconnect', (err) => { this.handleEvent('disconnect', err) })
-      console.log('starting up qri backend version ' + qriBinVersion)
+      log.info(`starting up qri backend version ${qriBinVersion}`)
     } catch (err) {
-      console.log('ERROR, Starting background process: ' + err)
+      log.error(`starting background process: ${err}`)
     }
   }
 
   handleEvent (kind, err) {
     if (err) {
-      console.log('event ' + kind + ' from backend: ' + err)
+      log.error(`event ${kind} from backend: ${err}`)
     } else {
-      console.log('event ' + kind + ' from backend')
+      log.warn(`event ${kind} from backend`)
     }
   }
 
