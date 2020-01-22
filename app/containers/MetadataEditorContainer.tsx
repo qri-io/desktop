@@ -2,7 +2,7 @@ import { connect } from 'react-redux'
 import MetadataEditor from '../components/MetadataEditor'
 import Store from '../models/store'
 
-import { fsiWriteAndFetch } from '../actions/api'
+import { fsiWrite } from '../actions/api'
 
 const mapStateToProps = (state: Store) => {
   const { workingDataset } = state
@@ -13,7 +13,7 @@ const mapStateToProps = (state: Store) => {
 }
 
 const actions = {
-  fsiWrite: fsiWriteAndFetch
+  fsiWrite
 }
 
 export default connect(mapStateToProps, actions)(MetadataEditor)

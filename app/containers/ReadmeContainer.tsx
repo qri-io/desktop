@@ -2,7 +2,7 @@ import { connect } from 'react-redux'
 import { bindActionCreators, Dispatch } from 'redux'
 import Readme, { ReadmeProps } from '../components/Readme'
 import Store from '../models/store'
-import { fsiWriteAndFetch, fetchReadmePreview } from '../actions/api'
+import { fsiWrite, fetchReadmePreview } from '../actions/api'
 
 const mapStateToProps = (state: Store) => {
   const { workingDataset, selections } = state
@@ -25,7 +25,7 @@ const mergeProps = (props: any, actions: any): ReadmeProps => { //eslint-disable
 }
 
 const mapDispatchToProps = (dispatch: Dispatch) => {
-  return bindActionCreators({ write: fsiWriteAndFetch, fetchPreview: fetchReadmePreview }, dispatch)
+  return bindActionCreators({ write: fsiWrite, fetchPreview: fetchReadmePreview }, dispatch)
 }
 
 export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(Readme)

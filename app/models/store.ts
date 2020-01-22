@@ -72,8 +72,8 @@ export type SelectedComponent = 'commit' | 'readme' | 'meta' | 'body' | 'structu
 
 // currently selected dataset, tab, dataset component, commit, etc
 export interface Selections {
-  peername: string | null
-  name: string | null
+  peername: string
+  name: string
   activeTab: string
   component: SelectedComponent
   commit: string
@@ -172,10 +172,12 @@ export interface WorkingDataset extends CommitDetails {
   fsiPath: string
   hasHistory: boolean
   published: boolean
-  history: {
-    pageInfo: PageInfo
-    value: HistoryItem[]
-  }
+  history: History
+}
+
+export interface History {
+  pageInfo: PageInfo
+  value: HistoryItem[]
 }
 
 export default interface Store {

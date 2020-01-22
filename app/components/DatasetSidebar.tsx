@@ -8,12 +8,13 @@ import { faClock } from '@fortawesome/free-regular-svg-icons'
 import { ApiActionThunk } from '../store/api'
 import ComponentList from './ComponentList'
 import DatasetReference from './DatasetReference'
+import { Modal } from '../models/modals'
 
 import classNames from 'classnames'
 import Spinner from './chrome/Spinner'
 
 import { DatasetDetailsSubtext } from './DatasetList'
-import { WorkingDataset, ComponentType, Selections } from '../models/store'
+import { WorkingDataset, ComponentType, Selections, History, SelectedComponent } from '../models/store'
 import ContextMenuArea from 'react-electron-contextmenu'
 import { MenuItemConstructorOptions, remote, ipcRenderer } from 'electron'
 
@@ -25,7 +26,7 @@ interface HistoryListItemProps {
   selected: boolean
   first: boolean
   last: boolean
-  onClick: (type: string, selectedListItem: string) => Action
+  onClick: (selectedListItem: string) => Action
 }
 
 const HistoryListItem: React.FunctionComponent<HistoryListItemProps> = (props) => {
@@ -43,7 +44,7 @@ const HistoryListItem: React.FunctionComponent<HistoryListItemProps> = (props) =
           last
         })
       }
-      onClick={() => { props.onClick('commit', path) }}
+      onClick={() => { props.onClick(path) }}
     >
       <div className='icon-column'>
         <div className='history-timeline-line history-timeline-line-top' />
@@ -63,30 +64,48 @@ const HistoryListItem: React.FunctionComponent<HistoryListItemProps> = (props) =
   )
 }
 
-export interface DatasetSidebarProps {
-  selections: Selections
+export interface DatasetSidebarData {
   workingDataset: WorkingDataset
-  hideCommitNudge: boolean
+  history: History
+}
+
+export interface DatasetSidebarProps {
+  data: DatasetSidebarData
+
+  // display details
+  selections: Selections
+
+  // setting actions
+  setModal: (modal: Modal) => void
   setActiveTab: (activeTab: string) => Action
-  setSelectedListItem: (type: ComponentType, activeTab: string) => Action
-  fetchWorkingHistory: (page?: number, pageSize?: number) => ApiActionThunk
-  discardChanges: (component: ComponentType) => ApiActionThunk
-  setHideCommitNudge: () => Action
+  setCommit: (path: string) => Action
+  setComponent: (type: ComponentType, activeComponent: string) => Action // actually just setSelectedListItem
+
+  // fetching actions
+  fetchHistory: (page?: number, pageSize?: number) => ApiActionThunk
+
+  // api actions (not fetching)
+  discardChanges: (component: SelectedComponent) => ApiActionThunk
   renameDataset: (peername: string, name: string, newName: string) => ApiActionThunk
 }
 
 const DatasetSidebar: React.FunctionComponent<DatasetSidebarProps> = (props) => {
   const {
     selections,
-    workingDataset,
+    data,
+
     setActiveTab,
-    setSelectedListItem,
-    fetchWorkingHistory,
-    discardChanges,
-    renameDataset
+    setCommit,
+    setComponent,
+
+    fetchHistory,
+
+    renameDataset,
+    discardChanges
   } = props
 
-  const { fsiPath, history, status, structure } = workingDataset
+  const { history, workingDataset } = data
+  const { fsiPath, status, structure } = workingDataset
   const format = structure && structure.format
   const commitCount = history.value.length
   const lastCommit = history.value.length ? history.value[0].timestamp : ''
@@ -105,18 +124,14 @@ const DatasetSidebar: React.FunctionComponent<DatasetSidebarProps> = (props) => 
   const statusLoaded = !!status
 
   const handleHistoryScroll = (e: any) => {
-    if (!(history && history.pageInfo)) {
-      fetchWorkingHistory()
-      return
-    }
     if (e.target.scrollHeight === parseInt(e.target.scrollTop) + parseInt(e.target.offsetHeight)) {
-      fetchWorkingHistory(history.pageInfo.page + 1, history.pageInfo.pageSize)
+      fetchHistory(history.pageInfo.page + 1, history.pageInfo.pageSize)
     }
   }
 
   const handleExport = (path: string) => {
     const window = remote.getCurrentWindow()
-    const selectedPath: string | undefined = remote.dialog.showSaveDialog(window, {})
+    const selectedPath: string | undefined = remote.dialog.showSaveDialogSync(window, {})
 
     if (!selectedPath) {
       return
@@ -128,6 +143,8 @@ const DatasetSidebar: React.FunctionComponent<DatasetSidebarProps> = (props) => 
   }
 
   const historyToolTip = history.value.length !== 0 || !datasetSelected ? 'Explore older versions of this dataset' : 'This dataset has no previous versions'
+
+  // if no dataset is selected, what to return
 
   return (
     <div className='dataset-sidebar'>
@@ -186,7 +203,7 @@ const DatasetSidebar: React.FunctionComponent<DatasetSidebarProps> = (props) => 
               datasetSelected={datasetSelected}
               status={status}
               selectedComponent={selectedComponent}
-              onComponentClick={setSelectedListItem}
+              onComponentClick={setComponent}
               selectionType={'component' as ComponentType}
               fsiPath={fsiPath}
               discardChanges={discardChanges}
@@ -223,14 +240,14 @@ const DatasetSidebar: React.FunctionComponent<DatasetSidebarProps> = (props) => 
                   <ContextMenuArea menuItems={menuItems} key={path}>
                     <HistoryListItem
                       key={path}
-                      id={`HEAD~${i + 1}`}
+                      id={`HEAD-${i + 1}`}
                       first={i === 0}
                       last={i === history.value.length - 1}
                       path={path}
                       commitTitle={title}
                       timeMessage={timeMessage}
                       selected={selectedCommit === path}
-                      onClick={setSelectedListItem}
+                      onClick={setCommit}
                     />
                   </ContextMenuArea>
                 )

@@ -2,7 +2,7 @@ import { connect } from 'react-redux'
 import { bindActionCreators, Dispatch } from 'redux'
 import Transform, { TransformProps } from '../components/Transform'
 import Store from '../models/store'
-import { fsiWriteAndFetch } from '../actions/api'
+import { fsiWrite } from '../actions/api'
 
 const mapStateToProps = (state: Store) => {
   const { workingDataset, selections } = state
@@ -25,7 +25,7 @@ const mergeProps = (props: any, actions: any): TransformProps => { //eslint-disa
 }
 
 const mapDispatchToProps = (dispatch: Dispatch) => {
-  return bindActionCreators({ write: fsiWriteAndFetch }, dispatch)
+  return bindActionCreators({ write: fsiWrite }, dispatch)
 }
 
 export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(Transform)

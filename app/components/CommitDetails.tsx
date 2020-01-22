@@ -6,12 +6,9 @@ import { faClock } from '@fortawesome/free-regular-svg-icons'
 
 import HistoryComponentList from '../components/HistoryComponentList'
 import DatasetComponent from './DatasetComponent'
-import { CSSTransition } from 'react-transition-group'
-import SpinnerWithIcon from './chrome/SpinnerWithIcon'
 import SidebarLayout from './SidebarLayout'
-import { ApiAction } from '../store/api'
 import { Structure, Commit } from '../models/dataset'
-import { CommitDetails as ICommitDetails, ComponentType } from '../models/Store'
+import { CommitDetails as ICommitDetails, ComponentType, SelectedComponent, Selections } from '../models/Store'
 import fileSize from '../utils/fileSize'
 
 interface CommitDetailsHeaderProps {
@@ -34,10 +31,10 @@ const CommitDetailsHeader: React.FunctionComponent<CommitDetailsHeaderProps> = (
           </div>
         </div>
         <div className='details-column'>
-          {structure.length && <div className='detail'>{fileSize(structure.length)}</div>}
-          {structure.format && <div className='detail'>{structure.format.toUpperCase()}</div>}
-          {structure.entries && <div className='detail'>{structure.entries.toLocaleString()} {structure.entries !== 1 ? 'entries' : 'entry'}</div>}
-          {structure.errCount && <div className='detail'>{structure.errCount.toLocaleString()} {structure.errCount !== 1 ? 'errors' : 'error'}</div>}
+          {structure.length && <div className='detail' id='commit-details-header-file-size'>{fileSize(structure.length)}</div>}
+          {structure.format && <div className='detail' id='commit-details-header-format'>{structure.format.toUpperCase()}</div>}
+          {structure.entries && <div className='detail' id='commit-details-header-entries'>{structure.entries.toLocaleString()} {structure.entries !== 1 ? 'entries' : 'entry'}</div>}
+          {structure.errCount && <div className='detail' id='commit-details-header-errors'>{structure.errCount.toLocaleString()} {structure.errCount !== 1 ? 'errors' : 'error'}</div>}
         </div>
       </div>}
     </div>
@@ -45,29 +42,20 @@ const CommitDetailsHeader: React.FunctionComponent<CommitDetailsHeaderProps> = (
 }
 
 export interface CommitDetailsProps {
-  peername: string
-  name: string
-  selectedCommitPath: string
-  commit: Commit
-  selectedComponent: 'meta' | 'body' | 'structure' | ''
-  sidebarWidth: number
-  commitDetails: ICommitDetails
-  structure: Structure
-  setSelectedListItem: (type: string, activeTab: string) => Action
-  setSidebarWidth: (type: string, sidebarWidth: number) => Action
-  fetchCommitDetail: () => Promise<ApiAction>
+  data: ICommitDetails
+  selections: Selections
+
+  setComponent: (type: ComponentType, activeComponent: string) => Action
 }
 
 const CommitDetails: React.FunctionComponent<CommitDetailsProps> = ({
-  peername,
-  name,
-  selectedCommitPath,
-  commit,
-  selectedComponent,
-  setSelectedListItem,
-  fetchCommitDetail,
-  commitDetails,
-  structure
+  data,
+
+  // display details
+  selections,
+
+  // setting actions
+  setComponent
 }) => {
   // we have to guard against an odd case when we look at history
   // it is possible that we can get the history of a dataset, but
@@ -76,86 +64,43 @@ const CommitDetails: React.FunctionComponent<CommitDetailsProps> = ({
   // when we get that error, we should prompt the user to add that
   // version of the dataset.
   // for now, we will tell the user to run a command on the command line
-  const [isLogError, setLogError] = React.useState(false)
-  const [loading, setLoading] = React.useState(true)
-  const isLoadingRef = React.useRef(commitDetails.isLoading)
+  const { peername, name, status, components, isLoading, path } = data
+  const { structure, commit } = components
 
-  const isLoadingTimeout = setTimeout(() => {
-    if (isLoadingRef.current) {
-      setLoading(true)
-    }
-    clearTimeout(isLoadingTimeout)
-  }, 250)
-
-  React.useEffect(() => {
-    // only fetch data if the workingCommit does not match selected path
-    if (selectedCommitPath !== commitDetails.path) {
-      fetchCommitDetail()
-        .then(() => {
-          if (isLogError) setLogError(false)
-        })
-        .catch(action => {
-          const message: string = action.payload.err.message
-          setLogError(message.includes('does not match datasetRef on file'))
-        })
-    }
-  }, [selectedCommitPath])
-
-  React.useEffect(() => {
-    if (isLoadingRef.current !== commitDetails.isLoading) {
-      isLoadingRef.current = commitDetails.isLoading
-    }
-    if (loading && isLoadingRef.current === false) {
-      setLoading(false)
-    }
-  }, [commitDetails.isLoading])
-
-  const { status } = commitDetails
+  const { commitComponent: selectedComponent } = selections
 
   const getComponents = () => {
-    const components = []
-    Object.keys(commitDetails.components).forEach((component) => {
-      if (commitDetails.components[component].value) components.push(component)
-    })
+    const components: SelectedComponent[] = []
+    if (data && data.components) {
+      Object.keys(data.components).forEach((component: SelectedComponent) => {
+        if (component !== '' && data.components[component].value) components.push(component)
+      })
+    }
     return components
   }
 
+  const loading = !path || path !== selections.commit || isLoading
+
   return (
     <div id='commit-details' className='dataset-content transition-group'>
-      <CSSTransition
-        in={!isLogError && !loading}
-        classNames='fade'
-        timeout={300}
-        unmountOnExit
-      >
-        <div id='transition-wrap'>
-          {<CommitDetailsHeader structure={structure} commit={commit}/>}
-          <SidebarLayout
-            id={'commit-details'}
-            sidebarContent={(
-              <HistoryComponentList
-                datasetSelected={peername !== '' && name !== ''}
-                status={status}
-                components={getComponents()}
-                selectedComponent={selectedComponent}
-                selectionType={'commitComponent' as ComponentType}
-                onComponentClick={setSelectedListItem}
-              />
-            )}
-            sidebarWidth={150}
-            mainContent={(
-              <DatasetComponent isLoading={loading} component={selectedComponent} componentStatus={status[selectedComponent]} history />
-            )}
+      <CommitDetailsHeader structure={structure.value} commit={data.components && commit.value}/>
+      <SidebarLayout
+        id={'commit-details'}
+        sidebarContent={(
+          <HistoryComponentList
+            datasetSelected={peername !== '' && name !== ''}
+            status={status}
+            components={getComponents()}
+            selectedComponent={selectedComponent}
+            selectionType={'commitComponent' as ComponentType}
+            onComponentClick={setComponent}
           />
-        </div>
-      </CSSTransition>
-      <SpinnerWithIcon loading={loading} />
-      <SpinnerWithIcon loading={isLogError && !loading} title='Oh no!' spinner={false}>
-        <p>Oops, you don&apos;t have this version of the dataset.</p>
-        <p>Try adding it by using the terminal and the Qri command line tool that can be used when this desktop app is running!</p>
-        <p>Open up the terminal and paste this command:</p>
-        <div className='terminal'>{`qri add ${peername}/${name}/at${selectedCommitPath}`}</div>
-      </SpinnerWithIcon>
+        )}
+        sidebarWidth={150}
+        mainContent={(
+          <DatasetComponent isLoading={loading} component={selectedComponent} componentStatus={status[selectedComponent]} history />
+        )}
+      />
     </div>
   )
 }

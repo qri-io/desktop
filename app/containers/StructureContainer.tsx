@@ -1,7 +1,7 @@
 import { connect } from 'react-redux'
 import Structure, { StructureProps } from '../components/Structure'
 import Store from '../models/store'
-import { fsiWriteAndFetch } from '../actions/api'
+import { fsiWrite } from '../actions/api'
 import path from 'path'
 
 const mapStateToProps = (state: Store) => {
@@ -23,7 +23,7 @@ const mapStateToProps = (state: Store) => {
 }
 
 const actions = {
-  write: fsiWriteAndFetch
+  write: fsiWrite
 }
 
 const mergeProps = (props: any, actions: any): StructureProps => {

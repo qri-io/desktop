@@ -18,9 +18,15 @@ describe('Qri End to End tests', function spec () {
   const filename = 'e2e_test_csv_dataset.csv'
   const datasetName = 'e2e_test_csv_datasetcsv'
 
+  const filename_1 = 'e2e_test_csv_dataset_1.csv'
+  const datasetName_1 = 'e2e_test_csv_dataset_1csv'
+
   const username = 'fred'
   const email = 'fred@qri.io'
   const password = '1234567890!!'
+
+  const metaCommitTitle = 'made a change to meta'
+  const bodyCommitTitle = 'made a change to body'
 
   beforeAll(async () => {
     jest.setTimeout(60000)
@@ -295,9 +301,8 @@ describe('Qri End to End tests', function spec () {
     // navigate to commit
     await click('#commit-status')
     // set value of title & message
-    const commitTitle = 'modified body'
     const commitMessage = 'modified body using fsi'
-    await setValue('#title', commitTitle)
+    await setValue('#title', bodyCommitTitle)
     await setValue('#message', commitMessage)
     // send accept
     await click('#submit')
@@ -306,7 +311,7 @@ describe('Qri End to End tests', function spec () {
     // body status should be modified
     await checkStatus('body', 'modified')
     // title should be the same as title we added
-    await expectTextToBe('#commit-title', commitTitle)
+    await expectTextToBe('#commit-title', bodyCommitTitle)
   })
 
   // meta write and commit
@@ -340,8 +345,8 @@ describe('Qri End to End tests', function spec () {
     // click #commit-status
     await click('#commit-status')
     // set title and message
-    const commitTitle = 'yay we made a commit'
-    await setValue('#title', commitTitle)
+
+    await setValue('#title', metaCommitTitle)
     await setValue('#message', 'commit message')
     // submit
     await click('#submit')
@@ -350,11 +355,40 @@ describe('Qri End to End tests', function spec () {
     // meta status should be 'added'
     await checkStatus('meta', 'added')
     // commit title should be the same
-    await expectTextToBe('#commit-title', commitTitle)
+    await expectTextToBe('#commit-title', metaCommitTitle)
     // verify meta title and description should be correct
     await click('#meta-status')
     await expectTextToBe('#meta-title', metaTitle)
     await expectTextToBe('#meta-description', metaDescription)
+  })
+
+  // switch between commits
+  it('switch between commits', async () => {
+    const {
+      click,
+      onHistoryTab,
+      atLocation,
+      expectTextToBe,
+    } = utils
+
+    // make sure we are on the dataset page, looking at history
+    await click('#dataset')
+    await atLocation('#/dataset')
+    await click('#history-tab')
+    await onHistoryTab()
+    await click('#commit-status')
+
+    // click the third commit and check commit-title
+    await click('#HEAD-3')
+    await expectTextToBe('#commit-title', 'created dataset')
+
+    // click the second commit and check commit-title
+    await click('#HEAD-2')
+    await expectTextToBe('#commit-title', bodyCommitTitle)
+
+    // click the third commit and check commit-title
+    await click('#HEAD-1')
+    await expectTextToBe('#commit-title', metaCommitTitle)
   })
 
   // rename
@@ -385,6 +419,54 @@ describe('Qri End to End tests', function spec () {
     await doesNotExist('#dataset-name-input.invalid')
     // submit by clicking away
     await click('#dataset-reference')
+  })
+
+  it('create another new CSV dataset from a data source', async () => {
+    const {
+      atLocation,
+      click,
+      expectTextToBe,
+      onHistoryTab,
+      checkStatus
+    } = utils
+
+    // make sure we are on the collection page
+    await click('#collection')
+    await atLocation('#/collection')
+
+    // click create-dataset to open up the Create Dataset modal
+    await click('#create-dataset')
+
+    // mock the dialog and create a temp csv file
+    // clicking the '#chooseBodyFilePath' button will connect the fakeDialog
+    // to the correct input
+    const csvPath = path.join(backend.dir, filename_1)
+    fs.writeFileSync(csvPath, 'e2e_test_bool_col,x,y,z\nfalse,100,99,98\ntrue,97,96,95')
+    await fakeDialog.mock([ { method: 'showOpenDialogSync', value: [csvPath] } ])
+    await click('#chooseBodyFilePath')
+
+    // submit to create a new dataset
+    await click('#submit')
+
+    // ensure we have redirected to the dataset page
+    await atLocation('#/dataset')
+
+    // ensure we have navigated to the correct dataset
+    // TODO (ramfox): it's weird that we have to pass in this newline character
+    // to get the reference to match. It looks like because the #dataset-reference
+    // div divides the peername and name among multiple divs, we get this odd
+    // whitespace character
+    const reference = `${username}/\n${datasetName_1}`
+    await expectTextToBe('#dataset-reference', reference)
+
+    await expectTextToBe('#commit-details-header-entries', '2 entries')
+
+    // enure we are on the history tab
+    await onHistoryTab()
+
+    // ensure the body and structure indicate that they were 'added'
+    await checkStatus('body', 'added')
+    await checkStatus('structure', 'added')
   })
 
   // remove a dataset is commented out until we have a keyboard command in
