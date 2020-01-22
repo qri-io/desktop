@@ -231,6 +231,7 @@
     "deep-equal": "1.1.0",
     "electron-debug": "3.0.1",
     "electron-dl": "1.14.0",
+    "electron-log": "4.0.3",
     "electron-updater": "4.2.0",
     "eslint-utils": "1.4.3",
     "filesize": "6.0.1",

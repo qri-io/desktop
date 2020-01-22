@@ -1,3 +1,4 @@
+const log = require('electron-log')
 const { app, BrowserWindow, Menu, shell, ipcMain } = require('electron')
 const { autoUpdater } = require('electron-updater')
 const { BackendProcess } = require('./backend')
@@ -45,6 +46,7 @@ app.on('window-all-closed', () => {
 })
 
 app.on('will-quit', () => {
+  log.info('quitting app')
   if (backendProcess) {
     backendProcess.close()
     backendProcess = null
@@ -96,6 +98,7 @@ let quitting = false
 app.on('ready', () =>
   installExtensions()
     .then(() => {
+      log.info('main process ready')
       autoUpdater.checkForUpdatesAndNotify()
       backendProcess = new BackendProcess()
       backendProcess.maybeStartup()
@@ -548,4 +551,6 @@ app.on('ready', () =>
       app.on('before-quit', () => {
         quitting = true
       })
+
+      log.info('app launched')
     }))
