@@ -21,7 +21,10 @@ This will only work if you are internal to Qri and have the correct keys
   - replace the old zip file with the new one
   - run `./node_modules/app-builder-bin/mac/app-builder blockmap -i release/FILENAME.zip -o release/throwaway.zip`
     - app-builder is modifying the contents of the zip, which is messing up the notarization. The -o flag indicates an output file that app-builder can futz with without ruining the integrity of the original app
-  - take the updated file into from size, sha512 and blockMapSize
+  - take the updated file info from size, sha512 and blockMapSize
   - update the `/release/latest-mac.yml` with that info
   - replace `FILENAME.zip` to the release page
-12) **remember to change website link give details of where here** 
+12) change link on website to downloads:
+  - in website/src/pages/download.js, line 10
+    `const latestVersion = 'VERSION'`
+  - create pr, get approval, and merge
