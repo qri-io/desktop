@@ -3,7 +3,7 @@ import Dataset, { DatasetProps, DatasetData } from '../components/Dataset'
 
 import Store from '../models/store'
 
-import { setSidebarWidth, setModal } from '../actions/ui'
+import { setSidebarWidth, setModal, setDetailsBar } from '../actions/ui'
 import {
   fetchHistory,
 
@@ -61,7 +61,8 @@ const DatasetContainer = connect(
       session,
       hasDatasets,
       showDetailsBar,
-      sidebarWidth: ui.datasetSidebarWidth
+      sidebarWidth: ui.datasetSidebarWidth,
+      details: ui.detailsBar
     }
   },
   {
@@ -71,6 +72,7 @@ const DatasetContainer = connect(
     setRoute,
     setCommit,
     setComponent: setSelectedListItem,
+    setDetailsBar,
 
     fetchHistory,
     fetchWorkingDataset,

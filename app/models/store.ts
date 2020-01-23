@@ -142,7 +142,7 @@ export interface CommitDetails {
       preview: string | undefined
     }
     body: {
-      value: any[] | undefined
+      value: any[]
       pageInfo: PageInfo
     }
     meta: {

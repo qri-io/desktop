@@ -10,6 +10,8 @@ import SidebarLayout from './SidebarLayout'
 import { Structure, Commit } from '../models/dataset'
 import { CommitDetails as ICommitDetails, ComponentType, SelectedComponent, Selections } from '../models/Store'
 import fileSize from '../utils/fileSize'
+import { Details } from '../models/details'
+import { ApiActionThunk } from '../store/api'
 
 interface CommitDetailsHeaderProps {
   structure: Structure
@@ -44,18 +46,25 @@ const CommitDetailsHeader: React.FunctionComponent<CommitDetailsHeaderProps> = (
 export interface CommitDetailsProps {
   data: ICommitDetails
   selections: Selections
+  details: Details
 
+  fetchCommitBody: (page?: number, pageSize?: number) => ApiActionThunk
+  setDetailsBar: (details: {[key: string]: any}) => Action
   setComponent: (type: ComponentType, activeComponent: string) => Action
 }
 
 const CommitDetails: React.FunctionComponent<CommitDetailsProps> = ({
   data,
-
   // display details
+  details,
   selections,
 
   // setting actions
-  setComponent
+  setDetailsBar,
+  setComponent,
+
+  // fetching api actions
+  fetchCommitBody
 }) => {
   // we have to guard against an odd case when we look at history
   // it is possible that we can get the history of a dataset, but
@@ -98,7 +107,19 @@ const CommitDetails: React.FunctionComponent<CommitDetailsProps> = ({
         )}
         sidebarWidth={150}
         mainContent={(
-          <DatasetComponent isLoading={loading} component={selectedComponent} componentStatus={status[selectedComponent]} history />
+          <DatasetComponent
+            data={data}
+
+            details={details}
+
+            setDetailsBar={setDetailsBar}
+            fetchBody={fetchCommitBody}
+
+            isLoading={loading}
+            component={selectedComponent}
+            componentStatus={status[selectedComponent]}
+            history
+          />
         )}
       />
     </div>

@@ -2,33 +2,23 @@ import * as React from 'react'
 
 import BodyTable from './BodyTable'
 import BodyJson from './BodyJson'
-import { ApiAction } from '../store/api'
+import { ApiActionThunk } from '../store/api'
+
+import { CommitDetails } from '../models/store'
+import { Action } from 'redux'
+import { DetailsType, StatsDetails, Details } from '../models/details'
 import { Structure } from '../models/dataset'
 
-import { PageInfo, WorkingDataset } from '../models/store'
-import { Action } from 'redux'
-import { DetailsType, Details, StatsDetails } from '../models/details'
-
 export interface BodyProps {
-  workingDataset: WorkingDataset
-  peername: string
-  name: string
-  path: string
-  value: any[]
-  structure: Structure
-  pageInfo: PageInfo
-  history: boolean
-  format: string
-  details: Details
-  stats: Array<{[key: string]: any}>
+  data: CommitDetails
 
-  fetchBody: (page?: number, pageSize?: number) => Promise<ApiAction>
-  fetchCommitBody: (page?: number, pageSize?: number) => Promise<ApiAction>
+  details: Details
+  fetchBody: (page?: number, pageSize?: number) => ApiActionThunk
   setDetailsBar: (details: {[key: string]: any}) => Action
 }
 
-function shouldDisplayTable (value: any[] | Object, format: string) {
-  return value && (format === 'csv' || format === 'xlsx')
+function shouldDisplayJsonViewer (format: string) {
+  return (format !== undefined && format !== 'csv' && format !== 'xlsx')
 }
 
 export interface Header {
@@ -36,7 +26,7 @@ export interface Header {
   type: string
 }
 
-const extractColumnHeaders = (structure: any, value: any): undefined | object => {
+const extractColumnHeaders = (structure: Structure, value: any[]): undefined | any[] => {
   const schema = structure.schema
 
   if (!schema) {
@@ -56,26 +46,22 @@ const extractColumnHeaders = (structure: any, value: any): undefined | object =>
 
   return schema &&
     schema.items &&
-    schema.items.items.map((d: { title: string }): string => d)
+    schema.items.items.map((d: { title: string }): {[key: string]: string} => d)
 }
 
 const Body: React.FunctionComponent<BodyProps> = (props) => {
   const {
-    value,
-    pageInfo,
-    history,
-    fetchBody,
-    format,
-    fetchCommitBody,
+    data,
     details,
     setDetailsBar,
-    stats,
-    structure
+    fetchBody
   } = props
 
-  const onFetch = history ? fetchCommitBody : fetchBody
+  const { components, stats } = data
+  const { body, structure } = components
+  const { value, pageInfo } = body
 
-  const headers = extractColumnHeaders(structure, value)
+  const headers = extractColumnHeaders(structure.value, value)
 
   const makeStatsDetails = (stats: {[key: string]: any}, title: string, index: number): StatsDetails => {
     return {
@@ -107,18 +93,18 @@ const Body: React.FunctionComponent<BodyProps> = (props) => {
 
   return (
     <div className='transition-group'>
-      {shouldDisplayTable(value, format)
-        ? <BodyTable
+      {shouldDisplayJsonViewer(structure.value.format)
+        ? <BodyJson
+          body={value}
+          pageInfo={pageInfo}
+        />
+        : <BodyTable
           headers={headers}
           body={value}
           pageInfo={pageInfo}
           highlighedColumnIndex={details.type !== DetailsType.NoDetails ? details.index : undefined}
-          onFetch={onFetch}
+          onFetch={fetchBody}
           setDetailsBar={handleToggleDetailsBar}
-        />
-        : <BodyJson
-          body={value}
-          pageInfo={pageInfo}
         />
       }
     </div>

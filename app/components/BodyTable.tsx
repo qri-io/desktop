@@ -6,13 +6,13 @@ import { faSync } from '@fortawesome/free-solid-svg-icons'
 import { TypeLabel } from './TwoDSchemaLayout'
 import { bodyPageSizeDefault } from '../actions/api'
 import { PageInfo } from '../models/store'
-import { ApiAction } from '../store/api'
+import { ApiActionThunk } from '../store/api'
 
 interface BodyTableProps {
   headers?: any[]
   body: any[]
   highlighedColumnIndex: number | undefined
-  onFetch: (page?: number, pageSize?: number) => Promise<ApiAction>
+  onFetch: (page?: number, pageSize?: number) => ApiActionThunk
   setDetailsBar: (index: number) => void
   pageInfo: PageInfo
 }
@@ -98,7 +98,9 @@ export default class BodyTable extends React.Component<BodyTableProps> {
 
   render () {
     const { body, headers, pageInfo, highlighedColumnIndex, setDetailsBar } = this.props
-    const { fetchedAll } = pageInfo
+    const { isFetching, fetchedAll } = pageInfo
+
+    if (isFetching) return null
 
     const tableRows = body.map((row, i) => {
       return (
@@ -119,7 +121,6 @@ export default class BodyTable extends React.Component<BodyTableProps> {
     return (
       <div
         id='body-table-container'
-        style={{ height: '100%', overflowY: 'scroll' }}
         onScroll={() => { this.handleVerticalScrollThrottled() } }
       >
         <table style={{ display: 'table' }}>

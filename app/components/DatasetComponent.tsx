@@ -3,7 +3,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 import MetadataContainer from '../containers/MetadataContainer'
 import MetadataEditorContainer from '../containers/MetadataEditorContainer'
-import BodyContainer from '../containers/BodyContainer'
 import StructureContainer from '../containers/StructureContainer'
 import ParseError from './ParseError'
 import ReadmeContainer from '../containers/ReadmeContainer'
@@ -16,9 +15,24 @@ import CommitContainer from '../containers/CommitContainer'
 
 import { getComponentDisplayProps, StatusDot } from './ComponentList'
 
-import { ComponentStatus, SelectedComponent } from '../models/store'
+import { ComponentStatus, SelectedComponent, CommitDetails } from '../models/store'
+import Body from './Body'
+import { Details } from '../models/details'
+import { ApiActionThunk } from '../store/api'
+import { Action } from 'redux'
 
 interface DatasetComponentProps {
+  data: CommitDetails
+
+  // display details
+  details: Details
+
+  // seting actions
+  setDetailsBar: (details: {[key: string]: any}) => Action
+
+  // fetching api actions
+  fetchBody: (page?: number, pageSize?: number) => ApiActionThunk
+
   isLoading: boolean
   component: SelectedComponent
   componentStatus: ComponentStatus
@@ -27,7 +41,7 @@ interface DatasetComponentProps {
 }
 
 const DatasetComponent: React.FunctionComponent<DatasetComponentProps> = (props: DatasetComponentProps) => {
-  const { component: selectedComponent, componentStatus, isLoading, history = false, fsiPath } = props
+  const { component: selectedComponent, componentStatus, isLoading, history = false, fsiPath, data, details, setDetailsBar, fetchBody } = props
 
   const hasParseError = componentStatus && componentStatus.status === 'parse error'
   const component = selectedComponent || 'meta'
@@ -92,7 +106,7 @@ const DatasetComponent: React.FunctionComponent<DatasetComponentProps> = (props:
           </div>
         </CSSTransition>
         <CSSTransition
-          in={component === 'body' && !hasParseError && !isLoading}
+          in={component === 'body' && !hasParseError}
           classNames='fade'
           component='div'
           timeout={300}
@@ -101,7 +115,12 @@ const DatasetComponent: React.FunctionComponent<DatasetComponentProps> = (props:
           appear={true}
         >
           <div className='transition-wrap'>
-            <BodyContainer/>
+            <Body
+              data={data}
+              fetchBody={fetchBody}
+              setDetailsBar={setDetailsBar}
+              details={details}
+            />
           </div>
         </CSSTransition>
         <CSSTransition
