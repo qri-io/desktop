@@ -109,31 +109,3 @@
     overflow-y: auto;
   }
 }
-
-.segment {
-  margin: 10px auto;
-  background: #FFF;
-  border-radius: 3px;
-  border: 1px solid #D8DFE6;
-
-  header {
-    width: 100%;
-    padding: 8px 10px;
-    border-bottom: 1px solid #D8DFE6;
-    min-height: 40px;
-     
-    .left_side {
-      .icon-dark {
-        float: left;
-        margin: 3px 5px 0 0;
-      }
-      .name {
-        font-family: $font-family-sans-serif;
-        font-weight: 500;
-        margin: 0;
-        font-size: 16px;
-        line-height: 1.45;
-      }
-    }
-  }
-}
