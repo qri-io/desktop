@@ -1,0 +1,23 @@
+
+.dataset-details {
+  font-family: $font-family-sans-serif;
+  font-size: 14px;
+  font-weight: 300;
+  margin: 2px 0;
+
+  &.muted {
+    color: #B1B1B1
+  }
+
+  &.light {
+    color: #ffffff;
+  }
+
+  &.small {
+    font-size: 11px;
+  }
+
+  .dataset-details-item {
+    margin-right: 10px;
+  }
+}
