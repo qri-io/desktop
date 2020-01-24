@@ -3,7 +3,7 @@ import DatasetItem from '../app/components/item/Dataset'
 import LabeledStats, { Stat } from '../app/components/item/LabeledStats'
 
 export default {
-  title: 'Dataset List Item',
+  title: 'Items',
   parameters: {
     notes: ''
   }
