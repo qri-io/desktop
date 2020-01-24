@@ -11,10 +11,9 @@ import { Structure } from '../models/dataset'
 
 export interface BodyProps {
   data: CommitDetails
-
   details: Details
   fetchBody: (page?: number, pageSize?: number) => ApiActionThunk
-  setDetailsBar: (details: {[key: string]: any}) => Action
+  setDetailsBar: (details: Record<string, any>) => Action
 }
 
 function shouldDisplayJsonViewer (format: string) {
@@ -46,7 +45,7 @@ const extractColumnHeaders = (structure: Structure, value: any[]): undefined | a
 
   return schema &&
     schema.items &&
-    schema.items.items.map((d: { title: string }): {[key: string]: string} => d)
+    schema.items.items.map((d: { title: string }): Record<string, any> => d)
 }
 
 const Body: React.FunctionComponent<BodyProps> = (props) => {
@@ -63,7 +62,7 @@ const Body: React.FunctionComponent<BodyProps> = (props) => {
 
   const headers = extractColumnHeaders(structure.value, value)
 
-  const makeStatsDetails = (stats: {[key: string]: any}, title: string, index: number): StatsDetails => {
+  const makeStatsDetails = (stats: Record<string, any>, title: string, index: number): StatsDetails => {
     return {
       type: DetailsType.StatsDetails,
       title: title,

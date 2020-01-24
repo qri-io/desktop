@@ -72,6 +72,18 @@ export function fetchWorkingDatasetDetails (): ApiActionThunk {
   }
 }
 
+export function fetchWorkingDatasetAndStatus (): ApiActionThunk {
+  return async (dispatch, getState) => {
+    let response: AnyAction
+
+    await fetchWorkingDataset()(dispatch, getState).then(() => {
+      response = dispatch(fetchWorkingStatus())
+    })
+
+    return response
+  }
+}
+
 export function fetchModifiedComponents (): ApiActionThunk {
   return async (dispatch, getState) => {
     const { selections, workingDataset } = getState()

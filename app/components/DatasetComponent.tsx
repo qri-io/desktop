@@ -28,7 +28,7 @@ interface DatasetComponentProps {
   details: Details
 
   // seting actions
-  setDetailsBar: (details: {[key: string]: any}) => Action
+  setDetailsBar: (details: Record<string, any>) => Action
 
   // fetching api actions
   fetchBody: (page?: number, pageSize?: number) => ApiActionThunk

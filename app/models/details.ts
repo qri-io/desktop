@@ -9,7 +9,7 @@ export interface StatsDetails {
   // eventually replace with a Stats interface
   index: number
   title: string
-  stats: {[key: string]: any}
+  stats: Record<string, any>
 }
 
 export interface NoDetails {

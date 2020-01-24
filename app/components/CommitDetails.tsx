@@ -49,7 +49,7 @@ export interface CommitDetailsProps {
   details: Details
 
   fetchCommitBody: (page?: number, pageSize?: number) => ApiActionThunk
-  setDetailsBar: (details: {[key: string]: any}) => Action
+  setDetailsBar: (details: Record<string, any>) => Action
   setComponent: (type: ComponentType, activeComponent: string) => Action
 }
 
@@ -109,12 +109,9 @@ const CommitDetails: React.FunctionComponent<CommitDetailsProps> = ({
         mainContent={(
           <DatasetComponent
             data={data}
-
             details={details}
-
             setDetailsBar={setDetailsBar}
             fetchBody={fetchCommitBody}
-
             isLoading={loading}
             component={selectedComponent}
             componentStatus={status[selectedComponent]}

@@ -58,10 +58,11 @@ export interface DatasetProps {
   setRoute: (route: string) => Action
   setCommit: (path: string) => Action
   setComponent: (type: ComponentType, activeComponent: string) => Action
-  setDetailsBar: (details: {[key: string]: any}) => Action
+  setDetailsBar: (details: Record<string, any>) => Action
 
   // fetching actions
   fetchHistory: (page?: number, pageSize?: number) => ApiActionThunk
+  fetchWorkingDatasetAndStatus: () => ApiActionThunk
   fetchWorkingDataset: () => ApiActionThunk
   fetchWorkingStatus: () => ApiActionThunk
   fetchStats: () => ApiActionThunk
@@ -109,10 +110,9 @@ class Dataset extends React.Component<DatasetProps> {
     const {
       data,
       selections,
-      fetchWorkingDataset,
+      fetchWorkingDatasetAndStatus,
       fetchHistory,
       fetchStats,
-      fetchWorkingStatus,
       fetchBody,
       fetchCommitDataset,
       fetchCommitStats,
@@ -126,15 +126,7 @@ class Dataset extends React.Component<DatasetProps> {
         (selections.peername !== workingDataset.peername ||
         selections.name !== workingDataset.name)) {
       fetchHistory()
-      // TODO (ramfox): refactor action so that `fetchWorkingStatus` does not rely on workingDataset
-      new Promise((resolve, reject) => {
-        try {
-          fetchWorkingDataset()
-        } catch (e) {
-          reject(e)
-        }
-        resolve()
-      }).then(() => fetchWorkingStatus())
+      fetchWorkingDatasetAndStatus()
       fetchStats()
       fetchBody(-1)
       return
@@ -189,10 +181,10 @@ class Dataset extends React.Component<DatasetProps> {
     const {
       data,
       selections,
+      fetchWorkingDatasetAndStatus,
       fetchWorkingDataset,
       fetchHistory,
       fetchStats,
-      fetchWorkingStatus,
       fetchBody,
       fetchCommitDataset,
       fetchCommitStats,
@@ -206,15 +198,7 @@ class Dataset extends React.Component<DatasetProps> {
         (selections.peername !== workingDataset.peername ||
         selections.name !== workingDataset.name)) {
       fetchHistory()
-      // TODO (ramfox): refactor action so that `fetchWorkingStatus` does not rely on workingDataset
-      new Promise((resolve, reject) => {
-        try {
-          fetchWorkingDataset()
-        } catch (e) {
-          reject(e)
-        }
-        resolve()
-      }).then(() => fetchWorkingStatus())
+      fetchWorkingDatasetAndStatus()
       fetchBody(-1)
       fetchStats()
       return

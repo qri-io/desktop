@@ -155,7 +155,7 @@ export interface CommitDetails {
       value: string | undefined
     }
   }
-  stats: Array<{[key: string]: any}>
+  stats: Array<Record<string, any>>
   structure: Structure
 }
 

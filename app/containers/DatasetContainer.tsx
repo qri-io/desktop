@@ -7,6 +7,7 @@ import { setSidebarWidth, setModal, setDetailsBar } from '../actions/ui'
 import {
   fetchHistory,
 
+  fetchWorkingDatasetAndStatus,
   fetchWorkingDataset,
   fetchWorkingStatus,
   fetchStats,
@@ -75,6 +76,7 @@ const DatasetContainer = connect(
     setDetailsBar,
 
     fetchHistory,
+    fetchWorkingDatasetAndStatus,
     fetchWorkingDataset,
     fetchWorkingStatus,
     fetchStats,
