@@ -2,6 +2,7 @@ import * as React from 'react'
 
 import Dataset from '../../models/dataset'
 import DatasetDetailsSubtext from '../dataset/DatasetDetailsSubtext'
+import Tag from './Tag'
 
 interface DatasetItemProps {
   data: Dataset
@@ -16,15 +17,13 @@ const DatasetItem: React.FunctionComponent<DatasetItemProps> = ({ data, path, hi
   const title = (meta && meta.title) ? meta.title : `No Title - ${name}`
 
   return (
-    <div className='dataset_item' key={path}>
-      <a className='reference-link' href={`/${peername}/${name}`}>{hideUsername ? `${name}` : `${peername}/${name}`}</a>
-      {meta && meta.theme && <div className='themes'>
-        {meta.theme.map((keyword: string, i: number) => (
-          <div key={i} className='theme badge badge-secondary ml-2'>{keyword}</div>
-        ))}
-      </div>}
+    <div className='dataset-item' key={path}>
+      <div className='header'>
+        <a href={`/${peername}/${name}`}>{hideUsername ? `${name}` : `${peername}/${name}`}</a>
+        {meta && meta.themes && meta.themes.length > 1 && <Tag type='category' tag={meta.themes[0]} />}
+      </div>
       <div className='title'>{ title }</div>
-      <DatasetDetailsSubtext data={data} />
+      <div className='details'><DatasetDetailsSubtext data={data} color='muted' /></div>
     </div>
   )
 }

@@ -15,9 +15,13 @@
 
   &.small {
     font-size: 11px;
+    
+    .dataset-details-item {
+      margin-right: 10px;
+    }
   }
 
   .dataset-details-item {
-    margin-right: 10px;
+    margin-right: 24px;
   }
 }
