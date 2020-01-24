@@ -67,7 +67,7 @@ const commitDetailsReducer: Reducer = (state = initialState, action: AnyAction):
         published,
         isLoading: false,
         components: {
-          body: initialState.components.body,
+          body: state.components.body,
           meta: {
             value: dataset.meta
           },

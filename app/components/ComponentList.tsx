@@ -20,6 +20,7 @@ import {
 
 import { checkClearToCommit } from '../utils/formValidation'
 import { DatasetStatus, SelectedComponent, ComponentType } from '../models/store'
+import Spinner from './chrome/Spinner'
 
 interface StatusDotProps {
   status: string | undefined
@@ -144,6 +145,7 @@ export const components = [
   }
 ]
 
+// removes components that don't have content on this dataset
 function removeHiddenComponents (status: DatasetStatus, selectionType: ComponentType) {
   const showWhenMissing = {
     'readme': 'component',
@@ -155,6 +157,7 @@ function removeHiddenComponents (status: DatasetStatus, selectionType: Component
   }
 }
 
+// returns the component display details of the given named component
 export const getComponentDisplayProps = (name: string) => {
   return components.filter(d => d.name === name)[0]
 }
@@ -170,7 +173,9 @@ const ComponentList: React.FunctionComponent<ComponentListProps> = (props: Compo
     fsiPath
   } = props
 
-  if (!fsiPath) {
+  // if we don't have an fsiPath (the dataset is not yet checked out) or we are
+  // still waiting for status to return, display all of the possible components
+  if (!fsiPath || Object.keys(status).length === 0) {
     return (
       <div>
         {components.map(({ name, displayName, tooltip, icon }) => {
@@ -185,6 +190,10 @@ const ComponentList: React.FunctionComponent<ComponentListProps> = (props: Compo
             onClick={undefined}
           />
         })}
+        {
+          // TODO (ramfox): need better loading indicator
+          Object.keys(status).length === 0 && <Spinner white />
+        }
 
       </div>
     )

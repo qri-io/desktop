@@ -142,7 +142,7 @@ export interface CommitDetails {
       preview: string | undefined
     }
     body: {
-      value: any[] | undefined
+      value: any[]
       pageInfo: PageInfo
     }
     meta: {
@@ -155,7 +155,7 @@ export interface CommitDetails {
       value: string | undefined
     }
   }
-  stats: Array<{[key: string]: any}>
+  stats: Array<Record<string, any>>
   structure: Structure
 }
 

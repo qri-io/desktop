@@ -38,7 +38,7 @@ interface IconProps {
   color?: 'light' | 'medium' | 'dark'
 }
 
-const icons: {[key: string]: any} = {
+const icons: Record<string, any> = {
   'search': faSearch,
   'any': faQuestion,
   'string': faFont,

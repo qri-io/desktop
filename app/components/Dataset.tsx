@@ -32,6 +32,7 @@ import {
 } from '../models/store'
 import NoDatasets from './NoDatasets'
 import { defaultPollInterval } from './App'
+import { Details } from '../models/details'
 
 export interface DatasetData {
   workingDataset: WorkingDataset
@@ -48,6 +49,7 @@ export interface DatasetProps {
   hasDatasets: boolean
   showDetailsBar: boolean
   sidebarWidth: number
+  details: Details
 
   // setting actions
   setModal: (modal: Modal) => void
@@ -56,9 +58,11 @@ export interface DatasetProps {
   setRoute: (route: string) => Action
   setCommit: (path: string) => Action
   setComponent: (type: ComponentType, activeComponent: string) => Action
+  setDetailsBar: (details: Record<string, any>) => Action
 
   // fetching actions
   fetchHistory: (page?: number, pageSize?: number) => ApiActionThunk
+  fetchWorkingDatasetAndStatus: () => ApiActionThunk
   fetchWorkingDataset: () => ApiActionThunk
   fetchWorkingStatus: () => ApiActionThunk
   fetchStats: () => ApiActionThunk
@@ -106,10 +110,9 @@ class Dataset extends React.Component<DatasetProps> {
     const {
       data,
       selections,
-      fetchWorkingDataset,
+      fetchWorkingDatasetAndStatus,
       fetchHistory,
       fetchStats,
-      fetchWorkingStatus,
       fetchBody,
       fetchCommitDataset,
       fetchCommitStats,
@@ -123,10 +126,9 @@ class Dataset extends React.Component<DatasetProps> {
         (selections.peername !== workingDataset.peername ||
         selections.name !== workingDataset.name)) {
       fetchHistory()
-      fetchWorkingDataset()
+      fetchWorkingDatasetAndStatus()
       fetchStats()
       fetchBody(-1)
-      fetchWorkingStatus()
       return
     }
     if (!head.isLoading &&
@@ -179,10 +181,10 @@ class Dataset extends React.Component<DatasetProps> {
     const {
       data,
       selections,
+      fetchWorkingDatasetAndStatus,
       fetchWorkingDataset,
       fetchHistory,
       fetchStats,
-      fetchWorkingStatus,
       fetchBody,
       fetchCommitDataset,
       fetchCommitStats,
@@ -196,10 +198,9 @@ class Dataset extends React.Component<DatasetProps> {
         (selections.peername !== workingDataset.peername ||
         selections.name !== workingDataset.name)) {
       fetchHistory()
-      fetchWorkingDataset()
-      fetchStats()
+      fetchWorkingDatasetAndStatus()
       fetchBody(-1)
-      fetchWorkingStatus()
+      fetchStats()
       return
     }
     if (!head.isLoading &&
@@ -280,14 +281,18 @@ class Dataset extends React.Component<DatasetProps> {
       hasDatasets,
       sidebarWidth,
       session,
+      details,
 
       setModal,
       setActiveTab,
       setCommit,
       setComponent,
       setRoute,
+      setDetailsBar,
 
       fetchHistory,
+      fetchBody,
+      fetchCommitBody,
 
       discardChanges,
       renameDataset
@@ -427,7 +432,16 @@ class Dataset extends React.Component<DatasetProps> {
               mountOnEnter
               unmountOnExit
             >
-              <DatasetComponent component={selectedComponent} componentStatus={status[selectedComponent]} isLoading={data.workingDataset.isLoading} fsiPath={this.props.data.workingDataset.fsiPath}/>
+              <DatasetComponent
+                details={details}
+                data={data.workingDataset}
+                setDetailsBar={setDetailsBar}
+                fetchBody={fetchBody}
+                component={selectedComponent}
+                componentStatus={status[selectedComponent]}
+                isLoading={data.workingDataset.isLoading}
+                fsiPath={this.props.data.workingDataset.fsiPath}
+              />
             </CSSTransition>
             <CSSTransition
               in={datasetSelected && activeTab === 'history'}
@@ -438,6 +452,9 @@ class Dataset extends React.Component<DatasetProps> {
             >
               <CommitDetails
                 data={data.head}
+                details={details}
+                setDetailsBar={setDetailsBar}
+                fetchCommitBody={fetchCommitBody}
                 selections={selections}
                 setComponent={setComponent}
               />
