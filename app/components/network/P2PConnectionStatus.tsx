@@ -1,7 +1,7 @@
 import React from 'React'
 
 import { P2PConnection, P2PConnectionEvent } from '../../models/network'
-import LabelledStats from '../viz/LabelledStats'
+import LabeledStats from '../item/LabeledStats'
 import Switch from '../form/Switch'
 
 export interface P2PConnectionStatusProps {
@@ -21,10 +21,10 @@ const P2PConnectionStatus: React.FunctionComponent<P2PConnectionStatusProps> = (
         <label>P2P</label>
         <Switch value={data.enabled} onChange={onChangeConnection} />
       </header>
-      <LabelledStats light data={[
-        ['qri peers', 8],
-        ['conns.', 300],
-        ['data transfer', '3.48Mb/s']
+      <LabeledStats color='light' data={[
+        { label: 'qri peers', value: 8 },
+        { label: 'conns.', value: 300 },
+        { label: 'data transfer', value: '3.48Mb/s' }
       ]} />
     </div>
   )

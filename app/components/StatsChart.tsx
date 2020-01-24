@@ -3,7 +3,7 @@ import { ResponsivePie } from '@nivo/pie'
 import * as React from 'react'
 import numeral from 'numeral'
 
-import LabelledStats from './viz/LabelledStats'
+import LabeledStats from './item/LabeledStats'
 
 const primaryStatColor = '#0061A6'
 const labelSkipWidth = 10
@@ -27,7 +27,7 @@ const StatsChart: React.FunctionComponent<StatsChartProps> = (props: StatsChartP
     default:
       return (
         <div>
-          {data.count && <LabelledStats data={[
+          {data.count && <LabeledStats data={[
             ['count', data.count.toLocaleString()]
           ]} />}
         </div>
@@ -90,7 +90,7 @@ const NumericStat: React.FunctionComponent<StatsChartProps> = (props: StatsChart
           labelFormat={labelFormat}
         />
       </div>}
-      <LabelledStats data={[
+      <LabeledStats data={[
         ['count', data.count.toLocaleString()],
         ['min', data.min.toLocaleString()],
         ['max', data.max.toLocaleString()],
@@ -160,7 +160,7 @@ const StringStat: React.FunctionComponent<StatsChartProps> = (props: StatsChartP
           labelFormat={labelFormat}
         />
       </div>}
-      <LabelledStats data={[
+      <LabeledStats data={[
         ['count', data.count.toLocaleString()],
         ['min length', data.minLength.toLocaleString()],
         ['max length', data.maxLength.toLocaleString()]
@@ -225,7 +225,7 @@ const BooleanStat: React.FunctionComponent<StatsChartProps> = (props: StatsChart
           motionDamping={15}
         />
       </div>}
-      <LabelledStats data={[
+      <LabeledStats data={[
         ['count', data.count.toLocaleString()],
         ['true', data.trueCount.toLocaleString()],
         ['false', data.falseCount.toLocaleString()]

@@ -22,15 +22,15 @@ export const switches = () => {
       </div>
       <div style={{ display: 'flex', alignItems: 'center' }}>
         <span style={{ marginRight: 30 }}>{lightLarge ? 'on' : 'off'}</span>
-        <Switch name='lightLarge' checked={lightLarge} onClick={() => setLightLarge(!lightLarge)} large/>
+        <Switch name='lightLarge' checked={lightLarge} onClick={() => setLightLarge(!lightLarge)} size='lg'/>
       </div>
       <div style={{ display: 'flex', alignItems: 'center' }}>
         <span style={{ marginRight: 30 }}>{darkSmall ? 'on' : 'off'}</span>
-        <Switch name='darkSmall' checked={darkSmall} onClick={() => setDarkSmall(!darkSmall)} dark />
+        <Switch name='darkSmall' checked={darkSmall} onClick={() => setDarkSmall(!darkSmall)} color='dark' />
       </div>
       <div style={{ display: 'flex', alignItems: 'center' }}>
         <span style={{ marginRight: 30 }}>{darkLarge ? 'on' : 'off'}</span>
-        <Switch name='darkLarge' checked={darkLarge} onClick={() => setDarkLarge(!darkLarge)} dark large />
+        <Switch name='darkLarge' checked={darkLarge} onClick={() => setDarkLarge(!darkLarge)} color='dark' size='lg' />
       </div>
     </div>
   )
@@ -44,8 +44,8 @@ switches.story = {
 export const segments = () => {
   const content = <div style={{ padding: 15 }}><h4>Some content here</h4><div>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</div></div>
   return (
-    <div style={{background: 'grey', height: '100%'}}>
-      <div style={{height: 80 }}></div>
+    <div style={{ background: 'grey', height: '100%' }}>
+      <div style={{ height: 80 }}></div>
       <Segment
         content={content}
         name='Structure'
