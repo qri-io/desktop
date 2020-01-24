@@ -1,9 +1,10 @@
 import * as React from 'react'
+import path from 'path'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 import MetadataContainer from '../containers/MetadataContainer'
 import MetadataEditorContainer from '../containers/MetadataEditorContainer'
-import StructureContainer from '../containers/StructureContainer'
+import Structure from '../components/Structure'
 import ParseError from './ParseError'
 import ReadmeContainer from '../containers/ReadmeContainer'
 import TransformContainer from '../containers/TransformContainer'
@@ -20,6 +21,7 @@ import Body from './Body'
 import { Details } from '../models/details'
 import { ApiActionThunk } from '../store/api'
 import { Action } from 'redux'
+import Dataset, { Structure as IStructure } from '../models/dataset'
 
 interface DatasetComponentProps {
   data: CommitDetails
@@ -32,6 +34,7 @@ interface DatasetComponentProps {
 
   // fetching api actions
   fetchBody: (page?: number, pageSize?: number) => ApiActionThunk
+  fsiWrite: (peername: string, name: string, dataset: Dataset) => ApiActionThunk
 
   isLoading: boolean
   component: SelectedComponent
@@ -41,11 +44,15 @@ interface DatasetComponentProps {
 }
 
 const DatasetComponent: React.FunctionComponent<DatasetComponentProps> = (props: DatasetComponentProps) => {
-  const { component: selectedComponent, componentStatus, isLoading, history = false, fsiPath, data, details, setDetailsBar, fetchBody } = props
+  const { component: selectedComponent, componentStatus, isLoading, history = false, fsiPath, data, details, setDetailsBar, fetchBody, fsiWrite } = props
 
   const hasParseError = componentStatus && componentStatus.status === 'parse error'
   const component = selectedComponent || 'meta'
   const { displayName, icon, tooltip } = getComponentDisplayProps(component)
+
+  const handleStructureWrite = (structure: IStructure): ApiActionThunk => {
+    return fsiWrite(data.peername, data.name, { structure })
+  }
 
   return (
     <div className='component-container'>
@@ -133,7 +140,12 @@ const DatasetComponent: React.FunctionComponent<DatasetComponentProps> = (props:
           appear={true}
         >
           <div className='transition-wrap'>
-            <StructureContainer history={history}/>
+            <Structure
+              data={data.components.structure.value}
+              history={history}
+              fsiBodyFormat={(!history && data.status.body.filepath && path.extname(data.status.body.filepath).slice(1)) || ''}
+              write={handleStructureWrite}
+            />
           </div>
         </CSSTransition>
         <CSSTransition

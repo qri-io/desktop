@@ -7,10 +7,10 @@ export interface Stat {
 }
 
 interface LabeledStatsProps {
-  // data is an array of arrays
-  // the inner array has stat[0] as the label and stat[1] as the value
   data: Stat[]
+  // default is dark
   color?: 'light' | 'dark'
+  // default sm
   size?: 'sm' | 'lg'
 }
 
@@ -19,7 +19,7 @@ const LabeledStats: React.FunctionComponent<LabeledStatsProps> = ({ data, color 
     <div className='stats-values'>
       {data.map((stat, i) => {
         return (
-          <div key={i} className="stats-value" style={{ marginLeft: 15 }}>
+          <div key={i} className={classNames('stats-value', { 'large': size === 'lg' })} >
             <label className={classNames('label', { 'light': color === 'light', 'large': size === 'lg' })}>{stat.label}</label>
             <div className={classNames('value', { 'light': color === 'light', 'large': size === 'lg' })}>{stat.value}</div>
           </div>

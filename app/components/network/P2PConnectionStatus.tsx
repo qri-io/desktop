@@ -1,4 +1,4 @@
-import React from 'React'
+import React from 'react'
 
 import { P2PConnection, P2PConnectionEvent } from '../../models/network'
 import LabeledStats from '../item/LabeledStats'

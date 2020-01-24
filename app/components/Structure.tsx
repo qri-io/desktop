@@ -7,14 +7,14 @@ import ExternalLink from './ExternalLink'
 import { ApiActionThunk } from '../store/api'
 import FormatConfigHistory from './FormatConfigHistory'
 import FormatConfigFSI from './FormatConfigFSI'
+import LabeledStats from './item/LabeledStats'
+import fileSize, { abbreviateNumber } from '../utils/fileSize'
 
 export interface StructureProps {
-  peername: string
-  name: string
-  structure: IStructure
+  data: IStructure
   history: boolean
   fsiBodyFormat: string
-  write: (peername: string, name: string, dataset: any) => ApiActionThunk
+  write: (structure: IStructure) => ApiActionThunk
 }
 
 export interface FormatConfigOption {
@@ -59,35 +59,42 @@ export const formatConfigOptions: { [key: string]: FormatConfigOption } = {
   }
 }
 
-const Structure: React.FunctionComponent<StructureProps> = ({ peername, name, structure, history, write, fsiBodyFormat }) => {
-  const format = history ? structure.format : fsiBodyFormat
+const Structure: React.FunctionComponent<StructureProps> = ({ data, history, write, fsiBodyFormat }) => {
+  const format = history ? data.format : fsiBodyFormat
   const handleWriteFormat = (option: string, value: any) => {
     // TODO (ramfox): sending over format since a user can replace the body with a body of a different
     // format. Let's pass in whatever the current format is, so that we have unity between
     // what the desktop is seeing and the backend. This can be removed when we have the fsi
     // backend codepaths settled
-    write(peername, name, {
-      structure: {
-        ...structure,
-        format,
-        formatConfig: {
-          ...structure.formatConfig,
-          [option]: value
-        }
+    write({
+      ...data,
+      format,
+      formatConfig: {
+        ...data.formatConfig,
+        [option]: value
       }
     })
   }
 
   const handleOnChange = (schema: ISchema) => {
-    write(peername, name, { structure: { ...structure, schema } })
+    write({ ...data, schema })
   }
+  console.log(data)
 
+  const stats = [
+    { 'label': 'format', 'value': data.format.toUpperCase() },
+    { 'label': 'body size', 'value': fileSize(data.length) },
+    { 'label': 'entries', 'value': abbreviateNumber(data.entries) },
+    { 'label': 'errors', 'value': abbreviateNumber(data.errCount) },
+    { 'label': 'depth', 'value': data.depth }
+  ]
   return (
     <div className='structure content'>
+      <div className='stats'><LabeledStats data={stats} size='lg' /></div>
       { history
-        ? <FormatConfigHistory structure={structure} />
+        ? <FormatConfigHistory structure={data} />
         : <FormatConfigFSI
-          structure={structure}
+          structure={data}
           format={format}
           write={handleWriteFormat}
         />
@@ -106,7 +113,7 @@ const Structure: React.FunctionComponent<StructureProps> = ({ peername, name, st
           </ExternalLink>
         </h4>
         <Schema
-          data={structure ? structure.schema : undefined}
+          data={data ? data.schema : undefined}
           onChange={handleOnChange}
           editable={!history}
         />

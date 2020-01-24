@@ -78,6 +78,7 @@ export interface DatasetProps {
   unpublishDataset: () => ApiActionThunk
   discardChanges: (component: SelectedComponent) => ApiActionThunk
   renameDataset: (peername: string, name: string, newName: string) => ApiActionThunk
+  fsiWrite: (peername: string, name: string, dataset: Dataset) => ApiActionThunk
 }
 
 const logo = require('../assets/qri-blob-logo-tiny.png') //eslint-disable-line
@@ -295,7 +296,8 @@ class Dataset extends React.Component<DatasetProps> {
       fetchCommitBody,
 
       discardChanges,
-      renameDataset
+      renameDataset,
+      fsiWrite
     } = this.props
     const { peername: username } = session
     const {
@@ -437,6 +439,7 @@ class Dataset extends React.Component<DatasetProps> {
                 data={data.workingDataset}
                 setDetailsBar={setDetailsBar}
                 fetchBody={fetchBody}
+                fsiWrite={fsiWrite}
                 component={selectedComponent}
                 componentStatus={status[selectedComponent]}
                 isLoading={data.workingDataset.isLoading}
@@ -455,6 +458,7 @@ class Dataset extends React.Component<DatasetProps> {
                 details={details}
                 setDetailsBar={setDetailsBar}
                 fetchCommitBody={fetchCommitBody}
+                fsiWrite={fsiWrite}
                 selections={selections}
                 setComponent={setComponent}
               />

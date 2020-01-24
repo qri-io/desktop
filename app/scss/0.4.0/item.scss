@@ -47,6 +47,18 @@
 
   .stats-value {
     margin: 5px 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    &.large {
+      margin: 10px 20px;
+    }
+
+    &:first-child, &.large:first-child {
+      margin-left: 0;
+    }
 
     .label {
       font-family: $font-family-sans-serif;
@@ -60,7 +72,7 @@
       }
       &.large {
         font-size: 14px;
-        margin-bottom: 3px;
+        margin-bottom: 5px;
       }
     }
 

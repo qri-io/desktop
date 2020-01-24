@@ -34,7 +34,7 @@ const Segment: React.FunctionComponent<SegmentProps> = (props) => {
 
         {
           // if we are expanded, don't let the user 'collapse' the segment
-          collapsable && !isExpanded && 
+          collapsable && !isExpanded &&
             <div className='caret' onClick={() => setIsOpen(!isOpen)}>
               <Icon icon={isOpen ? 'angle-down' : 'angle-right'} size='md' />
             </div>
@@ -49,7 +49,7 @@ const Segment: React.FunctionComponent<SegmentProps> = (props) => {
         <div className='right-side'>
           {/* ensure the container div you want to expand to has the css */}
           {/* property 'position: relative' */}
-          {expandable && 
+          {expandable &&
             <div className='expand' onClick={() => setIsExpanded(!isExpanded)}>
               <Icon icon={ isExpanded ? 'close' : 'expand'} />
             </div>
@@ -58,7 +58,7 @@ const Segment: React.FunctionComponent<SegmentProps> = (props) => {
       </header>
       {/* the .content div has no padding/margin */}
       <div className='content' style={heightStyle}>
-      {/* you must set padding/margin in the passed in `content` element */}
+        {/* you must set padding/margin in the passed in `content` element */}
         {content}
       </div>
     </div>

@@ -5,7 +5,7 @@ export interface NetworkHomeData {
   recent: Dataset[]
 }
 
-export type P2PConnection = {
+export interface P2PConnection {
   enabled: boolean
 }
 

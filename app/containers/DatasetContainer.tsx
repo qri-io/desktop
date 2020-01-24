@@ -21,7 +21,8 @@ import {
   publishDataset,
   unpublishDataset,
   discardChanges,
-  renameDataset
+  renameDataset,
+  fsiWrite
 } from '../actions/api'
 
 import {
@@ -90,7 +91,8 @@ const DatasetContainer = connect(
     publishDataset,
     unpublishDataset,
     discardChanges,
-    renameDataset
+    renameDataset,
+    fsiWrite
   },
   mergeProps
 )(Dataset)
