@@ -45,24 +45,24 @@ const sampleSchema: ISchema = {
   }
 }
 
-const sampleStructure = {
-  schema: sampleSchema,
-  format: 'csv',
-  length: 265000,
-  entries: 2350,
-  errors: 3,
-  depth: 2,
-  strict: false,
-  checksum: 'Qmb9Gy14GuCjrhRSjGJQpf5JkgdEdbZrV81Tz4x3ZDreY3'
-}
+// const sampleStructure = {
+//   schema: sampleSchema,
+//   format: 'csv',
+//   length: 265000,
+//   entries: 2350,
+//   errors: 3,
+//   depth: 2,
+//   strict: false,
+//   checksum: 'Qmb9Gy14GuCjrhRSjGJQpf5JkgdEdbZrV81Tz4x3ZDreY3'
+// }
 
-export const structure = () => {
-  return (
-    <div style={{ display: 'flex', justifyContent:'center', alignItems: 'center' }}>
-      <Structure data={sampleStructure} />
-    </div>
-  )
-}
+// export const structure = () => {
+//   return (
+//     <div style={{ display: 'flex', justifyContent:'center', alignItems: 'center' }}>
+//       <Structure data={sampleStructure} />
+//     </div>
+//   )
+// }
 
 export const schema = () => {
   const [schema, setSchema] = React.useState(sampleSchema)

@@ -58,6 +58,7 @@ module.exports = merge(baseConfig, {
             }
           },
           'css-loader',
+          'resolve-url-loader',
           'sass-loader'
         ]
       },

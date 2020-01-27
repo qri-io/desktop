@@ -143,3 +143,52 @@
     }
   }
 }
+
+.action-button {
+  color: #4FC7F3;
+  font-size: 16px;
+  font-weight: 300;
+  display: flex;
+  align-items: center;
+
+  .text {
+    margin-left: 10px;
+  }
+
+}
+
+.hamburger {
+  position: relative;
+
+  .hamburger-icon {
+    &:hover {
+      cursor: pointer;
+      color: #000000;
+    }
+  }
+
+  .hamburger-overlay {
+    position: absolute;
+    right: 0;
+    z-index: 99;
+    text-align: right;
+
+    .content {
+      > div {
+        cursor: pointer;
+        padding: 10px;
+        font-size: 14px;
+        white-space: nowrap;
+
+        &:hover {
+          cursor: pointer;
+          background-color: #F5F7FA;
+        }
+      
+        &> * {
+          pointer-events: none;
+        }
+      }
+    }
+  }
+}

@@ -5,6 +5,14 @@
   flex-direction: column;
   box-shadow: 0px 0px 6px rgba(0,0,0,0.20);
   background: #fff;
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility 0s, opacity 0.3s ease-in-out;
+
+  &.visible {
+    visibility: visible;
+    opacity: 1;
+  }
 
   .title-bar {
     display: flex;
@@ -23,10 +31,6 @@
     overflow-y: auto;
     height: 100%;
   }
-}
-
-.overlay.closed {
-  display: none;
 }
 
 .type-picker-overlay-row {

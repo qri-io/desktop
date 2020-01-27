@@ -25,3 +25,12 @@
     margin-right: 24px;
   }
 }
+
+.title-bar {
+  display: flex;
+  justify-content: space-between;
+
+  .left {
+    flex: 0 0 
+  }
+}

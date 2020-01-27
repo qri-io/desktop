@@ -73,6 +73,7 @@ module.exports = merge(baseConfig, {
             }
           },
           'css-loader',
+          'resolve-url-loader',
           'sass-loader'
         ]
       },
@@ -146,13 +147,13 @@ module.exports = merge(baseConfig, {
       'process.env.NODE_ENV': JSON.stringify('development'),
 
       /**
-       * compile-time flags are stored under a global __BUILD__ constant. 
+       * compile-time flags are stored under a global __BUILD__ constant.
        * Useful for allowing different behaviour between development builds and
        * release builds. These should be synted with
        *
        */
       '__BUILD__': {
-        'ENABLE_NETWORK_SECTION': JSON.stringify(true),
+        'ENABLE_NETWORK_SECTION': JSON.stringify(true)
       }
     }),
 

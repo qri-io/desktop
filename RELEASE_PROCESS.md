@@ -2,6 +2,13 @@
 ## Release process:
 This will only work if you are internal to Qri and have the correct keys
 
+Before anything, pull master on both a windows and mac machine, run
+
+`yarn build`
+`yarn test-e2e` for mac and `yarn test-win-e2e` for windows
+
+to ensure we can build on both
+
 1) change the frontend and backend version numbers in:
   `/package.json`
   `/app/package.json`
@@ -19,12 +26,18 @@ This will only work if you are internal to Qri and have the correct keys
   - compress the app file that exists in `/release/mac`
   - rename it to match the current mac.zip file in the `/release` directory
   - replace the old zip file with the new one
-  - run `./node_modules/app-builder-bin/mac/app-builder blockmap -i release/FILENAME.zip -o release/throwaway.zip`
+  - run `./node_modules/app-builder-bin/mac/app-builder blockmap -i release/Qri\ Desktop-0.3.3-mac.zip -o release/throwaway.zip`
     - app-builder is modifying the contents of the zip, which is messing up the notarization. The -o flag indicates an output file that app-builder can futz with without ruining the integrity of the original app
   - take the updated file info from size, sha512 and blockMapSize
   - update the `/release/latest-mac.yml` with that info
   - replace `FILENAME.zip` to the release page
+13) On the windows lenova machine, click the `build_qri.bat` file on the desktop
+  - after it's build, upload it to drop box: `qri/qri Team Folder/qri builds/desktop/windows`
+  - add it to the release page
+14) Add the changelog notes to the release page
 12) change link on website to downloads:
   - in website/src/pages/download.js, line 10
     `const latestVersion = 'VERSION'`
   - create pr, get approval, and merge
+
+14) click publish on the release!
