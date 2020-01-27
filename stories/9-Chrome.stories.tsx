@@ -1,6 +1,8 @@
 import React from 'react'
 import Switch from '../app/components/chrome/Switch'
 import Segment from '../app/components/chrome/Segment'
+import ActionButton from '../app/components/chrome/ActionButton'
+import Hamburger from '../app/components/chrome/Hamburger'
 
 export default {
   title: 'Chrome',
@@ -62,4 +64,31 @@ export const segments = () => {
 segments.story = {
   name: 'Segments',
   paramaters: { note: 'collapse, untwirl, expand and contract' }
+}
+
+export const actionButtons = () => {
+  return (
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+      <ActionButton icon='unknown' text='this is a test' onClick={console.log('yay! click worked')} />
+    </div>
+  )
+}
+
+actionButtons.story = {
+  name: 'Action Buttons',
+  parameters: { note: 'text, icon, onClick functions only params' }
+}
+
+export const hamburger = () => {
+  const actions = [
+    { icon: 'publish', text: 'Publish', onClick: (e: MouseEvent) => { console.log('Publish!', e) } },
+    { icon: 'close', text: 'Unpublish', onClick: (e: MouseEvent) => { console.log('UnPublish!', e) } },
+    { icon: 'openInFinder', text: 'Open in finder', onClick: (e: MouseEvent) => { console.log('Open in Finder!', e) } },
+    { icon: 'clone', text: 'Clone', onClick: (e: MouseEvent) => { console.log('Clone!', e) } }
+  ]
+  return (
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+      <Hamburger data={actions} />
+    </div>
+  )
 }

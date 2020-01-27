@@ -30,7 +30,8 @@ import {
   faCaretRight,
   faCaretUp,
   faCaretDown,
-  faExpandArrowsAlt
+  faExpandArrowsAlt,
+  faEllipsisH
 } from '@fortawesome/free-solid-svg-icons'
 
 interface IconProps {
@@ -80,7 +81,8 @@ const icons: Record<string, any> = {
   'right': faCaretRight,
   'up': faCaretUp,
   'down': faCaretDown,
-  'expand': faExpandArrowsAlt
+  'expand': faExpandArrowsAlt,
+  'hamburger': faEllipsisH
 }
 
 export const iconsList = Object.keys(icons)
