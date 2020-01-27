@@ -1,3 +1,12 @@
+## [0.3.3](https://github.com/qri-io/desktop/compare/v0.3.2...v0.3.3) (2020-01-24)
+
+Quick patch release to address some bugs when viewing the body!
+
+### Bug Fixes
+
+* **body:** refine props to Body components, fix fetching status ([#405](https://github.com/qri-io/desktop/issues/405)) ([c07797b](https://github.com/qri-io/desktop/commit/c07797b))
+
+
 ## [0.3.2](https://github.com/qri-io/desktop/compare/v0.3.1...v0.3.2) (2020-01-22)
 
 This release brings a two new features and some fixes that address bugs that occured while navigating through the app.
