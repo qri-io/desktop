@@ -29,8 +29,47 @@
 .title-bar {
   display: flex;
   justify-content: space-between;
+  align-items: flex-start;
+  width: 100%;
+  padding: 5px 20px;
+  flex-flow: nowrap;
 
   .left {
-    flex: 0 0 
+    display: flex;
+    align-items: flex-start;
+    min-width: 0;
+    float: unset;
+    overflow: hidden;
+    white-space: nowrap;
+
+    &.expanded {
+      cursor: pointer;
+    }
+
+    &.expandable {
+      cursor: pointer;
+    }
+    
+    .title-bar-icon {
+      margin-top: 5px;
+      margin-right: 10px;
+    }
+
+    .title-bar-title {
+      font-size: 24px;
+      font-weight: 900;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow-x: hidden;
+
+      &.expanded {
+        white-space: normal;
+      }
+    }
+  }
+  .right {
+    flex-grow: 1;
+    flex-Basis: 40px;
+    float: unset;
   }
 }

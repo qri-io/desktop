@@ -252,6 +252,7 @@
     "react-router-dom": "5.1.2",
     "react-select": "3.0.8",
     "react-simplemde-editor": "4.1.0",
+    "react-sizeme": "^2.6.12",
     "react-tag-input": "6.4.1",
     "react-tooltip": "3.11.1",
     "react-transition-group": "4.3.0",

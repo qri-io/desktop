@@ -1,7 +1,8 @@
 import React from 'react'
 import Switch from '../app/components/chrome/Switch'
 import Segment from '../app/components/chrome/Segment'
-import ActionButton from '../app/components/chrome/ActionButton'
+import ActionButton, { ActionButtonProps } from '../app/components/chrome/ActionButton'
+import ActionButtonBar from '../app/components/chrome/ActionButtonBar'
 import Hamburger from '../app/components/chrome/Hamburger'
 
 export default {
@@ -69,10 +70,17 @@ segments.story = {
 export const actionButtons = () => {
   return (
     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
-      <ActionButton icon='unknown' text='this is a test' onClick={console.log('yay! click worked')} />
+      <ActionButton icon='unknown' text='this is a test' onClick={(e: React.MouseEvent<Element, MouseEvent>) => console.log(e, 'yay! click worked')} />
     </div>
   )
 }
+
+const titleBarActions: ActionButtonProps[] = [
+  { icon: 'publish', text: 'Publish', onClick: (e: MouseEvent<Element, MouseEvent>) => { console.log('Publish!', e) } },
+  { icon: 'close', text: 'Unpublish', onClick: (e: MouseEvent<Element, MouseEvent>) => { console.log('UnPublish!', e) } },
+  { icon: 'openInFinder', text: 'Open in finder', onClick: (e: MouseEvent<Element, MouseEvent>) => { console.log('Open in Finder!', e) } },
+  { icon: 'clone', text: 'Clone', onClick: (e: MouseEvent<Element, MouseEvent>) => { console.log('Clone!', e) } }
+]
 
 actionButtons.story = {
   name: 'Action Buttons',
@@ -80,15 +88,35 @@ actionButtons.story = {
 }
 
 export const hamburger = () => {
-  const actions = [
-    { icon: 'publish', text: 'Publish', onClick: (e: MouseEvent) => { console.log('Publish!', e) } },
-    { icon: 'close', text: 'Unpublish', onClick: (e: MouseEvent) => { console.log('UnPublish!', e) } },
-    { icon: 'openInFinder', text: 'Open in finder', onClick: (e: MouseEvent) => { console.log('Open in Finder!', e) } },
-    { icon: 'clone', text: 'Clone', onClick: (e: MouseEvent) => { console.log('Clone!', e) } }
-  ]
   return (
     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
-      <Hamburger data={actions} />
+      <Hamburger data={titleBarActions} />
     </div>
   )
+}
+
+export const actionButtonBar = () => {
+  const [size, setSize] = React.useState(80)
+  return <div style={{ height: '100%', margin: 20, position: 'relative' }}>
+    <div style={{ minWidth: 40, width: `calc(100% * ${size / 100}`, top: 0, right: 0, marginLeft: 'auto' }}>
+      <ActionButtonBar data={titleBarActions} />
+    </div>
+    <input
+      style={{ width: 300, marginTop: 30 }}
+      name='size'
+      type='range'
+      min='0'
+      max='100'
+      step='1'
+      value={size}
+      onChange={(e: React.ChangeEvent) => { setSize(e.currentTarget.value) }}
+    />
+  </div>
+}
+
+actionButtonBar.story = {
+  name: 'Action Button Bar',
+  parameters: {
+    note: 'as we change width, the buttons in the action bar will change'
+  }
 }

@@ -150,6 +150,9 @@
   font-weight: 300;
   display: flex;
   align-items: center;
+  cursor: pointer;
+  padding: 10px;
+  white-space: nowrap;
 
   .text {
     margin-left: 10px;
@@ -189,6 +192,20 @@
           pointer-events: none;
         }
       }
+    }
+  }
+}
+
+.action-button-bar {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+
+  > div {
+    display: inline-block;
+
+    &.closed {
+      display: none;
     }
   }
 }

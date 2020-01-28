@@ -1,5 +1,6 @@
 import React from 'react'
 import Icon from './Icon'
+import sizeMe from 'react-sizeme'
 
 export interface ActionButtonProps {
   icon: string
@@ -18,4 +19,4 @@ const ActionButton: React.FunctionComponent<ActionButtonProps> = (props) => {
   )
 }
 
-export default ActionButton
+export default sizeMe()(ActionButton)
