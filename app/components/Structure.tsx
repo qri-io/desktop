@@ -89,7 +89,7 @@ const Structure: React.FunctionComponent<StructureProps> = ({ data, history, wri
     { 'label': 'depth', 'value': data.depth }
   ]
   return (
-    <div className='structure content'>
+    <div className='structure'>
       <div className='stats'><LabeledStats data={stats} size='lg' /></div>
       { history
         ? <FormatConfigHistory structure={data} />
@@ -112,12 +112,12 @@ const Structure: React.FunctionComponent<StructureProps> = ({ data, history, wri
             </span>
           </ExternalLink>
         </h4>
-        <Schema
-          data={data ? data.schema : undefined}
-          onChange={handleOnChange}
-          editable={!history}
-        />
       </div>
+      <Schema
+        data={data ? data.schema : undefined}
+        onChange={handleOnChange}
+        editable={!history}
+      />
     </div>
   )
 }

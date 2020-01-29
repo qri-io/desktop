@@ -3,6 +3,7 @@ import React from 'react'
 import DatasetDetailsSubtext from '../app/components/dataset/DatasetDetailsSubtext'
 import Dataset from '../app/models/dataset'
 import TitleBar from '../app/components/dataset/TitleBar'
+import Overview from '../app/components/dataset/Overview'
 import { ActionButtonProps } from '../app/components/chrome/ActionButton'
 
 export default {
@@ -21,7 +22,7 @@ const titleBarActions: ActionButtonProps[] = [
 
 export const titleBar = () => {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '100%', width: '100%' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '100%', width: '100%', padding: 15 }}>
       <TitleBar icon='structure' title='Short test title' data={titleBarActions} />
       <TitleBar title='Long test title with no icon that should overflow ellipsis unless you click it in which case it should expand' data={titleBarActions} />
     </div>
@@ -36,11 +37,7 @@ titleBar.story = {
 }
 
 export const detailsSubtext = () => {
-  const date: Date = new Date(1579892323028)
-  const data: Dataset = {
-    commit: { timestamp: date, count: 14 },
-    structure: { length: 349200, format: 'csv' }
-  }
+  const data: Dataset = overviewDataset
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', height: '100%', justifyContent: 'space-between' }}>
       <div style={{ background: 'grey' }}>
@@ -90,27 +87,31 @@ detailsSubtext.story = {
   }
 }
 
-export const titleBarTest = () => {
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '100%', width: '100%', margin: 10, position: 'relative' }}>
-      <div style={{
-        display: 'flex',
-        flexFlow: 'nowrap',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        width: '100%',
-        overflow: 'hidden'
-      }}>
-        <div style={{ height: 100, background: 'red', overflow: 'hidden', whiteSpace: 'nowrap' }}>Here is some text that is</div>
-        <div style={{ height: 100, background: 'green', flexGrow: 1, flexBasis: 40 }}>What about now when I add stuff to this one?</div>
-      </div>
-    </div>
-  )
+const overviewDataset: Dataset = {
+  meta: {
+    title: 'Earthquakes in the last month',
+    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+    theme: ['geology']
+  },
+  structure: {
+    format: 'csv',
+    length: 24000000,
+    depth: 2,
+    entries: 2206,
+    errCount: 0
+  },
+  commit: {
+    author: 'chriswhong',
+    title: 'Added metadata',
+    timestamp: new Date(1579892323028),
+    count: 247
+  }
 }
 
-titleBarTest.story = {
-  name: 'Title Bar Test',
-  parameters: {
-    notes: 'four actions max will appear at the top bar, if the title is long or the space is small, they will collapse into the hamburger'
-  }
+export const overview = () => {
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', width: '100%', padding: 20 }}>
+      <Overview data={overviewDataset}/>
+    </div>
+  )
 }

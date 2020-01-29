@@ -14,8 +14,8 @@ const CommitPreview: React.FunctionComponent<CommitPreviewProps> = ({ data }) =>
 
   return (
     <div className='commit-preview'>
-      by <span>{author}</span> <span className='dataset-details-item'>{moment(timestamp).fromNow()}</span>
-      <span>{title}</span>
+      <div className='author-time'>by {author} {moment(timestamp).fromNow()}</div>
+      <div className='title'>{title}</div>
     </div>
   )
 }

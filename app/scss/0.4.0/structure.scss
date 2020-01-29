@@ -58,7 +58,8 @@
 
 .schema-wrap {
   width: 100%;
-  max-width: 800px;
+  margin: unset;
+  padding: -15px;
   
   .schema-header {
     display: flex;

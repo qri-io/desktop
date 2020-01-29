@@ -31,7 +31,6 @@
   justify-content: space-between;
   align-items: flex-start;
   width: 100%;
-  padding: 5px 20px;
   flex-flow: nowrap;
 
   .left {
@@ -71,5 +70,48 @@
     flex-grow: 1;
     flex-Basis: 40px;
     float: unset;
+  }
+}
+
+.commit-preview {
+  width: 100%;
+  font-family: 'Rubik';
+  font-size: 14px;
+  line-height: 17px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #E8EDF2;
+  border-radius: 3px;
+  padding: 10px 20px;
+
+  .author-time {
+    font-weight: 500;
+  }
+
+  .title {
+    font-weight: 300;
+  }
+}
+
+.structure {
+  > div {
+    padding: 15px;
+  }
+}
+
+.overview {
+  width: 100%;
+  #overview {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    .description {
+      max-width: 600px;
+    }
+  }
+  .expandable {
+    cursor: pointer;
   }
 }
