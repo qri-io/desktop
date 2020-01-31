@@ -1,10 +1,14 @@
 import React from 'react'
 
 import DatasetDetailsSubtext from '../app/components/dataset/DatasetDetailsSubtext'
-import Dataset from '../app/models/dataset'
+import { Dataset as IDataset } from '../app/models/dataset'
 import TitleBar from '../app/components/dataset/TitleBar'
 import Overview from '../app/components/dataset/Overview'
+import Dataset from '../app/components/dataset/Dataset'
+// import Navbar from '../app/components/nav/Navbar'
+import { BrowserRouter as Router } from 'react-router-dom'
 import { ActionButtonProps } from '../app/components/chrome/ActionButton'
+const cities = require('./data/cities.dataset.json')
 
 export default {
   title: 'Dataset',
@@ -87,7 +91,7 @@ detailsSubtext.story = {
   }
 }
 
-const overviewDataset: Dataset = {
+const overviewDataset: IDataset = {
   meta: {
     title: 'Earthquakes in the last month',
     description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
@@ -111,7 +115,28 @@ const overviewDataset: Dataset = {
 export const overview = () => {
   return (
     <div style={{ display: 'flex', alignItems: 'center', width: '100%', padding: 20 }}>
-      <Overview data={overviewDataset}/>
+      <Overview data={overviewDataset} actions={[]}/>
     </div>
   )
+}
+
+export const dataset = () => {
+  return (
+    <div style={{ margin: 0, padding: 30, minHeight: '100%', background: '#F5F7FA' }}>
+      <div style={{ width: '90%', margin: '2em auto', background: 'white' }}>
+        <Router>
+          {/* <Navbar location='foo/bar' /> */}
+          <Dataset data={cities} actions={[]} />
+        </Router>
+      </div>
+    </div>
+  )
+}
+
+dataset.story = {
+  name: 'Dataset'
+}
+
+export const bodySegment = () => {
+
 }

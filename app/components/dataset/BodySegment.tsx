@@ -1,113 +1,115 @@
 import React from 'react'
 // import numeral from 'numeral'
 
-import Dataset from '../../models/dataset'
+import Dataset, { Body } from '../../models/dataset'
 import Segment from '../chrome/Segment'
+import { TypeLabel } from '../TwoDSchemaLayout'
 
 interface BodyPreviewProps {
   data: Dataset
 }
 
 const BodyPreviewTable: React.FunctionComponent<BodyPreviewProps> = ({ data }) => {
-  const { body } = data
+  const { body, structure } = data
+
+  if (!body) return null
 
   const bdy = addRowNumbers(body)
-  console.log(bdy)
 
-  const tableRows = bdy.map((row, i) => {
-    return (
-      <tr key={i}>
-        {row.map((d: any, j: number) => {
-          const isFirstColumn = j === 0
-          if (isFirstColumn) d = parseInt(d) + 1
-          return (
-            <td key={j} className={isFirstColumn ? 'first-column' : ''}>
-              <div className='cell'>{typeof d === 'boolean' ? JSON.stringify(d) : d}</div>
-            </td>
-          )
-        })}
-      </tr>
-    )
-  })
+  let bodyPreview
 
-  return (
-    <table style={{ display: 'table' }}>
-      <thead>
-        <tr>
-          <th>
-            <div className='cell'>&nbsp;</div>
-          </th>
-          {/* {headers && headers.map((d: any, j: number) => {
+  if (!Array.isArray(bdy)) {
+    bodyPreview =
+    <div id='json-preview-container'>
+      <textarea id='json-preview'>{JSON.stringify(body, null, 2)}</textarea>
+    </div>
+  } else {
+    const tableRows = bdy.map((row: any[], i: number) => {
+      return (
+        <tr key={i}>
+          {row.map((d: any, j: number) => {
+            const isFirstColumn = j === 0
+            if (isFirstColumn) d = parseInt(d) + 1
             return (
-              <th key={j} className={(j === highlighedColumnIndex) ? 'highlighted' : '' }>
-                <div className='cell' onClick={() => setDetailsBar(j)}>
-                  <TypeLabel type={d.type} showLabel={false}/>&nbsp;{d.title}
-                </div>
-              </th>
+              <td key={j} className={isFirstColumn ? 'first-column' : ''}>
+                <div className='cell'>{typeof d === 'boolean' ? JSON.stringify(d) : d}</div>
+              </td>
             )
-          })} */}
+          })}
         </tr>
-      </thead>
-      <tbody>
-        {tableRows}
-      </tbody>
-    </table>)
+      )
+    })
+    let headers: Array<{ type: string, title: string}> = []
+    if (structure && structure.schema) {
+      structure.schema.items.items.forEach((column: { type: string, title: string}) => {
+        headers.push(column)
+      })
+    }
+
+    bodyPreview =
+    <div className='table-container'>
+      <table style={{ display: 'table' }}>
+        <thead>
+          <tr>
+            <th>
+              <div className='cell'>#</div>
+            </th>
+            {headers.length > 0 && headers.map((d: any, j: number) => {
+              return (
+                <th key={j} >
+                  <div className='cell' >
+                    <TypeLabel type={d.type} showLabel={false}/>&nbsp;{d.title}
+                  </div>
+                </th>
+              )
+            })}
+          </tr>
+        </thead>
+        <tbody>
+          {tableRows}
+        </tbody>
+      </table>
+    </div>
+  }
+
+  return bodyPreview
 }
 
-// const previewLength = (body: Body) => {
-//   return Array.isArray(body) ? body.length : Object.keys(body).length
-// }
+// adds row numbers to an array of arrays or object
+const addRowNumbers = (body: Body): any[][] | any[] => {
+  if (!body) return body
+  if (Array.isArray(body)) {
+    return body.map((row: any[], i): any[] => { return [i, ...row] })
+  }
 
-// adds row numbers to an array of objects
-const addRowNumbers = (body: Body) => {
-  // if (Array.isArray(body)) {
-  //   return body.map((d: object, i): object => ({
-  //     ' ': i + 1,
-  //     ...d
-  //   }))
-  // }
-
-  // return Object.keys(body as Record<any, any>).map((key: string): Record<any, any> => ({
-  //   ' ': key,
-  //   ...body[key]
-  // }))
-  return body
+  return Object.keys(body).map((key: string): Record<any, any> => ({
+    ' ': key,
+    ...body[key]
+  }))
 }
-
-// // transform csvBody (array of arrays) + csv Schema into an array of objects
-// // to feed ts-react-json-table
-// // TODO (chriswhong): this assumes depth 2 and a good schema, handle other varieties
-// const transformCsvBody = (csvBody: any[], csvSchema: any) => {
-//   // make an array of column names
-//   const columns: string[] = csvSchema.items.items.map((d: { title: string }): string => d.title)
-//   // map each array of csv values into an object
-//   return csvBody.map((row) => {
-//     const rowObject: {
-//       [key: string]: any
-//     } = {}
-
-//     // for each column header, set a value on rowObject
-//     columns.forEach((column: string, i: number) => {
-//       rowObject[column] = row[i]
-//     })
-//     return rowObject
-//   })
-// }
 
 interface BodySegmentProps {
   name?: string
   data: Dataset
+  collapsable?: boolean
 }
 
-const BodySegment: React.FunctionComponent<BodySegmentProps> = ({ data }) => {
+const BodySegment: React.FunctionComponent<BodySegmentProps> = ({ data, collapsable }) => {
   if (!data.body) {
     return null
+  }
+
+  let subhead = ''
+
+  if (data.structure) {
+    subhead = `previewing ${data.body.length} of ${data.structure.entries} rows`
   }
 
   return <Segment
     icon='body'
     name='body'
-    subhead='previewing 100 of 2,206 rows'
+    subhead={subhead}
+    collapsable={collapsable}
     content={<BodyPreviewTable data={data} />}
   />
 }

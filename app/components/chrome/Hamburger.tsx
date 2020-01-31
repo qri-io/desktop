@@ -14,10 +14,12 @@ const Hamburger: React.FunctionComponent<HamburgerProps> = (props) => {
   const [iconColor, setIconColor] = React.useState<'light' |'medium' | 'dark'>('medium')
 
   const onHamburgerEnter = (e: MouseEvent<HTMLDivElement, MouseEvent>) => {
+    e.preventDefault()
     setIconColor('dark')
   }
 
   const onHamburgerLeave = (e: MouseEvent<HTMLDivElement, MouseEvent>) => {
+    e.preventDefault()
     setIconColor('medium')
   }
 

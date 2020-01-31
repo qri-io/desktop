@@ -6,8 +6,11 @@ import { Modal } from '../../models/modals'
 import { P2PConnection, NetworkHomeData } from '../../models/network'
 import P2PConnectionStatus from './P2PConnectionStatus'
 
+import Dataset from '../dataset/Dataset'
+
 import Navbar from '../nav/Navbar'
-import NetworkHome from './NetworkHome'
+// import NetworkHome from './NetworkHome'
+import cities from '../../../stories/data/cities.dataset.json'
 
 export interface NetworkProps {
   sidebarWidth: number
@@ -29,6 +32,8 @@ const Network: React.FunctionComponent<NetworkProps> = (props) => {
   const [data, setData] = React.useState(undefined)
   const [error, setError] = React.useState('')
 
+  console.log(loading, data, error)
+
   React.useEffect(() => {
     homeFeed()
       .then(f => {
@@ -46,7 +51,8 @@ const Network: React.FunctionComponent<NetworkProps> = (props) => {
       <div className='main-content-flex' style={{ overflow: 'auto' }}>
         {/* TODO (b5) - navbar shouldn't be loaded here, should be in App.tsx, needs location */}
         <Navbar location={''} />
-        <NetworkHome data={data} loading={loading} error={error} />
+        <Dataset data={cities} />
+        {/* <NetworkHome data={data} loading={loading} error={error} /> */}
       </div>
     </>
   )

@@ -65,7 +65,7 @@ const SchemaItemProps: React.FunctionComponent<SchemaItemProps> = ({
           onChange={onChange && editable ? handleDynamicEditChange : undefined}
           allowEmpty={false}
           large
-          width={150}
+          minWidth={100}
           expanded={expanded}
           editable={editable}
         />
@@ -87,7 +87,7 @@ const SchemaItemProps: React.FunctionComponent<SchemaItemProps> = ({
           value={data.description || ''}
           onChange={onChange && editable ? handleDynamicEditChange : undefined}
           allowEmpty expanded={expanded}
-          width={200}
+          minWidth={100}
           editable={editable}
         />
       </div>
@@ -99,7 +99,7 @@ const SchemaItemProps: React.FunctionComponent<SchemaItemProps> = ({
           value={data.validation || ''}
           onChange={onChange && editable ? handleDynamicEditChange : undefined}
           allowEmpty expanded={expanded}
-          width={100}
+          minWidth={100}
           editable={editable}
         />
       </div>

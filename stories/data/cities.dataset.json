@@ -1,21 +1,27 @@
 {
   "qri": "ds:0",
-  "peername" : "some_user",
-  "name" : "cities",
+  "peername" : "ramfox",
+  "name" : "test_csv",
+  "path": "/ipfs/QmbRtAnopGhN5iqt6W9uG52MPXEE1WYar4j6AeQS3BZu5A",
   "commit": {
     "qri": "cm:0",
     "timestamp": "2017-01-01T01:00:00.000Z",
-    "title": "initial commit"
+    "title": "initial commit",
+    "author": "chriswhong"
   },
   "meta": {
     "qri": "md:0",
-    "title": "example city data"
+    "title": "example city data",
+    "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+    "theme": ["geology"]
   },
   "structure": {
     "qri": "st:0",
     "format": "csv",
     "formatConfig": {
-      "headerRow": true
+      "headerRow": true,
+      "lazyQuotes": true,
+      "variadicFields": false
     },
     "schema": {
       "type": "array",
@@ -40,7 +46,11 @@
           }
         ]
       }
-    }
+    },
+    "depth": 2,
+    "entries": 5,
+    "errCount": 0,
+    "length": 1280
   },
   "body": [
     ["toronto",40000000,55.5,false],

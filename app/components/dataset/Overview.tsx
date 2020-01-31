@@ -3,13 +3,16 @@ import { Dataset } from '../../models/dataset'
 import TitleBar from './TitleBar'
 import DatasetDetailsSubtext from './DatasetDetailsSubtext'
 import Tag from '../item/Tag'
+import { ActionButtonProps } from '../chrome/ActionButton'
 
 interface OverviewProps {
   data: Dataset
+  actions: ActionButtonProps[]
 }
 
-const Overview: React.FunctionComponent<OverviewProps> = ({ data }) => {
-  const { meta, structure, name } = data
+const Overview: React.FunctionComponent<OverviewProps> = (props) => {
+  const { data, actions } = props
+  const { meta, name } = data
 
   const title = (meta && meta.title) || name
   const initDescription: string = (meta && meta.description) || ''
@@ -34,7 +37,7 @@ const Overview: React.FunctionComponent<OverviewProps> = ({ data }) => {
 
   return (
     <div className='overview'>
-      <TitleBar title={title} data={[]} />
+      <TitleBar title={title} data={actions} />
       <DatasetDetailsSubtext size='md' color='dark' data={data}/>
       <div id='overview'>
         <div onClick={handleClick} className='description'>{description}</div>

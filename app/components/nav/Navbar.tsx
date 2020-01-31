@@ -30,9 +30,9 @@ const ForwardArrow: React.FunctionComponent = () => (
 
 // Navbar is a the basic button used throughout the app
 const Navbar: React.FunctionComponent<NavbarProps> = ({ location }) => (
-  <div className='page_navbar'>
+  <div className='page-navbar'>
     <div className='row'>
-      <div className='nav_buttons'>
+      <div className='nav-buttons'>
         <a className='back'><BackArrow /></a>
         <a className='forward'><ForwardArrow /></a>
       </div>

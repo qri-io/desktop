@@ -1,20 +1,24 @@
 import React from 'react'
 import Segment from '../chrome/Segment'
-import Readme from '../../models/dataset'
+import ReadmeHistory from '../ReadmeHistory'
 
 interface ReadmeSegmentProps {
-  data: Readme
+  peername: string
+  name: string
+  path: string
   subhead?: string
+  collapsable: boolean
 }
 
-const ReadmeSegment: React.FunctionComponent<ReadmeSegmentProps> = ({ subhead, data }) => {
-  if (!data) { return null }
+const ReadmeSegment: React.FunctionComponent<ReadmeSegmentProps> = ({ subhead, peername, name, path, collapsable }) => {
+  if (!peername || !name) { return null }
 
   return <Segment
     icon='readme'
     name='readme'
+    collapsable={collapsable}
     subhead={subhead}
-    content={<h3>Huh?</h3>}
+    content={<ReadmeHistory peername={peername} name={name} path={path} />}
   />
 }
 

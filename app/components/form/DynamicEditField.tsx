@@ -10,7 +10,7 @@ interface DynamicEditFieldProps {
   onChange?: (name: string, value: string, e?: React.SyntheticEvent) => void
   value: string
   allowEmpty: boolean
-  width?: number
+  minWidth?: number
   maxLength?: number
   expanded?: boolean
   name: string
@@ -27,7 +27,7 @@ const DynamicEditField: React.FunctionComponent<DynamicEditFieldProps> = ({
   validate,
   onChange,
   allowEmpty = true,
-  width,
+  minWidth,
   maxLength,
   expanded = false,
   row = 0,
@@ -132,7 +132,7 @@ const DynamicEditField: React.FunctionComponent<DynamicEditFieldProps> = ({
   }
 
   return (
-    <div style={{ width }} className={classNames('dynamic-edit-field', { 'invalid': !isValid, 'dynamic-edit-field-large': large, 'focused': focused, 'dynamic-edit-field-editable': editable })} >
+    <div style={{ minWidth }} className={classNames('dynamic-edit-field', { 'invalid': !isValid, 'dynamic-edit-field-large': large, 'focused': focused, 'dynamic-edit-field-editable': editable })} >
       <div
         suppressContentEditableWarning={true}
         className={classNames({ 'expanded': expanded })}

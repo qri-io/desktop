@@ -1,14 +1,15 @@
 
-.page_navbar {
+.page-navbar {
   padding: 10px 20px;
 
   .row {
     display: flex;
+    justify-content: space-between;
+    align-items: center;
   }
 
-  .nav_buttons {
-    width: 10%;
-    min-width: 80px;
+  .nav-buttons {
+    width: 80px;
     margin-top: 6px;
 
     .back, .forward {
@@ -19,11 +20,18 @@
   }
 
   .searchbox {
-    width: 89%;
+    width: 100%;
   }
 
   .breadcrumb {
     margin-top: 10px;
+    font-family: 'Rubik';
+    color: #808080;
+    > a {
+      color: #808080;
+    }
+    font-weight: 500;
+    font-size: 14px;
   }
 }
 

@@ -4,7 +4,7 @@ import classNames from 'classnames'
 
 interface SegmentProps {
   name: string
-  content: React.Component | Element
+  content: React.Component | Element | null
 
   icon?: string
   subhead?: string
@@ -15,6 +15,8 @@ interface SegmentProps {
 
 const Segment: React.FunctionComponent<SegmentProps> = (props) => {
   const { name, subhead, content, icon, collapsable = false, expandable = false, contentHeight = 400 } = props
+
+  if (content === null) return null
 
   const [isOpen, setIsOpen] = React.useState(true)
   const [isExpanded, setIsExpanded] = React.useState(false)

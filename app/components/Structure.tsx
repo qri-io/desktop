@@ -13,8 +13,9 @@ import fileSize, { abbreviateNumber } from '../utils/fileSize'
 export interface StructureProps {
   data: IStructure
   history: boolean
-  fsiBodyFormat: string
-  write: (structure: IStructure) => ApiActionThunk
+  fsiBodyFormat?: string
+  showConfig?: boolean
+  write?: (structure: IStructure) => ApiActionThunk
 }
 
 export interface FormatConfigOption {
@@ -59,9 +60,10 @@ export const formatConfigOptions: { [key: string]: FormatConfigOption } = {
   }
 }
 
-const Structure: React.FunctionComponent<StructureProps> = ({ data, history, write, fsiBodyFormat }) => {
+const Structure: React.FunctionComponent<StructureProps> = ({ data, history, write, fsiBodyFormat = '', showConfig = true }) => {
   const format = history ? data.format : fsiBodyFormat
   const handleWriteFormat = (option: string, value: any) => {
+    if (!write) return
     // TODO (ramfox): sending over format since a user can replace the body with a body of a different
     // format. Let's pass in whatever the current format is, so that we have unity between
     // what the desktop is seeing and the backend. This can be removed when we have the fsi
@@ -79,7 +81,6 @@ const Structure: React.FunctionComponent<StructureProps> = ({ data, history, wri
   const handleOnChange = (schema: ISchema) => {
     write({ ...data, schema })
   }
-  console.log(data)
 
   const stats = [
     { 'label': 'format', 'value': data.format.toUpperCase() },
@@ -91,13 +92,13 @@ const Structure: React.FunctionComponent<StructureProps> = ({ data, history, wri
   return (
     <div className='structure'>
       <div className='stats'><LabeledStats data={stats} size='lg' /></div>
-      { history
+      { showConfig && (history
         ? <FormatConfigHistory structure={data} />
         : <FormatConfigFSI
           structure={data}
           format={format}
           write={handleWriteFormat}
-        />
+        />)
       }
       <div>
         <h4 className='schema-title'>

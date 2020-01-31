@@ -109,9 +109,75 @@
     align-items: flex-start;
     .description {
       max-width: 600px;
+      padding-right: 20px;
     }
   }
   .expandable {
     cursor: pointer;
+  }
+}
+
+.dataset {
+  overflow-x:auto;
+  padding: 20px;
+  width: 100%;
+
+  > div {
+    margin-bottom: 20px;
+  }
+}
+
+.table-container {
+  $cell-border: 1px solid #D8D8D8;
+  $header-background-color: #f0f0f0;
+
+  overflow: scroll !important;
+  height: 100%;
+
+  table {
+    table-layout: fixed;
+    min-width: 100%;
+
+    td, th {
+      white-space: nowrap;
+      border-top-width: 0;
+      border-left-width: 0;
+      border-right: $cell-border;
+      border-bottom: $cell-border;
+      padding: 2px 6px;
+      font-size: 14px;
+      font-weight: 300;
+    }
+
+    tr {
+      border-left: none;
+    }
+
+    th {
+      border-left: $cell-border;
+      font-weight: 500;
+    }
+
+    td:first-child, th:first-child {
+      margin-left: -2px;
+      text-align: center;
+      border-left: none;
+      color: #969696;
+      font-weight: 500;
+      padding: 3px 1px;
+    }
+
+    td:last-child, th:last-child {
+      border-right: none;
+    }
+  }
+}
+
+#json-preview-container {
+  height: 500px;
+  width: 100%;
+
+  .CodeMirror {
+    height: 500px;
   }
 }

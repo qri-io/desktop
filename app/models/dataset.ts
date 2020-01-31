@@ -82,11 +82,11 @@ export type Schema = JSONSchema7
 export interface Dataset {
   meta?: Meta
   structure?: Structure
-  body?: {
-    [key: string]: any
-  }
+  body?: Body
   commit?: Commit
   [key: string]: any
 }
+
+export type Body = Record<string, any> | any[][]
 
 export default Dataset

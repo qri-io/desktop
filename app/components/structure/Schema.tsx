@@ -31,7 +31,7 @@ const Schema: React.FunctionComponent<SchemaProps> = ({
   }
 
   return (
-    <div className='schema-wrap'>
+    <div id='schema-wrap'>
       <div className='schema-header'>
         <div>title</div>
         <div>type</div>
