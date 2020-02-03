@@ -79,7 +79,7 @@ module.exports = merge(baseConfig, {
         use: {
           loader: 'url-loader',
           options: {
-            limit: 10000,
+            limit: 30000,
             mimetype: 'application/font-woff'
           }
         }
@@ -126,7 +126,7 @@ module.exports = merge(baseConfig, {
 
     new webpack.DefinePlugin({
       /**
-       * compile-time flags are stored under a global __BUILD__ constant. 
+       * compile-time flags are stored under a global __BUILD__ constant.
        * Useful for allowing different behaviour between development builds and
        * release builds. These should be synted with
        *
