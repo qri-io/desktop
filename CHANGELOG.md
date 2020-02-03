@@ -1,3 +1,7 @@
+## [0.3.5](https://github.com/qri-io/desktop/compare/v0.3.4...v0.3.5) (2020-02-03)
+
+Patch release to upgrade electron & electron-builder, re-enabling auto update on the app.
+
 ## [0.3.4](https://github.com/qri-io/desktop/compare/v0.3.3...v0.3.4) (2020-02-03)
 
 This patch release fixes two visual bugs (packaged fonts and adjustments to the menus), restores the 'unpublish' option to the dataset page, and adds a number of reusable components that we will begin to surface as we release new features.
