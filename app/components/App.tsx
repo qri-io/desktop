@@ -56,10 +56,12 @@ export interface AppProps {
   exportPath: string
   setExportPath: (path: string) => Action
   children: JSX.Element[] | JSX.Element
+
   bootstrap: () => Promise<ApiAction>
   fetchMyDatasets: (page?: number, pageSize?: number) => Promise<ApiAction>
   addDataset: (peername: string, name: string) => Promise<ApiAction>
   linkDataset: (peername: string, name: string, dir: string) => Promise<ApiAction>
+  push: (path: string) => void
   setWorkingDataset: (peername: string, name: string) => Promise<ApiAction>
   acceptTOS: () => Action
   setQriCloudAuthenticated: () => Action
@@ -73,7 +75,6 @@ export interface AppProps {
   unpublishDataset: () => Promise<ApiAction>
   setDatasetDirPath: (path: string) => Action
   signout: () => Action
-  setRoute: (route: string) => Action
   importFile: (filePath: string, fileName: string, fileSize: number) => Promise<ApiAction>
   fetchWorkingDatasetDetails: () => Promise<ApiAction>
 }
@@ -107,7 +108,7 @@ class App extends React.Component<AppProps, AppState> {
     this.renderAppError = this.renderAppError.bind(this)
     this.handleCreateDataset = this.handleCreateDataset.bind(this)
     this.handleAddDataset = this.handleAddDataset.bind(this)
-    this.handleSelectRoute = this.handleSelectRoute.bind(this)
+    this.handlePush = this.handlePush.bind(this)
     this.handleSetDebugLogPath = this.handleSetDebugLogPath.bind(this)
     this.handleExportDebugLog = this.handleExportDebugLog.bind(this)
   }
@@ -120,8 +121,8 @@ class App extends React.Component<AppProps, AppState> {
     this.props.setModal({ type: ModalType.AddDataset })
   }
 
-  private handleSelectRoute (e: any, route: string) {
-    this.props.setRoute(route)
+  private handlePush (e: any, route: string) {
+    this.props.push(route)
   }
 
   private handleSetDebugLogPath (_e: any, path: string) {
@@ -148,13 +149,9 @@ class App extends React.Component<AppProps, AppState> {
   componentDidMount () {
     // handle ipc events from electron menus
     ipcRenderer.on('create-dataset', this.handleCreateDataset)
-
     ipcRenderer.on('add-dataset', this.handleAddDataset)
-
-    ipcRenderer.on('select-route', this.handleSelectRoute)
-
+    ipcRenderer.on('history-push', this.handlePush)
     ipcRenderer.on('set-debug-log-path', this.handleSetDebugLogPath)
-
     ipcRenderer.on('export-debug-log', this.handleExportDebugLog)
 
     setInterval(() => {
@@ -170,10 +167,8 @@ class App extends React.Component<AppProps, AppState> {
 
   componentWillUnmount () {
     ipcRenderer.removeListener('create-dataset', this.handleCreateDataset)
-
     ipcRenderer.on('add-dataset', this.handleAddDataset)
-
-    ipcRenderer.on('select-route', this.handleSelectRoute)
+    ipcRenderer.on('history-push', this.handlePush)
   }
 
   componentDidUpdate (prevProps: AppProps) {

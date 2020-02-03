@@ -87,7 +87,7 @@ export default function Routes (props: any) {
 
           <Route exact path='/' render={() => {
             ipcRenderer.send('show-dataset-menu', false)
-            return requireSignin(<h3>Home</h3>)
+            return requireSignin(<Redirect to='/collection' />)
           }} />
         </Route>
       </Switch>

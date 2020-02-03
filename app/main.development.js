@@ -297,19 +297,19 @@ app.on('ready', () =>
         label: 'View',
         submenu: [
           {
-            id: 'show-dataset',
-            label: 'Dataset',
-            accelerator: 'CmdOrCtrl+1',
-            click () {
-              mainWindow.webContents.send('select-route', '/dataset')
-            }
-          },
-          {
             id: 'show-collection',
             label: 'Collection',
             accelerator: 'CmdOrCtrl+2',
             click () {
-              mainWindow.webContents.send('select-route', '/collection')
+              mainWindow.webContents.send('history-push', '/collection')
+            }
+          },
+          {
+            id: 'show-workbench',
+            label: 'Workbench',
+            accelerator: 'CmdOrCtrl+2',
+            click () {
+              mainWindow.webContents.send('history-push', '/workbench')
             }
           },
           {

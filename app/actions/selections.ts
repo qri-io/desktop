@@ -1,5 +1,3 @@
-import { push } from 'connected-react-router'
-
 import {
   SELECTIONS_SET_ACTIVE_TAB,
   SELECTIONS_SET_SELECTED_LISTITEM,
@@ -43,5 +41,3 @@ export const clearSelection = () => {
 export const setCommit = (path: string) => {
   return setSelectedListItem('commit', path)
 }
-
-export const setRoute = (route: string) => push(route)

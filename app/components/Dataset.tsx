@@ -56,7 +56,6 @@ export interface DatasetProps {
   setModal: (modal: Modal) => void
   setActiveTab: (activeTab: string) => Action
   setSidebarWidth: (type: string, sidebarWidth: number) => Action
-  setRoute: (route: string) => Action
   setCommit: (path: string) => Action
   setComponent: (type: ComponentType, activeComponent: string) => Action
   setDetailsBar: (details: Record<string, any>) => Action
@@ -280,7 +279,6 @@ class Dataset extends React.Component<DatasetProps> {
   }
 
   render () {
-    // unpack all the things
     const {
       data,
 
@@ -294,7 +292,6 @@ class Dataset extends React.Component<DatasetProps> {
       setActiveTab,
       setCommit,
       setComponent,
-      setRoute,
       setDetailsBar,
 
       fetchHistory,
@@ -416,7 +413,7 @@ class Dataset extends React.Component<DatasetProps> {
               mountOnEnter
               unmountOnExit
             >
-              <NoDatasets setModal={setModal} setRoute={setRoute} />
+              <NoDatasets setModal={setModal} />
             </CSSTransition>
             <CSSTransition
               in={!datasetSelected && hasDatasets}

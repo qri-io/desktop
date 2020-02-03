@@ -1,5 +1,4 @@
 import { Action, AnyAction } from 'redux'
-
 import { push } from 'connected-react-router'
 
 import { CALL_API, ApiAction, ApiActionThunk, chainSuccess } from '../store/api'

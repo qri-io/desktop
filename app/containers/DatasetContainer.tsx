@@ -27,7 +27,6 @@ import {
 
 import {
   setActiveTab,
-  setRoute,
   setCommit,
   setSelectedListItem
 } from '../actions/selections'
@@ -71,7 +70,6 @@ const DatasetContainer = connect(
     setModal,
     setActiveTab,
     setSidebarWidth,
-    setRoute,
     setCommit,
     setComponent: setSelectedListItem,
     setDetailsBar,
