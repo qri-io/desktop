@@ -84,7 +84,7 @@ module.exports = merge(baseConfig, {
         use: {
           loader: 'url-loader',
           options: {
-            limit: 10000,
+            limit: 30000,
             mimetype: 'application/font-woff'
           }
         }
@@ -95,7 +95,7 @@ module.exports = merge(baseConfig, {
         use: {
           loader: 'url-loader',
           options: {
-            limit: 10000,
+            limit: 30000,
             mimetype: 'application/font-woff'
           }
         }

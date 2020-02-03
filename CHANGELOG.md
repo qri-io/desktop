@@ -1,3 +1,28 @@
+## [0.3.4](https://github.com/qri-io/desktop/compare/v0.3.3...v0.3.4) (2020-02-03)
+
+This patch release fixes two visual bugs (packaged fonts and adjustments to the menus), restores the 'unpublish' option to the dataset page, and adds a number of reusable components that we will begin to surface as we release new features.
+
+### Bug Fixes
+
+* **Dataset:** add `Hamburger` to dataset actions ([c4d0c6a](https://github.com/qri-io/desktop/commit/c4d0c6a))
+* **fonts:** add Rubik font to font-face in scss ([e628d57](https://github.com/qri-io/desktop/commit/e628d57))
+
+
+### Features
+
+* **Dataset Item Compoent:** add basic item component for datasets ([6fb5240](https://github.com/qri-io/desktop/commit/6fb5240))
+* **Hamburger, Action Button, Titlebar:** add to stories ([ae58313](https://github.com/qri-io/desktop/commit/ae58313))
+* **modal/Search:** work on search modal component ([7917f7c](https://github.com/qri-io/desktop/commit/7917f7c))
+* **navbar:** initial 0.4.0 page navabar and supporting components ([5bcfdb3](https://github.com/qri-io/desktop/commit/5bcfdb3))
+* **Network:** add network section behind __BUILD__ flag ([16dace1](https://github.com/qri-io/desktop/commit/16dace1))
+* **NetworkHome:** added initial NetworkHome component ([1996e3f](https://github.com/qri-io/desktop/commit/1996e3f))
+* **Overview:** component that gives basic meta and structure info at top of preview page ([26fde61](https://github.com/qri-io/desktop/commit/26fde61))
+* **switch:** add light/dark, small/large versions of Switch ([36e7140](https://github.com/qri-io/desktop/commit/36e7140))
+* **Tag:** tag component, `category`/`keyword` options ([d61efab](https://github.com/qri-io/desktop/commit/d61efab))
+* **TitleBar:** ActionButton, ActionButtonBar, used to make responsive title bar ([4ac5f51](https://github.com/qri-io/desktop/commit/4ac5f51))
+
+
+
 ## [0.3.3](https://github.com/qri-io/desktop/compare/v0.3.2...v0.3.3) (2020-01-24)
 
 Quick patch release to address some bugs when viewing the body!
