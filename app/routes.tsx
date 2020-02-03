@@ -6,7 +6,7 @@ import Welcome from './components/Welcome'
 import Signup from './components/Signup'
 import Signin from './components/Signin'
 import CollectionContainer from './containers/CollectionContainer'
-import DatasetContainer from './containers/DatasetContainer'
+import WorkbenchContainer from './containers/WorkbenchContainer'
 import NetworkContainer from './containers/NetworkContainer'
 
 export default function Routes (props: any) {
@@ -71,14 +71,14 @@ export default function Routes (props: any) {
           }} />
 
           <Route path='/workbench/' render={(props) => {
-            return sectionElement('workbench', <DatasetContainer
+            return sectionElement('workbench', <WorkbenchContainer
               username={props.match.params.username}
               dataset={props.match.params.dataset}
               setModal={setModal}
             />)
           }}/>
           <Route path='/workbench/:username/:dataset' render={(props) => {
-            return sectionElement('workbench', <DatasetContainer
+            return sectionElement('workbench', <WorkbenchContainer
               username={props.match.params.username}
               dataset={props.match.params.dataset}
               setModal={setModal}

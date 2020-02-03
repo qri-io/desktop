@@ -3,25 +3,12 @@ import { Action } from 'redux'
 import { withRouter } from 'react-router-dom'
 import { remote, ipcRenderer, shell, clipboard } from 'electron'
 import { CSSTransition } from 'react-transition-group'
-
-import { ApiActionThunk } from '../store/api'
-import { Resizable } from './Resizable'
-import { Session } from '../models/session'
-import SidebarLayout from './SidebarLayout'
-import UnlinkedDataset from './UnlinkedDataset'
-import { QRI_CLOUD_URL } from '../constants'
-import DatasetComponent from './DatasetComponent'
-import NoDatasetSelected from './NoDatasetSelected'
-import { Modal, ModalType } from '../models/modals'
-import { defaultSidebarWidth } from '../reducers/ui'
-import HeaderColumnButton from './chrome/HeaderColumnButton'
-// import HeaderColumnButtonDropdown from './chrome/HeaderColumnButtonDropdown'
-import DatasetSidebar from '../components/DatasetSidebar'
-import DetailsBarContainer from '../containers/DetailsBarContainer'
-import CommitDetails from './CommitDetails'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faFolderOpen, faFile, faLink, faCloud, faCloudUploadAlt } from '@fortawesome/free-solid-svg-icons'
 
+import { QRI_CLOUD_URL, DEFAULT_POLL_INTERVAL } from '../../constants'
+import { Details } from '../../models/details'
+import { Session } from '../../models/session'
 import {
   Selections,
   WorkingDataset,
@@ -29,20 +16,31 @@ import {
   History,
   ComponentType,
   SelectedComponent
-} from '../models/store'
-import NoDatasets from './NoDatasets'
-import { defaultPollInterval } from './App'
-import { Details } from '../models/details'
-import Hamburger from './chrome/Hamburger'
+} from '../../models/store'
+import { Modal, ModalType } from '../../models/modals'
+import { ApiActionThunk } from '../../store/api'
+import { defaultSidebarWidth } from '../../reducers/ui'
 
-export interface DatasetData {
+import { Resizable } from '../Resizable'
+import SidebarLayout from '../SidebarLayout'
+import UnlinkedDataset from './UnlinkedDataset'
+import DatasetComponent from '../DatasetComponent'
+import NoDatasetSelected from './NoDatasetSelected'
+import HeaderColumnButton from '../chrome/HeaderColumnButton'
+import HeaderColumnButtonDropdown from '../chrome/HeaderColumnButtonDropdown'
+import WorkbenchSidebar from './WorkbenchSidebar'
+import DetailsBarContainer from '../../containers/DetailsBarContainer'
+import CommitDetails from '../CommitDetails'
+import NoDatasets from '../NoDatasets'
+
+export interface WorkbenchData {
   workingDataset: WorkingDataset
   head: ICommitDetails
   history: History
 }
 
-export interface DatasetProps {
-  data: DatasetData
+export interface WorkbenchProps {
+  data: WorkbenchData
 
   // display details
   selections: Selections
@@ -83,8 +81,8 @@ export interface DatasetProps {
 
 const logo = require('../assets/qri-blob-logo-tiny.png') //eslint-disable-line
 
-class Dataset extends React.Component<DatasetProps> {
-  constructor (props: DatasetProps) {
+class Workbench extends React.Component<WorkbenchProps> {
+  constructor (props: WorkbenchProps) {
     super(props);
 
     [
@@ -100,13 +98,9 @@ class Dataset extends React.Component<DatasetProps> {
   componentDidMount () {
     // electron menu events
     ipcRenderer.on('show-status', this.handleShowStatus)
-
     ipcRenderer.on('show-history', this.handleShowHistory)
-
     ipcRenderer.on('open-working-directory', this.openWorkingDirectory)
-
     ipcRenderer.on('publish-unpublish-dataset', this.publishUnpublishDataset)
-
     ipcRenderer.on('reload', this.handleReload)
 
     const {
@@ -151,13 +145,9 @@ class Dataset extends React.Component<DatasetProps> {
   componentWillUnmount () {
     clearInterval(this.statusInterval)
     ipcRenderer.removeListener('show-status', this.handleShowStatus)
-
     ipcRenderer.removeListener('show-history', this.handleShowHistory)
-
     ipcRenderer.removeListener('open-working-directory', this.openWorkingDirectory)
-
     ipcRenderer.removeListener('publish-unpublish-dataset', this.publishUnpublishDataset)
-
     ipcRenderer.removeListener('reload', this.handleReload)
   }
 
@@ -165,7 +155,7 @@ class Dataset extends React.Component<DatasetProps> {
     if (this.props.data.workingDataset.peername !== '' || this.props.data.workingDataset.name !== '') {
       this.props.fetchWorkingStatus()
     }
-  }, defaultPollInterval)
+  }, DEFAULT_POLL_INTERVAL)
 
   handleShowStatus () {
     this.props.setActiveTab('status')
@@ -183,7 +173,7 @@ class Dataset extends React.Component<DatasetProps> {
     clipboard.writeText(`${QRI_CLOUD_URL}/${this.props.data.workingDataset.peername}/${this.props.data.workingDataset.name}`)
   }
 
-  componentDidUpdate (prevProps: DatasetProps) {
+  componentDidUpdate (prevProps: WorkbenchProps) {
     const {
       data,
       selections,
@@ -323,7 +313,7 @@ class Dataset extends React.Component<DatasetProps> {
     } = this.props
 
     const sidebarContent = (
-      <DatasetSidebar
+      <WorkbenchSidebar
         data= {{ workingDataset: data.workingDataset, history: data.history }}
         selections={selections}
         setModal={setModal}
@@ -506,4 +496,4 @@ class Dataset extends React.Component<DatasetProps> {
   }
 }
 
-export default withRouter(Dataset)
+export default withRouter(Workbench)

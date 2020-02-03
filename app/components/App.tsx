@@ -6,10 +6,18 @@ import { ipcRenderer, remote } from 'electron'
 import fs from 'fs'
 import path from 'path'
 import ReactTooltip from 'react-tooltip'
-import { history } from '../store/configureStore.development'
-
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faFileMedical } from '@fortawesome/free-solid-svg-icons'
+
+import { DEFAULT_POLL_INTERVAL } from '../constants'
+
+// import models
+import { history } from '../store/configureStore.development'
+import { ApiAction } from '../store/api'
+import { Modal, ModalType, HideModal } from '../models/modals'
+import { Toast as IToast, Selections, ToastType } from '../models/store'
+import { Dataset } from '../models/dataset'
+import { ToastTypes } from './chrome/Toast'
 
 // import components
 import Toast from './Toast'
@@ -24,19 +32,6 @@ import PublishDataset from './modals/PublishDataset'
 import UnpublishDataset from './modals/UnpublishDataset'
 import SearchModal from './modals/SearchModal'
 import RoutesContainer from '../containers/RoutesContainer'
-
-// import models
-import { ApiAction } from '../store/api'
-import { Modal, ModalType, HideModal } from '../models/modals'
-import { Toast as IToast, Selections, ToastType } from '../models/store'
-import { Dataset } from '../models/dataset'
-import { ToastTypes } from './chrome/Toast'
-
-export const QRI_CLOUD_ROOT = 'https://qri.cloud'
-
-// 2800ms is quick enough for the app to feel responsive
-// but is slow enough to not clog up the ports
-export const defaultPollInterval = 3000
 
 export interface AppProps {
   hasDatasets: boolean
@@ -158,7 +153,7 @@ class App extends React.Component<AppProps, AppState> {
       if (this.props.apiConnection !== 1 || this.props.selections.peername === '' || this.props.selections.name === '') {
         this.props.pingApi()
       }
-    }, defaultPollInterval)
+    }, DEFAULT_POLL_INTERVAL)
 
     if (this.props.apiConnection === 1) {
       this.props.bootstrap()

@@ -5,16 +5,16 @@ import { CSSTransition } from 'react-transition-group'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faClock } from '@fortawesome/free-regular-svg-icons'
 
-import { ApiActionThunk } from '../store/api'
-import ComponentList from './ComponentList'
-import DatasetReference from './DatasetReference'
-import { Modal } from '../models/modals'
+import { ApiActionThunk } from '../../store/api'
+import ComponentList from '../ComponentList'
+import DatasetReference from '../DatasetReference'
+import { Modal } from '../../models/modals'
 
 import classNames from 'classnames'
-import Spinner from './chrome/Spinner'
+import Spinner from '../chrome/Spinner'
 
-import DatasetDetailsSubtext from './dataset/DatasetDetailsSubtext'
-import { WorkingDataset, ComponentType, Selections, History, SelectedComponent } from '../models/store'
+import DatasetDetailsSubtext from '../dataset/DatasetDetailsSubtext'
+import { WorkingDataset, ComponentType, Selections, History, SelectedComponent } from '../../models/store'
 import ContextMenuArea from 'react-electron-contextmenu'
 import { MenuItemConstructorOptions, remote, ipcRenderer } from 'electron'
 
@@ -64,13 +64,13 @@ const HistoryListItem: React.FunctionComponent<HistoryListItemProps> = (props) =
   )
 }
 
-export interface DatasetSidebarData {
+export interface WorkbenchSidebarData {
   workingDataset: WorkingDataset
   history: History
 }
 
-export interface DatasetSidebarProps {
-  data: DatasetSidebarData
+export interface WorkbenchSidebarProps {
+  data: WorkbenchSidebarData
 
   // display details
   selections: Selections
@@ -89,7 +89,7 @@ export interface DatasetSidebarProps {
   renameDataset: (peername: string, name: string, newName: string) => ApiActionThunk
 }
 
-const DatasetSidebar: React.FunctionComponent<DatasetSidebarProps> = (props) => {
+const WorkbenchSidebar: React.FunctionComponent<WorkbenchSidebarProps> = (props) => {
   const {
     selections,
     data,
@@ -260,4 +260,4 @@ const DatasetSidebar: React.FunctionComponent<DatasetSidebarProps> = (props) => 
   )
 }
 
-export default DatasetSidebar
+export default WorkbenchSidebar

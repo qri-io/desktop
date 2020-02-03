@@ -1,5 +1,5 @@
 import { connect } from 'react-redux'
-import Dataset, { DatasetProps, DatasetData } from '../components/Dataset'
+import Workbench, { WorkbenchProps, WorkbenchData } from '../components/workbench/Workbench'
 
 import Store from '../models/store'
 
@@ -32,11 +32,11 @@ import {
 } from '../actions/selections'
 import { DetailsType } from '../models/details'
 
-const mergeProps = (props: any, actions: any): DatasetProps => {
+const mergeProps = (props: any, actions: any): WorkbenchProps => {
   return { ...props, ...actions }
 }
 
-const DatasetContainer = connect(
+const WorkbenchContainer = connect(
   (state: Store) => {
     const {
       ui,
@@ -49,7 +49,7 @@ const DatasetContainer = connect(
     const hasDatasets = myDatasets.value.length !== 0
     const showDetailsBar = ui.detailsBar.type !== DetailsType.NoDetails
 
-    const data: DatasetData = {
+    const data: WorkbenchData = {
       workingDataset: workingDataset,
       head: commitDetails,
       // TODO (ramfox): refactor so that history has it's own place in the state tree
@@ -93,6 +93,6 @@ const DatasetContainer = connect(
     fsiWrite
   },
   mergeProps
-)(Dataset)
+)(Workbench)
 
-export default DatasetContainer
+export default WorkbenchContainer
