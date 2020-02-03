@@ -1,7 +1,7 @@
 {
   "name": "qri-desktop",
   "productName": "Qri Desktop",
-  "version": "0.3.4",
+  "version": "0.3.5",
   "description": "Version your data with the Qri desktop app!",
   "main": "main.js",
   "scripts": {
@@ -161,8 +161,8 @@
     "css-loader": "3.2.0",
     "css-modules-require-hook": "4.2.3",
     "devtron": "1.4.0",
-    "electron": "7.1.7",
-    "electron-builder": "22.1.0",
+    "electron": "7.1.8",
+    "electron-builder": "22.2.0",
     "electron-builder-http": "19.27.5",
     "electron-chromedriver": "7.0.0",
     "electron-devtools-installer": "2.2.4",
