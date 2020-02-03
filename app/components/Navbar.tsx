@@ -101,9 +101,9 @@ const Navbar: React.FunctionComponent<NavbarProps> = (props: NavbarProps) => {
     },
     {
       icon: faFileAlt,
-      id: 'dataset',
-      link: '/dataset',
-      tooltip: 'Dataset - Work with the active dataset'
+      id: 'workbench',
+      link: '/workbench',
+      tooltip: 'Workbench - Build & Edit Datasets'
     }
   ]
 
@@ -112,7 +112,7 @@ const Navbar: React.FunctionComponent<NavbarProps> = (props: NavbarProps) => {
       icon: faGlobeEurope,
       id: 'network',
       link: '/network',
-      tooltip: 'Dataset - Work with the active dataset'
+      tooltip: 'Network - Browse other datasets'
     }].concat(navItems)
   }
 

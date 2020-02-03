@@ -541,7 +541,7 @@ export function addDatasetAndFetch (peername: string, name: string): ApiActionTh
       dispatch(setWorkingDataset(peername, name))
       dispatch(setActiveTab('history'))
       dispatch(setSelectedListItem('component', DEFAULT_SELECTED_COMPONENT))
-      dispatch(push('dataset'))
+      dispatch(push('workbench'))
     } catch (action) {
       dispatch(openToast('error', 'add', action.payload.err.message))
       throw action
@@ -830,7 +830,7 @@ export function importFile (filePath: string, fileName: string, fileSize: number
     }
     dispatch(setActiveTab('history'))
     dispatch(setSelectedListItem('component', DEFAULT_SELECTED_COMPONENT))
-    dispatch(push('dataset'))
+    dispatch(push('workbench'))
     dispatch(setImportFileDetails('', 0))
     return response
   }

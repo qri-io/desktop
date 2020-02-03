@@ -110,7 +110,7 @@ describe('Qri End to End tests', function spec () {
     await click('#accept')
 
     // make sure we navigated to the correct page
-    await atLocation('#/signup')
+    await atLocation('#/onboard/signup')
   })
 
   it('create a new account, taken to datasets page', async () => {
@@ -153,7 +153,7 @@ describe('Qri End to End tests', function spec () {
     // click signout
     await click('#signout')
     // on signup page
-    await atLocation('#/signup')
+    await atLocation('#/onboard/signup')
     // navigate to signin page
     await click('#signin')
     // ensure we are on signin page
@@ -193,8 +193,8 @@ describe('Qri End to End tests', function spec () {
     // submit to create a new dataset
     await click('#submit')
 
-    // ensure we have redirected to the dataset page
-    await atLocation('#/dataset')
+    // ensure we are redirected to the workbench
+    await atLocation(`#/workbench`)
 
     // ensure we have navigated to the correct dataset
     // TODO (ramfox): it's weird that we have to pass in this newline character
@@ -212,7 +212,7 @@ describe('Qri End to End tests', function spec () {
     await checkStatus('structure', 'added')
   })
 
-  it ('navigate to collection and back to dataset', async () => {
+  it('navigate to collection and back to dataset', async () => {
     const {
       atLocation,
       click,
@@ -230,7 +230,7 @@ describe('Qri End to End tests', function spec () {
     const ref = `#${username}-${datasetName}`
     await click(ref)
     // ensure we have redirected to the dataset page
-    await atLocation('#/dataset')
+    await atLocation(`#/workbench/${username}/${datasetName}`)
     // ensure we are still at the history tab
     await onHistoryTab()
     // ensure we have a commit title
@@ -249,7 +249,7 @@ describe('Qri End to End tests', function spec () {
     } = utils
 
     // at dataset
-    await click('#dataset')
+    await click('#workbench')
     // at status
     await click('#status-tab')
     await onStatusTab()
@@ -266,7 +266,7 @@ describe('Qri End to End tests', function spec () {
     // expect modal to be gone
     await waitForNotExist('#checkout-dataset')
     // atLocation
-    await atLocation('#/dataset')
+    await atLocation(`#/workbench`)
     // check we are at status tab
     await onStatusTab()
     // expect Body to now be active
@@ -286,7 +286,7 @@ describe('Qri End to End tests', function spec () {
     } = utils
 
     // on dataset page
-    await click('#dataset')
+    await click('#workbench')
     // on status tab
     await click('#status-tab')
     // no changes, so cannot commit
@@ -327,7 +327,7 @@ describe('Qri End to End tests', function spec () {
     } = utils
 
     // on dataset page
-    await click('#dataset')
+    await click('#workbench')
     // on status tab
     await click('#status-tab')
     // commit should be disabled
@@ -372,8 +372,8 @@ describe('Qri End to End tests', function spec () {
     } = utils
 
     // make sure we are on the dataset page, looking at history
-    await click('#dataset')
-    await atLocation('#/dataset')
+    await click('#workbench')
+    await atLocation(`#/workbench`)
     await click('#history-tab')
     await onHistoryTab()
     await click('#commit-status')
@@ -402,9 +402,9 @@ describe('Qri End to End tests', function spec () {
     } = utils
 
     // on dataset
-    await click('#dataset')
-    // ensure we are on dataset
-    await atLocation('#/dataset')
+    await click('#workbench')
+    // ensure we are on the workbench
+    await atLocation(`#/workbench`)
     // click #dataset-name
     await click('#dataset-name')
     // make sure the input exists
@@ -448,8 +448,8 @@ describe('Qri End to End tests', function spec () {
     // submit to create a new dataset
     await click('#submit')
 
-    // ensure we have redirected to the dataset page
-    await atLocation('#/dataset')
+    // ensure we have redirected to the workbench section
+    await atLocation('#/workbench')
 
     // ensure we have navigated to the correct dataset
     // TODO (ramfox): it's weird that we have to pass in this newline character

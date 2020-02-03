@@ -82,7 +82,7 @@ const Signin: React.FunctionComponent<SigninProps> = (props: SigninProps) => {
       loading={loading}
       id='signin-page'
     >
-      <h6>Don&apos;t have an account yet? <Link to='/signup'>Sign Up</Link></h6>
+      <h6>Don&apos;t have an account yet? <Link to='/onboard/signup'>Sign Up</Link></h6>
       <div className='welcome-form'>
         <DebouncedTextInput
           name= 'username'
