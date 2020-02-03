@@ -22,10 +22,16 @@ import {
   faCopy,
   faTimes,
   faCheck,
+  faAngleLeft,
+  faAngleRight,
+  faAngleUp,
+  faAngleDown,
   faCaretLeft,
   faCaretRight,
   faCaretUp,
-  faCaretDown
+  faCaretDown,
+  faExpandArrowsAlt,
+  faEllipsisH
 } from '@fortawesome/free-solid-svg-icons'
 
 interface IconProps {
@@ -67,10 +73,16 @@ const icons: Record<string, any> = {
   'transform': faCode,
   'close': faTimes,
   'check': faCheck,
+  'angle-left': faAngleLeft,
+  'angle-right': faAngleRight,
+  'angle-up': faAngleUp,
+  'angle-down': faAngleDown,
   'left': faCaretLeft,
   'right': faCaretRight,
   'up': faCaretUp,
-  'down': faCaretDown
+  'down': faCaretDown,
+  'expand': faExpandArrowsAlt,
+  'hamburger': faEllipsisH
 }
 
 export const iconsList = Object.keys(icons)

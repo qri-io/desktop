@@ -16,8 +16,8 @@
 .schema-item {
   width: 100%;
   padding: 10px 10px 4px 10px;
-  border: solid 1px #E8E9ED;
-  border-top: none;
+  border-bottom: solid 1px #E8E9ED;
+  // border-top: none;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -38,5 +38,107 @@
 
   &.top {
     border-top: solid 1px #E8E9ED;
+  }
+}
+
+.stats-values {
+  display: flex;
+  flex-wrap: wrap;
+
+  .stats-value {
+    margin: 5px 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    &.large {
+      margin: 10px 20px;
+    }
+
+    &:first-child, &.large:first-child {
+      margin-left: 0;
+    }
+
+    .label {
+      font-family: $font-family-sans-serif;
+      font-size: 12px;
+      font-weight: 300;
+      margin-bottom: 0px;
+      text-transform: uppercase;
+      color: #808080;
+      &.light {
+        color: white;
+      }
+      &.large {
+        font-size: 14px;
+        margin-bottom: 5px;
+      }
+    }
+
+    .value {
+      font-family: $font-family-sans-serif;
+      margin-bottom: 0;
+      font-size: 14px;
+      font-weight: 600;
+      &.light {
+        color: white;
+      }
+      &.large {
+        font-size: 24px;
+      }
+    }
+  }
+}
+
+.tag {
+  font-size: 14px;
+  color: #AFD148;
+  padding: 3px 5px;
+  letter-spacing: .5px;
+
+  &.category {
+    color: #F8AB31;
+    background: #F2F2F2;
+    border-radius: 2px; 
+  }
+}
+
+
+.dataset-item {
+  padding: 20px;
+  background: white;
+  border-radius: 5px;
+  border: 1px solid #E8EDF2;
+  max-width: 600px;
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    a {
+      font-family: $font-family-sans-serif;
+      text-overflow: ellipsis;
+      font-size: 24px;
+      font-weight: 500;
+      flex: 1 1 auto;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+    div {
+      flex: 0 0 auto;
+    }
+  }
+
+  .title {
+    color: #595959;
+    margin: 10px 0px;
+    font-size: 19px;
+    text-overflow: ellipsis;
+  }
+
+  .detail {
+    margin-right: 10px;
+    width: 100%;
   }
 }

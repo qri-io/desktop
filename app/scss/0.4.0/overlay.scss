@@ -6,6 +6,10 @@
   box-shadow: 0px 0px 6px rgba(0,0,0,0.20);
   background: #fff;
 
+  &.closed {
+    display: none;
+  }
+
   .title-bar {
     display: flex;
     justify-content: space-between;
@@ -23,10 +27,6 @@
     overflow-y: auto;
     height: 100%;
   }
-}
-
-.overlay.closed {
-  display: none;
 }
 
 .type-picker-overlay-row {

@@ -4,12 +4,12 @@ import Icon from '../chrome/Icon'
 import classNames from 'classnames'
 
 interface OverlayProps {
-  title: string
+  title?: string
   onCancel: () => void
   open: boolean
   height: number
   width: number
-  navigation: Element | undefined
+  navigation?: Element | undefined
 }
 
 const Overlay: React.FunctionComponent<OverlayProps> = ({
@@ -55,14 +55,14 @@ const Overlay: React.FunctionComponent<OverlayProps> = ({
 
   return (
     <div
-      style={{ height, width }}
+      style={{ maxHeight: height, maxWidth: width }}
       className={classNames('overlay', { 'closed': !open })}
       ref={overlayRef}
     >
-      <div className='title-bar'>
+      {title && <div className='title-bar'>
         <div className='label small'>{title}</div>
         <div className='pointer' onClick={onCancel}><Icon icon='close' size='xs' /></div>
-      </div>
+      </div>}
       {navigation && <div className='nav'>{navigation}</div>}
       <div className='content'>{children}</div>
     </div>

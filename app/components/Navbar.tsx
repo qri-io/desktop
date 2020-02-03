@@ -1,3 +1,4 @@
+// globals __BUILD__
 import * as React from 'react'
 import { Action } from 'redux'
 import { withRouter } from 'react-router-dom'
@@ -6,7 +7,8 @@ import {
   faExternalLinkAlt,
   faFileAlt,
   faCopy,
-  faComment
+  faComment,
+  faGlobeEurope
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { IconDefinition } from '@fortawesome/free-regular-svg-icons'
@@ -90,20 +92,29 @@ const Navbar: React.FunctionComponent<NavbarProps> = (props: NavbarProps) => {
     }
   })
 
-  const navItems = [
-    {
-      icon: faFileAlt,
-      id: 'dataset',
-      link: '/dataset',
-      tooltip: 'Dataset - Work with the active dataset'
-    },
+  let navItems = [
     {
       icon: faCopy,
       id: 'collection',
       link: '/collection',
       tooltip: 'Collection - Local Datasets'
+    },
+    {
+      icon: faFileAlt,
+      id: 'dataset',
+      link: '/dataset',
+      tooltip: 'Dataset - Work with the active dataset'
     }
   ]
+
+  if (__BUILD__.ENABLE_NETWORK_SECTION) {
+    navItems = [{
+      icon: faGlobeEurope,
+      id: 'network',
+      link: '/network',
+      tooltip: 'Dataset - Work with the active dataset'
+    }].concat(navItems)
+  }
 
   return (
 

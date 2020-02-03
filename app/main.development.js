@@ -517,7 +517,6 @@ app.on('ready', () =>
 
       ipcMain.on('block-menus', (e, blockMenus) => {
         const blockableMenus = [
-          'about-qri-desktop',
           'show-all',
           'new-dataset',
           'add-dataset',

@@ -51,6 +51,7 @@ export interface CommitDetailsProps {
   fetchCommitBody: (page?: number, pageSize?: number) => ApiActionThunk
   setDetailsBar: (details: Record<string, any>) => Action
   setComponent: (type: ComponentType, activeComponent: string) => Action
+  fsiWrite: (peername: string, name: string, dataset: Dataset) => ApiActionThunk
 }
 
 const CommitDetails: React.FunctionComponent<CommitDetailsProps> = ({
@@ -64,7 +65,10 @@ const CommitDetails: React.FunctionComponent<CommitDetailsProps> = ({
   setComponent,
 
   // fetching api actions
-  fetchCommitBody
+  fetchCommitBody,
+
+  // other api actions
+  fsiWrite
 }) => {
   // we have to guard against an odd case when we look at history
   // it is possible that we can get the history of a dataset, but
@@ -112,6 +116,7 @@ const CommitDetails: React.FunctionComponent<CommitDetailsProps> = ({
             details={details}
             setDetailsBar={setDetailsBar}
             fetchBody={fetchCommitBody}
+            fsiWrite={fsiWrite}
             isLoading={loading}
             component={selectedComponent}
             componentStatus={status[selectedComponent]}

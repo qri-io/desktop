@@ -8,6 +8,7 @@ import TypePicker, { typesAndDescriptions } from '../app/components/structure/Ty
 import SchemaItem from '../app/components/item/SchemaItem'
 import { Schema as ISchema } from '../app/models/dataset'
 import Schema from '../app/components/structure/Schema'
+import Structure from '../app/components/Structure'
 
 export default {
   title: 'Structure',
@@ -43,6 +44,25 @@ const sampleSchema: ISchema = {
     type: 'array'
   }
 }
+
+// const sampleStructure = {
+//   schema: sampleSchema,
+//   format: 'csv',
+//   length: 265000,
+//   entries: 2350,
+//   errors: 3,
+//   depth: 2,
+//   strict: false,
+//   checksum: 'Qmb9Gy14GuCjrhRSjGJQpf5JkgdEdbZrV81Tz4x3ZDreY3'
+// }
+
+// export const structure = () => {
+//   return (
+//     <div style={{ display: 'flex', justifyContent:'center', alignItems: 'center' }}>
+//       <Structure data={sampleStructure} />
+//     </div>
+//   )
+// }
 
 export const schema = () => {
   const [schema, setSchema] = React.useState(sampleSchema)
