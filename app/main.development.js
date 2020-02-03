@@ -99,6 +99,7 @@ app.on('ready', () =>
   installExtensions()
     .then(() => {
       log.info('main process ready')
+      autoUpdater.logger = log
       autoUpdater.checkForUpdatesAndNotify()
       backendProcess = new BackendProcess()
       backendProcess.maybeStartup()
