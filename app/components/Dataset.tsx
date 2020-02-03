@@ -15,7 +15,7 @@ import NoDatasetSelected from './NoDatasetSelected'
 import { Modal, ModalType } from '../models/modals'
 import { defaultSidebarWidth } from '../reducers/ui'
 import HeaderColumnButton from './chrome/HeaderColumnButton'
-import HeaderColumnButtonDropdown from './chrome/HeaderColumnButtonDropdown'
+// import HeaderColumnButtonDropdown from './chrome/HeaderColumnButtonDropdown'
 import DatasetSidebar from '../components/DatasetSidebar'
 import DetailsBarContainer from '../containers/DetailsBarContainer'
 import CommitDetails from './CommitDetails'
@@ -33,6 +33,7 @@ import {
 import NoDatasets from './NoDatasets'
 import { defaultPollInterval } from './App'
 import { Details } from '../models/details'
+import Hamburger from './chrome/Hamburger'
 
 export interface DatasetData {
   workingDataset: WorkingDataset
@@ -92,7 +93,8 @@ class Dataset extends React.Component<DatasetProps> {
       'publishUnpublishDataset',
       'handleShowStatus',
       'handleShowHistory',
-      'handleReload'
+      'handleReload',
+      'handleCopyLink'
     ].forEach((m) => { this[m] = this[m].bind(this) })
   }
 
@@ -176,6 +178,10 @@ class Dataset extends React.Component<DatasetProps> {
 
   handleReload () {
     remote.getCurrentWindow().reload()
+  }
+
+  handleCopyLink () {
+    clipboard.writeText(`${QRI_CLOUD_URL}/${this.props.data.workingDataset.peername}/${this.props.data.workingDataset.name}`)
   }
 
   componentDidUpdate (prevProps: DatasetProps) {
@@ -359,22 +365,25 @@ class Dataset extends React.Component<DatasetProps> {
     let publishButton
     if (username === peername && datasetSelected) {
       publishButton = published ? (
-        <HeaderColumnButtonDropdown
+        <><HeaderColumnButton
           id='publishButton'
           onClick={() => { shell.openExternal(`${QRI_CLOUD_URL}/${data.workingDataset.peername}/${data.workingDataset.name}`) }}
           icon={faCloud}
           label='View in Cloud'
-          items={[
-            <li key={0} onClick={(e) => {
-              e.stopPropagation()
-              clipboard.writeText(`${QRI_CLOUD_URL}/${data.workingDataset.peername}/${data.workingDataset.name}`)
-            }}>Copy Link</li>,
-            <li key={1} onClick={(e) => {
-              e.stopPropagation()
-              setModal({ type: ModalType.UnpublishDataset })
-            }}>Unpublish</li>
-          ]}
         />
+        <Hamburger data={[
+          {
+            icon: 'clone',
+            text: 'Copy Cloud Link',
+            onClick: this.handleCopyLink
+          },
+          {
+            icon: 'close',
+            text: 'Unpublish',
+            onClick: () => setModal({ type: ModalType.UnpublishDataset })
+          }
+        ]} />
+        </>
       ) : (
         <span data-tip={
           data.workingDataset.history.value.length === 0
