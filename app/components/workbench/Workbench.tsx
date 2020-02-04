@@ -27,7 +27,7 @@ import UnlinkedDataset from './UnlinkedDataset'
 import DatasetComponent from '../DatasetComponent'
 import NoDatasetSelected from './NoDatasetSelected'
 import HeaderColumnButton from '../chrome/HeaderColumnButton'
-import HeaderColumnButtonDropdown from '../chrome/HeaderColumnButtonDropdown'
+import Hamburger from '../chrome/Hamburger'
 import WorkbenchSidebar from './WorkbenchSidebar'
 import DetailsBarContainer from '../../containers/DetailsBarContainer'
 import CommitDetails from '../CommitDetails'
@@ -99,8 +99,7 @@ class Workbench extends React.Component<WorkbenchProps> {
       'publishUnpublishDataset',
       'handleShowStatus',
       'handleShowHistory',
-      'handleReload',
-      'handleCopyLink'
+      'handleCopyLink',
       'startPolling',
       'stopPolling'
     ].forEach((m) => { this[m] = this[m].bind(this) })

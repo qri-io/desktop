@@ -1,6 +1,7 @@
 import path from 'path'
 import fs from 'fs'
 import TestBackendProcess from '../utils/testQriBackend'
+import TestTempRegistry from '../utils/testTempRegistry'
 import fakeDialog from 'spectron-fake-dialog'
 import { E2ETestUtils, newE2ETestUtils } from '../utils/e2eTestUtils'
 
@@ -9,6 +10,7 @@ const { Application } = require('spectron')
 describe('Qri End to End tests', function spec () {
   let app: any
   let backend: any
+  let registry: any
 
   // The utility functions we use to build our e2e tests
   // declared in this scope so they can be accessed by all tests
@@ -30,6 +32,9 @@ describe('Qri End to End tests', function spec () {
 
   beforeAll(async () => {
     jest.setTimeout(60000)
+
+    registry = new TestTempRegistry()
+    await registry.start()
 
     // spin up a new mock backend with a mock registry server attached
     backend = new TestBackendProcess()
@@ -79,6 +84,7 @@ describe('Qri End to End tests', function spec () {
   afterAll(async () => {
     await utils.delay(500)
     backend.close()
+    registry.close()
     if (app && app.isRunning()) {
       return app.stop()
     }

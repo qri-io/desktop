@@ -32,6 +32,9 @@ jobs:
           name: install qri backend
           command: go get github.com/qri-io/qri
       - run:
+          name: install temp_registry_server
+          command: git clone https://github.com/qri-io/qri.git && cd qri/registry/temp_registry_server && go install && cd ~/desktop
+      - run:
           name: build
           command: yarn build
       - run:

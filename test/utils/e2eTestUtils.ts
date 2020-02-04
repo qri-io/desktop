@@ -47,7 +47,7 @@ function atLocation (app: any) {
       const currUrl: string = await browserWindow.getURL()
       const location = new url.URL(currUrl).hash
       return location === expected
-    }, 10000, `expected url to be '${expected}', got: ${location.hash}`)
+    }, 10000, `expected url to be '${expected}', got: ${location.hash || location}`)
     if (!headless) await delay(delayTime)
   }
 }
