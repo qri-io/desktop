@@ -4,7 +4,7 @@ import { faDownload, faPlus, faFile } from '@fortawesome/free-solid-svg-icons'
 import { Link } from 'react-router-dom'
 
 import { Modal, ModalType } from '../models/modals'
-import WelcomeTemplate from './WelcomeTemplate'
+import WelcomeTemplate from './onboard/WelcomeTemplate'
 
 interface NoDatasetsProps {
   setModal: (modal: Modal) => void

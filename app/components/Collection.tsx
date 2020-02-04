@@ -2,7 +2,7 @@ import * as React from 'react'
 import { Action, AnyAction } from 'redux'
 
 import HeaderColumnButton from './chrome/HeaderColumnButton'
-import WelcomeTemplate from './WelcomeTemplate'
+import WelcomeTemplate from './onboard/WelcomeTemplate'
 import DatasetList from './DatasetList'
 import SidebarLayout from './SidebarLayout'
 import { MyDatasets, WorkingDataset } from '../models/store'

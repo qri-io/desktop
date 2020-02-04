@@ -79,7 +79,7 @@ export interface WorkbenchProps {
   fsiWrite: (peername: string, name: string, dataset: Dataset) => ApiActionThunk
 }
 
-const logo = require('../assets/qri-blob-logo-tiny.png') //eslint-disable-line
+const logo = require('../../assets/qri-blob-logo-tiny.png') //eslint-disable-line
 
 class Workbench extends React.Component<WorkbenchProps> {
   constructor (props: WorkbenchProps) {

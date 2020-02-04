@@ -1,8 +1,8 @@
 import * as React from 'react'
 import { Action } from 'redux'
-import ExternalLink from './ExternalLink'
+import ExternalLink from '../ExternalLink'
 import WelcomeTemplate from './WelcomeTemplate'
-import { DISCORD_URL } from '../constants'
+import { DISCORD_URL } from '../../constants'
 
 export interface WelcomeProps {
   onAccept: () => Action

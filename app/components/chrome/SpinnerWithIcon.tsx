@@ -1,6 +1,6 @@
 import * as React from 'react'
 import Spinner from './Spinner'
-import { logo } from '../WelcomeTemplate'
+import { logo } from '../onboard/WelcomeTemplate'
 import { CSSTransition } from 'react-transition-group'
 
 interface SpinnerWithIconProps {

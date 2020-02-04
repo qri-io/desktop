@@ -1,5 +1,5 @@
 import * as React from 'react'
-import WelcomeTemplate from './WelcomeTemplate'
+import WelcomeTemplate from './onboard/WelcomeTemplate'
 import ExternalLink from './ExternalLink'
 import { DISCORD_URL } from '../constants'
 
