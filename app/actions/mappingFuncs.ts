@@ -14,9 +14,19 @@ export function mapRecord (data: any): Record<string, string> {
 }
 
 export function mapDatasetSummary (data: any[]): DatasetSummary[] {
+  // {
+  //   "username": "b5",
+  //   "profileID": "QmSyDX5LYTiwQi861F5NAwdHrrnd1iRGsoEvCyzQMUyZ4W",
+  //   "name": "airport_codes",
+  //   "path": "/ipfs/QmY9WcXXUnHJbYRA28LRctiL4qu4yQdAhahHtNaMZHcw4V",
+  //   "bodySize": 4584827,
+  //   "bodyRows": 46235,
+  //   "commitTime": "2019-03-07T14:15:42.95212Z",
+  //   "numErrors": 3632
+  // },
   return data.map((ref: any) => ({
     dataset: ref.dataset,
-    peername: ref.peername,
+    peername: ref.username,
     name: ref.name,
     path: ref.path,
     fsiPath: ref.fsiPath,

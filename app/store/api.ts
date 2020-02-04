@@ -84,6 +84,13 @@ export type ApiActionThunk = (
   getState: () => Store
 ) => Promise<AnyAction>
 
+// LaunchedFetchesAction is an action that returns true if it has kicked off
+// one or more API_REQUEST actions
+export type LaunchedFetchesAction = (
+  dispatch: ThunkDispatch<any, any, any>,
+  getState: () => Store
+) => Promise<boolean>
+
 // chainSuccess wires together successive ApiActions in a ThunkAction.
 // call it with dispatch & getState to get a function that accepts actions,
 // and chain it a .then() call off another api response

@@ -71,6 +71,7 @@ export default function Routes (props: any) {
           }} />
 
           <Route path='/workbench/' render={(props) => {
+            // return <Redirect to='/collection' />
             return sectionElement('workbench', <WorkbenchContainer
               username={props.match.params.username}
               dataset={props.match.params.dataset}

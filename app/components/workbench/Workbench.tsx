@@ -18,7 +18,7 @@ import {
   SelectedComponent
 } from '../../models/store'
 import { Modal, ModalType } from '../../models/modals'
-import { ApiActionThunk } from '../../store/api'
+import { ApiActionThunk, LaunchedFetchesAction } from '../../store/api'
 import { defaultSidebarWidth } from '../../reducers/ui'
 
 import { Resizable } from '../Resizable'
@@ -32,6 +32,9 @@ import WorkbenchSidebar from './WorkbenchSidebar'
 import DetailsBarContainer from '../../containers/DetailsBarContainer'
 import CommitDetails from '../CommitDetails'
 import NoDatasets from '../NoDatasets'
+
+// TODO (b5) - is this still required?
+require('../../assets/qri-blob-logo-tiny.png')
 
 export interface WorkbenchData {
   workingDataset: WorkingDataset
@@ -59,17 +62,14 @@ export interface WorkbenchProps {
   setDetailsBar: (details: Record<string, any>) => Action
 
   // fetching actions
+  fetchWorkbench: () => LaunchedFetchesAction
   fetchHistory: (page?: number, pageSize?: number) => ApiActionThunk
-  fetchWorkingDatasetAndStatus: () => ApiActionThunk
   fetchWorkingDataset: () => ApiActionThunk
   fetchWorkingStatus: () => ApiActionThunk
-  fetchStats: () => ApiActionThunk
   fetchBody: (page: number) => ApiActionThunk
 
   fetchCommitDataset: () => ApiActionThunk
-  fetchCommitStatus: () => ApiActionThunk
   fetchCommitBody: (page: number) => ApiActionThunk
-  fetchCommitStats: () => ApiActionThunk
 
   // api actions (that aren't fetching)
   publishDataset: () => ApiActionThunk
@@ -78,8 +78,6 @@ export interface WorkbenchProps {
   renameDataset: (peername: string, name: string, newName: string) => ApiActionThunk
   fsiWrite: (peername: string, name: string, dataset: Dataset) => ApiActionThunk
 }
-
-const logo = require('../../assets/qri-blob-logo-tiny.png') //eslint-disable-line
 
 class Workbench extends React.Component<WorkbenchProps> {
   constructor (props: WorkbenchProps) {
@@ -103,43 +101,7 @@ class Workbench extends React.Component<WorkbenchProps> {
     ipcRenderer.on('publish-unpublish-dataset', this.publishUnpublishDataset)
     ipcRenderer.on('reload', this.handleReload)
 
-    const {
-      data,
-      selections,
-      fetchWorkingDatasetAndStatus,
-      fetchHistory,
-      fetchStats,
-      fetchBody,
-      fetchCommitDataset,
-      fetchCommitStats,
-      fetchCommitStatus,
-      fetchCommitBody,
-      setCommit
-    } = this.props
-    const { workingDataset, head, history } = data
-
-    if (!workingDataset.isLoading &&
-        (selections.peername !== workingDataset.peername ||
-        selections.name !== workingDataset.name)) {
-      fetchHistory()
-      fetchWorkingDatasetAndStatus()
-      fetchStats()
-      fetchBody(-1)
-      return
-    }
-    if (!head.isLoading &&
-        (selections.peername !== head.peername ||
-        selections.name !== head.name ||
-        selections.commit !== head.path)) {
-      fetchCommitDataset()
-      fetchCommitStats()
-      fetchCommitStatus()
-      fetchCommitBody(-1)
-      return
-    }
-    if (selections.commit === '' && history.value.length !== 0) {
-      setCommit(history.value[0].path)
-    }
+    this.props.fetchWorkbench()
   }
 
   componentWillUnmount () {
@@ -176,42 +138,13 @@ class Workbench extends React.Component<WorkbenchProps> {
   componentDidUpdate (prevProps: WorkbenchProps) {
     const {
       data,
-      selections,
-      fetchWorkingDatasetAndStatus,
-      fetchWorkingDataset,
-      fetchHistory,
-      fetchStats,
-      fetchBody,
-      fetchCommitDataset,
-      fetchCommitStats,
-      fetchCommitStatus,
-      fetchCommitBody,
-      setCommit
+      // fetchWorkingDataset,
+      fetchBody
     } = this.props
-    const { workingDataset, head, history } = data
+    const { workingDataset } = data
 
-    if (!workingDataset.isLoading &&
-        (selections.peername !== workingDataset.peername ||
-        selections.name !== workingDataset.name)) {
-      fetchHistory()
-      fetchWorkingDatasetAndStatus()
-      fetchBody(-1)
-      fetchStats()
-      return
-    }
-    if (!head.isLoading &&
-        (selections.peername !== head.peername ||
-        selections.name !== head.name ||
-        selections.commit !== head.path)) {
-      fetchCommitDataset()
-      fetchCommitStats()
-      fetchCommitStatus()
-      fetchCommitBody(-1)
-      return
-    }
-    if (selections.commit === '' && history.value.length !== 0) {
-      setCommit(history.value[0].path)
-    }
+    // TODO (b5) - this was bailing early when fetch happened
+    // this.props.fetchWorkbench()
 
     // map mtime deltas to a boolean to determine whether to update the workingDataset
     const { status } = workingDataset

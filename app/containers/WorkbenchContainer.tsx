@@ -1,5 +1,6 @@
 import { connect } from 'react-redux'
 import Workbench, { WorkbenchProps, WorkbenchData } from '../components/workbench/Workbench'
+import { fetchWorkbench } from '../actions/workbench'
 
 import Store from '../models/store'
 
@@ -7,16 +8,11 @@ import { setSidebarWidth, setModal, setDetailsBar } from '../actions/ui'
 import {
   fetchHistory,
 
-  fetchWorkingDatasetAndStatus,
   fetchWorkingDataset,
   fetchWorkingStatus,
-  fetchStats,
   fetchBody,
-
-  fetchCommitDataset,
-  fetchCommitStatus,
   fetchCommitBody,
-  fetchCommitStats,
+  fetchCommitDataset,
 
   publishDataset,
   unpublishDataset,
@@ -75,16 +71,13 @@ const WorkbenchContainer = connect(
     setDetailsBar,
 
     fetchHistory,
-    fetchWorkingDatasetAndStatus,
     fetchWorkingDataset,
     fetchWorkingStatus,
-    fetchStats,
     fetchBody,
+    fetchWorkbench,
 
     fetchCommitDataset,
-    fetchCommitStatus,
     fetchCommitBody,
-    fetchCommitStats,
 
     publishDataset,
     unpublishDataset,
