@@ -17,6 +17,7 @@ import { setCommit } from './selections'
 // the returned promise resolves to true if loading thunks have been kicked off
 export function fetchWorkbench (): LaunchedFetchesAction {
   return async (dispatch, getState) => {
+    console.log('fetching workbench')
     const { workingDataset, selections, commitDetails } = getState()
     const head = commitDetails
     const history = workingDataset.history

@@ -37,6 +37,15 @@ import NoDatasets from '../NoDatasets'
 require('../../assets/qri-blob-logo-tiny.png')
 
 export interface WorkbenchData {
+  // TODO (b5) - this is a shim to get selection data out of the workbench component
+  // these should be factored into the given workingDataset
+  location: string
+  tab: 'status' | 'history'
+  peername: string
+  name: string
+  path: string
+  component: string
+
   workingDataset: WorkingDataset
   head: ICommitDetails
   history: History
@@ -80,6 +89,8 @@ export interface WorkbenchProps {
 }
 
 class Workbench extends React.Component<WorkbenchProps> {
+  poll: NodeJS.Timeout
+
   constructor (props: WorkbenchProps) {
     super(props);
 
@@ -87,13 +98,11 @@ class Workbench extends React.Component<WorkbenchProps> {
       'openWorkingDirectory',
       'publishUnpublishDataset',
       'handleShowStatus',
-<<<<<<< HEAD
       'handleShowHistory',
       'handleReload',
       'handleCopyLink'
-=======
-      'handleShowHistory'
->>>>>>> fix(App): properly remove listeners on app unmount
+      'startPolling',
+      'stopPolling'
     ].forEach((m) => { this[m] = this[m].bind(this) })
   }
 
@@ -105,52 +114,57 @@ class Workbench extends React.Component<WorkbenchProps> {
     ipcRenderer.on('publish-unpublish-dataset', this.publishUnpublishDataset)
 
     this.props.fetchWorkbench()
+    this.startPolling()
   }
 
   componentWillUnmount () {
-    clearInterval(this.statusInterval)
+    this.stopPolling()
     ipcRenderer.removeListener('show-status', this.handleShowStatus)
     ipcRenderer.removeListener('show-history', this.handleShowHistory)
     ipcRenderer.removeListener('open-working-directory', this.openWorkingDirectory)
     ipcRenderer.removeListener('publish-unpublish-dataset', this.publishUnpublishDataset)
   }
 
-  statusInterval = setInterval(() => {
-    console.log('starting polling')
-    if (this.props.data.workingDataset.peername !== '' || this.props.data.workingDataset.name !== '') {
-      this.props.fetchWorkingStatus()
+  private startPolling () {
+    if (this.poll) {
+      clearInterval(this.poll)
     }
-  }, DEFAULT_POLL_INTERVAL)
 
-  handleShowStatus () {
+    this.poll = setInterval(() => {
+      if (this.props.data.workingDataset.peername !== '' || this.props.data.workingDataset.name !== '') {
+        this.props.fetchWorkingStatus()
+      }
+    }, DEFAULT_POLL_INTERVAL)
+  }
+
+  private stopPolling () {
+    clearInterval(this.poll)
+  }
+
+  private handleShowStatus () {
     this.props.setActiveTab('status')
   }
 
-  handleShowHistory () {
+  private handleShowHistory () {
     this.props.setActiveTab('history')
   }
 
-<<<<<<< HEAD
-  handleReload () {
-    remote.getCurrentWindow().reload()
-  }
-
-  handleCopyLink () {
+  private handleCopyLink () {
     clipboard.writeText(`${QRI_CLOUD_URL}/${this.props.data.workingDataset.peername}/${this.props.data.workingDataset.name}`)
   }
 
-  componentDidUpdate (prevProps: WorkbenchProps) {
-=======
   async componentDidUpdate (prevProps: WorkbenchProps) {
->>>>>>> fix(App): properly remove listeners on app unmount
     const {
       data,
+      fetchWorkingDataset,
       fetchBody
     } = this.props
     const { workingDataset } = data
 
-    // TODO (b5) - this was bailing early when fetch happened
-    // this.props.fetchWorkbench()
+    if (prevProps.data.location !== this.props.data.location) {
+      // TODO (b5) - this was bailing early when fetch happened
+      this.props.fetchWorkbench()
+    }
 
     // map mtime deltas to a boolean to determine whether to update the workingDataset
     const { status } = workingDataset

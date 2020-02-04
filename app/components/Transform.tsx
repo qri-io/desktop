@@ -16,7 +16,7 @@ export interface TransformProps {
 }
 
 const Transform: React.FunctionComponent<TransformProps> = (props) => {
-  const { value } = props
+  const { value = '' } = props
 
   return (
     <Code data={value} />

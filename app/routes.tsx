@@ -35,62 +35,63 @@ export default function Routes (props: any) {
   return (
     <div className='route-content'>
       <Switch>
-        <Route path='/'>
-          {/* Onboarding */}
-          <Route exact path='/onboard' render={() => {
-            if (hasAcceptedTOS) return <Redirect to='/onboard/signup' />
-            return <Welcome onAccept={acceptTOS} />
-          }} />
-          <Route exact path='/onboard/signup' render={() => {
-            if (!hasAcceptedTOS) return <Redirect to='/onboard' />
-            if (qriCloudAuthenticated) return <Redirect to='/collection' />
-            return <Signup signup={signup} onSuccess={setQriCloudAuthenticated} />
-          }} />
+        {/* Onboarding */}
+        <Route exact path='/onboard' render={() => {
+          if (hasAcceptedTOS) return <Redirect to='/onboard/signup' />
+          return <Welcome onAccept={acceptTOS} />
+        }} />
+        <Route exact path='/onboard/signup' render={() => {
+          if (!hasAcceptedTOS) return <Redirect to='/onboard' />
+          if (qriCloudAuthenticated) return <Redirect to='/collection' />
+          return <Signup signup={signup} onSuccess={setQriCloudAuthenticated} />
+        }} />
 
-          {/* Sign in */}
-          <Route exact path='/signin' render={() => {
-            if (!hasAcceptedTOS) return <Redirect to='/onboard' />
-            if (qriCloudAuthenticated) return <Redirect to='/collection' />
-            return <Signin signin={signin} onSuccess={setQriCloudAuthenticated} />
-          }} />
+        {/* Sign in */}
+        <Route exact path='/signin' render={() => {
+          if (!hasAcceptedTOS) return <Redirect to='/onboard' />
+          if (qriCloudAuthenticated) return <Redirect to='/collection' />
+          return <Signin signin={signin} onSuccess={setQriCloudAuthenticated} />
+        }} />
 
-          {/* App Sections */}
-          { __BUILD__.ENABLE_NETWORK_SECTION &&
-            <Route exact path='/network' render={() => {
-              return sectionElement('network', <NetworkContainer setModal={setModal} />)
-            }} />
-          }
-          <Route exact path='/collection' render={() => {
-            return sectionElement('collection', <CollectionContainer setModal={setModal} />)
+        {/* App Sections */}
+        { __BUILD__.ENABLE_NETWORK_SECTION &&
+          <Route exact path='/network' render={() => {
+            return sectionElement('network', <NetworkContainer setModal={setModal} />)
           }} />
-          <Route path='/collection/:username' render={(props) => {
-            return sectionElement('collection', <Placeholder
-              title='Collection User Datasets'
-              pathname={props.location.pathname}
-            />)
-          }} />
+        }
+        <Route exact path='/collection' render={() => {
+          return sectionElement('collection', <CollectionContainer setModal={setModal} />)
+        }} />
+        <Route path='/collection/:username' render={(props) => {
+          return sectionElement('collection', <Placeholder
+            title='Collection User Datasets'
+            pathname={props.location.pathname}
+          />)
+        }} />
 
-          <Route path='/workbench/' render={(props) => {
-            // return <Redirect to='/collection' />
-            return sectionElement('workbench', <WorkbenchContainer
-              username={props.match.params.username}
-              dataset={props.match.params.dataset}
-              setModal={setModal}
-            />)
-          }}/>
-          <Route path='/workbench/:username/:dataset' render={(props) => {
-            return sectionElement('workbench', <WorkbenchContainer
-              username={props.match.params.username}
-              dataset={props.match.params.dataset}
-              setModal={setModal}
-            />)
-          }}/>
+        <Route exact path='/workbench' render={() => {
+          return sectionElement('workbench', <WorkbenchContainer
+            tab="status"
+            setModal={setModal}
+          />)
+        }}/>
+        <Route path='/workbench/:username/:dataset' render={(props) => {
+          const { params } = props.match
+          return sectionElement('workbench', <WorkbenchContainer
+            location={props.match.path}
+            tab="status"
+            username={params.username}
+            dataset={params.dataset}
+            path={params.path}
+            component={params.component}
+            setModal={setModal}
+          />)
+        }}/>
 
-          <Route exact path='/' render={() => {
-            ipcRenderer.send('show-dataset-menu', false)
-            return requireSignin(<Redirect to='/collection' />)
-          }} />
-        </Route>
+        <Route path='/' render={() => {
+          ipcRenderer.send('show-dataset-menu', false)
+          return requireSignin(<Redirect to='/collection' />)
+        }} />
       </Switch>
     </div>
   )

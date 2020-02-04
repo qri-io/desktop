@@ -2,17 +2,16 @@ import { connect } from 'react-redux'
 import Workbench, { WorkbenchProps, WorkbenchData } from '../components/workbench/Workbench'
 import { fetchWorkbench } from '../actions/workbench'
 
-import Store from '../models/store'
+import { Store, Selections } from '../models/store'
 
 import { setSidebarWidth, setModal, setDetailsBar } from '../actions/ui'
 import {
-  fetchHistory,
-
-  fetchWorkingDataset,
-  fetchWorkingStatus,
   fetchBody,
   fetchCommitBody,
   fetchCommitDataset,
+  fetchHistory,
+  fetchWorkingDataset,
+  fetchWorkingStatus,
 
   publishDataset,
   unpublishDataset,
@@ -32,8 +31,16 @@ const mergeProps = (props: any, actions: any): WorkbenchProps => {
   return { ...props, ...actions }
 }
 
+function locationFromSelection (s: Selections): string {
+  let sel = `/workbench/${s.activeTab}/${s.peername}/${s.name}`
+  if (s.commit !== '') {
+    sel += `/${s.commit}`
+  }
+  return sel
+}
+
 const WorkbenchContainer = connect(
-  (state: Store) => {
+  (state: Store, props) => {
     const {
       ui,
       selections,
@@ -46,6 +53,15 @@ const WorkbenchContainer = connect(
     const showDetailsBar = ui.detailsBar.type !== DetailsType.NoDetails
 
     const data: WorkbenchData = {
+      // TODO (b5) - here we're intentionally constructing location from selection state,
+      // as it's more accurate than values derived from the route. Refactor away
+      // from selection toward using route match params
+      location: locationFromSelection(selections),
+      tab: props.tab || 'status',
+      peername: props.peername || selections.peername,
+      name: props.name || selections.name,
+      path: props.path || selections.commit,
+
       workingDataset: workingDataset,
       head: commitDetails,
       // TODO (ramfox): refactor so that history has it's own place in the state tree

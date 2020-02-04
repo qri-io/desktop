@@ -1,11 +1,11 @@
 import * as React from 'react'
 
 interface CodeProps {
-  data: string | undefined
+  data: string
 }
 
 const Code: React.FunctionComponent<CodeProps> = (props: CodeProps) => {
-  const { data } = props
+  const { data = '' } = props
 
   const lines = data.split('\n')
 
