@@ -1,9 +1,7 @@
 // globals process
-// import os from 'os'
 import fs, { WriteStream } from 'fs'
-import childProcess from 'child_process'
 import path from 'path'
-// import rimraf from 'rimraf'
+import childProcess from 'child_process'
 
 // TestTempRegistry runs the qri backend binary in connected'ed mode,
 // configured for isolated testing in a temporary directory
@@ -12,6 +10,7 @@ export default class TestTempRegistry {
   registryBinPath: string
   process: any
   dir: string
+  logPath: string
   stdout: WriteStream
   stderr: WriteStream
 
@@ -27,7 +26,7 @@ export default class TestTempRegistry {
     // this.registryBinPath = this.findTempRegistryBin(['qri', resourcesPath, path.join(__dirname, '../../')])
     this.registryBinPath = this.findTempRegistryBin()
     if (this.registryBinPath === '') {
-      throw `couldn't find a qri binary on your $PATH, please install qri backend to run e2e tests`
+      throw `couldn't find a temp_registry_server binary on your $PATH, please install qri backend to run e2e tests`
     }
     // Run the binary if it is found
     console.log(`using registry binary: '${this.registryBinPath}'`)
@@ -45,33 +44,37 @@ export default class TestTempRegistry {
   launchProcess () {
     try {
       // const [ base, qriPath, ipfsPath ] = this.setupRepo()
-
-      // this.stdout = fs.createWriteStream(path.join(this.dir, 'stdout.log'))
-      // this.stderr = fs.createWriteStream(path.join(this.dir, 'stderr.log'))
+      this.logPath = path.join(this.dir, 'temp_registry_server.log')
+      const write = fs.createWriteStream(this.logPath)
+      this.stdout = write
+      this.stderr = write
       this.process = childProcess.spawn(this.registryBinPath, ['connect', '--setup'], {
         // stdio: ['pipe', this.stdout, this.stderr],
-        // env: Object.assign(process.env, {
-        //   'QRI_SETUP_CONFIG_DATA': qriConfig,
-        //   'QRI_PATH': qriPath,
-        //   'IPFS_PATH': ipfsPath
-        // })
+        env: Object.assign(process.env, {
+          'PORT': '2500'
+        })
       })
 
-      // this.process.stdout.pipe(this.stdout);
-      // this.process.stderr.pipe(this.stderr);
+      this.process.stdout.pipe(this.stdout);
+      this.process.stderr.pipe(this.stderr);
 
       this.process.on('error', (err: any) => { this.handleEvent('error', err) })
-      this.process.on('exit', () => {  /* noop */ })
-      this.process.on('close', (err: any) => { /* noop */ })
+      this.process.on('exit', () => { this.handleEvent('exit', 'registry exited') })
+      this.process.on('close', (err: any) => {
+        this.handleEvent('close', err)
+        write.close()
+        const buffer = fs.readFileSync(this.logPath)
+        console.log(buffer.toString())
+      })
       this.process.on('disconnect', (err: any) => { this.handleEvent('disconnect', err) })
     } catch (err) {
-      console.log('ERROR, Starting background process: ' + err)
+      console.error(`starting registry process: ${err}`)
     }
   }
 
   handleEvent (kind: string, err: Error) {
     if (err) {
-      console.log(`err event '${kind}' from registry: ${err}`)
+      console.error(`err event '${kind}' from registry: ${err}`)
     } else {
       console.log(`event '${kind}' from registry`)
     }

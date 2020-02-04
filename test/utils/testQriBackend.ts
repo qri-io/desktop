@@ -177,7 +177,7 @@ const qriConfig = `{
     "address": "127.0.0.1:2506"
   },
   "Registry": {
-    "location": "http://localhost:3000"
+    "location": "http://localhost:2500"
   },
   "Remotes": null,
   "Remote": null,

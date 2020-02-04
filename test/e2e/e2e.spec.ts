@@ -1,4 +1,5 @@
 import path from 'path'
+import os from 'os'
 import fs from 'fs'
 import TestBackendProcess from '../utils/testQriBackend'
 import TestTempRegistry from '../utils/testTempRegistry'
@@ -11,6 +12,11 @@ describe('Qri End to End tests', function spec () {
   let app: any
   let backend: any
   let registry: any
+  const imagesDir = process.env.E2E_ARTIFACTS_PATH || os.tmpdir()
+  const artifactPath = (s: string): string => {
+    return path.join(imagesDir, s)
+  }
+  console.log(`storing artifacts at: ${imagesDir}`)
 
   // The utility functions we use to build our e2e tests
   // declared in this scope so they can be accessed by all tests
@@ -116,7 +122,7 @@ describe('Qri End to End tests', function spec () {
     await click('#accept')
 
     // make sure we navigated to the correct page
-    await atLocation('#/onboard/signup')
+    await atLocation('#/onboard/signup', artifactPath('accept_terms_of_service_by_clicking_accept_and_get_taken_to_signup.png'))
   })
 
   it('create a new account, taken to datasets page', async () => {
@@ -143,7 +149,7 @@ describe('Qri End to End tests', function spec () {
     await click('#accept')
 
     // make sure we are on the collection page
-    await atLocation('#/collection')
+    await atLocation('#/collection', artifactPath('create_a_new_account_taken_to_datasets_page.png'))
   })
 
   // signout and sign in

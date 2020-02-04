@@ -1,4 +1,5 @@
 import url from 'url'
+import fs from 'fs'
 
 const headless = false
 const delayTime = 300
@@ -41,13 +42,23 @@ const delay = async (time: number) => new Promise(resolve => setTimeout(resolve,
 // Use this after a click that should have directed the user to a different
 // route
 function atLocation (app: any) {
-  return async (expected: string) => {
+  return async (expected: string, screenshotLocation?: string) => {
     const { client, browserWindow } = app
-    await client.waitUntil(async () => {
-      const currUrl: string = await browserWindow.getURL()
-      const location = new url.URL(currUrl).hash
-      return location === expected
-    }, 10000, `expected url to be '${expected}', got: ${location.hash || location}`)
+    try {
+      await client.waitUntil(async () => {
+        const currUrl: string = await browserWindow.getURL()
+        const location = new url.URL(currUrl).hash
+        return location === expected
+      }, 10000, `expected url to be '${expected}', got: ${location.hash || location}`)
+    } catch (e) {
+      if (screenshotLocation) {
+        app.browserWindow.capturePage().then(function (imageBuffer) {
+          console.log(`writing screenshot: ${screenshotLocation}`)
+          fs.writeFileSync(screenshotLocation, imageBuffer)
+        })
+      }
+      throw e
+    }
     if (!headless) await delay(delayTime)
   }
 }
