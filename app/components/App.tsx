@@ -104,6 +104,7 @@ class App extends React.Component<AppProps, AppState> {
     this.handleCreateDataset = this.handleCreateDataset.bind(this)
     this.handleAddDataset = this.handleAddDataset.bind(this)
     this.handlePush = this.handlePush.bind(this)
+    this.handleReload = this.handleReload.bind(this)
     this.handleSetDebugLogPath = this.handleSetDebugLogPath.bind(this)
     this.handleExportDebugLog = this.handleExportDebugLog.bind(this)
   }
@@ -118,6 +119,10 @@ class App extends React.Component<AppProps, AppState> {
 
   private handlePush (e: any, route: string) {
     this.props.push(route)
+  }
+
+  private handleReload () {
+    remote.getCurrentWindow().reload()
   }
 
   private handleSetDebugLogPath (_e: any, path: string) {
@@ -148,6 +153,7 @@ class App extends React.Component<AppProps, AppState> {
     ipcRenderer.on('history-push', this.handlePush)
     ipcRenderer.on('set-debug-log-path', this.handleSetDebugLogPath)
     ipcRenderer.on('export-debug-log', this.handleExportDebugLog)
+    ipcRenderer.on('reload', this.handleReload)
 
     setInterval(() => {
       if (this.props.apiConnection !== 1 || this.props.selections.peername === '' || this.props.selections.name === '') {
@@ -162,8 +168,10 @@ class App extends React.Component<AppProps, AppState> {
 
   componentWillUnmount () {
     ipcRenderer.removeListener('create-dataset', this.handleCreateDataset)
-    ipcRenderer.on('add-dataset', this.handleAddDataset)
-    ipcRenderer.on('history-push', this.handlePush)
+    ipcRenderer.removeListener('add-dataset', this.handleAddDataset)
+    ipcRenderer.removeListener('history-push', this.handlePush)
+    ipcRenderer.removeListener('set-debug-log-path', this.handleSetDebugLogPath)
+    ipcRenderer.removeListener('reload', this.handleReload)
   }
 
   componentDidUpdate (prevProps: AppProps) {

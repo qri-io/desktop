@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { Action } from 'redux'
 import { withRouter } from 'react-router-dom'
-import { remote, ipcRenderer, shell, clipboard } from 'electron'
+import { ipcRenderer, shell, clipboard } from 'electron'
 import { CSSTransition } from 'react-transition-group'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faFolderOpen, faFile, faLink, faCloud, faCloudUploadAlt } from '@fortawesome/free-solid-svg-icons'
@@ -87,9 +87,13 @@ class Workbench extends React.Component<WorkbenchProps> {
       'openWorkingDirectory',
       'publishUnpublishDataset',
       'handleShowStatus',
+<<<<<<< HEAD
       'handleShowHistory',
       'handleReload',
       'handleCopyLink'
+=======
+      'handleShowHistory'
+>>>>>>> fix(App): properly remove listeners on app unmount
     ].forEach((m) => { this[m] = this[m].bind(this) })
   }
 
@@ -99,7 +103,6 @@ class Workbench extends React.Component<WorkbenchProps> {
     ipcRenderer.on('show-history', this.handleShowHistory)
     ipcRenderer.on('open-working-directory', this.openWorkingDirectory)
     ipcRenderer.on('publish-unpublish-dataset', this.publishUnpublishDataset)
-    ipcRenderer.on('reload', this.handleReload)
 
     this.props.fetchWorkbench()
   }
@@ -110,10 +113,10 @@ class Workbench extends React.Component<WorkbenchProps> {
     ipcRenderer.removeListener('show-history', this.handleShowHistory)
     ipcRenderer.removeListener('open-working-directory', this.openWorkingDirectory)
     ipcRenderer.removeListener('publish-unpublish-dataset', this.publishUnpublishDataset)
-    ipcRenderer.removeListener('reload', this.handleReload)
   }
 
   statusInterval = setInterval(() => {
+    console.log('starting polling')
     if (this.props.data.workingDataset.peername !== '' || this.props.data.workingDataset.name !== '') {
       this.props.fetchWorkingStatus()
     }
@@ -127,6 +130,7 @@ class Workbench extends React.Component<WorkbenchProps> {
     this.props.setActiveTab('history')
   }
 
+<<<<<<< HEAD
   handleReload () {
     remote.getCurrentWindow().reload()
   }
@@ -136,9 +140,11 @@ class Workbench extends React.Component<WorkbenchProps> {
   }
 
   componentDidUpdate (prevProps: WorkbenchProps) {
+=======
+  async componentDidUpdate (prevProps: WorkbenchProps) {
+>>>>>>> fix(App): properly remove listeners on app unmount
     const {
       data,
-      // fetchWorkingDataset,
       fetchBody
     } = this.props
     const { workingDataset } = data
