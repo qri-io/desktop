@@ -96,6 +96,19 @@ export interface ModalProps {
    * of the loading operation.
    */
   readonly loading?: boolean
+
+  /**
+   * Some models may want greater control over their styling. When
+   * `noContentPadding` is true, remove the padding around the content
+   * so the content is more seamless
+   */
+  readonly noContentPadding?: boolean
+
+  /**
+   * moving the dialog to be max size: 70% by 70%
+   */
+  readonly maxSize?: boolean
+
 }
 
 /**
@@ -106,7 +119,7 @@ export interface ModalProps {
  * underlying elements. It's not possible to use the tab key to move focus
  * out of the dialog without first dismissing it.
  */
-const Modal: React.FunctionComponent<ModalProps> = ({ title, dismissable = false, setDismissable, onDismissed, id, type, onSubmit, className, disabled, loading, children }) => {
+const Modal: React.FunctionComponent<ModalProps> = ({ title, dismissable = false, setDismissable, onDismissed, id, type, onSubmit, className, disabled, loading, children, noContentPadding = false, maxSize = false }) => {
   const [modalElement, setModalElement] = React.useState<HTMLElement | null>(null)
 
   React.useEffect(() => {
@@ -225,6 +238,12 @@ const Modal: React.FunctionComponent<ModalProps> = ({ title, dismissable = false
     className
   )
 
+  const content = onSubmit ? <form className={classNames({ 'no-padding': noContentPadding })}onSubmit={onFormSubmit}>
+    <fieldset disabled={disabled}>
+      {children}
+    </fieldset>
+  </form> : children
+
   // we are rendering a second instance of ReactTooltip here because the modal
   // is displayed in a <dialog> element, which always wants to live above the
   // rest of the page. To add tooltips in a modal, add data-tip='string' and
@@ -236,14 +255,10 @@ const Modal: React.FunctionComponent<ModalProps> = ({ title, dismissable = false
       ref={onModalRef}
       id={id}
       onMouseDown={onModalClick}
-      className={modalClassName}
+      className={classNames(modalClassName, { 'max': maxSize })}
     >
       {renderHeader()}
-      <form onSubmit={onFormSubmit}>
-        <fieldset disabled={disabled}>
-          {children}
-        </fieldset>
-      </form>
+      {content}
       <ReactTooltip
         id='modal-tooltip'
         place='top'

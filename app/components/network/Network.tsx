@@ -2,7 +2,7 @@ import * as React from 'react'
 import { Action } from 'redux'
 
 import SidebarLayout from '../SidebarLayout'
-import { Modal } from '../../models/modals'
+import { Modal, ModalType } from '../../models/modals'
 import { P2PConnection, NetworkHomeData } from '../../models/network'
 import P2PConnectionStatus from './P2PConnectionStatus'
 
@@ -25,7 +25,8 @@ export interface NetworkProps {
 const Network: React.FunctionComponent<NetworkProps> = (props) => {
   const {
     sidebarWidth,
-    setSidebarWidth
+    setSidebarWidth,
+    setModal
   } = props
 
   const [loading, setLoading] = React.useState(true)
@@ -46,11 +47,15 @@ const Network: React.FunctionComponent<NetworkProps> = (props) => {
       })
   }, [false])
 
+  const handleOpenSearch = (q: string) => {
+    setModal({ type: ModalType.Search, q: q })
+  }
+
   const mainContent = (
     <>
       <div className='main-content-flex' style={{ overflow: 'auto' }}>
         {/* TODO (b5) - navbar shouldn't be loaded here, should be in App.tsx, needs location */}
-        <Navbar location={''} />
+        <Navbar location={''} openSearch={handleOpenSearch}/>
         <Dataset data={cities} />
         {/* <NetworkHome data={data} loading={loading} error={error} /> */}
       </div>

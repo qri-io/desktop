@@ -4,6 +4,7 @@ import Breadcrumb from '../chrome/Breadcrumb'
 
 interface NavbarProps {
   location: string
+  openSearch: (q: string) => void
 }
 
 const BackArrow: React.FunctionComponent = () => (
@@ -29,17 +30,22 @@ const ForwardArrow: React.FunctionComponent = () => (
 )
 
 // Navbar is a the basic button used throughout the app
-const Navbar: React.FunctionComponent<NavbarProps> = ({ location }) => (
-  <div className='page-navbar'>
-    <div className='row'>
-      <div className='nav-buttons'>
-        <a className='back'><BackArrow /></a>
-        <a className='forward'><ForwardArrow /></a>
+const Navbar: React.FunctionComponent<NavbarProps> = ({ location, openSearch }) => {
+  const handleOnEnter = (e: React.KeyboardEvent) => {
+    openSearch(e.target.value)
+  }
+  return (
+    <div className='page-navbar'>
+      <div className='row'>
+        <div className='nav-buttons'>
+          <a className='back'><BackArrow /></a>
+          <a className='forward'><ForwardArrow /></a>
+        </div>
+        <SearchBox onEnter={handleOnEnter} />
       </div>
-      <SearchBox />
+      <Breadcrumb value={location} />
     </div>
-    <Breadcrumb value={location} />
-  </div>
-)
+  )
+}
 
 export default Navbar

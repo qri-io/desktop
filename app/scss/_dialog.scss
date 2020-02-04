@@ -1,7 +1,9 @@
 dialog {
   padding: 0;
-  border: solid 1px $border-color;
   border-radius: 5px;
+  background: #F5F7FA;
+  border: 1px solid #E8EDF2;
+  box-shadow: 0 0 6px #00000055;
   background: $appBackground;
   opacity: 1;
   position: absolute;
@@ -11,6 +13,11 @@ dialog {
   left: 0;
   z-index: $zindex-modal;
   width: 500px;
+
+  &.max {
+    width: 70%;
+    height: 70%;
+  }
 
   &::backdrop {
     background-color: rgba(0, 0, 0, 0.1);
@@ -62,6 +69,10 @@ dialog {
 
   form {
     padding: 1.5rem;
+
+    &.no-padding {
+      padding: 0;
+    }
 
     .row {
       display: flex;

@@ -27,7 +27,7 @@
   }
   
   .switch-dark:after {
-    background: #D8D8D8;
+    background: #979797;
     border: solid 1px #979797;
   }
 
@@ -57,7 +57,8 @@
   }
 
   input:checked + .switch-dark:after {
-    background: #979797;
+    background: #4FC7F3;
+    border: solid 1px #4FC7F3;
   }
   
   input:checked + label:after {

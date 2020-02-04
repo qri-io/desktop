@@ -120,22 +120,22 @@ export const overview = () => {
   )
 }
 
-export const dataset = () => {
-  return (
-    <div style={{ margin: 0, padding: 30, minHeight: '100%', background: '#F5F7FA' }}>
-      <div style={{ width: '90%', margin: '2em auto', background: 'white' }}>
-        <Router>
-          {/* <Navbar location='foo/bar' /> */}
-          <Dataset data={cities} actions={[]} />
-        </Router>
-      </div>
-    </div>
-  )
-}
+// export const dataset = () => {
+//   return (
+//     <div style={{ margin: 0, padding: 30, minHeight: '100%', background: '#F5F7FA' }}>
+//       <div style={{ width: '90%', margin: '2em auto', background: 'white' }}>
+//         <Router>
+//           {/* <Navbar location='foo/bar' /> */}
+//           <Dataset data={cities} actions={[]} />
+//         </Router>
+//       </div>
+//     </div>
+//   )
+// }
 
-dataset.story = {
-  name: 'Dataset'
-}
+// dataset.story = {
+//   name: 'Dataset'
+// }
 
 export const bodySegment = () => {
 

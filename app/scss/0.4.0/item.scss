@@ -112,6 +112,10 @@
   border: 1px solid #E8EDF2;
   max-width: 600px;
 
+  &.full {
+    max-width: unset;
+  }
+
   .header {
     display: flex;
     justify-content: space-between;

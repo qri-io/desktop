@@ -6,7 +6,8 @@ export enum ModalType {
   RemoveDataset,
   PublishDataset,
   UnpublishDataset,
-  ExportVersion
+  ExportVersion,
+  Search
 }
 
 interface CreateDatasetModal {
@@ -49,6 +50,11 @@ export interface ExportVersionModal {
   title: string
 }
 
+export interface SearchModal {
+  type: ModalType.Search
+  q: string
+}
+
 export interface HideModal {
   type: ModalType.NoModal
 }
@@ -61,3 +67,4 @@ export type Modal = CreateDatasetModal
 | UnpublishDataset
 | HideModal
 | ExportVersionModal
+| SearchModal
