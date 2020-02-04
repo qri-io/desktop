@@ -1,10 +1,12 @@
 import * as React from 'react'
+import { withRouter } from 'react-router-dom'
 import SearchBox from '../chrome/SearchBox'
 import Breadcrumb from '../chrome/Breadcrumb'
+import { Modal, ModalType } from '../../models/modals'
 
 interface NavbarProps {
   location: string
-  openSearch: (q: string) => void
+  setModal: (modal: Modal) => void
 }
 
 const BackArrow: React.FunctionComponent = () => (
@@ -30,9 +32,9 @@ const ForwardArrow: React.FunctionComponent = () => (
 )
 
 // Navbar is a the basic button used throughout the app
-const Navbar: React.FunctionComponent<NavbarProps> = ({ location, openSearch }) => {
+const Navbar: React.FunctionComponent<NavbarProps> = ({ location, setModal }) => {
   const handleOnEnter = (e: React.KeyboardEvent) => {
-    openSearch(e.target.value)
+    setModal({ q: e.target.value, type: ModalType.Search })
   }
   return (
     <div className='page-navbar'>
@@ -48,4 +50,4 @@ const Navbar: React.FunctionComponent<NavbarProps> = ({ location, openSearch }) 
   )
 }
 
-export default Navbar
+export default withRouter(Navbar)

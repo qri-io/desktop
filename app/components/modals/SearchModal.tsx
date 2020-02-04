@@ -7,8 +7,6 @@ import { Dataset as IDataset } from '../../models/dataset'
 import _ from 'underscore'
 import Switch from '../chrome/Switch'
 import Modal from './Modal'
-import { push } from 'connected-react-router'
-import { connect } from 'react-redux'
 
 interface SearchModalProps {
   q: string
@@ -116,4 +114,4 @@ const SearchModal: React.FunctionComponent<SearchModalProps> = (props) => {
   )
 }
 
-export default connect(null, { push })(SearchModal)
+export default SearchModal
