@@ -20,7 +20,6 @@ const ReadmeHistory: React.FunctionComponent<ReadmeHistoryProps> = (props) => {
           .then((render) => {
             if (!render) { setHasReadme(false) }
             el.innerHTML = render
-            console.log('wooo')
           })
       }
     }, [])

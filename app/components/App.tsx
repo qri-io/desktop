@@ -22,6 +22,7 @@ import RemoveDataset from './modals/RemoveDataset'
 import CreateDataset from './modals/CreateDataset'
 import PublishDataset from './modals/PublishDataset'
 import UnpublishDataset from './modals/UnpublishDataset'
+import SearchModal from './modals/SearchModal'
 import RoutesContainer from '../containers/RoutesContainer'
 
 // import models
@@ -260,6 +261,13 @@ class App extends React.Component<AppProps, AppState> {
             setDatasetDirPath={this.props.setDatasetDirPath}
             datasetDirPath={this.props.datasetDirPath}
           />
+        )
+        break
+      }
+
+      case ModalType.Search: {
+        modalComponent = (
+          <SearchModal q={modal.q} onDismissed={() => { setModal(noModalObject) }}/>
         )
         break
       }

@@ -20,7 +20,7 @@ const worldBank = {
   structure: { length: 239940, format: 'csv' },
   meta: {
     title: 'World Bank Population - Geographic Regions Only',
-    themes: ['population', 'world bank statistics']
+    theme: ['population', 'world bank statistics']
   }
 }
 
