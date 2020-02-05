@@ -41,13 +41,13 @@ export interface Meta {
 }
 
 export interface Commit {
-  author: string
-  message: string
-  path: string
+  author?: string
+  message?: string
+  path?: string
   timestamp: Date
-  title: string
+  title?: string
 
-  count: number // commit chain height
+  count?: number // commit chain height
 }
 
 export interface CSVFormatConfig {
@@ -68,13 +68,13 @@ export interface XLSXFormatConfig {
 }
 
 export interface Structure {
-  depth: number
+  depth?: number
   entries: number
-  format: string
+  format?: string
   length: number
   errCount: number
-  formatConfig: CSVFormatConfig | JSONFormatConfig | XLSXFormatConfig
-  schema: Schema
+  formatConfig?: CSVFormatConfig | JSONFormatConfig | XLSXFormatConfig
+  schema?: Schema
 }
 
 export type Schema = JSONSchema7

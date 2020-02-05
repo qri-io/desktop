@@ -1,16 +1,15 @@
 import * as React from 'react'
 import { Action, AnyAction } from 'redux'
-import classNames from 'classnames'
 import ContextMenuArea from 'react-electron-contextmenu'
 import { withRouter } from 'react-router-dom'
 import { shell, MenuItemConstructorOptions } from 'electron'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faTimes, faFileAlt } from '@fortawesome/free-solid-svg-icons'
+import { faTimes } from '@fortawesome/free-solid-svg-icons'
 
 import { Modal, ModalType } from '../models/modals'
-import { MyDatasets, WorkingDataset } from '../models/store'
-import DatasetDetailsSubtext from './dataset/DatasetDetailsSubtext'
+import { MyDatasets, WorkingDataset, DetailedDatasetRef } from '../models/store'
 import ProgressBar from './chrome/ProgressBar'
+import DetailedDatasetRefItem from './item/DetailedDatasetRefItem'
 
 // for displaying a progress bar based on import file size
 // assumes an import rate of 4828 bytes per millisecond
@@ -19,12 +18,13 @@ const IMPORT_BYTES_PER_MS = 4828
 interface DatasetListProps {
   myDatasets: MyDatasets
   workingDataset: WorkingDataset
+  importFileName: string
+  importFileSize: number
+
   setFilter: (filter: string) => Action
   setWorkingDataset: (peername: string, name: string) => Action
   fetchMyDatasets: (page: number, pageSize: number) => Promise<AnyAction>
   setModal: (modal: Modal) => void
-  importFileName: string
-  importFileSize: number
 }
 
 class DatasetList extends React.Component<DatasetListProps> {
@@ -74,29 +74,29 @@ class DatasetList extends React.Component<DatasetListProps> {
 
     const { filter, value: datasets } = myDatasets
 
-    const filteredDatasets = datasets.filter(({ peername, name, title }) => {
+    const filteredDatasets = datasets.filter(({ username, name, metaTitle = '' }) => {
       // if there's a non-empty filter string, only show matches on peername, name, and title
       // TODO (chriswhong) replace this simple filtering with an API call for deeper matches
       if (filter !== '') {
         const lowercasedFilterString = filter.toLowerCase()
-        if (peername.toLowerCase().includes(lowercasedFilterString)) return true
+        if (username.toLowerCase().includes(lowercasedFilterString)) return true
         if (name.toLowerCase().includes(lowercasedFilterString)) return true
-        if (title && title.toLowerCase().includes(lowercasedFilterString)) return true
+        if (metaTitle.toLowerCase().includes(lowercasedFilterString)) return true
         return false
       }
       return true
     })
 
     const listContent = filteredDatasets.length > 0
-      ? filteredDatasets.map((dataset) => {
-        const { peername, name, fsiPath } = dataset
+      ? filteredDatasets.map((ddr: DetailedDatasetRef) => {
+        const { username, name, fsiPath } = ddr
         let menuItems: MenuItemConstructorOptions[] = [
           {
             label: 'Remove...',
             click: () => {
               setModal({
                 type: ModalType.RemoveDataset,
-                peername,
+                peername: username,
                 name,
                 fsiPath
               })
@@ -117,28 +117,17 @@ class DatasetList extends React.Component<DatasetListProps> {
           ]
         }
 
-        return (<ContextMenuArea menuItems={menuItems} key={`${peername}/${name}`}>
-          <div
-            id={`${peername}-${name}`}
-            key={`${peername}/${name}`}
-            className={classNames('sidebar-list-item', 'sidebar-list-item-text', {
-              'selected': (peername === workingDataset.peername) && (name === workingDataset.name)
-            })}
-            onClick={() => {
-              setWorkingDataset(peername, name)
+        return (<ContextMenuArea menuItems={menuItems} key={`${username}/${name}`}>
+          <DetailedDatasetRefItem
+            data={ddr}
+            selected={(username === workingDataset.peername) && (name === workingDataset.name)}
+            onClick={(data: DetailedDatasetRef) => {
+              setWorkingDataset(data.username, data.name)
                 .then(() => {
-                  this.props.history.push(`/workbench/${peername}/${name}`)
+                  this.props.history.push(`/workbench/${data.username}/${name}`)
                 })
             }}
-          >
-            <div className='icon-column'>
-              <FontAwesomeIcon icon={faFileAlt} size='lg'/>
-            </div>
-            <div className='text-column'>
-              <div className='text'>{peername}/{name}</div>
-              {dataset.dataset && <DatasetDetailsSubtext data={dataset.dataset} />}
-            </div>
-          </div>
+          />
         </ContextMenuArea>)
       }
       )

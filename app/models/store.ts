@@ -1,5 +1,5 @@
 import { RouterState } from 'connected-react-router'
-import { Dataset, Meta, Structure, Commit } from './dataset'
+import { Meta, Structure, Commit } from './dataset'
 import { Session } from './session'
 import { Details } from './details'
 
@@ -90,19 +90,30 @@ export interface PageInfo {
 }
 
 // dataset summary info to show in dataset list
-export interface DatasetSummary {
-  dataset: Dataset
-  peername: string
+export interface DetailedDatasetRef {
+  username: string
+  profileId: string
   name: string
   path: string
+  foreign: boolean
+  metaTitle: string
+  themeList: string
+
+  bodySize: number
+  bodyRows: number
+  numErrors: number
+  commitTime: Date
+
   fsiPath: string
-  published: boolean
+
+  // TODO (b5) - need to figure out publication representation
+  // published: boolean
 }
 
 // list of local datasets
 export interface MyDatasets {
   pageInfo: PageInfo
-  value: DatasetSummary[]
+  value: DetailedDatasetRef[]
   filter: string // filter string from ui
 }
 

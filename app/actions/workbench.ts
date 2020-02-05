@@ -17,7 +17,6 @@ import { setCommit } from './selections'
 // the returned promise resolves to true if loading thunks have been kicked off
 export function fetchWorkbench (): LaunchedFetchesAction {
   return async (dispatch, getState) => {
-    console.log('fetching workbench')
     const { workingDataset, selections, commitDetails } = getState()
     const head = commitDetails
     const history = workingDataset.history
@@ -30,7 +29,6 @@ export function fetchWorkbench (): LaunchedFetchesAction {
       dispatch(fetchWorkingDatasetAndStatus())
       dispatch(fetchStats())
       dispatch(fetchBody(-1))
-      console.log('workbench: doing initial fetch')
       return fetching
     }
 
@@ -42,12 +40,10 @@ export function fetchWorkbench (): LaunchedFetchesAction {
       dispatch(fetchCommitStats())
       dispatch(fetchCommitStatus())
       dispatch(fetchCommitBody(-1))
-      console.log('workbench: doing history fetch')
       return fetching
     }
 
     if (selections.commit === '' && history.value.length !== 0) {
-      console.log('workbench: setting root commit')
       dispatch(setCommit(history.value[0].path))
     }
 
