@@ -6,7 +6,7 @@ import { faClock } from '@fortawesome/free-regular-svg-icons'
 
 import HistoryComponentList from '../components/HistoryComponentList'
 import DatasetComponent from './DatasetComponent'
-import SidebarLayout from './SidebarLayout'
+import Layout from './Layout'
 import { Structure, Commit } from '../models/dataset'
 import { CommitDetails as ICommitDetails, ComponentType, SelectedComponent, Selections } from '../models/Store'
 import fileSize from '../utils/fileSize'
@@ -97,7 +97,8 @@ const CommitDetails: React.FunctionComponent<CommitDetailsProps> = ({
   return (
     <div id='commit-details' className='dataset-content transition-group'>
       <CommitDetailsHeader structure={structure.value} commit={data.components && commit.value}/>
-      <SidebarLayout
+      <Layout
+        showNav={false}
         id={'commit-details'}
         sidebarContent={(
           <HistoryComponentList

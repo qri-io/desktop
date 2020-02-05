@@ -1,24 +1,33 @@
 // a layout component for the resizable sidebar with main content area
 import * as React from 'react'
 import { Resizable } from './Resizable'
+import NavbarContainer from '../containers/NavbarContainer'
 
-interface SidebarLayoutProps {
+interface LayoutProps {
   id: string
   sidebarContent: any
   sidebarWidth: number
   onSidebarResize?: (width: number) => void
   maximumSidebarWidth?: number
   mainContent: any
+
+  /**
+   * Some views may not want to display the navbar, setting `showNav` = false
+   * will hide it
+   * `showNav` defaults to true
+   */
+  showNav?: boolean
 }
 
-const SidebarLayout: React.FunctionComponent<SidebarLayoutProps> = (props: SidebarLayoutProps) => {
+const Layout: React.FunctionComponent<LayoutProps> = (props: LayoutProps) => {
   const {
     id,
     sidebarContent,
     sidebarWidth,
     onSidebarResize,
     maximumSidebarWidth = 495,
-    mainContent
+    mainContent,
+    showNav = true
   } = props
 
   return (
@@ -33,6 +42,7 @@ const SidebarLayout: React.FunctionComponent<SidebarLayoutProps> = (props: Sideb
           {sidebarContent}
         </Resizable>
         <div id={`${id}-main-content`} className='main-content'>
+          {showNav && <NavbarContainer />}
           {mainContent}
         </div>
       </div>
@@ -40,4 +50,4 @@ const SidebarLayout: React.FunctionComponent<SidebarLayoutProps> = (props: Sideb
   )
 }
 
-export default SidebarLayout
+export default Layout
