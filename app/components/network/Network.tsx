@@ -1,13 +1,12 @@
 import * as React from 'react'
 import { Action } from 'redux'
 
-import SidebarLayout from '../SidebarLayout'
+import Layout from '../Layout'
 import { P2PConnection } from '../../models/network'
 import P2PConnectionStatus from './P2PConnectionStatus'
 
 import Dataset from '../dataset/Dataset'
 
-import NavbarContainer from '../../containers/NavbarContainer'
 // import NetworkHome from './NetworkHome'
 import cities from '../../../stories/data/cities.dataset.json'
 
@@ -47,7 +46,6 @@ const Network: React.FunctionComponent<NetworkProps> = (props) => {
     <>
       <div className='main-content-flex' style={{ overflow: 'auto' }}>
         {/* TODO (b5) - navbar shouldn't be loaded here, should be in App.tsx, needs location */}
-        <NavbarContainer />
         <Dataset data={cities} />
         {/* <NetworkHome data={data} loading={loading} error={error} /> */}
       </div>
@@ -55,7 +53,7 @@ const Network: React.FunctionComponent<NetworkProps> = (props) => {
   )
 
   return (
-    <SidebarLayout
+    <Layout
       id='collection-container'
       sidebarContent={<div className='dataset-sidebar'>
         <P2PConnectionStatus

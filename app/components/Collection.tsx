@@ -4,7 +4,7 @@ import { Action, AnyAction } from 'redux'
 import HeaderColumnButton from './chrome/HeaderColumnButton'
 import WelcomeTemplate from './onboard/WelcomeTemplate'
 import DatasetList from './DatasetList'
-import SidebarLayout from './SidebarLayout'
+import Layout from './Layout'
 import { MyDatasets, WorkingDataset } from '../models/store'
 import { Modal, ModalType } from '../models/modals'
 
@@ -67,7 +67,7 @@ class Collection extends React.Component<CollectionProps> {
     )
 
     return (
-      <SidebarLayout
+      <Layout
         id='collection-container'
         sidebarContent={<DatasetList
           myDatasets={myDatasets}

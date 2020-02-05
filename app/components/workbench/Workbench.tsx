@@ -21,7 +21,7 @@ import { ApiActionThunk, LaunchedFetchesAction } from '../../store/api'
 import { defaultSidebarWidth } from '../../reducers/ui'
 
 import { Resizable } from '../Resizable'
-import SidebarLayout from '../SidebarLayout'
+import Layout from '../Layout'
 import UnlinkedDataset from './UnlinkedDataset'
 import DatasetComponent from '../DatasetComponent'
 import NoDatasetSelected from './NoDatasetSelected'
@@ -427,7 +427,7 @@ class Workbench extends React.Component<WorkbenchProps> {
             </Resizable>
           </div>
         </div>
-        <SidebarLayout
+        <Layout
           id='dataset-container'
           sidebarContent={sidebarContent}
           sidebarWidth={sidebarWidth}
