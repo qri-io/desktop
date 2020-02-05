@@ -1,11 +1,11 @@
 import * as React from 'react'
-import { withRouter } from 'react-router-dom'
+import { withRouter, RouteComponentProps } from 'react-router-dom'
 import SearchBox from '../chrome/SearchBox'
 import Breadcrumb from '../chrome/Breadcrumb'
 import { Modal, ModalType } from '../../models/modals'
 
-interface NavbarProps {
-  location: string
+// RouteComponentProps includes `history`, `location`, and `match`
+interface NavbarProps extends RouteComponentProps {
   setModal: (modal: Modal) => void
 }
 
@@ -31,7 +31,7 @@ const ForwardArrow: React.FunctionComponent = () => (
   </svg>
 )
 
-// Navbar is a the basic button used throughout the app
+// Navbar is persistent chrome from app-wide navigation
 const Navbar: React.FunctionComponent<NavbarProps> = ({ location, setModal }) => {
   const handleOnEnter = (e: React.KeyboardEvent) => {
     setModal({ q: e.target.value, type: ModalType.Search })
@@ -45,9 +45,11 @@ const Navbar: React.FunctionComponent<NavbarProps> = ({ location, setModal }) =>
         </div>
         <SearchBox onEnter={handleOnEnter} />
       </div>
-      <Breadcrumb value={location} />
+      <Breadcrumb value={location.pathname} />
     </div>
   )
 }
 
+// the `withRouter` func from 'react-router-dom' gives the Navbar component
+// access to history, location, and match (the RouteComponentProps)
 export default withRouter(Navbar)

@@ -98,14 +98,14 @@ export interface ModalProps {
   readonly loading?: boolean
 
   /**
-   * Some models may want greater control over their styling. When
+   * Some modals may want greater control over their styling. When
    * `noContentPadding` is true, remove the padding around the content
    * so the content is more seamless
    */
   readonly noContentPadding?: boolean
 
   /**
-   * moving the dialog to be max size: 70% by 70%
+   * Setting the dialog to be max size: 70% by 70%
    */
   readonly maxSize?: boolean
 

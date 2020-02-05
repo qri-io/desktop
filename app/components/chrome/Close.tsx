@@ -2,7 +2,7 @@ import * as React from 'react'
 
 interface CloseProps {
   right?: boolean
-  onClick: () => void
+  onClick: (e: React.SyntheticEvent) => void
 }
 
 const Close: React.FunctionComponent<CloseProps> = ({ right, onClick }) => (

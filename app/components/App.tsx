@@ -267,7 +267,7 @@ class App extends React.Component<AppProps, AppState> {
 
       case ModalType.Search: {
         modalComponent = (
-          <SearchModal q={modal.q} onDismissed={async () => setModal(noModalObject)}/>
+          <SearchModal q={modal.q} onDismissed={() => { setModal(noModalObject) }}/>
         )
         break
       }

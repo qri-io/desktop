@@ -1,12 +1,14 @@
 import * as React from 'react'
+import _ from 'underscore'
 
-import Close from '../chrome/Close'
+import { Dataset as IDataset } from '../../models/dataset'
+import { BACKEND_URL } from '../../constants'
+
 import SearchBox from '../chrome/SearchBox'
 import Dataset from '../item/Dataset'
-import { Dataset as IDataset } from '../../models/dataset'
-import _ from 'underscore'
 import Switch from '../chrome/Switch'
 import Modal from './Modal'
+import Close from '../chrome/Close'
 
 interface SearchModalProps {
   q: string
@@ -26,6 +28,9 @@ interface SearchProps {
   Value: IDataset
 }
 
+// time in milliseconds to wait for debounce
+const debounceTime = 300
+
 const SearchModal: React.FunctionComponent<SearchModalProps> = (props) => {
   const { q, onDismissed } = props
   const [local, setLocal] = React.useState(false)
@@ -37,7 +42,7 @@ const SearchModal: React.FunctionComponent<SearchModalProps> = (props) => {
       method: 'GET'
     }
 
-    const url = local ? `http://localhost:2503/list?term=${term}` : `http://localhost:2503/search?q=${term}`
+    const url = local ? `${BACKEND_URL}/list?term=${term}` : `${BACKEND_URL}/search?q=${term}`
 
     const r = await fetch(url, options)
     const res = await r.json()
@@ -98,7 +103,7 @@ const SearchModal: React.FunctionComponent<SearchModalProps> = (props) => {
           <label className='window-name'>Search Qri</label>
           <SearchBox
             onChange={(e) => {
-              _.debounce(setTerm(e.target.value), 300)
+              _.debounce(setTerm(e.target.value), debounceTime)
             }}
             onEnter={(e) => setTerm(e.target.value)}
             value={term}
