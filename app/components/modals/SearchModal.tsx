@@ -2,6 +2,7 @@ import * as React from 'react'
 import _ from 'underscore'
 
 import { Dataset as IDataset } from '../../models/dataset'
+import { FetchOptions } from '../../store/api'
 import { BACKEND_URL } from '../../constants'
 
 import SearchBox from '../chrome/SearchBox'
@@ -13,12 +14,6 @@ import Close from '../chrome/Close'
 interface SearchModalProps {
   q: string
   onDismissed: () => void
-}
-
-interface FetchOptions {
-  method: string
-  headers?: Record<string, string>
-  body?: string
 }
 
 interface SearchProps {

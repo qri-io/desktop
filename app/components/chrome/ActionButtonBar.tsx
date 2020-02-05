@@ -1,11 +1,14 @@
 import React from 'react'
-import ActionButton, { ActionButtonProps } from './ActionButton'
-import Hamburger from './Hamburger'
 import classNames from 'classnames'
 import sizeMe, { SizeMeProps } from 'react-sizeme'
 
+import { DatasetAction } from '../../models/dataset'
+
+import ActionButton from './ActionButton'
+import Hamburger from './Hamburger'
+
 interface ActionButtonBarProps {
-  data: ActionButtonProps[]
+  data: DatasetAction[]
   size: SizeMeProps['size']
 }
 
@@ -28,7 +31,7 @@ const ActionButtonBar: React.FunctionComponent<ActionButtonBarProps> = (props) =
     })
   }
 
-  const buttons = data.map((d: ActionButtonProps, i: number) =>
+  const buttons = data.map((d: DatasetAction, i: number) =>
     <div className={classNames({ 'closed': !areVisible[i] })} key={i}>
       <ActionButton icon={d.icon} onClick={d.onClick} text={d.text} onSize={(size: { width: number | null, height: number | null }) => handleSize(size.width, i)}/>
     </div>
@@ -59,7 +62,7 @@ const ActionButtonBar: React.FunctionComponent<ActionButtonBarProps> = (props) =
     <div className='action-button-bar'>
       {buttons}
       {/* If any are not visible, show the hamburger */}
-      {areVisible.some((val: boolean) => val === false) && <Hamburger data={data.filter((d: ActionButtonProps, i: number) => {
+      {areVisible.some((val: boolean) => val === false) && <Hamburger data={data.filter((d: DatasetAction, i: number) => {
         if (!areVisible[i]) return d
         else return undefined
       })}/>}

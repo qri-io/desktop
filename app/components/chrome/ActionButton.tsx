@@ -1,14 +1,11 @@
 import React from 'react'
-import Icon from './Icon'
 import sizeMe from 'react-sizeme'
 
-export interface ActionButtonProps {
-  icon: string
-  onClick: (e: React.MouseEvent) => void
-  text: string
-}
+import { DatasetAction } from '../../models/dataset'
 
-const ActionButton: React.FunctionComponent<ActionButtonProps> = (props) => {
+import Icon from './Icon'
+
+const ActionButton: React.FunctionComponent<DatasetAction> = (props) => {
   const { icon, onClick, text } = props
 
   return (

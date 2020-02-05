@@ -1,10 +1,12 @@
 import React from 'react'
-import { ActionButtonProps } from './ActionButton'
+
+import { DatasetAction } from '../../models/dataset'
+
 import HamburgerOverlay from '../overlay/HamburgerOverlay'
 import Icon from './Icon'
 
 interface HamburgerProps {
-  data: ActionButtonProps[]
+  data: DatasetAction[]
 }
 
 const Hamburger: React.FunctionComponent<HamburgerProps> = (props) => {

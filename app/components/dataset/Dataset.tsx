@@ -1,17 +1,16 @@
 import React from 'react'
 
-import { Dataset as IDataset } from '../../models/dataset'
+import { Dataset as IDataset, DatasetAction } from '../../models/dataset'
 
 import BodySegment from './BodySegment'
 import Overview from './Overview'
 import ReadmeSegment from './ReadmeSegment'
 import StructureSegment from './StructureSegment'
 import CommitPreview from './CommitPreview'
-import { ActionButtonProps } from '../chrome/ActionButton'
 
 interface DatasetProps {
   data: IDataset
-  actions?: ActionButtonProps[]
+  actions?: DatasetAction[]
 }
 
 const Dataset: React.FunctionComponent<DatasetProps> = (props) => {

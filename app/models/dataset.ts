@@ -89,4 +89,10 @@ export interface Dataset {
 
 export type Body = Record<string, any> | any[][]
 
+export interface DatasetAction {
+  icon: string
+  onClick: (e: React.MouseEvent) => void
+  text: string
+}
+
 export default Dataset

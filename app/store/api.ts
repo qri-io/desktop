@@ -163,9 +163,9 @@ function apiUrl (endpoint: string, segments?: ApiSegments, query?: ApiQuery, pag
   return [url, '']
 }
 
-interface FetchOptions {
+export interface FetchOptions {
   method: string
-  headers: Record<string, string>
+  headers?: Record<string, string>
   body?: string
 }
 
