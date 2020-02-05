@@ -70,22 +70,10 @@ export default function Routes (props: any) {
         }} />
 
         <Route exact path='/workbench' render={() => {
-          return sectionElement('workbench', <WorkbenchContainer
-            tab="status"
-            setModal={setModal}
-          />)
+          return sectionElement('workbench', <WorkbenchContainer />)
         }}/>
-        <Route path='/workbench/:username/:dataset' render={(props) => {
-          const { params } = props.match
-          return sectionElement('workbench', <WorkbenchContainer
-            location={props.match.path}
-            tab="status"
-            username={params.username}
-            dataset={params.dataset}
-            path={params.path}
-            component={params.component}
-            setModal={setModal}
-          />)
+        <Route path='/workbench/:username/:dataset' render={() => {
+          return sectionElement('workbench', <WorkbenchContainer />)
         }}/>
 
         <Route path='/' render={() => {

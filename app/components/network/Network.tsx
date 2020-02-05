@@ -26,6 +26,7 @@ const Network: React.FunctionComponent<NetworkProps> = (props) => {
     setSidebarWidth
   } = props
 
+  // TODO (b5) - bring this back in the near future for fetching home feed
   // const [loading, setLoading] = React.useState(true)
   // const [data, setData] = React.useState(undefined)
   // const [error, setError] = React.useState('')
@@ -71,7 +72,7 @@ const Network: React.FunctionComponent<NetworkProps> = (props) => {
 
 export default Network
 
-// // TODO (b5) - this is only here for demo purposes
+// TODO (b5) - bring this back in the near future for fetching home feed
 // async function homeFeed (): Promise<NetworkHomeData> {
 //   const options: FetchOptions = {
 //     method: 'GET'

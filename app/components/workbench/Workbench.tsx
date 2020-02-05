@@ -1,6 +1,5 @@
 import * as React from 'react'
 import { Action } from 'redux'
-import { withRouter } from 'react-router-dom'
 import { ipcRenderer, shell, clipboard } from 'electron'
 import { CSSTransition } from 'react-transition-group'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -37,14 +36,7 @@ import NoDatasets from '../NoDatasets'
 require('../../assets/qri-blob-logo-tiny.png')
 
 export interface WorkbenchData {
-  // TODO (b5) - this is a shim to get selection data out of the workbench component
-  // these should be factored into the given workingDataset
   location: string
-  tab: 'status' | 'history'
-  peername: string
-  name: string
-  path: string
-  component: string
 
   workingDataset: WorkingDataset
   head: ICommitDetails
@@ -448,4 +440,4 @@ class Workbench extends React.Component<WorkbenchProps> {
   }
 }
 
-export default withRouter(Workbench)
+export default Workbench

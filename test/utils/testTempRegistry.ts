@@ -21,12 +21,9 @@ export default class TestTempRegistry {
   }
 
   start () {
-    // const { resourcesPath = '' } = process
-    // Locate the binary for the qri backend command-line
-    // this.registryBinPath = this.findTempRegistryBin(['qri', resourcesPath, path.join(__dirname, '../../')])
     this.registryBinPath = this.findTempRegistryBin()
     if (this.registryBinPath === '') {
-      throw `couldn't find a temp_registry_server binary on your $PATH, please install qri backend to run e2e tests`
+      throw `couldn't find a temp_registry_server binary on your $PATH, please install temp_registry_binary to run e2e tests`
     }
     // Run the binary if it is found
     console.log(`using registry binary: '${this.registryBinPath}'`)
@@ -43,13 +40,11 @@ export default class TestTempRegistry {
 
   launchProcess () {
     try {
-      // const [ base, qriPath, ipfsPath ] = this.setupRepo()
       this.logPath = path.join(this.dir, 'temp_registry_server.log')
       const write = fs.createWriteStream(this.logPath)
       this.stdout = write
       this.stderr = write
       this.process = childProcess.spawn(this.registryBinPath, ['connect', '--setup'], {
-        // stdio: ['pipe', this.stdout, this.stderr],
         env: Object.assign(process.env, {
           'PORT': '2500'
         })
@@ -63,8 +58,6 @@ export default class TestTempRegistry {
       this.process.on('close', (err: any) => {
         this.handleEvent('close', err)
         write.close()
-        const buffer = fs.readFileSync(this.logPath)
-        console.log(buffer.toString())
       })
       this.process.on('disconnect', (err: any) => { this.handleEvent('disconnect', err) })
     } catch (err) {

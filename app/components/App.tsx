@@ -41,36 +41,36 @@ export interface AppProps {
   selections: Selections
   apiConnection?: number
   hasAcceptedTOS: boolean
-  // the persited directory path to which the user last saved a dataset
-  datasetDirPath: string
+  datasetDirPath: string // the persited directory path to which the user last saved a dataset
   qriCloudAuthenticated: boolean
   toast: IToast
   openToast: (type: ToastType, name: string, message: string) => Action
   modal: Modal
   workingDataset: Dataset
   exportPath: string
-  setExportPath: (path: string) => Action
   children: JSX.Element[] | JSX.Element
 
+  setExportPath: (path: string) => Action
+  acceptTOS: () => Action
+  push: (path: string) => void
+  setQriCloudAuthenticated: () => Action
+  setDatasetDirPath: (path: string) => Action
+  setModal: (modal: Modal) => Action
+  signout: () => Action
+  closeToast: () => Action
+
   bootstrap: () => Promise<ApiAction>
+  pingApi: () => Promise<ApiAction>
   fetchMyDatasets: (page?: number, pageSize?: number) => Promise<ApiAction>
   addDataset: (peername: string, name: string) => Promise<ApiAction>
   linkDataset: (peername: string, name: string, dir: string) => Promise<ApiAction>
-  push: (path: string) => void
   setWorkingDataset: (peername: string, name: string) => Promise<ApiAction>
-  acceptTOS: () => Action
-  setQriCloudAuthenticated: () => Action
   signup: (username: string, email: string, password: string) => Promise<ApiAction>
   signin: (username: string, password: string) => Promise<ApiAction>
-  closeToast: () => Action
-  pingApi: () => Promise<ApiAction>
-  setModal: (modal: Modal) => Action
+  importFile: (filePath: string, fileName: string, fileSize: number) => Promise<ApiAction>
   removeDatasetAndFetch: (peername: string, name: string, removeFiles: boolean) => Promise<ApiAction>
   publishDataset: () => Promise<ApiAction>
   unpublishDataset: () => Promise<ApiAction>
-  setDatasetDirPath: (path: string) => Action
-  signout: () => Action
-  importFile: (filePath: string, fileName: string, fileSize: number) => Promise<ApiAction>
   fetchWorkingDatasetDetails: () => Promise<ApiAction>
 }
 
