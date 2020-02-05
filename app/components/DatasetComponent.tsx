@@ -143,7 +143,7 @@ const DatasetComponent: React.FunctionComponent<DatasetComponentProps> = (props:
             <Structure
               data={data.components.structure.value}
               history={history}
-              fsiBodyFormat={(!history && data.status.body.filepath && path.extname(data.status.body.filepath).slice(1)) || ''}
+              fsiBodyFormat={(!history && data.status && data.status.body && data.status.body.filepath && path.extname(data.status.body.filepath).slice(1)) || ''}
               write={handleStructureWrite}
             />
           </div>

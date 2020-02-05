@@ -1,5 +1,5 @@
 import { Dataset } from '../models/dataset'
-import { DatasetSummary, ComponentStatus, ComponentState, HistoryItem } from '../models/store'
+import { DetailedDatasetRef, ComponentStatus, ComponentState, HistoryItem } from '../models/store'
 
 export function mapDataset (data: Record<string, string>): Dataset {
   return data
@@ -13,15 +13,32 @@ export function mapRecord (data: any): Record<string, string> {
   return data
 }
 
-export function mapDatasetSummary (data: any[]): DatasetSummary[] {
-  return data.map((ref: any) => ({
-    dataset: ref.dataset,
-    peername: ref.peername,
-    name: ref.name,
-    path: ref.path,
-    fsiPath: ref.fsiPath,
-    published: ref.published
-  }))
+export function mapDetailedDatasetRef (data: any[]): DetailedDatasetRef[] {
+  return data.map((ref: any) => ref as DetailedDatasetRef)
+}
+
+// detailedDatasetRefToDataset converts a detailed ref to a sparsely-populated
+// dataset object without using any fetching
+export function detailedDatasetRefToDataset (ddr: DetailedDatasetRef): Dataset {
+  return {
+    username: ddr.username,
+    name: ddr.name,
+    path: ddr.path,
+    meta: {
+      title: ddr.metaTitle,
+      theme: ddr.themeList && ddr.themeList.split(',', -1)
+    },
+    structure: {
+      format: 'csv',
+      length: ddr.bodySize,
+      depth: 0,
+      entries: ddr.bodyRows,
+      errCount: ddr.numErrors
+    },
+    commit: {
+      timestamp: ddr.commitTime
+    }
+  }
 }
 
 export function mapStatus (data: Array<Record<string, string>>): ComponentStatus[] {

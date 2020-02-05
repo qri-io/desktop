@@ -1,6 +1,8 @@
 import path from 'path'
+import os from 'os'
 import fs from 'fs'
 import TestBackendProcess from '../utils/testQriBackend'
+import TestTempRegistry from '../utils/testTempRegistry'
 import fakeDialog from 'spectron-fake-dialog'
 import { E2ETestUtils, newE2ETestUtils } from '../utils/e2eTestUtils'
 
@@ -9,6 +11,12 @@ const { Application } = require('spectron')
 describe('Qri End to End tests', function spec () {
   let app: any
   let backend: any
+  let registry: any
+  const imagesDir = process.env.E2E_ARTIFACTS_PATH || os.tmpdir()
+  const artifactPath = (s: string): string => {
+    return path.join(imagesDir, s)
+  }
+  console.log(`storing artifacts at: ${imagesDir}`)
 
   // The utility functions we use to build our e2e tests
   // declared in this scope so they can be accessed by all tests
@@ -30,6 +38,9 @@ describe('Qri End to End tests', function spec () {
 
   beforeAll(async () => {
     jest.setTimeout(60000)
+
+    registry = new TestTempRegistry()
+    await registry.start()
 
     // spin up a new mock backend with a mock registry server attached
     backend = new TestBackendProcess()
@@ -79,6 +90,7 @@ describe('Qri End to End tests', function spec () {
   afterAll(async () => {
     await utils.delay(500)
     backend.close()
+    registry.close()
     if (app && app.isRunning()) {
       return app.stop()
     }
@@ -110,7 +122,7 @@ describe('Qri End to End tests', function spec () {
     await click('#accept')
 
     // make sure we navigated to the correct page
-    await atLocation('#/signup')
+    await atLocation('#/onboard/signup', artifactPath('accept_terms_of_service_by_clicking_accept_and_get_taken_to_signup.png'))
   })
 
   it('create a new account, taken to datasets page', async () => {
@@ -137,7 +149,7 @@ describe('Qri End to End tests', function spec () {
     await click('#accept')
 
     // make sure we are on the collection page
-    await atLocation('#/collection')
+    await atLocation('#/collection', artifactPath('create_a_new_account_taken_to_datasets_page.png'))
   })
 
   // signout and sign in
@@ -153,7 +165,7 @@ describe('Qri End to End tests', function spec () {
     // click signout
     await click('#signout')
     // on signup page
-    await atLocation('#/signup')
+    await atLocation('#/onboard/signup')
     // navigate to signin page
     await click('#signin')
     // ensure we are on signin page
@@ -193,8 +205,8 @@ describe('Qri End to End tests', function spec () {
     // submit to create a new dataset
     await click('#submit')
 
-    // ensure we have redirected to the dataset page
-    await atLocation('#/dataset')
+    // ensure we are redirected to the workbench
+    await atLocation(`#/workbench`)
 
     // ensure we have navigated to the correct dataset
     // TODO (ramfox): it's weird that we have to pass in this newline character
@@ -212,7 +224,7 @@ describe('Qri End to End tests', function spec () {
     await checkStatus('structure', 'added')
   })
 
-  it ('navigate to collection and back to dataset', async () => {
+  it('navigate to collection and back to dataset', async () => {
     const {
       atLocation,
       click,
@@ -230,7 +242,7 @@ describe('Qri End to End tests', function spec () {
     const ref = `#${username}-${datasetName}`
     await click(ref)
     // ensure we have redirected to the dataset page
-    await atLocation('#/dataset')
+    await atLocation(`#/workbench/${username}/${datasetName}`)
     // ensure we are still at the history tab
     await onHistoryTab()
     // ensure we have a commit title
@@ -249,7 +261,7 @@ describe('Qri End to End tests', function spec () {
     } = utils
 
     // at dataset
-    await click('#dataset')
+    await click('#workbench')
     // at status
     await click('#status-tab')
     await onStatusTab()
@@ -266,7 +278,7 @@ describe('Qri End to End tests', function spec () {
     // expect modal to be gone
     await waitForNotExist('#checkout-dataset')
     // atLocation
-    await atLocation('#/dataset')
+    await atLocation(`#/workbench`)
     // check we are at status tab
     await onStatusTab()
     // expect Body to now be active
@@ -286,7 +298,7 @@ describe('Qri End to End tests', function spec () {
     } = utils
 
     // on dataset page
-    await click('#dataset')
+    await click('#workbench')
     // on status tab
     await click('#status-tab')
     // no changes, so cannot commit
@@ -327,7 +339,7 @@ describe('Qri End to End tests', function spec () {
     } = utils
 
     // on dataset page
-    await click('#dataset')
+    await click('#workbench')
     // on status tab
     await click('#status-tab')
     // commit should be disabled
@@ -372,8 +384,8 @@ describe('Qri End to End tests', function spec () {
     } = utils
 
     // make sure we are on the dataset page, looking at history
-    await click('#dataset')
-    await atLocation('#/dataset')
+    await click('#workbench')
+    await atLocation(`#/workbench`)
     await click('#history-tab')
     await onHistoryTab()
     await click('#commit-status')
@@ -402,9 +414,9 @@ describe('Qri End to End tests', function spec () {
     } = utils
 
     // on dataset
-    await click('#dataset')
-    // ensure we are on dataset
-    await atLocation('#/dataset')
+    await click('#workbench')
+    // ensure we are on the workbench
+    await atLocation(`#/workbench`)
     // click #dataset-name
     await click('#dataset-name')
     // make sure the input exists
@@ -448,8 +460,8 @@ describe('Qri End to End tests', function spec () {
     // submit to create a new dataset
     await click('#submit')
 
-    // ensure we have redirected to the dataset page
-    await atLocation('#/dataset')
+    // ensure we have redirected to the workbench section
+    await atLocation('#/workbench')
 
     // ensure we have navigated to the correct dataset
     // TODO (ramfox): it's weird that we have to pass in this newline character

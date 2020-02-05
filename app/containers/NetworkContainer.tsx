@@ -9,8 +9,7 @@ import { setSidebarWidth } from '../actions/ui'
 
 import {
   setActiveTab,
-  setSelectedListItem,
-  setRoute
+  setSelectedListItem
 } from '../actions/selections'
 import { DetailsType } from '../models/details'
 
@@ -50,8 +49,7 @@ const NetworkContainer = connect(
   {
     setActiveTab,
     setSidebarWidth,
-    setSelectedListItem,
-    setRoute
+    setSelectedListItem
   },
   mergeProps
 )(Network)

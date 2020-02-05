@@ -15,12 +15,11 @@ export interface TransformProps {
   write: (peername: string, name: string, dataset: any) => ApiActionThunk
 }
 
-const Transform: React.FunctionComponent<TransformProps> = (props) => {
-  const { value } = props
-
-  return (
-    <Code data={value} />
-  )
+// TODO (b5) - setting a default value here b/c we're getting null value from
+// somewhere when we click workbench/transform component. need to investigate
+// and not pass a nonexistent value, ever.
+const Transform: React.FunctionComponent<TransformProps> = ({ value = '' }) => {
+  return <Code data={value} />
 }
 
 export default Transform

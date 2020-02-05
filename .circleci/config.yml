@@ -29,16 +29,23 @@ jobs:
           name: publish to codecov
           command: yarn codecov
       - run:
-          name: install qri backend
-          command: go get github.com/qri-io/qri
+          name: install qri backend & temp_registry_server
+          command: go get github.com/qri-io/qri github.com/qri-io/temp_registry_server
       - run:
           name: build
           command: yarn build
+      - run:
+          name: create artifacts path
+          command: mkdir /home/circleci/e2e_artifacts
       - run:
           name: test e2e
           command: yarn test-e2e
           environment:
             HEADLESS_CHROME: 'true'
+            E2E_ARTIFACTS_PATH: '/home/circleci/e2e_artifacts'
+      - store_artifacts:
+          path: ~/e2e_artifacts
+          prefix: screenshots
       - store_artifacts:
           path: test-results.xml
           prefix: tests

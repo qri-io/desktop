@@ -1,7 +1,7 @@
 import * as React from 'react'
 
-import { Modal, ModalType } from '../models/modals'
-import ExternalLink from './ExternalLink'
+import { Modal, ModalType } from '../../models/modals'
+import ExternalLink from '../ExternalLink'
 
 interface UnlinkedDatasetProps {
   setModal: (modal: Modal) => void

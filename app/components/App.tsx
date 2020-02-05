@@ -6,10 +6,18 @@ import { ipcRenderer, remote } from 'electron'
 import fs from 'fs'
 import path from 'path'
 import ReactTooltip from 'react-tooltip'
-import { history } from '../store/configureStore.development'
-
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faFileMedical } from '@fortawesome/free-solid-svg-icons'
+
+import { DEFAULT_POLL_INTERVAL } from '../constants'
+
+// import models
+import { history } from '../store/configureStore.development'
+import { ApiAction } from '../store/api'
+import { Modal, ModalType, HideModal } from '../models/modals'
+import { Toast as IToast, Selections, ToastType } from '../models/store'
+import { Dataset } from '../models/dataset'
+import { ToastTypes } from './chrome/Toast'
 
 // import components
 import Toast from './Toast'
@@ -25,19 +33,6 @@ import UnpublishDataset from './modals/UnpublishDataset'
 import SearchModal from './modals/SearchModal'
 import RoutesContainer from '../containers/RoutesContainer'
 
-// import models
-import { ApiAction } from '../store/api'
-import { Modal, ModalType, HideModal } from '../models/modals'
-import { Toast as IToast, Selections, ToastType } from '../models/store'
-import { Dataset } from '../models/dataset'
-import { ToastTypes } from './chrome/Toast'
-
-export const QRI_CLOUD_ROOT = 'https://qri.cloud'
-
-// 2800ms is quick enough for the app to feel responsive
-// but is slow enough to not clog up the ports
-export const defaultPollInterval = 3000
-
 export interface AppProps {
   hasDatasets: boolean
   loading: boolean
@@ -46,35 +41,36 @@ export interface AppProps {
   selections: Selections
   apiConnection?: number
   hasAcceptedTOS: boolean
-  // the persited directory path to which the user last saved a dataset
-  datasetDirPath: string
+  datasetDirPath: string // the persited directory path to which the user last saved a dataset
   qriCloudAuthenticated: boolean
   toast: IToast
   openToast: (type: ToastType, name: string, message: string) => Action
   modal: Modal
   workingDataset: Dataset
   exportPath: string
-  setExportPath: (path: string) => Action
   children: JSX.Element[] | JSX.Element
+
+  setExportPath: (path: string) => Action
+  acceptTOS: () => Action
+  push: (path: string) => void
+  setQriCloudAuthenticated: () => Action
+  setDatasetDirPath: (path: string) => Action
+  setModal: (modal: Modal) => Action
+  signout: () => Action
+  closeToast: () => Action
+
   bootstrap: () => Promise<ApiAction>
+  pingApi: () => Promise<ApiAction>
   fetchMyDatasets: (page?: number, pageSize?: number) => Promise<ApiAction>
   addDataset: (peername: string, name: string) => Promise<ApiAction>
   linkDataset: (peername: string, name: string, dir: string) => Promise<ApiAction>
   setWorkingDataset: (peername: string, name: string) => Promise<ApiAction>
-  acceptTOS: () => Action
-  setQriCloudAuthenticated: () => Action
   signup: (username: string, email: string, password: string) => Promise<ApiAction>
   signin: (username: string, password: string) => Promise<ApiAction>
-  closeToast: () => Action
-  pingApi: () => Promise<ApiAction>
-  setModal: (modal: Modal) => Action
+  importFile: (filePath: string, fileName: string, fileSize: number) => Promise<ApiAction>
   removeDatasetAndFetch: (peername: string, name: string, removeFiles: boolean) => Promise<ApiAction>
   publishDataset: () => Promise<ApiAction>
   unpublishDataset: () => Promise<ApiAction>
-  setDatasetDirPath: (path: string) => Action
-  signout: () => Action
-  setRoute: (route: string) => Action
-  importFile: (filePath: string, fileName: string, fileSize: number) => Promise<ApiAction>
   fetchWorkingDatasetDetails: () => Promise<ApiAction>
 }
 
@@ -107,7 +103,8 @@ class App extends React.Component<AppProps, AppState> {
     this.renderAppError = this.renderAppError.bind(this)
     this.handleCreateDataset = this.handleCreateDataset.bind(this)
     this.handleAddDataset = this.handleAddDataset.bind(this)
-    this.handleSelectRoute = this.handleSelectRoute.bind(this)
+    this.handlePush = this.handlePush.bind(this)
+    this.handleReload = this.handleReload.bind(this)
     this.handleSetDebugLogPath = this.handleSetDebugLogPath.bind(this)
     this.handleExportDebugLog = this.handleExportDebugLog.bind(this)
   }
@@ -120,8 +117,12 @@ class App extends React.Component<AppProps, AppState> {
     this.props.setModal({ type: ModalType.AddDataset })
   }
 
-  private handleSelectRoute (e: any, route: string) {
-    this.props.setRoute(route)
+  private handlePush (e: any, route: string) {
+    this.props.push(route)
+  }
+
+  private handleReload () {
+    remote.getCurrentWindow().reload()
   }
 
   private handleSetDebugLogPath (_e: any, path: string) {
@@ -148,20 +149,17 @@ class App extends React.Component<AppProps, AppState> {
   componentDidMount () {
     // handle ipc events from electron menus
     ipcRenderer.on('create-dataset', this.handleCreateDataset)
-
     ipcRenderer.on('add-dataset', this.handleAddDataset)
-
-    ipcRenderer.on('select-route', this.handleSelectRoute)
-
+    ipcRenderer.on('history-push', this.handlePush)
     ipcRenderer.on('set-debug-log-path', this.handleSetDebugLogPath)
-
     ipcRenderer.on('export-debug-log', this.handleExportDebugLog)
+    ipcRenderer.on('reload', this.handleReload)
 
     setInterval(() => {
       if (this.props.apiConnection !== 1 || this.props.selections.peername === '' || this.props.selections.name === '') {
         this.props.pingApi()
       }
-    }, defaultPollInterval)
+    }, DEFAULT_POLL_INTERVAL)
 
     if (this.props.apiConnection === 1) {
       this.props.bootstrap()
@@ -170,10 +168,10 @@ class App extends React.Component<AppProps, AppState> {
 
   componentWillUnmount () {
     ipcRenderer.removeListener('create-dataset', this.handleCreateDataset)
-
-    ipcRenderer.on('add-dataset', this.handleAddDataset)
-
-    ipcRenderer.on('select-route', this.handleSelectRoute)
+    ipcRenderer.removeListener('add-dataset', this.handleAddDataset)
+    ipcRenderer.removeListener('history-push', this.handlePush)
+    ipcRenderer.removeListener('set-debug-log-path', this.handleSetDebugLogPath)
+    ipcRenderer.removeListener('reload', this.handleReload)
   }
 
   componentDidUpdate (prevProps: AppProps) {

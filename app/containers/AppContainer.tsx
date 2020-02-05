@@ -1,6 +1,7 @@
 import { connect } from 'react-redux'
 import App, { AppProps } from '../components/App'
 import Store from '../models/store'
+import { push } from 'connected-react-router'
 
 import {
   fetchMyDatasets,
@@ -31,8 +32,7 @@ import {
 } from '../actions/session'
 
 import {
-  setWorkingDataset,
-  setRoute
+  setWorkingDataset
 } from '../actions/selections'
 
 const mergeProps = (props: any, actions: any): AppProps => {
@@ -65,6 +65,7 @@ const AppContainer = connect(
     fetchMyDatasets,
     acceptTOS,
     signup,
+    push,
     setQriCloudAuthenticated,
     addDataset: addDatasetAndFetch,
     linkDataset: linkDatasetAndFetch,
@@ -79,7 +80,6 @@ const AppContainer = connect(
     removeDatasetAndFetch,
     setDatasetDirPath,
     signout,
-    setRoute,
     importFile,
     fetchWorkingDatasetDetails
   },

@@ -3,11 +3,11 @@ import { Action } from 'redux'
 import { Link } from 'react-router-dom'
 
 import WelcomeTemplate from './WelcomeTemplate'
-import DebouncedTextInput from './form/DebouncedTextInput'
-import { getActionType } from '../utils/actionType'
-import { ApiAction } from '../store/api'
+import DebouncedTextInput from '../form/DebouncedTextInput'
+import { getActionType } from '../../utils/actionType'
+import { ApiAction } from '../../store/api'
 
-import { validateUsername, validateEmail, validatePassword } from '../utils/formValidation'
+import { validateUsername, validateEmail, validatePassword } from '../../utils/formValidation'
 
 export interface SignupProps {
   signup: (username: string, email: string, password: string) => Promise<ApiAction>

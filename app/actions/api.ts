@@ -1,5 +1,4 @@
 import { Action, AnyAction } from 'redux'
-
 import { push } from 'connected-react-router'
 
 import { CALL_API, ApiAction, ApiActionThunk, chainSuccess } from '../store/api'
@@ -11,7 +10,7 @@ import { setWorkingDataset, setSelectedListItem, setActiveTab, clearSelection } 
 import {
   mapDataset,
   mapRecord,
-  mapDatasetSummary,
+  mapDetailedDatasetRef,
   mapStatus,
   mapHistory,
   mapBody
@@ -25,10 +24,10 @@ export const bodyPageSizeDefault = 50
 
 const DEFAULT_SELECTED_COMPONENT = 'body'
 
-// look up the peername/name in myDatasets, return boolean for existence of fsiPath
-const lookupFsi = (peername: string | null, name: string | null, myDatasets: MyDatasets) => {
+// look up the username/name in myDatasets, return boolean for existence of fsiPath
+function lookupFsi (username: string | null, name: string | null, myDatasets: MyDatasets) {
   const dataset = myDatasets.value.find((dataset) => {
-    return dataset.peername === peername && dataset.name === name
+    return dataset.username === username && dataset.name === name
   })
 
   return dataset && !!dataset.fsiPath
@@ -149,7 +148,7 @@ export function fetchMyDatasets (page: number = 1, pageSize: number = pageSizeDe
           page: confirmedPage,
           pageSize
         },
-        map: mapDatasetSummary
+        map: mapDetailedDatasetRef
       }
     }
 
@@ -166,7 +165,7 @@ export function fetchWorkingDataset (): ApiActionThunk {
       return Promise.reject(new Error('no peername or name selected'))
     }
     // look up the peername + name in myDatasets to determine whether it is FSI linked
-    const dataset = myDatasets.value.find((d) => (d.peername === peername) && (d.name === name))
+    const dataset = myDatasets.value.find((d) => (d.username === peername) && (d.name === name))
     if (!dataset) {
       return Promise.reject(new Error('could not find dataset in list'))
     }
@@ -541,7 +540,7 @@ export function addDatasetAndFetch (peername: string, name: string): ApiActionTh
       dispatch(setWorkingDataset(peername, name))
       dispatch(setActiveTab('history'))
       dispatch(setSelectedListItem('component', DEFAULT_SELECTED_COMPONENT))
-      dispatch(push('dataset'))
+      dispatch(push('workbench'))
     } catch (action) {
       dispatch(openToast('error', 'add', action.payload.err.message))
       throw action
@@ -830,7 +829,7 @@ export function importFile (filePath: string, fileName: string, fileSize: number
     }
     dispatch(setActiveTab('history'))
     dispatch(setSelectedListItem('component', DEFAULT_SELECTED_COMPONENT))
-    dispatch(push('dataset'))
+    dispatch(push('workbench'))
     dispatch(setImportFileDetails('', 0))
     return response
   }

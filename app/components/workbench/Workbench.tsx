@@ -1,27 +1,13 @@
 import * as React from 'react'
 import { Action } from 'redux'
-import { withRouter } from 'react-router-dom'
-import { remote, ipcRenderer, shell, clipboard } from 'electron'
+import { ipcRenderer, shell, clipboard } from 'electron'
 import { CSSTransition } from 'react-transition-group'
-
-import { ApiActionThunk } from '../store/api'
-import { Resizable } from './Resizable'
-import { Session } from '../models/session'
-import SidebarLayout from './SidebarLayout'
-import UnlinkedDataset from './UnlinkedDataset'
-import { QRI_CLOUD_URL } from '../constants'
-import DatasetComponent from './DatasetComponent'
-import NoDatasetSelected from './NoDatasetSelected'
-import { Modal, ModalType } from '../models/modals'
-import { defaultSidebarWidth } from '../reducers/ui'
-import HeaderColumnButton from './chrome/HeaderColumnButton'
-// import HeaderColumnButtonDropdown from './chrome/HeaderColumnButtonDropdown'
-import DatasetSidebar from '../components/DatasetSidebar'
-import DetailsBarContainer from '../containers/DetailsBarContainer'
-import CommitDetails from './CommitDetails'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faFolderOpen, faFile, faLink, faCloud, faCloudUploadAlt } from '@fortawesome/free-solid-svg-icons'
 
+import { QRI_CLOUD_URL, DEFAULT_POLL_INTERVAL } from '../../constants'
+import { Details } from '../../models/details'
+import { Session } from '../../models/session'
 import {
   Selections,
   WorkingDataset,
@@ -29,20 +15,36 @@ import {
   History,
   ComponentType,
   SelectedComponent
-} from '../models/store'
-import NoDatasets from './NoDatasets'
-import { defaultPollInterval } from './App'
-import { Details } from '../models/details'
-import Hamburger from './chrome/Hamburger'
+} from '../../models/store'
+import { Modal, ModalType } from '../../models/modals'
+import { ApiActionThunk, LaunchedFetchesAction } from '../../store/api'
+import { defaultSidebarWidth } from '../../reducers/ui'
 
-export interface DatasetData {
+import { Resizable } from '../Resizable'
+import SidebarLayout from '../SidebarLayout'
+import UnlinkedDataset from './UnlinkedDataset'
+import DatasetComponent from '../DatasetComponent'
+import NoDatasetSelected from './NoDatasetSelected'
+import HeaderColumnButton from '../chrome/HeaderColumnButton'
+import Hamburger from '../chrome/Hamburger'
+import WorkbenchSidebar from './WorkbenchSidebar'
+import DetailsBarContainer from '../../containers/DetailsBarContainer'
+import CommitDetails from '../CommitDetails'
+import NoDatasets from '../NoDatasets'
+
+// TODO (b5) - is this still required?
+require('../../assets/qri-blob-logo-tiny.png')
+
+export interface WorkbenchData {
+  location: string
+
   workingDataset: WorkingDataset
   head: ICommitDetails
   history: History
 }
 
-export interface DatasetProps {
-  data: DatasetData
+export interface WorkbenchProps {
+  data: WorkbenchData
 
   // display details
   selections: Selections
@@ -56,23 +58,19 @@ export interface DatasetProps {
   setModal: (modal: Modal) => void
   setActiveTab: (activeTab: string) => Action
   setSidebarWidth: (type: string, sidebarWidth: number) => Action
-  setRoute: (route: string) => Action
   setCommit: (path: string) => Action
   setComponent: (type: ComponentType, activeComponent: string) => Action
   setDetailsBar: (details: Record<string, any>) => Action
 
   // fetching actions
+  fetchWorkbench: () => LaunchedFetchesAction
   fetchHistory: (page?: number, pageSize?: number) => ApiActionThunk
-  fetchWorkingDatasetAndStatus: () => ApiActionThunk
   fetchWorkingDataset: () => ApiActionThunk
   fetchWorkingStatus: () => ApiActionThunk
-  fetchStats: () => ApiActionThunk
   fetchBody: (page: number) => ApiActionThunk
 
   fetchCommitDataset: () => ApiActionThunk
-  fetchCommitStatus: () => ApiActionThunk
   fetchCommitBody: (page: number) => ApiActionThunk
-  fetchCommitStats: () => ApiActionThunk
 
   // api actions (that aren't fetching)
   publishDataset: () => ApiActionThunk
@@ -82,10 +80,10 @@ export interface DatasetProps {
   fsiWrite: (peername: string, name: string, dataset: Dataset) => ApiActionThunk
 }
 
-const logo = require('../assets/qri-blob-logo-tiny.png') //eslint-disable-line
+class Workbench extends React.Component<WorkbenchProps> {
+  poll: NodeJS.Timeout
 
-class Dataset extends React.Component<DatasetProps> {
-  constructor (props: DatasetProps) {
+  constructor (props: WorkbenchProps) {
     super(props);
 
     [
@@ -93,135 +91,70 @@ class Dataset extends React.Component<DatasetProps> {
       'publishUnpublishDataset',
       'handleShowStatus',
       'handleShowHistory',
-      'handleReload',
-      'handleCopyLink'
+      'handleCopyLink',
+      'startPolling',
+      'stopPolling'
     ].forEach((m) => { this[m] = this[m].bind(this) })
   }
 
   componentDidMount () {
     // electron menu events
     ipcRenderer.on('show-status', this.handleShowStatus)
-
     ipcRenderer.on('show-history', this.handleShowHistory)
-
     ipcRenderer.on('open-working-directory', this.openWorkingDirectory)
-
     ipcRenderer.on('publish-unpublish-dataset', this.publishUnpublishDataset)
 
-    ipcRenderer.on('reload', this.handleReload)
-
-    const {
-      data,
-      selections,
-      fetchWorkingDatasetAndStatus,
-      fetchHistory,
-      fetchStats,
-      fetchBody,
-      fetchCommitDataset,
-      fetchCommitStats,
-      fetchCommitStatus,
-      fetchCommitBody,
-      setCommit
-    } = this.props
-    const { workingDataset, head, history } = data
-
-    if (!workingDataset.isLoading &&
-        (selections.peername !== workingDataset.peername ||
-        selections.name !== workingDataset.name)) {
-      fetchHistory()
-      fetchWorkingDatasetAndStatus()
-      fetchStats()
-      fetchBody(-1)
-      return
-    }
-    if (!head.isLoading &&
-        (selections.peername !== head.peername ||
-        selections.name !== head.name ||
-        selections.commit !== head.path)) {
-      fetchCommitDataset()
-      fetchCommitStats()
-      fetchCommitStatus()
-      fetchCommitBody(-1)
-      return
-    }
-    if (selections.commit === '' && history.value.length !== 0) {
-      setCommit(history.value[0].path)
-    }
+    this.props.fetchWorkbench()
+    this.startPolling()
   }
 
   componentWillUnmount () {
-    clearInterval(this.statusInterval)
+    this.stopPolling()
     ipcRenderer.removeListener('show-status', this.handleShowStatus)
-
     ipcRenderer.removeListener('show-history', this.handleShowHistory)
-
     ipcRenderer.removeListener('open-working-directory', this.openWorkingDirectory)
-
     ipcRenderer.removeListener('publish-unpublish-dataset', this.publishUnpublishDataset)
-
-    ipcRenderer.removeListener('reload', this.handleReload)
   }
 
-  statusInterval = setInterval(() => {
-    if (this.props.data.workingDataset.peername !== '' || this.props.data.workingDataset.name !== '') {
-      this.props.fetchWorkingStatus()
+  private startPolling () {
+    if (this.poll) {
+      clearInterval(this.poll)
     }
-  }, defaultPollInterval)
 
-  handleShowStatus () {
+    this.poll = setInterval(() => {
+      if (this.props.data.workingDataset.peername !== '' || this.props.data.workingDataset.name !== '') {
+        this.props.fetchWorkingStatus()
+      }
+    }, DEFAULT_POLL_INTERVAL)
+  }
+
+  private stopPolling () {
+    clearInterval(this.poll)
+  }
+
+  private handleShowStatus () {
     this.props.setActiveTab('status')
   }
 
-  handleShowHistory () {
+  private handleShowHistory () {
     this.props.setActiveTab('history')
   }
 
-  handleReload () {
-    remote.getCurrentWindow().reload()
-  }
-
-  handleCopyLink () {
+  private handleCopyLink () {
     clipboard.writeText(`${QRI_CLOUD_URL}/${this.props.data.workingDataset.peername}/${this.props.data.workingDataset.name}`)
   }
 
-  componentDidUpdate (prevProps: DatasetProps) {
+  async componentDidUpdate (prevProps: WorkbenchProps) {
     const {
       data,
-      selections,
-      fetchWorkingDatasetAndStatus,
       fetchWorkingDataset,
-      fetchHistory,
-      fetchStats,
-      fetchBody,
-      fetchCommitDataset,
-      fetchCommitStats,
-      fetchCommitStatus,
-      fetchCommitBody,
-      setCommit
+      fetchBody
     } = this.props
-    const { workingDataset, head, history } = data
+    const { workingDataset } = data
 
-    if (!workingDataset.isLoading &&
-        (selections.peername !== workingDataset.peername ||
-        selections.name !== workingDataset.name)) {
-      fetchHistory()
-      fetchWorkingDatasetAndStatus()
-      fetchBody(-1)
-      fetchStats()
-      return
-    }
-    if (!head.isLoading &&
-        (selections.peername !== head.peername ||
-        selections.name !== head.name ||
-        selections.commit !== head.path)) {
-      fetchCommitDataset()
-      fetchCommitStats()
-      fetchCommitStatus()
-      fetchCommitBody(-1)
-      return
-    }
-    if (selections.commit === '' && history.value.length !== 0) {
-      setCommit(history.value[0].path)
+    if (prevProps.data.location !== this.props.data.location) {
+      // TODO (b5) - this was bailing early when fetch happened
+      this.props.fetchWorkbench()
     }
 
     // map mtime deltas to a boolean to determine whether to update the workingDataset
@@ -280,7 +213,6 @@ class Dataset extends React.Component<DatasetProps> {
   }
 
   render () {
-    // unpack all the things
     const {
       data,
 
@@ -294,7 +226,6 @@ class Dataset extends React.Component<DatasetProps> {
       setActiveTab,
       setCommit,
       setComponent,
-      setRoute,
       setDetailsBar,
 
       fetchHistory,
@@ -326,7 +257,7 @@ class Dataset extends React.Component<DatasetProps> {
     } = this.props
 
     const sidebarContent = (
-      <DatasetSidebar
+      <WorkbenchSidebar
         data= {{ workingDataset: data.workingDataset, history: data.history }}
         selections={selections}
         setModal={setModal}
@@ -416,7 +347,7 @@ class Dataset extends React.Component<DatasetProps> {
               mountOnEnter
               unmountOnExit
             >
-              <NoDatasets setModal={setModal} setRoute={setRoute} />
+              <NoDatasets setModal={setModal} />
             </CSSTransition>
             <CSSTransition
               in={!datasetSelected && hasDatasets}
@@ -509,4 +440,4 @@ class Dataset extends React.Component<DatasetProps> {
   }
 }
 
-export default withRouter(Dataset)
+export default Workbench
