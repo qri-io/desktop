@@ -2,14 +2,15 @@ import * as React from 'react'
 import { Action } from 'redux'
 
 import { P2PConnection } from '../../models/network'
+import { QriRef } from '../../models/qriRef'
 
 import Layout from '../Layout'
 import P2PConnectionStatus from './P2PConnectionStatus'
 import NetworkHome from './NetworkHome'
 import Preview from '../dataset/Preview'
-import { RouteComponentProps } from 'react-router-dom'
 
-export interface NetworkProps extends RouteComponentProps {
+export interface NetworkProps {
+  qriRef: QriRef
 
   sidebarWidth: number
   importFileName: string
@@ -21,15 +22,10 @@ export interface NetworkProps extends RouteComponentProps {
 
 const Network: React.FunctionComponent<NetworkProps> = (props) => {
   const {
-    match,
-    history,
+    qriRef,
     sidebarWidth,
     setSidebarWidth
   } = props
-
-  const { params } = match
-
-  console.log(match)
 
   const renderMainContent = () => {
     /** TODO (ramfox): username, name, and path must be passed down from container
@@ -37,9 +33,9 @@ const Network: React.FunctionComponent<NetworkProps> = (props) => {
    * if empty, peername is empty, we know to show 'home'
    * if name is empty, we know to show 'profile'
    */
-    if (params && !params.username) return <NetworkHome history={history}/>
+    if (!qriRef.username) return <NetworkHome history={history}/>
 
-    if (params && !params.dataset) {
+    if (!qriRef.dataset) {
       return (
         <div
           style={{
@@ -57,7 +53,7 @@ const Network: React.FunctionComponent<NetworkProps> = (props) => {
       )
     }
 
-    return <Preview peername={params.username} name={params.dataset} path={params.path} />
+    return <Preview peername={qriRef.username} name={qriRef.name} path={qriRef.path} />
   }
 
   const mainContent = (

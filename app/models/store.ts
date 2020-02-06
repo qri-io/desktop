@@ -113,8 +113,8 @@ export interface VersionInfo {
   commitTime: Date    // commit.Timestamp field, time of version creation
   
   // TODO (b5) - these are not yet supplied by the backend.
-  // bodyFormat: string  //
-  // numCommits: number  // 
+  // bodyFormat: string  // data format of the body
+  // numCommits: number  // number of commits in history
 
   // TODO (b5) - need to figure out publication representation. there's tension
   // about what "publication" as a boolean means.

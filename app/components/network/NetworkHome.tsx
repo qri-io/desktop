@@ -1,19 +1,23 @@
 import React from 'react'
+import { withRouter } from 'react-router-dom'
 
 import { BACKEND_URL } from '../../constants'
 import { NetworkHomeData } from '../../models/network'
 
 import Spinner from '../chrome/Spinner'
 import DatasetItem from '../item/Dataset'
-import { RouteComponentProps } from 'react-router-dom'
 
 const initialDataState: NetworkHomeData = {
   featured: [],
   recent: []
 }
 
+export interface NetworkHomeProps {
+  push: (path: string) => void
+}
+
 // NetworkHome accepts no props
-const NetworkHome: React.FC<RouteComponentProps> = ({ history }) => {
+const NetworkHome: React.FC<NetworkHomeProps> = ({ push }) => {
   const [loading, setLoading] = React.useState(true)
   const [data, setData] = React.useState(initialDataState)
   const [error, setError] = React.useState('')
@@ -45,21 +49,21 @@ const NetworkHome: React.FC<RouteComponentProps> = ({ history }) => {
         <label>Featured Datasets</label>
         {featured.map((ds, i) => <DatasetItem onClick={(peername: string, name: string) => {
           console.log(peername, name)
-          history.push(`/network/${peername}/${name}`)
+          push(`/network/${peername}/${name}`)
         }} data={ds} key={i} />)}
       </div>}
       {recent && recent.length && <div>
         <label>Recent Datasets</label>
         {recent.map((ds, i) => <DatasetItem onClick={(peername: string, name: string) => {
           console.log(peername, name)
-          history.push(`/network/${peername}/${name}`)
+          push(`/network/${peername}/${name}`)
         }} data={ds} key={i} />)}
       </div>}
     </div>
   )
 }
 
-export default NetworkHome
+export default withRouter(NetworkHome)
 
 // TODO (b5) - bring this back in the near future for fetching home feed
 async function homeFeed (): Promise<NetworkHomeData> {
