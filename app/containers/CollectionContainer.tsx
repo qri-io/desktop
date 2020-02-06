@@ -1,17 +1,13 @@
 import { connect } from 'react-redux'
 import { setFilter } from '../actions/myDatasets'
-import Collection from '../components/Collection'
+import Collection from '../components/collection/Collection'
 import { fetchMyDatasets } from '../actions/api'
 import { setWorkingDataset } from '../actions/selections'
-import { setSidebarWidth } from '../actions/ui'
+import { setSidebarWidth, setModal } from '../actions/ui'
 
-import { Modal } from '../models/modals'
+import { RouteComponentProps } from 'react-router'
 
-interface CollectionContainerProps {
-  setModal: (modal: Modal) => void
-}
-
-const mapStateToProps = (state: any, ownProps: CollectionContainerProps) => {
+const mapStateToProps = (state: any, ownProps: RouteComponentProps) => {
   const { myDatasets, workingDataset, ui } = state
   const {
     collectionSidebarWidth: sidebarWidth,
@@ -19,8 +15,10 @@ const mapStateToProps = (state: any, ownProps: CollectionContainerProps) => {
     importFileSize
   } = ui
 
-  const { setModal } = ownProps
+  const { match } = ownProps
+  console.log(ownProps)
   return {
+    match,
     myDatasets,
     workingDataset,
     setModal,

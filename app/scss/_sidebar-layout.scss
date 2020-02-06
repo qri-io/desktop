@@ -36,10 +36,12 @@
       overflow: hidden;
 
       .main-content-header {
-        flex: 0;
         display: flex;
+        justify-content: center;
         align-items: center;
         padding: 5px 0;
+        height: 100%;
+        width: 100%;
 
         .header-column {
           display: inline-flex;
@@ -67,7 +69,7 @@
       }
 
       .main-content-flex {
-        flex: 1;
+        // flex: 1;
       }
     }
   }

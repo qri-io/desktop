@@ -15,6 +15,7 @@ const ReadmeHistory: React.FunctionComponent<ReadmeHistoryProps> = (props) => {
       if (el !== null) {
         fetch(`http://localhost:2503/render/${peername}/${name}/at/${path}`)
           .then(async (res) => {
+            if (res.status !== 200) { setHasReadme(false) }
             return res.text()
           })
           .then((render) => {
@@ -59,7 +60,6 @@ const ReadmeHistory: React.FunctionComponent<ReadmeHistoryProps> = (props) => {
   // }
 
   if (!hasReadme) {
-    console.log('no readme')
     return null
   }
   return (

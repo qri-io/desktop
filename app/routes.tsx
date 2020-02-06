@@ -16,8 +16,7 @@ export default function Routes (props: any) {
     setQriCloudAuthenticated,
     acceptTOS,
     signup,
-    signin,
-    setModal
+    signin
   } = props
 
   const requireSignin = (dest: React.ReactElement): React.ReactElement => {
@@ -69,14 +68,12 @@ export default function Routes (props: any) {
             return sectionElement('network', <NetworkContainer {...props} />)
           }} />
         }
-        <Route exact path='/collection' render={() => {
-          return sectionElement('collection', <CollectionContainer setModal={setModal} />)
+        { __BUILD__.ENABLE_NETWORK_SECTION && <Route path='/collection/:username/:dataset' render={(props) => {
+          return sectionElement('collection', <CollectionContainer { ...props }/>)
         }} />
-        <Route path='/collection/:username' render={(props) => {
-          return sectionElement('collection', <Placeholder
-            title='Collection User Datasets'
-            pathname={props.location.pathname}
-          />)
+        }
+        <Route exact path='/collection' render={(props) => {
+          return sectionElement('collection', <CollectionContainer {...props} />)
         }} />
 
         <Route exact path='/workbench' render={() => {
@@ -95,14 +92,14 @@ export default function Routes (props: any) {
   )
 }
 
-interface PlaceholderProps {
-  title: string
-  pathname: string
-}
+// interface PlaceholderProps {
+//   title: string
+//   pathname: string
+// }
 
-const Placeholder: React.FunctionComponent<PlaceholderProps> = ({ title, pathname }) => {
-  return <div className='container dataset'>
-    <h1>{title}</h1>
-    <i>a placeholder for: {pathname}</i>
-  </div>
-}
+// const Placeholder: React.FunctionComponent<PlaceholderProps> = ({ title, pathname }) => {
+//   return <div className='container dataset'>
+//     <h1>{title}</h1>
+//     <i>a placeholder for: {pathname}</i>
+//   </div>
+// }

@@ -4,7 +4,7 @@ import { Dataset as IDataset, DatasetAction } from '../../models/dataset'
 
 import BodySegment from './BodySegment'
 import Overview from './Overview'
-// import ReadmeSegment from './ReadmeSegment'
+import ReadmeSegment from './ReadmeSegment'
 import StructureSegment from './StructureSegment'
 import CommitPreview from './CommitPreview'
 
@@ -17,14 +17,14 @@ const Dataset: React.FunctionComponent<DatasetProps> = (props) => {
   const { data, actions = [] } = props
   if (!data) { return null }
 
-  // const { commit = {}, peername, name, path, structure } = data
-  const { commit = {}, structure } = data
+  const { commit = {}, peername, name, path, structure } = data
+  // const { commit = {}, structure } = data
 
   return (
     <div className='dataset'>
       <Overview data={data} actions={actions} />
       <CommitPreview data={commit} />
-      {/* <ReadmeSegment peername={peername} name={name} path={path} collapsable /> */}
+      <ReadmeSegment peername={peername} name={name} path={path} collapsable />
       <StructureSegment data={structure} collapsable />
       <BodySegment data={data} collapsable />
     </div>

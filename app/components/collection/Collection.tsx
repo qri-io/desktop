@@ -1,16 +1,15 @@
 import * as React from 'react'
 import { Action, AnyAction } from 'redux'
 
-import HeaderColumnButton from './chrome/HeaderColumnButton'
-import WelcomeTemplate from './onboard/WelcomeTemplate'
-import DatasetList from './DatasetList'
-import Layout from './Layout'
-import { MyDatasets, WorkingDataset } from '../models/store'
-import { Modal, ModalType } from '../models/modals'
+import WelcomeTemplate from '../onboard/WelcomeTemplate'
+import DatasetList from '../DatasetList'
+import LocalPreview from '../dataset/LocalPreview'
+import Layout from '../Layout'
+import { MyDatasets, WorkingDataset } from '../../models/store'
+import { Modal } from '../../models/modals'
+import { RouteComponentProps } from 'react-router'
 
-import { faPlus, faDownload } from '@fortawesome/free-solid-svg-icons'
-
-interface CollectionProps {
+interface CollectionProps extends RouteComponentProps {
   myDatasets: MyDatasets
   workingDataset: WorkingDataset
   toggleCollection: () => Action
@@ -27,6 +26,7 @@ interface CollectionProps {
 class Collection extends React.Component<CollectionProps> {
   render () {
     const {
+      match,
       myDatasets,
       workingDataset,
       sidebarWidth,
@@ -38,33 +38,25 @@ class Collection extends React.Component<CollectionProps> {
       importFileSize
     } = this.props
 
-    const mainContent = (
-      <>
-        <div className='main-content-header'>
-          <HeaderColumnButton
-            id='create-dataset'
-            icon={faPlus}
-            label='Create new Dataset'
-            onClick={() => { setModal({ type: ModalType.CreateDataset }) }}
-          />
-          <HeaderColumnButton
-            icon={faDownload}
-            id='add-dataset'
-            label='Add existing Dataset'
-            onClick={() => { setModal({ type: ModalType.AddDataset }) }}
-          />
-        </div>
-        <div className='main-content-flex'>
-          <WelcomeTemplate
-            title='Welcome to Qri!'
-            subtitle={`drop a file to create a new dataset`}
-            id='drop-file'
-            loading={false}
-            fullscreen={false}
-          />
-        </div>
-      </>
-    )
+    const { params } = match
+
+    const renderMainContent = () => {
+      if (params && (!params.username || !params.dataset)) {
+        return (
+          <div className='main-content-header'>
+            <WelcomeTemplate
+              title='Welcome to Qri!'
+              subtitle={`drop a file to create a new dataset`}
+              id='drop-file'
+              loading={false}
+              fullscreen={false}
+            />
+          </div>
+        )
+      }
+
+      return <LocalPreview peername={params.username} name={params.dataset} path={params.path} />
+    }
 
     return (
       <Layout
@@ -80,7 +72,7 @@ class Collection extends React.Component<CollectionProps> {
         />}
         sidebarWidth={sidebarWidth}
         onSidebarResize={(width) => { setSidebarWidth('collection', width) }}
-        mainContent={mainContent}
+        mainContent={renderMainContent()}
       />
     )
   }

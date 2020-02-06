@@ -7,10 +7,11 @@ import { ApiActionThunk } from '../../store/api'
 import Layout from '../Layout'
 import NetworkHome from './NetworkHome'
 import NetworkSidebar from './NetworkSidebar'
-import Preview from '../dataset/Preview'
 import LogList from './LogList'
 import SidebarActionButton from '../chrome/SidebarActionButton'
-import { RouteComponentProps } from 'react-router'
+
+import NetworkPreview from '../dataset/NetworkPreview'
+import { RouteComponentProps } from 'react-router-dom'
 
 export interface NetworkProps extends RouteComponentProps{
   qriRef: QriRef
@@ -29,7 +30,6 @@ export interface NetworkProps extends RouteComponentProps{
 const Network: React.FunctionComponent<NetworkProps> = (props) => {
   const {
     qriRef,
-
     inCollection,
     addDatasetAndFetch,
     sidebarWidth,
@@ -37,8 +37,7 @@ const Network: React.FunctionComponent<NetworkProps> = (props) => {
   } = props
 
   const renderMainContent = () => {
-    /** TODO (ramfox): username, name, and path must be passed down from container
-   * based on route or selections
+    /**
    * if empty, peername is empty, we know to show 'home'
    * if name is empty, we know to show 'profile'
    */
@@ -62,7 +61,7 @@ const Network: React.FunctionComponent<NetworkProps> = (props) => {
       )
     }
 
-    return <Preview peername={qriRef.username} name={qriRef.name} path={qriRef.path} />
+    return <NetworkPreview peername={qriRef.username} name={qriRef.name} path={qriRef.path} />
   }
 
   const mainContent = (

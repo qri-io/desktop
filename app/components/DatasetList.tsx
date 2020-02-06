@@ -124,7 +124,7 @@ class DatasetList extends React.Component<DatasetListProps> {
             onClick={(data: VersionInfo) => {
               setWorkingDataset(data.username, data.name)
                 .then(() => {
-                  this.props.history.push(`/workbench/${data.username}/${name}`)
+                  this.props.history.push(`/collection/${data.username}/${name}`)
                 })
             }}
           />

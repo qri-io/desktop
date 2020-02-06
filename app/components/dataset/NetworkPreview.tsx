@@ -7,7 +7,7 @@ import { BACKEND_URL } from '../../constants'
 import Dataset from './Dataset'
 import SpinnerWithIcon from '../chrome/SpinnerWithIcon'
 
-interface PreviewProps {
+interface NetworkPreviewProps {
   peername: string
   name: string
   path?: string
@@ -16,14 +16,11 @@ interface PreviewProps {
 }
 
 /**
- * Preview is a self-sufficiant component whose content is ephemeral, if you
+ * NetworkPreview is a self-sufficiant component whose content is ephemeral, if you
  * give it a peername, name, and optional path, it will fetch the dataset
  * preview for you
- * TODO (ramfox): we can refactor the fetching and state into the Dataset
- * component itself, just wanted to iterate outside of the component first
- * This should probably have a different name, such as DatasetFetchAndPreview?
  */
-const Preview: React.FunctionComponent<PreviewProps> = (props) => {
+const NetworkPreview: React.FunctionComponent<NetworkPreviewProps> = (props) => {
   const { peername, name, path = '', actions } = props
 
   const [data, setData] = React.useState<IDataset>()
@@ -80,4 +77,4 @@ const Preview: React.FunctionComponent<PreviewProps> = (props) => {
   return <Dataset data={data} actions={actions} />
 }
 
-export default Preview
+export default NetworkPreview
