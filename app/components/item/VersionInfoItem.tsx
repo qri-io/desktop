@@ -3,18 +3,18 @@ import classNames from 'classnames'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faFileAlt } from '@fortawesome/free-solid-svg-icons'
 
-import { DetailedDatasetRef } from '../../models/store'
+import { VersionInfo } from '../../models/store'
 import { detailedDatasetRefToDataset } from '../../actions/mappingFuncs'
 import DatasetDetailsSubtext from '../dataset/DatasetDetailsSubtext'
 
-interface DetailedDatasetRefItemProps {
-  data: DetailedDatasetRef
+interface VersionInfoItemProps {
+  data: VersionInfo
   selected?: boolean
 
-  onClick: (data: DetailedDatasetRef, e?: React.MouseEvent) => void
+  onClick: (data: VersionInfo, e?: React.MouseEvent) => void
 }
 
-const DetailedDatasetRefItem: React.FunctionComponent<DetailedDatasetRefItemProps> = ({ data, selected = false, onClick }) => {
+const VersionInfoItem: React.FunctionComponent<VersionInfoItemProps> = ({ data, selected = false, onClick }) => {
   const { username, name } = data
   return (
     <div
@@ -36,4 +36,4 @@ const DetailedDatasetRefItem: React.FunctionComponent<DetailedDatasetRefItemProp
   )
 }
 
-export default DetailedDatasetRefItem
+export default VersionInfoItem

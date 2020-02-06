@@ -1,5 +1,5 @@
 import { Dataset } from '../models/dataset'
-import { DetailedDatasetRef, ComponentStatus, ComponentState, HistoryItem } from '../models/store'
+import { VersionInfo, ComponentStatus, ComponentState, HistoryItem } from '../models/store'
 
 export function mapDataset (data: Record<string, string>): Dataset {
   return data
@@ -13,13 +13,13 @@ export function mapRecord (data: any): Record<string, string> {
   return data
 }
 
-export function mapDetailedDatasetRef (data: any[]): DetailedDatasetRef[] {
-  return data.map((ref: any) => ref as DetailedDatasetRef)
+export function mapVersionInfo (data: any[]): VersionInfo[] {
+  return data.map((ref: any) => ref as VersionInfo)
 }
 
 // detailedDatasetRefToDataset converts a detailed ref to a sparsely-populated
 // dataset object without using any fetching
-export function detailedDatasetRefToDataset (ddr: DetailedDatasetRef): Dataset {
+export function detailedDatasetRefToDataset (ddr: VersionInfo): Dataset {
   return {
     username: ddr.username,
     name: ddr.name,

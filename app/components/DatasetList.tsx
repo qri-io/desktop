@@ -7,9 +7,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTimes } from '@fortawesome/free-solid-svg-icons'
 
 import { Modal, ModalType } from '../models/modals'
-import { MyDatasets, WorkingDataset, DetailedDatasetRef } from '../models/store'
+import { MyDatasets, WorkingDataset, VersionInfo } from '../models/store'
 import ProgressBar from './chrome/ProgressBar'
-import DetailedDatasetRefItem from './item/DetailedDatasetRefItem'
+import VersionInfoItem from './item/VersionInfoItem'
 
 // for displaying a progress bar based on import file size
 // assumes an import rate of 4828 bytes per millisecond
@@ -88,7 +88,7 @@ class DatasetList extends React.Component<DatasetListProps> {
     })
 
     const listContent = filteredDatasets.length > 0
-      ? filteredDatasets.map((ddr: DetailedDatasetRef) => {
+      ? filteredDatasets.map((ddr: VersionInfo) => {
         const { username, name, fsiPath } = ddr
         let menuItems: MenuItemConstructorOptions[] = [
           {
@@ -118,10 +118,10 @@ class DatasetList extends React.Component<DatasetListProps> {
         }
 
         return (<ContextMenuArea menuItems={menuItems} key={`${username}/${name}`}>
-          <DetailedDatasetRefItem
+          <VersionInfoItem
             data={ddr}
             selected={(username === workingDataset.peername) && (name === workingDataset.name)}
-            onClick={(data: DetailedDatasetRef) => {
+            onClick={(data: VersionInfo) => {
               setWorkingDataset(data.username, data.name)
                 .then(() => {
                   this.props.history.push(`/workbench/${data.username}/${name}`)
