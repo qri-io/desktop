@@ -6,7 +6,6 @@ import { DatasetAction } from '../../models/dataset'
 import ActionButtonBar from '../chrome/ActionButtonBar'
 import Icon from '../chrome/Icon'
 
-
 interface TitleBarProps {
   icon?: string
   title: string
