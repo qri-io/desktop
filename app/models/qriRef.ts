@@ -5,7 +5,7 @@ import { RouteComponentProps } from "react-router"
 // property.
 //
 // QriRef are structured expansions of a reference string, breaking elements of
-// a reference into fields. For example the folling reference string:
+// a reference into fields. For example the following reference string:
 //
 // foo/bar/at/ipfs/QmFme0d:body
 //

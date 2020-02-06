@@ -17,26 +17,28 @@ export function mapVersionInfo (data: any[]): VersionInfo[] {
   return data.map((ref: any) => ref as VersionInfo)
 }
 
-// detailedDatasetRefToDataset converts a detailed ref to a sparsely-populated
+// versionInfoToDataset converts a detailed ref to a sparsely-populated
 // dataset object without using any fetching
-export function detailedDatasetRefToDataset (ddr: VersionInfo): Dataset {
+export function versionInfoToDataset (vi: VersionInfo): Dataset {
+  const theme = (vi.themeList) ? vi.themeList.split(',', -1) : undefined
+
   return {
-    username: ddr.username,
-    name: ddr.name,
-    path: ddr.path,
+    username: vi.username,
+    name: vi.name,
+    path: vi.path,
     meta: {
-      title: ddr.metaTitle,
-      theme: ddr.themeList && ddr.themeList.split(',', -1)
+      title: vi.metaTitle,
+      theme
     },
     structure: {
       format: 'csv',
-      length: ddr.bodySize,
+      length: vi.bodySize,
       depth: 0,
-      entries: ddr.bodyRows,
-      errCount: ddr.numErrors
+      entries: vi.bodyRows,
+      errCount: vi.numErrors
     },
     commit: {
-      timestamp: ddr.commitTime
+      timestamp: vi.commitTime
     }
   }
 }

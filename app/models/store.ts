@@ -95,23 +95,35 @@ export interface PageInfo {
 // contains, and a subset of a Dataset, which fully describes a single version
 export interface VersionInfo {
   // reference details
-  username: string    // human-readble name of the owner of this dataset
-  profileId: string   // user identifier 
-  name: string        // dataset name
-  path: string        // commit hash, eg: /ipfs/QmY9WcXXUnHJbYRA28LRctiL4qu4y...
+  // human-readble name of the owner of this dataset
+  username: string
+  // user identifier
+  profileId: string
+  // dataset name
+  name: string
+  // commit hash, eg: /ipfs/QmY9WcXXUnHJbYRA28LRctiL4qu4y...
+  path: string
 
   // repo locality
-  fsiPath: string     // path to a local filesystem-linked directory (if exists)
-  foreign: boolean    // is block data for this commit stored locally?
+  // path to a local filesystem-linked directory (if exists)
+  fsiPath: string
+  // is block data for this commit stored locally?
+  foreign: boolean
 
   // dataset version details
-  metaTitle: string   // dataset meta.Title field
-  themeList: string   // meta.Themes array as a "comma,separated,string"
-  bodySize: number    // length of body data in bytes
-  bodyRows: number    // number of rows in the body
-  numErrors: number   // number of validation errors in the body
-  commitTime: Date    // commit.Timestamp field, time of version creation
-  
+  // dataset meta.Title field
+  metaTitle: string
+  // meta.Themes array as a "comma,separated,string"
+  themeList: string
+  // length of body data in bytes
+  bodySize: number
+  // number of rows in the body
+  bodyRows: number
+  // number of validation errors in the body
+  numErrors: number
+  // commit.Timestamp field, time of version creation
+  commitTime: Date
+
   // TODO (b5) - these are not yet supplied by the backend.
   // bodyFormat: string  // data format of the body
   // numCommits: number  // number of commits in history
