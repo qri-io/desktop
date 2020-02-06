@@ -10,7 +10,7 @@ import { setWorkingDataset, setSelectedListItem, setActiveTab, clearSelection } 
 import {
   mapDataset,
   mapRecord,
-  mapDetailedDatasetRef,
+  mapVersionInfo,
   mapStatus,
   mapHistory,
   mapBody
@@ -148,7 +148,7 @@ export function fetchMyDatasets (page: number = 1, pageSize: number = pageSizeDe
           page: confirmedPage,
           pageSize
         },
-        map: mapDetailedDatasetRef
+        map: mapVersionInfo
       }
     }
 

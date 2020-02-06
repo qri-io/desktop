@@ -55,7 +55,7 @@ export default function Routes (props: any) {
 
         {/* App Sections */}
         { __BUILD__.ENABLE_NETWORK_SECTION &&
-          <Route path='/network/:username/:dataset' render={(props) => {
+          <Route path='/network/:username/:name' render={(props) => {
             return sectionElement('network', <NetworkContainer {...props} />)
           }} />
         }
@@ -77,7 +77,7 @@ export default function Routes (props: any) {
         <Route exact path='/workbench' render={() => {
           return sectionElement('workbench', <WorkbenchContainer />)
         }}/>
-        <Route path='/workbench/:username/:dataset' render={() => {
+        <Route path='/workbench/:username/:name' render={() => {
           return sectionElement('workbench', <WorkbenchContainer />)
         }}/>
 
