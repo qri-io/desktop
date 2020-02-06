@@ -1,5 +1,6 @@
 import React from 'react'
-import DatasetItem from '../app/components/item/Dataset'
+import DatasetItem from '../app/components/item/DatasetItem'
+import { datasetToVersionInfo } from '../app/actions/mappingFuncs'
 import LabeledStats, { Stat } from '../app/components/item/LabeledStats'
 import Tag from '../app/components/item/Tag'
 
@@ -17,7 +18,7 @@ const worldBank = {
     timestamp: new Date(),
     count: 3
   },
-  structure: { length: 239940, format: 'csv' },
+  structure: { length: 239940, format: 'csv', errCount: 0, entries: 220 },
   meta: {
     title: 'World Bank Population - Geographic Regions Only',
     theme: ['population', 'world bank statistics']
@@ -28,7 +29,7 @@ export const dataset = () => {
   return (
     <div style={{ margin: 0, padding: 30, height: '100%', background: '#F5F7FA' }}>
       <div style={{ width: 800, margin: '2em auto' }}>
-        <DatasetItem path='foo/bar' data={worldBank} />
+        <DatasetItem path='foo/bar' data={datasetToVersionInfo(worldBank)} />
       </div>
     </div>
   )

@@ -3,10 +3,12 @@ import { withRouter, RouteComponentProps } from 'react-router-dom'
 
 import { BACKEND_URL } from '../../constants'
 import { NetworkHomeData } from '../../models/network'
+import { VersionInfo } from '../../models/store'
+import Dataset from '../../models/dataset'
 
 import Spinner from '../chrome/Spinner'
 import DatasetItem from '../item/DatasetItem'
-import Dataset from '../../models/dataset'
+import { datasetToVersionInfo } from '../../actions/mappingFuncs'
 
 const initialDataState: NetworkHomeData = {
   featured: [],
@@ -30,18 +32,12 @@ const NetworkHome: React.FC<RouteComponentProps> = ({ history }) => {
         let data = { ...f }
         if (data.featured) {
           data.featured = f.featured.map((d: Dataset) => {
-            return {
-              ...d,
-              username: d.peername
-            }
+            return datasetToVersionInfo(d)
           })
         }
         if (data.recent) {
           data.recent = f.recent.map((d: Dataset) => {
-            return {
-              ...d,
-              username: d.peername
-            }
+            return datasetToVersionInfo(d)
           })
         }
         setData(data)
@@ -67,17 +63,15 @@ const NetworkHome: React.FC<RouteComponentProps> = ({ history }) => {
       <h2>Home</h2>
       {featured && featured.length && <div>
         <label>Featured Datasets</label>
-        {featured.map((ds, i) => <DatasetItem onClick={(username: string, name: string) => {
-          console.log(username, name)
+        {featured.map((vi: VersionInfo, i) => <DatasetItem onClick={(username: string, name: string) => {
           history.push(`/network/${username}/${name}`)
-        }} data={ds} key={i} />)}
+        }} data={vi} key={i} />)}
       </div>}
       {recent && recent.length && <div>
         <label>Recent Datasets</label>
-        {recent.map((ds, i) => <DatasetItem onClick={(username: string, name: string) => {
-          console.log(username, name)
+        {recent.map((vi: VersionInfo, i) => <DatasetItem onClick={(username: string, name: string) => {
           history.push(`/network/${username}/${name}`)
-        }} data={ds} key={i} />)}
+        }} data={vi} key={i} />)}
       </div>}
     </div>
   )
