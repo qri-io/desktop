@@ -6,14 +6,16 @@ import { FetchOptions } from '../../store/api'
 import { BACKEND_URL } from '../../constants'
 
 import SearchBox from '../chrome/SearchBox'
-import Dataset from '../item/Dataset'
+import DatasetItem from '../item/DatasetItem'
 import Switch from '../chrome/Switch'
 import Modal from './Modal'
 import Close from '../chrome/Close'
+import { RouteComponentProps, withRouter } from 'react-router-dom'
 
-interface SearchModalProps {
+interface SearchModalProps extends RouteComponentProps {
   q: string
   onDismissed: () => void
+  setWorkingDataset: (username: string, name: string) => void
 }
 
 interface SearchProps {
@@ -27,7 +29,7 @@ interface SearchProps {
 const debounceTime = 300
 
 const SearchModal: React.FunctionComponent<SearchModalProps> = (props) => {
-  const { q, onDismissed } = props
+  const { q, onDismissed, setWorkingDataset, history } = props
   const [local, setLocal] = React.useState(false)
   const [results, setResults] = React.useState<SearchProps[]>([])
   const [term, setTerm] = React.useState(q)
@@ -51,10 +53,7 @@ const SearchModal: React.FunctionComponent<SearchModalProps> = (props) => {
         Type: 'dataset',
         ID: item.path,
         URL: '',
-        Value: {
-          ...item.dataset,
-          name: item.name
-        }
+        Value: item
       }
     }) : res.data
     setResults(data)
@@ -68,14 +67,16 @@ const SearchModal: React.FunctionComponent<SearchModalProps> = (props) => {
 
   const handleOnClick = () => {
     if (local) {
-      return (peername: string, name: string) => {
-        alert(`navigate to /dataset/${peername}/${name}`)
+      return (username: string, name: string) => {
+        setWorkingDataset(username, name)
+        console.log(username, name)
+        history.push(`/workbench/${username}/${name}`)
         onDismissed()
       }
     }
 
-    return (peername: string, name: string) => {
-      alert(`navigate to /network/${peername}/${name}`)
+    return (username: string, name: string) => {
+      history.push(`/network/${username}/${name}`)
       onDismissed()
     }
   }
@@ -106,7 +107,7 @@ const SearchModal: React.FunctionComponent<SearchModalProps> = (props) => {
           {term && <p className='response-description'>{results.length} {results.length === 1 ? 'result' : 'results'} for <i>{term}</i></p>}
         </header>
         <div className='results'>
-          {term && (results.length !== 0) && results.map((result: SearchProps, i) => <Dataset key={i} data={result.Value} fullWidth onClick={handleOnClick()} />)}
+          {term && (results.length !== 0) && results.map((result: SearchProps, i) => <DatasetItem key={i} data={result.Value} fullWidth onClick={handleOnClick()} />)}
           {term && !results.length && <h4 className='no-results'>No Results</h4>}
         </div>
       </div>
@@ -114,4 +115,4 @@ const SearchModal: React.FunctionComponent<SearchModalProps> = (props) => {
   )
 }
 
-export default SearchModal
+export default withRouter(SearchModal)

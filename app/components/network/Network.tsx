@@ -35,7 +35,7 @@ const Network: React.FunctionComponent<NetworkProps> = (props) => {
    */
     if (!qriRef.username) return <NetworkHome history={history}/>
 
-    if (!qriRef.dataset) {
+    if (!qriRef.name) {
       return (
         <div
           style={{

@@ -265,7 +265,7 @@ class App extends React.Component<AppProps, AppState> {
 
       case ModalType.Search: {
         modalComponent = (
-          <SearchModal q={modal.q} onDismissed={() => { setModal(noModalObject) }}/>
+          <SearchModal q={modal.q} onDismissed={() => { setModal(noModalObject) }} setWorkingDataset={this.props.setWorkingDataset}/>
         )
         break
       }
@@ -394,8 +394,8 @@ class App extends React.Component<AppProps, AppState> {
         }}>
         {this.renderAppError()}
         {this.state.showDragDrop && this.renderDragDrop() }
-        {this.renderModal()}
         <ConnectedRouter history={history}>
+          {this.renderModal()}
           <Navbar
             userphoto={userphoto}
             username={username}
