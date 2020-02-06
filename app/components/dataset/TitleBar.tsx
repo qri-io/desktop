@@ -1,14 +1,15 @@
 import React from 'react'
-import ActionButtonBar from '../chrome/ActionButtonBar'
-import { ActionButtonProps } from '../chrome/ActionButton'
-import Icon from '../chrome/Icon'
-
 import classNames from 'classnames'
+
+import { DatasetAction } from '../../models/dataset'
+
+import ActionButtonBar from '../chrome/ActionButtonBar'
+import Icon from '../chrome/Icon'
 
 interface TitleBarProps {
   icon?: string
   title: string
-  data: ActionButtonProps[]
+  data: DatasetAction[]
 }
 
 const TitleBar: React.FunctionComponent<TitleBarProps> = (props) => {

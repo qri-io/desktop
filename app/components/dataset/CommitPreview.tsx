@@ -10,11 +10,11 @@ export interface CommitPreviewProps {
 const CommitPreview: React.FunctionComponent<CommitPreviewProps> = ({ data }) => {
   if (!data) { return null }
 
-  const { timestamp, author, title } = data
+  const { timestamp, title } = data
 
   return (
     <div className='commit-preview'>
-      <div className='author-time'>by {author} {moment(timestamp).fromNow()}</div>
+      <div className='author-time'>{moment(timestamp).fromNow()}</div>
       <div className='title'>{title}</div>
     </div>
   )

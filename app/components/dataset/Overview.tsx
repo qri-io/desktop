@@ -1,13 +1,14 @@
 import React from 'react'
-import { Dataset } from '../../models/dataset'
+
+import { Dataset, DatasetAction } from '../../models/dataset'
+
 import TitleBar from './TitleBar'
 import DatasetDetailsSubtext from './DatasetDetailsSubtext'
 import Tag from '../item/Tag'
-import { ActionButtonProps } from '../chrome/ActionButton'
 
 interface OverviewProps {
   data: Dataset
-  actions: ActionButtonProps[]
+  actions: DatasetAction[]
 }
 
 const Overview: React.FunctionComponent<OverviewProps> = (props) => {

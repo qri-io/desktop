@@ -1,12 +1,14 @@
 import * as React from 'react'
+
+import { DatasetAction } from '../../models/dataset'
+
 import Overlay from './Overlay'
-import { ActionButtonProps } from '../chrome/ActionButton'
 
 interface TypePickerOverlayProps {
   // function to close the picker
   onCancel: () => void
   // list of actions to take in hamburger
-  data: ActionButtonProps[]
+  data: DatasetAction[]
   // when open is true, the overlay is visible
   open: boolean
 }

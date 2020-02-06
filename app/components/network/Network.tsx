@@ -1,16 +1,16 @@
 import * as React from 'react'
 import { Action } from 'redux'
 
-import Layout from '../Layout'
 import { P2PConnection } from '../../models/network'
+
+import Layout from '../Layout'
 import P2PConnectionStatus from './P2PConnectionStatus'
+import NetworkHome from './NetworkHome'
+import Preview from '../dataset/Preview'
+import { RouteComponentProps } from 'react-router-dom'
 
-import Dataset from '../dataset/Dataset'
+export interface NetworkProps extends RouteComponentProps {
 
-// import NetworkHome from './NetworkHome'
-import cities from '../../../stories/data/cities.dataset.json'
-
-export interface NetworkProps {
   sidebarWidth: number
   importFileName: string
   importFileSize: number
@@ -21,33 +21,49 @@ export interface NetworkProps {
 
 const Network: React.FunctionComponent<NetworkProps> = (props) => {
   const {
+    match,
+    history,
     sidebarWidth,
     setSidebarWidth
   } = props
 
-  // TODO (b5) - bring this back in the near future for fetching home feed
-  // const [loading, setLoading] = React.useState(true)
-  // const [data, setData] = React.useState(undefined)
-  // const [error, setError] = React.useState('')
+  const { params } = match
 
-  // React.useEffect(() => {
-  //   homeFeed()
-  //     .then(f => {
-  //       setData(f)
-  //       setLoading(false)
-  //     })
-  //     .catch(error => {
-  //       setLoading(false)
-  //       setError(error)
-  //     })
-  // }, [false])
+  console.log(match)
+
+  const renderMainContent = () => {
+    /** TODO (ramfox): username, name, and path must be passed down from container
+   * based on route or selections
+   * if empty, peername is empty, we know to show 'home'
+   * if name is empty, we know to show 'profile'
+   */
+    if (params && !params.username) return <NetworkHome history={history}/>
+
+    if (params && !params.dataset) {
+      return (
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            fontSize: 16,
+            height: '100%',
+            width: '100%'
+          }}>
+          <div style={{ width: 300 }}>
+            PROFILE
+          </div>
+        </div>
+      )
+    }
+
+    return <Preview peername={params.username} name={params.dataset} path={params.path} />
+  }
 
   const mainContent = (
     <>
       <div className='main-content-flex' style={{ overflow: 'auto' }}>
-        {/* TODO (b5) - navbar shouldn't be loaded here, should be in App.tsx, needs location */}
-        <Dataset data={cities} />
-        {/* <NetworkHome data={data} loading={loading} error={error} /> */}
+        {renderMainContent()}
       </div>
     </>
   )
@@ -69,19 +85,3 @@ const Network: React.FunctionComponent<NetworkProps> = (props) => {
 }
 
 export default Network
-
-// TODO (b5) - bring this back in the near future for fetching home feed
-// async function homeFeed (): Promise<NetworkHomeData> {
-//   const options: FetchOptions = {
-//     method: 'GET'
-//   }
-
-//   const r = await fetch(`http://localhost:2503/feed/home`, options)
-//   const res = await r.json()
-//   if (res.meta.code !== 200) {
-//     var err = { code: res.meta.code, message: res.meta.error }
-//     throw err // eslint-disable-line
-//   }
-
-//   return res.data as NetworkHomeData
-// }
