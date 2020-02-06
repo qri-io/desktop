@@ -1,30 +1,30 @@
 import * as React from 'react'
 
-import { VersionInfo } from '../../models/store'
+import Dataset from '../../models/dataset'
 import DatasetDetailsSubtext from '../dataset/DatasetDetailsSubtext'
 import Tag from './Tag'
 import classNames from 'classnames'
 
 interface DatasetItemProps {
-  id?: string
-  data: VersionInfo
+  data: Dataset
   onClick: (username: string, name: string) => void
   fullWidth: boolean
   path?: string
   hideUsername?: boolean
 }
 
-const DatasetItem: React.FunctionComponent<DatasetItemProps> = ({ id, data, path, hideUsername, fullWidth = false, onClick }) => {
+const DatasetItem: React.FunctionComponent<DatasetItemProps> = ({ data, path, hideUsername, fullWidth = false, onClick }) => {
   if (!data) { return null }
-  const { metaTitle, themeList, username, name } = data
+  const { meta, username, name } = data
+  const title = (meta && meta.title) ? meta.title : `No Title - ${name}`
 
   return (
-    <div id={id} className={classNames('dataset-item', { 'full': fullWidth })} key={path} data-ref={`${username}/${name}`}>
+    <div className={classNames('dataset-item', { 'full': fullWidth })} key={path}>
       <div className='header'>
         <a onClick={() => onClick(username, name)}>{hideUsername ? `${name}` : `${username}/${name}`}</a>
-        {themeList && themeList.length > 0 && <Tag type='category' tag={themeList[0]} />}
+        {meta && meta.theme && meta.theme.length > 0 && <Tag type='category' tag={meta.theme[0]} />}
       </div>
-      <div className='title'>{ metaTitle }</div>
+      <div className='title'>{ title }</div>
       <div className='details'><DatasetDetailsSubtext data={data} color='muted' /></div>
     </div>
   )

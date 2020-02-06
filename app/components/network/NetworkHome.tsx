@@ -2,6 +2,7 @@ import React from 'react'
 import { withRouter, RouteComponentProps } from 'react-router-dom'
 
 import { BACKEND_URL } from '../../constants'
+import { FetchOptions } from '../../store/api'
 import { NetworkHomeData } from '../../models/network'
 import { VersionInfo } from '../../models/store'
 
