@@ -538,7 +538,7 @@ export function addDatasetAndFetch (peername: string, name: string): ApiActionTh
       dispatch(setWorkingDataset(peername, name))
       dispatch(setActiveTab('history'))
       dispatch(setSelectedListItem('component', DEFAULT_SELECTED_COMPONENT))
-      dispatch(push('workbench'))
+      dispatch(push('/workbench'))
     } catch (action) {
       dispatch(openToast('error', 'add', action.payload.err.message))
       throw action

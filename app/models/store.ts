@@ -60,6 +60,7 @@ export interface UI {
   showDiff: boolean
   datasetSidebarWidth: number
   collectionSidebarWidth: number
+  networkSidebarWidth: number
   toast: Toast
   blockMenus: boolean
   hideCommitNudge: boolean
@@ -108,7 +109,7 @@ export interface VersionInfo {
   // path to a local filesystem-linked directory (if exists)
   fsiPath: string
   // is block data for this commit stored locally?
-  foreign?: boolean
+  foreign: boolean
 
   // dataset version details
   // dataset meta.Title field

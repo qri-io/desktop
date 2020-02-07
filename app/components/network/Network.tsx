@@ -3,20 +3,24 @@ import { Action } from 'redux'
 
 import { P2PConnection } from '../../models/network'
 import { QriRef } from '../../models/qriRef'
+import { ApiActionThunk } from '../../store/api'
 
 import Layout from '../Layout'
 import P2PConnectionStatus from './P2PConnectionStatus'
 import NetworkHome from './NetworkHome'
 import Preview from '../dataset/Preview'
 import LogList from './LogList'
+import SidebarActionButton from '../chrome/SidebarActionButton'
+import { RouteComponentProps } from 'react-router'
 
-export interface NetworkProps {
+export interface NetworkProps extends RouteComponentProps{
   qriRef: QriRef
 
   sidebarWidth: number
   importFileName: string
   importFileSize: number
 
+  addDatasetAndFetch: (username: string, name: string) => ApiActionThunk
   toggleNetwork: () => Action
   setSidebarWidth: (type: string, sidebarWidth: number) => Action
 }
@@ -24,6 +28,8 @@ export interface NetworkProps {
 const Network: React.FunctionComponent<NetworkProps> = (props) => {
   const {
     qriRef,
+
+    addDatasetAndFetch,
     sidebarWidth,
     setSidebarWidth
   } = props
@@ -34,7 +40,7 @@ const Network: React.FunctionComponent<NetworkProps> = (props) => {
    * if empty, peername is empty, we know to show 'home'
    * if name is empty, we know to show 'profile'
    */
-    if (!qriRef.username) return <NetworkHome history={history}/>
+    if (!qriRef.username) return <NetworkHome />
 
     if (!qriRef.name) {
       return (
@@ -73,10 +79,11 @@ const Network: React.FunctionComponent<NetworkProps> = (props) => {
           data={{ enabled: true }}
           onChange={(d: P2PConnection) => { alert(`change connection: ${d.enabled}`) }}
         />
-        {qriRef.name && qriRef.username && <LogList qriRef={qriRef} />}
+        {qriRef.username && qriRef.name && <LogList qriRef={qriRef} />}
+        {qriRef.username && qriRef.name && <SidebarActionButton text='Clone Dataset' onClick={() => addDatasetAndFetch(qriRef.username, qriRef.name)}/>}
       </div>}
       sidebarWidth={sidebarWidth}
-      onSidebarResize={(width) => { setSidebarWidth('collection', width) }}
+      onSidebarResize={(width) => { setSidebarWidth('network', width) }}
       mainContent={mainContent}
     />
   )

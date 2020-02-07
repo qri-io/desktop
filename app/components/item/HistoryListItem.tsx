@@ -17,7 +17,7 @@ interface HistoryListItemProps {
 
 const HistoryListItem: React.FunctionComponent<HistoryListItemProps> = (props) => {
   const { id, selected, data, first, last } = props
-  const { path = '', commitTitle, commitTime } = data
+  const { path = '', commitTitle, commitTime, foreign } = data
   return (
     <div
       id={id}
@@ -28,7 +28,8 @@ const HistoryListItem: React.FunctionComponent<HistoryListItemProps> = (props) =
         {
           selected,
           first,
-          last
+          last,
+          foreign
         })
       }
       onClick={() => { props.onClick(path) }}
