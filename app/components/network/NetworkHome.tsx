@@ -1,23 +1,22 @@
 import React from 'react'
-import { withRouter } from 'react-router-dom'
+import { withRouter, RouteComponentProps } from 'react-router-dom'
 
 import { BACKEND_URL } from '../../constants'
 import { NetworkHomeData } from '../../models/network'
+import { VersionInfo } from '../../models/store'
+import Dataset from '../../models/dataset'
 
 import Spinner from '../chrome/Spinner'
-import DatasetItem from '../item/Dataset'
+import DatasetItem from '../item/DatasetItem'
+import { datasetToVersionInfo } from '../../actions/mappingFuncs'
 
 const initialDataState: NetworkHomeData = {
   featured: [],
   recent: []
 }
 
-export interface NetworkHomeProps {
-  push: (path: string) => void
-}
-
 // NetworkHome accepts no props
-const NetworkHome: React.FC<NetworkHomeProps> = ({ push }) => {
+const NetworkHome: React.FC<RouteComponentProps> = ({ history }) => {
   const [loading, setLoading] = React.useState(true)
   const [data, setData] = React.useState(initialDataState)
   const [error, setError] = React.useState('')
@@ -25,10 +24,27 @@ const NetworkHome: React.FC<NetworkHomeProps> = ({ push }) => {
   React.useEffect(() => {
     homeFeed()
       .then(f => {
-        setData(f)
+        /**
+         * TODO (ramfox): this mapping is temporary. The feed, list, and search endpoints
+         * should return VersionInfo's, which already have `username` in place
+         * of `username`
+         */
+        let data = { ...f }
+        if (data.featured) {
+          data.featured = f.featured.map((d: Dataset) => {
+            return datasetToVersionInfo(d)
+          })
+        }
+        if (data.recent) {
+          data.recent = f.recent.map((d: Dataset) => {
+            return datasetToVersionInfo(d)
+          })
+        }
+        setData(data)
         setLoading(false)
       })
       .catch(error => {
+        console.log('error:', error)
         setLoading(false)
         setError(error)
       })
@@ -47,17 +63,15 @@ const NetworkHome: React.FC<NetworkHomeProps> = ({ push }) => {
       <h2>Home</h2>
       {featured && featured.length && <div>
         <label>Featured Datasets</label>
-        {featured.map((ds, i) => <DatasetItem onClick={(peername: string, name: string) => {
-          console.log(peername, name)
-          push(`/network/${peername}/${name}`)
-        }} data={ds} key={i} />)}
+        {featured.map((vi: VersionInfo, i) => <DatasetItem onClick={(username: string, name: string) => {
+          history.push(`/network/${username}/${name}`)
+        }} data={vi} key={i} />)}
       </div>}
       {recent && recent.length && <div>
         <label>Recent Datasets</label>
-        {recent.map((ds, i) => <DatasetItem onClick={(peername: string, name: string) => {
-          console.log(peername, name)
-          push(`/network/${peername}/${name}`)
-        }} data={ds} key={i} />)}
+        {recent.map((vi: VersionInfo, i) => <DatasetItem onClick={(username: string, name: string) => {
+          history.push(`/network/${username}/${name}`)
+        }} data={vi} key={i} />)}
       </div>}
     </div>
   )

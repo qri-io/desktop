@@ -43,6 +43,23 @@ export function versionInfoToDataset (vi: VersionInfo): Dataset {
   }
 }
 
+// datasetToVersionInfo converts a dataset to a versionInfo
+export function datasetToVersionInfo (d: Dataset): VersionInfo {
+  return {
+    username: d.peername,
+    name: d.name,
+    path: d.path,
+    metaTitle: d.meta && d.meta.title,
+    themeList: d.meta && d.meta.theme && d.meta.theme.join(','),
+    bodySize: d.structure && d.structure.length,
+    bodyRows: d.structure && d.structure.entries,
+    numErrors: d.structure && d.structure.errCount,
+    commitTime: d.commit && d.commit.timestamp,
+    bodyFormat: d.structure && d.structure.format,
+    fsiPath: d.fsiPath
+  }
+}
+
 export function mapStatus (data: Array<Record<string, string>>): ComponentStatus[] {
   return data.map((d) => {
     return {

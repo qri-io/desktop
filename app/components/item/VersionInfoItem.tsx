@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faFileAlt } from '@fortawesome/free-solid-svg-icons'
 
 import { VersionInfo } from '../../models/store'
-import { detailedDatasetRefToDataset } from '../../actions/mappingFuncs'
+import { versionInfoToDataset } from '../../actions/mappingFuncs'
 import DatasetDetailsSubtext from '../dataset/DatasetDetailsSubtext'
 
 interface VersionInfoItemProps {
@@ -30,7 +30,7 @@ const VersionInfoItem: React.FunctionComponent<VersionInfoItemProps> = ({ data, 
       </div>
       <div className='text-column'>
         <div className='text'>{username}/{name}</div>
-        <DatasetDetailsSubtext data={detailedDatasetRefToDataset(data)} />
+        <DatasetDetailsSubtext data={versionInfoToDataset(data)} />
       </div>
     </div>
   )

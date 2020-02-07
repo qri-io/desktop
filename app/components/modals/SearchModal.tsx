@@ -1,19 +1,23 @@
 import * as React from 'react'
 import _ from 'underscore'
+import { RouteComponentProps, withRouter } from 'react-router-dom'
 
 import { Dataset as IDataset } from '../../models/dataset'
+import { datasetToVersionInfo } from '../../actions/mappingFuncs'
 import { FetchOptions } from '../../store/api'
 import { BACKEND_URL } from '../../constants'
+import { VersionInfo } from '../../models/store'
 
 import SearchBox from '../chrome/SearchBox'
-import Dataset from '../item/Dataset'
+import DatasetItem from '../item/DatasetItem'
 import Switch from '../chrome/Switch'
 import Modal from './Modal'
 import Close from '../chrome/Close'
 
-interface SearchModalProps {
+interface SearchModalProps extends RouteComponentProps {
   q: string
   onDismissed: () => void
+  setWorkingDataset: (username: string, name: string) => void
 }
 
 interface SearchProps {
@@ -27,9 +31,9 @@ interface SearchProps {
 const debounceTime = 300
 
 const SearchModal: React.FunctionComponent<SearchModalProps> = (props) => {
-  const { q, onDismissed } = props
+  const { q, onDismissed, setWorkingDataset, history } = props
   const [local, setLocal] = React.useState(false)
-  const [results, setResults] = React.useState<SearchProps[]>([])
+  const [results, setResults] = React.useState<VersionInfo[]>([])
   const [term, setTerm] = React.useState(q)
 
   const search = async (): Promise<void> => {
@@ -46,17 +50,10 @@ const SearchModal: React.FunctionComponent<SearchModalProps> = (props) => {
       throw err // eslint-disable-line
     }
 
-    const data = local ? res.data.map((item: IDataset) => {
-      return {
-        Type: 'dataset',
-        ID: item.path,
-        URL: '',
-        Value: {
-          ...item.dataset,
-          name: item.name
-        }
-      }
-    }) : res.data
+    const data = local ? res.data
+      : res.data.map((item: SearchProps) => {
+        return datasetToVersionInfo(item.Value)
+      })
     setResults(data)
   }
 
@@ -68,14 +65,15 @@ const SearchModal: React.FunctionComponent<SearchModalProps> = (props) => {
 
   const handleOnClick = () => {
     if (local) {
-      return (peername: string, name: string) => {
-        alert(`navigate to /dataset/${peername}/${name}`)
+      return (username: string, name: string) => {
+        setWorkingDataset(username, name)
+        history.push(`/workbench/${username}/${name}`)
         onDismissed()
       }
     }
 
-    return (peername: string, name: string) => {
-      alert(`navigate to /network/${peername}/${name}`)
+    return (username: string, name: string) => {
+      history.push(`/network/${username}/${name}`)
       onDismissed()
     }
   }
@@ -106,7 +104,7 @@ const SearchModal: React.FunctionComponent<SearchModalProps> = (props) => {
           {term && <p className='response-description'>{results.length} {results.length === 1 ? 'result' : 'results'} for <i>{term}</i></p>}
         </header>
         <div className='results'>
-          {term && (results.length !== 0) && results.map((result: SearchProps, i) => <Dataset key={i} data={result.Value} fullWidth onClick={handleOnClick()} />)}
+          {term && (results.length !== 0) && results.map((result: VersionInfo, i) => <DatasetItem key={i} data={result} fullWidth onClick={handleOnClick()} />)}
           {term && !results.length && <h4 className='no-results'>No Results</h4>}
         </div>
       </div>
@@ -114,4 +112,4 @@ const SearchModal: React.FunctionComponent<SearchModalProps> = (props) => {
   )
 }
 
-export default SearchModal
+export default withRouter(SearchModal)

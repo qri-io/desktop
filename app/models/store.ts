@@ -98,35 +98,35 @@ export interface VersionInfo {
   // human-readble name of the owner of this dataset
   username: string
   // user identifier
-  profileId: string
+  profileId?: string
   // dataset name
   name: string
   // commit hash, eg: /ipfs/QmY9WcXXUnHJbYRA28LRctiL4qu4y...
-  path: string
+  path?: string
 
   // repo locality
   // path to a local filesystem-linked directory (if exists)
-  fsiPath: string
+  fsiPath?: string
   // is block data for this commit stored locally?
-  foreign: boolean
+  foreign?: boolean
 
   // dataset version details
   // dataset meta.Title field
-  metaTitle: string
+  metaTitle?: string
   // meta.Themes array as a "comma,separated,string"
-  themeList: string
+  themeList?: string
   // length of body data in bytes
-  bodySize: number
+  bodySize?: number
   // number of rows in the body
-  bodyRows: number
+  bodyRows?: number
   // number of validation errors in the body
-  numErrors: number
+  numErrors?: number
   // commit.Timestamp field, time of version creation
-  commitTime: Date
+  commitTime?: Date
 
   // TODO (b5) - these are not yet supplied by the backend.
-  // bodyFormat: string  // data format of the body
-  // numCommits: number  // number of commits in history
+  bodyFormat?: string // data format of the body
+  numCommits?: number // number of commits in history
 
   // TODO (b5) - need to figure out publication representation. there's tension
   // about what "publication" as a boolean means.
