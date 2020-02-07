@@ -1,5 +1,6 @@
 import { Dataset } from '../models/dataset'
 import { VersionInfo, ComponentStatus, ComponentState, HistoryItem } from '../models/store'
+import { SearchResult } from '../models/search'
 
 export function mapDataset (data: Record<string, string>): Dataset {
   return data
@@ -27,7 +28,8 @@ export function versionInfoToDataset (vi: VersionInfo): Dataset {
     name: vi.name,
     path: vi.path,
     meta: {
-      title: vi.metaTitle,
+      title: vi.commitTitle,
+      description: vi.commitMessage,
       theme
     },
     structure: {
@@ -43,6 +45,12 @@ export function versionInfoToDataset (vi: VersionInfo): Dataset {
   }
 }
 
+// searchResultToVersionInfo converts a search result to a VersionInfo
+export function searchResultToVersionInfo (s: SearchResult): VersionInfo {
+  console.log(s)
+  return datasetToVersionInfo(s.Value)
+}
+
 // datasetToVersionInfo converts a dataset to a versionInfo
 export function datasetToVersionInfo (d: Dataset): VersionInfo {
   return {
@@ -55,6 +63,8 @@ export function datasetToVersionInfo (d: Dataset): VersionInfo {
     bodyRows: d.structure && d.structure.entries,
     numErrors: d.structure && d.structure.errCount,
     commitTime: d.commit && d.commit.timestamp,
+    commitTitle: d.commit && d.commit.title,
+    commitMessage: d.commit && d.commit.message,
     bodyFormat: d.structure && d.structure.format,
     fsiPath: d.fsiPath
   }

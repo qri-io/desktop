@@ -8,6 +8,7 @@ import Layout from '../Layout'
 import P2PConnectionStatus from './P2PConnectionStatus'
 import NetworkHome from './NetworkHome'
 import Preview from '../dataset/Preview'
+import LogList from './LogList'
 
 export interface NetworkProps {
   qriRef: QriRef
@@ -72,6 +73,7 @@ const Network: React.FunctionComponent<NetworkProps> = (props) => {
           data={{ enabled: true }}
           onChange={(d: P2PConnection) => { alert(`change connection: ${d.enabled}`) }}
         />
+        {qriRef.name && qriRef.username && <LogList qriRef={qriRef} />}
       </div>}
       sidebarWidth={sidebarWidth}
       onSidebarResize={(width) => { setSidebarWidth('collection', width) }}

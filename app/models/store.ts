@@ -115,18 +115,25 @@ export interface VersionInfo {
   metaTitle?: string
   // meta.Themes array as a "comma,separated,string"
   themeList?: string
+
+  // TODO (b5) - these are not yet supplied by the backend.
+  // data format of the body
+  bodyFormat?: string
   // length of body data in bytes
   bodySize?: number
   // number of rows in the body
   bodyRows?: number
   // number of validation errors in the body
   numErrors?: number
+
+  // title of commit
+  commitTitle?: string
+  // commit description message
+  commitMessage?: string
   // commit.Timestamp field, time of version creation
   commitTime?: Date
-
-  // TODO (b5) - these are not yet supplied by the backend.
-  bodyFormat?: string // data format of the body
-  numCommits?: number // number of commits in history
+  // number of commits in history
+  numCommits?: number
 
   // TODO (b5) - need to figure out publication representation. there's tension
   // about what "publication" as a boolean means.

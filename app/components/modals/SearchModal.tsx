@@ -2,8 +2,7 @@ import * as React from 'react'
 import _ from 'underscore'
 import { RouteComponentProps, withRouter } from 'react-router-dom'
 
-import { Dataset as IDataset } from '../../models/dataset'
-import { datasetToVersionInfo } from '../../actions/mappingFuncs'
+import { searchResultToVersionInfo } from '../../actions/mappingFuncs'
 import { FetchOptions } from '../../store/api'
 import { BACKEND_URL } from '../../constants'
 import { VersionInfo } from '../../models/store'
@@ -18,13 +17,6 @@ interface SearchModalProps extends RouteComponentProps {
   q: string
   onDismissed: () => void
   setWorkingDataset: (username: string, name: string) => void
-}
-
-interface SearchProps {
-  Type: string
-  ID: string
-  URL: string
-  Value: IDataset
 }
 
 // time in milliseconds to wait for debounce
@@ -50,10 +42,7 @@ const SearchModal: React.FunctionComponent<SearchModalProps> = (props) => {
       throw err // eslint-disable-line
     }
 
-    const data = local ? res.data
-      : res.data.map((item: SearchProps) => {
-        return datasetToVersionInfo(item.Value)
-      })
+    const data = local ? res.data : res.data.map(searchResultToVersionInfo)
     setResults(data)
   }
 
