@@ -12,7 +12,6 @@ import {
   mapRecord,
   mapVersionInfo,
   mapStatus,
-  mapHistory,
   mapBody
 } from './mappingFuncs'
 import { getActionType } from '../utils/actionType'
@@ -292,8 +291,7 @@ export function fetchHistory (page: number = 1, pageSize: number = pageSizeDefau
         pageInfo: {
           page: confirmedPage,
           pageSize
-        },
-        map: mapHistory
+        }
       }
     }
 

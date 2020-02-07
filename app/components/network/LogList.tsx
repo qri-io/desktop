@@ -1,6 +1,5 @@
 import React from 'react'
 import { Action } from 'redux'
-import moment from 'moment'
 
 import { QriRef } from '../../models/qriRef'
 import { VersionInfo } from '../../models/store'
@@ -41,17 +40,14 @@ const LogList: React.FC<LogListProps> = ({ qriRef }) => {
       className='sidebar-content'
     >
       {
-        data.map((props, i) => {
-          const { path, commitTime, commitTitle } = props
+        data.map((item, i) => {
           return (
             <HistoryListItem
-              key={path}
+              data={item}
+              key={item.path}
               id={`HEAD-${i + 1}`}
               first={i === 0}
               last={i === data.length - 1}
-              path={path || ''}
-              commitTitle={commitTitle || ''}
-              timeMessage={moment(commitTime).fromNow()}
               selected={false}
               onClick={(s: string): Action => {
                 alert(`you clicked a commit: ${s}`)

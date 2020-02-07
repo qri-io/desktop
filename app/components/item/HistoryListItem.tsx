@@ -3,12 +3,12 @@ import { Action } from 'redux'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faClock } from '@fortawesome/free-regular-svg-icons'
 import classNames from 'classnames'
+import { VersionInfo } from '../../models/store'
+import moment from 'moment'
 
 interface HistoryListItemProps {
   id: string
-  path: string
-  commitTitle: string
-  timeMessage: string
+  data: VersionInfo
   selected: boolean
   first: boolean
   last: boolean
@@ -16,7 +16,8 @@ interface HistoryListItemProps {
 }
 
 const HistoryListItem: React.FunctionComponent<HistoryListItemProps> = (props) => {
-  const { id, selected, path, commitTitle, timeMessage, first, last } = props
+  const { id, selected, data, first, last } = props
+  const { path = '', commitTitle, commitTime } = data
   return (
     <div
       id={id}
@@ -42,7 +43,7 @@ const HistoryListItem: React.FunctionComponent<HistoryListItemProps> = (props) =
         <div className='subtext'>
           {/* Bring back avatar later <img className= 'user-image' src = {props.avatarUrl} /> */}
           <div className='time-message'>
-            <FontAwesomeIcon icon={faClock} size='sm'/> {timeMessage}
+            <FontAwesomeIcon icon={faClock} size='sm'/> {moment(commitTime).fromNow()}
           </div>
         </div>
       </div>

@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { Action } from 'redux'
-import moment from 'moment'
+
 import { CSSTransition } from 'react-transition-group'
 import classNames from 'classnames'
 import ContextMenuArea from 'react-electron-contextmenu'
@@ -177,28 +177,24 @@ const WorkbenchSidebar: React.FunctionComponent<WorkbenchSidebarProps> = (props)
             hidden = {activeTab === 'status'}
           >
             {
-              history.value.map((props, i) => {
-                const { path, timestamp, title } = props
-                const timeMessage = moment(timestamp).fromNow()
+              history.value.map((item, i) => {
                 const menuItems: MenuItemConstructorOptions[] = [
                   {
                     label: 'Export this version',
                     click: () => {
-                      handleExport(path)
+                      handleExport(item.path)
                     }
                   }
                 ]
                 return (
-                  <ContextMenuArea menuItems={menuItems} key={path}>
+                  <ContextMenuArea menuItems={menuItems} key={item.path}>
                     <HistoryListItem
-                      key={path}
+                      data={item}
+                      key={item.path}
                       id={`HEAD-${i + 1}`}
                       first={i === 0}
                       last={i === history.value.length - 1}
-                      path={path}
-                      commitTitle={title}
-                      timeMessage={timeMessage}
-                      selected={selectedCommit === path}
+                      selected={selectedCommit === item.path}
                       onClick={setCommit}
                     />
                   </ContextMenuArea>

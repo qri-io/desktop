@@ -1,5 +1,5 @@
 import { Dataset } from '../models/dataset'
-import { VersionInfo, ComponentStatus, ComponentState, HistoryItem } from '../models/store'
+import { VersionInfo, ComponentStatus, ComponentState } from '../models/store'
 import { SearchResult } from '../models/search'
 
 export function mapDataset (data: Record<string, string>): Dataset {
@@ -77,18 +77,6 @@ export function mapStatus (data: Array<Record<string, string>>): ComponentStatus
       component: d.component,
       status: d.type as ComponentState,
       mtime: new Date(d.mtime)
-    }
-  })
-}
-
-export function mapHistory (data: any[]): HistoryItem[] {
-  return data.map((historyItem): HistoryItem => {
-    const { username, path } = historyItem.ref
-    return {
-      author: username,
-      timestamp: historyItem.timestamp,
-      title: historyItem.commitTitle,
-      path: path
     }
   })
 }
