@@ -297,12 +297,12 @@ class Workbench extends React.Component<WorkbenchProps> {
     if (username === peername && datasetSelected) {
       publishButton = published ? (
         <><HeaderColumnButton
-          id='publishButton'
+          id='view-in-cloud'
           onClick={() => { shell.openExternal(`${QRI_CLOUD_URL}/${data.workingDataset.peername}/${data.workingDataset.name}`) }}
           icon={faCloud}
           label='View in Cloud'
         />
-        <Hamburger data={[
+        <Hamburger id='workbench-hamburger' data={[
           {
             icon: 'clone',
             text: 'Copy Cloud Link',
@@ -322,7 +322,7 @@ class Workbench extends React.Component<WorkbenchProps> {
             : 'Publish this dataset to Qri Cloud'
         }>
           <HeaderColumnButton
-            id='publishButton'
+            id='publish-button'
             label='Publish'
             icon={faCloudUploadAlt}
             disabled={data.workingDataset.history.value.length === 0}

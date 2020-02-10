@@ -89,11 +89,12 @@ const SearchModal: React.FunctionComponent<SearchModalProps> = (props) => {
             }}
             onEnter={(e) => setTerm(e.target.value)}
             value={term}
+            id='modal-search-box'
           />
           {term && <p className='response-description'>{results.length} {results.length === 1 ? 'result' : 'results'} for <i>{term}</i></p>}
         </header>
         <div className='results'>
-          {term && (results.length !== 0) && results.map((result: VersionInfo, i) => <DatasetItem key={i} data={result} fullWidth onClick={handleOnClick()} />)}
+          {term && (results.length !== 0) && results.map((result: VersionInfo, i) => <DatasetItem key={i} id={`result-${i}`} data={result} fullWidth onClick={handleOnClick()} />)}
           {term && !results.length && <h4 className='no-results'>No Results</h4>}
         </div>
       </div>

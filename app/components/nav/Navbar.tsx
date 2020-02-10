@@ -53,9 +53,9 @@ const Navbar: React.FunctionComponent<NavbarProps> = ({ location, setModal, hist
           <a className='back' onClick={() => history.goBack()}><BackArrow /></a>
           <a className='forward' onClick={() => history.goForward()}><ForwardArrow /></a>
         </div>
-        <SearchBox onEnter={handleOnEnter} />
+        <SearchBox onEnter={handleOnEnter} id='search-box' />
       </div>
-      <Breadcrumb value={location.pathname} />
+      <Breadcrumb id='navbar-breadcrumb' value={location.pathname} />
     </div>
   )
 }
