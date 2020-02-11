@@ -53,6 +53,7 @@
     "afterSign": "./notarize.js",
     "dmg": {
       "sign": false,
+      "icon": "qri_dmg.icns",
       "contents": [
         {
           "x": 410,
