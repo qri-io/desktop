@@ -18,7 +18,7 @@ import { getActionType } from '../utils/actionType'
 
 import { CLEAR_DATASET_HEAD } from '../reducers/commitDetail'
 
-const pageSizeDefault = 50
+const pageSizeDefault = 100
 export const bodyPageSizeDefault = 50
 
 const DEFAULT_SELECTED_COMPONENT = 'body'

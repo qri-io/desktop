@@ -16,6 +16,8 @@ import { RouteComponentProps } from 'react-router'
 export interface NetworkProps extends RouteComponentProps{
   qriRef: QriRef
 
+  inCollection: boolean
+
   sidebarWidth: number
   importFileName: string
   importFileSize: number
@@ -29,6 +31,7 @@ const Network: React.FunctionComponent<NetworkProps> = (props) => {
   const {
     qriRef,
 
+    inCollection,
     addDatasetAndFetch,
     sidebarWidth,
     setSidebarWidth
@@ -80,7 +83,7 @@ const Network: React.FunctionComponent<NetworkProps> = (props) => {
           onChange={(d: P2PConnection) => { alert(`change connection: ${d.enabled}`) }}
         />
         {qriRef.username && qriRef.name && <LogList qriRef={qriRef} />}
-        {qriRef.username && qriRef.name && <SidebarActionButton text='Clone Dataset' onClick={() => addDatasetAndFetch(qriRef.username, qriRef.name)}/>}
+        {qriRef.username && qriRef.name && !inCollection && <SidebarActionButton text='Clone Dataset' onClick={() => addDatasetAndFetch(qriRef.username, qriRef.name)}/>}
       </div>}
       sidebarWidth={sidebarWidth}
       onSidebarResize={(width) => { setSidebarWidth('network', width) }}

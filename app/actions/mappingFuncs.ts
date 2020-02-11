@@ -47,7 +47,6 @@ export function versionInfoToDataset (vi: VersionInfo): Dataset {
 
 // searchResultToVersionInfo converts a search result to a VersionInfo
 export function searchResultToVersionInfo (s: SearchResult): VersionInfo {
-  console.log(s)
   return datasetToVersionInfo(s.Value)
 }
 
