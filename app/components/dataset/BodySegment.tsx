@@ -4,6 +4,7 @@ import React from 'react'
 import Dataset, { Body } from '../../models/dataset'
 import Segment from '../chrome/Segment'
 import { TypeLabel } from '../TwoDSchemaLayout'
+import BodyJson from '../BodyJson'
 
 interface BodyPreviewProps {
   data: Dataset
@@ -18,10 +19,10 @@ const BodyPreviewTable: React.FunctionComponent<BodyPreviewProps> = ({ data }) =
 
   let bodyPreview
 
-  if (!Array.isArray(bdy)) {
+  if (!structure || (structure && structure.format !== 'csv')) {
     bodyPreview =
     <div id='json-preview-container'>
-      <textarea id='json-preview'>{JSON.stringify(body, null, 2)}</textarea>
+      <BodyJson data={bdy} previewWarning={false}/>
     </div>
   } else {
     const tableRows = bdy.map((row: any[], i: number) => {
