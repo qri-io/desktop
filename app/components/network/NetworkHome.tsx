@@ -4,11 +4,9 @@ import { withRouter, RouteComponentProps } from 'react-router-dom'
 import { BACKEND_URL } from '../../constants'
 import { NetworkHomeData } from '../../models/network'
 import { VersionInfo } from '../../models/store'
-import Dataset from '../../models/dataset'
 
 import Spinner from '../chrome/Spinner'
 import DatasetItem from '../item/DatasetItem'
-import { datasetToVersionInfo } from '../../actions/mappingFuncs'
 
 const initialDataState: NetworkHomeData = {
   featured: [],
@@ -23,23 +21,7 @@ const NetworkHome: React.FC<RouteComponentProps> = ({ history }) => {
 
   React.useEffect(() => {
     homeFeed()
-      .then(f => {
-        /**
-         * TODO (ramfox): this mapping is temporary. The feed, list, and search endpoints
-         * should return VersionInfo's, which already have `username` in place
-         * of `username`
-         */
-        let data = { ...f }
-        if (data.featured) {
-          data.featured = f.featured.map((d: Dataset) => {
-            return datasetToVersionInfo(d)
-          })
-        }
-        if (data.recent) {
-          data.recent = f.recent.map((d: Dataset) => {
-            return datasetToVersionInfo(d)
-          })
-        }
+      .then(data => {
         setData(data)
         setLoading(false)
       })
@@ -89,7 +71,7 @@ async function homeFeed (): Promise<NetworkHomeData> {
     method: 'GET'
   }
 
-  const r = await fetch(`${BACKEND_URL}/registry/feed/home`, options)
+  const r = await fetch(`${BACKEND_URL}/feeds`, options)
   const res = await r.json()
   if (res.meta.code !== 200) {
     var err = { code: res.meta.code, message: res.meta.error }

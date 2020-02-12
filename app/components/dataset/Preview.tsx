@@ -34,7 +34,7 @@ const Preview: React.FunctionComponent<PreviewProps> = (props) => {
       method: 'GET'
     }
 
-    const url = path === '' ? `${BACKEND_URL}/registry/dataset/preview/${peername}/${name}` : `${BACKEND_URL}/registry/dataset/preview/${peername}/${name}/at/${path}`
+    const url = path === '' ? `${BACKEND_URL}/preview/${peername}/${name}` : `${BACKEND_URL}/preview/${peername}/${name}/at/${path}`
 
     const r = await fetch(url, options)
     const res = await r.json()

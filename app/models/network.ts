@@ -1,8 +1,8 @@
-import Dataset from './dataset'
+import { VersionInfo } from './store'
 
 export interface NetworkHomeData {
-  featured: Dataset[]
-  recent: Dataset[]
+  featured: VersionInfo[]
+  recent: VersionInfo[]
 }
 
 export interface P2PConnection {
