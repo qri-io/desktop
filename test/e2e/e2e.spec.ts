@@ -1,4 +1,5 @@
 import path from 'path'
+import url from 'url'
 import os from 'os'
 import fs from 'fs'
 import TestBackendProcess from '../utils/testQriBackend'
@@ -26,9 +27,10 @@ describe('Qri End to End tests', function spec () {
 
   const filename = 'e2e_test_csv_dataset.csv'
   const datasetName = 'e2e_test_csv_datasetcsv'
+  const datasetRename = 'test_dataset'
 
-  const filename1 = 'e2e_test_csv_dataset_1.csv'
-  const datasetName1 = 'e2e_test_csv_dataset_1csv'
+  const jsonFilename = 'e2e_test_json_dataset.json'
+  const jsonDatasetName = 'e2e_test_json_datasetjson'
 
   const username = 'fred'
   const email = 'fred@qri.io'
@@ -431,14 +433,14 @@ describe('Qri End to End tests', function spec () {
     // class should be error
     await exists(['#dataset-name-input.invalid'])
     // setValue as good name
-    await setValue('#dataset-name-input', 'test_dataset')
+    await setValue('#dataset-name-input', datasetRename)
     // get correct class
     await doesNotExist('#dataset-name-input.invalid')
     // submit by clicking away
     await click('#dataset-reference')
   })
 
-  it('create a new CSV dataset from a data source', async () => {
+  it('create a new JSON dataset from a data source', async () => {
     const {
       atLocation,
       click,
@@ -457,9 +459,9 @@ describe('Qri End to End tests', function spec () {
     // mock the dialog and create a temp csv file
     // clicking the '#chooseBodyFilePath' button will connect the fakeDialog
     // to the correct input
-    const csvPath = path.join(backend.dir, filename1)
-    fs.writeFileSync(csvPath, 'e2e_test_bool_col,x,y,z\nfalse,100,99,98\ntrue,97,96,95')
-    await fakeDialog.mock([ { method: 'showOpenDialogSync', value: [csvPath] } ])
+    const jsonPath = path.join(backend.dir, jsonFilename)
+    fs.writeFileSync(jsonPath, '{"a": 1, "b":2, "c": 3}')
+    await fakeDialog.mock([ { method: 'showOpenDialogSync', value: [jsonPath] } ])
     await click('#chooseBodyFilePath')
 
     // submit to create a new dataset
@@ -473,10 +475,10 @@ describe('Qri End to End tests', function spec () {
     // to get the reference to match. It looks like because the #dataset-reference
     // div divides the peername and name among multiple divs, we get this odd
     // whitespace character
-    const reference = `${username}/\n${datasetName1}`
+    const reference = `${username}/\n${jsonDatasetName}`
     await expectTextToBe('#dataset-reference', reference)
 
-    await expectTextToBe('#commit-details-header-entries', '2 entries')
+    await expectTextToBe('#commit-details-header-entries', '3 entries')
 
     // enure we are on the history tab
     await onHistoryTab()
@@ -520,23 +522,23 @@ describe('Qri End to End tests', function spec () {
 
     // check location
     // TODO (ramfox): currently broken
-    // await atLocation('#/network')
+    await atLocation('#/network')
 
     // check we are at the right dataset
-    await expectTextToContain('#navbar-breadcrumb ', registryDatasetName)
+    await expectTextToContain('#navbar-breadcrumb', registryDatasetName)
     // history item has foreign class
     await waitForExist('#HEAD-1.foreign')
 
     // clone the dataset by clicking on the action button
     await click('#sidebar-action')
     await atLocation('#/workbench')
-    await expectTextToContain('#dataset-reference', registryDatasetName)
+    await expectTextToContain('#dataset-name', registryDatasetName)
 
     // the dataset should be part of the collection
     await click('#collection')
     await atLocation('#/collection')
     const datasets = await app.client.$$('.sidebar-list-item')
-    expect(datasets.length).toBe(2)
+    expect(datasets.length).toBe(3)
   })
 
   it(`clicking 'Network' tab takes you to the feed, navigate to network preview, new commits are foreign`, async () => {
@@ -570,7 +572,7 @@ describe('Qri End to End tests', function spec () {
 
     // since this dataset has already been cloned, expect NO sidebar action button
     // TODO (ramfox): currently broken
-    // await waitForNotExist('#sidebar-action')
+    await waitForNotExist('#sidebar-action')
 
     // there should be two history items
     const historyItems = await app.client.$$('.history-list-item')
@@ -599,14 +601,15 @@ describe('Qri End to End tests', function spec () {
 
     // set search scope to 'local' & search for the local dataset
     await click('#switch-local')
-    await setValue('#modal-search-box', datasetName)
+    expect(await app.client.$('#switch-local input').getValue()).toBe("on")
+    await setValue('#modal-search-box', jsonDatasetName)
     await sendKeys('#modal-search-box', "Enter")
 
     // wait for results to populate
     await waitForExist('#result-0')
 
     // check that the results are what we expect them to be
-    await expectTextToBe("#result-0 .header a", username + '/' + datasetName)
+    await expectTextToBe("#result-0 .header a", username + '/' + jsonDatasetName)
 
     // click on #result-0 & get sent to the network preview page
     await click('#result-0 .header a')
@@ -614,7 +617,7 @@ describe('Qri End to End tests', function spec () {
     // check location
     await atLocation('#/workbench')
     // ensure we are on the correct dataset
-    await expectTextToBe('#dataset-reference', username + '/' + datasetName)
+    await expectTextToBe('#dataset-reference', username + '/\n' + jsonDatasetName)
   })
 
   it('publishing a dataset adds a dataset to the network feed, unpublishing removes it', async () => {
@@ -627,10 +630,12 @@ describe('Qri End to End tests', function spec () {
     // check location
     await atLocation('#/workbench')
     // ensure we are on the correct dataset
-    await expectTextToBe('#dataset-reference', username + '/' + datasetName)
+    await expectTextToBe('#dataset-reference', username + '/\n' + jsonDatasetName)
 
     // click publish
     await click('#publish-button')
+    await waitForExist('#submit')
+    await click('#submit')
 
     // publish button should change to '#view-in-cloud' button
     await waitForExist('#view-in-cloud')
@@ -645,17 +650,19 @@ describe('Qri End to End tests', function spec () {
 
     // ensure the correct dataset exists
     // Shift+CmdOrCtrl+P
-    await waitForExist(`[data-ref="${username}/${datasetName}"]`)
+    await waitForExist(`[data-ref="${username}/${jsonDatasetName}"]`)
 
     // head back to the workbench & unpublish
     // check location
+    await click('#workbench')
     await atLocation('#/workbench')
     // ensure we are on the correct dataset
-    await expectTextToBe('#dataset-reference', username + '/' + datasetName)
+    await expectTextToBe('#dataset-reference', username + '/\n' + jsonDatasetName)
 
     // click the hamburger & click the unpublish action
     await click('#workbench-hamburger')
     await click('#hamburger-action-unpublish')
+    await click('#submit')
 
     // publish button should exist again
     await waitForExist('#publish-button')

@@ -42,7 +42,7 @@ const Segment: React.FunctionComponent<SegmentProps> = (props) => {
             </div>
         }
         <div className='left-side'>
-          {icon && <div className='segment-icon'><Icon icon={icon} size='md' /></div>}
+          {icon && <div className='segment-icon'><Icon icon={icon} size='sm' /></div>}
           <div className='text'>
             <h4 className='name'>{name}</h4>
             <small className='subhead'>{subhead}</small>

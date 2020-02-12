@@ -12,7 +12,7 @@ interface HistoryListItemProps {
   selected: boolean
   first: boolean
   last: boolean
-  onClick: (selectedListItem: string) => Action
+  onClick: (path: string | undefined) => Action | void
 }
 
 const HistoryListItem: React.FunctionComponent<HistoryListItemProps> = (props) => {

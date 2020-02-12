@@ -52,7 +52,7 @@ function atLocation (app: any) {
       await client.waitUntil(async () => {
         const currUrl: string = await browserWindow.getURL()
         const location = new url.URL(currUrl).hash
-        return location === expected
+        return location.startsWith(expected)
       }, 10000, `expected url to be '${expected}', got: ${location.hash || location}`)
     } catch (e) {
       if (screenshotLocation) {
@@ -100,7 +100,11 @@ function click (app: any) {
       const classes = await client.element(selector).getAttribute('class')
       return !(classes.includes('linkDisabled') || classes.includes('disabled'))
     }, 10000)
-    await client.click(selector)
+    try {
+      await client.click(selector)
+    } catch (e) {
+      throw new Error(`${selector}: ${e}`)
+    }
     if (!headless) await delay(delayTime)
   }
 }
@@ -160,8 +164,12 @@ function expectTextToContain (app: any) {
     // await app.client.waitUntil(async () => {
     //   return !!await app.client.element(selector)
     // }, 10000, `element '${selector}' does not exist`)
-    expect(await app.client.element(selector).getText()).toContain(text)
-    if (!headless) await delay(delayTime)
+    try {
+      expect(await app.client.element(selector).getText()).toContain(text)
+      if (!headless) await delay(delayTime)
+    } catch (e) {
+      throw new Error(`${selector}, ${text}: ${e}`)
+    }
   }
 }
 

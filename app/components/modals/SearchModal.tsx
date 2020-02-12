@@ -79,7 +79,7 @@ const SearchModal: React.FunctionComponent<SearchModalProps> = (props) => {
           <div className='search-modal-switch'>
             <label className='window-name'>local only</label>
             <div>
-              <Switch size='sm' color='dark' name='local' onClick={() => setLocal(!local)} />
+              <Switch size='sm' color='dark' name='local' onClick={() => setLocal(!local)} checked={local} />
             </div>
           </div>
           <label className='window-name'>Search Qri</label>
