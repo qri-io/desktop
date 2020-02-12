@@ -1,18 +1,18 @@
 import React from 'react'
-import { Action } from 'redux'
 
-import { QriRef } from '../../models/qriRef'
+import { QriRef, refStringFromQriRef } from '../../models/qriRef'
 import { VersionInfo } from '../../models/store'
 import { FetchOptions } from '../../store/api'
 import { BACKEND_URL } from '../../constants'
 
 import HistoryListItem from '../item/HistoryListItem'
+import { RouteComponentProps, withRouter } from 'react-router-dom'
 
-export interface LogListProps {
+export interface LogListProps extends RouteComponentProps{
   qriRef: QriRef
 }
 
-const LogList: React.FC<LogListProps> = ({ qriRef }) => {
+const LogList: React.FC<LogListProps> = ({ qriRef, history }) => {
   const [data, setData] = React.useState<VersionInfo[]>([])
   const [error, setError] = React.useState('')
 
@@ -34,6 +34,12 @@ const LogList: React.FC<LogListProps> = ({ qriRef }) => {
     fetchLogs()
   }, [qriRef.username, qriRef.name])
 
+  const handleOnClick = (item: VersionInfo) => {
+    return () => {
+      history.push(`/network/${refStringFromQriRef({ location: '', username: item.username, name: item.name, path: item.path })}`)
+    }
+  }
+
   return (
     <div
       id='history_list'
@@ -41,6 +47,7 @@ const LogList: React.FC<LogListProps> = ({ qriRef }) => {
     >
       {
         data.map((item, i) => {
+          const selected = qriRef.path ? qriRef.path === item.path : i === 0
           return (
             <HistoryListItem
               data={item}
@@ -48,11 +55,8 @@ const LogList: React.FC<LogListProps> = ({ qriRef }) => {
               id={`HEAD-${i + 1}`}
               first={i === 0}
               last={i === data.length - 1}
-              selected={false}
-              onClick={(s: string): Action => {
-                alert(`you clicked a commit: ${s}`)
-                return { type: '' }
-              }}
+              selected={selected}
+              onClick={handleOnClick(item)}
             />
           )
         })
@@ -61,4 +65,4 @@ const LogList: React.FC<LogListProps> = ({ qriRef }) => {
   )
 }
 
-export default LogList
+export default withRouter(LogList)

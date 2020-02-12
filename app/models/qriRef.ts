@@ -57,7 +57,14 @@ export function qriRefFromRoute (p: RouteComponentProps<QriRef>): QriRef {
 
     username: p.match.params.username,
     name: p.match.params.name,
-    path: p.match.params.path,
+    path: p.match.params.path ? '/ipfs/' + p.match.params.path : undefined,
     selector: p.match.params.selector
   }
+}
+
+// refStringFromQriRef takes a qriRef and turns it into a ref string
+export function refStringFromQriRef (qriRef: QriRef): string {
+  let route = `${qriRef.username}/${qriRef.name}`
+  if (qriRef.path) route += `/at${qriRef.path}`
+  return route
 }
