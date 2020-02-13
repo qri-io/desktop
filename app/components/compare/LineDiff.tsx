@@ -1,5 +1,7 @@
 import * as React from 'react'
 
+import DiffStat from './DiffStat'
+
 interface LineDiffProps {
   data: any
 }
@@ -13,7 +15,7 @@ const LineDiff: React.FunctionComponent<LineDiffProps> = (props: LineDiffProps) 
       <div className='header'>
         <b>{data.meta['---']}</b>
         <div style={{ 'float': 'right' }}>
-          <ChangeStat added={data.meta.added} removed={data.meta.removed} />
+          <DiffStat added={data.meta.added} removed={data.meta.removed} />
         </div>
       </div>
       <table className='content'>
@@ -53,21 +55,6 @@ const LineDiff: React.FunctionComponent<LineDiffProps> = (props: LineDiffProps) 
         })}
       </table>
     </div>
-  )
-}
-
-interface ChangeStatProps {
-  added: number
-  removed: number
-}
-
-const ChangeStat: React.FunctionComponent<ChangeStatProps> = (props: ChangeStatProps) => {
-  const { added, removed } = props
-  return (
-    <span className="change_stat">
-      <b className="add">+{added}</b>
-      <b className="rem">-{removed}</b>
-    </span>
   )
 }
 

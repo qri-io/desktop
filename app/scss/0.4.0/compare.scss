@@ -1,0 +1,44 @@
+.compare-sidebar .picker {
+  display: flex;
+
+  .input-label {
+    color: white;
+  }
+
+  .input {
+    color: white;
+    background: #00000025;
+  }
+
+  .indicator {
+    margin: 10px 10px 0 5px;
+  }
+
+  .input.button {
+    margin-top: 5px;
+  }
+}
+
+.picker.swap {
+  margin: -25px auto 0 auto;
+  max-width: 40px;
+  .input {
+    background: transparent;
+  }
+}
+
+#compare-container {
+  width: 100%;
+  .columns {
+    width: 100%;
+  }
+}
+
+.compare-container-main-content {
+  width: 100%;
+}
+
+.compare-content {
+  overflow: auto;
+  max-width: 800px;
+}

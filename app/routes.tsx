@@ -8,6 +8,7 @@ import Signin from './components/Signin'
 import CollectionContainer from './containers/CollectionContainer'
 import WorkbenchContainer from './containers/WorkbenchContainer'
 import NetworkContainer from './containers/NetworkContainer'
+import Compare from './components/compare/Compare'
 
 export default function Routes (props: any) {
   const {
@@ -80,6 +81,10 @@ export default function Routes (props: any) {
         <Route path='/workbench/:username/:name' render={() => {
           return sectionElement('workbench', <WorkbenchContainer />)
         }}/>
+
+        { __BUILD__.ENABLE_COMPARE_SECTION &&
+          <Route exact path='/compare' render={(props) => sectionElement('compare', <Compare {...props} />)} />
+        }
 
         <Route path='/' render={() => {
           ipcRenderer.send('show-dataset-menu', false)

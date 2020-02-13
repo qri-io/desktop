@@ -31,7 +31,9 @@ import {
   faCaretUp,
   faCaretDown,
   faExpandArrowsAlt,
-  faEllipsisH
+  faEllipsisH,
+  faSort,
+  faMinus
 } from '@fortawesome/free-solid-svg-icons'
 
 interface IconProps {
@@ -41,7 +43,7 @@ interface IconProps {
   // md: 1.33em
   // lg: 2em
   size?: 'xs' | 'sm' | 'md' | 'lg'
-  color?: 'light' | 'medium' | 'dark'
+  color?: 'light' | 'medium' | 'dark' | 'red' | 'green'
 }
 
 const icons: Record<string, any> = {
@@ -65,6 +67,8 @@ const icons: Record<string, any> = {
   'create': faPlus,
   'clone': faDownload,
   'download': faDownload,
+  'file': faFileAlt,
+  'sort': faSort,
   'dataset': faFileAlt,
   'datasets': faCopy,
   'readme': faGlasses,
@@ -82,7 +86,9 @@ const icons: Record<string, any> = {
   'up': faCaretUp,
   'down': faCaretDown,
   'expand': faExpandArrowsAlt,
-  'hamburger': faEllipsisH
+  'hamburger': faEllipsisH,
+  'minus': faMinus,
+  'plus': faPlus
 }
 
 export const iconsList = Object.keys(icons)

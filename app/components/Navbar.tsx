@@ -8,7 +8,8 @@ import {
   faFileAlt,
   faCopy,
   faComment,
-  faGlobeEurope
+  faGlobeEurope,
+  faRandom
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { IconDefinition } from '@fortawesome/free-regular-svg-icons'
@@ -114,8 +115,16 @@ const Navbar: React.FunctionComponent<NavbarProps> = (props: NavbarProps) => {
     }
   ]
 
-  return (
+  if (__BUILD__.ENABLE_COMPARE_SECTION) {
+    navItems.push({
+      icon: faRandom,
+      id: 'compare',
+      link: '/compare',
+      tooltip: 'Compare two datasets'
+    })
+  }
 
+  return (
     <div className='navbar-container' ref={dropdown}>
       {showUserMenu && (
         <div className='user-menu'>
