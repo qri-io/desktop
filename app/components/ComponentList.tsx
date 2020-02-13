@@ -7,20 +7,14 @@ import ContextMenuArea from 'react-electron-contextmenu'
 import { ApiActionThunk } from '../store/api'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
-  faTags,
-  faUniversity,
-  faTh,
-  IconDefinition,
   faExclamation,
-  faRobot,
-  faGlasses,
-  faSave,
   faArrowRight
 } from '@fortawesome/free-solid-svg-icons'
 
 import { checkClearToCommit } from '../utils/formValidation'
 import { DatasetStatus, SelectedComponent, ComponentType } from '../models/store'
 import Spinner from './chrome/Spinner'
+import Icon from './chrome/Icon'
 
 interface StatusDotProps {
   status: string | undefined
@@ -48,9 +42,10 @@ export const StatusDot: React.FunctionComponent<StatusDotProps> = (props) => {
 }
 
 interface FileRowProps {
+  color?: 'light' | 'dark'
   name: string
   displayName: string
-  icon?: IconDefinition
+  icon?: string
   filename?: string
   selected?: boolean
   status?: string
@@ -81,7 +76,7 @@ export const FileRow: React.FunctionComponent<FileRowProps> = (props) => {
       }}
     >
       {props.icon && (<div className='icon-column'>
-        <FontAwesomeIcon icon={props.icon} size='sm'/>
+        <Icon icon={props.icon} size='sm' color={props.disabled ? 'medium' : props.color}/>
       </div>)}
       <div className='text-column'>
         <div className='text'>{props.displayName}</div>
@@ -111,37 +106,37 @@ export const components = [
     name: 'commit',
     displayName: 'Commit',
     tooltip: 'info about the latest changes to the dataset',
-    icon: faSave
+    icon: 'commit'
   },
   {
     name: 'readme',
     displayName: 'Readme',
     tooltip: 'a markdown file to familiarize people with the dataset',
-    icon: faGlasses
+    icon: 'readme'
   },
   {
     name: 'meta',
     displayName: 'Meta',
     tooltip: 'the dataset\'s title, description, tags, etc',
-    icon: faTags
+    icon: 'meta'
   },
   {
     name: 'body',
     displayName: 'Body',
     tooltip: 'the structured content of the dataset',
-    icon: faTh
+    icon: 'body'
   },
   {
     name: 'structure',
     displayName: 'Structure',
     tooltip: 'the structure of the dataset',
-    icon: faUniversity
+    icon: 'structure'
   },
   {
     name: 'transform',
     displayName: 'Transform',
     tooltip: 'commit automation',
-    icon: faRobot
+    icon: 'transform'
   }
 ]
 
@@ -188,6 +183,7 @@ const ComponentList: React.FunctionComponent<ComponentListProps> = (props: Compo
             disabled={true}
             tooltip={tooltip}
             onClick={undefined}
+            color='light'
           />
         })}
         {
@@ -234,6 +230,7 @@ const ComponentList: React.FunctionComponent<ComponentListProps> = (props: Compo
                 selectionType={selectionType}
                 tooltip={tooltip}
                 onClick={onComponentClick}
+                color='light'
               />
             )
 
@@ -271,6 +268,7 @@ const ComponentList: React.FunctionComponent<ComponentListProps> = (props: Compo
           } else {
             return (
               <FileRow
+                color='light'
                 key={name}
                 displayName={displayName}
                 name={name}

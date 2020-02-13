@@ -160,14 +160,17 @@ function expectTextToBe (app: any) {
 
 // expectTextToContain wraps expect().toContain()
 function expectTextToContain (app: any) {
-  return async (selector: string, text: string) => {
-    // await app.client.waitUntil(async () => {
-    //   return !!await app.client.element(selector)
-    // }, 10000, `element '${selector}' does not exist`)
+  return async (selector: string, text: string, screenshotLocation?: string) => {
     try {
       expect(await app.client.element(selector).getText()).toContain(text)
       if (!headless) await delay(delayTime)
     } catch (e) {
+      if (screenshotLocation) {
+        app.browserWindow.capturePage().then(function (imageBuffer) {
+          console.log(`writing screenshot: ${screenshotLocation}`)
+          fs.writeFileSync(screenshotLocation, imageBuffer)
+        })
+      }
       throw new Error(`${selector}, ${text}: ${e}`)
     }
   }
