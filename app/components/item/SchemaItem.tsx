@@ -52,11 +52,11 @@ const SchemaItemProps: React.FunctionComponent<SchemaItemProps> = ({
 
   // TODO (ramfox): do we have max lengths for title, description?
   return (
-    <div className={classNames('schema-item', { 'expanded': expanded, 'top': data.row === 0 })} key={data.row}>
-      <div className='schema-item-icon' onClick={() => setExpanded((prev) => !prev)} >
+    <tr className={classNames('schema-item', { 'expanded': expanded, 'top': data.row === 0 })} key={data.row}>
+      <td className='schema-item-icon' onClick={() => setExpanded((prev) => !prev)} >
         <Icon icon={expanded ? 'down' : 'right'} size='md' color='medium'/>
-      </div>
-      <div>
+      </td>
+      <td>
         <DynamicEditField
           row={data.row}
           name='title'
@@ -69,8 +69,8 @@ const SchemaItemProps: React.FunctionComponent<SchemaItemProps> = ({
           expanded={expanded}
           editable={editable}
         />
-      </div>
-      <div>
+      </td>
+      <td className='type-picker-cell'>
         <TypePicker
           name={data.row}
           onPickType={onChange && editable ? handleTypePickerChange : undefined}
@@ -78,8 +78,8 @@ const SchemaItemProps: React.FunctionComponent<SchemaItemProps> = ({
           expanded={expanded}
           editable={editable}
         />
-      </div>
-      <div>
+      </td>
+      <td>
         <DynamicEditField
           row={data.row}
           name='description'
@@ -90,8 +90,8 @@ const SchemaItemProps: React.FunctionComponent<SchemaItemProps> = ({
           minWidth={100}
           editable={editable}
         />
-      </div>
-      <div>
+      </td>
+      <td>
         <DynamicEditField
           row={data.row}
           name='validation'
@@ -102,8 +102,8 @@ const SchemaItemProps: React.FunctionComponent<SchemaItemProps> = ({
           minWidth={100}
           editable={editable}
         />
-      </div>
-    </div>
+      </td>
+    </tr>
   )
 }
 

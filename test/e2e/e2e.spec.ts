@@ -1,5 +1,4 @@
 import path from 'path'
-import url from 'url'
 import os from 'os'
 import fs from 'fs'
 import TestBackendProcess from '../utils/testQriBackend'
@@ -525,6 +524,7 @@ describe('Qri End to End tests', function spec () {
     await atLocation('#/network')
 
     // check we are at the right dataset
+    await waitForExist('#navbar-breadcrumb')
     await expectTextToContain('#navbar-breadcrumb', registryDatasetName)
     // history item has foreign class
     await waitForExist('#HEAD-1.foreign')
@@ -532,6 +532,7 @@ describe('Qri End to End tests', function spec () {
     // clone the dataset by clicking on the action button
     await click('#sidebar-action')
     await atLocation('#/workbench')
+    await waitForExist('#dataset-name')
     await expectTextToContain('#dataset-name', registryDatasetName)
 
     // the dataset should be part of the collection

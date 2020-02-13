@@ -53,7 +53,7 @@ function atLocation (app: any) {
         const currUrl: string = await browserWindow.getURL()
         const location = new url.URL(currUrl).hash
         return location.startsWith(expected)
-      }, 10000, `expected url to be '${expected}', got: ${location.hash || location}`)
+      }, 10000, `expected url to start with '${expected}', got: ${location.hash}`)
     } catch (e) {
       if (screenshotLocation) {
         app.browserWindow.capturePage().then(function (imageBuffer) {
