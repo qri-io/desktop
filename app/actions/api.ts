@@ -324,9 +324,16 @@ export function fetchWorkingStatus (): ApiActionThunk {
 // to invalidate pagination, set page to -1
 export function fetchBody (page: number = 1, pageSize: number = bodyPageSizeDefault): ApiActionThunk {
   return async (dispatch, getState) => {
-    const { workingDataset, selections } = getState()
+    const { workingDataset, selections, myDatasets } = getState()
     const { peername, name } = selections
-    const { path, fsiPath } = workingDataset
+    const { path } = workingDataset
+
+    // look up the peername + name in myDatasets to determine whether it is FSI linked
+    const dataset = myDatasets.value.find((d) => (d.username === peername) && (d.name === name))
+    if (!dataset) {
+      return Promise.reject(new Error('could not find dataset in list'))
+    }
+    const { fsiPath } = dataset
 
     const { page: confirmedPage, doNotFetch } = actionWithPagination(page, workingDataset.components.body.pageInfo)
 
