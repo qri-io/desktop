@@ -100,7 +100,7 @@ export default class BodyTable extends React.Component<BodyTableProps> {
     const { body, headers, pageInfo, highlighedColumnIndex, setDetailsBar } = this.props
     const { isFetching, fetchedAll } = pageInfo
 
-    if (isFetching) return null
+    if (isFetching && !body) return null
 
     const tableRows = body.map((row, i) => {
       return (
