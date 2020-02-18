@@ -1,13 +1,12 @@
 import * as React from 'react'
 import { Action } from 'redux'
 
-import { P2PConnection } from '../../models/network'
 import { QriRef } from '../../models/qriRef'
 import { ApiActionThunk } from '../../store/api'
 
 import Layout from '../Layout'
-import P2PConnectionStatus from './P2PConnectionStatus'
 import NetworkHome from './NetworkHome'
+import NetworkSidebar from './NetworkSidebar'
 import Preview from '../dataset/Preview'
 import LogList from './LogList'
 import SidebarActionButton from '../chrome/SidebarActionButton'
@@ -77,14 +76,17 @@ const Network: React.FunctionComponent<NetworkProps> = (props) => {
   return (
     <Layout
       id='collection-container'
-      sidebarContent={<div className='dataset-sidebar'>
-        <P2PConnectionStatus
-          data={{ enabled: true }}
-          onChange={(d: P2PConnection) => { alert(`change connection: ${d.enabled}`) }}
-        />
-        {qriRef.username && qriRef.name && <LogList qriRef={qriRef} />}
-        {qriRef.username && qriRef.name && !inCollection && <SidebarActionButton text='Clone Dataset' onClick={() => addDatasetAndFetch(qriRef.username, qriRef.name)}/>}
-      </div>}
+      sidebarContent={
+        <NetworkSidebar>
+          {/* TODO (ramfox): add back in when we have accurate network stats */}
+          {/* <P2PConnectionStatus
+            data={{ enabled: true }}
+            onChange={(d: P2PConnection) => { alert(`change connection: ${d.enabled}`) }}
+          /> */}
+          {qriRef.username && qriRef.name && <LogList qriRef={qriRef} />}
+          {qriRef.username && qriRef.name && !inCollection && <SidebarActionButton text='Clone Dataset' onClick={() => addDatasetAndFetch(qriRef.username, qriRef.name)} />}
+        </NetworkSidebar>
+      }
       sidebarWidth={sidebarWidth}
       onSidebarResize={(width) => { setSidebarWidth('network', width) }}
       mainContent={mainContent}

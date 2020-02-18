@@ -142,8 +142,8 @@ class DatasetList extends React.Component<DatasetListProps> {
 
     return (
       <div id='dataset-list'>
-        <div className='dataset-sidebar' >
-          <div className='dataset-sidebar-header sidebar-padded-container'>
+        <div className='sidebar' >
+          <div className='sidebar-header sidebar-padded-container'>
             <p className='pane-title'>Collection</p>
           </div>
           <div id='dataset-list-filter'>

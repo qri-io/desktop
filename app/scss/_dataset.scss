@@ -178,7 +178,11 @@ $header-font-size: .9rem;
 //     Dataset Sidebar    //
 ////////////////////////////
 
-.dataset-sidebar {
+#network-sidebar {
+  height: 100%
+}
+
+.sidebar {
   height: 100%;
   font-size: $header-font-size;
   cursor: default;
@@ -193,7 +197,7 @@ $header-font-size: .9rem;
     padding: 0 10px;
   }
 
-  .dataset-sidebar-header {
+  .sidebar-header {
     p {
       margin-bottom: 2px;
     }

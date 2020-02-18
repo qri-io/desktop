@@ -99,8 +99,8 @@ const WorkbenchSidebar: React.FunctionComponent<WorkbenchSidebarProps> = (props)
   // if no dataset is selected, what to return
 
   return (
-    <div className='dataset-sidebar'>
-      <div className='dataset-sidebar-header sidebar-padded-container'>
+    <div className='sidebar'>
+      <div className='sidebar-header sidebar-padded-container'>
         <p className='pane-title'>Dataset</p>
         <DatasetReference peername={peername} name={name} renameDataset={renameDataset}/>
         <DatasetDetailsSubtext format={format} lastCommit={lastCommit} commitCount={commitCount} />
@@ -171,7 +171,7 @@ const WorkbenchSidebar: React.FunctionComponent<WorkbenchSidebarProps> = (props)
           unmountOnExit
         >
           <div
-            id='history_list'
+            id='history-list'
             className='sidebar-content'
             onScroll={(e) => handleHistoryScroll(e)}
             hidden = {activeTab === 'status'}

@@ -26,7 +26,7 @@ const SidebarActionButton: React.FC<SidebarActionButtonProps> = (props) => {
   const { text, onClick } = props
   return (
     <div className='sidebar-action-button'>
-      <Button id='sidebar-action' text={text.toUpperCase()} color='bright' full onClick={handleOnClick} loading={loading} />
+      <Button id='sidebar-action' text={text.toUpperCase()} color='primary' full onClick={handleOnClick} loading={loading} />
     </div>
   )
 }

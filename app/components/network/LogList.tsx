@@ -42,9 +42,9 @@ const LogList: React.FC<LogListProps> = ({ qriRef, history }) => {
 
   return (
     <div
-      id='history_list'
-      className='sidebar-content'
+      id='history-list'
     >
+      <label className='sidebar light'>Dataset History</label>
       {
         data.map((item, i) => {
           const selected = qriRef.path ? qriRef.path === item.path : i === 0

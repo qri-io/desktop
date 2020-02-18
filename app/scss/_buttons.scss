@@ -62,10 +62,6 @@ fieldset[disabled] a.btn {
 //
 
 .btn-primary {
-  @include button-variant($btn-primary-color, $qri-blue, $qri-blue);
-}
-
-.btn-bright {
   @include button-variant($btn-primary-color, $light-blue-accent, $light-blue-accent);
 }
 

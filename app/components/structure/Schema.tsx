@@ -32,23 +32,27 @@ const Schema: React.FunctionComponent<SchemaProps> = ({
 
   return (
     <table id='schema-wrap' style={{ width: '100%' }}>
-      <tr className='schema-header'>
-        <th></th>
-        <th>title</th>
-        <th className='type-picker-header'>type</th>
-        <th>description</th>
-        <th>validation</th>
-      </tr>
-      {items.map((item: SchemaItemType, i: number) => {
-        return (
-          <SchemaItem
-            onChange={onChange ? onChangeHandler : undefined}
-            data={{ ...item, row: i }}
-            editable={editable}
-            key={i}
-          />
-        )
-      })}
+      <thead>
+        <tr className='schema-header'>
+          <th></th>
+          <th>title</th>
+          <th className='type-picker-header'>type</th>
+          <th>description</th>
+          <th>validation</th>
+        </tr>
+      </thead>
+      <tbody>
+        {items.map((item: SchemaItemType, i: number) => {
+          return (
+            <SchemaItem
+              onChange={onChange ? onChangeHandler : undefined}
+              data={{ ...item, row: i }}
+              editable={editable}
+              key={i}
+            />
+          )
+        })}
+      </tbody>
     </table>
   )
 }
