@@ -5,7 +5,7 @@ import TabPicker from '../app/components/nav/TabPicker'
 import DataType from '../app/components/item/DataType'
 import TypePickerOverlay from '../app/components/overlay/TypePickerOverlay'
 import TypePicker, { typesAndDescriptions } from '../app/components/structure/TypePicker'
-import SchemaItem from '../app/components/item/SchemaItem'
+import SchemaItem, { SchemaItemType } from '../app/components/item/SchemaItem'
 import { Schema as ISchema } from '../app/models/dataset'
 import Schema from '../app/components/structure/Schema'
 import Structure from '../app/components/Structure'
@@ -67,24 +67,13 @@ const sampleSchema: ISchema = {
 export const schema = () => {
   const [schema, setSchema] = React.useState(sampleSchema)
 
-  const onAccept = (row: number) => {
-    return (field: string) => {
-      return (value: string) => {
-        setSchema((prev) => {
-          let s = { ...prev }
-          try {
-            s.items.items[row][field] = value
-          } catch (e) {
-            throw e
-          }
-          return s
-        })
-      }
-    }
+  const onChange = (schema: ISchema, e: React.ChangeEvent) => {
+    e.preventDefault()
+    setSchema(schema) 
   }
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', margin: 20, width: 700 }}>
-      <Schema schema={schema} onAccept={onAccept} />
+    <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', margin: 20 }}>
+      <Schema data={schema} onChange={onChange} editable />
     </div>
   )
 }
@@ -97,23 +86,20 @@ schema.story = {
 export const nonEditableSchema = () => {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', margin: 20, width: 700 }}>
-      <Schema schema={sampleSchema} editable={false}/>
+      <Schema data={sampleSchema} editable={false}/>
     </div>
   )
 }
 
 export const schemaItem = () => {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', margin: 20, width: 700 }}>
+    <table style={{ margin: 20, width: 700 }}>
       <SchemaItem
-        onAccept={(field: string) => { return (value: string) => console.log(field, value) }}
-        title='the title'
-        type='string'
-        description='here is my description yay!'
-        validation=''
-        row={1}
+        onChange={(item: SchemaItemType, e: React.SyntheticEvent) => { console.log(item)}}
+        data={{title:'the title', type: 'string', description:' here is my description yay!', validation: '', row: 1}}
+        editable
       />
-    </div>
+    </table>
   )
 }
 

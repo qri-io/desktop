@@ -13,10 +13,13 @@ const Switch: React.FunctionComponent<SwitchProps> = (props) => {
   const { checked, name, onClick, size = 'sm', color = 'light' } = props
 
   return (
-    <div className='switch'>
-      <input type='checkbox' id={`switch-${name}`} checked={checked}/>
+    <div
+      className='switch'
+      id={`switch-${name}`}
+      onClick={onClick}
+    >
+      <input type='checkbox' checked={checked}/>
       <label
-        onClick={onClick}
         className={classNames({ 'switch-large': size === 'lg', 'switch-dark': color === 'dark' })}
         htmlFor={`switch-${name}`}></label>
     </div>)

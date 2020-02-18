@@ -113,6 +113,22 @@ label {
   font-weight: $font-weight-regular;
   font-size: 14px;
   line-height: 17px;
+
+  &.sidebar {
+    font-family: $font-family-sans-serif;
+    font-size: 12px;
+    font-weight: 300;
+    margin-bottom: 0px;
+    text-transform: uppercase;
+    color: #808080;
+    &.light {
+      color: white;
+    }
+    &.large {
+      font-size: 14px;
+      margin-bottom: 5px;
+    }
+  }
 }
 
 //

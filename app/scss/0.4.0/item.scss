@@ -14,26 +14,23 @@
 }
 
 .schema-item {
-  width: 100%;
-  padding: 10px 10px 4px 10px;
   border-bottom: solid 1px #E8E9ED;
-  // border-top: none;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: flex-start;
-  min-height: 45px;
+  min-height: 60px;
+
+  td {
+    vertical-align: top;
+    padding-top: 10px;
+  }
+
+  td.type-picker-cell {
+    padding-top: 7px;
+  }
 
 
   .schema-item-icon {
-    padding-top: 4px;
     padding-left: 7px;
     width: 14px;
     flex: 0 0 14px;
-  }
-
-  &.expanded {
-    align-items: flex-start 
   }
 
   &.top {

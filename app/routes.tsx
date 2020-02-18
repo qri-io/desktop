@@ -55,6 +55,11 @@ export default function Routes (props: any) {
 
         {/* App Sections */}
         { __BUILD__.ENABLE_NETWORK_SECTION &&
+          <Route path='/network/:username/:name/at/ipfs/:path' render={(props) => {
+            return sectionElement('network', <NetworkContainer {...props} />)
+          }} />
+        }
+        { __BUILD__.ENABLE_NETWORK_SECTION &&
           <Route path='/network/:username/:name' render={(props) => {
             return sectionElement('network', <NetworkContainer {...props} />)
           }} />

@@ -2,8 +2,7 @@ import * as React from 'react'
 import _ from 'underscore'
 import { RouteComponentProps, withRouter } from 'react-router-dom'
 
-import { Dataset as IDataset } from '../../models/dataset'
-import { datasetToVersionInfo } from '../../actions/mappingFuncs'
+import { searchResultToVersionInfo } from '../../actions/mappingFuncs'
 import { FetchOptions } from '../../store/api'
 import { BACKEND_URL } from '../../constants'
 import { VersionInfo } from '../../models/store'
@@ -18,13 +17,6 @@ interface SearchModalProps extends RouteComponentProps {
   q: string
   onDismissed: () => void
   setWorkingDataset: (username: string, name: string) => void
-}
-
-interface SearchProps {
-  Type: string
-  ID: string
-  URL: string
-  Value: IDataset
 }
 
 // time in milliseconds to wait for debounce
@@ -50,10 +42,7 @@ const SearchModal: React.FunctionComponent<SearchModalProps> = (props) => {
       throw err // eslint-disable-line
     }
 
-    const data = local ? res.data
-      : res.data.map((item: SearchProps) => {
-        return datasetToVersionInfo(item.Value)
-      })
+    const data = local ? res.data : res.data.map(searchResultToVersionInfo)
     setResults(data)
   }
 
@@ -90,7 +79,7 @@ const SearchModal: React.FunctionComponent<SearchModalProps> = (props) => {
           <div className='search-modal-switch'>
             <label className='window-name'>local only</label>
             <div>
-              <Switch size='sm' color='dark' name='local' onClick={() => setLocal(!local)} />
+              <Switch size='sm' color='dark' name='local' onClick={() => setLocal(!local)} checked={local} />
             </div>
           </div>
           <label className='window-name'>Search Qri</label>
@@ -100,11 +89,12 @@ const SearchModal: React.FunctionComponent<SearchModalProps> = (props) => {
             }}
             onEnter={(e) => setTerm(e.target.value)}
             value={term}
+            id='modal-search-box'
           />
           {term && <p className='response-description'>{results.length} {results.length === 1 ? 'result' : 'results'} for <i>{term}</i></p>}
         </header>
         <div className='results'>
-          {term && (results.length !== 0) && results.map((result: VersionInfo, i) => <DatasetItem key={i} data={result} fullWidth onClick={handleOnClick()} />)}
+          {term && (results.length !== 0) && results.map((result: VersionInfo, i) => <DatasetItem key={i} id={`result-${i}`} data={result} fullWidth onClick={handleOnClick()} />)}
           {term && !results.length && <h4 className='no-results'>No Results</h4>}
         </div>
       </div>

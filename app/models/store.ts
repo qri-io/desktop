@@ -60,6 +60,7 @@ export interface UI {
   showDiff: boolean
   datasetSidebarWidth: number
   collectionSidebarWidth: number
+  networkSidebarWidth: number
   toast: Toast
   blockMenus: boolean
   hideCommitNudge: boolean
@@ -98,35 +99,42 @@ export interface VersionInfo {
   // human-readble name of the owner of this dataset
   username: string
   // user identifier
-  profileId?: string
+  profileId: string
   // dataset name
   name: string
   // commit hash, eg: /ipfs/QmY9WcXXUnHJbYRA28LRctiL4qu4y...
-  path?: string
+  path: string
 
   // repo locality
   // path to a local filesystem-linked directory (if exists)
-  fsiPath?: string
+  fsiPath: string
   // is block data for this commit stored locally?
-  foreign?: boolean
+  foreign: boolean
 
   // dataset version details
   // dataset meta.Title field
-  metaTitle?: string
+  metaTitle: string
   // meta.Themes array as a "comma,separated,string"
-  themeList?: string
+  themeList: string
+
+  // TODO (b5) - these are not yet supplied by the backend.
+  // data format of the body
+  bodyFormat: string
   // length of body data in bytes
   bodySize?: number
   // number of rows in the body
   bodyRows?: number
   // number of validation errors in the body
   numErrors?: number
-  // commit.Timestamp field, time of version creation
-  commitTime?: Date
 
-  // TODO (b5) - these are not yet supplied by the backend.
-  bodyFormat?: string // data format of the body
-  numCommits?: number // number of commits in history
+  // title of commit
+  commitTitle: string
+  // commit description message
+  commitMessage: string
+  // commit.Timestamp field, time of version creation
+  commitTime: Date
+  // number of commits in history
+  numCommits?: number
 
   // TODO (b5) - need to figure out publication representation. there's tension
   // about what "publication" as a boolean means.
@@ -193,15 +201,6 @@ export interface CommitDetails {
   structure: Structure
 }
 
-export interface HistoryItem {
-  author: string
-  // profileID: string
-  name: string
-  path: string
-  timestamp: Date
-  title: string
-}
-
 export interface WorkingDataset extends CommitDetails {
   fsiPath: string
   hasHistory: boolean
@@ -211,7 +210,7 @@ export interface WorkingDataset extends CommitDetails {
 
 export interface History {
   pageInfo: PageInfo
-  value: HistoryItem[]
+  value: VersionInfo[]
 }
 
 export default interface Store {

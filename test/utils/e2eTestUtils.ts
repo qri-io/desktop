@@ -13,10 +13,12 @@ export interface E2ETestUtils {
   exists: (selectors: string[]) => Promise<void>
   doesNotExist: (selector: string) => Promise<void>
   expectTextToBe: (selector: string, text: string) => Promise<void>
+  expectTextToContain: (selector: string, text: string) => Promise<void>
   onHistoryTab: () => Promise<void>
   onStatusTab: () => Promise<void>
   checkStatus: (component: string, status: string) => Promise<void>
   delay: (time: number) => Promise<unknown>
+  sendKeys: (selector: string, value: string | string[]) => Promise<void>
 }
 
 export function newE2ETestUtils (app: any): E2ETestUtils {
@@ -30,9 +32,11 @@ export function newE2ETestUtils (app: any): E2ETestUtils {
     exists: exists(app),
     doesNotExist: doesNotExist(app),
     expectTextToBe: expectTextToBe(app),
+    expectTextToContain: expectTextToContain(app),
     onHistoryTab: onHistoryTab(app),
     onStatusTab: onStatusTab(app),
-    checkStatus: checkStatus(app)
+    checkStatus: checkStatus(app),
+    sendKeys: sendKeys(app)
   }
 }
 
@@ -48,8 +52,8 @@ function atLocation (app: any) {
       await client.waitUntil(async () => {
         const currUrl: string = await browserWindow.getURL()
         const location = new url.URL(currUrl).hash
-        return location === expected
-      }, 10000, `expected url to be '${expected}', got: ${location.hash || location}`)
+        return location.startsWith(expected)
+      }, 10000, `expected url to start with '${expected}', got: ${location.hash}`)
     } catch (e) {
       if (screenshotLocation) {
         app.browserWindow.capturePage().then(function (imageBuffer) {
@@ -96,7 +100,11 @@ function click (app: any) {
       const classes = await client.element(selector).getAttribute('class')
       return !(classes.includes('linkDisabled') || classes.includes('disabled'))
     }, 10000)
-    await client.click(selector)
+    try {
+      await client.click(selector)
+    } catch (e) {
+      throw new Error(`${selector}: ${e}`)
+    }
     if (!headless) await delay(delayTime)
   }
 }
@@ -106,6 +114,14 @@ function setValue (app: any) {
   return async (selector: string, value: any) => {
     await app.client.element(selector).setValue(value)
     // if (!headless) await delay(delayTime)
+  }
+}
+
+// sendKeys sends a sequence of key strokes to the active element
+// supported characters listed here: https://w3c.github.io/webdriver/#keyboard-actions
+function sendKeys (app: any) {
+  return async (selector: string, value: string | string[]) => {
+    await app.client.element(selector).keys(value)
   }
 }
 
@@ -139,6 +155,24 @@ function expectTextToBe (app: any) {
     // }, 10000, `element '${selector}' does not exist`)
     expect(await app.client.element(selector).getText()).toBe(text)
     if (!headless) await delay(delayTime)
+  }
+}
+
+// expectTextToContain wraps expect().toContain()
+function expectTextToContain (app: any) {
+  return async (selector: string, text: string, screenshotLocation?: string) => {
+    try {
+      expect(await app.client.element(selector).getText()).toContain(text)
+      if (!headless) await delay(delayTime)
+    } catch (e) {
+      if (screenshotLocation) {
+        app.browserWindow.capturePage().then(function (imageBuffer) {
+          console.log(`writing screenshot: ${screenshotLocation}`)
+          fs.writeFileSync(screenshotLocation, imageBuffer)
+        })
+      }
+      throw new Error(`${selector}, ${text}: ${e}`)
+    }
   }
 }
 

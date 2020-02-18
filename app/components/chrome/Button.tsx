@@ -8,13 +8,13 @@ interface ButtonProps {
   id: string
   text: string // the text written on the button
   downloadName?: string // the name of the file that will be downloaded.
-  // color should be one of 4 options:
-  // primary
-  // dark
-  // danger
-  // muted
+  // color should be one of 5 options:
+  // dark - dark blue
+  // danger - red
+  // muted - white
+  // primary - bright blue
   color: 'primary' | 'dark' | 'danger' | 'muted' // the color of the button, default is 'primary'
-  onClick?: () => void | Promise<void> // function that will trigger when the button is clicked
+  onClick?: (e?: React.MouseEvent) => void | Promise<void> // function that will trigger when the button is clicked
   full?: boolean // when full is true, the button has width 100%
   loading?: boolean // when true, the button is disabled and the loading spinner replaces the text
   download?: string // the href of what you want to make available for download. Requires download and downloadName to function properly

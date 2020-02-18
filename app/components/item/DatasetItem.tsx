@@ -6,6 +6,7 @@ import Tag from './Tag'
 import classNames from 'classnames'
 
 interface DatasetItemProps {
+  id?: string
   data: VersionInfo
   onClick: (username: string, name: string) => void
   fullWidth: boolean
@@ -13,12 +14,12 @@ interface DatasetItemProps {
   hideUsername?: boolean
 }
 
-const DatasetItem: React.FunctionComponent<DatasetItemProps> = ({ data, path, hideUsername, fullWidth = false, onClick }) => {
+const DatasetItem: React.FunctionComponent<DatasetItemProps> = ({ id, data, path, hideUsername, fullWidth = false, onClick }) => {
   if (!data) { return null }
   const { metaTitle, themeList, username, name } = data
 
   return (
-    <div className={classNames('dataset-item', { 'full': fullWidth })} key={path}>
+    <div id={id} className={classNames('dataset-item', { 'full': fullWidth })} key={path} data-ref={`${username}/${name}`}>
       <div className='header'>
         <a onClick={() => onClick(username, name)}>{hideUsername ? `${name}` : `${username}/${name}`}</a>
         {themeList && themeList.length > 0 && <Tag type='category' tag={themeList[0]} />}

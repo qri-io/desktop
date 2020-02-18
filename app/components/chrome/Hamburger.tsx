@@ -6,11 +6,12 @@ import HamburgerOverlay from '../overlay/HamburgerOverlay'
 import Icon from './Icon'
 
 interface HamburgerProps {
+  id: string
   data: DatasetAction[]
 }
 
 const Hamburger: React.FunctionComponent<HamburgerProps> = (props) => {
-  const { data } = props
+  const { data, id } = props
 
   const [isOpen, setIsOpen] = React.useState(false)
   const [iconColor, setIconColor] = React.useState<'light' |'medium' | 'dark'>('medium')
@@ -26,7 +27,7 @@ const Hamburger: React.FunctionComponent<HamburgerProps> = (props) => {
   }
 
   return (
-    <div className='hamburger' onClick={() => setIsOpen(!isOpen)}>
+    <div className='hamburger' id={id} onClick={() => setIsOpen(!isOpen)}>
       <div className='hamburger-icon'
         onMouseEnter={onHamburgerEnter}
         onMouseLeave={onHamburgerLeave}

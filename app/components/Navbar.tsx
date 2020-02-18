@@ -60,6 +60,7 @@ interface NavbarProps {
 
 const Navbar: React.FunctionComponent<NavbarProps> = (props: NavbarProps) => {
   const { userphoto = defaultPhoto, location, signout, username = '', name = '' } = props
+
   const { pathname } = location
 
   const [showUserMenu, setShowUserMenu] = React.useState(false)
@@ -147,7 +148,7 @@ const Navbar: React.FunctionComponent<NavbarProps> = (props: NavbarProps) => {
                 icon={icon}
                 link={link}
                 tooltip={tooltip}
-                active={link === pathname}
+                active={pathname.startsWith(link)}
               />
             ))
           }

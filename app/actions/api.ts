@@ -12,14 +12,13 @@ import {
   mapRecord,
   mapVersionInfo,
   mapStatus,
-  mapHistory,
   mapBody
 } from './mappingFuncs'
 import { getActionType } from '../utils/actionType'
 
 import { CLEAR_DATASET_HEAD } from '../reducers/commitDetail'
 
-const pageSizeDefault = 50
+const pageSizeDefault = 100
 export const bodyPageSizeDefault = 50
 
 const DEFAULT_SELECTED_COMPONENT = 'body'
@@ -292,8 +291,7 @@ export function fetchHistory (page: number = 1, pageSize: number = pageSizeDefau
         pageInfo: {
           page: confirmedPage,
           pageSize
-        },
-        map: mapHistory
+        }
       }
     }
 
@@ -540,7 +538,7 @@ export function addDatasetAndFetch (peername: string, name: string): ApiActionTh
       dispatch(setWorkingDataset(peername, name))
       dispatch(setActiveTab('history'))
       dispatch(setSelectedListItem('component', DEFAULT_SELECTED_COMPONENT))
-      dispatch(push('workbench'))
+      dispatch(push('/workbench'))
     } catch (action) {
       dispatch(openToast('error', 'add', action.payload.err.message))
       throw action

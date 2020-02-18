@@ -1,6 +1,5 @@
 import * as React from 'react'
 import path from 'path'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 import MetadataContainer from '../containers/MetadataContainer'
 import MetadataEditorContainer from '../containers/MetadataEditorContainer'
@@ -22,6 +21,7 @@ import { Details } from '../models/details'
 import { ApiActionThunk } from '../store/api'
 import { Action } from 'redux'
 import Dataset, { Structure as IStructure } from '../models/dataset'
+import Icon from './chrome/Icon'
 
 interface DatasetComponentProps {
   data: CommitDetails
@@ -59,7 +59,7 @@ const DatasetComponent: React.FunctionComponent<DatasetComponentProps> = (props:
       <div className='component-header'>
         <div className='component-display-name-container'>
           <div className='component-display-name' data-tip={tooltip}>
-            <FontAwesomeIcon icon={icon} size='sm'/> {displayName}
+            <Icon icon={icon} size='sm'/> {displayName}
           </div>
         </div>
         <div className='status-dot-container'>

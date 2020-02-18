@@ -1,68 +1,20 @@
 import * as React from 'react'
 import { Action } from 'redux'
-import moment from 'moment'
+
 import { CSSTransition } from 'react-transition-group'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faClock } from '@fortawesome/free-regular-svg-icons'
-
-import { ApiActionThunk } from '../../store/api'
-import ComponentList from '../ComponentList'
-import DatasetReference from '../DatasetReference'
-import { Modal } from '../../models/modals'
-
 import classNames from 'classnames'
-import Spinner from '../chrome/Spinner'
-
-import DatasetDetailsSubtext from '../dataset/DatasetDetailsSubtext'
-import { WorkingDataset, ComponentType, Selections, History, SelectedComponent } from '../../models/store'
 import ContextMenuArea from 'react-electron-contextmenu'
 import { MenuItemConstructorOptions, remote, ipcRenderer } from 'electron'
 
-interface HistoryListItemProps {
-  id: string
-  path: string
-  commitTitle: string
-  timeMessage: string
-  selected: boolean
-  first: boolean
-  last: boolean
-  onClick: (selectedListItem: string) => Action
-}
+import { ApiActionThunk } from '../../store/api'
+import { Modal } from '../../models/modals'
+import { WorkingDataset, ComponentType, Selections, History, SelectedComponent } from '../../models/store'
 
-const HistoryListItem: React.FunctionComponent<HistoryListItemProps> = (props) => {
-  const { id, selected, path, commitTitle, timeMessage, first, last } = props
-  return (
-    <div
-      id={id}
-      className={classNames(
-        'sidebar-list-item',
-        'sidebar-list-item-text',
-        'history-list-item',
-        {
-          selected,
-          first,
-          last
-        })
-      }
-      onClick={() => { props.onClick(path) }}
-    >
-      <div className='icon-column'>
-        <div className='history-timeline-line history-timeline-line-top' />
-        <div className='history-timeline-dot' />
-        <div className='history-timeline-line history-timeline-line-bottom' />
-      </div>
-      <div className='text-column'>
-        <div className='text'>{commitTitle}</div>
-        <div className='subtext'>
-          {/* Bring back avatar later <img className= 'user-image' src = {props.avatarUrl} /> */}
-          <div className='time-message'>
-            <FontAwesomeIcon icon={faClock} size='sm'/> {timeMessage}
-          </div>
-        </div>
-      </div>
-    </div>
-  )
-}
+import ComponentList from '../ComponentList'
+import DatasetReference from '../DatasetReference'
+import Spinner from '../chrome/Spinner'
+import HistoryListItem from '../item/HistoryListItem'
+import DatasetDetailsSubtext from '../dataset/DatasetDetailsSubtext'
 
 export interface WorkbenchSidebarData {
   workingDataset: WorkingDataset
@@ -147,8 +99,8 @@ const WorkbenchSidebar: React.FunctionComponent<WorkbenchSidebarProps> = (props)
   // if no dataset is selected, what to return
 
   return (
-    <div className='dataset-sidebar'>
-      <div className='dataset-sidebar-header sidebar-padded-container'>
+    <div className='sidebar'>
+      <div className='sidebar-header sidebar-padded-container'>
         <p className='pane-title'>Dataset</p>
         <DatasetReference peername={peername} name={name} renameDataset={renameDataset}/>
         <DatasetDetailsSubtext format={format} lastCommit={lastCommit} commitCount={commitCount} />
@@ -219,34 +171,30 @@ const WorkbenchSidebar: React.FunctionComponent<WorkbenchSidebarProps> = (props)
           unmountOnExit
         >
           <div
-            id='history_list'
+            id='history-list'
             className='sidebar-content'
             onScroll={(e) => handleHistoryScroll(e)}
             hidden = {activeTab === 'status'}
           >
             {
-              history.value.map((props, i) => {
-                const { path, timestamp, title } = props
-                const timeMessage = moment(timestamp).fromNow()
+              history.value.map((item, i) => {
                 const menuItems: MenuItemConstructorOptions[] = [
                   {
                     label: 'Export this version',
                     click: () => {
-                      handleExport(path)
+                      handleExport(item.path)
                     }
                   }
                 ]
                 return (
-                  <ContextMenuArea menuItems={menuItems} key={path}>
+                  <ContextMenuArea menuItems={menuItems} key={item.path}>
                     <HistoryListItem
-                      key={path}
+                      data={item}
+                      key={item.path}
                       id={`HEAD-${i + 1}`}
                       first={i === 0}
                       last={i === history.value.length - 1}
-                      path={path}
-                      commitTitle={title}
-                      timeMessage={timeMessage}
-                      selected={selectedCommit === path}
+                      selected={selectedCommit === item.path}
                       onClick={setCommit}
                     />
                   </ContextMenuArea>

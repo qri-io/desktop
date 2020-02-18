@@ -1,7 +1,7 @@
 {
   "name": "qri-desktop",
   "productName": "Qri Desktop",
-  "version": "0.3.5",
+  "version": "0.3.6-dev",
   "description": "Version your data with the Qri desktop app!",
   "main": "main.js",
   "scripts": {
@@ -53,6 +53,7 @@
     "afterSign": "./notarize.js",
     "dmg": {
       "sign": false,
+      "icon": "qri_dmg.icns",
       "contents": [
         {
           "x": 410,

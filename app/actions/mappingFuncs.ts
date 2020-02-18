@@ -1,5 +1,6 @@
 import { Dataset } from '../models/dataset'
-import { VersionInfo, ComponentStatus, ComponentState, HistoryItem } from '../models/store'
+import { VersionInfo, ComponentStatus, ComponentState } from '../models/store'
+import { SearchResult } from '../models/search'
 
 export function mapDataset (data: Record<string, string>): Dataset {
   return data
@@ -27,7 +28,8 @@ export function versionInfoToDataset (vi: VersionInfo): Dataset {
     name: vi.name,
     path: vi.path,
     meta: {
-      title: vi.metaTitle,
+      title: vi.commitTitle,
+      description: vi.commitMessage,
       theme
     },
     structure: {
@@ -43,6 +45,11 @@ export function versionInfoToDataset (vi: VersionInfo): Dataset {
   }
 }
 
+// searchResultToVersionInfo converts a search result to a VersionInfo
+export function searchResultToVersionInfo (s: SearchResult): VersionInfo {
+  return datasetToVersionInfo(s.Value)
+}
+
 // datasetToVersionInfo converts a dataset to a versionInfo
 export function datasetToVersionInfo (d: Dataset): VersionInfo {
   return {
@@ -55,6 +62,8 @@ export function datasetToVersionInfo (d: Dataset): VersionInfo {
     bodyRows: d.structure && d.structure.entries,
     numErrors: d.structure && d.structure.errCount,
     commitTime: d.commit && d.commit.timestamp,
+    commitTitle: d.commit && d.commit.title,
+    commitMessage: d.commit && d.commit.message,
     bodyFormat: d.structure && d.structure.format,
     fsiPath: d.fsiPath
   }
@@ -67,18 +76,6 @@ export function mapStatus (data: Array<Record<string, string>>): ComponentStatus
       component: d.component,
       status: d.type as ComponentState,
       mtime: new Date(d.mtime)
-    }
-  })
-}
-
-export function mapHistory (data: any[]): HistoryItem[] {
-  return data.map((historyItem): HistoryItem => {
-    const { username, path } = historyItem.ref
-    return {
-      author: username,
-      timestamp: historyItem.timestamp,
-      title: historyItem.commitTitle,
-      path: path
     }
   })
 }

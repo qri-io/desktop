@@ -30,6 +30,7 @@ const HamburgerOverlay: React.FunctionComponent<TypePickerOverlayProps> = ({
         return (
           <div
             key={i}
+            id={`hamburger-action-${item.text.toLowerCase()}`}
             onClick={(e: MouseEvent<HTMLDivElement, MouseEvent>) => {
               item.onClick(e)
               onCancel()

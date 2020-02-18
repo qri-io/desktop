@@ -16,7 +16,7 @@ const P2PConnectionStatus: React.FunctionComponent<P2PConnectionStatusProps> = (
   }
 
   return (
-    <div className='p2p_connection_status'>
+    <div className='p2p-connection-status'>
       <header>
         <label>P2P</label>
         <Switch value={data.enabled} onChange={onChangeConnection} />

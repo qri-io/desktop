@@ -5,6 +5,7 @@ import TestBackendProcess from '../utils/testQriBackend'
 import TestTempRegistry from '../utils/testTempRegistry'
 import fakeDialog from 'spectron-fake-dialog'
 import { E2ETestUtils, newE2ETestUtils } from '../utils/e2eTestUtils'
+import http from 'http'
 
 const { Application } = require('spectron')
 
@@ -25,9 +26,10 @@ describe('Qri End to End tests', function spec () {
 
   const filename = 'e2e_test_csv_dataset.csv'
   const datasetName = 'e2e_test_csv_datasetcsv'
+  const datasetRename = 'test_dataset'
 
-  const filename_1 = 'e2e_test_csv_dataset_1.csv'
-  const datasetName_1 = 'e2e_test_csv_dataset_1csv'
+  const jsonFilename = 'e2e_test_json_dataset.json'
+  const jsonDatasetName = 'e2e_test_json_datasetjson'
 
   const username = 'fred'
   const email = 'fred@qri.io'
@@ -35,6 +37,10 @@ describe('Qri End to End tests', function spec () {
 
   const metaCommitTitle = 'made a change to meta'
   const bodyCommitTitle = 'made a change to body'
+
+  const registryDatasetName = 'synths'
+  const registryLoc = 'http://localhost:2500'
+  const registryNewCommitAction = '/sim/action?action=appendsynthsdataset'
 
   beforeAll(async () => {
     jest.setTimeout(60000)
@@ -380,7 +386,7 @@ describe('Qri End to End tests', function spec () {
       click,
       onHistoryTab,
       atLocation,
-      expectTextToBe,
+      expectTextToBe
     } = utils
 
     // make sure we are on the dataset page, looking at history
@@ -426,14 +432,14 @@ describe('Qri End to End tests', function spec () {
     // class should be error
     await exists(['#dataset-name-input.invalid'])
     // setValue as good name
-    await setValue('#dataset-name-input', 'test_dataset')
+    await setValue('#dataset-name-input', datasetRename)
     // get correct class
     await doesNotExist('#dataset-name-input.invalid')
     // submit by clicking away
     await click('#dataset-reference')
   })
 
-  it('create another new CSV dataset from a data source', async () => {
+  it('create a new JSON dataset from a data source', async () => {
     const {
       atLocation,
       click,
@@ -452,9 +458,9 @@ describe('Qri End to End tests', function spec () {
     // mock the dialog and create a temp csv file
     // clicking the '#chooseBodyFilePath' button will connect the fakeDialog
     // to the correct input
-    const csvPath = path.join(backend.dir, filename_1)
-    fs.writeFileSync(csvPath, 'e2e_test_bool_col,x,y,z\nfalse,100,99,98\ntrue,97,96,95')
-    await fakeDialog.mock([ { method: 'showOpenDialogSync', value: [csvPath] } ])
+    const jsonPath = path.join(backend.dir, jsonFilename)
+    fs.writeFileSync(jsonPath, '{"a": 1, "b":2, "c": 3}')
+    await fakeDialog.mock([ { method: 'showOpenDialogSync', value: [jsonPath] } ])
     await click('#chooseBodyFilePath')
 
     // submit to create a new dataset
@@ -468,10 +474,10 @@ describe('Qri End to End tests', function spec () {
     // to get the reference to match. It looks like because the #dataset-reference
     // div divides the peername and name among multiple divs, we get this odd
     // whitespace character
-    const reference = `${username}/\n${datasetName_1}`
+    const reference = `${username}/\n${jsonDatasetName}`
     await expectTextToBe('#dataset-reference', reference)
 
-    await expectTextToBe('#commit-details-header-entries', '2 entries')
+    await expectTextToBe('#commit-details-header-entries', '3 entries')
 
     // enure we are on the history tab
     await onHistoryTab()
@@ -479,6 +485,198 @@ describe('Qri End to End tests', function spec () {
     // ensure the body and structure indicate that they were 'added'
     await checkStatus('body', 'added')
     await checkStatus('structure', 'added')
+  })
+
+  it('Search: search for a foreign dataset, navigate it, clone it', async () => {
+    const {
+      atLocation,
+      click,
+      expectTextToContain,
+      waitForExist,
+      sendKeys,
+      setValue
+    } = utils
+    // make sure we are on the collection page
+    await click('#collection')
+    await atLocation('#/collection')
+
+    // send the 'Enter' key to the search bar to activate the search modal
+    // await waitForExist('#search-box')
+    await click('#search-box')
+    await sendKeys('#search-box', "Enter")
+    await waitForExist('#search')
+
+    // search for registryDatasetName
+    await setValue('#modal-search-box', registryDatasetName)
+    await sendKeys('#modal-search-box', "Enter")
+
+    // wait for results to populate
+    await waitForExist('#result-0')
+
+    // check that the results are what we expect them to be
+    await expectTextToContain("#result-0 .header a", registryDatasetName)
+
+    // click on #result-0 & get sent to the network preview page
+    await click('#result-0 .header a')
+
+    // check location
+    // TODO (ramfox): currently broken
+    await atLocation('#/network')
+
+    // check we are at the right dataset
+    await waitForExist('#navbar-breadcrumb')
+    await expectTextToContain('#navbar-breadcrumb', registryDatasetName)
+    // history item has foreign class
+    await waitForExist('#HEAD-1.foreign')
+
+    // clone the dataset by clicking on the action button
+    await click('#sidebar-action')
+    await atLocation('#/workbench')
+
+    // flaky tests, they change whether or not the username is so long that the dataset name is cut off by the dataset sidebar.
+    // await waitForExist('#dataset-reference')
+    // await expectTextToContain('#dataset-reference', registryDatasetName, artifactPath(`search_foreign_dataset_expect_dataset_name.png`))
+
+    // the dataset should be part of the collection
+    await click('#collection')
+    await atLocation('#/collection')
+    const datasets = await app.client.$$('.sidebar-list-item')
+    expect(datasets.length).toBe(3)
+  })
+
+  it(`clicking 'Network' tab takes you to the feed, navigate to network preview, new commits are foreign`, async () => {
+    // ask the temp registry to create another commit on the dataset
+    http.get(registryLoc + registryNewCommitAction, (res: http.IncomingMessage) => {
+      expect(res.statusCode).toBe(200)
+    })
+
+    const {
+      click,
+      atLocation,
+      expectTextToContain,
+      waitForNotExist,
+      waitForExist
+    } = utils
+
+    // click the Network tab
+    await click('#network')
+    await atLocation('#/network')
+
+    // there should only be one dataset item in the list
+    const recentDatasets = await app.client.$$('.recent-datasets-item')
+    expect(recentDatasets.length).toBe(1)
+
+    // ensure we are inspecting the correct dataset & navigate to the preview page
+    await expectTextToContain('#recent-0 .header a', registryDatasetName)
+    await click('#recent-0 .header a')
+
+    // check we are at the right dataset
+    await expectTextToContain('#navbar-breadcrumb ', registryDatasetName)
+
+    // since this dataset has already been cloned, expect NO sidebar action button
+    // TODO (ramfox): currently broken
+    await waitForNotExist('#sidebar-action')
+
+    // there should be two history items
+    const historyItems = await app.client.$$('.history-list-item')
+    expect(historyItems.length).toBe(2)
+
+    // first commit should have foreign class
+    await waitForExist('#HEAD-1.foreign')
+    // second commit should not
+    await waitForNotExist('#HEAD-2.foreign')
+  })
+
+  it('search: clicking a local dataset brings you to the workbench', async () => {
+    const {
+      click,
+      sendKeys,
+      waitForExist,
+      setValue,
+      expectTextToBe,
+      atLocation
+    } = utils
+    // click the search box to bring up the modal
+    // send the 'Enter' key to the search bar to activate the search modal
+    await click('#search-box')
+    await sendKeys('#search-box', "Enter")
+    await waitForExist('#search')
+
+    // set search scope to 'local' & search for the local dataset
+    await click('#switch-local')
+    expect(await app.client.$('#switch-local input').getValue()).toBe("on")
+    await setValue('#modal-search-box', jsonDatasetName)
+    await sendKeys('#modal-search-box', "Enter")
+
+    // wait for results to populate
+    await waitForExist('#result-0')
+
+    // check that the results are what we expect them to be
+    await expectTextToBe("#result-0 .header a", username + '/' + jsonDatasetName)
+
+    // click on #result-0 & get sent to the network preview page
+    await click('#result-0 .header a')
+
+    // check location
+    await atLocation('#/workbench')
+    // ensure we are on the correct dataset
+    await expectTextToBe('#dataset-reference', username + '/\n' + jsonDatasetName)
+  })
+
+  it('publishing a dataset adds a dataset to the network feed, unpublishing removes it', async () => {
+    const {
+      click,
+      atLocation,
+      expectTextToBe,
+      waitForExist
+    } = utils
+    // check location
+    await atLocation('#/workbench')
+    // ensure we are on the correct dataset
+    await expectTextToBe('#dataset-reference', username + '/\n' + jsonDatasetName)
+
+    // click publish
+    await click('#publish-button')
+    await waitForExist('#submit')
+    await click('#submit')
+
+    // publish button should change to '#view-in-cloud' button
+    await waitForExist('#view-in-cloud')
+
+    // naviate to feed
+    await click('#network')
+    await atLocation('#/network')
+
+    // should be two recent datasets, dataset username/datasetName should exist
+    let recentDatasets = await app.client.$$('.recent-datasets-item')
+    expect(recentDatasets.length).toBe(2)
+
+    // ensure the correct dataset exists
+    // Shift+CmdOrCtrl+P
+    await waitForExist(`[data-ref="${username}/${jsonDatasetName}"]`)
+
+    // head back to the workbench & unpublish
+    // check location
+    await click('#workbench')
+    await atLocation('#/workbench')
+    // ensure we are on the correct dataset
+    await expectTextToBe('#dataset-reference', username + '/\n' + jsonDatasetName)
+
+    // click the hamburger & click the unpublish action
+    await click('#workbench-hamburger')
+    await click('#hamburger-action-unpublish')
+    await click('#submit')
+
+    // publish button should exist again
+    await waitForExist('#publish-button')
+
+    // naviate to feed
+    await click('#network')
+    await atLocation('#/network')
+
+    // should be two recent datasets, dataset username/datasetName should exist
+    recentDatasets = await app.client.$$('.recent-datasets-item')
+    expect(recentDatasets.length).toBe(1)
   })
 
   // remove a dataset is commented out until we have a keyboard command in

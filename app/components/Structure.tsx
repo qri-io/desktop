@@ -86,7 +86,7 @@ const Structure: React.FunctionComponent<StructureProps> = ({ data, history, wri
     { 'label': 'format', 'value': data.format.toUpperCase() },
     { 'label': 'body size', 'value': fileSize(data.length) },
     { 'label': 'entries', 'value': abbreviateNumber(data.entries) },
-    { 'label': 'errors', 'value': abbreviateNumber(data.errCount) },
+    { 'label': 'errors', 'value': data.errCount ? abbreviateNumber(data.errCount) : 0 },
     { 'label': 'depth', 'value': data.depth }
   ]
   return (

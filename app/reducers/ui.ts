@@ -53,6 +53,7 @@ const initialState = {
   showDiff: false,
   datasetSidebarWidth: getSidebarWidth('datasetSidebarWidth'),
   collectionSidebarWidth: getSidebarWidth('collectionSidebarWidth'),
+  networkSidebarWidth: getSidebarWidth('networkSidebarWidth'),
   toast: defaultToast,
   blockMenus: true,
   hideCommitNudge: store().getItem(hideCommitNudge) === 'true',
@@ -86,6 +87,12 @@ export default (state = initialState, action: AnyAction) => {
           return {
             ...state,
             collectionSidebarWidth: sidebarWidth
+          }
+        case 'network':
+          store().setItem('networkSidebarWidth', sidebarWidth)
+          return {
+            ...state,
+            networkSidebarWidth: sidebarWidth
           }
         default:
           return state

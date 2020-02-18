@@ -50,38 +50,38 @@
 }
 
 .column-type.clickable.active {
-  // transition: all 1000s;
   border: solid 1px #D8DFE6;
   border-radius: 3px;
   box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.1)
 }
 
 #schema-wrap {
-  width: 100%;
   margin: 0;
   border: none;
   padding: 0;
+  table-layout: fixed;
   
   .schema-header {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
     font-family: 'Rubik';
     font-size: 10px;
     font-weight: 500;
     color: #4D4D4D;
     text-transform: uppercase;
     letter-spacing: 1.5px;
-    padding: 10px;
+    height: 30px;
     border-top: solid 1px #E8E9ED;
 
-    div:first-child {
-      margin-left: 80px;
+    th:first-child {
+      width: 20px;
     }
-  
-    div:last-child {
-      margin-right: 30px;
+
+    th {
+      padding-left: 8px;
+    }
+
+    th.type-picker-header {
+      padding-left: 10px;
+      width: 100px;
     }
   }
 }
