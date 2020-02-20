@@ -1,13 +1,12 @@
-import { Store as IStore } from '../models/store'
 import { Dispatch, AnyAction, Store } from 'redux'
+
+import { WEBSOCKETS_URL, WEBSOCKETS_PROTOCOL } from '../constants'
+
+import { Store as IStore } from '../models/store'
 import { fetchWorkingStatus } from '../actions/api'
 
 // wsMiddleware manages requests to connect to the qri backend via websockets
 // as well as managing messages that get passed through
-
-const uri = 'ws://localhost:2506'
-const protocol = 'qri-websocket'
-
 export const wsConnect = () => ({ type: 'WS_CONNECT' })
 export const wsConnecting = () => ({ type: 'WS_CONNECTING' })
 export const wsConnected = () => ({ type: 'WS_CONNECTED' })
@@ -55,7 +54,7 @@ const socketMiddleware = () => {
         }
 
         // connect to the remote host
-        socket = new WebSocket(uri, protocol)
+        socket = new WebSocket(WEBSOCKETS_URL, WEBSOCKETS_PROTOCOL)
 
         // websocket handlers
         socket.onmessage = onMessage(store)
