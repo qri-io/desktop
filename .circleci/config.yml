@@ -32,9 +32,6 @@ jobs:
           name: install qri backend & temp_registry_server
           command: go get github.com/qri-io/qri github.com/qri-io/temp_registry_server
       - run:
-          name: build
-          command: yarn build
-      - run:
           name: create artifacts path
           command: mkdir /home/circleci/e2e_artifacts
       - run:
