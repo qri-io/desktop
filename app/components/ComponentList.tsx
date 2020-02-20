@@ -4,92 +4,12 @@ import path from 'path'
 import classNames from 'classnames'
 import { clipboard, shell, MenuItemConstructorOptions } from 'electron'
 import ContextMenuArea from 'react-electron-contextmenu'
-import { ApiActionThunk } from '../store/api'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {
-  faExclamation,
-  faArrowRight
-} from '@fortawesome/free-solid-svg-icons'
 
+import { ApiActionThunk } from '../store/api'
 import { checkClearToCommit } from '../utils/formValidation'
 import { DatasetStatus, SelectedComponent, ComponentType } from '../models/store'
 import Spinner from './chrome/Spinner'
-import Icon from './chrome/Icon'
-
-interface StatusDotProps {
-  status: string | undefined
-}
-
-export const StatusDot: React.FunctionComponent<StatusDotProps> = (props) => {
-  let statusTooltip
-  switch (props.status) {
-    case 'modified':
-      statusTooltip = 'modified'
-      break
-    case 'add':
-      statusTooltip = 'added'
-      break
-    case 'removed':
-      statusTooltip = 'removed'
-      break
-    default:
-      statusTooltip = ''
-  }
-  if (props.status === 'parse error') {
-    return <FontAwesomeIcon icon={faExclamation} className='parse-error' style={{ color: '#e04f4f' }} data-tip='Parsing Error' size='sm' />
-  }
-  return <div className={classNames('status-dot', { 'status-dot-modified': statusTooltip === 'modified', 'status-dot-removed': statusTooltip === 'removed', 'status-dot-added': statusTooltip === 'added', 'status-dot-transparent': statusTooltip === '' })} data-tip={statusTooltip}></div>
-}
-
-interface FileRowProps {
-  color?: 'light' | 'dark'
-  name: string
-  displayName: string
-  icon?: string
-  filename?: string
-  selected?: boolean
-  status?: string
-  selectionType?: ComponentType
-  disabled?: boolean
-  tooltip?: string
-  onClick?: (type: ComponentType, activeTab: string) => Action
-}
-
-export const FileRow: React.FunctionComponent<FileRowProps> = (props) => {
-  let statusIcon = <StatusDot status={props.status} />
-
-  if (props.name === 'commit') {
-    statusIcon = <FontAwesomeIcon icon={faArrowRight} style={{ color: '#FFF' }} size='lg' />
-  }
-
-  return (
-    <div
-      id={`${props.displayName.toLowerCase()}-status`}
-      className={classNames('sidebar-list-item', 'sidebar-list-item-text', {
-        'selected': props.selected,
-        'disabled': props.disabled
-      })}
-      onClick={() => {
-        if (props.onClick && props.selectionType && props.name) {
-          props.onClick(props.selectionType, props.name.toLowerCase())
-        }
-      }}
-    >
-      {props.icon && (<div className='icon-column'>
-        <Icon icon={props.icon} size='sm' color={props.disabled ? 'medium' : props.color}/>
-      </div>)}
-      <div className='text-column'>
-        <div className='text'>{props.displayName}</div>
-        <div className='subtext'>{props.filename}</div>
-      </div>
-      <div className={classNames('status-column', { 'disabled': props.disabled })}>
-        {statusIcon}
-      </div>
-    </div>
-  )
-}
-
-FileRow.displayName = 'FileRow'
+import ComponentItem from './item/ComponentItem'
 
 interface ComponentListProps {
   datasetSelected: boolean
@@ -174,7 +94,7 @@ const ComponentList: React.FunctionComponent<ComponentListProps> = (props: Compo
     return (
       <div>
         {components.map(({ name, displayName, tooltip, icon }) => {
-          return <FileRow
+          return <ComponentItem
             key={name}
             displayName={displayName}
             name={name}
@@ -219,7 +139,7 @@ const ComponentList: React.FunctionComponent<ComponentListProps> = (props: Compo
             }
 
             const fileRow = (
-              <FileRow
+              <ComponentItem
                 key={name}
                 displayName={displayName}
                 name={name}
@@ -267,7 +187,7 @@ const ComponentList: React.FunctionComponent<ComponentListProps> = (props: Compo
             }
           } else {
             return (
-              <FileRow
+              <ComponentItem
                 color='light'
                 key={name}
                 displayName={displayName}

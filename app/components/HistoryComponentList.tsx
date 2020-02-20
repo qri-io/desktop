@@ -2,7 +2,8 @@ import * as React from 'react'
 import { Action } from 'redux'
 
 import { DatasetStatus, SelectedComponent, ComponentType } from '../models/store'
-import { FileRow, components as componentsInfo } from './ComponentList'
+import { components as componentsInfo } from './ComponentList'
+import ComponentItem from './item/ComponentItem'
 
 interface HistoryComponentListProps {
   datasetSelected: boolean
@@ -35,7 +36,7 @@ const HistoryComponentList: React.FunctionComponent<HistoryComponentListProps> =
             }
 
             return (
-              <FileRow
+              <ComponentItem
                 key={name}
                 displayName={displayName}
                 name={name}
@@ -49,7 +50,7 @@ const HistoryComponentList: React.FunctionComponent<HistoryComponentListProps> =
             )
           }
           return (
-            <FileRow
+            <ComponentItem
               key={name}
               displayName={displayName}
               name={name}

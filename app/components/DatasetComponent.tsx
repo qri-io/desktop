@@ -13,7 +13,7 @@ import SpinnerWithIcon from './chrome/SpinnerWithIcon'
 import CommitHistoryContainer from '../containers/CommitHistoryContainer'
 import CommitContainer from '../containers/CommitContainer'
 
-import { getComponentDisplayProps, StatusDot } from './ComponentList'
+import { getComponentDisplayProps } from './ComponentList'
 
 import { ComponentStatus, SelectedComponent, CommitDetails } from '../models/store'
 import Body from './Body'
@@ -22,6 +22,7 @@ import { ApiActionThunk } from '../store/api'
 import { Action } from 'redux'
 import Dataset, { Structure as IStructure } from '../models/dataset'
 import Icon from './chrome/Icon'
+import StatusDot from './chrome/StatusDot'
 
 interface DatasetComponentProps {
   data: CommitDetails
