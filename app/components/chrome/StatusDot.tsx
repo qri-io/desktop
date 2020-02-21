@@ -2,9 +2,10 @@ import React from 'react'
 import classNames from 'classnames'
 import { faExclamation } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { ComponentState } from '../../models/store'
 
 export interface StatusDotProps {
-  status: 'modified' | 'add' | 'removed' | 'parse error' | undefined
+  status: ComponentState
 }
 
 export const StatusDot: React.FunctionComponent<StatusDotProps> = (props) => {
@@ -27,7 +28,7 @@ export const StatusDot: React.FunctionComponent<StatusDotProps> = (props) => {
         data-tip='Parsing Error'
         size='sm' />)
     default:
-      statusTooltip = ''
+      statusTooltip = 'unmodified'
   }
 
   return <div
@@ -35,7 +36,7 @@ export const StatusDot: React.FunctionComponent<StatusDotProps> = (props) => {
       'status-dot-modified': statusTooltip === 'modified',
       'status-dot-removed': statusTooltip === 'removed',
       'status-dot-added': statusTooltip === 'added',
-      'status-dot-transparent': statusTooltip === '' })}
+      'status-dot-transparent': statusTooltip === 'unmodified' })}
     data-tip={statusTooltip} />
 }
 

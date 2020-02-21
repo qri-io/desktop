@@ -6,7 +6,7 @@ import {
   faArrowRight
 } from '@fortawesome/free-solid-svg-icons'
 
-import { ComponentType } from '../../models/store'
+import { ComponentType, ComponentState } from '../../models/store'
 
 import Icon from '../chrome/Icon'
 import StatusDot from '../chrome/StatusDot'
@@ -19,7 +19,7 @@ export interface ComponentItemProps {
   icon?: string
   filename?: string
   selected?: boolean
-  status?: string
+  status?: ComponentState
   selectionType?: ComponentType
   disabled?: boolean
   tooltip?: string
@@ -27,7 +27,9 @@ export interface ComponentItemProps {
 }
 
 export const ComponentItem: React.FunctionComponent<ComponentItemProps> = (props) => {
-  let statusIcon = <StatusDot status={props.status} />
+  const { status = 'unmodified' } = props
+
+  let statusIcon = <StatusDot status={status} />
 
   if (props.name === 'commit') {
     statusIcon = <FontAwesomeIcon icon={faArrowRight} style={{ color: '#FFF' }} size='lg' />
