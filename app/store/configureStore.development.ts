@@ -5,6 +5,7 @@ import { routerMiddleware, push } from 'connected-react-router'
 // import { createLogger } from 'redux-logger'
 import createRootReducer from '../reducers'
 import { apiMiddleware } from './api'
+import wsMiddleware from './wsMiddleware'
 
 declare const window: Window & {
   __REDUX_DEVTOOLS_EXTENSION_COMPOSE__?(a: any): void
@@ -39,7 +40,7 @@ const composeEnhancers: typeof compose = window.__REDUX_DEVTOOLS_EXTENSION_COMPO
   : compose
 /* eslint-enable no-underscore-dangle */
 const enhancer = composeEnhancers(
-  applyMiddleware(thunk, router, apiMiddleware)
+  applyMiddleware(thunk, router, apiMiddleware, wsMiddleware)
 )
 
 const configureStore = (initialState: Object | void) => {

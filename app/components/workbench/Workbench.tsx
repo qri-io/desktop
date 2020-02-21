@@ -5,7 +5,7 @@ import { CSSTransition } from 'react-transition-group'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faFolderOpen, faFile, faLink, faCloud, faCloudUploadAlt } from '@fortawesome/free-solid-svg-icons'
 
-import { QRI_CLOUD_URL, DEFAULT_POLL_INTERVAL } from '../../constants'
+import { QRI_CLOUD_URL } from '../../constants'
 import { Details } from '../../models/details'
 import { Session } from '../../models/session'
 import {
@@ -81,8 +81,6 @@ export interface WorkbenchProps {
 }
 
 class Workbench extends React.Component<WorkbenchProps> {
-  poll: NodeJS.Timeout
-
   constructor (props: WorkbenchProps) {
     super(props);
 
@@ -91,9 +89,7 @@ class Workbench extends React.Component<WorkbenchProps> {
       'publishUnpublishDataset',
       'handleShowStatus',
       'handleShowHistory',
-      'handleCopyLink',
-      'startPolling',
-      'stopPolling'
+      'handleCopyLink'
     ].forEach((m) => { this[m] = this[m].bind(this) })
   }
 
@@ -105,31 +101,13 @@ class Workbench extends React.Component<WorkbenchProps> {
     ipcRenderer.on('publish-unpublish-dataset', this.publishUnpublishDataset)
 
     this.props.fetchWorkbench()
-    this.startPolling()
   }
 
   componentWillUnmount () {
-    this.stopPolling()
     ipcRenderer.removeListener('show-status', this.handleShowStatus)
     ipcRenderer.removeListener('show-history', this.handleShowHistory)
     ipcRenderer.removeListener('open-working-directory', this.openWorkingDirectory)
     ipcRenderer.removeListener('publish-unpublish-dataset', this.publishUnpublishDataset)
-  }
-
-  private startPolling () {
-    if (this.poll) {
-      clearInterval(this.poll)
-    }
-
-    this.poll = setInterval(() => {
-      if (this.props.data.workingDataset.peername !== '' || this.props.data.workingDataset.name !== '') {
-        this.props.fetchWorkingStatus()
-      }
-    }, DEFAULT_POLL_INTERVAL)
-  }
-
-  private stopPolling () {
-    clearInterval(this.poll)
   }
 
   private handleShowStatus () {
