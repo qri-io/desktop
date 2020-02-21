@@ -2,10 +2,10 @@ import * as React from 'react'
 import path from 'path'
 
 import MetadataContainer from '../containers/MetadataContainer'
-import MetadataEditorContainer from '../containers/MetadataEditorContainer'
+import MetadataEditor from '../components/MetadataEditor'
 import Structure from '../components/Structure'
 import ParseError from './ParseError'
-import ReadmeContainer from '../containers/ReadmeContainer'
+import Readme from '../components/Readme'
 import TransformContainer from '../containers/TransformContainer'
 import ReadmeHistoryContainer from '../containers/ReadmeHistoryContainer'
 import { CSSTransition } from 'react-transition-group'
@@ -35,7 +35,7 @@ interface DatasetComponentProps {
 
   // fetching api actions
   fetchBody: (page?: number, pageSize?: number) => ApiActionThunk
-  fsiWrite: (peername: string, name: string, dataset: Dataset) => ApiActionThunk
+  write: (peername: string, name: string, dataset: Dataset) => ApiActionThunk | void
 
   isLoading: boolean
   component: SelectedComponent
@@ -45,14 +45,14 @@ interface DatasetComponentProps {
 }
 
 const DatasetComponent: React.FunctionComponent<DatasetComponentProps> = (props: DatasetComponentProps) => {
-  const { component: selectedComponent, componentStatus, isLoading, history = false, fsiPath, data, details, setDetailsBar, fetchBody, fsiWrite } = props
+  const { component: selectedComponent, componentStatus, isLoading, history = false, fsiPath, data, details, setDetailsBar, fetchBody, write } = props
 
   const hasParseError = componentStatus && componentStatus.status === 'parse error'
   const component = selectedComponent || 'meta'
   const { displayName, icon, tooltip } = getComponentDisplayProps(component)
 
-  const handleStructureWrite = (structure: IStructure): ApiActionThunk => {
-    return fsiWrite(data.peername, data.name, { structure })
+  const handleStructureWrite = (structure: IStructure): ApiActionThunk | void => {
+    return write(data.peername, data.name, { structure })
   }
 
   return (
@@ -93,7 +93,13 @@ const DatasetComponent: React.FunctionComponent<DatasetComponentProps> = (props:
           <div className='transition-wrap'>
             {history
               ? <ReadmeHistoryContainer />
-              : <ReadmeContainer />}
+              : <Readme
+                data={data.components.readme.value}
+                name={data.name}
+                username={data.peername}
+                write={write}
+                loading={data.isLoading}
+              />}
           </div>
         </CSSTransition>
         <CSSTransition
@@ -109,7 +115,11 @@ const DatasetComponent: React.FunctionComponent<DatasetComponentProps> = (props:
             {
               history
                 ? <MetadataContainer />
-                : <MetadataEditorContainer />
+                : <MetadataEditor
+                  data={data.components.meta.value}
+                  write={write}
+                  loading={data.isLoading}
+                />
             }
           </div>
         </CSSTransition>
@@ -146,6 +156,7 @@ const DatasetComponent: React.FunctionComponent<DatasetComponentProps> = (props:
               history={history}
               fsiBodyFormat={(!history && data.status && data.status.body && data.status.body.filepath && path.extname(data.status.body.filepath).slice(1)) || ''}
               write={handleStructureWrite}
+              loading={data.isLoading}
             />
           </div>
         </CSSTransition>

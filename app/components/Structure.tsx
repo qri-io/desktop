@@ -9,13 +9,15 @@ import FormatConfigHistory from './FormatConfigHistory'
 import FormatConfigFSI from './FormatConfigFSI'
 import LabeledStats from './item/LabeledStats'
 import fileSize, { abbreviateNumber } from '../utils/fileSize'
+import SpinnerWithIcon from './chrome/SpinnerWithIcon'
 
 export interface StructureProps {
   data: IStructure
   history: boolean
   fsiBodyFormat?: string
   showConfig?: boolean
-  write?: (structure: IStructure) => ApiActionThunk
+  loading: boolean
+  write?: (structure: IStructure) => ApiActionThunk | void
 }
 
 export interface FormatConfigOption {
@@ -60,7 +62,13 @@ export const formatConfigOptions: { [key: string]: FormatConfigOption } = {
   }
 }
 
-const Structure: React.FunctionComponent<StructureProps> = ({ data, history, write, fsiBodyFormat = '', showConfig = true }) => {
+const Structure: React.FunctionComponent<StructureProps> = (props) => {
+  const { data, history, write, fsiBodyFormat = '', showConfig = true, loading } = props
+
+  if (loading) {
+    return <SpinnerWithIcon loading={true} />
+  }
+
   const format = history ? data.format : fsiBodyFormat
   const handleWriteFormat = (option: string, value: any) => {
     if (!write) return
@@ -83,12 +91,13 @@ const Structure: React.FunctionComponent<StructureProps> = ({ data, history, wri
   }
 
   const stats = [
-    { 'label': 'format', 'value': data.format.toUpperCase() },
+    { 'label': 'format', 'value': data.format ? data.format.toUpperCase() : 'unknown' },
     { 'label': 'body size', 'value': fileSize(data.length) },
     { 'label': 'entries', 'value': abbreviateNumber(data.entries) },
     { 'label': 'errors', 'value': data.errCount ? abbreviateNumber(data.errCount) : 0 },
     { 'label': 'depth', 'value': data.depth }
   ]
+
   return (
     <div className='structure'>
       <div className='stats'><LabeledStats data={stats} size='lg' /></div>

@@ -7,13 +7,13 @@ import { Action } from 'redux'
 import TextInput from './form/TextInput'
 import TextAreaInput from './form/TextAreaInput'
 import { validateCommitState } from '../utils/formValidation'
-import { DatasetStatus } from '../models/store'
+import { Status } from '../models/store'
 import { ApiAction } from '../store/api'
 
 export interface CommitProps {
   isLoading: boolean
   datasetRef: string
-  status: DatasetStatus
+  status: Status
   title: string
   message: string
   saveWorkingDatasetAndFetch: () => Promise<ApiAction>

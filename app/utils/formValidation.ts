@@ -1,4 +1,4 @@
-import { DatasetStatus } from '../models/store'
+import { Status } from '../models/store'
 
 type ValidationError = string | null
 
@@ -66,7 +66,7 @@ export const validateDatasetReference = (datasetReference: string): ValidationEr
 }
 
 // infer readiness to commit from status
-export const checkClearToCommit = (status: DatasetStatus): boolean => {
+export const checkClearToCommit = (status: Status): boolean => {
   const statuses: string[] = Object.keys(status).map((key) => status[key].status)
 
   const hasErrors = statuses.reduce((acc, status) => {
@@ -83,7 +83,7 @@ export const checkClearToCommit = (status: DatasetStatus): boolean => {
   return true
 }
 
-export const validateCommitState = (title: string, status: DatasetStatus): boolean => {
+export const validateCommitState = (title: string, status: Status): boolean => {
   let valid = true
   // commit message (title) must be more than 3 characters
   if (title.length < 4) valid = false

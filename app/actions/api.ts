@@ -17,6 +17,7 @@ import {
 import { getActionType } from '../utils/actionType'
 
 import { CLEAR_DATASET_HEAD } from '../reducers/commitDetail'
+import Dataset from '../models/dataset'
 
 const pageSizeDefault = 100
 export const bodyPageSizeDefault = 50
@@ -465,6 +466,18 @@ export function saveWorkingDataset (): ApiActionThunk {
     const { workingDataset, mutations } = getState()
     const { peername, name } = workingDataset
     const { title, message } = mutations.save.value
+    let body: Dataset
+    const commit = { title, message }
+    if (workingDataset.fsiPath) {
+      body = {
+        commit
+      }
+    } else {
+      body = {
+        ...mutations.dataset.value,
+        commit
+      }
+    }
     const action = {
       type: 'save',
       [CALL_API]: {
@@ -475,14 +488,9 @@ export function saveWorkingDataset (): ApiActionThunk {
           name
         },
         query: {
-          fsi: true
+          fsi: !!workingDataset.fsiPath
         },
-        body: {
-          commit: {
-            title,
-            message
-          }
-        }
+        body
       }
     }
 
@@ -500,6 +508,7 @@ export function saveWorkingDatasetAndFetch (): ApiActionThunk {
       path = response.payload.data.path
       response = await whenOk(fetchWorkingDatasetDetails())(response)
     } catch (action) {
+      console.log(action)
       dispatch(setSaveComplete(action.payload.err.message))
       dispatch(openToast('error', 'commit', action.payload.err.message))
       throw action

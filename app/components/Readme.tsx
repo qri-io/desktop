@@ -2,24 +2,22 @@ import * as React from 'react'
 import SimpleMDE from 'react-simplemde-editor'
 import { useDebounce } from 'use-debounce'
 
-import { WorkingDataset } from '../models/store'
 import { ApiActionThunk } from '../store/api'
+import SpinnerWithIcon from './chrome/SpinnerWithIcon'
 
 const DEBOUNCE_TIMER = 1000
 
 export interface ReadmeProps {
-  peername: string
+  username: string
   name: string
-  value: string
-  preview: string
-  history: boolean
-  workingDataset: WorkingDataset
-  write: (peername: string, name: string, dataset: any) => ApiActionThunk
+  data?: string
+  loading: boolean
+  write: (username: string, name: string, dataset: any) => ApiActionThunk | void
 }
 
 const Readme: React.FunctionComponent<ReadmeProps> = (props) => {
-  const { value, peername, name, write } = props
-  const [internalValue, setInternalValue] = React.useState(value)
+  const { data = '', username, name, write, loading } = props
+  const [internalValue, setInternalValue] = React.useState(data)
   const [debouncedValue] = useDebounce(internalValue, DEBOUNCE_TIMER)
 
   React.useEffect(() => {
@@ -30,12 +28,12 @@ const Readme: React.FunctionComponent<ReadmeProps> = (props) => {
   })
 
   const onFocus = () => {
-    setInternalValue(value)
+    setInternalValue(data)
   }
 
   React.useEffect(() => {
-    if (debouncedValue !== value) {
-      write(peername, name, {
+    if (debouncedValue !== data) {
+      write(username, name, {
         readme: {
           scriptBytes: btoa(unescape(encodeURIComponent(internalValue)))
         }
@@ -48,12 +46,16 @@ const Readme: React.FunctionComponent<ReadmeProps> = (props) => {
   }
 
   const getPreview = (plainText: string, preview: HTMLElement) => {
-    fetch(`http://localhost:2503/render/${peername}/${name}?fsi=true`)
+    fetch(`http://localhost:2503/render/${username}/${name}?fsi=true`)
       .then(async (res) => res.text())
       .then((render) => {
         preview.innerHTML = render
       })
     return 'Loading...'
+  }
+
+  if (loading) {
+    return <SpinnerWithIcon loading={true} />
   }
 
   return (

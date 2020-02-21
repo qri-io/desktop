@@ -4,6 +4,7 @@ import { ipcRenderer, shell, clipboard } from 'electron'
 import { CSSTransition } from 'react-transition-group'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faFolderOpen, faFile, faLink, faCloud, faCloudUploadAlt } from '@fortawesome/free-solid-svg-icons'
+import { withRouter, RouteComponentProps, Prompt } from 'react-router-dom'
 
 import { QRI_CLOUD_URL } from '../../constants'
 import { Details } from '../../models/details'
@@ -14,7 +15,8 @@ import {
   CommitDetails as ICommitDetails,
   History,
   ComponentType,
-  SelectedComponent
+  SelectedComponent,
+  Status
 } from '../../models/store'
 import { Modal, ModalType } from '../../models/modals'
 import { ApiActionThunk, LaunchedFetchesAction } from '../../store/api'
@@ -22,7 +24,7 @@ import { defaultSidebarWidth } from '../../reducers/ui'
 
 import { Resizable } from '../Resizable'
 import Layout from '../Layout'
-import UnlinkedDataset from './UnlinkedDataset'
+// import UnlinkedDataset from './UnlinkedDataset'
 import DatasetComponent from '../DatasetComponent'
 import NoDatasetSelected from './NoDatasetSelected'
 import HeaderColumnButton from '../chrome/HeaderColumnButton'
@@ -31,6 +33,7 @@ import WorkbenchSidebar from './WorkbenchSidebar'
 import DetailsBarContainer from '../../containers/DetailsBarContainer'
 import CommitDetails from '../CommitDetails'
 import NoDatasets from '../NoDatasets'
+import Dataset from '../../models/dataset'
 
 // TODO (b5) - is this still required?
 require('../../assets/qri-blob-logo-tiny.png')
@@ -43,7 +46,7 @@ export interface WorkbenchData {
   history: History
 }
 
-export interface WorkbenchProps {
+export interface WorkbenchProps extends RouteComponentProps {
   data: WorkbenchData
 
   // display details
@@ -54,6 +57,9 @@ export interface WorkbenchProps {
   sidebarWidth: number
   details: Details
 
+  // only used if there is no fsiPath
+  modified?: boolean
+
   // setting actions
   setModal: (modal: Modal) => void
   setActiveTab: (activeTab: string) => Action
@@ -61,6 +67,8 @@ export interface WorkbenchProps {
   setCommit: (path: string) => Action
   setComponent: (type: ComponentType, activeComponent: string) => Action
   setDetailsBar: (details: Record<string, any>) => Action
+  setDataset: (data: Dataset) => Action
+  resetDataset: () => Action
 
   // fetching actions
   fetchWorkbench: () => LaunchedFetchesAction
@@ -80,7 +88,7 @@ export interface WorkbenchProps {
   fsiWrite: (peername: string, name: string, dataset: Dataset) => ApiActionThunk
 }
 
-class Workbench extends React.Component<WorkbenchProps> {
+class Workbench extends React.Component<WorkbenchProps, Status> {
   constructor (props: WorkbenchProps) {
     super(props);
 
@@ -89,8 +97,17 @@ class Workbench extends React.Component<WorkbenchProps> {
       'publishUnpublishDataset',
       'handleShowStatus',
       'handleShowHistory',
+      'handleSetDataset',
       'handleCopyLink'
     ].forEach((m) => { this[m] = this[m].bind(this) })
+
+    this.state = {
+      'meta': { status: 'unmodified', filepath: '' },
+      'body': { status: 'unmodified', filepath: '' },
+      'readme': { status: 'unmodified', filepath: '' },
+      'structure': { status: 'unmodified', filepath: '' },
+      'transform': { status: 'unmodified', filepath: '' }
+    }
   }
 
   componentDidMount () {
@@ -108,6 +125,8 @@ class Workbench extends React.Component<WorkbenchProps> {
     ipcRenderer.removeListener('show-history', this.handleShowHistory)
     ipcRenderer.removeListener('open-working-directory', this.openWorkingDirectory)
     ipcRenderer.removeListener('publish-unpublish-dataset', this.publishUnpublishDataset)
+
+    this.props.resetDataset()
   }
 
   private handleShowStatus () {
@@ -190,6 +209,21 @@ class Workbench extends React.Component<WorkbenchProps> {
       : setModal({ type: ModalType.PublishDataset })
   }
 
+  handleSetDataset (peername: string, name: string, data: Dataset) {
+    const { setDataset } = this.props
+
+    // // TODO (ramfox): make this better
+    // let status = {
+    //   'meta': { status: 'unmodified', filepath: '' },
+    //   'body': { status: 'unmodified', filepath: '' },
+    //   'readme': { status: 'unmodified', filepath: '' },
+    //   'structure': { status: 'unmodified', filepath: '' },
+    //   'transform': { status: 'unmodified', filepath: '' }
+    // }
+    // status = Object.keys(status).map
+    setDataset(data)
+  }
+
   render () {
     const {
       data,
@@ -199,6 +233,7 @@ class Workbench extends React.Component<WorkbenchProps> {
       sidebarWidth,
       session,
       details,
+      modified = false,
 
       setModal,
       setActiveTab,
@@ -242,6 +277,7 @@ class Workbench extends React.Component<WorkbenchProps> {
         setActiveTab={setActiveTab}
         setCommit={setCommit}
         setComponent={setComponent}
+        modified={modified}
         fetchHistory={fetchHistory}
         discardChanges={discardChanges}
         renameDataset={renameDataset}
@@ -312,6 +348,7 @@ class Workbench extends React.Component<WorkbenchProps> {
 
     const mainContent = (
       <>
+        <Prompt when={modified} message={() => `You have uncommited changes! Please commit these changes before you navigate away or you will lose your work.`}/>
         <div className='main-content-header'>
           {linkButton}
           {publishButton}
@@ -337,16 +374,7 @@ class Workbench extends React.Component<WorkbenchProps> {
               <NoDatasetSelected />
             </CSSTransition>
             <CSSTransition
-              in={datasetSelected && (activeTab === 'status') && !isLinked && !data.workingDataset.isLoading}
-              classNames='fade'
-              timeout={300}
-              mountOnEnter
-              unmountOnExit
-            >
-              <UnlinkedDataset setModal={setModal} inNamespace={username === peername}/>
-            </CSSTransition>
-            <CSSTransition
-              in={datasetSelected && activeTab === 'status' && isLinked}
+              in={datasetSelected && activeTab === 'status'}
               classNames='fade'
               timeout={300}
               mountOnEnter
@@ -357,7 +385,7 @@ class Workbench extends React.Component<WorkbenchProps> {
                 data={data.workingDataset}
                 setDetailsBar={setDetailsBar}
                 fetchBody={fetchBody}
-                fsiWrite={fsiWrite}
+                write={fsiPath ? fsiWrite : this.handleSetDataset}
                 component={selectedComponent}
                 componentStatus={status[selectedComponent]}
                 isLoading={data.workingDataset.isLoading}
@@ -376,7 +404,7 @@ class Workbench extends React.Component<WorkbenchProps> {
                 details={details}
                 setDetailsBar={setDetailsBar}
                 fetchCommitBody={fetchCommitBody}
-                fsiWrite={fsiWrite}
+                write={fsiPath ? fsiWrite : this.handleSetDataset}
                 selections={selections}
                 setComponent={setComponent}
               />
@@ -418,4 +446,4 @@ class Workbench extends React.Component<WorkbenchProps> {
   }
 }
 
-export default Workbench
+export default withRouter(Workbench)

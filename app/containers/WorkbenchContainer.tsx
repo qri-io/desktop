@@ -1,6 +1,7 @@
 import { connect } from 'react-redux'
 import Workbench, { WorkbenchProps, WorkbenchData } from '../components/workbench/Workbench'
 import { fetchWorkbench } from '../actions/workbench'
+import { setDataset, resetDataset } from '../actions/mutations'
 
 import { Store, Selections } from '../models/store'
 
@@ -47,7 +48,8 @@ const WorkbenchContainer = connect(
       workingDataset,
       commitDetails,
       myDatasets,
-      session
+      session,
+      mutations
     } = state
     const hasDatasets = myDatasets.value.length !== 0
     const showDetailsBar = ui.detailsBar.type !== DetailsType.NoDetails
@@ -74,6 +76,7 @@ const WorkbenchContainer = connect(
       session,
       hasDatasets,
       showDetailsBar,
+      modified: mutations.dirty,
       sidebarWidth: ui.datasetSidebarWidth,
       details: ui.detailsBar
     }
@@ -85,6 +88,8 @@ const WorkbenchContainer = connect(
     setCommit,
     setComponent: setSelectedListItem,
     setDetailsBar,
+    setDataset,
+    resetDataset,
 
     fetchHistory,
     fetchWorkingDataset,

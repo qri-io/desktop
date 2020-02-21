@@ -7,18 +7,18 @@ import ContextMenuArea from 'react-electron-contextmenu'
 
 import { ApiActionThunk } from '../store/api'
 import { checkClearToCommit } from '../utils/formValidation'
-import { DatasetStatus, SelectedComponent, ComponentType } from '../models/store'
-import Spinner from './chrome/Spinner'
+import { Status, SelectedComponent, ComponentType } from '../models/store'
 import ComponentItem from './item/ComponentItem'
 
 interface ComponentListProps {
   datasetSelected: boolean
-  status: DatasetStatus
+  status: Status
   selectedComponent: string
   onComponentClick: (type: ComponentType, activeTab: string) => Action
   discardChanges?: (component: SelectedComponent) => ApiActionThunk
   selectionType: ComponentType
   fsiPath?: string
+  modified?: boolean
 }
 
 export const components = [
@@ -61,14 +61,11 @@ export const components = [
 ]
 
 // removes components that don't have content on this dataset
-function removeHiddenComponents (status: DatasetStatus, selectionType: ComponentType) {
-  const showWhenMissing = {
-    'readme': 'component',
-    'meta': 'component',
-    'commit': true
-  }
+function hiddenComponentFilter (status: Status, selectionType: ComponentType) {
+  const hidden = [ 'transform' ]
   return (component): boolean => {
-    return !!status[component.name] || showWhenMissing[component.name] === selectionType || showWhenMissing[component.name] === true
+    // filtering all componennt, if the component name is NOT in the hidden list, we good, if it is, then it must be in the status
+    return !hidden.includes(component.name) || Object.keys(status).some((statusComponentName: string) => statusComponentName === component.name)
   }
 }
 
@@ -84,45 +81,41 @@ const ComponentList: React.FunctionComponent<ComponentListProps> = (props: Compo
     onComponentClick,
     selectionType,
     discardChanges,
-    datasetSelected,
-    fsiPath
+    fsiPath,
+    modified = false
   } = props
 
   // if we don't have an fsiPath (the dataset is not yet checked out) or we are
   // still waiting for status to return, display all of the possible components
-  if (!fsiPath || Object.keys(status).length === 0) {
-    return (
-      <div>
-        {components.map(({ name, displayName, tooltip, icon }) => {
-          return <ComponentItem
-            key={name}
-            displayName={displayName}
-            name={name}
-            icon={icon}
-            selected={false}
-            disabled={true}
-            tooltip={tooltip}
-            onClick={undefined}
-            color='light'
-          />
-        })}
-        {
-          // TODO (ramfox): need better loading indicator
-          Object.keys(status).length === 0 && <Spinner white />
-        }
+  // if (!fsiPath || Object.keys(status).length === 0) {
+  //   return (
+  //     <div>
+  //       {components.map(({ name, displayName, tooltip, icon }) => {
+  //         return <FileRow
+  //           key={name}
+  //           displayName={displayName}
+  //           name={name}
+  //           icon={icon}
+  //           selected={false}
+  //           disabled={true}
+  //           tooltip={tooltip}
+  //           onClick={undefined}
+  //           color='light'
+  //         />
+  //       })}
+  //       {
+  //         // TODO (ramfox): need better loading indicator
+  //         Object.keys(status).length === 0 && <Spinner white />
+  //       }
 
-      </div>
-    )
-  }
+  //     </div>
+  //   )
+  // }
 
-  const isEnabled = (name: string): boolean => {
-    return (datasetSelected && selectionType === 'component' && (name === 'meta' || name === 'structure' || name === 'readme' || name === 'transform' || name === 'commit'))
-  }
-
-  const visibleComponents = components.filter(removeHiddenComponents(status, selectionType))
+  const visibleComponents = components.filter(hiddenComponentFilter(status, selectionType))
 
   // reduce visible component statuses into boolean indicating that there are changes ready to be committed
-  const clearToCommit = checkClearToCommit(status)
+  const clearToCommit = fsiPath ? checkClearToCommit(status) : modified
 
   return (
     <div className={classNames({ 'clear-to-commit': clearToCommit })}>
@@ -196,10 +189,8 @@ const ComponentList: React.FunctionComponent<ComponentListProps> = (props: Compo
                 selected={selectedComponent === name}
                 selectionType={selectionType}
                 // TODO (ramfox): we should create a 'isDisabled' function and add these specifications & test
-                disabled={!isEnabled(name)}
                 tooltip={tooltip}
-                // ditto, this should relate to the above
-                onClick={isEnabled(name) ? onComponentClick : undefined}
+                onClick={onComponentClick}
               />
             )
           }

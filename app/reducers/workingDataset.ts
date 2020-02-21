@@ -1,6 +1,6 @@
 import { Reducer, AnyAction } from 'redux'
 import deepEqual from 'deep-equal'
-import { WorkingDataset, DatasetStatus, ComponentStatus } from '../models/store'
+import { WorkingDataset, Status, ComponentStatus } from '../models/store'
 import { apiActionTypes } from '../utils/actionType'
 import { reducerWithPagination, initialPageInfo } from '../utils/pagination'
 import { ipcRenderer } from 'electron'
@@ -152,7 +152,7 @@ const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction
     case DATASET_STATUS_REQ:
       return state
     case DATASET_STATUS_SUCC:
-      const statusObject: DatasetStatus = action.payload.data
+      const statusObject: Status = action.payload.data
         .reduce((obj: any, item: any): ComponentStatus => {
           const { component, filepath, status, mtime } = item
           obj[component] = { filepath, status, mtime }

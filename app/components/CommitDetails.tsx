@@ -117,7 +117,6 @@ const CommitDetails: React.FunctionComponent<CommitDetailsProps> = ({
             details={details}
             setDetailsBar={setDetailsBar}
             fetchBody={fetchCommitBody}
-            fsiWrite={fsiWrite}
             isLoading={loading}
             component={selectedComponent}
             componentStatus={status[selectedComponent]}

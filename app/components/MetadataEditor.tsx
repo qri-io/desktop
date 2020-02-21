@@ -9,16 +9,16 @@ import TextAreaInput from './form/TextAreaInput'
 import MultiTextInput from './form/MultiTextInput'
 import DropdownInput from './form/DropdownInput'
 import MultiStructuredInput from './form/MultiStructuredInput'
-import { ApiAction } from '../store/api'
+import { ApiActionThunk } from '../store/api'
 
-import { WorkingDataset } from '../models/store'
 import { Meta } from '../models/dataset'
 
 import SpinnerWithIcon from './chrome/SpinnerWithIcon'
 
 interface MetadataEditorProps {
-  workingDataset: WorkingDataset
-  fsiWrite: (peername: string, name: string, dataset: any) => Promise<ApiAction>
+  data: Meta
+  write: (peername: string, name: string, dataset: any) => ApiActionThunk | void
+  loading: boolean
 }
 
 const renderValue = (value: string) => {
@@ -74,15 +74,15 @@ export const standardFields = [
 ]
 
 const MetadataEditor: React.FunctionComponent<MetadataEditorProps> = (props: MetadataEditorProps) => {
-  const { workingDataset, fsiWrite } = props
+  const { data = {}, write, loading } = props
 
-  const meta = workingDataset.components.meta.value
-  const { peername, name } = workingDataset
+  const meta = data
+  const { peername, name } = data
 
   const [stateMeta, setStateMeta] = React.useState(meta)
   const [previousMeta, setPreviousMeta] = React.useState(meta)
 
-  if (!meta) {
+  if (loading) {
     return <SpinnerWithIcon loading={true} />
   }
 
@@ -103,7 +103,7 @@ const MetadataEditor: React.FunctionComponent<MetadataEditorProps> = (props: Met
     // if it is, send the new meta object to the backend
     if (!deepEqual(stateMeta, previousMeta)) {
       setPreviousMeta(stateMeta)
-      fsiWrite(peername, name, {
+      write(peername, name, {
         meta: stateMeta
       })
     }
@@ -119,7 +119,7 @@ const MetadataEditor: React.FunctionComponent<MetadataEditorProps> = (props: Met
       ...update
     }
 
-    fsiWrite(peername, name, {
+    write(peername, name, {
       meta: newState
     })
 

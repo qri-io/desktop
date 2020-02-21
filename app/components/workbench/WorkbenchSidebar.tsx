@@ -26,6 +26,7 @@ export interface WorkbenchSidebarProps {
 
   // display details
   selections: Selections
+  modified: boolean
 
   // setting actions
   setModal: (modal: Modal) => void
@@ -45,6 +46,7 @@ const WorkbenchSidebar: React.FunctionComponent<WorkbenchSidebarProps> = (props)
   const {
     selections,
     data,
+    modified,
 
     setActiveTab,
     setCommit,
@@ -159,6 +161,7 @@ const WorkbenchSidebar: React.FunctionComponent<WorkbenchSidebarProps> = (props)
               selectionType={'component' as ComponentType}
               fsiPath={fsiPath}
               discardChanges={discardChanges}
+              modified={modified}
             />
           </div>
         </CSSTransition>

@@ -164,7 +164,7 @@ export interface Pages {
   [key: string]: PageInfo
 }
 
-export interface DatasetStatus {
+export interface Status {
   [key: string]: ComponentStatus
 }
 
@@ -173,7 +173,7 @@ export interface CommitDetails {
   prevPath: string
   peername: string
   name: string
-  status: DatasetStatus
+  status: Status
   isLoading: boolean
   components: {
     commit: {
