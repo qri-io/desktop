@@ -6,7 +6,7 @@ import {
   faArrowRight
 } from '@fortawesome/free-solid-svg-icons'
 
-import { ComponentType, ComponentState } from '../../models/store'
+import { ComponentType, ComponentStatus } from '../../models/store'
 
 import Icon from '../chrome/Icon'
 import StatusDot from '../chrome/StatusDot'
@@ -19,7 +19,7 @@ export interface ComponentItemProps {
   icon?: string
   filename?: string
   selected?: boolean
-  status?: ComponentState
+  status?: ComponentStatus
   selectionType?: ComponentType
   disabled?: boolean
   tooltip?: string

@@ -148,12 +148,12 @@ export interface MyDatasets {
   filter: string // filter string from ui
 }
 
-export type ComponentState = 'modified' | 'unmodified' | 'removed' | 'add' | 'parse error'
+export type ComponentStatus = 'modified' | 'unmodified' | 'removed' | 'added' | 'parse error'
 
 // info about a dataset component as compared the same component in previous commit
-export interface ComponentStatus {
+export interface StatusInfo {
   filepath: string
-  status: ComponentState
+  status: ComponentStatus
   mtime?: Date
   errors?: object[]
   warnings?: object[]
@@ -165,7 +165,7 @@ export interface Pages {
 }
 
 export interface Status {
-  [key: string]: ComponentStatus
+  [key: string]: StatusInfo
 }
 
 export interface CommitDetails {

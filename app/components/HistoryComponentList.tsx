@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { Action } from 'redux'
 
-import { Status, SelectedComponent, ComponentType, ComponentState } from '../models/store'
+import { Status, SelectedComponent, ComponentType, ComponentStatus } from '../models/store'
 import { components as componentsInfo } from './ComponentList'
 import ComponentItem from './item/ComponentItem'
 
@@ -30,7 +30,7 @@ const HistoryComponentList: React.FunctionComponent<HistoryComponentListProps> =
       {
         componentsInfo.map(({ name, displayName, tooltip, icon }) => {
           if (components.includes(name)) {
-            var fileStatus: ComponentState = 'unmodified'
+            var fileStatus: ComponentStatus = 'unmodified'
             if (status[name]) {
               fileStatus = status[name].status
             }

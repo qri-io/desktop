@@ -4,9 +4,12 @@ import {
   SAVE_COMPLETE,
   MUTATIONS_SET_DATASET,
   MUTATIONS_RESET_DATASET,
+  MUTATIONS_SET_STATUS,
+  MUTATIONS_RESET_STATUS,
   MUTATIONS_DATASET_MODIFIED
 } from '../reducers/mutations'
 import Dataset from '../models/dataset'
+import { Status } from '../models/store'
 
 export function setCommitTitle (title: string) {
   return {
@@ -29,13 +32,26 @@ export function setSaveComplete (error?: string) {
   }
 }
 
-export function resetDataset () {
+export function resetMutationsDataset () {
   return {
     type: MUTATIONS_RESET_DATASET
   }
 }
 
-export function setDataset (data: Dataset) {
+export function resetMutationsStatus () {
+  return {
+    type: MUTATIONS_RESET_STATUS
+  }
+}
+
+export function setMutationsStatus (status: Status) {
+  return {
+    type: MUTATIONS_SET_STATUS,
+    status
+  }
+}
+
+export function setMutationsDataset (data: Dataset) {
   return {
     type: MUTATIONS_SET_DATASET,
     dataset: data

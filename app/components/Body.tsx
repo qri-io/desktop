@@ -4,14 +4,16 @@ import BodyTable from './BodyTable'
 import BodyJson from './BodyJson'
 import { ApiActionThunk } from '../store/api'
 
-import { CommitDetails } from '../models/store'
 import { Action } from 'redux'
 import { DetailsType, StatsDetails, Details } from '../models/details'
-import { Structure } from '../models/dataset'
+import Dataset, { Structure } from '../models/dataset'
+import { PageInfo } from '../models/store'
 
 export interface BodyProps {
-  data: CommitDetails
+  data: Dataset
+  stats: Array<Record<string, any>>
   details: Details
+  pageInfo: PageInfo
   fetchBody: (page?: number, pageSize?: number) => ApiActionThunk
   setDetailsBar: (details: Record<string, any>) => Action
 }
@@ -51,16 +53,16 @@ const extractColumnHeaders = (structure: Structure, value: any[]): undefined | a
 const Body: React.FunctionComponent<BodyProps> = (props) => {
   const {
     data,
+    pageInfo,
+    stats,
     details,
     setDetailsBar,
     fetchBody
   } = props
 
-  const { components, stats } = data
-  const { body, structure } = components
-  const { value, pageInfo } = body
+  const { body, structure } = data
 
-  const headers = extractColumnHeaders(structure.value, value)
+  const headers = extractColumnHeaders(structure, body)
 
   const makeStatsDetails = (stats: Record<string, any>, title: string, index: number): StatsDetails => {
     return {
@@ -92,14 +94,14 @@ const Body: React.FunctionComponent<BodyProps> = (props) => {
 
   return (
     <div className='transition-group'>
-      {shouldDisplayJsonViewer(structure.value.format)
+      {shouldDisplayJsonViewer(structure.format)
         ? <BodyJson
-          body={value}
+          body={body}
           pageInfo={pageInfo}
         />
         : <BodyTable
           headers={headers}
-          body={value}
+          body={body}
           pageInfo={pageInfo}
           highlighedColumnIndex={details.type !== DetailsType.NoDetails ? details.index : undefined}
           onFetch={fetchBody}

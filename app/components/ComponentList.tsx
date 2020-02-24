@@ -18,7 +18,6 @@ interface ComponentListProps {
   discardChanges?: (component: SelectedComponent) => ApiActionThunk
   selectionType: ComponentType
   fsiPath?: string
-  modified?: boolean
 }
 
 export const components = [
@@ -81,8 +80,7 @@ const ComponentList: React.FunctionComponent<ComponentListProps> = (props: Compo
     onComponentClick,
     selectionType,
     discardChanges,
-    fsiPath,
-    modified = false
+    fsiPath
   } = props
 
   // if we don't have an fsiPath (the dataset is not yet checked out) or we are
@@ -115,7 +113,7 @@ const ComponentList: React.FunctionComponent<ComponentListProps> = (props: Compo
   const visibleComponents = components.filter(hiddenComponentFilter(status, selectionType))
 
   // reduce visible component statuses into boolean indicating that there are changes ready to be committed
-  const clearToCommit = fsiPath ? checkClearToCommit(status) : modified
+  const clearToCommit = checkClearToCommit(status)
 
   return (
     <div className={classNames({ 'clear-to-commit': clearToCommit })}>

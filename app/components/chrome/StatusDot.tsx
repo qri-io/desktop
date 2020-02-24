@@ -2,10 +2,10 @@ import React from 'react'
 import classNames from 'classnames'
 import { faExclamation } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { ComponentState } from '../../models/store'
+import { ComponentStatus } from '../../models/store'
 
 export interface StatusDotProps {
-  status: ComponentState
+  status: ComponentStatus
 }
 
 export const StatusDot: React.FunctionComponent<StatusDotProps> = (props) => {

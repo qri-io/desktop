@@ -15,7 +15,7 @@ import CommitContainer from '../containers/CommitContainer'
 
 import { getComponentDisplayProps } from './ComponentList'
 
-import { ComponentStatus, SelectedComponent, CommitDetails } from '../models/store'
+import { StatusInfo, SelectedComponent, PageInfo } from '../models/store'
 import Body from './Body'
 import { Details } from '../models/details'
 import { ApiActionThunk } from '../store/api'
@@ -25,10 +25,12 @@ import Icon from './chrome/Icon'
 import StatusDot from './chrome/StatusDot'
 
 interface DatasetComponentProps {
-  data: CommitDetails
+  data: Dataset
 
   // display details
   details: Details
+  stats?: Array<Record<string, any>>
+  bodyPageInfo?: PageInfo
 
   // seting actions
   setDetailsBar: (details: Record<string, any>) => Action
@@ -39,15 +41,15 @@ interface DatasetComponentProps {
 
   isLoading: boolean
   component: SelectedComponent
-  componentStatus: ComponentStatus
+  componentStatus: StatusInfo
   history?: boolean
   fsiPath?: string
 }
 
 const DatasetComponent: React.FunctionComponent<DatasetComponentProps> = (props: DatasetComponentProps) => {
-  const { component: selectedComponent, componentStatus, isLoading, history = false, fsiPath, data, details, setDetailsBar, fetchBody, write } = props
+  const { component: selectedComponent, componentStatus, isLoading, history = false, fsiPath, data, stats, bodyPageInfo, details, setDetailsBar, fetchBody, write } = props
 
-  const hasParseError = componentStatus && componentStatus.status === 'parse error'
+  const hasParseError = componentStatus.status === 'parse error'
   const component = selectedComponent || 'meta'
   const { displayName, icon, tooltip } = getComponentDisplayProps(component)
 
@@ -94,11 +96,11 @@ const DatasetComponent: React.FunctionComponent<DatasetComponentProps> = (props:
             {history
               ? <ReadmeHistoryContainer />
               : <Readme
-                data={data.components.readme.value}
+                data={data.readme.value}
                 name={data.name}
                 username={data.peername}
                 write={write}
-                loading={data.isLoading}
+                loading={isLoading}
               />}
           </div>
         </CSSTransition>
@@ -116,9 +118,9 @@ const DatasetComponent: React.FunctionComponent<DatasetComponentProps> = (props:
               history
                 ? <MetadataContainer />
                 : <MetadataEditor
-                  data={data.components.meta.value}
+                  data={data.meta}
                   write={write}
-                  loading={data.isLoading}
+                  loading={isLoading}
                 />
             }
           </div>
@@ -135,6 +137,8 @@ const DatasetComponent: React.FunctionComponent<DatasetComponentProps> = (props:
           <div className='transition-wrap'>
             <Body
               data={data}
+              pageInfo={bodyPageInfo}
+              stats={stats}
               fetchBody={fetchBody}
               setDetailsBar={setDetailsBar}
               details={details}
@@ -152,11 +156,11 @@ const DatasetComponent: React.FunctionComponent<DatasetComponentProps> = (props:
         >
           <div className='transition-wrap'>
             <Structure
-              data={data.components.structure.value}
+              data={data.structure}
               history={history}
               fsiBodyFormat={(!history && data.status && data.status.body && data.status.body.filepath && path.extname(data.status.body.filepath).slice(1)) || ''}
               write={handleStructureWrite}
-              loading={data.isLoading}
+              loading={isLoading}
             />
           </div>
         </CSSTransition>

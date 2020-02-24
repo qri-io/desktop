@@ -18,6 +18,7 @@ import {
   SelectedComponent,
   Status
 } from '../../models/store'
+import Dataset from '../../models/dataset'
 import { Modal, ModalType } from '../../models/modals'
 import { ApiActionThunk, LaunchedFetchesAction } from '../../store/api'
 import { defaultSidebarWidth } from '../../reducers/ui'
@@ -33,7 +34,6 @@ import WorkbenchSidebar from './WorkbenchSidebar'
 import DetailsBarContainer from '../../containers/DetailsBarContainer'
 import CommitDetails from '../CommitDetails'
 import NoDatasets from '../NoDatasets'
-import Dataset from '../../models/dataset'
 
 // TODO (b5) - is this still required?
 require('../../assets/qri-blob-logo-tiny.png')
@@ -44,6 +44,10 @@ export interface WorkbenchData {
   workingDataset: WorkingDataset
   head: ICommitDetails
   history: History
+
+  // mutations
+  mutationsDataset: Dataset
+  mutationsStatus: Status
 }
 
 export interface WorkbenchProps extends RouteComponentProps {
@@ -67,8 +71,10 @@ export interface WorkbenchProps extends RouteComponentProps {
   setCommit: (path: string) => Action
   setComponent: (type: ComponentType, activeComponent: string) => Action
   setDetailsBar: (details: Record<string, any>) => Action
-  setDataset: (data: Dataset) => Action
-  resetDataset: () => Action
+  setMutationsDataset: (data: Dataset) => Action
+  resetMutationsDataset: () => Action
+  setMutationsStatus: (status: Status) => Action
+  resetMutationsStatus: () => Action
 
   // fetching actions
   fetchWorkbench: () => LaunchedFetchesAction
@@ -98,16 +104,10 @@ class Workbench extends React.Component<WorkbenchProps, Status> {
       'handleShowStatus',
       'handleShowHistory',
       'handleSetDataset',
+      'datasetFromMutations',
+      'statusFromMutations',
       'handleCopyLink'
     ].forEach((m) => { this[m] = this[m].bind(this) })
-
-    this.state = {
-      'meta': { status: 'unmodified', filepath: '' },
-      'body': { status: 'unmodified', filepath: '' },
-      'readme': { status: 'unmodified', filepath: '' },
-      'structure': { status: 'unmodified', filepath: '' },
-      'transform': { status: 'unmodified', filepath: '' }
-    }
   }
 
   componentDidMount () {
@@ -126,7 +126,8 @@ class Workbench extends React.Component<WorkbenchProps, Status> {
     ipcRenderer.removeListener('open-working-directory', this.openWorkingDirectory)
     ipcRenderer.removeListener('publish-unpublish-dataset', this.publishUnpublishDataset)
 
-    this.props.resetDataset()
+    this.props.resetMutationsDataset()
+    this.props.resetMutationsStatus()
   }
 
   private handleShowStatus () {
@@ -210,18 +211,43 @@ class Workbench extends React.Component<WorkbenchProps, Status> {
   }
 
   handleSetDataset (peername: string, name: string, data: Dataset) {
-    const { setDataset } = this.props
+    const { setMutationsDataset, setMutationsStatus } = this.props
 
-    // // TODO (ramfox): make this better
-    // let status = {
-    //   'meta': { status: 'unmodified', filepath: '' },
-    //   'body': { status: 'unmodified', filepath: '' },
-    //   'readme': { status: 'unmodified', filepath: '' },
-    //   'structure': { status: 'unmodified', filepath: '' },
-    //   'transform': { status: 'unmodified', filepath: '' }
-    // }
-    // status = Object.keys(status).map
-    setDataset(data)
+    let s = this.statusFromMutations()
+    Object.keys(data).forEach((componentName: string) => {
+      if (!data.workingDataset.components[componentName]) {
+        s[componentName] = { ...s[componentName], status: 'added' }
+      } else if (data[componentName].deepEquals(data.workingDataset.components[componentName])) {
+        s[componentName] = { ...s[componentName], status: 'unmodified' }
+      } else {
+        s[componentName] = { ...s[componentName], status: 'modified' }
+      }
+    })
+    setMutationsStatus(s)
+    setMutationsDataset(data)
+  }
+
+  // TODO (ramfox): should this logic should happen at the container level, and the
+  // component should just display whatever dataset it is given? We need to
+  // know what the head dataset looks like, however, in order to determine if
+  // anything has changed in 'handleSetDataset'
+  datasetFromMutations (): Dataset {
+    const { data } = this.props
+    const { workingDataset, mutationsDataset } = data
+    let dataset: Dataset = {}
+
+    Object.keys(workingDataset.components).forEach((componentName: string) => {
+      dataset[componentName] = workingDataset.components[componentName].value
+    })
+    return { ...dataset, ...mutationsDataset }
+  }
+
+  // TODO(ramfox): this logic should happen at the container level, and the
+  // component should just display whatever status it is given
+  statusFromMutations (): Status {
+    const { data } = this.props
+    const { workingDataset, mutationsStatus } = data
+    return { ...workingDataset.status, ...mutationsStatus }
   }
 
   render () {
@@ -258,7 +284,9 @@ class Workbench extends React.Component<WorkbenchProps, Status> {
     } = selections
 
     const datasetSelected = peername !== '' && name !== ''
-    const { status, published, fsiPath } = data.workingDataset
+
+    const { workingDataset } = data
+    const { published, fsiPath, stats } = workingDataset
 
     // isLinked is derived from fsiPath and only used locally
     const isLinked = fsiPath !== ''
@@ -272,12 +300,12 @@ class Workbench extends React.Component<WorkbenchProps, Status> {
     const sidebarContent = (
       <WorkbenchSidebar
         data= {{ workingDataset: data.workingDataset, history: data.history }}
+        status={this.statusFromMutations()}
         selections={selections}
         setModal={setModal}
         setActiveTab={setActiveTab}
         setCommit={setCommit}
         setComponent={setComponent}
-        modified={modified}
         fetchHistory={fetchHistory}
         discardChanges={discardChanges}
         renameDataset={renameDataset}
@@ -348,7 +376,7 @@ class Workbench extends React.Component<WorkbenchProps, Status> {
 
     const mainContent = (
       <>
-        <Prompt when={modified} message={() => `You have uncommited changes! Please commit these changes before you navigate away or you will lose your work.`}/>
+        <Prompt when={modified} message={() => `You have uncommited changes! Click 'cancel' and commit these changes before you navigate away or you will lose your work.`}/>
         <div className='main-content-header'>
           {linkButton}
           {publishButton}
@@ -382,12 +410,14 @@ class Workbench extends React.Component<WorkbenchProps, Status> {
             >
               <DatasetComponent
                 details={details}
-                data={data.workingDataset}
+                data={this.datasetFromMutations()}
+                stats={stats}
+                bodyPageInfo={data.workingDataset.components.body.pageInfo}
                 setDetailsBar={setDetailsBar}
                 fetchBody={fetchBody}
                 write={fsiPath ? fsiWrite : this.handleSetDataset}
                 component={selectedComponent}
-                componentStatus={status[selectedComponent]}
+                componentStatus={this.statusFromMutations()[selectedComponent]}
                 isLoading={data.workingDataset.isLoading}
                 fsiPath={this.props.data.workingDataset.fsiPath}
               />

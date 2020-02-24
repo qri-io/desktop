@@ -1,7 +1,7 @@
 import { connect } from 'react-redux'
 import Workbench, { WorkbenchProps, WorkbenchData } from '../components/workbench/Workbench'
 import { fetchWorkbench } from '../actions/workbench'
-import { setDataset, resetDataset } from '../actions/mutations'
+import { setMutationsDataset, setMutationsStatus, resetMutationsDataset, resetMutationsStatus } from '../actions/mutations'
 
 import { Store, Selections } from '../models/store'
 
@@ -63,6 +63,8 @@ const WorkbenchContainer = connect(
       peername: props.peername || selections.peername,
       name: props.name || selections.name,
       path: props.path || selections.commit,
+      mutatedDataset: mutations.dataset.value || {},
+      mutatedStatus: mutations.status.value || {},
 
       workingDataset: workingDataset,
       head: commitDetails,
@@ -88,8 +90,10 @@ const WorkbenchContainer = connect(
     setCommit,
     setComponent: setSelectedListItem,
     setDetailsBar,
-    setDataset,
-    resetDataset,
+    setMutationsStatus,
+    setMutationsDataset,
+    resetMutationsDataset,
+    resetMutationsStatus,
 
     fetchHistory,
     fetchWorkingDataset,

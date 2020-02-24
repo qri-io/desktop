@@ -1,5 +1,5 @@
 import { Dataset } from '../models/dataset'
-import { VersionInfo, ComponentStatus, ComponentState } from '../models/store'
+import { VersionInfo, StatusInfo, ComponentStatus } from '../models/store'
 import { SearchResult } from '../models/search'
 
 export function mapDataset (data: Record<string, string>): Dataset {
@@ -69,12 +69,12 @@ export function datasetToVersionInfo (d: Dataset): VersionInfo {
   }
 }
 
-export function mapStatus (data: Array<Record<string, string>>): ComponentStatus[] {
+export function mapStatus (data: Array<Record<string, string>>): StatusInfo[] {
   return data.map((d) => {
     return {
       filepath: d.sourceFile,
       component: d.component,
-      status: d.type as ComponentState,
+      status: d.type as ComponentStatus,
       mtime: new Date(d.mtime)
     }
   })

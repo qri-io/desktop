@@ -8,7 +8,7 @@ import { MenuItemConstructorOptions, remote, ipcRenderer } from 'electron'
 
 import { ApiActionThunk } from '../../store/api'
 import { Modal } from '../../models/modals'
-import { WorkingDataset, ComponentType, Selections, History, SelectedComponent } from '../../models/store'
+import { WorkingDataset, ComponentType, Selections, History, SelectedComponent, Status } from '../../models/store'
 
 import ComponentList from '../ComponentList'
 import DatasetReference from '../DatasetReference'
@@ -26,7 +26,7 @@ export interface WorkbenchSidebarProps {
 
   // display details
   selections: Selections
-  modified: boolean
+  status: Status
 
   // setting actions
   setModal: (modal: Modal) => void
@@ -46,7 +46,7 @@ const WorkbenchSidebar: React.FunctionComponent<WorkbenchSidebarProps> = (props)
   const {
     selections,
     data,
-    modified,
+    status,
 
     setActiveTab,
     setCommit,
@@ -59,7 +59,7 @@ const WorkbenchSidebar: React.FunctionComponent<WorkbenchSidebarProps> = (props)
   } = props
 
   const { history, workingDataset } = data
-  const { fsiPath, status, structure } = workingDataset
+  const { fsiPath, structure } = workingDataset
   const format = structure && structure.format
   const commitCount = history.value.length
   const lastCommit = history.value.length ? history.value[0].timestamp : ''
@@ -161,7 +161,6 @@ const WorkbenchSidebar: React.FunctionComponent<WorkbenchSidebarProps> = (props)
               selectionType={'component' as ComponentType}
               fsiPath={fsiPath}
               discardChanges={discardChanges}
-              modified={modified}
             />
           </div>
         </CSSTransition>

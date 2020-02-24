@@ -15,6 +15,11 @@ const initialState: Mutations = {
     value: undefined,
     isLoading: false,
     error: null
+  },
+  status: {
+    value: undefined,
+    isLoading: false,
+    error: null
   }
 }
 
@@ -25,6 +30,8 @@ export const SET_COMMIT_MESSAGE = 'SET_COMMIT_MESSAGE'
 export const MUTATIONS_SET_DATASET = 'MUTATIONS_SET_DATASET'
 export const MUTATIONS_RESET_DATASET = 'MUTATIONS_RESET_DATASET'
 export const MUTATIONS_DATASET_MODIFIED = 'MUTATIONS_DATASET_MODIFIED'
+export const MUTATIONS_SET_STATUS = 'MUTATIONS_SET_STATUS'
+export const MUTATIONS_RESET_STATUS = 'MUTATIONS_RESET_STATUS'
 
 const mutationsReducer: Reducer = (state = initialState, action: AnyAction): Mutations => {
   switch (action.type) {
@@ -90,6 +97,23 @@ const mutationsReducer: Reducer = (state = initialState, action: AnyAction): Mut
         ...state,
         dataset: initialState.dataset,
         dirty: undefined
+      }
+
+    case MUTATIONS_SET_STATUS:
+      return {
+        ...state,
+        status: {
+          ...state.status,
+          value: {
+            ...state.dataset.value,
+            ...action.status
+          }
+        }
+      }
+    case MUTATIONS_RESET_STATUS:
+      return {
+        ...state,
+        status: initialState.status
       }
     default:
       return state
