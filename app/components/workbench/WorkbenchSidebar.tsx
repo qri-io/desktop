@@ -38,7 +38,7 @@ export interface WorkbenchSidebarProps {
   fetchHistory: (page?: number, pageSize?: number) => ApiActionThunk
 
   // api actions (not fetching)
-  discardChanges: (component: SelectedComponent) => ApiActionThunk
+  discardChanges: (component: SelectedComponent) => ApiActionThunk | Action
   renameDataset: (peername: string, name: string, newName: string) => ApiActionThunk
 }
 

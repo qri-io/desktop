@@ -5,6 +5,7 @@ import { CSSTransition } from 'react-transition-group'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faFolderOpen, faFile, faLink, faCloud, faCloudUploadAlt } from '@fortawesome/free-solid-svg-icons'
 import { withRouter, RouteComponentProps, Prompt } from 'react-router-dom'
+import deepEqual from 'deep-equal'
 
 import { QRI_CLOUD_URL } from '../../constants'
 import { Details } from '../../models/details'
@@ -44,10 +45,10 @@ export interface WorkbenchData {
   workingDataset: WorkingDataset
   head: ICommitDetails
   history: History
+  status: Status
 
   // mutations
   mutationsDataset: Dataset
-  mutationsStatus: Status
 }
 
 export interface WorkbenchProps extends RouteComponentProps {
@@ -89,7 +90,7 @@ export interface WorkbenchProps extends RouteComponentProps {
   // api actions (that aren't fetching)
   publishDataset: () => ApiActionThunk
   unpublishDataset: () => ApiActionThunk
-  discardChanges: (component: SelectedComponent) => ApiActionThunk
+  discardChanges: (component: SelectedComponent) => ApiActionThunk | Action
   renameDataset: (peername: string, name: string, newName: string) => ApiActionThunk
   fsiWrite: (peername: string, name: string, dataset: Dataset) => ApiActionThunk
 }
@@ -105,7 +106,6 @@ class Workbench extends React.Component<WorkbenchProps, Status> {
       'handleShowHistory',
       'handleSetDataset',
       'datasetFromMutations',
-      'statusFromMutations',
       'handleCopyLink'
     ].forEach((m) => { this[m] = this[m].bind(this) })
   }
@@ -210,21 +210,32 @@ class Workbench extends React.Component<WorkbenchProps, Status> {
       : setModal({ type: ModalType.PublishDataset })
   }
 
-  handleSetDataset (peername: string, name: string, data: Dataset) {
-    const { setMutationsDataset, setMutationsStatus } = this.props
+  handleDiscardChanges (component: SelectedComponent) {
+    const { workingDataset } = this.props.data
+    const { fsiPath } = workingDataset
+    if (fsiPath !== '') {
+      this.props.discardChanges(component)
+    }
+    const { mutationsDataset } = this.props.data
+    this.props.setMutationsDataset({ ...mutationsDataset, [component]: undefined })
+  }
 
-    let s = this.statusFromMutations()
-    Object.keys(data).forEach((componentName: string) => {
-      if (!data.workingDataset.components[componentName]) {
-        s[componentName] = { ...s[componentName], status: 'added' }
-      } else if (data[componentName].deepEquals(data.workingDataset.components[componentName])) {
-        s[componentName] = { ...s[componentName], status: 'unmodified' }
+  handleSetDataset (peername: string, name: string, dataset: Dataset) {
+    const { setMutationsDataset, setMutationsStatus, data } = this.props
+
+    let s = { ...data.status }
+    let d = { ...dataset }
+    Object.keys(dataset).forEach((componentName: string) => {
+      if (!data.workingDataset.components[componentName].value) {
+        s[componentName] = { ...s[componentName], filepath: componentName, status: 'add' }
+      } else if (deepEqual(dataset[componentName], data.workingDataset.components[componentName].value)) {
+        s[componentName] = { ...s[componentName], filepath: componentName, status: 'unmodified' }
       } else {
-        s[componentName] = { ...s[componentName], status: 'modified' }
+        s[componentName] = { ...s[componentName], filepath: componentName, status: 'modified' }
       }
     })
     setMutationsStatus(s)
-    setMutationsDataset(data)
+    setMutationsDataset(d)
   }
 
   // TODO (ramfox): should this logic should happen at the container level, and the
@@ -240,14 +251,6 @@ class Workbench extends React.Component<WorkbenchProps, Status> {
       dataset[componentName] = workingDataset.components[componentName].value
     })
     return { ...dataset, ...mutationsDataset }
-  }
-
-  // TODO(ramfox): this logic should happen at the container level, and the
-  // component should just display whatever status it is given
-  statusFromMutations (): Status {
-    const { data } = this.props
-    const { workingDataset, mutationsStatus } = data
-    return { ...workingDataset.status, ...mutationsStatus }
   }
 
   render () {
@@ -285,7 +288,7 @@ class Workbench extends React.Component<WorkbenchProps, Status> {
 
     const datasetSelected = peername !== '' && name !== ''
 
-    const { workingDataset } = data
+    const { workingDataset, status } = data
     const { published, fsiPath, stats } = workingDataset
 
     // isLinked is derived from fsiPath and only used locally
@@ -300,7 +303,7 @@ class Workbench extends React.Component<WorkbenchProps, Status> {
     const sidebarContent = (
       <WorkbenchSidebar
         data= {{ workingDataset: data.workingDataset, history: data.history }}
-        status={this.statusFromMutations()}
+        status={status}
         selections={selections}
         setModal={setModal}
         setActiveTab={setActiveTab}
@@ -412,14 +415,16 @@ class Workbench extends React.Component<WorkbenchProps, Status> {
                 details={details}
                 data={this.datasetFromMutations()}
                 stats={stats}
-                bodyPageInfo={data.workingDataset.components.body.pageInfo}
+                bodyPageInfo={workingDataset.components.body.pageInfo}
                 setDetailsBar={setDetailsBar}
+                peername={peername}
+                name={name}
                 fetchBody={fetchBody}
-                write={fsiPath ? fsiWrite : this.handleSetDataset}
+                write={isLinked ? fsiWrite : this.handleSetDataset}
                 component={selectedComponent}
-                componentStatus={this.statusFromMutations()[selectedComponent]}
-                isLoading={data.workingDataset.isLoading}
-                fsiPath={this.props.data.workingDataset.fsiPath}
+                componentStatus={status}
+                isLoading={workingDataset.isLoading}
+                fsiPath={workingDataset.fsiPath}
               />
             </CSSTransition>
             <CSSTransition
@@ -434,7 +439,7 @@ class Workbench extends React.Component<WorkbenchProps, Status> {
                 details={details}
                 setDetailsBar={setDetailsBar}
                 fetchCommitBody={fetchCommitBody}
-                write={fsiPath ? fsiWrite : this.handleSetDataset}
+                write={isLinked ? fsiWrite : this.handleSetDataset}
                 selections={selections}
                 setComponent={setComponent}
               />

@@ -12,7 +12,7 @@ export interface ReadmeProps {
   name: string
   data?: string
   loading: boolean
-  write: (username: string, name: string, dataset: any) => ApiActionThunk | void
+  write: (dataset: any) => ApiActionThunk | void
 }
 
 const Readme: React.FunctionComponent<ReadmeProps> = (props) => {
@@ -33,7 +33,7 @@ const Readme: React.FunctionComponent<ReadmeProps> = (props) => {
 
   React.useEffect(() => {
     if (debouncedValue !== data) {
-      write(username, name, {
+      write({
         readme: {
           scriptBytes: btoa(unescape(encodeURIComponent(internalValue)))
         }

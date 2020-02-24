@@ -17,7 +17,7 @@ import SpinnerWithIcon from './chrome/SpinnerWithIcon'
 
 interface MetadataEditorProps {
   data: Meta
-  write: (peername: string, name: string, dataset: any) => ApiActionThunk | void
+  write: (dataset: any) => ApiActionThunk | void
   loading: boolean
 }
 
@@ -77,7 +77,6 @@ const MetadataEditor: React.FunctionComponent<MetadataEditorProps> = (props: Met
   const { data = {}, write, loading } = props
 
   const meta = data
-  const { peername, name } = data
 
   const [stateMeta, setStateMeta] = React.useState(meta)
   const [previousMeta, setPreviousMeta] = React.useState(meta)
@@ -103,7 +102,7 @@ const MetadataEditor: React.FunctionComponent<MetadataEditorProps> = (props: Met
     // if it is, send the new meta object to the backend
     if (!deepEqual(stateMeta, previousMeta)) {
       setPreviousMeta(stateMeta)
-      write(peername, name, {
+      write({
         meta: stateMeta
       })
     }
@@ -119,7 +118,7 @@ const MetadataEditor: React.FunctionComponent<MetadataEditorProps> = (props: Met
       ...update
     }
 
-    write(peername, name, {
+    write({
       meta: newState
     })
 

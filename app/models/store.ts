@@ -148,7 +148,7 @@ export interface MyDatasets {
   filter: string // filter string from ui
 }
 
-export type ComponentStatus = 'modified' | 'unmodified' | 'removed' | 'added' | 'parse error'
+export type ComponentStatus = 'modified' | 'unmodified' | 'removed' | 'add' | 'parse error'
 
 // info about a dataset component as compared the same component in previous commit
 export interface StatusInfo {

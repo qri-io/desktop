@@ -7,7 +7,7 @@ import { faClock } from '@fortawesome/free-regular-svg-icons'
 import HistoryComponentList from '../components/HistoryComponentList'
 import DatasetComponent from './DatasetComponent'
 import Layout from './Layout'
-import { Structure, Commit } from '../models/dataset'
+import Dataset, { Structure, Commit } from '../models/dataset'
 import { CommitDetails as ICommitDetails, ComponentType, SelectedComponent, Selections } from '../models/Store'
 import fileSize from '../utils/fileSize'
 import { Details } from '../models/details'
@@ -77,7 +77,7 @@ const CommitDetails: React.FunctionComponent<CommitDetailsProps> = ({
   // when we get that error, we should prompt the user to add that
   // version of the dataset.
   // for now, we will tell the user to run a command on the command line
-  const { peername, name, status, components, isLoading, path } = data
+  const { peername, name, status, components, isLoading, path, stats } = data
   const { structure, commit } = components
 
   const { commitComponent: selectedComponent } = selections
@@ -91,6 +91,15 @@ const CommitDetails: React.FunctionComponent<CommitDetailsProps> = ({
     }
     return components
   }
+
+  let dataset: Dataset = {}
+
+  Object.keys(components).forEach((componentName: string) => {
+    dataset[componentName] = components[componentName].value
+  })
+
+  const { body } = components
+  const { pageInfo } = body
 
   const loading = !path || path !== selections.commit || isLoading
 
@@ -113,13 +122,17 @@ const CommitDetails: React.FunctionComponent<CommitDetailsProps> = ({
         sidebarWidth={150}
         mainContent={(
           <DatasetComponent
-            data={data}
+            data={dataset}
+            peername={peername}
+            name={name}
             details={details}
             setDetailsBar={setDetailsBar}
             fetchBody={fetchCommitBody}
             isLoading={loading}
+            bodyPageInfo={pageInfo}
+            stats={stats}
             component={selectedComponent}
-            componentStatus={status[selectedComponent]}
+            componentStatus={status[selectedComponent] || {}}
             history
           />
         )}

@@ -77,6 +77,7 @@ const mutationsReducer: Reducer = (state = initialState, action: AnyAction): Mut
           value: initialState.save.value
         },
         dataset: initialState.dataset,
+        status: initialState.status,
         dirty: undefined
       }
     case MUTATIONS_SET_DATASET:
@@ -105,7 +106,7 @@ const mutationsReducer: Reducer = (state = initialState, action: AnyAction): Mut
         status: {
           ...state.status,
           value: {
-            ...state.dataset.value,
+            ...state.status.value,
             ...action.status
           }
         }

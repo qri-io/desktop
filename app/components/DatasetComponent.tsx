@@ -1,5 +1,4 @@
 import * as React from 'react'
-import path from 'path'
 
 import MetadataContainer from '../containers/MetadataContainer'
 import MetadataEditor from '../components/MetadataEditor'
@@ -20,7 +19,7 @@ import Body from './Body'
 import { Details } from '../models/details'
 import { ApiActionThunk } from '../store/api'
 import { Action } from 'redux'
-import Dataset, { Structure as IStructure } from '../models/dataset'
+import Dataset from '../models/dataset'
 import Icon from './chrome/Icon'
 import StatusDot from './chrome/StatusDot'
 
@@ -31,6 +30,8 @@ interface DatasetComponentProps {
   details: Details
   stats?: Array<Record<string, any>>
   bodyPageInfo?: PageInfo
+  peername: string
+  name: string
 
   // seting actions
   setDetailsBar: (details: Record<string, any>) => Action
@@ -47,14 +48,14 @@ interface DatasetComponentProps {
 }
 
 const DatasetComponent: React.FunctionComponent<DatasetComponentProps> = (props: DatasetComponentProps) => {
-  const { component: selectedComponent, componentStatus, isLoading, history = false, fsiPath, data, stats, bodyPageInfo, details, setDetailsBar, fetchBody, write } = props
+  const { component: selectedComponent, componentStatus, isLoading, history = false, fsiPath, data, peername, name, stats, bodyPageInfo, details, setDetailsBar, fetchBody, write } = props
 
   const hasParseError = componentStatus.status === 'parse error'
   const component = selectedComponent || 'meta'
   const { displayName, icon, tooltip } = getComponentDisplayProps(component)
 
-  const handleStructureWrite = (structure: IStructure): ApiActionThunk | void => {
-    return write(data.peername, data.name, { structure })
+  const handleWrite = (data: Dataset): ApiActionThunk | void => {
+    return write(peername, name, data)
   }
 
   return (
@@ -96,10 +97,10 @@ const DatasetComponent: React.FunctionComponent<DatasetComponentProps> = (props:
             {history
               ? <ReadmeHistoryContainer />
               : <Readme
-                data={data.readme.value}
-                name={data.name}
-                username={data.peername}
-                write={write}
+                data={data.readme}
+                name={name}
+                username={peername}
+                write={handleWrite}
                 loading={isLoading}
               />}
           </div>
@@ -119,14 +120,14 @@ const DatasetComponent: React.FunctionComponent<DatasetComponentProps> = (props:
                 ? <MetadataContainer />
                 : <MetadataEditor
                   data={data.meta}
-                  write={write}
+                  write={handleWrite}
                   loading={isLoading}
                 />
             }
           </div>
         </CSSTransition>
         <CSSTransition
-          in={component === 'body' && !hasParseError}
+          in={component === 'body' && bodyPageInfo && !hasParseError}
           classNames='fade'
           component='div'
           timeout={300}
@@ -158,8 +159,7 @@ const DatasetComponent: React.FunctionComponent<DatasetComponentProps> = (props:
             <Structure
               data={data.structure}
               history={history}
-              fsiBodyFormat={(!history && data.status && data.status.body && data.status.body.filepath && path.extname(data.status.body.filepath).slice(1)) || ''}
-              write={handleStructureWrite}
+              write={handleWrite}
               loading={isLoading}
             />
           </div>

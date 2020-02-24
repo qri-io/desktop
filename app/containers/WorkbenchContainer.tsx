@@ -3,7 +3,7 @@ import Workbench, { WorkbenchProps, WorkbenchData } from '../components/workbenc
 import { fetchWorkbench } from '../actions/workbench'
 import { setMutationsDataset, setMutationsStatus, resetMutationsDataset, resetMutationsStatus } from '../actions/mutations'
 
-import { Store, Selections } from '../models/store'
+import { Store, Selections, WorkingDataset, Status } from '../models/store'
 
 import { setSidebarWidth, setModal, setDetailsBar } from '../actions/ui'
 import {
@@ -40,6 +40,30 @@ function locationFromSelection (s: Selections): string {
   return sel
 }
 
+// selectStatus sends down the correct status to the Workbench
+// if workingDataset has not loaded yet, send an empty status
+// if the dataset is linked to the filesystem, send down the workingDataset status
+// if not, and there is not mutationsStatus, that means no changes have occured
+// create a status based on the dataset components in the workingDataset
+function selectStatus (workingDataset: WorkingDataset, mutationsStatus: Status): Status {
+  if (!workingDataset || workingDataset.isLoading) return {}
+
+  const { fsiPath } = workingDataset
+  if (fsiPath !== '') {
+    return workingDataset.status
+  }
+  if (mutationsStatus) {
+    return mutationsStatus
+  }
+  let status: Status = {}
+  Object.keys(workingDataset.components).forEach((componentName: string) => {
+    if (workingDataset.components[componentName].value) {
+      status[componentName] = { filepath: componentName, status: 'unmodified' }
+    }
+  })
+  return status
+}
+
 const WorkbenchContainer = connect(
   (state: Store, props) => {
     const {
@@ -64,7 +88,7 @@ const WorkbenchContainer = connect(
       name: props.name || selections.name,
       path: props.path || selections.commit,
       mutatedDataset: mutations.dataset.value || {},
-      mutatedStatus: mutations.status.value || {},
+      status: selectStatus(workingDataset, mutations.status.value),
 
       workingDataset: workingDataset,
       head: commitDetails,

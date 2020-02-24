@@ -22,7 +22,7 @@ const ReadmeHistory: React.FunctionComponent<ReadmeHistoryProps> = (props) => {
             el.innerHTML = render
           })
       }
-    }, [])
+    }, [peername, name, path])
     ref.current = setRef
     return [setRef]
   }

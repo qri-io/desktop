@@ -309,8 +309,7 @@ describe('Qri End to End tests', function spec () {
     if (takeScreenshots) {
       await takeScreenshot(artifactPath('workbench-checkout.png'))
     }
-    // body is disabled
-    await waitForExist('#body-status.disabled')
+
     // click #checkout to open checkout modal
     await click('#checkout')
 
@@ -334,9 +333,6 @@ describe('Qri End to End tests', function spec () {
     if (takeScreenshots) {
       await takeScreenshot(artifactPath('csv-workbench-status.png'))
     }
-
-    // expect Body to now be active
-    await doesNotExist('#body-status.disabled')
   })
 
   // body write & commit

@@ -59,12 +59,12 @@ export const components = [
   }
 ]
 
+export const hiddenComponents = ['transform']
 // removes components that don't have content on this dataset
 function hiddenComponentFilter (status: Status, selectionType: ComponentType) {
-  const hidden = [ 'transform' ]
   return (component): boolean => {
     // filtering all componennt, if the component name is NOT in the hidden list, we good, if it is, then it must be in the status
-    return !hidden.includes(component.name) || Object.keys(status).some((statusComponentName: string) => statusComponentName === component.name)
+    return !hiddenComponents.includes(component.name) || Object.keys(status).some((statusComponentName: string) => statusComponentName === component.name)
   }
 }
 
@@ -83,43 +83,17 @@ const ComponentList: React.FunctionComponent<ComponentListProps> = (props: Compo
     fsiPath
   } = props
 
-  // if we don't have an fsiPath (the dataset is not yet checked out) or we are
-  // still waiting for status to return, display all of the possible components
-  // if (!fsiPath || Object.keys(status).length === 0) {
-  //   return (
-  //     <div>
-  //       {components.map(({ name, displayName, tooltip, icon }) => {
-  //         return <FileRow
-  //           key={name}
-  //           displayName={displayName}
-  //           name={name}
-  //           icon={icon}
-  //           selected={false}
-  //           disabled={true}
-  //           tooltip={tooltip}
-  //           onClick={undefined}
-  //           color='light'
-  //         />
-  //       })}
-  //       {
-  //         // TODO (ramfox): need better loading indicator
-  //         Object.keys(status).length === 0 && <Spinner white />
-  //       }
-
-  //     </div>
-  //   )
-  // }
-
   const visibleComponents = components.filter(hiddenComponentFilter(status, selectionType))
 
   // reduce visible component statuses into boolean indicating that there are changes ready to be committed
+
   const clearToCommit = checkClearToCommit(status)
 
   return (
     <div className={classNames({ 'clear-to-commit': clearToCommit })}>
       {
         visibleComponents.map(({ name, displayName, tooltip, icon }) => {
-          if (status[name] && !!fsiPath) {
+          if (status[name]) {
             const { filepath, status: fileStatus } = status[name]
 
             // if filepath is the same as the component name, we are looking at a

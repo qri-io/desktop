@@ -28,6 +28,9 @@ export interface Header {
 }
 
 const extractColumnHeaders = (structure: Structure, value: any[]): undefined | any[] => {
+  if (!structure || !value) {
+    return undefined
+  }
   const schema = structure.schema
 
   if (!schema) {
@@ -61,7 +64,6 @@ const Body: React.FunctionComponent<BodyProps> = (props) => {
   } = props
 
   const { body, structure } = data
-
   const headers = extractColumnHeaders(structure, body)
 
   const makeStatsDetails = (stats: Record<string, any>, title: string, index: number): StatsDetails => {
