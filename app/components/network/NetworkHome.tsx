@@ -44,7 +44,7 @@ const NetworkHome: React.FC<RouteComponentProps> = ({ history }) => {
     <div className='network_home'>
       <h2>Home</h2>
       {featured && featured.length && <div>
-        <label>Featured Datasets</label>
+        <h4>Featured Datasets</h4>
         {featured.map((vi: VersionInfo, i) => <div key={i} className='featured-datasets-item'>
           <DatasetItem onClick={(username: string, name: string) => {
             history.push(`/network/${username}/${name}`)
@@ -52,7 +52,7 @@ const NetworkHome: React.FC<RouteComponentProps> = ({ history }) => {
         </div>)}
       </div>}
       {recent && recent.length && <div>
-        <label>Recent Datasets</label>
+        <h4>Recent Datasets</h4>
         {recent.map((vi: VersionInfo, i) => <div key={i} className='recent-datasets-item'>
           <DatasetItem onClick={(username: string, name: string) => {
             history.push(`/network/${username}/${name}`)
