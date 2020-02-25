@@ -5,7 +5,7 @@ import { CSSTransition } from 'react-transition-group'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faFolderOpen, faFile, faLink, faCloud, faCloudUploadAlt } from '@fortawesome/free-solid-svg-icons'
 import { withRouter, RouteComponentProps, Prompt } from 'react-router-dom'
-import deepEqual from 'deep-equal'
+import fnv from 'fnv-plus'
 
 import { QRI_CLOUD_URL } from '../../constants'
 import { Details } from '../../models/details'
@@ -106,6 +106,8 @@ class Workbench extends React.Component<WorkbenchProps, Status> {
       'handleShowHistory',
       'handleSetDataset',
       'datasetFromMutations',
+      'determineMutationsStatus',
+      'datasetFromCommitDetails',
       'handleCopyLink'
     ].forEach((m) => { this[m] = this[m].bind(this) })
   }
@@ -220,22 +222,50 @@ class Workbench extends React.Component<WorkbenchProps, Status> {
     this.props.setMutationsDataset({ ...mutationsDataset, [component]: undefined })
   }
 
+  determineMutationsStatus (head: Dataset, mutation: Dataset, prevStatus: Status): Status {
+    let s = { ...prevStatus }
+    let d = { ...mutation }
+    Object.keys(d).forEach((componentName: string) => {
+      if (!head[componentName]) {
+        s[componentName] = { ...s[componentName], filepath: componentName, status: 'add' }
+        return
+      }
+      /**
+       * TODO (ramfox): in the near future, let's keep hashes of each dataset
+       * component in the state tree so we don't have to calculate it each time
+       * perhaps as a key value field on workingDataset `componentHashes`?
+       * Don't want to alter the state tree until methodologies are more settled
+       */
+      const headHash = fnv.hash(head)
+      const mutationHash = fnv.hash(mutation)
+      if (headHash === mutationHash) {
+        s[componentName] = { ...s[componentName], filepath: componentName, status: 'unmodified' }
+        return
+      }
+      s[componentName] = { ...s[componentName], filepath: componentName, status: 'modified' }
+    })
+    return s
+  }
+
   handleSetDataset (peername: string, name: string, dataset: Dataset) {
     const { setMutationsDataset, setMutationsStatus, data } = this.props
+    const { workingDataset, status } = data
+    const wDataset = this.datasetFromCommitDetails(workingDataset)
+    const mutationsStatus = this.determineMutationsStatus(wDataset, dataset, status)
+    setMutationsStatus(mutationsStatus)
+    setMutationsDataset(dataset)
+  }
 
-    let s = { ...data.status }
-    let d = { ...dataset }
-    Object.keys(dataset).forEach((componentName: string) => {
-      if (!data.workingDataset.components[componentName].value) {
-        s[componentName] = { ...s[componentName], filepath: componentName, status: 'add' }
-      } else if (deepEqual(dataset[componentName], data.workingDataset.components[componentName].value)) {
-        s[componentName] = { ...s[componentName], filepath: componentName, status: 'unmodified' }
-      } else {
-        s[componentName] = { ...s[componentName], filepath: componentName, status: 'modified' }
+  datasetFromCommitDetails (commitDetails: ICommitDetails): Dataset {
+    const { components } = commitDetails
+    let d: Dataset = {}
+
+    Object.keys(components).forEach((componentName: string) => {
+      if (components[componentName].value) {
+        d[componentName] = components[componentName].value
       }
     })
-    setMutationsStatus(s)
-    setMutationsDataset(d)
+    return d
   }
 
   // TODO (ramfox): should this logic should happen at the container level, and the

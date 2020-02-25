@@ -3,6 +3,7 @@ import SimpleMDE from 'react-simplemde-editor'
 import { useDebounce } from 'use-debounce'
 
 import { ApiActionThunk } from '../store/api'
+
 import SpinnerWithIcon from './chrome/SpinnerWithIcon'
 
 const DEBOUNCE_TIMER = 1000
@@ -17,8 +18,13 @@ export interface ReadmeProps {
 
 const Readme: React.FunctionComponent<ReadmeProps> = (props) => {
   const { data = '', username, name, write, loading } = props
+
   const [internalValue, setInternalValue] = React.useState(data)
   const [debouncedValue] = useDebounce(internalValue, DEBOUNCE_TIMER)
+
+  React.useEffect(() => {
+    setInternalValue(data)
+  }, [data])
 
   React.useEffect(() => {
     window.addEventListener('focus', onFocus)
@@ -34,9 +40,7 @@ const Readme: React.FunctionComponent<ReadmeProps> = (props) => {
   React.useEffect(() => {
     if (debouncedValue !== data) {
       write({
-        readme: {
-          scriptBytes: btoa(unescape(encodeURIComponent(internalValue)))
-        }
+        readme: internalValue
       })
     }
   }, [debouncedValue])

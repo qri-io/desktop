@@ -15,6 +15,7 @@ import {
   mapBody
 } from './mappingFuncs'
 import { getActionType } from '../utils/actionType'
+import { datasetConvertStringToScriptBytes } from '../utils/datasetConvertStringToScriptBytes'
 
 import { CLEAR_DATASET_HEAD } from '../reducers/commitDetail'
 import Dataset from '../models/dataset'
@@ -478,6 +479,7 @@ export function saveWorkingDataset (): ApiActionThunk {
         commit
       }
     }
+
     const action = {
       type: 'save',
       [CALL_API]: {
@@ -490,7 +492,7 @@ export function saveWorkingDataset (): ApiActionThunk {
         query: {
           fsi: !!workingDataset.fsiPath
         },
-        body
+        body: datasetConvertStringToScriptBytes(body)
       }
     }
 
@@ -759,7 +761,7 @@ export function fsiWrite (peername: string, name: string, dataset: any): ApiActi
           peername,
           name
         },
-        body: dataset
+        body: datasetConvertStringToScriptBytes(dataset)
       }
     }
     return dispatch(action)

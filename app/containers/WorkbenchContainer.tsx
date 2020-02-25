@@ -87,7 +87,7 @@ const WorkbenchContainer = connect(
       peername: props.peername || selections.peername,
       name: props.name || selections.name,
       path: props.path || selections.commit,
-      mutatedDataset: mutations.dataset.value || {},
+      mutationsDataset: mutations.dataset.value || {},
       status: selectStatus(workingDataset, mutations.status.value),
 
       workingDataset: workingDataset,
