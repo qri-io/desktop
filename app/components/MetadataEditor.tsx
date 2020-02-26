@@ -76,9 +76,13 @@ export const standardFields = [
 
 const MetadataEditor: React.FunctionComponent<MetadataEditorProps> = (props: MetadataEditorProps) => {
   const { data = {}, write, loading } = props
-
+  console.log(data)
   const [stateMeta, setStateMeta] = React.useState(data)
-  const [previousMeta, setPreviousMeta] = React.useState(data)
+
+  React.useEffect(() => {
+    if (deepEqual(stateMeta, data)) return
+    setStateMeta(data)
+  }, [data])
 
   if (loading) {
     return <SpinnerWithIcon loading={true} />
@@ -87,7 +91,23 @@ const MetadataEditor: React.FunctionComponent<MetadataEditorProps> = (props: Met
   const ignoreFields = ['qri', 'path']
 
   const handleChange = (target: string, value: any) => {
-    const update: any = { ...stateMeta }
+    console.log(target, value)
+    const update: any = cloneDeep(stateMeta)
+
+    if (value === '' || value === undefined) {
+      delete update[target]
+    } else {
+      update[target] = value
+    }
+    console.log(update)
+
+    setStateMeta(update)
+  }
+
+  const handleBlur = (e: React.FocusEvent) => {
+    const value = e.target.value
+    const target = e.target.getAttribute('name') || ''
+    const update: any = cloneDeep(data)
 
     if (value === '' || value === undefined) {
       delete update[target]
@@ -95,18 +115,9 @@ const MetadataEditor: React.FunctionComponent<MetadataEditorProps> = (props: Met
       update[target] = value
     }
 
-    setStateMeta(update)
-  }
-
-  const handleBlur = () => {
-    // when an input blurs, check to see if anything in stateMeta is different
-    // if it is, send the new meta object to the backend
-    if (!deepEqual(stateMeta, previousMeta)) {
-      setPreviousMeta(stateMeta)
-      write({
-        meta: stateMeta
-      })
-    }
+    write({
+      meta: update
+    })
   }
 
   // like onChange(), but fires an fsiWrite and state update simultaneously
@@ -174,7 +185,7 @@ const MetadataEditor: React.FunctionComponent<MetadataEditorProps> = (props: Met
         type='text'
         value={stateMeta.title}
         placeHolder='Add a title'
-        onChange={handleChange}
+        // onChange={handleChange}
         onBlur={handleBlur}
         maxLength={600}
       />

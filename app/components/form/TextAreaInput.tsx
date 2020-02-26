@@ -9,8 +9,8 @@ export interface TextAreaInputProps {
   value: any
   maxLength: number
   onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void | undefined
-  onChange: (name: string, value: any) => void
-  onBlur?: (name: string, value: any) => void
+  onChange?: (name: string, value: any) => void
+  onBlur?: (event: React.FocusEvent<HTMLTextAreaElement>) => void
   placeHolder?: string
   rows?: number
   white?: boolean
@@ -24,7 +24,7 @@ const TextAreaInput: React.FunctionComponent<TextAreaInputProps> = (props) => {
     name,
     value,
     maxLength,
-    onChange,
+    // onChange,
     onBlur,
     placeHolder,
     rows = 3,
@@ -46,8 +46,8 @@ const TextAreaInput: React.FunctionComponent<TextAreaInputProps> = (props) => {
           className='input'
           value={value || ''}
           placeholder={placeHolder}
-          onChange={(e) => { onChange(name, e.target.value) }}
-          onBlur={() => { onBlur && onBlur() }}
+          // onChange={(e) => { if (onChange) onChange(name, e.target.value) }}
+          onBlur={onBlur}
           rows={rows}
         />
         {/* placeholder for error text to match spacing with other form inputs */}
