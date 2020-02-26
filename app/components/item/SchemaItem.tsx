@@ -34,12 +34,22 @@ const SchemaItemProps: React.FunctionComponent<SchemaItemProps> = ({
         d.title = value
         break
       case 'description':
-        d.description = value
+        if (value === '') {
+          delete d.description
+        } else {
+          d.description = value
+        }
         break
       case 'validation':
-        d.validation = value
+        if (value === '') {
+          delete d.validation
+        } else {
+          d.validation = value
+        }
         break
     }
+
+    delete d.row
 
     if (onChange) onChange(d, e)
   }

@@ -101,6 +101,7 @@ const DatasetComponent: React.FunctionComponent<DatasetComponentProps> = (props:
                 name={name}
                 username={peername}
                 write={handleWrite}
+                isLinked={fsiPath !== ''}
                 loading={isLoading}
               />}
           </div>

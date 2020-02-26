@@ -81,6 +81,13 @@ const mutationsReducer: Reducer = (state = initialState, action: AnyAction): Mut
         dirty: undefined
       }
     case MUTATIONS_SET_DATASET:
+      if (Object.keys(action.dataset).length === 0) {
+        return {
+          ...state,
+          dataset: initialState.dataset,
+          dirty: undefined
+        }
+      }
       return {
         ...state,
         dataset: {
@@ -101,14 +108,17 @@ const mutationsReducer: Reducer = (state = initialState, action: AnyAction): Mut
       }
 
     case MUTATIONS_SET_STATUS:
+      if (Object.keys(action.status).length === 0) {
+        return {
+          ...state,
+          status: initialState.status
+        }
+      }
       return {
         ...state,
         status: {
           ...state.status,
-          value: {
-            ...state.status.value,
-            ...action.status
-          }
+          value: action.status
         }
       }
     case MUTATIONS_RESET_STATUS:

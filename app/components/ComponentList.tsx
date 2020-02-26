@@ -3,9 +3,8 @@ import { Action } from 'redux'
 import path from 'path'
 import classNames from 'classnames'
 import { clipboard, shell, MenuItemConstructorOptions } from 'electron'
-import ContextMenuArea from 'react-electron-contextmenu'
 
-import { ApiActionThunk } from '../store/api'
+import ContextMenuArea from './ContextMenuArea'
 import { checkClearToCommit } from '../utils/formValidation'
 import { Status, SelectedComponent, ComponentType } from '../models/store'
 import ComponentItem from './item/ComponentItem'
@@ -15,7 +14,7 @@ interface ComponentListProps {
   status: Status
   selectedComponent: string
   onComponentClick: (type: ComponentType, activeTab: string) => Action
-  discardChanges?: (component: SelectedComponent) => ApiActionThunk
+  discardChanges?: (component: SelectedComponent) => void
   selectionType: ComponentType
   fsiPath?: string
 }
@@ -119,31 +118,36 @@ const ComponentList: React.FunctionComponent<ComponentListProps> = (props: Compo
               />
             )
 
-            if (discardChanges && fsiPath) {
-              const menuItems: MenuItemConstructorOptions[] = [
-                {
-                  label: 'Open in Finder',
-                  click: () => { shell.showItemInFolder(`${fsiPath}/${filename}`) }
-                },
-                {
-                  label: 'Copy File Path',
-                  click: () => { clipboard.writeText(`${fsiPath}/${filename}`) }
-                }
-              ]
+            if (discardChanges || fsiPath) {
+              let menuItems: MenuItemConstructorOptions[] = []
+              if (fsiPath) {
+                menuItems = [
+                  {
+                    label: 'Open in Finder',
+                    click: () => { shell.showItemInFolder(`${fsiPath}/${filename}`) }
+                  },
+                  {
+                    label: 'Copy File Path',
+                    click: () => { clipboard.writeText(`${fsiPath}/${filename}`) }
+                  }
+                ]
+              }
 
               // add discard changes option of file is modified
-              if (fileStatus !== 'unmodified') {
+              if (discardChanges && fileStatus !== 'unmodified') {
                 menuItems.unshift({
                   label: 'Discard Changes...',
-                  click: () => { discardChanges(name as SelectedComponent) }
-                },
-                {
-                  type: 'separator'
+                  click: () => {
+                    discardChanges(name as SelectedComponent)
+                  }
                 })
+                if (menuItems.length > 1) {
+                  menuItems.unshift({ type: 'separator' })
+                }
               }
 
               return (
-                <ContextMenuArea menuItems={menuItems} key={name}>
+                <ContextMenuArea data={menuItems} menuItemsFactory={(data) => data} key={name}>
                   {fileRow}
                 </ContextMenuArea>
               )

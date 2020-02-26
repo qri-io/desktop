@@ -24,6 +24,7 @@ interface AddDatasetModal {
 interface LinkDatasetModal {
   type: ModalType.LinkDataset
   dirPath?: string
+  modified?: boolean
 }
 
 interface PublishDataset {

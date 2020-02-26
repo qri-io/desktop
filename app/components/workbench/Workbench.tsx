@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faFolderOpen, faFile, faLink, faCloud, faCloudUploadAlt } from '@fortawesome/free-solid-svg-icons'
 import { withRouter, RouteComponentProps, Prompt } from 'react-router-dom'
 import fnv from 'fnv-plus'
+import cloneDeep from 'clone-deep'
 
 import { QRI_CLOUD_URL } from '../../constants'
 import { Details } from '../../models/details'
@@ -90,7 +91,7 @@ export interface WorkbenchProps extends RouteComponentProps {
   // api actions (that aren't fetching)
   publishDataset: () => ApiActionThunk
   unpublishDataset: () => ApiActionThunk
-  discardChanges: (component: SelectedComponent) => ApiActionThunk | Action
+  discardChanges: (component: SelectedComponent) => ApiActionThunk
   renameDataset: (peername: string, name: string, newName: string) => ApiActionThunk
   fsiWrite: (peername: string, name: string, dataset: Dataset) => ApiActionThunk
 }
@@ -108,6 +109,7 @@ class Workbench extends React.Component<WorkbenchProps, Status> {
       'datasetFromMutations',
       'determineMutationsStatus',
       'datasetFromCommitDetails',
+      'handleDiscardChanges',
       'handleCopyLink'
     ].forEach((m) => { this[m] = this[m].bind(this) })
   }
@@ -218,12 +220,21 @@ class Workbench extends React.Component<WorkbenchProps, Status> {
     if (fsiPath !== '') {
       this.props.discardChanges(component)
     }
-    const { mutationsDataset } = this.props.data
-    this.props.setMutationsDataset({ ...mutationsDataset, [component]: undefined })
+    const { mutationsDataset, status } = this.props.data
+
+    const d: Dataset = { ...mutationsDataset }
+    const s: Status = { ...status }
+    delete d[component]
+    delete s[component]
+
+    console.log(d)
+    console.log(s)
+    this.props.setMutationsDataset(d)
+    this.props.setMutationsStatus(s)
   }
 
   determineMutationsStatus (head: Dataset, mutation: Dataset, prevStatus: Status): Status {
-    let s = { ...prevStatus }
+    let s = cloneDeep(prevStatus)
     let d = { ...mutation }
     Object.keys(d).forEach((componentName: string) => {
       if (!head[componentName]) {
@@ -277,10 +288,13 @@ class Workbench extends React.Component<WorkbenchProps, Status> {
     const { workingDataset, mutationsDataset } = data
     let dataset: Dataset = {}
 
-    Object.keys(workingDataset.components).forEach((componentName: string) => {
-      dataset[componentName] = workingDataset.components[componentName].value
+    Object.keys(workingDataset.components).forEach((componentName: SelectedComponent) => {
+      if (workingDataset.components[componentName].value) {
+        dataset[componentName] = cloneDeep(workingDataset.components[componentName].value)
+      }
     })
-    return { ...dataset, ...mutationsDataset }
+    const d = { ...dataset, ...mutationsDataset }
+    return d
   }
 
   render () {
@@ -304,7 +318,6 @@ class Workbench extends React.Component<WorkbenchProps, Status> {
       fetchBody,
       fetchCommitBody,
 
-      discardChanges,
       renameDataset,
       fsiWrite
     } = this.props
@@ -340,7 +353,7 @@ class Workbench extends React.Component<WorkbenchProps, Status> {
         setCommit={setCommit}
         setComponent={setComponent}
         fetchHistory={fetchHistory}
-        discardChanges={discardChanges}
+        discardChanges={this.handleDiscardChanges}
         renameDataset={renameDataset}
       />
     )
@@ -364,7 +377,7 @@ class Workbench extends React.Component<WorkbenchProps, Status> {
               <FontAwesomeIcon icon={faLink} transform='shrink-8' />
             </span>
           )}
-          onClick={() => { setModal({ type: ModalType.LinkDataset }) }}
+          onClick={() => { setModal({ type: ModalType.LinkDataset, modified }) }}
         />)
     }
 

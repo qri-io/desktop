@@ -116,6 +116,12 @@ dialog {
       }
     }
 
+    .warning {
+      font-weight: 600;
+      color: $error;
+      margin-bottom: $spacer * 2
+    }
+
     // #error {
     //   bottom: 1rem;
     // }

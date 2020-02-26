@@ -1,4 +1,6 @@
 import * as React from 'react'
+import cloneDeep from 'clone-deep'
+
 import { Schema as ISchema } from '../../models/dataset'
 import SchemaItem, { SchemaItemType } from '../item/SchemaItem'
 
@@ -24,9 +26,9 @@ const Schema: React.FunctionComponent<SchemaProps> = ({
   const items = data.items.items
 
   const onChangeHandler = (schemaItem: SchemaItemType, e: React.ChangeEvent) => {
-    const s = { ...data }
+    const s = cloneDeep(data)
     // don't pass back 'row'
-    s.items.items[schemaItem.row] = { ...schemaItem, row: undefined }
+    s.items.items[schemaItem.row] = { ...schemaItem }
     if (onChange) onChange(s, e)
   }
 

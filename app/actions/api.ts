@@ -5,7 +5,7 @@ import { CALL_API, ApiAction, ApiActionThunk, chainSuccess } from '../store/api'
 import { SelectedComponent, MyDatasets } from '../models/store'
 import { actionWithPagination } from '../utils/pagination'
 import { openToast, setImportFileDetails } from './ui'
-import { setSaveComplete } from './mutations'
+import { setSaveComplete, resetMutationsDataset, resetMutationsStatus } from './mutations'
 import { setWorkingDataset, setSelectedListItem, setActiveTab, clearSelection } from './selections'
 import {
   mapDataset,
@@ -649,7 +649,11 @@ export function linkDatasetAndFetch (peername: string, name: string, dir: string
     let response: Action
 
     try {
-      response = await linkDataset(peername, name, dir)(dispatch, getState)
+      response = await linkDataset(peername, name, dir)(dispatch, getState).then((response) => {
+        dispatch(resetMutationsDataset())
+        dispatch(resetMutationsStatus())
+        return response
+      })
       response = await whenOk(fetchWorkingDatasetDetails())(response)
       // reset pagination
       response = await whenOk(fetchMyDatasets(-1))(response)

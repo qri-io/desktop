@@ -2,6 +2,7 @@ import * as React from 'react'
 import deepEqual from 'deep-equal'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faInfoCircle } from '@fortawesome/free-solid-svg-icons'
+import cloneDeep from 'clone-deep'
 
 import ExternalLink from './ExternalLink'
 import TextInput from './form/TextInput'
@@ -76,10 +77,8 @@ export const standardFields = [
 const MetadataEditor: React.FunctionComponent<MetadataEditorProps> = (props: MetadataEditorProps) => {
   const { data = {}, write, loading } = props
 
-  const meta = data
-
-  const [stateMeta, setStateMeta] = React.useState(meta)
-  const [previousMeta, setPreviousMeta] = React.useState(meta)
+  const [stateMeta, setStateMeta] = React.useState(data)
+  const [previousMeta, setPreviousMeta] = React.useState(data)
 
   if (loading) {
     return <SpinnerWithIcon loading={true} />
@@ -88,13 +87,15 @@ const MetadataEditor: React.FunctionComponent<MetadataEditorProps> = (props: Met
   const ignoreFields = ['qri', 'path']
 
   const handleChange = (target: string, value: any) => {
-    const update: any = {}
-    update[target] = value
+    const update: any = { ...stateMeta }
 
-    setStateMeta({
-      ...stateMeta,
-      ...update
-    })
+    if (value === '' || value === undefined) {
+      delete update[target]
+    } else {
+      update[target] = value
+    }
+
+    setStateMeta(update)
   }
 
   const handleBlur = () => {
@@ -110,19 +111,19 @@ const MetadataEditor: React.FunctionComponent<MetadataEditorProps> = (props: Met
 
   // like onChange(), but fires an fsiWrite and state update simultaneously
   const handleImmediateWrite = (target: string, value: any) => {
-    const update: any = {}
-    update[target] = value
+    const update: any = cloneDeep(stateMeta)
 
-    const newState = {
-      ...stateMeta,
-      ...update
+    if (value === '' || value === undefined) {
+      delete update[target]
+    } else {
+      update[target] = value
     }
 
     write({
-      meta: newState
+      meta: update
     })
 
-    setStateMeta(newState)
+    setStateMeta(update)
   }
 
   const licenseOptions = [
@@ -148,7 +149,7 @@ const MetadataEditor: React.FunctionComponent<MetadataEditorProps> = (props: Met
     }
   ]
 
-  const extra = Object.keys(meta).filter((key) => {
+  const extra = Object.keys(data).filter((key) => {
     return !(~standardFields.findIndex((sKey) => (key === sKey)) || ~ignoreFields.findIndex((iKey) => (key === iKey)))
   })
 
@@ -350,7 +351,7 @@ const MetadataEditor: React.FunctionComponent<MetadataEditorProps> = (props: Met
             <FontAwesomeIcon icon={faInfoCircle} size='sm'/>
           </span>
         </h4>
-        {renderTable(extra, meta)}
+        {renderTable(extra, data)}
       </div>}
     </div>
   )
