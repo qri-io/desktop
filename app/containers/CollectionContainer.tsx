@@ -1,9 +1,10 @@
 import { connect } from 'react-redux'
+
 import { setFilter } from '../actions/myDatasets'
-import Collection from '../components/Collection'
-import { fetchMyDatasets } from '../actions/api'
+import Collection from '../components/collection/Collection'
+import { fetchMyDatasets, importFile } from '../actions/api'
 import { setWorkingDataset } from '../actions/selections'
-import { setSidebarWidth } from '../actions/ui'
+import { setSidebarWidth, openToast, closeToast } from '../actions/ui'
 
 import { Modal } from '../models/modals'
 
@@ -34,7 +35,11 @@ const actions = {
   setFilter,
   setWorkingDataset,
   setSidebarWidth,
-  fetchMyDatasets
+  fetchMyDatasets,
+
+  openToast,
+  closeToast,
+  importFile
 }
 
 export default connect(mapStateToProps, actions)(Collection)

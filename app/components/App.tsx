@@ -4,10 +4,7 @@ import { CSSTransition } from 'react-transition-group'
 import { ConnectedRouter } from 'connected-react-router'
 import { ipcRenderer, remote } from 'electron'
 import fs from 'fs'
-import path from 'path'
 import ReactTooltip from 'react-tooltip'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faFileMedical } from '@fortawesome/free-solid-svg-icons'
 
 import { DEFAULT_POLL_INTERVAL } from '../constants'
 
@@ -15,9 +12,8 @@ import { DEFAULT_POLL_INTERVAL } from '../constants'
 import { history } from '../store/configureStore.development'
 import { ApiAction } from '../store/api'
 import { Modal, ModalType, HideModal } from '../models/modals'
-import { Toast as IToast, Selections, ToastType } from '../models/store'
+import { Toast as IToast, Selections } from '../models/store'
 import { Dataset } from '../models/dataset'
-import { ToastTypes } from './chrome/Toast'
 
 // import components
 import Toast from './Toast'
@@ -44,7 +40,6 @@ export interface AppProps {
   datasetDirPath: string // the persited directory path to which the user last saved a dataset
   qriCloudAuthenticated: boolean
   toast: IToast
-  openToast: (type: ToastType, name: string, message: string) => Action
   modal: Modal
   workingDataset: Dataset
   exportPath: string
@@ -316,56 +311,6 @@ class App extends React.Component<AppProps, AppState> {
     )
   }
 
-  private renderDragDrop () {
-    const { importFile } = this.props
-    return (
-      <div
-        onDragEnter={(event) => {
-          event.stopPropagation()
-          event.preventDefault()
-          this.setState({ showDragDrop: true })
-        }}
-        onDragOver={(event) => {
-          event.stopPropagation()
-          event.preventDefault()
-          this.setState({ showDragDrop: true })
-        }}
-        onDragLeave={(event) => {
-          event.stopPropagation()
-          event.preventDefault()
-          this.setState({ showDragDrop: false })
-        }}
-        onDrop={(event) => {
-          this.setState({ showDragDrop: false })
-          event.preventDefault()
-          const ext = path.extname(event.dataTransfer.files[0].path)
-          this.props.closeToast()
-          if (!(ext === '.csv' || ext === '.json')) {
-            // open toast for 1 second
-            this.props.openToast(ToastTypes.error, 'drag-drop', 'unsupported file format: only json and csv supported')
-            setTimeout(() => this.props.closeToast(), 2500)
-            return
-          }
-
-          const {
-            path: filePath,
-            name: fileName,
-            size: fileSize
-          } = event.dataTransfer.files[0]
-          importFile(filePath, fileName, fileSize)
-        }}
-        className='drag-drop'
-        id='drag-drop'
-      >
-        <div className="inner">
-          <div className="spacer">Create a new dataset!</div>
-          <div className="icon"><FontAwesomeIcon size="5x" icon={faFileMedical} /></div>
-        </div>
-        <div className="footer">You can import csv and json files</div>
-      </div>
-    )
-  }
-
   render () {
     const {
       toast,
@@ -383,11 +328,6 @@ class App extends React.Component<AppProps, AppState> {
 
     return (
       <div id='app' className='drag'
-        onDragEnter={() => {
-          if (this.props.modal.type === ModalType.NoModal) {
-            this.setState({ showDragDrop: true })
-          }
-        }}
         style={{
           height: '100%',
           position: 'relative',
@@ -406,6 +346,7 @@ class App extends React.Component<AppProps, AppState> {
           <RoutesContainer />
         </ConnectedRouter>
         <Toast
+          name={toast.name}
           type={toast.type}
           message={toast.message}
           isVisible={toast.visible}
@@ -413,7 +354,7 @@ class App extends React.Component<AppProps, AppState> {
           onClose={closeToast}
         />
         {/*
-          This adds react-tooltip to all children of Dataset
+          This adds react-tooltip to all children of the app component
           To add a tooltip to any element, add a data-tip={'tooltip text'} attribute
           See componentDidUpdate, which calls rebuild() to re-bind all tooltips
         */}
