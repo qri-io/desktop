@@ -28,7 +28,9 @@ const Schema: React.FunctionComponent<SchemaProps> = ({
   const onChangeHandler = (schemaItem: SchemaItemType, e: React.ChangeEvent) => {
     const s = cloneDeep(data)
     // don't pass back 'row'
-    s.items.items[schemaItem.row] = { ...schemaItem }
+    const row = schemaItem.row
+    delete schemaItem.row
+    s.items.items[row] = { ...schemaItem }
     if (onChange) onChange(s, e)
   }
 

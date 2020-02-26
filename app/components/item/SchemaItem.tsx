@@ -49,8 +49,6 @@ const SchemaItemProps: React.FunctionComponent<SchemaItemProps> = ({
         break
     }
 
-    delete d.row
-
     if (onChange) onChange(d, e)
   }
 
@@ -72,7 +70,7 @@ const SchemaItemProps: React.FunctionComponent<SchemaItemProps> = ({
           name='title'
           placeholder='title'
           value={data.title || ''}
-          onChange={onChange && editable ? handleDynamicEditChange : undefined}
+          onChange={handleDynamicEditChange}
           allowEmpty={false}
           large
           minWidth={100}
@@ -83,7 +81,7 @@ const SchemaItemProps: React.FunctionComponent<SchemaItemProps> = ({
       <td className='type-picker-cell'>
         <TypePicker
           name={data.row}
-          onPickType={onChange && editable ? handleTypePickerChange : undefined}
+          onPickType={handleTypePickerChange}
           type={data.type}
           expanded={expanded}
           editable={editable}
@@ -95,7 +93,7 @@ const SchemaItemProps: React.FunctionComponent<SchemaItemProps> = ({
           name='description'
           placeholder='description'
           value={data.description || ''}
-          onChange={onChange && editable ? handleDynamicEditChange : undefined}
+          onChange={handleDynamicEditChange}
           allowEmpty expanded={expanded}
           minWidth={100}
           editable={editable}
@@ -107,7 +105,7 @@ const SchemaItemProps: React.FunctionComponent<SchemaItemProps> = ({
           name='validation'
           placeholder='validation'
           value={data.validation || ''}
-          onChange={onChange && editable ? handleDynamicEditChange : undefined}
+          onChange={handleDynamicEditChange}
           allowEmpty expanded={expanded}
           minWidth={100}
           editable={editable}

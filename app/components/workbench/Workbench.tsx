@@ -227,8 +227,6 @@ class Workbench extends React.Component<WorkbenchProps, Status> {
     delete d[component]
     delete s[component]
 
-    console.log(d)
-    console.log(s)
     this.props.setMutationsDataset(d)
     this.props.setMutationsStatus(s)
   }
