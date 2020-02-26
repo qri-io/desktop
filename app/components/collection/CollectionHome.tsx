@@ -24,7 +24,7 @@ const CollectionHome: React.FC<CollectionHomeProps> = (props) => {
 
   const [dragging, setDragging] = React.useState(false)
 
-  const setDragStateHandler = (prefix: string, dragState: boolean) => {
+  const setDragStateHandler = (dragState: boolean) => {
     return (e: React.SyntheticEvent) => {
       e.preventDefault()
       setDragging(dragState)
@@ -52,8 +52,13 @@ const CollectionHome: React.FC<CollectionHomeProps> = (props) => {
   }
 
   return (
-    <div className='main-content-flex' onDragEnter={setDragStateHandler('outer', true)}>
-      {dragging && <DropZone setDragging={setDragging} onDrop={dropHandler} />}
+    <div className='main-content-flex' onDragEnter={setDragStateHandler(true)}>
+      {dragging && <DropZone
+        title='Drop to create a new dataset'
+        subtitle='You can import csv and json files'
+        setDragging={setDragging}
+        onDrop={dropHandler}
+      />}
       <div className='main-content-header'>
         <HeaderColumnButton
           id='create-dataset'

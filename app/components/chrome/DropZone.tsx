@@ -3,12 +3,15 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faFileMedical } from '@fortawesome/free-solid-svg-icons'
 
 export interface DropZoneProps {
+  title: string
+  subtitle: string
+
   setDragging: (showing: boolean) => void
   onDrop: (e: React.SyntheticEvent) => void
 }
 
 const DropZone: React.FC<DropZoneProps> = (props) => {
-  const { onDrop, setDragging } = props
+  const { title, subtitle, onDrop, setDragging } = props
 
   const setDragStateHandler = (showing: boolean) => {
     return (e: React.SyntheticEvent) => {
@@ -20,15 +23,16 @@ const DropZone: React.FC<DropZoneProps> = (props) => {
   return (<div className='drag-drop' id='drag-drop'
     onDragEnter={setDragStateHandler(true)}
     onDragOver={setDragStateHandler(true)}
-    onDragLeave={setDragStateHandler(false)}
+    onDragExit={setDragStateHandler(false)}
     onDragEnd={setDragStateHandler(false)}
     onDrop={onDrop}
   >
     <div className="inner">
       <div className="icon"><FontAwesomeIcon size="5x" icon={faFileMedical} /></div>
-      <div className="spacer">Drop to Create a new dataset</div>
+      <div className="spacer">{title}</div>
+      <a onClick={setDragStateHandler(false)}>cancel</a>
     </div>
-    <div className="footer">You can import csv and json files</div>
+    <div className="footer">{subtitle}</div>
   </div>)
 }
 

@@ -83,6 +83,7 @@ export interface Dataset {
   meta?: Meta
   structure?: Structure
   body?: Body
+  bodyPath?: string
   commit?: Commit
   readme?: string
   [key: string]: any

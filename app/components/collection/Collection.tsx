@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { Action, AnyAction } from 'redux'
 
-import { MyDatasets, WorkingDataset } from '../../models/store'
+import { MyDatasets, WorkingDataset, ToastType } from '../../models/store'
 
 import DatasetList from '../DatasetList'
 import Layout from '../Layout'
