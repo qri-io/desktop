@@ -15,6 +15,17 @@ export interface SelectInputProps {
 }
 
 const SelectInput: React.FunctionComponent<SelectInputProps> = ({ label, name, options, error, value, helpText, showHelpText, allowEmpty = false, onChange }) => {
+  const [stateValue, setStateValue] = React.useState(value)
+
+  React.useEffect(() => {
+    if (JSON.stringify(value) !== JSON.stringify(stateValue)) setStateValue(value)
+  }, [value])
+
+  const handleChange = (e: React.ChangeEvent) => {
+    setStateValue(e.target.value)
+    onChange(name, e.target.value, e)
+  }
+
   const feedback = error || (showHelpText && helpText)
   const feedbackStyle = classNames({ 'error': error, 'textMuted': showHelpText && helpText })
   return (
@@ -25,8 +36,8 @@ const SelectInput: React.FunctionComponent<SelectInputProps> = ({ label, name, o
           id={name}
           name={name}
           className='input'
-          value={value}
-          onChange={(e) => { onChange(name, e.target.value, e) }}
+          value={stateValue}
+          onChange={handleChange}
         >
           {allowEmpty && <option value='' />}
           {options.map((opt: ISelectOption, i: number) => {

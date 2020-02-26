@@ -219,6 +219,7 @@ class Workbench extends React.Component<WorkbenchProps, Status> {
     const { fsiPath } = workingDataset
     if (fsiPath !== '') {
       this.props.discardChanges(component)
+      return
     }
     const { mutationsDataset, status } = this.props.data
 
@@ -245,9 +246,9 @@ class Workbench extends React.Component<WorkbenchProps, Status> {
        * perhaps as a key value field on workingDataset `componentHashes`?
        * Don't want to alter the state tree until methodologies are more settled
        */
-      const headHash = fnv.hash(head)
-      const mutationHash = fnv.hash(mutation)
-      if (headHash === mutationHash) {
+      const headHash = fnv.hash(head[componentName])
+      const mutationHash = fnv.hash(mutation[componentName])
+      if (headHash.value === mutationHash.value) {
         s[componentName] = { ...s[componentName], filepath: componentName, status: 'unmodified' }
         return
       }

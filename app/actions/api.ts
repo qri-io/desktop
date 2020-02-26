@@ -668,27 +668,34 @@ export function discardChanges (component: SelectedComponent): ApiActionThunk {
   return async (dispatch, getState) => {
     const { selections } = getState()
     const { peername, name } = selections
-    let response: Action
 
-    try {
-      const action = {
-        type: 'restore',
-        [CALL_API]: {
-          endpoint: 'restore',
-          method: 'POST',
-          segments: {
-            peername,
-            name
-          },
-          query: {
-            component
-          }
+    const action = {
+      type: 'restore',
+      [CALL_API]: {
+        endpoint: 'restore',
+        method: 'POST',
+        segments: {
+          peername,
+          name
+        },
+        query: {
+          component
         }
       }
-      response = await dispatch(action)
-    } catch (action) {
-      throw action
     }
+    return dispatch(action)
+  }
+}
+
+export function discardChangesAndFetch (component: SelectedComponent): ApiActionThunk {
+  return async (dispatch, getState) => {
+    let response: Action
+    response = await discardChanges(component)(dispatch, getState)
+      .then((res) => {
+        dispatch(fetchWorkingDataset())
+        dispatch(fetchWorkingStatus())
+        return res
+      })
     return response
   }
 }

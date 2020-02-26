@@ -16,9 +16,9 @@ import {
 
   publishDataset,
   unpublishDataset,
-  discardChanges,
   renameDataset,
-  fsiWrite
+  fsiWrite,
+  discardChangesAndFetch
 } from '../actions/api'
 
 import {
@@ -130,7 +130,7 @@ const WorkbenchContainer = connect(
 
     publishDataset,
     unpublishDataset,
-    discardChanges,
+    discardChanges: discardChangesAndFetch,
     renameDataset,
     fsiWrite
   },

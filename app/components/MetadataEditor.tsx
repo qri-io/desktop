@@ -76,61 +76,31 @@ export const standardFields = [
 const MetadataEditor: React.FunctionComponent<MetadataEditorProps> = (props: MetadataEditorProps) => {
   const { data = {}, write, loading } = props
 
-  const [stateMeta, setStateMeta] = React.useState(data)
-
   if (loading) {
     return <SpinnerWithIcon loading={true} />
   }
 
   const ignoreFields = ['qri', 'path']
 
-  const handleChange = (target: string, value: any) => {
-    console.log(target, value)
-    const update: any = cloneDeep(stateMeta)
-
-    if (value === '' || value === undefined) {
-      console.log("in delete")
-      delete update[target]
-    } else {
-      console.log('in update')
-      update[target] = value
-    }
-    console.log(update)
-
-    setStateMeta(update)
-  }
-
-  const handleBlur = (e: React.FocusEvent) => {
-    const value = e.target.value
-    const target = e.target.getAttribute('name') || ''
+  const handleWrite = (e: React.FocusEvent, target: string = '', value: any = undefined) => {
+    const v = value || (e && e.target.value)
+    const t = target || (e && e.target.getAttribute('name')) || ''
     const update: any = cloneDeep(data)
 
-    if (value === '' || value === undefined) {
-      delete update[target]
+    if (v === '' || v === undefined || v === null || Object.keys(v).length === 0) {
+      // if the value is empty and the original field is also undefined
+      // then the blur action was called, but no change was made
+      // so return early
+      if (!update[t]) return
+      delete update[t]
     } else {
-      update[target] = value
+      if (update[t] === v) return
+      update[t] = v
     }
 
     write({
       meta: update
     })
-  }
-
-  // like onChange(), but fires an fsiWrite and state update simultaneously
-  const handleImmediateWrite = (target: string, value: any) => {
-    const update: any = cloneDeep(stateMeta)
-
-    if (value === '' || value === undefined) {
-      delete update[target]
-    } else {
-      update[target] = value
-    }
-
-    write({
-      meta: update
-    })
-
-    setStateMeta(update)
   }
 
   const licenseOptions = [
@@ -181,7 +151,7 @@ const MetadataEditor: React.FunctionComponent<MetadataEditorProps> = (props: Met
         type='text'
         value={data.title}
         placeHolder='Add a title'
-        onBlur={handleBlur}
+        onBlur={handleWrite}
         maxLength={600}
       />
       <TextAreaInput
@@ -190,24 +160,24 @@ const MetadataEditor: React.FunctionComponent<MetadataEditorProps> = (props: Met
         labelTooltip={'A detailed summary of the dataset\'s contents'}
         value={data.description}
         placeHolder='Add a description'
-        onBlur={handleBlur}
+        onBlur={handleWrite}
         maxLength={600}
       />
       <MultiTextInput
         name='theme'
         label='Theme'
         labelTooltip='The main category or categories of the dataset'
-        value={stateMeta.theme}
+        value={data.theme}
         placeHolder='Add a theme'
-        onArrayChange={handleImmediateWrite}
+        onArrayChange={handleWrite}
       />
       <MultiTextInput
         name='keywords'
         label='Keywords'
         labelTooltip='Keywords or tags describing the dataset (more specific than theme)'
-        value={stateMeta.keywords}
+        value={data.keywords}
         placeHolder='Add a new keyword'
-        onArrayChange={handleImmediateWrite}
+        onArrayChange={handleWrite}
       />
       {/*
         Dropdown Input uses react-select, which likes option that have 'label'
@@ -219,8 +189,8 @@ const MetadataEditor: React.FunctionComponent<MetadataEditorProps> = (props: Met
         label='License'
         labelTooltip='A legal document under which the resource is made available'
         value={
-          stateMeta.license
-            ? { label: stateMeta.license.type, value: stateMeta.license.url }
+          data.license
+            ? { label: data.license.type, value: data.license.url }
             : null
         }
         placeHolder='Add a license'
@@ -237,37 +207,33 @@ const MetadataEditor: React.FunctionComponent<MetadataEditorProps> = (props: Met
               url
             }
           }
-          handleImmediateWrite('license', newValue)
+          handleWrite(null, 'license', newValue)
         }}
       />
       <MultiStructuredInput
         name='contributors'
         label='Contributors'
         labelTooltip='Users who have contributed to the dataset'
-        value={stateMeta.contributors}
+        value={data.contributors}
         placeHolder='Add a contributor'
-        onChange={handleChange}
-        onBlur={handleBlur}
-        onArrayChange={handleImmediateWrite}
+        onWrite={handleWrite}
       />
       <MultiStructuredInput
         name='citations'
         label='Citations'
         labelTooltip='Works cited for the dataset'
-        value={stateMeta.citations}
+        value={data.citations}
         placeHolder='Add a citation'
-        onChange={handleChange}
-        onBlur={handleBlur}
-        onArrayChange={handleImmediateWrite}
+        onWrite={handleWrite}
       />
       <TextInput
         name='accessURL'
         label='Access URL'
         labelTooltip='A URL of the resource that gives access to a distribution of the dataset'
         type='url'
-        value={stateMeta.accessURL}
+        value={data.accessURL}
         placeHolder='Add Access URL'
-        onBlur={handleBlur}
+        onBlur={handleWrite}
         maxLength={600}
       />
       <TextInput
@@ -275,9 +241,9 @@ const MetadataEditor: React.FunctionComponent<MetadataEditorProps> = (props: Met
         label='Download URL'
         labelTooltip='A file that contains the distribution of the dataset in a given format'
         type='url'
-        value={stateMeta.downloadURL}
+        value={data.downloadURL}
         placeHolder='Add Download URL'
-        onBlur={handleBlur}
+        onBlur={handleWrite}
         maxLength={600}
       />
       <TextInput
@@ -285,9 +251,9 @@ const MetadataEditor: React.FunctionComponent<MetadataEditorProps> = (props: Met
         label='Home URL'
         labelTooltip='A URL of the dataset&apos;s homepage'
         type='url'
-        value={stateMeta.homeURL}
+        value={data.homeURL}
         placeHolder='Add Home URL'
-        onBlur={handleBlur}
+        onBlur={handleWrite}
         maxLength={600}
       />
       <TextInput
@@ -295,27 +261,27 @@ const MetadataEditor: React.FunctionComponent<MetadataEditorProps> = (props: Met
         label='Readme URL'
         labelTooltip='A url to a readme for the dataset'
         type='url'
-        value={stateMeta.readmeURL}
+        value={data.readmeURL}
         placeHolder='Add Readme URL'
-        onBlur={handleBlur}
+        onBlur={handleWrite}
         maxLength={600}
       />
       <MultiTextInput
         name='language'
         label='Language'
         labelTooltip='Languages of the dataset.<br/>This refers to the natural language<br/> used for textual metadata of a dataset or<br/>the textual values of a dataset distribution'
-        value={stateMeta.language}
+        value={data.language}
         placeHolder='Add a language'
-        onArrayChange={handleImmediateWrite}
+        onArrayChange={handleWrite}
       />
       <TextInput
         name='accrualPeriodicity'
         label='Accrual Periodicity'
         labelTooltip='The frequency at which dataset is published'
         type='text'
-        value={stateMeta.accrualPeriodicity}
+        value={data.accrualPeriodicity}
         placeHolder='Add Accrual Periodicity'
-        onBlur={handleBlur}
+        onBlur={handleWrite}
         maxLength={600}
       />
       <TextInput
@@ -323,9 +289,9 @@ const MetadataEditor: React.FunctionComponent<MetadataEditorProps> = (props: Met
         label='Version'
         labelTooltip='The version of the dataset'
         type='text'
-        value={stateMeta.version}
+        value={data.version}
         placeHolder='Add version'
-        onBlur={handleBlur}
+        onBlur={handleWrite}
         maxLength={600}
       />
       <TextInput
@@ -333,9 +299,9 @@ const MetadataEditor: React.FunctionComponent<MetadataEditorProps> = (props: Met
         label='Identifier'
         labelTooltip='An identifier for the dataset'
         type='text'
-        value={stateMeta.identifier}
+        value={data.identifier}
         placeHolder='Add identifier'
-        onBlur={handleBlur}
+        onBlur={handleWrite}
         maxLength={600}
       />
       {(extra.length > 0) && <div>
