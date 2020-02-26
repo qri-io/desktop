@@ -1,5 +1,4 @@
 import * as React from 'react'
-import deepEqual from 'deep-equal'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faInfoCircle } from '@fortawesome/free-solid-svg-icons'
 import cloneDeep from 'clone-deep'
@@ -76,13 +75,8 @@ export const standardFields = [
 
 const MetadataEditor: React.FunctionComponent<MetadataEditorProps> = (props: MetadataEditorProps) => {
   const { data = {}, write, loading } = props
-  console.log(data)
-  const [stateMeta, setStateMeta] = React.useState(data)
 
-  React.useEffect(() => {
-    if (deepEqual(stateMeta, data)) return
-    setStateMeta(data)
-  }, [data])
+  const [stateMeta, setStateMeta] = React.useState(data)
 
   if (loading) {
     return <SpinnerWithIcon loading={true} />
@@ -95,8 +89,10 @@ const MetadataEditor: React.FunctionComponent<MetadataEditorProps> = (props: Met
     const update: any = cloneDeep(stateMeta)
 
     if (value === '' || value === undefined) {
+      console.log("in delete")
       delete update[target]
     } else {
+      console.log('in update')
       update[target] = value
     }
     console.log(update)
@@ -183,9 +179,8 @@ const MetadataEditor: React.FunctionComponent<MetadataEditorProps> = (props: Met
         label='Title'
         labelTooltip='A single-line description of the dataset'
         type='text'
-        value={stateMeta.title}
+        value={data.title}
         placeHolder='Add a title'
-        // onChange={handleChange}
         onBlur={handleBlur}
         maxLength={600}
       />
@@ -193,9 +188,8 @@ const MetadataEditor: React.FunctionComponent<MetadataEditorProps> = (props: Met
         name='description'
         label='Description'
         labelTooltip={'A detailed summary of the dataset\'s contents'}
-        value={stateMeta.description}
+        value={data.description}
         placeHolder='Add a description'
-        onChange={handleChange}
         onBlur={handleBlur}
         maxLength={600}
       />
@@ -273,7 +267,6 @@ const MetadataEditor: React.FunctionComponent<MetadataEditorProps> = (props: Met
         type='url'
         value={stateMeta.accessURL}
         placeHolder='Add Access URL'
-        onChange={handleChange}
         onBlur={handleBlur}
         maxLength={600}
       />
@@ -284,7 +277,6 @@ const MetadataEditor: React.FunctionComponent<MetadataEditorProps> = (props: Met
         type='url'
         value={stateMeta.downloadURL}
         placeHolder='Add Download URL'
-        onChange={handleChange}
         onBlur={handleBlur}
         maxLength={600}
       />
@@ -295,7 +287,6 @@ const MetadataEditor: React.FunctionComponent<MetadataEditorProps> = (props: Met
         type='url'
         value={stateMeta.homeURL}
         placeHolder='Add Home URL'
-        onChange={handleChange}
         onBlur={handleBlur}
         maxLength={600}
       />
@@ -306,7 +297,6 @@ const MetadataEditor: React.FunctionComponent<MetadataEditorProps> = (props: Met
         type='url'
         value={stateMeta.readmeURL}
         placeHolder='Add Readme URL'
-        onChange={handleChange}
         onBlur={handleBlur}
         maxLength={600}
       />
@@ -325,7 +315,6 @@ const MetadataEditor: React.FunctionComponent<MetadataEditorProps> = (props: Met
         type='text'
         value={stateMeta.accrualPeriodicity}
         placeHolder='Add Accrual Periodicity'
-        onChange={handleChange}
         onBlur={handleBlur}
         maxLength={600}
       />
@@ -336,7 +325,6 @@ const MetadataEditor: React.FunctionComponent<MetadataEditorProps> = (props: Met
         type='text'
         value={stateMeta.version}
         placeHolder='Add version'
-        onChange={handleChange}
         onBlur={handleBlur}
         maxLength={600}
       />
@@ -347,7 +335,6 @@ const MetadataEditor: React.FunctionComponent<MetadataEditorProps> = (props: Met
         type='text'
         value={stateMeta.identifier}
         placeHolder='Add identifier'
-        onChange={handleChange}
         onBlur={handleBlur}
         maxLength={600}
       />

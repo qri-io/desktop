@@ -41,9 +41,9 @@ const Commit: React.FunctionComponent<CommitProps> = (props: CommitProps) => {
     setIsValid(valid)
   }, [title, message, status])
 
-  const handleChange = (name: string, value: string) => {
-    if (name === 'title') setCommitTitle(value)
-    if (name === 'message') setCommitMessage(value)
+  const handleChange = (e: React.ChangeEvent) => {
+    if (e.target.name === 'title') setCommitTitle(e.target.value)
+    if (e.target.name === 'message') setCommitMessage(e.target.value)
   }
 
   const handleSubmit = (event: any) => {

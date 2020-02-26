@@ -119,8 +119,8 @@ const CreateDataset: React.FunctionComponent<CreateDatasetProps> = (props) => {
               labelTooltip='Select a CSV or JSON file on your computer.<br/>Qri will import the data and leave the file in place.'
               type=''
               value={filePath}
-              onChange={(name: string, value: any) => {
-                setButtonDisabled(value === '')
+              onChange={(e: React.ChangeEvent) => {
+                setButtonDisabled(e.target.value === '')
               }}
               maxLength={600}
               errorText={alreadyDatasetError}

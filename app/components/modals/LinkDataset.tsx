@@ -70,7 +70,9 @@ const LinkDataset: React.FunctionComponent<LinkDatasetProps> = ({ peername, name
       .then(() => setDismissable(true))
   }
 
-  const handleChanges = (name: string, value: any) => {
+  const handleChanges = (e: React.ChangeEvent) => {
+    const value = e.target.value
+    const name = e.target.name
     if (value[value.length - 1] === ' ') {
       return
     }

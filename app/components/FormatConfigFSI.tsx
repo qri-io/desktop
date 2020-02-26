@@ -60,6 +60,9 @@ const xlsxFormatConfig: {[key: string]: string | boolean} = {
 }
 
 const FormatConfigFSI: React.FunctionComponent<FormatConfigFSIProps> = ({ structure, write, format }) => {
+  const handleOnChange = (e: React.ChangeEvent) => {
+    write(e.target.names, e.target.value)
+  }
   // Get the format config from structure that is coming from fsi
   // if there is no format config, set the formatConfig to {}
   var formatConfig: {[key: string]: string | boolean} = {}
@@ -110,7 +113,7 @@ const FormatConfigFSI: React.FunctionComponent<FormatConfigFSIProps> = ({ struct
                   key={i}
                   label={formatConfigOptions[option].label}
                   labelTooltip={formatConfigOptions[option].tooltip}
-                  onChange={write}
+                  onChange={handleOnChange}
                   value={formatConfig[option].toString()}
                   name={option}
                   type='text'

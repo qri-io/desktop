@@ -9,7 +9,7 @@ export interface TextAreaInputProps {
   value: any
   maxLength: number
   onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void | undefined
-  onChange?: (name: string, value: any) => void
+  onChange?: (e: React.ChangeEvent) => void
   onBlur?: (event: React.FocusEvent<HTMLTextAreaElement>) => void
   placeHolder?: string
   rows?: number
@@ -24,12 +24,23 @@ const TextAreaInput: React.FunctionComponent<TextAreaInputProps> = (props) => {
     name,
     value,
     maxLength,
-    // onChange,
+    onChange,
     onBlur,
     placeHolder,
     rows = 3,
     tooltipFor
   } = props
+
+  const [stateValue, setStateValue] = React.useState(value)
+
+  React.useEffect(() => {
+    if (value !== stateValue) setStateValue(value)
+  }, [value])
+
+  const handleOnChange = (e: React.ChangeEvent) => {
+    if (onChange) onChange(e)
+    else setStateValue(e.target.value)
+  }
 
   return (
     <>
@@ -44,9 +55,9 @@ const TextAreaInput: React.FunctionComponent<TextAreaInputProps> = (props) => {
           name={name}
           maxLength={maxLength}
           className='input'
-          value={value || ''}
+          value={stateValue || ''}
           placeholder={placeHolder}
-          // onChange={(e) => { if (onChange) onChange(name, e.target.value) }}
+          onChange={handleOnChange}
           onBlur={onBlur}
           rows={rows}
         />

@@ -13,7 +13,7 @@ export interface TextInputProps {
   helpText?: string
   showHelpText?: boolean
   onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void | undefined
-  onChange?: (name: string, value: any) => void
+  onChange?: (e: React.ChangeEvent) => void | undefined
   onBlur?: (event: React.FocusEvent<HTMLInputElement>) => void
   placeHolder?: string
   white?: boolean
@@ -31,6 +31,7 @@ const TextInput: React.FunctionComponent<TextInputProps> = (props) => {
     errorText,
     helpText,
     showHelpText,
+    onChange,
     onBlur,
     onKeyDown,
     placeHolder,
@@ -46,6 +47,12 @@ const TextInput: React.FunctionComponent<TextInputProps> = (props) => {
   const feedbackColor = errorText ? 'error' : showHelpText && helpText ? 'textMuted' : ''
   const feedback = errorText || (showHelpText &&
     helpText)
+
+  const handleOnChange = (e: React.ChangeEvent) => {
+    if (onChange) onChange(e)
+    else setStateValue(e.target.value)
+  }
+
   return (
     <>
       <div className='text-input-container'>
@@ -62,7 +69,7 @@ const TextInput: React.FunctionComponent<TextInputProps> = (props) => {
           className='input'
           value={stateValue || ''}
           placeholder={placeHolder}
-          onChange={(e) => { setStateValue(e.target.value) }}
+          onChange={handleOnChange}
           onBlur={onBlur}
           onKeyDown={onKeyDown}
         />
