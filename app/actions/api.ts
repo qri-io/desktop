@@ -510,7 +510,6 @@ export function saveWorkingDatasetAndFetch (): ApiActionThunk {
       path = response.payload.data.path
       response = await whenOk(fetchWorkingDatasetDetails())(response)
     } catch (action) {
-      console.log(action)
       dispatch(setSaveComplete(action.payload.err.message))
       dispatch(openToast('error', 'commit', action.payload.err.message))
       throw action
