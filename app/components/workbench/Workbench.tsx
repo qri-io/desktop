@@ -18,7 +18,8 @@ import {
   History,
   ComponentType,
   SelectedComponent,
-  Status
+  Status,
+  ToastType
 } from '../../models/store'
 import Dataset from '../../models/dataset'
 import { Modal, ModalType } from '../../models/modals'
@@ -77,6 +78,8 @@ export interface WorkbenchProps extends RouteComponentProps {
   resetMutationsDataset: () => Action
   setMutationsStatus: (status: Status) => Action
   resetMutationsStatus: () => Action
+  openToast: (type: ToastType, name: string, message: string) => Action
+  closeToast: () => Action
 
   // fetching actions
   fetchWorkbench: () => LaunchedFetchesAction
@@ -92,6 +95,7 @@ export interface WorkbenchProps extends RouteComponentProps {
   publishDataset: () => ApiActionThunk
   unpublishDataset: () => ApiActionThunk
   discardChanges: (component: SelectedComponent) => ApiActionThunk
+  discardMutationsChanges: (component: SelectedComponent) => Action
   renameDataset: (peername: string, name: string, newName: string) => ApiActionThunk
   fsiWrite: (peername: string, name: string, dataset: Dataset) => ApiActionThunk
 }
@@ -221,15 +225,7 @@ class Workbench extends React.Component<WorkbenchProps, Status> {
       this.props.discardChanges(component)
       return
     }
-    const { mutationsDataset, status } = this.props.data
-
-    const d: Dataset = { ...mutationsDataset }
-    const s: Status = { ...status }
-    delete d[component]
-    delete s[component]
-
-    this.props.setMutationsDataset(d)
-    this.props.setMutationsStatus(s)
+    this.props.discardMutationsChanges(component)
   }
 
   determineMutationsStatus (head: Dataset, mutation: Dataset, prevStatus: Status): Status {
@@ -254,6 +250,18 @@ class Workbench extends React.Component<WorkbenchProps, Status> {
       }
       s[componentName] = { ...s[componentName], filepath: componentName, status: 'modified' }
     })
+
+    // if there is a bodyPath, adjust the body status
+    /**
+     * TODO (ramfox): We don't know at this current state if the underlying contents
+     * of the body file and the given body are the same, but that is an outlying
+     * error I feel comfortable punting on for now
+     */
+    if (s.bodyPath) {
+      // if bodyPath is empty then there is no
+      s.body = { ...s.body, status: d.bodyPath === '' ? 'unmodified' : 'modified' }
+      delete s.bodyPath
+    }
     return s
   }
 
@@ -271,6 +279,7 @@ class Workbench extends React.Component<WorkbenchProps, Status> {
     let d: Dataset = {}
 
     Object.keys(components).forEach((componentName: string) => {
+      if (componentName === 'bodyPath') return
       if (components[componentName].value) {
         d[componentName] = components[componentName].value
       }
@@ -312,6 +321,8 @@ class Workbench extends React.Component<WorkbenchProps, Status> {
       setCommit,
       setComponent,
       setDetailsBar,
+      openToast,
+      closeToast,
 
       fetchHistory,
       fetchBody,
@@ -467,6 +478,8 @@ class Workbench extends React.Component<WorkbenchProps, Status> {
                 componentStatus={status}
                 isLoading={workingDataset.isLoading}
                 fsiPath={workingDataset.fsiPath}
+                openToast={openToast}
+                closeToast={closeToast}
               />
             </CSSTransition>
             <CSSTransition

@@ -15,7 +15,7 @@ import CommitContainer from '../containers/CommitContainer'
 
 import { getComponentDisplayProps } from './ComponentList'
 
-import { StatusInfo, SelectedComponent, PageInfo } from '../models/store'
+import { StatusInfo, SelectedComponent, PageInfo, ToastType } from '../models/store'
 import Body from './Body'
 import { Details } from '../models/details'
 import { ApiActionThunk } from '../store/api'
@@ -25,6 +25,7 @@ import DropZone from './chrome/DropZone'
 import CalloutBlock from './chrome/CalloutBlock'
 import Icon from './chrome/Icon'
 import StatusDot from './chrome/StatusDot'
+import { ToastTypes } from './chrome/Toast'
 
 interface DatasetComponentProps {
   data: Dataset
@@ -38,6 +39,8 @@ interface DatasetComponentProps {
 
   // seting actions
   setDetailsBar: (details: Record<string, any>) => Action
+  openToast: (type: ToastType, name: string, message: string) => Action
+  closeToast: () => Action
 
   // fetching api actions
   fetchBody: (page?: number, pageSize?: number) => ApiActionThunk
@@ -65,7 +68,9 @@ const DatasetComponent: React.FunctionComponent<DatasetComponentProps> = (props:
     details,
     setDetailsBar,
     fetchBody,
-    write
+    write,
+    openToast,
+    closeToast
   } = props
 
   const hasParseError = componentStatus.status === 'parse error'
@@ -88,20 +93,12 @@ const DatasetComponent: React.FunctionComponent<DatasetComponentProps> = (props:
     const ext = path.extname(e.dataTransfer.files[0].path)
     // closeToast()
     if (!(ext === '.csv' || ext === '.json')) {
-    //   // open toast for 1 second
-    //   openToast(ToastTypes.error, 'drag-drop', 'unsupported file format: only json and csv supported')
-    //   setTimeout(() => closeToast(), 2500)
-      console.log('can only drop csv & json files')
+      // open toast for 1 second
+      openToast(ToastTypes.error, 'drag-drop', 'unsupported file format: only json and csv supported')
+      setTimeout(() => closeToast(), 1000)
       return
     }
 
-    // const {
-    //   path: filePath,
-    //   name: fileName,
-    //   size: fileSize
-    // } = e.dataTransfer.files[0]
-    // importFile(filePath, fileName, fileSize)
-    console.log('dropped file')
     handleWrite({ bodyPath: e.dataTransfer.files[0].path })
   }
 
@@ -190,7 +187,7 @@ const DatasetComponent: React.FunctionComponent<DatasetComponentProps> = (props:
           <div className='transition-wrap'
             onDragEnter={dragHandler(true)}
           >
-            {dragging && <DropZone
+            {dragging && fsiPath === '' && <DropZone
               title='Drop a body update'
               subtitle='import either csv or json file'
               setDragging={setDragging}

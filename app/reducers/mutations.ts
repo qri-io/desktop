@@ -1,5 +1,6 @@
 import { Reducer, AnyAction } from 'redux'
 import { Mutations } from '../models/store'
+import cloneDeep from 'clone-deep'
 import { apiActionTypes } from '../utils/actionType'
 
 const initialState: Mutations = {
@@ -32,6 +33,7 @@ export const MUTATIONS_RESET_DATASET = 'MUTATIONS_RESET_DATASET'
 export const MUTATIONS_DATASET_MODIFIED = 'MUTATIONS_DATASET_MODIFIED'
 export const MUTATIONS_SET_STATUS = 'MUTATIONS_SET_STATUS'
 export const MUTATIONS_RESET_STATUS = 'MUTATIONS_RESET_STATUS'
+export const MUTATIONS_DISCARD_CHANGES = 'MUTATIONS_DISCARD_CHANGES'
 
 const mutationsReducer: Reducer = (state = initialState, action: AnyAction): Mutations => {
   switch (action.type) {
@@ -125,6 +127,31 @@ const mutationsReducer: Reducer = (state = initialState, action: AnyAction): Mut
       return {
         ...state,
         status: initialState.status
+      }
+    case MUTATIONS_DISCARD_CHANGES:
+      let dataset = cloneDeep(state.dataset.value)
+      let status = cloneDeep(state.status.value)
+      delete dataset[action.component]
+      delete status[action.component]
+      if (Object.keys(dataset).length === 0) {
+        return {
+          ...state,
+          status: initialState.status,
+          dataset: initialState.dataset,
+          dirty: undefined
+        }
+      }
+      return {
+        ...state,
+        dataset: {
+          ...state.dataset,
+          value: dataset
+        },
+        status: {
+          ...state.status,
+          value: status
+        },
+        dirty: true
       }
     default:
       return state
