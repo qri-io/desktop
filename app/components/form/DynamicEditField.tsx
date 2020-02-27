@@ -37,6 +37,10 @@ const DynamicEditField: React.FunctionComponent<DynamicEditFieldProps> = ({
   const [ newValue, setNewValue ] = React.useState(value)
   const [ isValid, setIsValid ] = React.useState(true)
 
+  React.useEffect(() => {
+    if (value !== newValue) setNewValue(value)
+  }, [value])
+
   const commitEdit = (e: React.SyntheticEvent) => {
     // TODO (ramfox): for some reason, the only way I can get the actual updated
     // state value is by hacking into the `setNewValue` function, which passes
@@ -111,6 +115,7 @@ const DynamicEditField: React.FunctionComponent<DynamicEditFieldProps> = ({
   }, [focused])
 
   const handleChange = async (e: any) => {
+    if (!editable) return
     let value = e.target.innerHTML
     if (maxLength && value.length > maxLength) {
       return

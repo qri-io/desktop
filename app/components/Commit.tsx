@@ -7,13 +7,13 @@ import { Action } from 'redux'
 import TextInput from './form/TextInput'
 import TextAreaInput from './form/TextAreaInput'
 import { validateCommitState } from '../utils/formValidation'
-import { DatasetStatus } from '../models/store'
+import { Status } from '../models/store'
 import { ApiAction } from '../store/api'
 
 export interface CommitProps {
   isLoading: boolean
   datasetRef: string
-  status: DatasetStatus
+  status: Status
   title: string
   message: string
   saveWorkingDatasetAndFetch: () => Promise<ApiAction>
@@ -41,9 +41,9 @@ const Commit: React.FunctionComponent<CommitProps> = (props: CommitProps) => {
     setIsValid(valid)
   }, [title, message, status])
 
-  const handleChange = (name: string, value: string) => {
-    if (name === 'title') setCommitTitle(value)
-    if (name === 'message') setCommitMessage(value)
+  const handleChange = (e: React.ChangeEvent) => {
+    if (e.target.name === 'title') setCommitTitle(e.target.value)
+    if (e.target.name === 'message') setCommitMessage(e.target.value)
   }
 
   const handleSubmit = (event: any) => {

@@ -2,25 +2,32 @@ import * as React from 'react'
 import SimpleMDE from 'react-simplemde-editor'
 import { useDebounce } from 'use-debounce'
 
-import { WorkingDataset } from '../models/store'
 import { ApiActionThunk } from '../store/api'
+
+import SpinnerWithIcon from './chrome/SpinnerWithIcon'
+import { datasetConvertStringToScriptBytes } from '../utils/datasetConvertStringToScriptBytes'
+import Dataset from '../models/dataset'
 
 const DEBOUNCE_TIMER = 1000
 
 export interface ReadmeProps {
-  peername: string
+  username: string
   name: string
-  value: string
-  preview: string
-  history: boolean
-  workingDataset: WorkingDataset
-  write: (peername: string, name: string, dataset: any) => ApiActionThunk
+  data?: string
+  loading: boolean
+  isLinked: boolean
+  write: (dataset: any) => ApiActionThunk | void
 }
 
 const Readme: React.FunctionComponent<ReadmeProps> = (props) => {
-  const { value, peername, name, write } = props
-  const [internalValue, setInternalValue] = React.useState(value)
+  const { data = '', username, name, write, loading, isLinked } = props
+
+  const [internalValue, setInternalValue] = React.useState(data)
   const [debouncedValue] = useDebounce(internalValue, DEBOUNCE_TIMER)
+
+  React.useEffect(() => {
+    setInternalValue(data)
+  }, [data])
 
   React.useEffect(() => {
     window.addEventListener('focus', onFocus)
@@ -30,15 +37,13 @@ const Readme: React.FunctionComponent<ReadmeProps> = (props) => {
   })
 
   const onFocus = () => {
-    setInternalValue(value)
+    setInternalValue(data)
   }
 
   React.useEffect(() => {
-    if (debouncedValue !== value) {
-      write(peername, name, {
-        readme: {
-          scriptBytes: btoa(unescape(encodeURIComponent(internalValue)))
-        }
+    if (debouncedValue !== data) {
+      write({
+        readme: internalValue
       })
     }
   }, [debouncedValue])
@@ -47,13 +52,39 @@ const Readme: React.FunctionComponent<ReadmeProps> = (props) => {
     setInternalValue(value)
   }
 
+  /**
+   * TODO (ramfox): this func is getting to the point where it probably should
+   * live outside of this component, however, I'm not sure where it should live
+   * and am leaning on the side of leaving it here until it is clearer whether
+   * ephemeral fetches should be pulled out into their own file or if they
+   * are okay living where they work
+   */
   const getPreview = (plainText: string, preview: HTMLElement) => {
-    fetch(`http://localhost:2503/render/${peername}/${name}?fsi=true`)
-      .then(async (res) => res.text())
-      .then((render) => {
-        preview.innerHTML = render
+    if (isLinked) {
+      fetch(`http://localhost:2503/render/${username}/${name}?fsi=true`)
+        .then(async (res) => res.text())
+        .then((render) => {
+          preview.innerHTML = render
+        })
+    } else {
+      const d: Dataset = datasetConvertStringToScriptBytes({ readme: plainText })
+      fetch(`http://localhost:2503/render`, {
+        method: 'post',
+        body: JSON.stringify(d),
+        headers: {
+          'Content-Type': 'application/json'
+        }
       })
+        .then(async (res) => res.text())
+        .then((render) => {
+          preview.innerHTML = render
+        })
+    }
     return 'Loading...'
+  }
+
+  if (loading) {
+    return <SpinnerWithIcon loading={true} />
   }
 
   return (

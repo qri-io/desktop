@@ -11,13 +11,14 @@ import { Action } from 'redux'
 interface LinkDatasetProps {
   peername: string
   name: string
+  modified?: boolean
   onDismissed: () => void
   onSubmit: (peername: string, name: string, dir: string) => Promise<ApiAction>
   setDatasetDirPath: (path: string) => Action
   datasetDirPath: string
 }
 
-const LinkDataset: React.FunctionComponent<LinkDatasetProps> = ({ peername, name, onDismissed, onSubmit, datasetDirPath, setDatasetDirPath }) => {
+const LinkDataset: React.FunctionComponent<LinkDatasetProps> = ({ peername, name, onDismissed, onSubmit, datasetDirPath, setDatasetDirPath, modified = false }) => {
   const [path, setPath] = React.useState(datasetDirPath)
   const [datasetDirectory, setDatasetDirectory] = React.useState(name)
 
@@ -69,7 +70,9 @@ const LinkDataset: React.FunctionComponent<LinkDatasetProps> = ({ peername, name
       .then(() => setDismissable(true))
   }
 
-  const handleChanges = (name: string, value: any) => {
+  const handleChanges = (e: React.ChangeEvent) => {
+    const value = e.target.value
+    const name = e.target.name
     if (value[value.length - 1] === ' ') {
       return
     }
@@ -109,6 +112,12 @@ const LinkDataset: React.FunctionComponent<LinkDatasetProps> = ({ peername, name
     >
       <div className='content-wrap'>
         <div className='content'>
+          {modified &&
+            <div className='warning'>
+              <div>Warning!</div>
+              This dataset has changes that haven&apos;t been commited yet! Click &apos;cancel&apos; and commit the changes if you want to keep them. Continuing to checkout will NOT keep your changes.
+            </div>
+          }
           <TextInput
             name='datasetDirectory'
             label='Dataset Directory'
@@ -139,7 +148,7 @@ const LinkDataset: React.FunctionComponent<LinkDatasetProps> = ({ peername, name
       <Buttons
         cancelText='cancel'
         onCancel={onDismissed}
-        submitText='Link Dataset'
+        submitText='Checkout Dataset'
         onSubmit={handleSubmit}
         disabled={buttonDisabled}
         loading={loading}

@@ -5,7 +5,7 @@ import { CALL_API, ApiAction, ApiActionThunk, chainSuccess } from '../store/api'
 import { SelectedComponent, MyDatasets } from '../models/store'
 import { actionWithPagination } from '../utils/pagination'
 import { openToast, setImportFileDetails } from './ui'
-import { setSaveComplete } from './mutations'
+import { setSaveComplete, resetMutationsDataset, resetMutationsStatus } from './mutations'
 import { setWorkingDataset, setSelectedListItem, setActiveTab, clearSelection } from './selections'
 import {
   mapDataset,
@@ -15,8 +15,10 @@ import {
   mapBody
 } from './mappingFuncs'
 import { getActionType } from '../utils/actionType'
+import { datasetConvertStringToScriptBytes } from '../utils/datasetConvertStringToScriptBytes'
 
 import { CLEAR_DATASET_HEAD } from '../reducers/commitDetail'
+import Dataset from '../models/dataset'
 
 const pageSizeDefault = 100
 export const bodyPageSizeDefault = 50
@@ -465,6 +467,19 @@ export function saveWorkingDataset (): ApiActionThunk {
     const { workingDataset, mutations } = getState()
     const { peername, name } = workingDataset
     const { title, message } = mutations.save.value
+    let body: Dataset
+    const commit = { title, message }
+    if (workingDataset.fsiPath) {
+      body = {
+        commit
+      }
+    } else {
+      body = {
+        ...mutations.dataset.value,
+        commit
+      }
+    }
+
     const action = {
       type: 'save',
       [CALL_API]: {
@@ -475,14 +490,9 @@ export function saveWorkingDataset (): ApiActionThunk {
           name
         },
         query: {
-          fsi: true
+          fsi: !!workingDataset.fsiPath
         },
-        body: {
-          commit: {
-            title,
-            message
-          }
-        }
+        body: datasetConvertStringToScriptBytes(body)
       }
     }
 
@@ -638,7 +648,11 @@ export function linkDatasetAndFetch (peername: string, name: string, dir: string
     let response: Action
 
     try {
-      response = await linkDataset(peername, name, dir)(dispatch, getState)
+      response = await linkDataset(peername, name, dir)(dispatch, getState).then((response) => {
+        dispatch(resetMutationsDataset())
+        dispatch(resetMutationsStatus())
+        return response
+      })
       response = await whenOk(fetchWorkingDatasetDetails())(response)
       // reset pagination
       response = await whenOk(fetchMyDatasets(-1))(response)
@@ -653,27 +667,34 @@ export function discardChanges (component: SelectedComponent): ApiActionThunk {
   return async (dispatch, getState) => {
     const { selections } = getState()
     const { peername, name } = selections
-    let response: Action
 
-    try {
-      const action = {
-        type: 'restore',
-        [CALL_API]: {
-          endpoint: 'restore',
-          method: 'POST',
-          segments: {
-            peername,
-            name
-          },
-          query: {
-            component
-          }
+    const action = {
+      type: 'restore',
+      [CALL_API]: {
+        endpoint: 'restore',
+        method: 'POST',
+        segments: {
+          peername,
+          name
+        },
+        query: {
+          component
         }
       }
-      response = await dispatch(action)
-    } catch (action) {
-      throw action
     }
+    return dispatch(action)
+  }
+}
+
+export function discardChangesAndFetch (component: SelectedComponent): ApiActionThunk {
+  return async (dispatch, getState) => {
+    let response: Action
+    response = await discardChanges(component)(dispatch, getState)
+      .then((res) => {
+        dispatch(fetchWorkingDataset())
+        dispatch(fetchWorkingStatus())
+        return res
+      })
     return response
   }
 }
@@ -750,7 +771,7 @@ export function fsiWrite (peername: string, name: string, dataset: any): ApiActi
           peername,
           name
         },
-        body: dataset
+        body: datasetConvertStringToScriptBytes(dataset)
       }
     }
     return dispatch(action)

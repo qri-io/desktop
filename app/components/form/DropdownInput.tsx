@@ -40,6 +40,17 @@ const TextInput: React.FunctionComponent<TextInputProps> = (props) => {
     }
   })
 
+  const [stateValue, setStateValue] = React.useState(value)
+
+  React.useEffect(() => {
+    if (JSON.stringify(value) !== JSON.stringify(stateValue)) setStateValue(stateValue)
+  }, [value])
+
+  const handleOnChange = (value: any) => {
+    setStateValue(value)
+    onChange(value)
+  }
+
   return (
     <>
       <div className='text-input-container'>
@@ -50,8 +61,8 @@ const TextInput: React.FunctionComponent<TextInputProps> = (props) => {
         />
         <Select
           className='react-select'
-          value={value}
-          onChange={onChange}
+          value={stateValue}
+          onChange={handleOnChange}
           options={options}
           placeholder={placeHolder}
           styles={{ control }}

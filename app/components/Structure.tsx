@@ -1,6 +1,6 @@
 import * as React from 'react'
 import Schema from './structure/Schema'
-import { Structure as IStructure, Schema as ISchema } from '../models/dataset'
+import Dataset, { Structure as IStructure, Schema as ISchema } from '../models/dataset'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faInfoCircle } from '@fortawesome/free-solid-svg-icons'
 import ExternalLink from './ExternalLink'
@@ -9,13 +9,14 @@ import FormatConfigHistory from './FormatConfigHistory'
 import FormatConfigFSI from './FormatConfigFSI'
 import LabeledStats from './item/LabeledStats'
 import fileSize, { abbreviateNumber } from '../utils/fileSize'
+import SpinnerWithIcon from './chrome/SpinnerWithIcon'
 
 export interface StructureProps {
   data: IStructure
   history: boolean
-  fsiBodyFormat?: string
   showConfig?: boolean
-  write?: (structure: IStructure) => ApiActionThunk
+  loading: boolean
+  write?: (dataset: Dataset) => ApiActionThunk | void
 }
 
 export interface FormatConfigOption {
@@ -60,35 +61,42 @@ export const formatConfigOptions: { [key: string]: FormatConfigOption } = {
   }
 }
 
-const Structure: React.FunctionComponent<StructureProps> = ({ data, history, write, fsiBodyFormat = '', showConfig = true }) => {
-  const format = history ? data.format : fsiBodyFormat
+const Structure: React.FunctionComponent<StructureProps> = (props) => {
+  const { data, history, write, showConfig = true, loading } = props
+
+  if (loading) {
+    return <SpinnerWithIcon loading={true} />
+  }
+
+  const format = data.format
   const handleWriteFormat = (option: string, value: any) => {
     if (!write) return
     // TODO (ramfox): sending over format since a user can replace the body with a body of a different
     // format. Let's pass in whatever the current format is, so that we have unity between
     // what the desktop is seeing and the backend. This can be removed when we have the fsi
     // backend codepaths settled
-    write({
+    write({ structure: {
       ...data,
       format,
       formatConfig: {
         ...data.formatConfig,
         [option]: value
       }
-    })
+    } })
   }
 
   const handleOnChange = (schema: ISchema) => {
-    write({ ...data, schema })
+    if (write) write({ structure: { ...data, schema } })
   }
 
   const stats = [
-    { 'label': 'format', 'value': data.format.toUpperCase() },
-    { 'label': 'body size', 'value': fileSize(data.length) },
-    { 'label': 'entries', 'value': abbreviateNumber(data.entries) },
-    { 'label': 'errors', 'value': data.errCount ? abbreviateNumber(data.errCount) : 0 },
-    { 'label': 'depth', 'value': data.depth }
+    { 'label': 'format', 'value': data.format ? data.format.toUpperCase() : 'unknown' },
+    { 'label': 'body size', 'value': data.length ? fileSize(data.length) : '—' },
+    { 'label': 'entries', 'value': abbreviateNumber(data.entries) || '—' },
+    { 'label': 'errors', 'value': data.errCount ? abbreviateNumber(data.errCount) : '—' },
+    { 'label': 'depth', 'value': data.depth || '—' }
   ]
+
   return (
     <div className='structure'>
       <div className='stats'><LabeledStats data={stats} size='lg' /></div>

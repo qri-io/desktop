@@ -528,11 +528,13 @@ input#path, input#bodyPath {
 // MultiTextInput (tags UI)
 .multi-text-input {
   .tag {
-    background: #e4e4e4;
+    background: $primary-dark;
     border-radius: 4px;
     padding: 4px 8px;
     margin: 5px;
     display: inline-block;
+    color: white;
+    font-weight: 700;
 
     .tag-text {
       flex: 1;

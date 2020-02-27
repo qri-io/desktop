@@ -4,6 +4,7 @@ import TextInput, { TextInputProps } from './TextInput'
 
 interface DebouncedTextInputProps extends TextInputProps {
   debounceTimer?: number
+  onChange: (name: string, value: string) => void
 }
 
 const DebouncedTextInput: React.FunctionComponent<DebouncedTextInputProps> = ({ debounceTimer = 500, ...props }) => {
@@ -16,7 +17,7 @@ const DebouncedTextInput: React.FunctionComponent<DebouncedTextInputProps> = ({ 
   }, [debouncedValue])
 
   // on change, update internalValue
-  const handleChange = (name: string, value: string) => { setInternalValue(value) }
+  const handleChange = (e: React.ChangeEvent) => { setInternalValue(e.target.value) }
 
   return (
     <TextInput

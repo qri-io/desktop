@@ -9,8 +9,8 @@ export interface TextAreaInputProps {
   value: any
   maxLength: number
   onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void | undefined
-  onChange: (name: string, value: any) => void
-  onBlur?: (name: string, value: any) => void
+  onChange?: (e: React.ChangeEvent) => void
+  onBlur?: (event: React.FocusEvent<HTMLTextAreaElement>) => void
   placeHolder?: string
   rows?: number
   white?: boolean
@@ -31,6 +31,17 @@ const TextAreaInput: React.FunctionComponent<TextAreaInputProps> = (props) => {
     tooltipFor
   } = props
 
+  const [stateValue, setStateValue] = React.useState(value)
+
+  React.useEffect(() => {
+    if (value !== stateValue) setStateValue(value)
+  }, [value])
+
+  const handleOnChange = (e: React.ChangeEvent) => {
+    if (onChange) onChange(e)
+    else setStateValue(e.target.value)
+  }
+
   return (
     <>
       <div className='text-input-container'>
@@ -44,10 +55,10 @@ const TextAreaInput: React.FunctionComponent<TextAreaInputProps> = (props) => {
           name={name}
           maxLength={maxLength}
           className='input'
-          value={value || ''}
+          value={stateValue || ''}
           placeholder={placeHolder}
-          onChange={(e) => { onChange(name, e.target.value) }}
-          onBlur={() => { onBlur && onBlur() }}
+          onChange={handleOnChange}
+          onBlur={onBlur}
           rows={rows}
         />
         {/* placeholder for error text to match spacing with other form inputs */}

@@ -1,14 +1,14 @@
 import * as React from 'react'
 import { Action } from 'redux'
 
-import { DatasetStatus, SelectedComponent, ComponentType } from '../models/store'
+import { Status, SelectedComponent, ComponentType, ComponentStatus } from '../models/store'
 import { components as componentsInfo } from './ComponentList'
 import ComponentItem from './item/ComponentItem'
 
 interface HistoryComponentListProps {
   datasetSelected: boolean
   components?: string[]
-  status: DatasetStatus
+  status: Status
   selectedComponent: SelectedComponent
   onComponentClick: (type: ComponentType, activeTab: string) => Action
   selectionType: ComponentType
@@ -30,7 +30,7 @@ const HistoryComponentList: React.FunctionComponent<HistoryComponentListProps> =
       {
         componentsInfo.map(({ name, displayName, tooltip, icon }) => {
           if (components.includes(name)) {
-            var fileStatus = 'unmodified'
+            var fileStatus: ComponentStatus = 'unmodified'
             if (status[name]) {
               fileStatus = status[name].status
             }

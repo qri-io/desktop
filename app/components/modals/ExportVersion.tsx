@@ -52,10 +52,9 @@ const ExportVersion: React.FunctionComponent<ExportVersionProps> = (props) => {
     }
   }, [exportPath])
 
-  const handleChanges = (name: string, value: any) => {
-    if (value[value.length - 1] === ' ') {
-
-    }
+  const handleChanges = (e: React.ChangeEvent) => {
+    const value = e.target.value
+    if (value[value.length - 1] !== ' ') setExportPath(value)
   }
 
   const handlePathPickerDialog = (showFunc: () => void) => {

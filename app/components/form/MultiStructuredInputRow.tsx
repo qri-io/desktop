@@ -12,34 +12,83 @@ interface MultiStructuredInputRowProps {
   item: User | Citation
   name: 'contributors' | 'citations'
   index: number
-  onChange: (index: number, value: User | Citation | null) => void
-  onBlur: () => void
+  onChange: (e: React.SyntheticEvent, index: number, value: User | Citation | null) => void
+  onBlur: (e: React.SyntheticEvent) => void
 }
 
 const MultiStructuredInputRow: React.FunctionComponent<MultiStructuredInputRowProps> = (props) => {
   const { item, index, onChange, onBlur, name } = props
 
-  const handleChange = (type: string, value: string) => {
+  const handleChange = (e: React.ChangeEvent, type: string, value: string) => {
     item[type] = value
-    onChange(index, item)
+    onChange(e, index, item)
   }
 
-  const removeMe = () => {
-    onChange(index, null)
+  const removeMe = (e: React.SyntheticEvent) => {
+    onChange(e, index, null)
   }
 
   const inputs = (name === 'contributors')
     ? (
       <>
-        <div className='input-column'><input className='input' type='text' value={item.id} onChange={(e) => { handleChange('id', e.target.value) }} onBlur={onBlur} autoFocus={true} /></div>
-        <div className='input-column'><input className='input' type='text' value={item.name} onChange={(e) => { handleChange('name', e.target.value) }} onBlur={onBlur} /></div>
-        <div className='input-column'><input className='input' type='email' value={item.email} onChange={(e) => { handleChange('email', e.target.value) }} onBlur={onBlur} /></div>
+        <div className='input-column'>
+          <input
+            className='input'
+            type='text'
+            value={item.id}
+            onChange={(e) => { handleChange(e, 'id', e.target.value) }}
+            onBlur={onBlur}
+            autoFocus={true}
+          />
+        </div>
+        <div className='input-column'>
+          <input
+            className='input'
+            type='text'
+            value={item.name}
+            onChange={(e) => { handleChange(e, 'name', e.target.value) }}
+            onBlur={onBlur}
+          />
+        </div>
+        <div className='input-column'>
+          <input
+            className='input'
+            type='email'
+            value={item.email}
+            onChange={(e) => { handleChange(e, 'email', e.target.value) }}
+            onBlur={onBlur}
+          />
+        </div>
       </>
     ) : (
       <>
-        <div className='input-column'><input className='input' type='text' value={item.name} onChange={(e) => { handleChange('name', e.target.value) }} onBlur={onBlur} autoFocus={true} /></div>
-        <div className='input-column'><input className='input' type='text' value={item.url} onChange={(e) => { handleChange('url', e.target.value) }} onBlur={onBlur} /></div>
-        <div className='input-column'><input className='input' type='email' value={item.email} onChange={(e) => { handleChange('email', e.target.value) }} onBlur={onBlur} /></div>
+        <div className='input-column'>
+          <input
+            className='input'
+            type='text'
+            value={item.name}
+            onChange={(e) => { handleChange(e, 'name', e.target.value) }}
+            onBlur={onBlur}
+            autoFocus={true} />
+        </div>
+        <div className='input-column'>
+          <input
+            className='input'
+            type='text'
+            value={item.url}
+            onChange={(e) => { handleChange(e, 'url', e.target.value) }}
+            onBlur={onBlur}
+          />
+        </div>
+        <div className='input-column'>
+          <input
+            className='input'
+            type='email'
+            value={item.email}
+            onChange={(e) => { handleChange(e, 'email', e.target.value) }}
+            onBlur={onBlur}
+          />
+        </div>
       </>
     )
 

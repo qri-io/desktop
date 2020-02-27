@@ -13,8 +13,8 @@ export interface TextInputProps {
   helpText?: string
   showHelpText?: boolean
   onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void | undefined
-  onChange: (name: string, value: any) => void
-  onBlur?: () => void
+  onChange?: (e: React.ChangeEvent) => void | undefined
+  onBlur?: (event: React.FocusEvent<HTMLInputElement>) => void
   placeHolder?: string
   white?: boolean
   tooltipFor?: string
@@ -38,9 +38,21 @@ const TextInput: React.FunctionComponent<TextInputProps> = (props) => {
     tooltipFor
   } = props
 
+  const [stateValue, setStateValue] = React.useState(value)
+
+  React.useEffect(() => {
+    if (value !== stateValue) setStateValue(value)
+  }, [value])
+
   const feedbackColor = errorText ? 'error' : showHelpText && helpText ? 'textMuted' : ''
   const feedback = errorText || (showHelpText &&
     helpText)
+
+  const handleOnChange = (e: React.ChangeEvent) => {
+    if (onChange) onChange(e)
+    else setStateValue(e.target.value)
+  }
+
   return (
     <>
       <div className='text-input-container'>
@@ -55,10 +67,10 @@ const TextInput: React.FunctionComponent<TextInputProps> = (props) => {
           type={type}
           maxLength={maxLength}
           className='input'
-          value={value || ''}
+          value={stateValue || ''}
           placeholder={placeHolder}
-          onChange={(e) => { onChange(name, e.target.value) }}
-          onBlur={() => { onBlur && onBlur() }}
+          onChange={handleOnChange}
+          onBlur={onBlur}
           onKeyDown={onKeyDown}
         />
         <div style={{ height: 20 }}>

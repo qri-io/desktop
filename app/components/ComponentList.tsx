@@ -3,20 +3,18 @@ import { Action } from 'redux'
 import path from 'path'
 import classNames from 'classnames'
 import { clipboard, shell, MenuItemConstructorOptions } from 'electron'
-import ContextMenuArea from 'react-electron-contextmenu'
 
-import { ApiActionThunk } from '../store/api'
+import ContextMenuArea from './ContextMenuArea'
 import { checkClearToCommit } from '../utils/formValidation'
-import { DatasetStatus, SelectedComponent, ComponentType } from '../models/store'
-import Spinner from './chrome/Spinner'
+import { Status, SelectedComponent, ComponentType } from '../models/store'
 import ComponentItem from './item/ComponentItem'
 
 interface ComponentListProps {
   datasetSelected: boolean
-  status: DatasetStatus
+  status: Status
   selectedComponent: string
   onComponentClick: (type: ComponentType, activeTab: string) => Action
-  discardChanges?: (component: SelectedComponent) => ApiActionThunk
+  discardChanges?: (component: SelectedComponent) => void
   selectionType: ComponentType
   fsiPath?: string
 }
@@ -60,15 +58,12 @@ export const components = [
   }
 ]
 
+export const hiddenComponents = ['transform']
 // removes components that don't have content on this dataset
-function removeHiddenComponents (status: DatasetStatus, selectionType: ComponentType) {
-  const showWhenMissing = {
-    'readme': 'component',
-    'meta': 'component',
-    'commit': true
-  }
+function hiddenComponentFilter (status: Status, selectionType: ComponentType) {
   return (component): boolean => {
-    return !!status[component.name] || showWhenMissing[component.name] === selectionType || showWhenMissing[component.name] === true
+    // filtering all componennt, if the component name is NOT in the hidden list, we good, if it is, then it must be in the status
+    return !hiddenComponents.includes(component.name) || Object.keys(status).some((statusComponentName: string) => statusComponentName === component.name)
   }
 }
 
@@ -84,51 +79,20 @@ const ComponentList: React.FunctionComponent<ComponentListProps> = (props: Compo
     onComponentClick,
     selectionType,
     discardChanges,
-    datasetSelected,
     fsiPath
   } = props
 
-  // if we don't have an fsiPath (the dataset is not yet checked out) or we are
-  // still waiting for status to return, display all of the possible components
-  if (!fsiPath || Object.keys(status).length === 0) {
-    return (
-      <div>
-        {components.map(({ name, displayName, tooltip, icon }) => {
-          return <ComponentItem
-            key={name}
-            displayName={displayName}
-            name={name}
-            icon={icon}
-            selected={false}
-            disabled={true}
-            tooltip={tooltip}
-            onClick={undefined}
-            color='light'
-          />
-        })}
-        {
-          // TODO (ramfox): need better loading indicator
-          Object.keys(status).length === 0 && <Spinner white />
-        }
-
-      </div>
-    )
-  }
-
-  const isEnabled = (name: string): boolean => {
-    return (datasetSelected && selectionType === 'component' && (name === 'meta' || name === 'structure' || name === 'readme' || name === 'transform' || name === 'commit'))
-  }
-
-  const visibleComponents = components.filter(removeHiddenComponents(status, selectionType))
+  const visibleComponents = components.filter(hiddenComponentFilter(status, selectionType))
 
   // reduce visible component statuses into boolean indicating that there are changes ready to be committed
+
   const clearToCommit = checkClearToCommit(status)
 
   return (
     <div className={classNames({ 'clear-to-commit': clearToCommit })}>
       {
         visibleComponents.map(({ name, displayName, tooltip, icon }) => {
-          if (status[name] && !!fsiPath) {
+          if (status[name]) {
             const { filepath, status: fileStatus } = status[name]
 
             // if filepath is the same as the component name, we are looking at a
@@ -154,31 +118,36 @@ const ComponentList: React.FunctionComponent<ComponentListProps> = (props: Compo
               />
             )
 
-            if (discardChanges && fsiPath) {
-              const menuItems: MenuItemConstructorOptions[] = [
-                {
-                  label: 'Open in Finder',
-                  click: () => { shell.showItemInFolder(`${fsiPath}/${filename}`) }
-                },
-                {
-                  label: 'Copy File Path',
-                  click: () => { clipboard.writeText(`${fsiPath}/${filename}`) }
-                }
-              ]
+            if (discardChanges || fsiPath) {
+              let menuItems: MenuItemConstructorOptions[] = []
+              if (fsiPath) {
+                menuItems = [
+                  {
+                    label: 'Open in Finder',
+                    click: () => { shell.showItemInFolder(`${fsiPath}/${filename}`) }
+                  },
+                  {
+                    label: 'Copy File Path',
+                    click: () => { clipboard.writeText(`${fsiPath}/${filename}`) }
+                  }
+                ]
+              }
 
               // add discard changes option of file is modified
-              if (fileStatus !== 'unmodified') {
+              if (discardChanges && fileStatus !== 'unmodified') {
                 menuItems.unshift({
                   label: 'Discard Changes...',
-                  click: () => { discardChanges(name as SelectedComponent) }
-                },
-                {
-                  type: 'separator'
+                  click: () => {
+                    discardChanges(name as SelectedComponent)
+                  }
                 })
+                if (menuItems.length > 1) {
+                  menuItems.unshift({ type: 'separator' })
+                }
               }
 
               return (
-                <ContextMenuArea menuItems={menuItems} key={name}>
+                <ContextMenuArea data={menuItems} menuItemsFactory={(data) => data} key={name}>
                   {fileRow}
                 </ContextMenuArea>
               )
@@ -196,10 +165,8 @@ const ComponentList: React.FunctionComponent<ComponentListProps> = (props: Compo
                 selected={selectedComponent === name}
                 selectionType={selectionType}
                 // TODO (ramfox): we should create a 'isDisabled' function and add these specifications & test
-                disabled={!isEnabled(name)}
                 tooltip={tooltip}
-                // ditto, this should relate to the above
-                onClick={isEnabled(name) ? onComponentClick : undefined}
+                onClick={onComponentClick}
               />
             )
           }

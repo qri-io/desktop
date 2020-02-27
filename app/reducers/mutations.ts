@@ -10,6 +10,16 @@ const initialState: Mutations = {
     },
     isLoading: false,
     error: null
+  },
+  dataset: {
+    value: undefined,
+    isLoading: false,
+    error: null
+  },
+  status: {
+    value: undefined,
+    isLoading: false,
+    error: null
   }
 }
 
@@ -17,6 +27,11 @@ export const [SAVE_REQ] = apiActionTypes('save')
 export const SAVE_COMPLETE = 'SAVE_COMPLETE'
 export const SET_COMMIT_TITLE = 'SET_COMMIT_TITLE'
 export const SET_COMMIT_MESSAGE = 'SET_COMMIT_MESSAGE'
+export const MUTATIONS_SET_DATASET = 'MUTATIONS_SET_DATASET'
+export const MUTATIONS_RESET_DATASET = 'MUTATIONS_RESET_DATASET'
+export const MUTATIONS_DATASET_MODIFIED = 'MUTATIONS_DATASET_MODIFIED'
+export const MUTATIONS_SET_STATUS = 'MUTATIONS_SET_STATUS'
+export const MUTATIONS_RESET_STATUS = 'MUTATIONS_RESET_STATUS'
 
 const mutationsReducer: Reducer = (state = initialState, action: AnyAction): Mutations => {
   switch (action.type) {
@@ -60,9 +75,57 @@ const mutationsReducer: Reducer = (state = initialState, action: AnyAction): Mut
           isLoading: false,
           error: action.err,
           value: initialState.save.value
+        },
+        dataset: initialState.dataset,
+        status: initialState.status,
+        dirty: undefined
+      }
+    case MUTATIONS_SET_DATASET:
+      if (Object.keys(action.dataset).length === 0) {
+        return {
+          ...state,
+          dataset: initialState.dataset,
+          dirty: undefined
         }
       }
+      return {
+        ...state,
+        dataset: {
+          ...state.dataset,
+          value: {
+            ...state.dataset.value,
+            ...action.dataset
+          }
+        },
+        dirty: true
+      }
 
+    case MUTATIONS_RESET_DATASET:
+      return {
+        ...state,
+        dataset: initialState.dataset,
+        dirty: undefined
+      }
+
+    case MUTATIONS_SET_STATUS:
+      if (Object.keys(action.status).length === 0) {
+        return {
+          ...state,
+          status: initialState.status
+        }
+      }
+      return {
+        ...state,
+        status: {
+          ...state.status,
+          value: action.status
+        }
+      }
+    case MUTATIONS_RESET_STATUS:
+      return {
+        ...state,
+        status: initialState.status
+      }
     default:
       return state
   }

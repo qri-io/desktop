@@ -254,6 +254,7 @@ class App extends React.Component<AppProps, AppState> {
           <LinkDataset
             peername={peername}
             name={name}
+            modified={modal.modified}
             onSubmit={this.props.linkDataset}
             onDismissed={async () => setModal(noModalObject)}
             setDatasetDirPath={this.props.setDatasetDirPath}

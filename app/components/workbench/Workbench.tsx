@@ -4,6 +4,9 @@ import { ipcRenderer, shell, clipboard } from 'electron'
 import { CSSTransition } from 'react-transition-group'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faFolderOpen, faFile, faLink, faCloud, faCloudUploadAlt } from '@fortawesome/free-solid-svg-icons'
+import { withRouter, RouteComponentProps, Prompt } from 'react-router-dom'
+import fnv from 'fnv-plus'
+import cloneDeep from 'clone-deep'
 
 import { QRI_CLOUD_URL } from '../../constants'
 import { Details } from '../../models/details'
@@ -14,15 +17,17 @@ import {
   CommitDetails as ICommitDetails,
   History,
   ComponentType,
-  SelectedComponent
+  SelectedComponent,
+  Status
 } from '../../models/store'
+import Dataset from '../../models/dataset'
 import { Modal, ModalType } from '../../models/modals'
 import { ApiActionThunk, LaunchedFetchesAction } from '../../store/api'
 import { defaultSidebarWidth } from '../../reducers/ui'
 
 import { Resizable } from '../Resizable'
 import Layout from '../Layout'
-import UnlinkedDataset from './UnlinkedDataset'
+// import UnlinkedDataset from './UnlinkedDataset'
 import DatasetComponent from '../DatasetComponent'
 import NoDatasetSelected from './NoDatasetSelected'
 import HeaderColumnButton from '../chrome/HeaderColumnButton'
@@ -41,9 +46,13 @@ export interface WorkbenchData {
   workingDataset: WorkingDataset
   head: ICommitDetails
   history: History
+  status: Status
+
+  // mutations
+  mutationsDataset: Dataset
 }
 
-export interface WorkbenchProps {
+export interface WorkbenchProps extends RouteComponentProps {
   data: WorkbenchData
 
   // display details
@@ -54,6 +63,9 @@ export interface WorkbenchProps {
   sidebarWidth: number
   details: Details
 
+  // only used if there is no fsiPath
+  modified?: boolean
+
   // setting actions
   setModal: (modal: Modal) => void
   setActiveTab: (activeTab: string) => Action
@@ -61,6 +73,10 @@ export interface WorkbenchProps {
   setCommit: (path: string) => Action
   setComponent: (type: ComponentType, activeComponent: string) => Action
   setDetailsBar: (details: Record<string, any>) => Action
+  setMutationsDataset: (data: Dataset) => Action
+  resetMutationsDataset: () => Action
+  setMutationsStatus: (status: Status) => Action
+  resetMutationsStatus: () => Action
 
   // fetching actions
   fetchWorkbench: () => LaunchedFetchesAction
@@ -80,7 +96,7 @@ export interface WorkbenchProps {
   fsiWrite: (peername: string, name: string, dataset: Dataset) => ApiActionThunk
 }
 
-class Workbench extends React.Component<WorkbenchProps> {
+class Workbench extends React.Component<WorkbenchProps, Status> {
   constructor (props: WorkbenchProps) {
     super(props);
 
@@ -89,6 +105,11 @@ class Workbench extends React.Component<WorkbenchProps> {
       'publishUnpublishDataset',
       'handleShowStatus',
       'handleShowHistory',
+      'handleSetDataset',
+      'datasetFromMutations',
+      'determineMutationsStatus',
+      'datasetFromCommitDetails',
+      'handleDiscardChanges',
       'handleCopyLink'
     ].forEach((m) => { this[m] = this[m].bind(this) })
   }
@@ -108,6 +129,9 @@ class Workbench extends React.Component<WorkbenchProps> {
     ipcRenderer.removeListener('show-history', this.handleShowHistory)
     ipcRenderer.removeListener('open-working-directory', this.openWorkingDirectory)
     ipcRenderer.removeListener('publish-unpublish-dataset', this.publishUnpublishDataset)
+
+    this.props.resetMutationsDataset()
+    this.props.resetMutationsStatus()
   }
 
   private handleShowStatus () {
@@ -190,6 +214,88 @@ class Workbench extends React.Component<WorkbenchProps> {
       : setModal({ type: ModalType.PublishDataset })
   }
 
+  handleDiscardChanges (component: SelectedComponent) {
+    const { workingDataset } = this.props.data
+    const { fsiPath } = workingDataset
+    if (fsiPath !== '') {
+      this.props.discardChanges(component)
+      return
+    }
+    const { mutationsDataset, status } = this.props.data
+
+    const d: Dataset = { ...mutationsDataset }
+    const s: Status = { ...status }
+    delete d[component]
+    delete s[component]
+
+    this.props.setMutationsDataset(d)
+    this.props.setMutationsStatus(s)
+  }
+
+  determineMutationsStatus (head: Dataset, mutation: Dataset, prevStatus: Status): Status {
+    let s = cloneDeep(prevStatus)
+    let d = { ...mutation }
+    Object.keys(d).forEach((componentName: string) => {
+      if (!head[componentName]) {
+        s[componentName] = { ...s[componentName], filepath: componentName, status: 'add' }
+        return
+      }
+      /**
+       * TODO (ramfox): in the near future, let's keep hashes of each dataset
+       * component in the state tree so we don't have to calculate it each time
+       * perhaps as a key value field on workingDataset `componentHashes`?
+       * Don't want to alter the state tree until methodologies are more settled
+       */
+      const headHash = fnv.hash(head[componentName])
+      const mutationHash = fnv.hash(mutation[componentName])
+      if (headHash.value === mutationHash.value) {
+        s[componentName] = { ...s[componentName], filepath: componentName, status: 'unmodified' }
+        return
+      }
+      s[componentName] = { ...s[componentName], filepath: componentName, status: 'modified' }
+    })
+    return s
+  }
+
+  handleSetDataset (peername: string, name: string, dataset: Dataset) {
+    const { setMutationsDataset, setMutationsStatus, data } = this.props
+    const { workingDataset, status } = data
+    const wDataset = this.datasetFromCommitDetails(workingDataset)
+    const mutationsStatus = this.determineMutationsStatus(wDataset, dataset, status)
+    setMutationsStatus(mutationsStatus)
+    setMutationsDataset(dataset)
+  }
+
+  datasetFromCommitDetails (commitDetails: ICommitDetails): Dataset {
+    const { components } = commitDetails
+    let d: Dataset = {}
+
+    Object.keys(components).forEach((componentName: string) => {
+      if (components[componentName].value) {
+        d[componentName] = components[componentName].value
+      }
+    })
+    return d
+  }
+
+  // TODO (ramfox): should this logic should happen at the container level, and the
+  // component should just display whatever dataset it is given? We need to
+  // know what the head dataset looks like, however, in order to determine if
+  // anything has changed in 'handleSetDataset'
+  datasetFromMutations (): Dataset {
+    const { data } = this.props
+    const { workingDataset, mutationsDataset } = data
+    let dataset: Dataset = {}
+
+    Object.keys(workingDataset.components).forEach((componentName: SelectedComponent) => {
+      if (workingDataset.components[componentName].value) {
+        dataset[componentName] = cloneDeep(workingDataset.components[componentName].value)
+      }
+    })
+    const d = { ...dataset, ...mutationsDataset }
+    return d
+  }
+
   render () {
     const {
       data,
@@ -199,6 +305,7 @@ class Workbench extends React.Component<WorkbenchProps> {
       sidebarWidth,
       session,
       details,
+      modified = false,
 
       setModal,
       setActiveTab,
@@ -210,7 +317,6 @@ class Workbench extends React.Component<WorkbenchProps> {
       fetchBody,
       fetchCommitBody,
 
-      discardChanges,
       renameDataset,
       fsiWrite
     } = this.props
@@ -223,7 +329,9 @@ class Workbench extends React.Component<WorkbenchProps> {
     } = selections
 
     const datasetSelected = peername !== '' && name !== ''
-    const { status, published, fsiPath } = data.workingDataset
+
+    const { workingDataset, status } = data
+    const { published, fsiPath, stats } = workingDataset
 
     // isLinked is derived from fsiPath and only used locally
     const isLinked = fsiPath !== ''
@@ -237,13 +345,14 @@ class Workbench extends React.Component<WorkbenchProps> {
     const sidebarContent = (
       <WorkbenchSidebar
         data= {{ workingDataset: data.workingDataset, history: data.history }}
+        status={status}
         selections={selections}
         setModal={setModal}
         setActiveTab={setActiveTab}
         setCommit={setCommit}
         setComponent={setComponent}
         fetchHistory={fetchHistory}
-        discardChanges={discardChanges}
+        discardChanges={this.handleDiscardChanges}
         renameDataset={renameDataset}
       />
     )
@@ -267,7 +376,7 @@ class Workbench extends React.Component<WorkbenchProps> {
               <FontAwesomeIcon icon={faLink} transform='shrink-8' />
             </span>
           )}
-          onClick={() => { setModal({ type: ModalType.LinkDataset }) }}
+          onClick={() => { setModal({ type: ModalType.LinkDataset, modified }) }}
         />)
     }
 
@@ -312,6 +421,7 @@ class Workbench extends React.Component<WorkbenchProps> {
 
     const mainContent = (
       <>
+        <Prompt when={modified} message={() => `You have uncommited changes! Click 'cancel' and commit these changes before you navigate away or you will lose your work.`}/>
         <div className='main-content-header'>
           {linkButton}
           {publishButton}
@@ -337,16 +447,7 @@ class Workbench extends React.Component<WorkbenchProps> {
               <NoDatasetSelected />
             </CSSTransition>
             <CSSTransition
-              in={datasetSelected && (activeTab === 'status') && !isLinked && !data.workingDataset.isLoading}
-              classNames='fade'
-              timeout={300}
-              mountOnEnter
-              unmountOnExit
-            >
-              <UnlinkedDataset setModal={setModal} inNamespace={username === peername}/>
-            </CSSTransition>
-            <CSSTransition
-              in={datasetSelected && activeTab === 'status' && isLinked}
+              in={datasetSelected && activeTab === 'status'}
               classNames='fade'
               timeout={300}
               mountOnEnter
@@ -354,14 +455,18 @@ class Workbench extends React.Component<WorkbenchProps> {
             >
               <DatasetComponent
                 details={details}
-                data={data.workingDataset}
+                data={this.datasetFromMutations()}
+                stats={stats}
+                bodyPageInfo={workingDataset.components.body.pageInfo}
                 setDetailsBar={setDetailsBar}
+                peername={peername}
+                name={name}
                 fetchBody={fetchBody}
-                fsiWrite={fsiWrite}
+                write={isLinked ? fsiWrite : this.handleSetDataset}
                 component={selectedComponent}
-                componentStatus={status[selectedComponent]}
-                isLoading={data.workingDataset.isLoading}
-                fsiPath={this.props.data.workingDataset.fsiPath}
+                componentStatus={status}
+                isLoading={workingDataset.isLoading}
+                fsiPath={workingDataset.fsiPath}
               />
             </CSSTransition>
             <CSSTransition
@@ -376,7 +481,7 @@ class Workbench extends React.Component<WorkbenchProps> {
                 details={details}
                 setDetailsBar={setDetailsBar}
                 fetchCommitBody={fetchCommitBody}
-                fsiWrite={fsiWrite}
+                write={isLinked ? fsiWrite : this.handleSetDataset}
                 selections={selections}
                 setComponent={setComponent}
               />
@@ -418,4 +523,4 @@ class Workbench extends React.Component<WorkbenchProps> {
   }
 }
 
-export default Workbench
+export default withRouter(Workbench)

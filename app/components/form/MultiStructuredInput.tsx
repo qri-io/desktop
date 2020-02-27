@@ -12,9 +12,7 @@ export interface MultiStructuredInputProps {
   labelTooltip?: string
   name: 'citations' | 'contributors'
   value: User[] | Citation[] | undefined
-  onChange: (name: string, value: any) => void
-  onArrayChange: (name: string, value: any) => void
-  onBlur?: () => void
+  onWrite?: (e: React.SyntheticEvent, target: string, value: any) => void
   placeHolder: string
   tooltipFor?: string
 }
@@ -29,9 +27,7 @@ const MultiStructuredInput: React.FunctionComponent<MultiStructuredInputProps> =
     name,
     labelTooltip,
     value,
-    onChange,
-    onBlur,
-    onArrayChange,
+    onWrite,
     tooltipFor,
     placeHolder
   } = props
@@ -49,25 +45,35 @@ const MultiStructuredInput: React.FunctionComponent<MultiStructuredInputProps> =
     }
   }
 
+  const [stateValue, setStateValue] = React.useState(value)
+
+  React.useEffect(() => {
+    if (value === stateValue) return
+    setStateValue(value)
+  }, [value])
+
   // handles changes, overwrites a user
-  const handleChange = (index: number, item: User | Citation) => {
-    if (value) {
-      const clonedArray: User[] | Citation[] = Object.assign([], value)
+  const handleChange = (e: React.ChangeEvent, index: number, item: User | Citation) => {
+    if (stateValue) {
+      const clonedArray: User[] | Citation[] = Object.assign([], stateValue)
       const clonedItem: User | Citation = Object.assign({}, item)
       if (item) {
         clonedArray[index] = clonedItem
-        onChange(name, clonedArray)
+        setStateValue(clonedArray)
       } else {
         // if item comes back null, remove item from array
         clonedArray.splice(index, 1)
-        onArrayChange(name, clonedArray)
+        setStateValue(clonedArray)
+        if (onWrite) {
+          onWrite(e, name, clonedArray)
+        }
       }
     }
   }
 
   const addItem = () => {
-    const clonedArray: User[] | Citation[] = Object.assign([], value)
-    if (value) {
+    const clonedArray: User[] | Citation[] = Object.assign([], stateValue)
+    if (stateValue) {
       // add an empty object
       if (isUserArray(clonedArray)) {
         clonedArray.push(emptyObjects['contributors'])
@@ -75,24 +81,28 @@ const MultiStructuredInput: React.FunctionComponent<MultiStructuredInputProps> =
         clonedArray.push(emptyObjects['citations'])
       }
       // send the new array up to the parent
-      onChange(name, clonedArray)
+      setStateValue(clonedArray)
     } else {
       // push a new array with an empty object
-      onChange(name, [emptyObjects[name]])
+      setStateValue([emptyObjects[name]])
     }
   }
 
   const headerRowValues = Object.keys(emptyObjects[name])
 
+  const handleBlur = (e: React.SyntheticEvent) => {
+    if (onWrite) onWrite(e, name, stateValue)
+  }
+
   const getRows = () => {
-    if (value) {
-      if (isUserArray(value)) {
-        return value.map((item: User, i) => (
-          <Row key={i} name={name} item={item} index={i} onChange={handleChange} onBlur={() => { onBlur && onBlur() }} />
+    if (stateValue) {
+      if (isUserArray(stateValue)) {
+        return stateValue.map((item: User, i) => (
+          <Row key={i} name={name} item={item} index={i} onChange={handleChange} onBlur={handleBlur} />
         ))
       } else {
-        return value.map((item: Citation, i) => (
-          <Row key={i} name={name} item={item} index={i} onChange={handleChange} onBlur={() => { onBlur && onBlur() }} />
+        return stateValue.map((item: Citation, i) => (
+          <Row key={i} name={name} item={item} index={i} onChange={handleChange} onBlur={handleBlur} />
         ))
       }
     }
@@ -119,7 +129,7 @@ const MultiStructuredInput: React.FunctionComponent<MultiStructuredInputProps> =
               }
               <div className='remove-column'></div>
             </div>
-            {value && getRows()}
+            {stateValue && getRows()}
             <div className='add-item'>
               <PseudoLink>
                 <span onClick={addItem} tabIndex={0} onKeyDown={(e) => { if (e.key === 'Enter') addItem() }}>
