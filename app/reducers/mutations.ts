@@ -133,6 +133,9 @@ const mutationsReducer: Reducer = (state = initialState, action: AnyAction): Mut
       let status = cloneDeep(state.status.value)
       delete dataset[action.component]
       delete status[action.component]
+      if (action.component === 'body' && dataset.bodyPath) {
+        delete dataset.bodyPath
+      }
       if (Object.keys(dataset).length === 0) {
         return {
           ...state,

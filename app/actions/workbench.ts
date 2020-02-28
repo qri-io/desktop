@@ -1,6 +1,11 @@
 import { LaunchedFetchesAction } from '../store/api'
 
 import {
+  setCommitTitle,
+  setCommitMessage
+} from './mutations'
+
+import {
   fetchBody,
   fetchCommitBody,
   fetchCommitDataset,
@@ -29,6 +34,8 @@ export function fetchWorkbench (): LaunchedFetchesAction {
       dispatch(fetchWorkingDatasetAndStatus())
       dispatch(fetchStats())
       dispatch(fetchBody(-1))
+      dispatch(setCommitTitle(''))
+      dispatch(setCommitMessage(''))
       return fetching
     }
 
