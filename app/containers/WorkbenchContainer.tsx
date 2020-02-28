@@ -1,11 +1,11 @@
 import { connect } from 'react-redux'
 import Workbench, { WorkbenchProps, WorkbenchData } from '../components/workbench/Workbench'
 import { fetchWorkbench } from '../actions/workbench'
-import { setMutationsDataset, setMutationsStatus, resetMutationsDataset, resetMutationsStatus } from '../actions/mutations'
+import { setMutationsDataset, setMutationsStatus, resetMutationsDataset, resetMutationsStatus, discardMutationsChanges } from '../actions/mutations'
 
 import { Store, Selections, WorkingDataset, Status } from '../models/store'
 
-import { setSidebarWidth, setModal, setDetailsBar } from '../actions/ui'
+import { setSidebarWidth, setModal, setDetailsBar, openToast, closeToast } from '../actions/ui'
 import {
   fetchBody,
   fetchCommitBody,
@@ -118,6 +118,8 @@ const WorkbenchContainer = connect(
     setMutationsDataset,
     resetMutationsDataset,
     resetMutationsStatus,
+    openToast,
+    closeToast,
 
     fetchHistory,
     fetchWorkingDataset,
@@ -131,6 +133,7 @@ const WorkbenchContainer = connect(
     publishDataset,
     unpublishDataset,
     discardChanges: discardChangesAndFetch,
+    discardMutationsChanges,
     renameDataset,
     fsiWrite
   },

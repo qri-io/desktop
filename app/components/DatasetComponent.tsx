@@ -1,4 +1,5 @@
 import * as React from 'react'
+import path from 'path'
 
 import MetadataContainer from '../containers/MetadataContainer'
 import MetadataEditor from '../components/MetadataEditor'
@@ -14,14 +15,17 @@ import CommitContainer from '../containers/CommitContainer'
 
 import { getComponentDisplayProps } from './ComponentList'
 
-import { StatusInfo, SelectedComponent, PageInfo } from '../models/store'
+import { StatusInfo, SelectedComponent, PageInfo, ToastType } from '../models/store'
 import Body from './Body'
 import { Details } from '../models/details'
 import { ApiActionThunk } from '../store/api'
 import { Action } from 'redux'
 import Dataset from '../models/dataset'
+import DropZone from './chrome/DropZone'
+import CalloutBlock from './chrome/CalloutBlock'
 import Icon from './chrome/Icon'
 import StatusDot from './chrome/StatusDot'
+import { ToastTypes } from './chrome/Toast'
 
 interface DatasetComponentProps {
   data: Dataset
@@ -35,6 +39,8 @@ interface DatasetComponentProps {
 
   // seting actions
   setDetailsBar: (details: Record<string, any>) => Action
+  openToast: (type: ToastType, name: string, message: string) => Action
+  closeToast: () => Action
 
   // fetching api actions
   fetchBody: (page?: number, pageSize?: number) => ApiActionThunk
@@ -48,11 +54,53 @@ interface DatasetComponentProps {
 }
 
 const DatasetComponent: React.FunctionComponent<DatasetComponentProps> = (props: DatasetComponentProps) => {
-  const { component: selectedComponent, componentStatus, isLoading, history = false, fsiPath, data, peername, name, stats, bodyPageInfo, details, setDetailsBar, fetchBody, write } = props
+  const {
+    component: selectedComponent,
+    componentStatus,
+    isLoading,
+    history = false,
+    fsiPath,
+    data,
+    peername,
+    name,
+    stats,
+    bodyPageInfo,
+    details,
+    setDetailsBar,
+    fetchBody,
+    write,
+    openToast,
+    closeToast
+  } = props
 
   const hasParseError = componentStatus.status === 'parse error'
   const component = selectedComponent || 'meta'
   const { displayName, icon, tooltip } = getComponentDisplayProps(component)
+
+  const [dragging, setDragging] = React.useState(false)
+
+  const dragHandler = (drag: boolean) => (e: React.DragEvent) => {
+    if (history) {
+      return
+    }
+    e.preventDefault()
+    setDragging(drag)
+  }
+
+  const dropHandler = (e: React.DragEvent) => {
+    setDragging(false)
+    e.preventDefault()
+    const ext = path.extname(e.dataTransfer.files[0].path)
+    // closeToast()
+    if (!(ext === '.csv' || ext === '.json')) {
+      // open toast for 1 second
+      openToast(ToastTypes.error, 'drag-drop', 'unsupported file format: only json and csv supported')
+      setTimeout(() => closeToast(), 1000)
+      return
+    }
+
+    handleWrite({ bodyPath: e.dataTransfer.files[0].path })
+  }
 
   const handleWrite = (data: Dataset): ApiActionThunk | void => {
     return write(peername, name, data)
@@ -136,7 +184,21 @@ const DatasetComponent: React.FunctionComponent<DatasetComponentProps> = (props:
           unmountOnExit
           appear={true}
         >
-          <div className='transition-wrap'>
+          <div className='transition-wrap'
+            onDragEnter={dragHandler(true)}
+          >
+            {dragging && fsiPath === '' && <DropZone
+              title='Drop a body update'
+              subtitle='import either csv or json file'
+              setDragging={setDragging}
+              onDrop={dropHandler}
+            />}
+            {!history && data.bodyPath && <CalloutBlock
+              type='info'
+              text={`body will be replaced with file: ${data.bodyPath} when you commit`}
+              cancelText='unstage file'
+              onCancel={() => { handleWrite({ bodyPath: '' }) }}
+            />}
             <Body
               data={data}
               pageInfo={bodyPageInfo}

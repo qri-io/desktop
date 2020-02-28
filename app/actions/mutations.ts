@@ -6,7 +6,8 @@ import {
   MUTATIONS_RESET_DATASET,
   MUTATIONS_SET_STATUS,
   MUTATIONS_RESET_STATUS,
-  MUTATIONS_DATASET_MODIFIED
+  MUTATIONS_DATASET_MODIFIED,
+  MUTATIONS_DISCARD_CHANGES
 } from '../reducers/mutations'
 import Dataset from '../models/dataset'
 import { Status } from '../models/store'
@@ -55,6 +56,13 @@ export function setMutationsDataset (data: Dataset) {
   return {
     type: MUTATIONS_SET_DATASET,
     dataset: data
+  }
+}
+
+export function discardMutationsChanges (component: string) {
+  return {
+    type: MUTATIONS_DISCARD_CHANGES,
+    component
   }
 }
 

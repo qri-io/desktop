@@ -217,3 +217,26 @@
   padding: 10px;
   width: 100%;
 }
+
+.callout-block {
+  width: 100%;
+  padding: 15px 10px 0 10px;
+
+  .text {
+    margin-top: 5px;
+  }
+
+  &.info {
+    background: #4FC7F3;
+    border: solid 1px #4FC7F3;
+  }
+
+  .cancel {
+    float: right;
+    padding: 3px 8px;
+    border: 1px solid white;
+    border-radius: 3px;
+    color: white;
+    font-weight: 500;
+  }
+}
