@@ -18,11 +18,13 @@ const DatasetItem: React.FunctionComponent<DatasetItemProps> = ({ id, data, path
   if (!data) { return null }
   const { metaTitle, themeList, username, name } = data
 
+  const theme = themeList ? themeList.split(',', -1) : []
+
   return (
     <div id={id} className={classNames('dataset-item', { 'full': fullWidth })} key={path} data-ref={`${username}/${name}`}>
       <div className='header'>
         <a onClick={() => onClick(username, name)}>{hideUsername ? `${name}` : `${username}/${name}`}</a>
-        {themeList && themeList.length > 0 && <Tag type='category' tag={themeList[0]} />}
+        {theme && theme.length > 0 && <Tag type='category' tag={theme[0]} />}
       </div>
       <div className='title'>{ metaTitle }</div>
       <div className='details'><DatasetDetailsSubtext data={data} color='muted' /></div>
