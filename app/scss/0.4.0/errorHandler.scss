@@ -1,0 +1,19 @@
+
+.error-container {
+  width: 100%;
+  height: 100%;
+
+  .dialog {
+    margin: 0 auto;
+    padding-top: 8em;
+    width: 350px;
+
+    .reporting.actions button {
+      margin-right: 15px;
+    }
+
+    .reload {
+      margin-top: 35px;
+    }
+  }
+}
