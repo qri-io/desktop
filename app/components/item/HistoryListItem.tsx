@@ -13,10 +13,21 @@ interface HistoryListItemProps {
   first: boolean
   last: boolean
   onClick: (path: string | undefined) => Action | void
+  /**
+   * in some appearances of the HistoryList, we want to have the option to disable
+   * certain items in the list if the version of the dataset is foreign
+   * in other appearances, we want the item to still remain clickable and active
+   * looking, regardless if the version is foreign or not
+   * When allowDisable is true, we can have a foreign dataset version, but still
+   * take actions on the item
+   *
+   * defaults to true (aka the normal behavior you expect when something is disabled)
+   */
+  allowDisable?: boolean
 }
 
 const HistoryListItem: React.FunctionComponent<HistoryListItemProps> = (props) => {
-  const { id, selected, data, first, last } = props
+  const { id, selected, data, first, last, allowDisable = true } = props
   const { path = '', commitTitle, commitTime, foreign } = data
   return (
     <div
@@ -29,10 +40,11 @@ const HistoryListItem: React.FunctionComponent<HistoryListItemProps> = (props) =
           selected,
           first,
           last,
-          foreign
+          foreign: allowDisable && foreign
         })
       }
-      onClick={() => { props.onClick(path) }}
+      data-tip={allowDisable && foreign ? 'This version is unavailable' : undefined}
+      onClick={() => { if (!allowDisable) props.onClick(path) }}
     >
       <div className='icon-column'>
         <div className='history-timeline-line history-timeline-line-top' />
