@@ -44,7 +44,7 @@ const HistoryListItem: React.FunctionComponent<HistoryListItemProps> = (props) =
         })
       }
       data-tip={allowDisable && foreign ? 'This version is unavailable' : undefined}
-      onClick={() => { if (!allowDisable) props.onClick(path) }}
+      onClick={() => { if (!(foreign && allowDisable)) props.onClick(path) }}
     >
       <div className='icon-column'>
         <div className='history-timeline-line history-timeline-line-top' />
