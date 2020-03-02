@@ -37,6 +37,7 @@ import WorkbenchSidebar from './WorkbenchSidebar'
 import DetailsBarContainer from '../../containers/DetailsBarContainer'
 import CommitDetails from '../CommitDetails'
 import NoDatasets from '../NoDatasets'
+import NotInNamespace from './NotInNamespace'
 
 // TODO (b5) - is this still required?
 require('../../assets/qri-blob-logo-tiny.png')
@@ -63,6 +64,7 @@ export interface WorkbenchProps extends RouteComponentProps {
   showDetailsBar: boolean
   sidebarWidth: number
   details: Details
+  inNamespace: boolean
 
   // only used if there is no fsiPath
   modified?: boolean
@@ -315,6 +317,7 @@ class Workbench extends React.Component<WorkbenchProps, Status> {
       session,
       details,
       modified = false,
+      inNamespace,
 
       setModal,
       setActiveTab,
@@ -464,23 +467,26 @@ class Workbench extends React.Component<WorkbenchProps, Status> {
               mountOnEnter
               unmountOnExit
             >
-              <DatasetComponent
-                details={details}
-                data={this.datasetFromMutations()}
-                stats={stats}
-                bodyPageInfo={workingDataset.components.body.pageInfo}
-                setDetailsBar={setDetailsBar}
-                peername={peername}
-                name={name}
-                fetchBody={fetchBody}
-                write={isLinked ? fsiWrite : this.handleSetDataset}
-                component={selectedComponent}
-                componentStatus={status}
-                isLoading={workingDataset.isLoading}
-                fsiPath={workingDataset.fsiPath}
-                openToast={openToast}
-                closeToast={closeToast}
-              />
+              { inNamespace
+                ? <DatasetComponent
+                  details={details}
+                  data={this.datasetFromMutations()}
+                  stats={stats}
+                  bodyPageInfo={workingDataset.components.body.pageInfo}
+                  setDetailsBar={setDetailsBar}
+                  peername={peername}
+                  name={name}
+                  fetchBody={fetchBody}
+                  write={isLinked ? fsiWrite : this.handleSetDataset}
+                  component={selectedComponent}
+                  componentStatus={status}
+                  isLoading={workingDataset.isLoading}
+                  fsiPath={workingDataset.fsiPath}
+                  openToast={openToast}
+                  closeToast={closeToast}
+                />
+                : <NotInNamespace />
+              }
             </CSSTransition>
             <CSSTransition
               in={datasetSelected && activeTab === 'history'}
