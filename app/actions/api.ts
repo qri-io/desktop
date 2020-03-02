@@ -502,26 +502,30 @@ export function saveWorkingDataset (): ApiActionThunk {
 
 export function saveWorkingDatasetAndFetch (): ApiActionThunk {
   return async (dispatch, getState) => {
-    const whenOk = chainSuccess(dispatch, getState)
-    let response: Action
     let path: string
-    try {
-      response = await saveWorkingDataset()(dispatch, getState)
-      path = response.payload.data.path
-      response = await whenOk(fetchWorkingDatasetDetails())(response)
-    } catch (action) {
-      dispatch(setSaveComplete(action.payload.err.message))
-      dispatch(openToast('error', 'commit', action.payload.err.message))
-      throw action
-    }
-    if (getActionType(response) === 'success') {
-      dispatch(setSaveComplete())
-      dispatch(openToast('success', 'commit', 'commit success!'))
-      dispatch(setSelectedListItem('commit', path))
-      dispatch(setActiveTab('history'))
-      dispatch(setSelectedListItem('commitComponent', DEFAULT_SELECTED_COMPONENT))
-    }
-    return response
+
+    return saveWorkingDataset()(dispatch, getState)
+      .then(async (response) => {
+        if (getActionType(response) === 'failure') throw response
+        path = response.payload.data.path
+        response = await fetchWorkingDatasetDetails()(dispatch, getState)
+        return response
+      })
+      .then((response) => {
+        if (getActionType(response) === 'success') {
+          dispatch(setSaveComplete())
+          dispatch(openToast('success', 'commit', 'commit success!'))
+          dispatch(setSelectedListItem('commit', path))
+          dispatch(setActiveTab('history'))
+          dispatch(setSelectedListItem('commitComponent', DEFAULT_SELECTED_COMPONENT))
+        }
+        return response
+      })
+      .catch((action) => {
+        dispatch(setSaveComplete(action.payload.err.message))
+        dispatch(openToast('error', 'commit', action.payload.err.message))
+        return action
+      })
   }
 }
 
