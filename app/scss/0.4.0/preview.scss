@@ -1,0 +1,16 @@
+.preview-not-found {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  .container {
+    width: 400px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    .graphic {
+      width: 200px;
+    }
+  }
+}

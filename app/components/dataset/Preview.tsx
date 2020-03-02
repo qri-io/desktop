@@ -5,6 +5,7 @@ import { FetchOptions } from '../../store/api'
 import { BACKEND_URL } from '../../constants'
 
 import Dataset from './Dataset'
+import PreviewNotFound from './PreviewNotFound'
 import SpinnerWithIcon from '../chrome/SpinnerWithIcon'
 
 interface PreviewProps {
@@ -50,9 +51,11 @@ const Preview: React.FunctionComponent<PreviewProps> = (props) => {
     fetchDataset()
   }, [peername, name, path])
 
-  // TODO (ramfox): what does an error screen look like here? or do we just nav
-  // back to the network/home & pop up a toast?
   if (error !== '') {
+    if (error.includes('not found')) {
+      return <PreviewNotFound />
+    }
+
     return (
       <div
         style={{
