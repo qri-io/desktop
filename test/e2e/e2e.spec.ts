@@ -294,8 +294,6 @@ describe('Qri End to End tests', function spec () {
       atLocation,
       click,
       onStatusTab,
-      waitForExist,
-      doesNotExist,
       waitForNotExist,
       takeScreenshot
     } = utils
@@ -592,8 +590,6 @@ describe('Qri End to End tests', function spec () {
     // check we are at the right dataset
     await waitForExist('#navbar-breadcrumb')
     await expectTextToContain('#navbar-breadcrumb', registryDatasetName)
-    // history item has foreign class
-    await waitForExist('#HEAD-1.foreign')
 
     if (takeScreenshots) {
       await takeScreenshot(artifactPath('network-preview.png'))
@@ -653,11 +649,6 @@ describe('Qri End to End tests', function spec () {
     // there should be two history items
     const historyItems = await app.client.$$('.history-list-item')
     expect(historyItems.length).toBe(2)
-
-    // first commit should have foreign class
-    await waitForExist('#HEAD-1.foreign')
-    // second commit should not
-    await waitForNotExist('#HEAD-2.foreign')
   })
 
   it('search: clicking a local dataset brings you to the workbench', async () => {

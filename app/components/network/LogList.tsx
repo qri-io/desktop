@@ -57,6 +57,7 @@ const LogList: React.FC<LogListProps> = ({ qriRef, history }) => {
               last={i === data.length - 1}
               selected={selected}
               onClick={handleOnClick(item)}
+              allowDisable={false}
             />
           )
         })

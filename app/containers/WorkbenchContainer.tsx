@@ -104,7 +104,8 @@ const WorkbenchContainer = connect(
       showDetailsBar,
       modified: mutations.dirty,
       sidebarWidth: ui.datasetSidebarWidth,
-      details: ui.detailsBar
+      details: ui.detailsBar,
+      inNamespace: workingDataset.peername === session.peername
     }
   },
   {

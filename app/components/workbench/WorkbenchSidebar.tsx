@@ -180,6 +180,17 @@ const WorkbenchSidebar: React.FunctionComponent<WorkbenchSidebarProps> = (props)
           >
             {
               history.value.map((item, i) => {
+                if (item.foreign) {
+                  return <HistoryListItem
+                    data={item}
+                    key={item.path}
+                    id={`HEAD-${i + 1}`}
+                    first={i === 0}
+                    last={i === history.value.length - 1}
+                    selected={selectedCommit === item.path}
+                    onClick={setCommit}
+                  />
+                }
                 const menuItems: MenuItemConstructorOptions[] = [
                   {
                     label: 'Export this version',
