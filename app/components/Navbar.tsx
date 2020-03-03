@@ -95,6 +95,12 @@ const Navbar: React.FunctionComponent<NavbarProps> = (props: NavbarProps) => {
 
   let navItems = [
     {
+      icon: faGlobeEurope,
+      id: 'network',
+      link: '/network',
+      tooltip: 'Network - Browse other datasets'
+    },
+    {
       icon: faCopy,
       id: 'collection',
       link: '/collection',
@@ -107,15 +113,6 @@ const Navbar: React.FunctionComponent<NavbarProps> = (props: NavbarProps) => {
       tooltip: 'Workbench - Build & Edit Datasets'
     }
   ]
-
-  if (__BUILD__.ENABLE_NETWORK_SECTION) {
-    navItems = [{
-      icon: faGlobeEurope,
-      id: 'network',
-      link: '/network',
-      tooltip: 'Network - Browse other datasets'
-    }].concat(navItems)
-  }
 
   return (
 
