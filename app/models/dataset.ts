@@ -79,6 +79,11 @@ export interface Structure {
 
 export type Schema = JSONSchema7
 
+export interface Transform {
+  format?: string
+  scriptBytes?: string
+}
+
 export interface Dataset {
   meta?: Meta
   structure?: Structure
@@ -86,6 +91,7 @@ export interface Dataset {
   bodyPath?: string
   commit?: Commit
   readme?: string
+  transform?: Transform
   [key: string]: any
 }
 

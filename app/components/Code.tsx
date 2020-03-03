@@ -6,13 +6,12 @@ interface CodeProps {
 
 const Code: React.FunctionComponent<CodeProps> = (props: CodeProps) => {
   const { data = '' } = props
-
   const lines = data.split('\n')
 
   return (
-    <div className="code">
+    <div style={{ overflowX: 'auto' }} className="code">
       <pre style={{ float: 'left', margin: '0 20px', color: '#bbb' }}>{lines.map((_, i) => (`${i}\n`))}</pre>
-      <pre style={{ float: 'left' }}>{data}</pre>
+      <pre>{data}</pre>
     </div>
   )
 }

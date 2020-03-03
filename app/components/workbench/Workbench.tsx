@@ -35,7 +35,7 @@ import HeaderColumnButton from '../chrome/HeaderColumnButton'
 import Hamburger from '../chrome/Hamburger'
 import WorkbenchSidebar from './WorkbenchSidebar'
 import DetailsBarContainer from '../../containers/DetailsBarContainer'
-import CommitDetails from '../CommitDetails'
+import CommitDetails from './CommitDetails'
 import NoDatasets from '../NoDatasets'
 import NotInNamespace from './NotInNamespace'
 
@@ -469,13 +469,14 @@ class Workbench extends React.Component<WorkbenchProps, Status> {
             >
               { inNamespace
                 ? <DatasetComponent
-                  details={details}
+                  qriRef={{ location: data.location, username: peername, name: name }}
+                  peername={peername}
+                  name={name}
                   data={this.datasetFromMutations()}
+                  details={details}
                   stats={stats}
                   bodyPageInfo={workingDataset.components.body.pageInfo}
                   setDetailsBar={setDetailsBar}
-                  peername={peername}
-                  name={name}
                   fetchBody={fetchBody}
                   write={isLinked ? fsiWrite : this.handleSetDataset}
                   component={selectedComponent}

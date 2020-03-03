@@ -1,10 +1,9 @@
 import { connect } from 'react-redux'
+
 import Workbench, { WorkbenchProps, WorkbenchData } from '../components/workbench/Workbench'
 import { fetchWorkbench } from '../actions/workbench'
 import { setMutationsDataset, setMutationsStatus, resetMutationsDataset, resetMutationsStatus, discardMutationsChanges } from '../actions/mutations'
-
 import { Store, Selections, WorkingDataset, Status } from '../models/store'
-
 import { setSidebarWidth, setModal, setDetailsBar, openToast, closeToast } from '../actions/ui'
 import {
   fetchBody,

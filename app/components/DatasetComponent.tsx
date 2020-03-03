@@ -1,33 +1,37 @@
 import * as React from 'react'
+import { Action } from 'redux'
 import path from 'path'
-
-import MetadataContainer from '../containers/MetadataContainer'
-import MetadataEditor from '../components/MetadataEditor'
-import Structure from '../components/Structure'
-import ParseError from './ParseError'
-import Readme from '../components/Readme'
-import TransformContainer from '../containers/TransformContainer'
-import ReadmeHistoryContainer from '../containers/ReadmeHistoryContainer'
 import { CSSTransition } from 'react-transition-group'
-import SpinnerWithIcon from './chrome/SpinnerWithIcon'
-import CommitHistoryContainer from '../containers/CommitHistoryContainer'
-import CommitContainer from '../containers/CommitContainer'
-
-import { getComponentDisplayProps } from './ComponentList'
 
 import { StatusInfo, SelectedComponent, PageInfo, ToastType } from '../models/store'
-import Body from './Body'
 import { Details } from '../models/details'
-import { ApiActionThunk } from '../store/api'
-import { Action } from 'redux'
+import { QriRef } from '../models/qriRef'
 import Dataset from '../models/dataset'
+import { ApiActionThunk } from '../store/api'
+
+import MetadataEditor from './MetadataEditor'
+import Structure from './Structure'
+import ParseError from './ParseError'
+import Readme from './Readme'
+import Transform from './Transform'
+import { getComponentDisplayProps } from './ComponentList'
+import Body from './Body'
+import SpinnerWithIcon from './chrome/SpinnerWithIcon'
 import DropZone from './chrome/DropZone'
 import CalloutBlock from './chrome/CalloutBlock'
 import Icon from './chrome/Icon'
 import StatusDot from './chrome/StatusDot'
 import { ToastTypes } from './chrome/Toast'
 
+// TODO (b5) - refactor all of these, inlining container definitions into
+// component files
+import MetadataContainer from '../containers/MetadataContainer'
+import ReadmeHistoryContainer from '../containers/ReadmeHistoryContainer'
+import CommitHistoryContainer from '../containers/CommitHistoryContainer'
+import CommitContainer from '../containers/CommitContainer'
+
 interface DatasetComponentProps {
+  qriRef: QriRef
   data: Dataset
 
   // display details
@@ -37,7 +41,7 @@ interface DatasetComponentProps {
   peername: string
   name: string
 
-  // seting actions
+  // setting actions
   setDetailsBar: (details: Record<string, any>) => Action
   openToast: (type: ToastType, name: string, message: string) => Action
   closeToast: () => Action
@@ -55,6 +59,7 @@ interface DatasetComponentProps {
 
 const DatasetComponent: React.FunctionComponent<DatasetComponentProps> = (props: DatasetComponentProps) => {
   const {
+    qriRef,
     component: selectedComponent,
     componentStatus,
     isLoading,
@@ -237,7 +242,10 @@ const DatasetComponent: React.FunctionComponent<DatasetComponentProps> = (props:
           appear={true}
         >
           <div className='transition-wrap'>
-            <TransformContainer />
+            <Transform
+              data={data.transform}
+              qriRef={qriRef}
+            />
           </div>
         </CSSTransition>
         <CSSTransition
