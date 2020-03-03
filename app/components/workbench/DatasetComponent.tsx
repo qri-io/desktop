@@ -1,9 +1,12 @@
 import * as React from 'react'
 import { Action } from 'redux'
+import { connect } from 'react-redux'
 import path from 'path'
 import { CSSTransition } from 'react-transition-group'
 
-import { StatusInfo, SelectedComponent, PageInfo, ToastType } from '../../models/store'
+import { openToast, closeToast, setDetailsBar } from '../../actions/ui'
+
+import { Store, StatusInfo, SelectedComponent, PageInfo, ToastType } from '../../models/store'
 import { Details } from '../../models/details'
 import { QriRef } from '../../models/qriRef'
 import Dataset from '../../models/dataset'
@@ -54,7 +57,7 @@ interface DatasetComponentProps {
   fsiPath?: string
 }
 
-const DatasetComponent: React.FunctionComponent<DatasetComponentProps> = (props) => {
+export const DatasetComponent: React.FunctionComponent<DatasetComponentProps> = (props) => {
   const {
     qriRef,
     component: selectedComponent,
@@ -266,4 +269,15 @@ const DatasetComponent: React.FunctionComponent<DatasetComponentProps> = (props)
     </div>
   )
 }
-export default DatasetComponent
+
+const mapStateToProps = (state: Store, ownProps: DatasetComponentProps) => {
+  // get data for the currently selected component
+  return ownProps
+}
+
+// TODO (b5) - this component doesn't need to be a container. Just feed it the right data
+export default connect(mapStateToProps, {
+  openToast,
+  closeToast,
+  setDetailsBar
+})(DatasetComponent)

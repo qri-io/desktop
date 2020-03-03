@@ -17,7 +17,6 @@ export interface CommitDetailsProps {
   details: Details
 
   fetchCommitBody: (page?: number, pageSize?: number) => ApiActionThunk
-  setDetailsBar: (details: Record<string, any>) => Action
   setComponent: (type: ComponentType, activeComponent: string) => Action
   fsiWrite: (peername: string, name: string, dataset: Dataset) => ApiActionThunk
 }
@@ -27,7 +26,6 @@ const CommitDetails: React.FunctionComponent<CommitDetailsProps> = (props) => {
     data,
     details,
     selections,
-    setDetailsBar,
     setComponent,
     fetchCommitBody
   } = props
@@ -88,7 +86,6 @@ const CommitDetails: React.FunctionComponent<CommitDetailsProps> = (props) => {
             peername={peername}
             name={name}
             details={details}
-            setDetailsBar={setDetailsBar}
             fetchBody={fetchCommitBody}
             isLoading={loading}
             bodyPageInfo={pageInfo}
