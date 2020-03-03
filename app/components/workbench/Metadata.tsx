@@ -1,15 +1,17 @@
 import * as React from 'react'
+import { connect } from 'react-redux'
 
-import ExternalLink from './ExternalLink'
-import KeyValueTable from './KeyValueTable'
-import SpinnerWithIcon from './chrome/SpinnerWithIcon'
+import Store from '../../models/store'
+import { isUserArray } from '../form/MultiStructuredInput'
+import { Meta, Citation, License, User } from '../../models/dataset'
+
+import ExternalLink from '../ExternalLink'
+import KeyValueTable from '../KeyValueTable'
+import SpinnerWithIcon from '../chrome/SpinnerWithIcon'
 import { standardFields } from './MetadataEditor'
-import { Meta, Citation, License, User } from '../models/dataset'
-
-import { isUserArray } from './form/MultiStructuredInput'
 
 interface MetadataProps {
-  meta: Meta
+  data: Meta
 }
 
 const renderValue = (value: string | string[] | object) => {
@@ -102,31 +104,39 @@ const renderTable = (keys: string[], data: Meta) => {
   )
 }
 
-const Metadata: React.FunctionComponent<MetadataProps> = (props: MetadataProps) => {
-  const { meta } = props
-
-  if (!meta) {
+export const MetadataComponent: React.FunctionComponent<MetadataProps> = ({ data }) => {
+  if (!data) {
     return <SpinnerWithIcon loading={true} />
   }
 
+  // TODO (b5) - this should happen at the point of ingest from the API
   const ignoreFields = ['qri', 'path']
-
-  const standard = standardFields.filter((key) => !!meta[key])
-  const extra = Object.keys(meta).filter((key) => {
+  const standard = standardFields.filter((key) => !!data[key])
+  const extra = Object.keys(data).filter((key) => {
     return !(~standardFields.findIndex((sKey) => (key === sKey)) || ~ignoreFields.findIndex((iKey) => (key === iKey)))
   })
 
   return (
     <div className='content metadata-viewer-wrap'>
       <h4 className='metadata-viewer-title'>Standard Metadata</h4>
-      {renderTable(standard, meta)}
+      {renderTable(standard, data)}
 
       {(extra.length > 0) && <div>
         <h4 className='metadata-viewer-title'>Additional Metadata</h4>
-        {renderTable(extra, meta)}
+        {renderTable(extra, data)}
       </div>}
     </div>
   )
 }
 
-export default Metadata
+const mapStateToProps = (state: Store) => {
+  const { commitDetails } = state
+
+  // get data for the currently selected component
+  return {
+    data: commitDetails.components.meta.value
+  }
+}
+
+// TODO (b5) - this component doesn't need to be a container. Just feed it the right data
+export default connect(mapStateToProps, {})(MetadataComponent)

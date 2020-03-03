@@ -1,13 +1,13 @@
 import * as React from 'react'
-
-import BodyTable from './BodyTable'
-import BodyJson from './BodyJson'
-import { ApiActionThunk } from '../store/api'
-
 import { Action } from 'redux'
-import { DetailsType, StatsDetails, Details } from '../models/details'
-import Dataset, { Structure } from '../models/dataset'
-import { PageInfo } from '../models/store'
+
+import { ApiActionThunk } from '../../store/api'
+import { DetailsType, StatsDetails, Details } from '../../models/details'
+import Dataset, { Structure } from '../../models/dataset'
+import { PageInfo } from '../../models/store'
+
+import BodyTable from '../BodyTable'
+import BodyJson from '../BodyJson'
 
 export interface BodyProps {
   data: Dataset

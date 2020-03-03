@@ -3,7 +3,7 @@ import { Details, DetailsType, StatsDetails } from '../models/details'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTimes } from '@fortawesome/free-solid-svg-icons'
 import StatsChart from './StatsChart'
-import { Header } from './Body'
+import { Header } from './workbench/Body'
 import { TypeLabel } from './TwoDSchemaLayout'
 
 export interface DetailsBarProps {

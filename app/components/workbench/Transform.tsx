@@ -2,11 +2,11 @@ import * as React from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators, Dispatch } from 'redux'
 
-import { Transform } from '../models/dataset'
-import Store from '../models/store'
-import { QriRef } from '../models/qriRef'
-import { fsiWrite } from '../actions/api'
-import Code from './Code'
+import { Transform } from '../../models/dataset'
+import Store from '../../models/store'
+import { QriRef } from '../../models/qriRef'
+import { fsiWrite } from '../../actions/api'
+import Code from '../Code'
 
 export interface TransformProps {
   data: Transform

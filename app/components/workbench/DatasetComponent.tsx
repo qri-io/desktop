@@ -3,32 +3,29 @@ import { Action } from 'redux'
 import path from 'path'
 import { CSSTransition } from 'react-transition-group'
 
-import { StatusInfo, SelectedComponent, PageInfo, ToastType } from '../models/store'
-import { Details } from '../models/details'
-import { QriRef } from '../models/qriRef'
-import Dataset from '../models/dataset'
-import { ApiActionThunk } from '../store/api'
+import { StatusInfo, SelectedComponent, PageInfo, ToastType } from '../../models/store'
+import { Details } from '../../models/details'
+import { QriRef } from '../../models/qriRef'
+import Dataset from '../../models/dataset'
+import { ApiActionThunk } from '../../store/api'
+import { getComponentDisplayProps } from '../ComponentList'
+import { ToastTypes } from '../chrome/Toast'
 
-import MetadataEditor from './MetadataEditor'
-import Structure from './Structure'
-import ParseError from './ParseError'
-import Readme from './Readme'
-import Transform from './Transform'
-import { getComponentDisplayProps } from './ComponentList'
 import Body from './Body'
-import SpinnerWithIcon from './chrome/SpinnerWithIcon'
-import DropZone from './chrome/DropZone'
-import CalloutBlock from './chrome/CalloutBlock'
-import Icon from './chrome/Icon'
-import StatusDot from './chrome/StatusDot'
-import { ToastTypes } from './chrome/Toast'
-
-// TODO (b5) - refactor all of these, inlining container definitions into
-// component files
-import MetadataContainer from '../containers/MetadataContainer'
-import ReadmeHistoryContainer from '../containers/ReadmeHistoryContainer'
-import CommitHistoryContainer from '../containers/CommitHistoryContainer'
-import CommitContainer from '../containers/CommitContainer'
+import CalloutBlock from '../chrome/CalloutBlock'
+import Commit from './Commit'
+import CommitHistory from './CommitHistory'
+import DropZone from '../chrome/DropZone'
+import Icon from '../chrome/Icon'
+import Metadata from './Metadata'
+import MetadataEditor from './MetadataEditor'
+import Readme from '../Readme'
+import ReadmeHistory from './ReadmeHistory'
+import ParseError from '../ParseError'
+import StatusDot from '../chrome/StatusDot'
+import Structure from '../Structure'
+import SpinnerWithIcon from '../chrome/SpinnerWithIcon'
+import Transform from './Transform'
 
 interface DatasetComponentProps {
   qriRef: QriRef
@@ -57,7 +54,7 @@ interface DatasetComponentProps {
   fsiPath?: string
 }
 
-const DatasetComponent: React.FunctionComponent<DatasetComponentProps> = (props: DatasetComponentProps) => {
+const DatasetComponent: React.FunctionComponent<DatasetComponentProps> = (props) => {
   const {
     qriRef,
     component: selectedComponent,
@@ -96,11 +93,10 @@ const DatasetComponent: React.FunctionComponent<DatasetComponentProps> = (props:
     setDragging(false)
     e.preventDefault()
     const ext = path.extname(e.dataTransfer.files[0].path)
-    // closeToast()
     if (!(ext === '.csv' || ext === '.json')) {
       // open toast for 1 second
       openToast(ToastTypes.error, 'drag-drop', 'unsupported file format: only json and csv supported')
-      setTimeout(() => closeToast(), 1000)
+      setTimeout(closeToast, 1000)
       return
     }
 
@@ -148,7 +144,7 @@ const DatasetComponent: React.FunctionComponent<DatasetComponentProps> = (props:
         >
           <div className='transition-wrap'>
             {history
-              ? <ReadmeHistoryContainer />
+              ? <ReadmeHistory />
               : <Readme
                 data={data.readme}
                 name={name}
@@ -171,7 +167,7 @@ const DatasetComponent: React.FunctionComponent<DatasetComponentProps> = (props:
           <div className='transition-wrap'>
             {
               history
-                ? <MetadataContainer />
+                ? <Metadata />
                 : <MetadataEditor
                   data={data.meta}
                   write={handleWrite}
@@ -260,8 +256,8 @@ const DatasetComponent: React.FunctionComponent<DatasetComponentProps> = (props:
           <div className='transition-wrap'>
             {
               history
-                ? <CommitHistoryContainer />
-                : <CommitContainer />
+                ? <CommitHistory />
+                : <Commit />
             }
           </div>
         </CSSTransition>

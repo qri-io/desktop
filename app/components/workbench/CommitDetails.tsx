@@ -7,7 +7,7 @@ import { Details } from '../../models/details'
 import { ApiActionThunk } from '../../store/api'
 
 import HistoryComponentList from '../HistoryComponentList'
-import DatasetComponent from '../DatasetComponent'
+import DatasetComponent from './DatasetComponent'
 import Layout from '../Layout'
 import CommitDetailsHeader from './CommitDetailsHeader'
 
