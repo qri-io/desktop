@@ -54,10 +54,12 @@ const NumericStat: React.FunctionComponent<StatsChartProps> = (props: StatsChart
 
   return (
     <div>
-      {histogram && <div style={{ height: height }}>
+      {histogram &&
         <div style={{ paddingLeft: 35 }}>
           <b>histogram</b>
         </div>
+      }
+      {histogram && <div style={{ height: height }}>
         <ResponsiveBar
           data={histogram}
           margin={{ top: 20, right: 10, bottom: 50, left: 60 }}
@@ -124,10 +126,12 @@ const StringStat: React.FunctionComponent<StatsChartProps> = (props: StatsChartP
 
   return (
     <div>
-      {frequencies && <div style={{ height: height }}>
+      {frequencies &&
         <div style={{ paddingLeft: 35 }}>
           <b>frequencies</b>
         </div>
+      }
+      {frequencies && <div style={{ height: height }}>
         <ResponsiveBar
           data={frequencies}
           margin={{ top: 20, right: 10, bottom: 50, left: 40 }}
@@ -157,6 +161,7 @@ const StringStat: React.FunctionComponent<StatsChartProps> = (props: StatsChartP
           animate={true}
           motionStiffness={90}
           motionDamping={15}
+          height={height - 50}
           labelFormat={labelFormat}
         />
       </div>}
@@ -197,10 +202,12 @@ const BooleanStat: React.FunctionComponent<StatsChartProps> = (props: StatsChart
 
   return (
     <div>
-      {frequencies && <div style={{ height: height }}>
+      {frequencies &&
         <div style={{ paddingLeft: 35 }}>
           <b>frequencies</b>
         </div>
+      }
+      {frequencies && <div style={{ height: height }}>
         <ResponsivePie
           data={frequencies}
           margin={{ top: 40, right: 80, bottom: 80, left: 80 }}
@@ -222,6 +229,7 @@ const BooleanStat: React.FunctionComponent<StatsChartProps> = (props: StatsChart
           slicesLabelsTextColor="#333333"
           animate={true}
           motionStiffness={90}
+          height={height - 50}
           motionDamping={15}
         />
       </div>}
