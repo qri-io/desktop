@@ -130,7 +130,6 @@ const mapStateToProps = (state: Store, ownProps: CompareSidebarProps) => {
   return ownProps
 }
 
-// TODO (b5) - this component doesn't need to be a container. Just feed it the right data
 export default connect(mapStateToProps, {
   openToast
 })(CompareSidebarComponent)

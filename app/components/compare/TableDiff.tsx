@@ -36,8 +36,6 @@ const TableDiff: React.FunctionComponent<TableDiffProps> = ({ data }) => {
             {data.diff.map((p, i) => {
               if (Array.isArray(p[0])) {
                 count = 1
-                // leftCount = p[0][0][0]
-                // rightCount = p[0][1][0]
                 return (
                   <tr key={i}>
                     <td colSpan={colCount} className='truncated'>
