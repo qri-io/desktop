@@ -1,6 +1,20 @@
-import * as React from 'react'
+import React from 'react'
+import classNames from 'classnames'
 
-const ButtonInput: React.FunctionComponent<any> = ({ id = '', onClick, children }) =>
-  <button id={id} onClick={onClick} className='input button'>{children}</button>
+export interface ButtonInputProps {
+  id?: string
+  disabled?: boolean
+  onClick: (e: React.SyntheticEvent) => void
+  children: React.ReactElement
+}
+
+const ButtonInput: React.FC<any> = ({ id = '', disabled = false, onClick, children }) => (
+  <button
+    id={id}
+    onClick={onClick}
+    disabled={disabled}
+    className={classNames('input button', { disabled })}
+  >{children}</button>
+)
 
 export default ButtonInput

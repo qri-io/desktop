@@ -1,6 +1,10 @@
 import * as React from 'react'
+import { Action } from 'redux'
+import { connect } from 'react-redux'
 
 import { BACKEND_URL } from '../../constants'
+import Store from '../../models/store'
+import { setSidebarWidth } from '../../actions/ui'
 
 import Spinner from '../chrome/Spinner'
 import CompareSidebar, { CompareParams } from './CompareSidebar'
@@ -9,6 +13,9 @@ import TableDiff from './TableDiff'
 
 export interface CompareProps {
   compact?: boolean
+
+  sidebarWidth: number
+  setSidebarWidth: (type: string, sidebarWidth: number) => Action
 }
 
 const initialCompareParams: CompareParams = {
@@ -16,7 +23,9 @@ const initialCompareParams: CompareParams = {
   right: ''
 }
 
-const Compare: React.FunctionComponent<CompareProps> = (props: CompareProps) => {
+export const CompareComponent: React.FC<CompareProps> = (props) => {
+  const { sidebarWidth, setSidebarWidth } = props
+
   const [loading, setLoading] = React.useState(false)
   const [params, setParams] = React.useState(initialCompareParams)
   const [data, setData] = React.useState(null)
@@ -58,14 +67,12 @@ const Compare: React.FunctionComponent<CompareProps> = (props: CompareProps) => 
     <Layout
       id='compare-container'
       sidebarContent={<CompareSidebar data={params} onChange={setParams} />}
-      sidebarWidth={360}
-      // onSidebarResize={(width) => { setSidebarWidth('collection', width) }}
+      sidebarWidth={sidebarWidth}
+      onSidebarResize={(width) => { setSidebarWidth('dataset', width) }}
       mainContent={mainContent()}
     />
   )
 }
-
-export default Compare
 
 async function diff (left: string, right: string): Promise<any[]> {
   const options: FetchOptions = {
@@ -81,3 +88,13 @@ async function diff (left: string, right: string): Promise<any[]> {
 
   return res.data as any[]
 }
+
+const mapStateToProps = (state: Store) => {
+  return {
+    sidebarWidth: state.ui.datasetSidebarWidth
+  }
+}
+
+export default connect(mapStateToProps, {
+  setSidebarWidth
+})(CompareComponent)

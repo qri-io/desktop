@@ -4,6 +4,7 @@ import { remote } from 'electron'
 import TextInput from '../form/TextInput'
 import ButtonInput from '../form/ButtonInput'
 import Icon from '../chrome/Icon'
+import ExternalLink from '../ExternalLink'
 
 export interface CompareParams {
   left: string
@@ -19,6 +20,11 @@ const CompareSidebar: React.FC<CompareSidebarProps> = ({ data, onChange }) => {
   const pathPicker = (side: string) => {
     const window = remote.getCurrentWindow()
     const filePaths: string[] | undefined = remote.dialog.showOpenDialogSync(window, {
+      title: 'Choose a CSV file',
+      buttonLabel: 'Load',
+      filters: [
+        { name: 'Structured Data', extensions: ['csv'] }
+      ],
       properties: ['openFile']
     })
 
@@ -47,11 +53,11 @@ const CompareSidebar: React.FC<CompareSidebarProps> = ({ data, onChange }) => {
   }
 
   return (
-    <div className='dataset-sidebar compare-sidebar'>
-      <div className='dataset-sidebar-header sidebar-padded-container'>
-        <div className='right'>
-        </div>
+    <div className='compare-sidebar sidebar'>
+      <div className='sidebar-header sidebar-padded-container'>
         <p className='pane-title'>Compare</p>
+      </div>
+      <div className='sidebar-padded-container'>
         <div className='picker'>
           <div className='indicator'>
             <Icon icon='minus' size='md' color='red' />
@@ -69,13 +75,11 @@ const CompareSidebar: React.FC<CompareSidebarProps> = ({ data, onChange }) => {
             </ButtonInput>
           </div>
         </div>
-        {(data.left && data.right) &&
-          <div className='picker swap'>
-            <ButtonInput onClick={handleSwap}>
-              <Icon icon='sort' size='md' color='light' />
-            </ButtonInput>
-          </div>
-        }
+        <div className='picker swap'>
+          <ButtonInput disabled={!(data.left && data.right)} onClick={handleSwap}>
+            <Icon icon='sort' size='md' color='light' />
+          </ButtonInput>
+        </div>
         <div className='picker'>
           <div className='indicator'>
             <Icon icon='plus' size='md' color='green' />
@@ -93,6 +97,9 @@ const CompareSidebar: React.FC<CompareSidebarProps> = ({ data, onChange }) => {
             </ButtonInput>
           </div>
         </div>
+      </div>
+      <div className='sidebar-padded-container note'>
+        <p>Compare view is under active development. Comparing is limited to CSV files under 10Mb. If you have any feeback, please <ExternalLink id='file-compare-issue' href='https://github.com/qri-io/desktop/issues/new'>file an issue</ExternalLink>.</p>
       </div>
     </div>
   )

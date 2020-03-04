@@ -1,22 +1,37 @@
-.compare-sidebar .picker {
-  display: flex;
+.compare-sidebar {
+  background: #123459;
+  height: 100%;
 
-  .input-label {
+  .picker {
+    display: flex;
+
+    .input-label{
+      color: white;
+    }
+
+    .input {
+      color: white;
+      background: #00000025;
+    }
+
+    .indicator {
+      margin: 10px 10px 0 5px;
+    }
+
+    .input.button {
+      margin-top: 5px;
+
+      &.disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+    }
+  }
+
+  h3 {
     color: white;
   }
-
-  .input {
-    color: white;
-    background: #00000025;
-  }
-
-  .indicator {
-    margin: 10px 10px 0 5px;
-  }
-
-  .input.button {
-    margin-top: 5px;
-  }
+  
 }
 
 .picker.swap {
