@@ -1,0 +1,72 @@
+.compare-sidebar {
+  background: #123459;
+  height: 100%;
+
+  .compare-sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .reset {
+      cursor: pointer;
+
+      &.disabled {
+        display: none;
+      }
+    }
+  }
+
+  .picker {
+    display: flex;
+
+    .input-label{
+      color: white;
+    }
+
+    .input {
+      color: white;
+      background: #00000025;
+    }
+
+    .indicator {
+      margin: 10px 10px 0 5px;
+    }
+
+    .input.button {
+      margin-top: 5px;
+
+      &.disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+    }
+  }
+
+  h3 {
+    color: white;
+  }
+  
+}
+
+.picker.swap {
+  margin: -25px auto 0 auto;
+  max-width: 40px;
+  .input {
+    background: transparent;
+  }
+}
+
+#compare-container {
+  width: 100%;
+  .columns {
+    width: 100%;
+  }
+}
+
+.compare-container-main-content {
+  width: 100%;
+}
+
+.compare-content {
+  overflow: hidden;
+}
