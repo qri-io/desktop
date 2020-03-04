@@ -33,6 +33,9 @@ export const CompareComponent: React.FC<CompareProps> = (props) => {
 
   React.useEffect(() => {
     if (!params.left || !params.right) {
+      if (data) {
+        setData(null)
+      }
       return
     }
     setLoading(true)

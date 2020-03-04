@@ -2,6 +2,20 @@
   background: #123459;
   height: 100%;
 
+  .compare-sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .reset {
+      cursor: pointer;
+
+      &.disabled {
+        display: none;
+      }
+    }
+  }
+
   .picker {
     display: flex;
 

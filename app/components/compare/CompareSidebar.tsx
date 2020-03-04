@@ -1,10 +1,19 @@
 import React from 'react'
 import { remote } from 'electron'
+import fs from 'fs'
+import { Action } from 'redux'
 
 import TextInput from '../form/TextInput'
 import ButtonInput from '../form/ButtonInput'
 import Icon from '../chrome/Icon'
 import ExternalLink from '../ExternalLink'
+import { connect } from 'react-redux'
+import Store, { ToastType } from '../../models/store'
+
+import {
+  openToast
+} from '../../actions/ui'
+import classNames from 'classnames'
 
 export interface CompareParams {
   left: string
@@ -14,9 +23,10 @@ export interface CompareParams {
 export interface CompareSidebarProps {
   data: CompareParams
   onChange: (p: CompareParams) => void
+  openToast: (type: ToastType, name: string, message: string) => Action
 }
 
-const CompareSidebar: React.FC<CompareSidebarProps> = ({ data, onChange }) => {
+export const CompareSidebarComponent: React.FC<CompareSidebarProps> = ({ data, onChange, openToast, closeToast }) => {
   const pathPicker = (side: string) => {
     const window = remote.getCurrentWindow()
     const filePaths: string[] | undefined = remote.dialog.showOpenDialogSync(window, {
@@ -32,12 +42,22 @@ const CompareSidebar: React.FC<CompareSidebarProps> = ({ data, onChange }) => {
       return
     }
 
+    let filepath = filePaths[0]
+
+    const stats = fs.statSync(filepath)
+
+    // if over 10 mb reject
+    if (stats.size > (1024 * 1000 * 10)) {
+      filepath = ''
+      openToast("error", "file size", "file must be under 10MB")
+    }
+
     switch (side) {
       case 'left':
-        onChange({ left: filePaths[0], right: data.right })
+        onChange({ left: filepath, right: data.right })
         break
       case 'right':
-        onChange({ right: filePaths[0], left: data.left })
+        onChange({ right: filepath, left: data.left })
         break
     }
   }
@@ -54,8 +74,9 @@ const CompareSidebar: React.FC<CompareSidebarProps> = ({ data, onChange }) => {
 
   return (
     <div className='compare-sidebar sidebar'>
-      <div className='sidebar-header sidebar-padded-container'>
+      <div className='sidebar-header sidebar-padded-container compare-sidebar-header'>
         <p className='pane-title'>Compare</p>
+        <div className={classNames('reset', { disabled: !(data.left || data.right) })} onClick={() => { onChange({ right: '', left: '' }) }}>reset</div>
       </div>
       <div className='sidebar-padded-container'>
         <div className='picker'>
@@ -105,4 +126,11 @@ const CompareSidebar: React.FC<CompareSidebarProps> = ({ data, onChange }) => {
   )
 }
 
-export default CompareSidebar
+const mapStateToProps = (state: Store, ownProps: CompareSidebarProps) => {
+  return ownProps
+}
+
+// TODO (b5) - this component doesn't need to be a container. Just feed it the right data
+export default connect(mapStateToProps, {
+  openToast
+})(CompareSidebarComponent)
