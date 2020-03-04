@@ -79,6 +79,9 @@ const commitDetailsReducer: Reducer = (state = initialState, action: AnyAction):
           },
           readme: {
             value: dataset.readme
+          },
+          transform: {
+            value: dataset && dataset.transform && dataset.transform.scriptBytes ? atob(dataset.transform.scriptBytes) : undefined
           }
         }
       }

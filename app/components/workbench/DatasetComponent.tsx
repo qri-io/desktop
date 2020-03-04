@@ -242,7 +242,7 @@ export const DatasetComponent: React.FunctionComponent<DatasetComponentProps> = 
         >
           <div className='transition-wrap'>
             <Transform
-              data={data.transform}
+              data={data.transform || ''}
               qriRef={qriRef}
             />
           </div>
