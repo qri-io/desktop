@@ -98,8 +98,9 @@ const Body: React.FunctionComponent<BodyProps> = (props) => {
     <div className='transition-group'>
       {shouldDisplayJsonViewer(structure.format)
         ? <BodyJson
-          body={body}
+          data={body}
           pageInfo={pageInfo}
+          previewWarning={false}
         />
         : <BodyTable
           headers={headers}
