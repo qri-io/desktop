@@ -7,11 +7,12 @@ import { Structure, Commit } from '../../models/dataset'
 import fileSize from '../../utils/fileSize'
 
 interface CommitDetailsHeaderProps {
+  path: string
   structure: Structure
   commit: Commit
 }
 
-const CommitDetailsHeader: React.FunctionComponent<CommitDetailsHeaderProps> = ({ structure, commit }) => {
+const CommitDetailsHeader: React.FunctionComponent<CommitDetailsHeaderProps> = ({ path, structure, commit }) => {
   return (
     <div className='commit-details-header'>
       {structure && commit && <div className='details-flex'>
@@ -23,6 +24,7 @@ const CommitDetailsHeader: React.FunctionComponent<CommitDetailsHeaderProps> = (
               <FontAwesomeIcon icon={faClock} size='sm'/>&nbsp;
               {moment(commit.timestamp).format('MMMM Do YYYY, h:mm:ss a')}
             </div>
+            <small className='small hash'>{path && path.replace('/ipfs/', '') }</small>
           </div>
         </div>
         <div className='details-column'>

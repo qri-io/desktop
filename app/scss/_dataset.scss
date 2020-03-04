@@ -369,7 +369,7 @@ $header-font-size: .9rem;
   }
 
   .commit-details-header {
-    height: 50px;
+    height: 74px;
     padding: $sidebar-item-padding;
     border-bottom: $list-item-bottom-border;
 
@@ -387,6 +387,14 @@ $header-font-size: .9rem;
         align-items: center;
         display: flex;
         justify-content: space-around;
+      }
+
+      .time-message {
+        margin: 2px 0;
+      }
+
+      .small.hash {
+        font-size: 12px;
       }
     }
   }

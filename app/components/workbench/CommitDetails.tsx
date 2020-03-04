@@ -64,7 +64,11 @@ const CommitDetails: React.FunctionComponent<CommitDetailsProps> = (props) => {
 
   return (
     <div id='commit-details' className='dataset-content transition-group'>
-      <CommitDetailsHeader structure={structure.value} commit={data.components && commit.value}/>
+      <CommitDetailsHeader
+        path={path}
+        structure={structure.value}
+        commit={data.components && commit.value}
+      />
       <Layout
         showNav={false}
         id={'commit-details'}
