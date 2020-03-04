@@ -18,8 +18,7 @@ import {
   History,
   ComponentType,
   SelectedComponent,
-  Status,
-  ToastType
+  Status
 } from '../../models/store'
 import Dataset from '../../models/dataset'
 import { Modal, ModalType } from '../../models/modals'
@@ -28,14 +27,13 @@ import { defaultSidebarWidth } from '../../reducers/ui'
 
 import { Resizable } from '../Resizable'
 import Layout from '../Layout'
-// import UnlinkedDataset from './UnlinkedDataset'
-import DatasetComponent from '../DatasetComponent'
+import DatasetComponent from './DatasetComponent'
 import NoDatasetSelected from './NoDatasetSelected'
 import HeaderColumnButton from '../chrome/HeaderColumnButton'
 import Hamburger from '../chrome/Hamburger'
 import WorkbenchSidebar from './WorkbenchSidebar'
 import DetailsBarContainer from '../../containers/DetailsBarContainer'
-import CommitDetails from '../CommitDetails'
+import CommitDetails from './CommitDetails'
 import NoDatasets from '../NoDatasets'
 import NotInNamespace from './NotInNamespace'
 
@@ -75,13 +73,10 @@ export interface WorkbenchProps extends RouteComponentProps {
   setSidebarWidth: (type: string, sidebarWidth: number) => Action
   setCommit: (path: string) => Action
   setComponent: (type: ComponentType, activeComponent: string) => Action
-  setDetailsBar: (details: Record<string, any>) => Action
   setMutationsDataset: (data: Dataset) => Action
   resetMutationsDataset: () => Action
   setMutationsStatus: (status: Status) => Action
   resetMutationsStatus: () => Action
-  openToast: (type: ToastType, name: string, message: string) => Action
-  closeToast: () => Action
 
   // fetching actions
   fetchWorkbench: () => LaunchedFetchesAction
@@ -323,9 +318,6 @@ class Workbench extends React.Component<WorkbenchProps, Status> {
       setActiveTab,
       setCommit,
       setComponent,
-      setDetailsBar,
-      openToast,
-      closeToast,
 
       fetchHistory,
       fetchBody,
@@ -469,21 +461,19 @@ class Workbench extends React.Component<WorkbenchProps, Status> {
             >
               { inNamespace
                 ? <DatasetComponent
-                  details={details}
-                  data={this.datasetFromMutations()}
-                  stats={stats}
-                  bodyPageInfo={workingDataset.components.body.pageInfo}
-                  setDetailsBar={setDetailsBar}
+                  qriRef={{ location: data.location, username: peername, name: name }}
                   peername={peername}
                   name={name}
+                  data={this.datasetFromMutations()}
+                  details={details}
+                  stats={stats}
+                  bodyPageInfo={workingDataset.components.body.pageInfo}
                   fetchBody={fetchBody}
                   write={isLinked ? fsiWrite : this.handleSetDataset}
                   component={selectedComponent}
                   componentStatus={status}
                   isLoading={workingDataset.isLoading}
                   fsiPath={workingDataset.fsiPath}
-                  openToast={openToast}
-                  closeToast={closeToast}
                 />
                 : <NotInNamespace />
               }
@@ -498,7 +488,6 @@ class Workbench extends React.Component<WorkbenchProps, Status> {
               <CommitDetails
                 data={data.head}
                 details={details}
-                setDetailsBar={setDetailsBar}
                 fetchCommitBody={fetchCommitBody}
                 write={isLinked ? fsiWrite : this.handleSetDataset}
                 selections={selections}

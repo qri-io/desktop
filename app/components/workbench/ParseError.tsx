@@ -1,8 +1,6 @@
 import * as React from 'react'
-import Button from './chrome/Button'
+import Button from '../chrome/Button'
 import { shell } from 'electron'
-
-// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 interface ParseErrorProps {
   component: string
@@ -11,8 +9,8 @@ interface ParseErrorProps {
 }
 
 const ParseError: React.FunctionComponent<ParseErrorProps> = ({ component, filename, fsiPath }) => (
-  <div className={'unlinked-dataset'}>
-    <div className={'message-container'}>
+  <div className='unlinked-dataset'>
+    <div className='message-container'>
       <div>
         <h4>There are parsing errors in your {component}</h4>
         <p>Fix the errors in your <strong>{filename}</strong> file to be able to view it in Qri Desktop.</p>

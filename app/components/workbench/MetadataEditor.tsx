@@ -3,17 +3,17 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faInfoCircle } from '@fortawesome/free-solid-svg-icons'
 import cloneDeep from 'clone-deep'
 
-import ExternalLink from './ExternalLink'
-import TextInput from './form/TextInput'
-import TextAreaInput from './form/TextAreaInput'
-import MultiTextInput from './form/MultiTextInput'
-import DropdownInput from './form/DropdownInput'
-import MultiStructuredInput from './form/MultiStructuredInput'
-import { ApiActionThunk } from '../store/api'
+import ExternalLink from '../ExternalLink'
+import TextInput from '../form/TextInput'
+import TextAreaInput from '../form/TextAreaInput'
+import MultiTextInput from '../form/MultiTextInput'
+import DropdownInput from '../form/DropdownInput'
+import MultiStructuredInput from '../form/MultiStructuredInput'
+import { ApiActionThunk } from '../../store/api'
 
-import { Meta } from '../models/dataset'
+import { Meta } from '../../models/dataset'
 
-import SpinnerWithIcon from './chrome/SpinnerWithIcon'
+import SpinnerWithIcon from '../chrome/SpinnerWithIcon'
 
 interface MetadataEditorProps {
   data: Meta

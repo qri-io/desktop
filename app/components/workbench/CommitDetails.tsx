@@ -1,47 +1,15 @@
 import * as React from 'react'
-import moment from 'moment'
 import { Action } from 'redux'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faClock } from '@fortawesome/free-regular-svg-icons'
 
-import HistoryComponentList from '../components/HistoryComponentList'
+import { CommitDetails as ICommitDetails, ComponentType, SelectedComponent, Selections } from '../../models/Store'
+import Dataset from '../../models/dataset'
+import { Details } from '../../models/details'
+import { ApiActionThunk } from '../../store/api'
+
+import HistoryComponentList from '../HistoryComponentList'
 import DatasetComponent from './DatasetComponent'
-import Layout from './Layout'
-import Dataset, { Structure, Commit } from '../models/dataset'
-import { CommitDetails as ICommitDetails, ComponentType, SelectedComponent, Selections } from '../models/Store'
-import fileSize from '../utils/fileSize'
-import { Details } from '../models/details'
-import { ApiActionThunk } from '../store/api'
-
-interface CommitDetailsHeaderProps {
-  structure: Structure
-  commit: Commit
-}
-
-const CommitDetailsHeader: React.FunctionComponent<CommitDetailsHeaderProps> = ({ structure, commit }) => {
-  return (
-    <div className='commit-details-header'>
-      {structure && commit && <div className='details-flex'>
-        <div className='text-column'>
-          <div id='commit-title' className='text'>{commit.title}</div>
-          <div className='subtext'>
-            {/* <img className= 'user-image' src = {'https://avatars0.githubusercontent.com/u/1154390?s=60&v=4'} /> */}
-            <div className='time-message'>
-              <FontAwesomeIcon icon={faClock} size='sm'/>&nbsp;
-              {moment(commit.timestamp).format('MMMM Do YYYY, h:mm:ss a')}
-            </div>
-          </div>
-        </div>
-        <div className='details-column'>
-          {structure.length && <div className='detail' id='commit-details-header-file-size'>{fileSize(structure.length)}</div>}
-          {structure.format && <div className='detail' id='commit-details-header-format'>{structure.format.toUpperCase()}</div>}
-          {structure.entries && <div className='detail' id='commit-details-header-entries'>{structure.entries.toLocaleString()} {structure.entries !== 1 ? 'entries' : 'entry'}</div>}
-          {structure.errCount && <div className='detail' id='commit-details-header-errors'>{structure.errCount.toLocaleString()} {structure.errCount !== 1 ? 'errors' : 'error'}</div>}
-        </div>
-      </div>}
-    </div>
-  )
-}
+import Layout from '../Layout'
+import CommitDetailsHeader from './CommitDetailsHeader'
 
 export interface CommitDetailsProps {
   data: ICommitDetails
@@ -49,27 +17,18 @@ export interface CommitDetailsProps {
   details: Details
 
   fetchCommitBody: (page?: number, pageSize?: number) => ApiActionThunk
-  setDetailsBar: (details: Record<string, any>) => Action
   setComponent: (type: ComponentType, activeComponent: string) => Action
   fsiWrite: (peername: string, name: string, dataset: Dataset) => ApiActionThunk
 }
 
-const CommitDetails: React.FunctionComponent<CommitDetailsProps> = ({
-  data,
-  // display details
-  details,
-  selections,
-
-  // setting actions
-  setDetailsBar,
-  setComponent,
-
-  // fetching api actions
-  fetchCommitBody,
-
-  // other api actions
-  fsiWrite
-}) => {
+const CommitDetails: React.FunctionComponent<CommitDetailsProps> = (props) => {
+  const {
+    data,
+    details,
+    selections,
+    setComponent,
+    fetchCommitBody
+  } = props
   // we have to guard against an odd case when we look at history
   // it is possible that we can get the history of a dataset, but
   // not have every version of that dataset in our repo
@@ -122,11 +81,11 @@ const CommitDetails: React.FunctionComponent<CommitDetailsProps> = ({
         sidebarWidth={150}
         mainContent={(
           <DatasetComponent
+            qriRef={{}}
             data={dataset}
             peername={peername}
             name={name}
             details={details}
-            setDetailsBar={setDetailsBar}
             fetchBody={fetchCommitBody}
             isLoading={loading}
             bodyPageInfo={pageInfo}

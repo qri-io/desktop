@@ -102,7 +102,7 @@ const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction
             value: dataset && dataset.structure ? dataset.structure : undefined
           },
           transform: {
-            value: dataset && dataset.transform ? dataset.transform : undefined
+            value: dataset && dataset.transform && dataset.transform.scriptBytes ? atob(dataset.transform.scriptBytes) : undefined
           }
         }
       }

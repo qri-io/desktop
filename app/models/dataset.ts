@@ -86,6 +86,7 @@ export interface Dataset {
   bodyPath?: string
   commit?: Commit
   readme?: string
+  transform?: string
   [key: string]: any
 }
 

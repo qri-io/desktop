@@ -1,11 +1,9 @@
 import { connect } from 'react-redux'
-import Workbench, { WorkbenchProps, WorkbenchData } from '../components/workbench/Workbench'
+
 import { fetchWorkbench } from '../actions/workbench'
 import { setMutationsDataset, setMutationsStatus, resetMutationsDataset, resetMutationsStatus, discardMutationsChanges } from '../actions/mutations'
-
 import { Store, Selections, WorkingDataset, Status } from '../models/store'
-
-import { setSidebarWidth, setModal, setDetailsBar, openToast, closeToast } from '../actions/ui'
+import { setSidebarWidth, setModal } from '../actions/ui'
 import {
   fetchBody,
   fetchCommitBody,
@@ -27,6 +25,8 @@ import {
   setSelectedListItem
 } from '../actions/selections'
 import { DetailsType } from '../models/details'
+
+import Workbench, { WorkbenchProps, WorkbenchData } from '../components/workbench/Workbench'
 
 const mergeProps = (props: any, actions: any): WorkbenchProps => {
   return { ...props, ...actions }
@@ -114,13 +114,10 @@ const WorkbenchContainer = connect(
     setSidebarWidth,
     setCommit,
     setComponent: setSelectedListItem,
-    setDetailsBar,
     setMutationsStatus,
     setMutationsDataset,
     resetMutationsDataset,
     resetMutationsStatus,
-    openToast,
-    closeToast,
 
     fetchHistory,
     fetchWorkingDataset,

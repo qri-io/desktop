@@ -1,14 +1,18 @@
 import * as React from 'react'
+import { Action, bindActionCreators, Dispatch } from 'redux'
+import { connect } from 'react-redux'
 import classNames from 'classnames'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSync } from '@fortawesome/free-solid-svg-icons'
-import { Action } from 'redux'
 
-import TextInput from './form/TextInput'
-import TextAreaInput from './form/TextAreaInput'
-import { validateCommitState } from '../utils/formValidation'
-import { Status } from '../models/store'
-import { ApiAction } from '../store/api'
+import Store, { Status } from '../../models/store'
+import { saveWorkingDatasetAndFetch } from '../../actions/api'
+import { setCommitTitle, setCommitMessage } from '../../actions/mutations'
+import { validateCommitState } from '../../utils/formValidation'
+import { ApiAction } from '../../store/api'
+
+import TextInput from '../form/TextInput'
+import TextAreaInput from '../form/TextAreaInput'
 
 export interface CommitProps {
   isLoading: boolean
@@ -21,7 +25,7 @@ export interface CommitProps {
   setCommitMessage: (message: string) => Action
 }
 
-const Commit: React.FunctionComponent<CommitProps> = (props: CommitProps) => {
+export const CommitComponent: React.FC<CommitProps> = (props) => {
   const {
     isLoading,
     status,
@@ -100,4 +104,32 @@ const Commit: React.FunctionComponent<CommitProps> = (props: CommitProps) => {
   )
 }
 
-export default Commit
+const mapStateToProps = (state: Store) => {
+  const { workingDataset, mutations } = state
+  const { status, peername, name } = workingDataset
+  const { save } = mutations
+  const { title, message } = save.value
+
+  // get data for the currently selected component
+  return {
+    isLoading: mutations.save.isLoading,
+    datasetRef: `${peername}/${name}`,
+    title,
+    message,
+    status
+  }
+}
+
+const mergeProps = (props: any, actions: any): CommitProps => { //eslint-disable-line
+  return { ...props, ...actions }
+}
+
+const mapDispatchToProps = (dispatch: Dispatch) => {
+  return bindActionCreators({
+    setCommitTitle,
+    setCommitMessage,
+    saveWorkingDatasetAndFetch
+  }, dispatch)
+}
+
+export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(CommitComponent)

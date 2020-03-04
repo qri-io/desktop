@@ -54,21 +54,16 @@ export default function Routes (props: any) {
         }} />
 
         {/* App Sections */}
-        { __BUILD__.ENABLE_NETWORK_SECTION &&
-          <Route path='/network/:username/:name/at/ipfs/:path' render={(props) => {
-            return sectionElement('network', <NetworkContainer {...props} />)
-          }} />
-        }
-        { __BUILD__.ENABLE_NETWORK_SECTION &&
-          <Route path='/network/:username/:name' render={(props) => {
-            return sectionElement('network', <NetworkContainer {...props} />)
-          }} />
-        }
-        { __BUILD__.ENABLE_NETWORK_SECTION &&
-          <Route exact path='/network' render={(props) => {
-            return sectionElement('network', <NetworkContainer {...props} />)
-          }} />
-        }
+        <Route path='/network/:username/:name/at/ipfs/:path' render={(props) => {
+          return sectionElement('network', <NetworkContainer {...props} />)
+        }} />
+        <Route path='/network/:username/:name' render={(props) => {
+          return sectionElement('network', <NetworkContainer {...props} />)
+        }} />
+        <Route exact path='/network' render={(props) => {
+          return sectionElement('network', <NetworkContainer {...props} />)
+        }} />
+
         <Route exact path='/collection' render={() => {
           return sectionElement('collection', <CollectionContainer setModal={setModal} />)
         }} />

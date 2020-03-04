@@ -1,33 +1,37 @@
 import * as React from 'react'
-import path from 'path'
-
-import MetadataContainer from '../containers/MetadataContainer'
-import MetadataEditor from '../components/MetadataEditor'
-import Structure from '../components/Structure'
-import ParseError from './ParseError'
-import Readme from '../components/Readme'
-import TransformContainer from '../containers/TransformContainer'
-import ReadmeHistoryContainer from '../containers/ReadmeHistoryContainer'
-import { CSSTransition } from 'react-transition-group'
-import SpinnerWithIcon from './chrome/SpinnerWithIcon'
-import CommitHistoryContainer from '../containers/CommitHistoryContainer'
-import CommitContainer from '../containers/CommitContainer'
-
-import { getComponentDisplayProps } from './ComponentList'
-
-import { StatusInfo, SelectedComponent, PageInfo, ToastType } from '../models/store'
-import Body from './Body'
-import { Details } from '../models/details'
-import { ApiActionThunk } from '../store/api'
 import { Action } from 'redux'
-import Dataset from '../models/dataset'
-import DropZone from './chrome/DropZone'
-import CalloutBlock from './chrome/CalloutBlock'
-import Icon from './chrome/Icon'
-import StatusDot from './chrome/StatusDot'
-import { ToastTypes } from './chrome/Toast'
+import { connect } from 'react-redux'
+import path from 'path'
+import { CSSTransition } from 'react-transition-group'
+
+import { openToast, closeToast, setDetailsBar } from '../../actions/ui'
+
+import { Store, StatusInfo, SelectedComponent, PageInfo, ToastType } from '../../models/store'
+import { Details } from '../../models/details'
+import { QriRef } from '../../models/qriRef'
+import Dataset from '../../models/dataset'
+import { ApiActionThunk } from '../../store/api'
+import { getComponentDisplayProps } from '../ComponentList'
+import { ToastTypes } from '../chrome/Toast'
+
+import Body from './Body'
+import CalloutBlock from '../chrome/CalloutBlock'
+import Commit from './Commit'
+import CommitHistory from './CommitHistory'
+import DropZone from '../chrome/DropZone'
+import Icon from '../chrome/Icon'
+import Metadata from './Metadata'
+import MetadataEditor from './MetadataEditor'
+import Readme from '../Readme'
+import ReadmeHistory from './ReadmeHistory'
+import ParseError from './ParseError'
+import StatusDot from '../chrome/StatusDot'
+import Structure from '../Structure'
+import SpinnerWithIcon from '../chrome/SpinnerWithIcon'
+import Transform from './Transform'
 
 interface DatasetComponentProps {
+  qriRef: QriRef
   data: Dataset
 
   // display details
@@ -37,7 +41,7 @@ interface DatasetComponentProps {
   peername: string
   name: string
 
-  // seting actions
+  // setting actions
   setDetailsBar: (details: Record<string, any>) => Action
   openToast: (type: ToastType, name: string, message: string) => Action
   closeToast: () => Action
@@ -53,8 +57,9 @@ interface DatasetComponentProps {
   fsiPath?: string
 }
 
-const DatasetComponent: React.FunctionComponent<DatasetComponentProps> = (props: DatasetComponentProps) => {
+export const DatasetComponent: React.FunctionComponent<DatasetComponentProps> = (props) => {
   const {
+    qriRef,
     component: selectedComponent,
     componentStatus,
     isLoading,
@@ -91,11 +96,10 @@ const DatasetComponent: React.FunctionComponent<DatasetComponentProps> = (props:
     setDragging(false)
     e.preventDefault()
     const ext = path.extname(e.dataTransfer.files[0].path)
-    // closeToast()
     if (!(ext === '.csv' || ext === '.json')) {
       // open toast for 1 second
       openToast(ToastTypes.error, 'drag-drop', 'unsupported file format: only json and csv supported')
-      setTimeout(() => closeToast(), 1000)
+      setTimeout(closeToast, 1000)
       return
     }
 
@@ -143,7 +147,7 @@ const DatasetComponent: React.FunctionComponent<DatasetComponentProps> = (props:
         >
           <div className='transition-wrap'>
             {history
-              ? <ReadmeHistoryContainer />
+              ? <ReadmeHistory />
               : <Readme
                 data={data.readme}
                 name={name}
@@ -166,7 +170,7 @@ const DatasetComponent: React.FunctionComponent<DatasetComponentProps> = (props:
           <div className='transition-wrap'>
             {
               history
-                ? <MetadataContainer />
+                ? <Metadata />
                 : <MetadataEditor
                   data={data.meta}
                   write={handleWrite}
@@ -237,7 +241,10 @@ const DatasetComponent: React.FunctionComponent<DatasetComponentProps> = (props:
           appear={true}
         >
           <div className='transition-wrap'>
-            <TransformContainer />
+            <Transform
+              data={data.transform || ''}
+              qriRef={qriRef}
+            />
           </div>
         </CSSTransition>
         <CSSTransition
@@ -252,8 +259,8 @@ const DatasetComponent: React.FunctionComponent<DatasetComponentProps> = (props:
           <div className='transition-wrap'>
             {
               history
-                ? <CommitHistoryContainer />
-                : <CommitContainer />
+                ? <CommitHistory />
+                : <Commit />
             }
           </div>
         </CSSTransition>
@@ -262,4 +269,15 @@ const DatasetComponent: React.FunctionComponent<DatasetComponentProps> = (props:
     </div>
   )
 }
-export default DatasetComponent
+
+const mapStateToProps = (state: Store, ownProps: DatasetComponentProps) => {
+  // get data for the currently selected component
+  return ownProps
+}
+
+// TODO (b5) - this component doesn't need to be a container. Just feed it the right data
+export default connect(mapStateToProps, {
+  openToast,
+  closeToast,
+  setDetailsBar
+})(DatasetComponent)
