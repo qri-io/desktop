@@ -5,11 +5,12 @@ import NavbarContainer from '../containers/NavbarContainer'
 
 interface LayoutProps {
   id: string
-  sidebarContent: any
   sidebarWidth: number
+  sidebarContent: React.ReactElement
+  mainContent: React.ReactElement
+  headerContent?: React.ReactElement
   onSidebarResize?: (width: number) => void
   maximumSidebarWidth?: number
-  mainContent: any
 
   /**
    * Some views may not want to display the navbar, setting `showNav` = false
@@ -27,11 +28,13 @@ const Layout: React.FunctionComponent<LayoutProps> = (props: LayoutProps) => {
     onSidebarResize,
     maximumSidebarWidth = 495,
     mainContent,
+    headerContent,
     showNav = true
   } = props
 
   return (
     <div id={id} className='sidebar-layout'>
+      {headerContent}
       <div className='columns'>
         <Resizable
           id={`${id}-sidebar`}
