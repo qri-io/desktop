@@ -33,7 +33,8 @@ import {
   faExpandArrowsAlt,
   faEllipsisH,
   faSort,
-  faMinus
+  faMinus,
+  faSave
 } from '@fortawesome/free-solid-svg-icons'
 
 interface IconProps {
@@ -72,7 +73,7 @@ const icons: Record<string, any> = {
   'dataset': faFileAlt,
   'datasets': faCopy,
   'readme': faGlasses,
-  'commit': faQuestionCircle,
+  'commit': faSave,
   'lock': faLock,
   'transform': faCode,
   'close': faTimes,
