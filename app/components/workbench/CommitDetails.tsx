@@ -63,11 +63,17 @@ const CommitDetails: React.FunctionComponent<CommitDetailsProps> = (props) => {
   const loading = !path || path !== selections.commit || isLoading
 
   return (
-    <div id='commit-details' className='dataset-content transition-group'>
-      <CommitDetailsHeader structure={structure.value} commit={data.components && commit.value}/>
+    <div className='dataset-content transition-group'>
       <Layout
         showNav={false}
         id={'commit-details'}
+        headerContent={
+          <CommitDetailsHeader
+            path={path}
+            structure={structure.value}
+            commit={data.components && commit.value}
+          />
+        }
         sidebarContent={(
           <HistoryComponentList
             datasetSelected={peername !== '' && name !== ''}
