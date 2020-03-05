@@ -1,3 +1,83 @@
+# [0.4.0](https://github.com/qri-io/desktop/compare/v0.3.5...v0.4.0) (2020-03-05)
+
+Release notes 0.4.0
+
+Welcome to the Qri Desktop App version 0.4.0!
+
+This version is one of our biggest to date. We've got a whole slew of new features for you to explore & a number of bugs have been squashed. With this release you can now browse, search, and clone datasets, all within the app. We’ve brought dataset editing in-app, and we’re premiering our first visual diffing tool with the compare section.
+
+
+## Network Explorer
+
+The first big feature we’re showing off is our new Network page. Browse the Qri network in app! Preview featured and recently published datasets without having to download the full dataset. Find a dataset you want to view in its entirety? **Clone** the dataset! That will download it from the network to your computer.
+
+This also means that when you publish, other users will be able to see your work directly in-app. More people will see your work!
+
+## Dataset Search
+
+And what browsing experience would be complete without **search**? We put a navigation bar at the top of the app so you can search the Qri network or your own local Qri repo for datasets, no matter where you are in the app.
+
+There is also a back and forward button in the nav bar so you can walk back through your browsing history.
+
+## In-App Editing
+
+You can now edit your dataset in app without having to checkout your files to the file system! This streamlines and simplifies iteration for those who don't need the feature of linking your dataset to a folder on your computer.
+
+You can edit the Readme, Meta, and Structure component in the Status tab of the Workbench. To make changes to the Body, edit the file using an appropriate app (text editors, Numbers, Excel, etc.), save (as .csv), and **drag and drop** the new version of the body file onto the Body component. When you make your commit, your new version will contain that updated body!
+
+## Diff CSV’s with the Compare View
+
+The next phase of features for Qri involve heavy use of structured data diffing, and we’re starting with an experiment. Use the compare view to generate a diff of any two csv files. This feature is very much a work-in-progress. If you have any feedback while you use the compare view, please let us know by filing an issue!
+
+In the future we plan to expand to other file formats, dataset comparison, and up the size limit. We plan to make diff display one of the central things Qri does, and once we’re sure we have a stable, accurate compare view, we’ll start adding it more and more places throughout the app.
+
+
+### Bug Fixes
+
+* **App:** properly remove listeners on app unmount ([c7a1fbe](https://github.com/qri-io/desktop/commit/c7a1fbe))
+* **body:** minor ui bugs ([3568826](https://github.com/qri-io/desktop/commit/3568826))
+* **Body:** fix param names in `BodyJson` call ([e26f744](https://github.com/qri-io/desktop/commit/e26f744))
+* **compare:** reject dataset larger then 10MB, add 'reset' button ([f54c34c](https://github.com/qri-io/desktop/commit/f54c34c))
+* **DatasetItem:** themeList not correctly converted to array ([751cfee](https://github.com/qri-io/desktop/commit/751cfee)), closes [#462](https://github.com/qri-io/desktop/issues/462)
+* **HistoryListItem:** add `allowDisable` flag to finetune interactions ([8723251](https://github.com/qri-io/desktop/commit/8723251))
+* **HistoryListItem, e2e tests:** fix logic bug in HistoryListItem ([80a109f](https://github.com/qri-io/desktop/commit/80a109f))
+* **Icon, MetadataEditor:** add commit icon, fix meta tooltips ([9b07102](https://github.com/qri-io/desktop/commit/9b07102))
+* **json:** use `BodyJson` component in `BodySegment` ([4bb9a09](https://github.com/qri-io/desktop/commit/4bb9a09))
+* **Navbar:** indicates which page you are on when you click it ([ca10b6a](https://github.com/qri-io/desktop/commit/ca10b6a))
+* **network:** previews of datasets with JSON bodies now load ([57e7862](https://github.com/qri-io/desktop/commit/57e7862))
+* **Network:** do not show 'clone' button when dataset is in user's collection ([f13ff3b](https://github.com/qri-io/desktop/commit/f13ff3b))
+* **Preview:** show `PreviewNotFound` when we don't have access to the version ([ce42883](https://github.com/qri-io/desktop/commit/ce42883))
+* **save:** fix `saveWorkingDatasetAndFetch` to properly throw error ([1a1981f](https://github.com/qri-io/desktop/commit/1a1981f))
+* **Schema:** bug where i deleted `schemaItem.row` too soon ([d7f5dce](https://github.com/qri-io/desktop/commit/d7f5dce))
+* **Schema, Button, NetworkSidebar:** various styling/minor fixes ([84f1423](https://github.com/qri-io/desktop/commit/84f1423))
+* **StatsChart:** fix scrolling bug ([d695d91](https://github.com/qri-io/desktop/commit/d695d91))
+* **workbench:** don't mutate state tree ([aee3a50](https://github.com/qri-io/desktop/commit/aee3a50))
+* **workbench:** history transform views need to work as well ([02fe214](https://github.com/qri-io/desktop/commit/02fe214))
+* **workbench:** viewing trasnform component shouldn't crash ([804d7e1](https://github.com/qri-io/desktop/commit/804d7e1))
+* **Workbench:** discard `bodyPath` correctly ([44c3e5d](https://github.com/qri-io/desktop/commit/44c3e5d))
+* **Workbench:** if a dataset is not in your namespace, you can't edit it ([6a7193c](https://github.com/qri-io/desktop/commit/6a7193c))
+* **workbench history:** prevent page overflow in history view ([33ece81](https://github.com/qri-io/desktop/commit/33ece81))
+
+
+### Features
+
+* **clone:** add clone dataset option to `Network` ([be10959](https://github.com/qri-io/desktop/commit/be10959))
+* **compare:** compare two csv files with compare section ([510b822](https://github.com/qri-io/desktop/commit/510b822))
+* **compare:** style & wire up compare section ([08675b7](https://github.com/qri-io/desktop/commit/08675b7))
+* **dmg:** add dmg volumn icon ([48fa111](https://github.com/qri-io/desktop/commit/48fa111))
+* **ErrorHandler:** handle react errors, crash reports ([22480ea](https://github.com/qri-io/desktop/commit/22480ea))
+* **history:** add network route with path ([9a0bcfa](https://github.com/qri-io/desktop/commit/9a0bcfa))
+* **history:** show hash in CommitDetailsHeader ([5fe7760](https://github.com/qri-io/desktop/commit/5fe7760))
+* **logs:** fetch logs on history preview, fix search ([f899a8c](https://github.com/qri-io/desktop/commit/f899a8c))
+* **network:** add network home feed page with ephemeral fetching ([8e93ae1](https://github.com/qri-io/desktop/commit/8e93ae1))
+* **QriRef:** define QriRef, use it in NetworkContainer, Network ([5312921](https://github.com/qri-io/desktop/commit/5312921))
+* **search:** add search modal and search to navbar ([d6ba5da](https://github.com/qri-io/desktop/commit/d6ba5da))
+* **websockets:** remove polling and add middleware for websockets ([41c0682](https://github.com/qri-io/desktop/commit/41c0682))
+* **workbench:** drag-and-drop body updates ([5de9843](https://github.com/qri-io/desktop/commit/5de9843))
+* **Workbench:** edit in the app without checking out ([ee3de61](https://github.com/qri-io/desktop/commit/ee3de61))
+
+
+
 ## [0.3.5](https://github.com/qri-io/desktop/compare/v0.3.4...v0.3.5) (2020-02-03)
 
 Patch release to upgrade electron & electron-builder, re-enabling auto update on the app.
