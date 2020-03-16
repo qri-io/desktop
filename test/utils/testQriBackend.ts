@@ -57,11 +57,11 @@ export default class TestBackendProcess {
         })
       })
 
-      this.process.stdout.pipe(this.stdout);
-      this.process.stderr.pipe(this.stderr);
+      this.process.stdout.pipe(this.stdout)
+      this.process.stderr.pipe(this.stderr)
 
       this.process.on('error', (err: any) => { this.handleEvent('error', err) })
-      this.process.on('exit', () => {  /* noop */ })
+      this.process.on('exit', () => { /* noop */ })
       this.process.on('close', (err: any) => { this.teardownRepo() })
       this.process.on('disconnect', (err: any) => { this.handleEvent('disconnect', err) })
     } catch (err) {
@@ -96,24 +96,24 @@ export default class TestBackendProcess {
     throw 'Could not find qri binary'
   }
 
-  setupRepo() {
+  setupRepo () {
     this.dir = path.join(os.tmpdir(), 'qri_desktop_test_backend')
     fs.mkdirSync(this.dir)
 
     const qriPath = path.join(this.dir, '.qri')
     fs.mkdirSync(qriPath)
-    
+
     const ipfsPath = path.join(this.dir, '.ipfs')
     fs.mkdirSync(ipfsPath)
 
     return [this.dir, qriPath, ipfsPath]
   }
 
-  teardownRepo() {
+  teardownRepo () {
     if (this.dir !== '') {
       rimraf(this.dir, (err) => {
         if (err) {
-          console.log(err) 
+          console.log(err)
         }
       })
       this.dir = ''
