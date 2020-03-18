@@ -9,7 +9,7 @@ import http from 'http'
 
 const { Application } = require('spectron')
 
-const takeScreenshots = true
+const takeScreenshots = false
 
 describe('Qri End to End tests', function spec () {
   let app: any
@@ -46,6 +46,13 @@ describe('Qri End to End tests', function spec () {
   const metaDescription = 'List of all earthquakes and their magnitudes'
   const metaTheme = 'geology'
   const metaKeywords = ['earthquakes', 'USGS']
+  const metaLicense = {
+    type: "Open Data Commons Attribution License (ODC-By)",
+    url: "http://opendatacommons.org/licenses/by/1.0/"
+  }
+  const metaContributors = ['000', 'fred', 'fred@qri.io']
+  const metaCitations = ['mary', 'mary.com', 'mary@qri.io']
+  const metaCitations2 = ['george', 'george.com', 'george@qri.io']
   const metaAccessURL = 'https://earthquake.usgs.gov/earthquakes/feed/v1.0/csv.php'
   const metaDownloadURL = 'https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/significant_month.csv'
   const metaHomeURL = 'https://earthquake.usgs.gov/'
@@ -411,19 +418,21 @@ describe('Qri End to End tests', function spec () {
     await setValue('#title', metaTitle, artifactPath('create-a-meta-and-commit-set-value-title.png'))
     await delay(500)
     await setValue('#description', metaDescription, artifactPath('create-a-meta-and-commit-set-value-description.png'))
-    await delay(1000)
+    await delay(500)
+
     // add 1 theme, add a 2nd theme, remove the first theme
     await setValue('#theme-tag-input', 'test')
-    // await click('#description')
-    await sendKeys('#theme-tag-input', "Enter")
     await delay(500)
+    await sendKeys('#theme-tag-input', "Enter")
+    await delay(5000)
     await waitForExist('#theme-tag-0')
     await expectTextToBe('#theme-tag-0', 'test')
+    await delay(500)
 
     await setValue('#theme-tag-input', metaTheme)
     await sendKeys('#theme-tag-input', "Enter")
     await delay(500)
-    // await click('#description')
+
     await waitForExist('#theme-tag-1')
     await expectTextToBe('#theme-tag-1', metaTheme)
 
@@ -445,11 +454,52 @@ describe('Qri End to End tests', function spec () {
     await waitForExist('#keywords-tag-1')
     await expectTextToBe('#keywords-tag-1', metaKeywords[1])
 
-    await setValue('#language-tag-input', metaLanguage)
-    await sendKeys('#language-tag-input', "Enter")
+    // NOTE: not testing license because the select component is imported from 'react-select'
+
+    // set Contributors
+    await click('#contributors-add-item')
+    await waitForExist('#contributors-row-0')
+    await setValue('#contributors-row-0 #id-0', metaContributors[0])
+    await sendKeys('#contributors-row-0 #id-0', "Tab")
     await delay(500)
-    await waitForExist('#language-tag-0')
-    await expectTextToBe('#language-tag-0', metaLanguage)
+    await setValue('#contributors-row-0 #name-0', metaContributors[1])
+    await sendKeys('#contributors-row-0 #name-0', "Tab")
+    await delay(500)
+    await setValue('#contributors-row-0 #email-0', metaContributors[2])
+    await sendKeys('#contributors-row-0 #email-0', "Tab")
+    await delay(500)
+
+    // set citations row 1
+    await click('#citations-add-item')
+    await waitForExist('#citations-row-0')
+    await setValue('#citations-row-0 #name-0', metaCitations[0])
+    await sendKeys('#citations-row-0 #name-0', "Tab")
+    await delay(500)
+    await setValue('#citations-row-0 #url-0', metaCitations[1])
+    await sendKeys('#citations-row-0 #url-0', "Tab")
+    await delay(500)
+    await setValue('#citations-row-0 #email-0', metaCitations[2])
+    await sendKeys('#citations-row-0 #email-0', "Tab")
+    await delay(500)
+
+    // set citations row 2
+    await click('#citations-add-item')
+    await waitForExist('#citations-row-1')
+    await setValue('#citations-row-1 #name-1', metaCitations2[0])
+    await sendKeys('#citations-row-1 #name-1', "Tab")
+    await delay(500)
+    await setValue('#citations-row-1 #url-1', metaCitations2[1])
+    await sendKeys('#citations-row-1 #url-1', "Tab")
+    await delay(500)
+    await setValue('#citations-row-1 #email-1', metaCitations2[2])
+    await sendKeys('#citations-row-1 #email-1', "Tab")
+    await delay(500)
+
+    // set remove citations row 1
+    await click('#citations-remove-row-0')
+    await delay(500)
+    await waitForNotExist('#citations-row-1')
+    await delay(500)
 
     // set value for accessURL
     await setValue('#accessURL', metaAccessURL)
@@ -463,6 +513,13 @@ describe('Qri End to End tests', function spec () {
     // set value for readmeURL
     await setValue('#readmeURL', metaReadmeURL)
     await delay(500)
+
+    // set value for language
+    await setValue('#language-tag-input', metaLanguage)
+    await sendKeys('#language-tag-input', "Enter")
+    await delay(500)
+    await waitForExist('#language-tag-0')
+    await expectTextToBe('#language-tag-0', metaLanguage)
 
     // set value for accrualPeriodicity
     await setValue('#accrualPeriodicity', metaAccrualPeriodicity)
@@ -507,10 +564,18 @@ describe('Qri End to End tests', function spec () {
       await takeScreenshot(artifactPath('csv-workbench-view-meta.png'))
     }
 
+    await delay(5000)
+
     await expectTextToBe('#meta-title', metaTitle, artifactPath('create-a-meta-and-commit-expect-text-to-be-meta-title.png'))
     await expectTextToBe('#meta-description', metaDescription, artifactPath('create-a-meta-and-commit-expect-text-to-be-meta-description.png'))
     await expectTextToBe('#meta-theme', metaTheme)
     await expectTextToBe('#meta-keywords', metaKeywords.join(''))
+    await expectTextToBe('#meta-contributors .id-0 .keyvalue-table-value', metaContributors[0])
+    await expectTextToBe('#meta-contributors .name-0 .keyvalue-table-value', metaContributors[1])
+    await expectTextToBe('#meta-contributors .email-0 .keyvalue-table-value', metaContributors[2])
+    await expectTextToBe('#meta-citations .name-0 .keyvalue-table-value', metaCitations2[0])
+    await expectTextToBe('#meta-citations .url-0 .keyvalue-table-value', metaCitations2[1])
+    await expectTextToBe('#meta-citations .email-0 .keyvalue-table-value', metaCitations2[2])
     await expectTextToBe('#meta-accessURL', metaAccessURL)
     await expectTextToBe('#meta-downloadURL', metaDownloadURL)
     await expectTextToBe('#meta-homeURL', metaHomeURL)
@@ -857,12 +922,12 @@ describe('Qri End to End tests', function spec () {
     expect(recentDatasets.length).toBe(1)
   })
 
-  remove a dataset is commented out until we have a keyboard command in
-  place to open the remove modal
-  we also must create a `keyboard` function that takes a string
-  and mocks the user typing that string into the keyboard
-  it must handle both windows and mac defaults (ctrl vs cmd)
-  it('remove a dataset', async () => {
+    // remove a dataset is commented out until we have a keyboard command in
+    // place to open the remove modal
+    // we also must create a `keyboard` function that takes a string
+    // and mocks the user typing that string into the keyboard
+    // it must handle both windows and mac defaults (ctrl vs cmd)
+    // it('remove a dataset', async () => {
     const {
       click,
       exists,
