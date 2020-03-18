@@ -1,9 +1,11 @@
 import * as React from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
+import cloneDeep from 'clone-deep'
+import classNames from 'classnames'
 
 import InputLabel from './InputLabel'
-import Row from './MultiStructuredInputRow'
+import Row from '../item/MultiStructuredInputItem'
 import { User, Citation } from '../../models/dataset'
 import PseudoLink from '../PseudoLink'
 
@@ -12,7 +14,7 @@ export interface MultiStructuredInputProps {
   labelTooltip?: string
   name: 'citations' | 'contributors'
   value: User[] | Citation[] | undefined
-  onWrite?: (e: React.SyntheticEvent, target: string, value: any) => void
+  onWrite: (e: React.SyntheticEvent, target: string, value: any) => void
   placeHolder: string
   tooltipFor?: string
 }
@@ -32,81 +34,100 @@ const MultiStructuredInput: React.FunctionComponent<MultiStructuredInputProps> =
     placeHolder
   } = props
 
-  const emptyObjects = {
-    citations: {
-      name: '',
-      url: '',
-      email: ''
-    },
+  const emptyValues = {
     contributors: {
       id: '',
       name: '',
       email: ''
+    },
+    citations: {
+      name: '',
+      url: '',
+      email: ''
     }
   }
 
-  const [stateValue, setStateValue] = React.useState(value)
+  const [numRows, setNumRows] = React.useState(value ? value.length : 0)
+  const [canAdd, setCanAdd] = React.useState(true)
+
+  console.log(value)
 
   React.useEffect(() => {
-    if (value === stateValue) return
-    setStateValue(value)
+    if (value) {
+      if (value.length === numRows && !canAdd) setCanAdd(true)
+      else if (value.length < numRows && canAdd) setCanAdd(false)
+    } else {
+      if (numRows === 0 && !canAdd) setCanAdd(true)
+      else if (numRows !== 0 && canAdd) setCanAdd(false)
+    }
   }, [value])
 
   // handles changes, overwrites a user
-  const handleChange = (e: React.ChangeEvent, index: number, item: User | Citation) => {
-    if (stateValue) {
-      const clonedArray: User[] | Citation[] = Object.assign([], stateValue)
-      const clonedItem: User | Citation = Object.assign({}, item)
-      if (item) {
-        clonedArray[index] = clonedItem
-        setStateValue(clonedArray)
-      } else {
-        // if item comes back null, remove item from array
-        clonedArray.splice(index, 1)
-        setStateValue(clonedArray)
-        if (onWrite) {
-          onWrite(e, name, clonedArray)
-        }
+  const handleWrite = (e: React.ChangeEvent, index: number, item: User | Citation) => {
+    let valueCopy = cloneDeep(value)
+    const allBlank = Object.keys(item).every((field: string) => {
+      return item[field] === ''
+    })
+
+    // if this is a new row that the user has not added to yet
+    // don't do anything, leave the row blank and available
+    if (allBlank && (!valueCopy || valueCopy.length === index)) {
+      return
+    }
+
+    if (!valueCopy) {
+      onWrite(e, name, [item])
+    } else {
+      // in this case, since the row previously existed but is now blank, we should remove it
+      if (allBlank) {
+        removeItem(index)
+        return
       }
+      valueCopy[index] = item
+      console.log(valueCopy)
+      onWrite(e, name, valueCopy)
     }
   }
 
   const addItem = () => {
-    const clonedArray: User[] | Citation[] = Object.assign([], stateValue)
-    if (stateValue) {
-      // add an empty object
-      if (isUserArray(clonedArray)) {
-        clonedArray.push(emptyObjects['contributors'])
-      } else {
-        clonedArray.push(emptyObjects['citations'])
+    setNumRows((prev: number) => prev + 1)
+    setCanAdd(false)
+  }
+
+  const removeItem = (index: number) => {
+    return (e: React.SyntheticEvent) => {
+      if (!value) return
+      const valueCopy = cloneDeep(value)
+      setNumRows(prev => prev - 1)
+      if (index !== valueCopy.length) {
+        valueCopy.splice(index, 1)
+        onWrite(e, name, valueCopy)
       }
-      // send the new array up to the parent
-      setStateValue(clonedArray)
-    } else {
-      // push a new array with an empty object
-      setStateValue([emptyObjects[name]])
     }
   }
 
-  const headerRowValues = Object.keys(emptyObjects[name])
+  const headerRowValues = Object.keys(emptyValues[name])
 
-  const handleBlur = (e: React.SyntheticEvent) => {
-    if (onWrite) onWrite(e, name, stateValue)
-  }
-
-  const getRows = () => {
-    if (stateValue) {
-      if (isUserArray(stateValue)) {
-        return stateValue.map((item: User, i) => (
-          <Row key={i} name={name} item={item} index={i} onChange={handleChange} onBlur={handleBlur} />
-        ))
+  const getRows = (numRows: number) => {
+    const rows: JSX.Element[] = []
+    let val: User | Citation
+    for (var i = 0; i < numRows; i++) {
+      if (!value || value.length === i) {
+        val = cloneDeep(emptyValues[name])
       } else {
-        return stateValue.map((item: Citation, i) => (
-          <Row key={i} name={name} item={item} index={i} onChange={handleChange} onBlur={handleBlur} />
-        ))
+        val = value[i]
       }
+      rows.push(<Row
+        key={i}
+        name={name}
+        item={val}
+        index={i}
+        write={handleWrite}
+        fields={Object.keys(emptyValues[name])}
+        onRemove={removeItem(i)}
+      />)
     }
-    return null
+    return rows
   }
 
   return (
@@ -118,28 +139,44 @@ const MultiStructuredInput: React.FunctionComponent<MultiStructuredInputProps> =
       />
       <div className='multi-structured-input-container'>
         <div className='list'>
-          <div className='multi-structured-input flex-table'>
-            <div className='row header-row'>
+          <table>
+            <colgroup>
               {
-                headerRowValues.map((d: string) => (
-                  <div className='input-column capitalize' key={d}>
-                    {d.charAt(0) + d.slice(1)}
-                  </div>
-                ))
+                headerRowValues.map((field: string, i: number) => <col key={i}/>)
               }
-              <div className='remove-column'></div>
-            </div>
-            {stateValue && getRows()}
-            <div className='add-item'>
-              <PseudoLink>
-                <span onClick={addItem} tabIndex={0} onKeyDown={(e) => { if (e.key === 'Enter') addItem() }}>
-                  <FontAwesomeIcon icon={faPlus} /> &nbsp;{placeHolder}
-                </span>
-              </PseudoLink>
-            </div>
+              <col className={'remove-col'} />
+            </colgroup>
+            <thead>
+              <tr>
+                {
+                  headerRowValues.map((d: string) => (
+                    <th className='input-column capitalize' key={d}>
+                      {d.charAt(0) + d.slice(1)}
+                    </th>
+                  ))
+                }
+                <th className='remove-column'></th>
+              </tr>
+            </thead>
+            <tbody>
+              {getRows(numRows)}
+            </tbody>
+          </table>
+          <div className='add-item'>
+            <PseudoLink>
+              <span
+                id={`${name}-add-item`}
+                className={classNames({ 'disabled': !canAdd })}
+                onClick={canAdd ? addItem : undefined}
+                tabIndex={0}
+                onKeyDown={canAdd ? (e) => { if (e.key === 'Enter') addItem() } : undefined}
+              >
+                <FontAwesomeIcon icon={faPlus} /> &nbsp;{placeHolder}
+              </span>
+            </PseudoLink>
           </div>
-          <div className='row'>
-          </div>
+        </div>
+        <div className='row'>
         </div>
       </div>
       {/* placeholder for error text to match spacing with other form inputs */}

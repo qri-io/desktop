@@ -3,9 +3,10 @@ import * as React from 'react'
 interface KeyValueTableProps {
   data: any
   filterKeys?: string[]
+  index: number
 }
 
-const KeyValueTable: React.FunctionComponent<KeyValueTableProps> = ({ data, filterKeys }) => (
+const KeyValueTable: React.FunctionComponent<KeyValueTableProps> = ({ data, filterKeys, index = 0 }) => (
   <div className='keyvalue-table-wrap'>
     <table className='keyvalue-table'>
       <tbody>
@@ -14,9 +15,9 @@ const KeyValueTable: React.FunctionComponent<KeyValueTableProps> = ({ data, filt
           const value = data[key]
 
           return (
-            <tr key={key} className='keyvalue-table-row'>
+            <tr key={key} className={`keyvalue-table-row ${key}-${index}`}>
               <td className='keyvalue-table-key'>{key}</td>
-              <td>{value}</td>
+              <td className='keyvalue-table-value'>{value}</td>
             </tr>
           )
         })}
