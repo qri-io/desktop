@@ -23,9 +23,9 @@ const FormatConfigHistory: React.FunctionComponent<FormatConfigHistoryProps> = (
             if (option in formatConfig) {
               switch (formatConfigOptions[option].type) {
                 case 'boolean':
-                  return formatConfig[option] && <div key={`structure_${i}`} className='config-item margin-bottom'>{formatConfigOptions[option].label}</div>
+                  return formatConfig[option] && <div id={`structure-${option}`} key={`structure_${i}`} className='config-item margin-bottom'>{formatConfigOptions[option].label}</div>
                 case 'string':
-                  return <div key={`structure_${i}`} className='config-item margin-bottom'>{formatConfigOptions[option].label}: {formatConfig[option]}</div>
+                  return <div key={`structure_${i}`} id={`structure-${option}`} className='config-item margin-bottom'>{formatConfigOptions[option].label}: {formatConfig[option]}</div>
               }
             }
             return undefined

@@ -427,7 +427,10 @@ class Workbench extends React.Component<WorkbenchProps, Status> {
 
     const mainContent = (
       <>
-        <Prompt when={modified} message={() => `You have uncommited changes! Click 'cancel' and commit these changes before you navigate away or you will lose your work.`}/>
+        <Prompt when={modified} message={(location) => {
+          if (location.pathname.includes('workbench')) return false
+          return `You have uncommited changes! Click 'cancel' and commit these changes before you navigate away or you will lose your work.`
+        }}/>
         <div className='main-content-header'>
           {linkButton}
           {publishButton}

@@ -50,8 +50,6 @@ const MultiStructuredInput: React.FunctionComponent<MultiStructuredInputProps> =
   const [numRows, setNumRows] = React.useState(value ? value.length : 0)
   const [canAdd, setCanAdd] = React.useState(true)
 
-  console.log(value)
-
   React.useEffect(() => {
     if (value) {
       if (value.length === numRows && !canAdd) setCanAdd(true)
@@ -84,7 +82,6 @@ const MultiStructuredInput: React.FunctionComponent<MultiStructuredInputProps> =
         return
       }
       valueCopy[index] = item
-      console.log(valueCopy)
       onWrite(e, name, valueCopy)
     }
   }
