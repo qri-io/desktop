@@ -18,7 +18,6 @@ export interface CommitDetailsProps {
 
   fetchCommitBody: (page?: number, pageSize?: number) => ApiActionThunk
   setComponent: (type: ComponentType, activeComponent: string) => Action
-  fsiWrite: (peername: string, name: string, dataset: Dataset) => ApiActionThunk
 }
 
 const CommitDetails: React.FunctionComponent<CommitDetailsProps> = (props) => {

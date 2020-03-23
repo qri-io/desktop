@@ -262,15 +262,18 @@ class Workbench extends React.Component<WorkbenchProps, Status> {
     return s
   }
 
+  // TODO (ramfox): refactor into action
   handleSetDataset (peername: string, name: string, dataset: Dataset) {
-    const { setMutationsDataset, setMutationsStatus, data } = this.props
+    const { setMutationsDataset, setMutationsStatus, data, fsiWrite } = this.props
     const { workingDataset, status } = data
     const wDataset = this.datasetFromCommitDetails(workingDataset)
     const mutationsStatus = this.determineMutationsStatus(wDataset, dataset, status)
+    if (workingDataset.fsiPath !== '') fsiWrite(peername, name, dataset)
     setMutationsStatus(mutationsStatus)
     setMutationsDataset(dataset)
   }
 
+  // TODO (refactor into selection)
   datasetFromCommitDetails (commitDetails: ICommitDetails): Dataset {
     const { components } = commitDetails
     let d: Dataset = {}
@@ -284,7 +287,7 @@ class Workbench extends React.Component<WorkbenchProps, Status> {
     return d
   }
 
-  // TODO (ramfox): should this logic should happen at the container level, and the
+  // TODO (ramfox): refactor into selection - should this logic should happen at the container level, and the
   // component should just display whatever dataset it is given? We need to
   // know what the head dataset looks like, however, in order to determine if
   // anything has changed in 'handleSetDataset'
@@ -323,8 +326,7 @@ class Workbench extends React.Component<WorkbenchProps, Status> {
       fetchBody,
       fetchCommitBody,
 
-      renameDataset,
-      fsiWrite
+      renameDataset
     } = this.props
     const { peername: username } = session
     const {
@@ -472,7 +474,7 @@ class Workbench extends React.Component<WorkbenchProps, Status> {
                   stats={stats}
                   bodyPageInfo={workingDataset.components.body.pageInfo}
                   fetchBody={fetchBody}
-                  write={isLinked ? fsiWrite : this.handleSetDataset}
+                  write={this.handleSetDataset}
                   component={selectedComponent}
                   componentStatus={status}
                   isLoading={workingDataset.isLoading}
@@ -492,7 +494,6 @@ class Workbench extends React.Component<WorkbenchProps, Status> {
                 data={data.head}
                 details={details}
                 fetchCommitBody={fetchCommitBody}
-                write={isLinked ? fsiWrite : this.handleSetDataset}
                 selections={selections}
                 setComponent={setComponent}
               />

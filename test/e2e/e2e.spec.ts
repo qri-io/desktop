@@ -7,9 +7,6 @@ import fakeDialog from 'spectron-fake-dialog'
 import { E2ETestUtils, newE2ETestUtils } from '../utils/e2eTestUtils'
 import http from 'http'
 import Dataset, { Commit, Meta, Structure } from '../../app/models/dataset'
-import { lazy } from 'react'
-import { JSONSchema7 } from 'json-schema'
-import SchemaItemProps from '../../app/components/item/SchemaItem'
 
 const { Application } = require('spectron')
 
@@ -58,7 +55,7 @@ describe('Qri End to End tests', function spec () {
     title: 'Earthquakes',
     description: 'List of all earthquakes and their magnitudes',
     theme: ['geology'],
-    keyworks: ['earthquakes', 'USGS'],
+    keywords: ['earthquakes', 'USGS'],
     license: {
       type: "Open Data Commons Attribution License (ODC-By)",
       url: "http://opendatacommons.org/licenses/by/1.0/"
@@ -105,13 +102,6 @@ describe('Qri End to End tests', function spec () {
   const structureCommit: Commit = {
     title: 'edited Structure',
     message: 'edited format config and some schema fields',
-    timestamp: metaCommit.timestamp
-  }
-
-  const readme = 'Hello World! This is my readme'
-  const readmeCommit: Commit = {
-    title: 'edited readme',
-    message: 'added a short readme',
     timestamp: metaCommit.timestamp
   }
 
