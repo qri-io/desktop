@@ -483,6 +483,7 @@ describe('Qri End to End tests', function spec () {
   it('switch between commits', async () => {
     const {
       click,
+      delay,
       onHistoryTab,
       atLocation,
       expectTextToBe
@@ -497,18 +498,22 @@ describe('Qri End to End tests', function spec () {
 
     // click the third commit and check commit-title
     await click('#HEAD-4', artifactPath('switch-between-commits-click-head-3.png'))
+    await delay(100)
     await expectTextToBe('#commit-title', 'created dataset')
 
     // click the second commit and check commit-title
     await click('#HEAD-3')
+    await delay(100)
     await expectTextToBe('#commit-title', bodyCommitTitle)
 
     // click the third commit and check commit-title
     await click('#HEAD-2')
+    await delay(100)
     await expectTextToBe('#commit-title', metaCommit.title)
 
     // click the third commit and check commit-title
     await click('#HEAD-1')
+    await delay(100)
     await expectTextToBe('#commit-title', structureCommit.title)
   })
 
@@ -574,7 +579,7 @@ describe('Qri End to End tests', function spec () {
   })
 
   // switch between commits
-  it('switch between commits', async () => {
+  it('in app editing - switch between commits', async () => {
     const {
       delay,
       click,
@@ -591,19 +596,19 @@ describe('Qri End to End tests', function spec () {
     await click('#commit-status')
 
     // click the third commit and check commit-title
-    await click('#HEAD-3', artifactPath('switch-between-commits-click-head-3.png'))
-    await expectTextToBe('#commit-title', 'created dataset')
+    await click('#HEAD-3', artifactPath('in-app-editing-switch-between-commits-click-head-3.png'))
     await delay(100)
+    await expectTextToBe('#commit-title', 'created dataset')
 
     // click the third commit and check commit-title
     await click('#HEAD-2')
-    await expectTextToBe('#commit-title', metaCommit.title)
     await delay(100)
+    await expectTextToBe('#commit-title', metaCommit.title)
 
     // click the third commit and check commit-title
     await click('#HEAD-1')
-    await expectTextToBe('#commit-title', structureCommit.title)
     await delay(100)
+    await expectTextToBe('#commit-title', structureCommit.title)
   })
 
   it('create a new JSON dataset from a data source', async () => {
@@ -1152,7 +1157,7 @@ async function editMeta (uniqueName: string, dataset: Dataset, status: 'added' |
   if (meta.theme && meta.theme.length > 0) {
     await expectTextToBe('#meta-theme', meta.theme.join(''))
   }
-  if (meta.keywords && meta.keyworks.length > 0) {
+  if (meta.keywords && meta.keywords.length > 0) {
     await expectTextToBe('#meta-keywords', meta.keywords.join(''))
   }
   if (meta.contributors && meta.contributors.length > 0) {
