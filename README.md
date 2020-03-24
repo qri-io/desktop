@@ -74,6 +74,12 @@ Run normally (no developer features):
 
 `yarn start`
 
+Run end to end tests:
+
+- `go get temp_registry_server`
+- For macOS users run with `yarn test-e2e` which will also trigger a build, or run `yarn test-e2e-no-build` if you already have a build to test against
+- For Windows users run `yarn test-win-e2e` or `yarn test-win-e2e-no-build`
+
 To build the electron distributable package:
 
 `yarn dist`
