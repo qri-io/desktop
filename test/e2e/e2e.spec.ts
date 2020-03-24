@@ -904,34 +904,34 @@ describe('Qri End to End tests', function spec () {
     expect(recentDatasets.length).toBe(1)
   })
 
-  // remove a dataset is commented out until we have a keyboard command in
-  // place to open the remove modal
-  // we also must create a `keyboard` function that takes a string
-  // and mocks the user typing that string into the keyboard
-  // it must handle both windows and mac defaults (ctrl vs cmd)
-  it('remove a dataset', async () => {
-    const {
-      click,
-      exists,
-      atLocation,
-      keyboard
-    } = utils
+  // // remove a dataset is commented out until we have a keyboard command in
+  // // place to open the remove modal
+  // // we also must create a `keyboard` function that takes a string
+  // // and mocks the user typing that string into the keyboard
+  // // it must handle both windows and mac defaults (ctrl vs cmd)
+  // it('remove a dataset', async () => {
+  //   const {
+  //     click,
+  //     exists,
+  //     atLocation,
+  //     keyboard
+  //   } = utils
 
-    // on dataset
-    await click('#dataset')
-    // type command (control) shift r to get remove dataset modal
-    await keyboard('')
-    // ensure we are on the remove modal
-    await exists(['#remove'])
-    // select to remove files
-    await click('#should-remove-files')
-    // click submit
-    await click('#submit')
-    // end up on collection page
-    await atLocation('#/collection')
-    // no datasets
-    await exists(['#no-datasets'])
-  })
+  //   // on dataset
+  //   await click('#dataset')
+  //   // type command (control) shift r to get remove dataset modal
+  //   await keyboard('')
+  //   // ensure we are on the remove modal
+  //   await exists(['#remove'])
+  //   // select to remove files
+  //   await click('#should-remove-files')
+  //   // click submit
+  //   await click('#submit')
+  //   // end up on collection page
+  //   await atLocation('#/collection')
+  //   // no datasets
+  //   await exists(['#no-datasets'])
+  // })
 })
 
 async function editCommit (uniqueName: string, component: string, status: 'added' | 'modified' | 'removed', commitTitle: string, commitMessage: string | undefined, utils: E2ETestUtils, imagesDir: string) {

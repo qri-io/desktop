@@ -20,11 +20,14 @@ export function mapVersionInfo (data: any[]): VersionInfo[] {
 
 export function mapHistory (data: any[]): VersionInfo[] {
   return data.map((item: any) => {
-    return {
-      ...item.versionInfo,
-      commitTitle: item.commitTitle,
-      commitMessage: item.commitMessage
+    const vinfo = {
+      ...item,
+      ...item.versionInfo
     }
+    if (item.versionInfo) {
+      delete vinfo.versionInfo
+    }
+    return vinfo
   })
 }
 
