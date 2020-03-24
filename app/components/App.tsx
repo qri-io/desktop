@@ -66,7 +66,6 @@ export interface AppProps {
   removeDatasetAndFetch: (peername: string, name: string, removeFiles: boolean) => Promise<ApiAction>
   publishDataset: () => Promise<ApiAction>
   unpublishDataset: () => Promise<ApiAction>
-  fetchWorkingDatasetDetails: () => Promise<ApiAction>
 }
 
 interface AppState {

@@ -129,6 +129,7 @@ const mutationsReducer: Reducer = (state = initialState, action: AnyAction): Mut
         status: initialState.status
       }
     case MUTATIONS_DISCARD_CHANGES:
+      if (!state.dataset.value || !state.status.value) return state
       let dataset = cloneDeep(state.dataset.value)
       let status = cloneDeep(state.status.value)
       delete dataset[action.component]

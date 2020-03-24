@@ -206,6 +206,8 @@ export interface WorkingDataset extends CommitDetails {
   hasHistory: boolean
   published: boolean
   history: History
+  isSaving: boolean
+  isWriting: boolean
 }
 
 export interface History {

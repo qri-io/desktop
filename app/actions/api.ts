@@ -12,7 +12,8 @@ import {
   mapRecord,
   mapVersionInfo,
   mapStatus,
-  mapBody
+  mapBody,
+  mapHistory
 } from './mappingFuncs'
 import { getActionType } from '../utils/actionType'
 import { datasetConvertStringToScriptBytes } from '../utils/datasetConvertStringToScriptBytes'
@@ -67,18 +68,6 @@ export function fetchWorkingDatasetDetails (): ApiActionThunk {
     response = await whenOk(fetchBody(-1))(response)
     response = await whenOk(fetchStats())(response)
     response = await whenOk(fetchHistory(-1))(response)
-
-    return response
-  }
-}
-
-export function fetchWorkingDatasetAndStatus (): ApiActionThunk {
-  return async (dispatch, getState) => {
-    let response: AnyAction
-
-    await fetchWorkingDataset()(dispatch, getState).then(() => {
-      response = dispatch(fetchWorkingStatus())
-    })
 
     return response
   }
@@ -293,7 +282,8 @@ export function fetchHistory (page: number = 1, pageSize: number = pageSizeDefau
         pageInfo: {
           page: confirmedPage,
           pageSize
-        }
+        },
+        map: mapHistory
       }
     }
 
@@ -303,8 +293,18 @@ export function fetchHistory (page: number = 1, pageSize: number = pageSizeDefau
 
 export function fetchWorkingStatus (): ApiActionThunk {
   return async (dispatch, getState) => {
-    const { workingDataset } = getState()
-    const { peername, name, fsiPath } = workingDataset
+    const { selections, myDatasets } = getState()
+    const { peername, name } = selections
+
+    if (peername === '' || name === '') {
+      return Promise.reject(new Error('no peername or name selected'))
+    }
+    // look up the peername + name in myDatasets to determine whether it is FSI linked
+    const dataset = myDatasets.value.find((d) => (d.username === peername) && (d.name === name))
+    if (!dataset) {
+      return Promise.reject(new Error('could not find dataset in list'))
+    }
+    const { fsiPath } = dataset
     const action = {
       type: 'status',
       [CALL_API]: {
@@ -657,9 +657,9 @@ export function linkDatasetAndFetch (peername: string, name: string, dir: string
         dispatch(resetMutationsStatus())
         return response
       })
-      response = await whenOk(fetchWorkingDatasetDetails())(response)
       // reset pagination
       response = await whenOk(fetchMyDatasets(-1))(response)
+      response = await whenOk(fetchWorkingDatasetDetails())(response)
     } catch (action) {
       throw action
     }
@@ -775,6 +775,7 @@ export function fsiWrite (peername: string, name: string, dataset: any): ApiActi
           peername,
           name
         },
+        map: mapStatus,
         body: datasetConvertStringToScriptBytes(dataset)
       }
     }

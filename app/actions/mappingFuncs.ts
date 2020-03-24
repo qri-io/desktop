@@ -18,6 +18,16 @@ export function mapVersionInfo (data: any[]): VersionInfo[] {
   return data.map((ref: any) => ref as VersionInfo)
 }
 
+export function mapHistory (data: any[]): VersionInfo[] {
+  return data.map((item: any) => {
+    return {
+      ...item.versionInfo,
+      commitTitle: item.commitTitle,
+      commitMessage: item.commitMessage
+    }
+  })
+}
+
 // versionInfoToDataset converts a detailed ref to a sparsely-populated
 // dataset object without using any fetching
 export function versionInfoToDataset (vi: VersionInfo): Dataset {
