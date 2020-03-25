@@ -49,8 +49,24 @@ describe('Qri End to End tests', function spec () {
   const registryLoc = 'http://localhost:2500'
   const registryNewCommitAction = '/sim/action?action=appendsynthsdataset'
 
+  const healthCheck = async () => {
+    return new Promise((res, rej) => {
+      http.get('http://localhost:2503/health', (data: http.IncomingMessage) => {
+        res(true);
+      }).on('error', (e) => {
+        res(false);
+      })
+    })
+  }
+
   beforeAll(async () => {
     jest.setTimeout(60000)
+
+    var isQriRunning = await healthCheck()
+
+    if (isQriRunning) {
+      throw("An instance of Qri is already running. Aborting e2e tests.")
+    }
 
     registry = new TestTempRegistry()
     await registry.start()
