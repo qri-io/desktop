@@ -1,8 +1,12 @@
-import { LaunchedFetchesAction } from '../store/api'
+import { LaunchedFetchesAction, ApiActionThunk } from '../store/api'
+import fnv from 'fnv-plus'
+import cloneDeep from 'clone-deep'
 
 import {
   setCommitTitle,
-  setCommitMessage
+  setCommitMessage,
+  setMutationsStatus,
+  setMutationsDataset
 } from './mutations'
 
 import {
@@ -14,9 +18,13 @@ import {
   fetchHistory,
   fetchStats,
   fetchWorkingDataset,
-  fetchWorkingStatus
+  fetchWorkingStatus,
+  fsiWrite
 } from './api'
 import { setCommit } from './selections'
+import { Dataset } from '../models/dataset'
+import { Status } from '../models/store'
+import { selectWorkingDataset, selectStatusFromMutations } from '../selections/workbench'
 
 // fetchworkBench makes the necessary API requests to populate the workbench
 // based on what we know about the working dataset from the state tree
@@ -58,4 +66,59 @@ export function fetchWorkbench (): LaunchedFetchesAction {
 
     return false
   }
+}
+
+export function writeDataset (peername: string, name: string, writeDataset: Dataset): ApiActionThunk {
+  return async (dispatch, getState) => {
+    const state = getState()
+    const head = selectWorkingDataset(state)
+    const prevStatus = selectStatusFromMutations(state)
+    const newStatus = determineMutationsStatus(head, writeDataset, prevStatus)
+    if (state.workingDataset.fsiPath !== '') {
+      fsiWrite(peername, name, writeDataset)(dispatch, getState)
+    }
+    dispatch(setMutationsStatus(newStatus))
+    return dispatch(setMutationsDataset(writeDataset))
+  }
+}
+
+/**
+ * determineMutationsStatus compares the hash of each dataset component of the
+ * head dataset to the proposed mutation dataset. Any change is recorded in status
+ */
+function determineMutationsStatus (head: Dataset, mutation: Dataset, prevStatus: Status): Status {
+  let s = cloneDeep(prevStatus)
+  let d = { ...mutation }
+  Object.keys(d).forEach((componentName: string) => {
+    if (!head[componentName]) {
+      s[componentName] = { ...s[componentName], filepath: componentName, status: 'add' }
+      return
+    }
+    /**
+     * TODO (ramfox): in the near future, let's keep hashes of each dataset
+     * component in the state tree so we don't have to calculate it each time
+     * perhaps as a key value field on workingDataset `componentHashes`?
+     * Don't want to alter the state tree until methodologies are more settled
+     */
+    const headHash = fnv.hash(head[componentName])
+    const mutationHash = fnv.hash(mutation[componentName])
+    if (headHash.value === mutationHash.value) {
+      s[componentName] = { ...s[componentName], filepath: componentName, status: 'unmodified' }
+      return
+    }
+    s[componentName] = { ...s[componentName], filepath: componentName, status: 'modified' }
+  })
+
+  // if there is a bodyPath, adjust the body status
+  /**
+   * TODO (ramfox): We don't know at this current state if the underlying contents
+   * of the body file and the given body are the same, but that is an outlying
+   * error I feel comfortable punting on for now
+   */
+  if (s.bodyPath) {
+    // if bodyPath is empty then there is no
+    s.body = { ...s.body, status: d.bodyPath === '' ? 'unmodified' : 'modified' }
+    delete s.bodyPath
+  }
+  return s
 }

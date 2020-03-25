@@ -226,7 +226,7 @@ class Workbench extends React.Component<WorkbenchProps, Status> {
     setMutationsDataset(dataset)
   }
 
-  // TODO (refactor into selection)
+  // TODO (refactor into selection) - marked for removal after container refactor
   datasetFromCommitDetails (commitDetails: ICommitDetails): Dataset {
     const { components } = commitDetails
     let d: Dataset = {}
@@ -240,10 +240,9 @@ class Workbench extends React.Component<WorkbenchProps, Status> {
     return d
   }
 
-  // TODO (ramfox): refactor into selection - should this logic should happen at the container level, and the
-  // component should just display whatever dataset it is given? We need to
-  // know what the head dataset looks like, however, in order to determine if
-  // anything has changed in 'handleSetDataset'
+  // TODO (ramfox): once all dataset components are refactored in containers
+  // will remove this function
+  // replaced by `selectDatasetFromMutations`
   datasetFromMutations (): Dataset {
     const { data } = this.props
     const { workingDataset, mutationsDataset } = data
