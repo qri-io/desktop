@@ -2,8 +2,9 @@ import { Dispatch, AnyAction, Store } from 'redux'
 
 import { WEBSOCKETS_URL, WEBSOCKETS_PROTOCOL } from '../constants'
 
-import { Store as IStore } from '../models/store'
-import { fetchWorkingStatus } from '../actions/api'
+import IStore from '../models/store'
+import { fetchWorkingDatasetDetails } from '../actions/api'
+import { resetMutationsDataset, resetMutationsStatus } from '../actions/mutations'
 
 // wsMiddleware manages requests to connect to the qri backend via websockets
 // as well as managing messages that get passed through
@@ -32,12 +33,23 @@ const socketMiddleware = () => {
       case 'create':
       case 'remove':
         const { workingDataset } = store.getState()
-        const { peername, name } = workingDataset
+        const { peername, name, status } = workingDataset
         // if the websocket message Username and Dsname match the peername and
         // dataset name of the dataset that is currently being viewed, fetch
         // status
-        if (peername && name && peername === payload.Username && name === payload.Dsname) {
-          fetchWorkingStatus()(store.dispatch, store.getState)
+        if (peername && name && peername === payload.Username && name === payload.Dsname && !workingDataset.isWriting && !workingDataset.isSaving) {
+          const components = Object.keys(status)
+          components.forEach((component: string) => {
+            if (payload.Source === status[component].filepath) {
+              const wsMtime = new Date(Date.parse(payload.Time))
+              // if there is and mtime or if the ws mtime is older then the status mtime, don't refetch
+              if (status[component].mtime && !(status[component].mtime < wsMtime)) return
+              // if there is no mtime, or if the ws mtime is newer then the status mtime, fetch!
+              fetchWorkingDatasetDetails()(store.dispatch, store.getState)
+              store.dispatch(resetMutationsDataset())
+              store.dispatch(resetMutationsStatus())
+            }
+          })
         }
         break
       default:

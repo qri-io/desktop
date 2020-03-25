@@ -11,8 +11,7 @@ import {
   publishDataset,
   unpublishDataset,
   removeDatasetAndFetch,
-  importFile,
-  fetchWorkingDatasetDetails
+  importFile
 } from '../actions/api'
 
 import {
@@ -78,8 +77,7 @@ const AppContainer = connect(
     removeDatasetAndFetch,
     setDatasetDirPath,
     signout,
-    importFile,
-    fetchWorkingDatasetDetails
+    importFile
   },
   mergeProps
 )(App)

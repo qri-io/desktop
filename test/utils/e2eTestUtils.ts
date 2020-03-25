@@ -20,6 +20,7 @@ export interface E2ETestUtils {
   delay: (time: number, screenshotLocation?: string) => Promise<unknown>
   sendKeys: (selector: string, value: string | string[], screenshotLocation?: string) => Promise<void>
   takeScreenshot: (screenshotLocation: string, delayTime?: number) => Promise<void>
+  isChecked: (selector: string, screenshotLocation?: string) => Promise<boolean>
 }
 
 export function newE2ETestUtils (app: any): E2ETestUtils {
@@ -38,7 +39,8 @@ export function newE2ETestUtils (app: any): E2ETestUtils {
     onStatusTab: onStatusTab(app),
     checkStatus: checkStatus(app),
     sendKeys: sendKeys(app),
-    takeScreenshot: takeScreenshot(app)
+    takeScreenshot: takeScreenshot(app),
+    isChecked: isChecked(app)
   }
 }
 
@@ -223,7 +225,7 @@ function doesNotExist (app: any) {
           fs.writeFileSync(screenshotLocation, imageBuffer)
         })
       }
-      throw new Error(`function 'sendKeys', selector '${selectors}': ${e}`)
+      throw new Error(`function 'sendKeys', selector '${selector}': ${e}`)
     }
     if (!headless) await delay(delayTime)
   }
@@ -325,5 +327,26 @@ function checkStatus (app: any) {
       throw new Error(`function 'checkStatus': ${e}`)
     }
     if (!headless) await delay(delayTime)
+  }
+}
+
+// isChecked returns whether or not the selection is checked or not
+function isChecked (app: any) {
+  return async (selector: string, screenshotLocation?: string): Promise<boolean> => {
+    const { client } = app
+    try {
+      await client.waitUntil(async () => {
+        return client.element(selector)
+      }, 10000, `element '${selector}' cannot be found`)
+      return await client.element(selector).isSelected()
+    } catch (e) {
+      if (screenshotLocation) {
+        app.browserWindow.capturePage().then(function (imageBuffer) {
+          console.log(`writing screenshot: ${screenshotLocation}`)
+          fs.writeFileSync(screenshotLocation, imageBuffer)
+        })
+      }
+      throw new Error(`function 'waitForExist': ${e}`)
+    }
   }
 }

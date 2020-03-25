@@ -50,7 +50,6 @@ const MultiTextInput: React.FunctionComponent<MultiTextInputProps> = (props) => 
     const i = document.getElementById(id)
     if (i) i.value = ''
     const newTagList = [...stateValue, tagString]
-    setStateValue(newTagList)
     onArrayChange(e, name, newTagList)
   }
 
@@ -72,7 +71,6 @@ const MultiTextInput: React.FunctionComponent<MultiTextInputProps> = (props) => 
   const removeItem = (e: React.SyntheticEvent, index: number) => {
     const clonedValue = Object.assign([], stateValue)
     clonedValue.splice(index, 1)
-    setStateValue(clonedValue)
     onArrayChange(e, name, clonedValue)
   }
 
@@ -85,7 +83,7 @@ const MultiTextInput: React.FunctionComponent<MultiTextInputProps> = (props) => 
       />
       <div className='multi-text-input'>
         { stateValue.map((d: string, i: number) => (
-          <div key={i} className='tag'>
+          <div key={i} className='tag' id={`${name}-tag-${i}`}>
             <span className='tag-text'>{d}</span>
             <span className='tag-remove' onClick={(e: React.SyntheticEvent) => { removeItem(e, i) }}>
               <PseudoLink>

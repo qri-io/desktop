@@ -4,6 +4,7 @@ import { QriRef, refStringFromQriRef } from '../../models/qriRef'
 import { VersionInfo } from '../../models/store'
 import { FetchOptions } from '../../store/api'
 import { BACKEND_URL } from '../../constants'
+import { mapHistory } from '../../actions/mappingFuncs'
 
 import HistoryListItem from '../item/HistoryListItem'
 import { RouteComponentProps, withRouter } from 'react-router-dom'
@@ -26,7 +27,7 @@ const LogList: React.FC<LogListProps> = ({ qriRef, history }) => {
       setError(res.meta.error)
       return
     }
-    setData(res.data)
+    setData(mapHistory(res.data))
   }
 
   React.useEffect(() => {

@@ -13,7 +13,8 @@ import {
   fetchCommitStatus,
   fetchHistory,
   fetchStats,
-  fetchWorkingDatasetAndStatus
+  fetchWorkingDataset,
+  fetchWorkingStatus
 } from './api'
 import { setCommit } from './selections'
 
@@ -31,7 +32,8 @@ export function fetchWorkbench (): LaunchedFetchesAction {
        (selections.peername !== workingDataset.peername ||
         selections.name !== workingDataset.name)) {
       dispatch(fetchHistory())
-      dispatch(fetchWorkingDatasetAndStatus())
+      dispatch(fetchWorkingDataset())
+      dispatch(fetchWorkingStatus())
       dispatch(fetchStats())
       dispatch(fetchBody(-1))
       dispatch(setCommitTitle(''))

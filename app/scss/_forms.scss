@@ -560,9 +560,51 @@ input#path, input#bodyPath {
 }
 
 .multi-structured-input-container {
-  display: flex;
+  table {
+    table-layout: fixed;
+    width: 100%;
+    margin: 10px;
+  }
+  th {
+    font-weight: 500;
+    padding: 0;
+    margin-bottom: 9px;
+    border-bottom: 1px solid $border-color
+  }
+  tr td {
+    padding-top: 5px;
+  }
 
-  .list, .form {
-    flex: 1;
+  .add-item {
+    font-weight: 300;
+    font-size: .9rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+
+    .disabled {
+      cursor: default;
+      color: #eeeeee;
+    }
+  }
+
+  .remove-column, .handle-column {
+    width: 10px;
+    text-align: right;
+    display: flex;
+    padding-top: 10px;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .remove-col {
+    width: 30px;
+  }
+
+  .header-row {
+    font-weight: 500;
+    padding: 0;
+    margin-bottom: 9px;
+    border-bottom: 1px solid $border-color
   }
 }

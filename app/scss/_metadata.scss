@@ -63,37 +63,3 @@
   padding: 4px 8px;
 }
 
-.multi-structured-input {
-  .add-item {
-    font-weight: 300;
-    font-size: .9rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .row {
-    display: flex;
-    padding-bottom: 9px;
-
-    .input-column {
-      flex: 1;
-      padding: 0 10px;
-    }
-
-    .remove-column, .handle-column {
-      width: 10px;
-      text-align: center;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-    }
-  }
-
-  .header-row {
-    font-weight: 500;
-    padding: 0;
-    margin-bottom: 9px;
-    border-bottom: 1px solid $border-color
-  }
-}

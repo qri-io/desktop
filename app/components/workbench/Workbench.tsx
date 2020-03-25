@@ -148,57 +148,9 @@ class Workbench extends React.Component<WorkbenchProps, Status> {
   }
 
   async componentDidUpdate (prevProps: WorkbenchProps) {
-    const {
-      data,
-      fetchWorkingDataset,
-      fetchBody
-    } = this.props
-    const { workingDataset } = data
-
     if (prevProps.data.location !== this.props.data.location) {
       // TODO (b5) - this was bailing early when fetch happened
       this.props.fetchWorkbench()
-    }
-
-    // map mtime deltas to a boolean to determine whether to update the workingDataset
-    const { status } = workingDataset
-    const { status: prevStatus } = prevProps.data.workingDataset
-
-    if (status) {
-      // create an array of components that need updating
-      const componentsToReset: SelectedComponent[] = []
-
-      const statusKeys = Object.keys(status)
-      const prevStatusKeys = Object.keys(prevStatus)
-
-      statusKeys.forEach((component: SelectedComponent) => {
-        const currentMtime = status[component].mtime
-        const prevMtime = prevStatus[component] && prevStatus[component].mtime
-        if (currentMtime && prevMtime) {
-          if (currentMtime.getTime() !== prevMtime.getTime()) {
-            componentsToReset.push(component)
-          }
-        }
-      })
-
-      // if the number of files has changed,
-      // make sure we fetchWorkingDataset
-      // ignore if prevStatusKeys is empty
-      if (prevStatusKeys.length > 0) {
-        const difference = statusKeys
-          .filter((component: SelectedComponent) => !prevStatusKeys.includes(component))
-          .concat(prevStatusKeys.filter((component: SelectedComponent) => !statusKeys.includes(component)))
-        difference.forEach((component: SelectedComponent) => componentsToReset.push(component))
-      }
-
-      // reset components
-      if (componentsToReset.includes('body')) fetchBody(-1)
-      if (
-        componentsToReset.includes('structure') ||
-        componentsToReset.includes('meta') ||
-        componentsToReset.includes('readme') ||
-        componentsToReset.includes('transform')
-      ) fetchWorkingDataset()
     }
   }
 
@@ -220,6 +172,7 @@ class Workbench extends React.Component<WorkbenchProps, Status> {
     const { fsiPath } = workingDataset
     if (fsiPath !== '') {
       this.props.discardChanges(component)
+      this.props.discardMutationsChanges(component)
       return
     }
     this.props.discardMutationsChanges(component)
@@ -262,15 +215,18 @@ class Workbench extends React.Component<WorkbenchProps, Status> {
     return s
   }
 
+  // TODO (ramfox): refactor into action
   handleSetDataset (peername: string, name: string, dataset: Dataset) {
-    const { setMutationsDataset, setMutationsStatus, data } = this.props
+    const { setMutationsDataset, setMutationsStatus, data, fsiWrite } = this.props
     const { workingDataset, status } = data
     const wDataset = this.datasetFromCommitDetails(workingDataset)
     const mutationsStatus = this.determineMutationsStatus(wDataset, dataset, status)
+    if (workingDataset.fsiPath !== '') fsiWrite(peername, name, dataset)
     setMutationsStatus(mutationsStatus)
     setMutationsDataset(dataset)
   }
 
+  // TODO (refactor into selection)
   datasetFromCommitDetails (commitDetails: ICommitDetails): Dataset {
     const { components } = commitDetails
     let d: Dataset = {}
@@ -284,7 +240,7 @@ class Workbench extends React.Component<WorkbenchProps, Status> {
     return d
   }
 
-  // TODO (ramfox): should this logic should happen at the container level, and the
+  // TODO (ramfox): refactor into selection - should this logic should happen at the container level, and the
   // component should just display whatever dataset it is given? We need to
   // know what the head dataset looks like, however, in order to determine if
   // anything has changed in 'handleSetDataset'
@@ -323,8 +279,7 @@ class Workbench extends React.Component<WorkbenchProps, Status> {
       fetchBody,
       fetchCommitBody,
 
-      renameDataset,
-      fsiWrite
+      renameDataset
     } = this.props
     const { peername: username } = session
     const {
@@ -427,7 +382,10 @@ class Workbench extends React.Component<WorkbenchProps, Status> {
 
     const mainContent = (
       <>
-        <Prompt when={modified} message={() => `You have uncommited changes! Click 'cancel' and commit these changes before you navigate away or you will lose your work.`}/>
+        <Prompt when={modified} message={(location) => {
+          if (location.pathname.includes('workbench')) return false
+          return `You have uncommited changes! Click 'cancel' and commit these changes before you navigate away or you will lose your work.`
+        }}/>
         <div className='main-content-header'>
           {linkButton}
           {publishButton}
@@ -469,7 +427,7 @@ class Workbench extends React.Component<WorkbenchProps, Status> {
                   stats={stats}
                   bodyPageInfo={workingDataset.components.body.pageInfo}
                   fetchBody={fetchBody}
-                  write={isLinked ? fsiWrite : this.handleSetDataset}
+                  write={this.handleSetDataset}
                   component={selectedComponent}
                   componentStatus={status}
                   isLoading={workingDataset.isLoading}
@@ -489,7 +447,6 @@ class Workbench extends React.Component<WorkbenchProps, Status> {
                 data={data.head}
                 details={details}
                 fetchCommitBody={fetchCommitBody}
-                write={isLinked ? fsiWrite : this.handleSetDataset}
                 selections={selections}
                 setComponent={setComponent}
               />

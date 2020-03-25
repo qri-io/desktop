@@ -16,6 +16,8 @@ const initialState: WorkingDataset = {
   peername: '',
   name: '',
   status: {},
+  isSaving: false,
+  isWriting: false,
   isLoading: false,
   fsiPath: '',
   published: true,
@@ -57,6 +59,8 @@ const [DATASET_BODY_REQ, DATASET_BODY_SUCC, DATASET_BODY_FAIL] = apiActionTypes(
 const [, RESETOTHERCOMPONENTS_SUCC, RESETOTHERCOMPONENTS_FAIL] = apiActionTypes('resetOtherComponents')
 const [STATS_REQ, STATS_SUCC, STATS_FAIL] = apiActionTypes('stats')
 export const [, RENAME_SUCC] = apiActionTypes('rename')
+export const [FSIWRITE_REQ, FSIWRITE_SUCC, FSIWRITE_FAIL] = apiActionTypes('fsiWrite')
+export const [SAVE_REQ, SAVE_SUCC, SAVE_FAIL] = apiActionTypes('save')
 
 export const RESET_BODY = 'RESET_BODY'
 
@@ -151,11 +155,23 @@ const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction
 
     case DATASET_STATUS_REQ:
       return state
+
+    case FSIWRITE_REQ:
+      return {
+        ...state,
+        isWriting: true
+      }
+    case FSIWRITE_FAIL:
+      return {
+        ...state,
+        isWriting: false
+      }
+    case FSIWRITE_SUCC:
     case DATASET_STATUS_SUCC:
       const statusObject: Status = action.payload.data
         .reduce((obj: any, item: any): StatusInfo => {
-          const { component, filepath, status, mtime } = item
-          obj[component] = { filepath, status, mtime }
+          const { component } = item
+          obj[component] = { ...item }
           return obj
         }, {})
 
@@ -163,7 +179,8 @@ const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction
       // state to prevent unecessary re-rendering
       return deepEqual(state.status, statusObject) ? state : {
         ...state,
-        status: statusObject
+        status: statusObject,
+        isWriting: false
       }
 
     case DATASET_STATUS_FAIL:
@@ -275,6 +292,17 @@ const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction
         name: action.payload.data.name
       }
 
+    case SAVE_REQ:
+      return {
+        ...state,
+        isSaving: true
+      }
+    case SAVE_SUCC:
+    case SAVE_FAIL:
+      return {
+        ...state,
+        isSaving: false
+      }
     default:
       return state
   }

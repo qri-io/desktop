@@ -2,7 +2,7 @@ import * as React from 'react'
 import { connect } from 'react-redux'
 
 import Store from '../../models/store'
-import { isUserArray } from '../form/MultiStructuredInput'
+import { isUserArray } from '../form/MetadataMultiInput'
 import { Meta, Citation, License, User } from '../../models/dataset'
 
 import ExternalLink from '../ExternalLink'

@@ -180,7 +180,7 @@ export const DatasetComponent: React.FunctionComponent<DatasetComponentProps> = 
           </div>
         </CSSTransition>
         <CSSTransition
-          in={component === 'body' && bodyPageInfo && !hasParseError}
+          in={component === 'body' && bodyPageInfo && !isLoading && !hasParseError}
           classNames='fade'
           component='div'
           timeout={300}

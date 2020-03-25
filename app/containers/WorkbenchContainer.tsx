@@ -34,7 +34,7 @@ const mergeProps = (props: any, actions: any): WorkbenchProps => {
 
 function locationFromSelection (s: Selections): string {
   let sel = `/workbench/${s.activeTab}/${s.peername}/${s.name}`
-  if (s.commit !== '') {
+  if (s.commit && s.commit !== '') {
     sel += `/${s.commit}`
   }
   return sel

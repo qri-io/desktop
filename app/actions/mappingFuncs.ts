@@ -18,6 +18,27 @@ export function mapVersionInfo (data: any[]): VersionInfo[] {
   return data.map((ref: any) => ref as VersionInfo)
 }
 
+export function mapHistory (data: any[]): VersionInfo[] {
+  /**
+   * this odd mapping function is the result of changes to the backend api.
+   * history returns a list of `DatasetLogItems`, which contains a `VersionInfo`
+   * with the added fields `commitMessage` and `commitTitle`.
+   * Desktop uses versionInfo in multiple places, and it is easier to mold the
+   * api output to a flatter form we can more easily use. This function flattens
+   * the structure and removes the embedded versionInfo field.
+   */
+  return data.map((item: any) => {
+    const vinfo = {
+      ...item,
+      ...item.versionInfo
+    }
+    if (item.versionInfo) {
+      delete vinfo.versionInfo
+    }
+    return vinfo
+  })
+}
+
 // versionInfoToDataset converts a detailed ref to a sparsely-populated
 // dataset object without using any fetching
 export function versionInfoToDataset (vi: VersionInfo): Dataset {

@@ -28,7 +28,7 @@ const InputCheckbox: React.FunctionComponent<InputCheckboxProps> = ({ value, lab
   , [value])
   return (
     <div className='input-checkbox' >
-      <div><input type="checkbox" id="headerRow" name={name} onChange={() => {
+      <div><input type="checkbox" id={name} name={name} onChange={() => {
         const val = checked
         setChecked(!val)
         onChange(name, !val)

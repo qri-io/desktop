@@ -18,7 +18,6 @@ export interface CommitDetailsProps {
 
   fetchCommitBody: (page?: number, pageSize?: number) => ApiActionThunk
   setComponent: (type: ComponentType, activeComponent: string) => Action
-  fsiWrite: (peername: string, name: string, dataset: Dataset) => ApiActionThunk
 }
 
 const CommitDetails: React.FunctionComponent<CommitDetailsProps> = (props) => {
@@ -60,7 +59,7 @@ const CommitDetails: React.FunctionComponent<CommitDetailsProps> = (props) => {
   const { body } = components
   const { pageInfo } = body
 
-  const loading = !path || path !== selections.commit || isLoading
+  const loading = !path || (selections.commit && path !== selections.commit) || isLoading
 
   return (
     <div className='dataset-content transition-group'>
