@@ -5,11 +5,11 @@ import cloneDeep from 'clone-deep'
 import classNames from 'classnames'
 
 import InputLabel from './InputLabel'
-import Row from '../item/MultiStructuredInputItem'
+import Row from '../item/MetadataMultiInputItem'
 import { User, Citation } from '../../models/dataset'
 import PseudoLink from '../PseudoLink'
 
-export interface MultiStructuredInputProps {
+export interface MetadataMultiInputProps {
   label: string
   labelTooltip?: string
   name: 'citations' | 'contributors'
@@ -23,7 +23,7 @@ export const isUserArray = (array: any): array is User[] => {
   return array[0] && array[0].id !== undefined
 }
 
-const MultiStructuredInput: React.FunctionComponent<MultiStructuredInputProps> = (props) => {
+const MetadataMultiInput: React.FunctionComponent<MetadataMultiInputProps> = (props) => {
   const {
     label,
     name,
@@ -182,4 +182,4 @@ const MultiStructuredInput: React.FunctionComponent<MultiStructuredInputProps> =
   )
 }
 
-export default MultiStructuredInput
+export default MetadataMultiInput

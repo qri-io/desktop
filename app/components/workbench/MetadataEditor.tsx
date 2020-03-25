@@ -9,7 +9,7 @@ import TextInput from '../form/TextInput'
 import TextAreaInput from '../form/TextAreaInput'
 import MultiTextInput from '../form/MultiTextInput'
 import DropdownInput from '../form/DropdownInput'
-import MultiStructuredInput from '../form/MultiStructuredInput'
+import MetadataMultiInput from '../form/MetadataMultiInput'
 import { ApiActionThunk } from '../../store/api'
 
 import { Meta } from '../../models/dataset'
@@ -215,7 +215,7 @@ const MetadataEditor: React.FunctionComponent<MetadataEditorProps> = (props: Met
           handleWrite(null, 'license', newValue)
         }}
       />
-      <MultiStructuredInput
+      <MetadataMultiInput
         name='contributors'
         label='Contributors'
         labelTooltip='Users who have contributed to the dataset'
@@ -223,7 +223,7 @@ const MetadataEditor: React.FunctionComponent<MetadataEditorProps> = (props: Met
         placeHolder='Add a contributor'
         onWrite={handleWrite}
       />
-      <MultiStructuredInput
+      <MetadataMultiInput
         name='citations'
         label='Citations'
         labelTooltip='Works cited for the dataset'

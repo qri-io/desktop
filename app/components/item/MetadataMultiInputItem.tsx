@@ -10,7 +10,7 @@ import PseudoLink from '../PseudoLink'
 import { User, Citation } from '../../models/dataset'
 import DynamicEditField from '../form/DynamicEditField'
 
-interface MultiStructuredInputItemProps {
+interface MetadataMultiInputrops {
   item: User | Citation
   name: 'contributors' | 'citations'
   index: number
@@ -19,7 +19,7 @@ interface MultiStructuredInputItemProps {
   onRemove: (event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => void
 }
 
-const MultiStructuredInputItem: React.FunctionComponent<MultiStructuredInputItemProps> = (props) => {
+const MetadataMultiInputItem: React.FunctionComponent<MetadataMultiInputrops> = (props) => {
   const { item, index, write, fields, onRemove, name } = props
 
   const handleWrite = (name: string, value: string, e: React.SyntheticEvent) => {
@@ -54,4 +54,4 @@ const MultiStructuredInputItem: React.FunctionComponent<MultiStructuredInputItem
   )
 }
 
-export default MultiStructuredInputItem
+export default MetadataMultiInputItem
