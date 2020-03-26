@@ -1,7 +1,7 @@
 import Dataset, { Commit } from "./models/dataset"
 import cloneDeep from 'clone-deep'
 
-import Store, { CommitDetails, Status } from "./models/store"
+import Store, { CommitDetails, Status } from './models/store'
 
 // combines working dataset and mutations dataset to return most
 // up-to-date version of the edited dataset
@@ -48,10 +48,30 @@ export function selectMutationsCommit (state: Store): Commit {
 }
 
 export function selectStatusFromMutations (state: Store): Status {
-  const { workingDataset, mutations } = state
+  const { mutations } = state
   const mutationsStatus = mutations.status.value
 
-  return { ...workingDataset.status, ...mutationsStatus }
+  // if we've already had mutations, trust the mutations status as the
+  // source of truth for status
+  if (mutationsStatus) {
+    return mutationsStatus
+  }
+
+  if (selectIsLinked(state)) {
+    // if we are fsi linked trust the working status
+    return selectWorkingStatus(state)
+  }
+
+  // otherwise, since we have not had any mutations we have to construct a status
+  // that expresses we haven't had any modifications
+  let status: Status = {}
+  const dataset = selectWorkingDataset(state)
+  Object.keys(dataset).forEach((componentName: string) => {
+    if (dataset[componentName]) {
+      status[componentName] = { filepath: componentName, status: 'unmodified' }
+    }
+  })
+  return status
 }
 
 // returns a dataset that only contains components
