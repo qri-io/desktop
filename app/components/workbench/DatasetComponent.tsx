@@ -16,14 +16,14 @@ import { ToastTypes } from '../chrome/Toast'
 
 import Body from './Body'
 import CalloutBlock from '../chrome/CalloutBlock'
+import CommitEditor from './CommitEditor'
 import Commit from './Commit'
-import CommitHistory from './CommitHistory'
 import DropZone from '../chrome/DropZone'
 import Icon from '../chrome/Icon'
 import Metadata from './Metadata'
 import MetadataEditor from './MetadataEditor'
-import Readme from '../Readme'
-import ReadmeHistory from './ReadmeHistory'
+import ReadmeEditor from './ReadmeEditor'
+import Readme from './Readme'
 import ParseError from './ParseError'
 import StatusDot from '../chrome/StatusDot'
 import Structure from '../Structure'
@@ -147,15 +147,8 @@ export const DatasetComponent: React.FunctionComponent<DatasetComponentProps> = 
         >
           <div className='transition-wrap'>
             {history
-              ? <ReadmeHistory />
-              : <Readme
-                data={data.readme}
-                name={name}
-                username={peername}
-                write={handleWrite}
-                isLinked={fsiPath !== ''}
-                loading={isLoading}
-              />}
+              ? <Readme />
+              : <ReadmeEditor />}
           </div>
         </CSSTransition>
         <CSSTransition
@@ -259,8 +252,8 @@ export const DatasetComponent: React.FunctionComponent<DatasetComponentProps> = 
           <div className='transition-wrap'>
             {
               history
-                ? <CommitHistory />
-                : <Commit />
+                ? <Commit />
+                : <CommitEditor />
             }
           </div>
         </CSSTransition>

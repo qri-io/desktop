@@ -1,26 +1,30 @@
 import * as React from 'react'
 import SimpleMDE from 'react-simplemde-editor'
 import { useDebounce } from 'use-debounce'
+import { connect } from 'react-redux'
 
-import { ApiActionThunk } from '../store/api'
+import { ApiActionThunk } from '../../store/api'
 
-import SpinnerWithIcon from './chrome/SpinnerWithIcon'
-import { datasetConvertStringToScriptBytes } from '../utils/datasetConvertStringToScriptBytes'
-import Dataset from '../models/dataset'
+import SpinnerWithIcon from '../chrome/SpinnerWithIcon'
+import { datasetConvertStringToScriptBytes } from '../../utils/datasetConvertStringToScriptBytes'
+import Dataset from '../../models/dataset'
+import { selectWorkingDatasetRef, selectWorkingDatasetIsLoading, selectMutationsDataset, selectIsLinked } from '../../selections'
+import Store from '../../models/store'
+import { writeDataset } from '../../actions/workbench'
+import { Dispatch, bindActionCreators } from 'redux'
 
 const DEBOUNCE_TIMER = 1000
 
-export interface ReadmeProps {
-  username: string
-  name: string
+export interface ReadmeEditorProps {
+  datasetRef: string
   data?: string
   loading: boolean
   isLinked: boolean
   write: (dataset: any) => ApiActionThunk | void
 }
 
-const Readme: React.FunctionComponent<ReadmeProps> = (props) => {
-  const { data = '', username, name, write, loading, isLinked } = props
+export const ReadmeEditorComponent: React.FunctionComponent<ReadmeEditorProps> = (props) => {
+  const { data = '', datasetRef, write, loading, isLinked } = props
 
   const [internalValue, setInternalValue] = React.useState(data)
   const [debouncedValue] = useDebounce(internalValue, DEBOUNCE_TIMER)
@@ -61,7 +65,7 @@ const Readme: React.FunctionComponent<ReadmeProps> = (props) => {
    */
   const getPreview = (plainText: string, preview: HTMLElement) => {
     if (isLinked) {
-      fetch(`http://localhost:2503/render/${username}/${name}?fsi=true`)
+      fetch(`http://localhost:2503/render/${datasetRef}?fsi=true`)
         .then(async (res) => res.text())
         .then((render) => {
           preview.innerHTML = render
@@ -119,4 +123,22 @@ const Readme: React.FunctionComponent<ReadmeProps> = (props) => {
   )
 }
 
-export default Readme
+const mapStateToProps = (state: Store) => {
+  return {
+    datasetRef: selectWorkingDatasetRef(state),
+    data: selectMutationsDataset(state).readme,
+    loading: selectWorkingDatasetIsLoading(state),
+    isLinked: selectIsLinked(state)
+  }
+}
+
+const mergeProps = (props: any, actions: any): ReadmeEditorProps => { //eslint-disable-line
+  return { ...props, ...actions }
+}
+
+const mapDispatchToProps = (dispatch: Dispatch) => {
+  return bindActionCreators({
+    write: writeDataset
+  }, dispatch)
+}
+export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(ReadmeEditorComponent)

@@ -24,7 +24,7 @@ import {
 import { setCommit } from './selections'
 import { Dataset } from '../models/dataset'
 import { Status } from '../models/store'
-import { selectWorkingDataset, selectStatusFromMutations } from '../selections/workbench'
+import { selectWorkingDataset, selectStatusFromMutations, selectWorkingDatasetPeername, selectWorkingDatasetName } from '../selections'
 
 // fetchworkBench makes the necessary API requests to populate the workbench
 // based on what we know about the working dataset from the state tree
@@ -68,14 +68,14 @@ export function fetchWorkbench (): LaunchedFetchesAction {
   }
 }
 
-export function writeDataset (peername: string, name: string, writeDataset: Dataset): ApiActionThunk {
+export function writeDataset (writeDataset: Dataset): ApiActionThunk {
   return async (dispatch, getState) => {
     const state = getState()
     const head = selectWorkingDataset(state)
     const prevStatus = selectStatusFromMutations(state)
     const newStatus = determineMutationsStatus(head, writeDataset, prevStatus)
     if (state.workingDataset.fsiPath !== '') {
-      fsiWrite(peername, name, writeDataset)(dispatch, getState)
+      fsiWrite(selectWorkingDatasetPeername(state), selectWorkingDatasetName(state), writeDataset)(dispatch, getState)
     }
     dispatch(setMutationsStatus(newStatus))
     return dispatch(setMutationsDataset(writeDataset))
