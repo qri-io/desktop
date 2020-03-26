@@ -165,11 +165,7 @@ export const DatasetComponent: React.FunctionComponent<DatasetComponentProps> = 
             {
               history
                 ? <Metadata />
-                : <MetadataEditor
-                  data={data.meta}
-                  write={handleWrite}
-                  loading={isLoading}
-                />
+                : <MetadataEditor />
             }
           </div>
         </CSSTransition>

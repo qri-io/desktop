@@ -9,6 +9,7 @@ import ExternalLink from '../ExternalLink'
 import KeyValueTable from '../KeyValueTable'
 import SpinnerWithIcon from '../chrome/SpinnerWithIcon'
 import { standardFields } from './MetadataEditor'
+import { selectHistoryDataset } from '../../selections'
 
 interface MetadataProps {
   data: Meta
@@ -130,11 +131,9 @@ export const MetadataComponent: React.FunctionComponent<MetadataProps> = ({ data
 }
 
 const mapStateToProps = (state: Store) => {
-  const { commitDetails } = state
-
   // get data for the currently selected component
   return {
-    data: commitDetails.components.meta.value
+    data: selectHistoryDataset(state).meta
   }
 }
 

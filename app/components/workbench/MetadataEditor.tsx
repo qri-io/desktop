@@ -15,6 +15,11 @@ import { ApiActionThunk } from '../../store/api'
 import { Meta } from '../../models/dataset'
 
 import SpinnerWithIcon from '../chrome/SpinnerWithIcon'
+import { selectMutationsDataset, selectWorkingDatasetIsLoading } from '../../selections'
+import Store from '../../models/store'
+import { Dispatch, bindActionCreators } from 'redux'
+import { writeDataset } from '../../actions/workbench'
+import { connect } from 'react-redux'
 
 interface MetadataEditorProps {
   data: Meta
@@ -74,7 +79,7 @@ export const standardFields = [
   'version'
 ]
 
-const MetadataEditor: React.FunctionComponent<MetadataEditorProps> = (props: MetadataEditorProps) => {
+const MetadataEditorComponent: React.FunctionComponent<MetadataEditorProps> = (props: MetadataEditorProps) => {
   const { data = {}, write, loading } = props
 
   if (loading) {
@@ -326,4 +331,21 @@ const MetadataEditor: React.FunctionComponent<MetadataEditorProps> = (props: Met
   )
 }
 
-export default MetadataEditor
+const mapStateToProps = (state: Store) => {
+  return {
+    data: selectMutationsDataset(state).meta,
+    loading: selectWorkingDatasetIsLoading(state)
+  }
+}
+
+const mapDispatchToProps = (dispatch: Dispatch) => {
+  return bindActionCreators({
+    write: writeDataset
+  }, dispatch)
+}
+
+const mergeProps = (props: any, actions: any): MetadataEditorProps => {
+  return { ...props, ...actions }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(MetadataEditorComponent)
