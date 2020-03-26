@@ -1,7 +1,12 @@
 import Dataset, { Commit } from "./models/dataset"
 import cloneDeep from 'clone-deep'
 
-import Store, { CommitDetails, Status } from './models/store'
+import Store, { CommitDetails, Status, PageInfo } from './models/store'
+import { Details } from "./models/details"
+
+export function selectDetails (state: Store): Details {
+  return state.ui.detailsBar
+}
 
 // combines working dataset and mutations dataset to return most
 // up-to-date version of the edited dataset
@@ -12,6 +17,10 @@ export function selectMutationsDataset (state: Store): Dataset {
   const dataset = selectWorkingDataset(state)
   const d = { ...dataset, ...mutationsDataset }
   return d
+}
+
+export function selectHistoryDatasetBodyPageInfo (state: Store): PageInfo {
+  return state.commitDetails.components.body.pageInfo
 }
 
 export function selectHistoryCommit (state: Store): Commit | undefined {
@@ -25,6 +34,10 @@ export function selectHistoryDataset (state: Store): Dataset {
 
 export function selectHistoryDatasetRef (state: Store): string {
   return `${state.commitDetails.peername}/${state.commitDetails.name}/at${state.commitDetails.path}`
+}
+
+export function selectHistoryStats (state: Store): Array<Record<string, any>> {
+  return state.commitDetails.stats
 }
 
 export function selectHistoryStatus (state: Store): Status {
@@ -45,6 +58,10 @@ export function selectIsLinked (state: Store): boolean {
 
 export function selectMutationsCommit (state: Store): Commit {
   return state.mutations.save.value
+}
+
+export function selectOnHistoryTab (state: Store): boolean {
+  return state.selections.activeTab === 'history'
 }
 
 export function selectStatusFromMutations (state: Store): Status {
@@ -74,6 +91,10 @@ export function selectStatusFromMutations (state: Store): Status {
   return status
 }
 
+export function selectWorkingDatasetBodyPageInfo (state: Store): PageInfo {
+  return state.workingDataset.components.body.pageInfo
+}
+
 // returns a dataset that only contains components
 export function selectWorkingDataset (state: Store): Dataset {
   return datasetFromCommitDetails(state.workingDataset)
@@ -98,6 +119,10 @@ export function selectWorkingDatasetRef (state: Store): string {
 
 export function selectWorkingStatus (state: Store): Status {
   return state.workingDataset.status
+}
+
+export function selectWorkingStats (state: Store): Array<Record<string, any>> {
+  return state.workingDataset.stats
 }
 
 function datasetFromCommitDetails (commitDetails: CommitDetails): Dataset {

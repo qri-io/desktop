@@ -60,7 +60,6 @@ interface DatasetComponentProps {
 
 export const DatasetComponent: React.FunctionComponent<DatasetComponentProps> = (props) => {
   const {
-    qriRef,
     component: selectedComponent,
     componentStatus,
     isLoading,
@@ -69,11 +68,7 @@ export const DatasetComponent: React.FunctionComponent<DatasetComponentProps> = 
     data,
     peername,
     name,
-    stats,
     bodyPageInfo,
-    details,
-    setDetailsBar,
-    fetchBody,
     write,
     openToast,
     closeToast
@@ -193,14 +188,7 @@ export const DatasetComponent: React.FunctionComponent<DatasetComponentProps> = 
               cancelText='unstage file'
               onCancel={() => { handleWrite({ bodyPath: '' }) }}
             />}
-            <Body
-              data={data}
-              pageInfo={bodyPageInfo}
-              stats={stats}
-              fetchBody={fetchBody}
-              setDetailsBar={setDetailsBar}
-              details={details}
-            />
+            <Body />
           </div>
         </CSSTransition>
         <CSSTransition
@@ -230,10 +218,7 @@ export const DatasetComponent: React.FunctionComponent<DatasetComponentProps> = 
           appear={true}
         >
           <div className='transition-wrap'>
-            <Transform
-              data={data.transform || ''}
-              qriRef={qriRef}
-            />
+            <Transform />
           </div>
         </CSSTransition>
         <CSSTransition

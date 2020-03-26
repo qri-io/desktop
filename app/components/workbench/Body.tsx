@@ -1,15 +1,20 @@
 import * as React from 'react'
-import { Action } from 'redux'
+import { Action, Dispatch, bindActionCreators } from 'redux'
 
 import { ApiActionThunk } from '../../store/api'
 import { DetailsType, StatsDetails, Details } from '../../models/details'
 import Dataset, { Structure } from '../../models/dataset'
-import { PageInfo } from '../../models/store'
+import Store, { PageInfo } from '../../models/store'
+import { fetchBody, fetchCommitBody } from '../../actions/api'
+import { setDetailsBar } from '../../actions/ui'
+import { selectOnHistoryTab, selectHistoryDataset, selectWorkingDataset, selectHistoryStats, selectWorkingStats, selectDetails, selectHistoryDatasetBodyPageInfo, selectWorkingDatasetBodyPageInfo } from '../../selections'
 
 import BodyTable from '../BodyTable'
 import BodyJson from '../BodyJson'
+import { connect } from 'react-redux'
 
 export interface BodyProps {
+  history: boolean
   data: Dataset
   stats: Array<Record<string, any>>
   details: Details
@@ -53,7 +58,7 @@ const extractColumnHeaders = (structure: Structure, value: any[]): undefined | a
     schema.items.items.map((d: { title: string }): Record<string, any> => d)
 }
 
-const Body: React.FunctionComponent<BodyProps> = (props) => {
+export const BodyComponent: React.FunctionComponent<BodyProps> = (props) => {
   const {
     data,
     pageInfo,
@@ -115,4 +120,30 @@ const Body: React.FunctionComponent<BodyProps> = (props) => {
   )
 }
 
-export default Body
+const mapStateToProps = (state: Store) => {
+  // TODO(ramfox): when we get a BodyEditor component, pull out all references
+  // to history
+  const history = selectOnHistoryTab(state)
+  return {
+    history,
+    data: history ? selectHistoryDataset(state) : selectWorkingDataset(state),
+    stats: history ? selectHistoryStats(state) : selectWorkingStats(state),
+    details: selectDetails(state),
+    pageInfo: history ? selectHistoryDatasetBodyPageInfo(state) : selectWorkingDatasetBodyPageInfo(state)
+  }
+}
+
+const mapDispatchToProps = (dispatch: Dispatch, ownProps: BodyProps) => {
+  // TODO(ramfox): when we get a BodyEditor component, pull out all references
+  // to history
+  return bindActionCreators({
+    fetchBody: ownProps.history ? fetchBody : fetchCommitBody,
+    setDetailsBar
+  }, dispatch)
+}
+
+const mergeProps = (props: any, actions: any): BodyProps => {
+  return { ...props, ...actions }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(BodyComponent)
