@@ -78,7 +78,7 @@ export interface Selections {
   activeTab: string
   component: SelectedComponent
   commit: string
-  commitComponent: string
+  commitComponent: SelectedComponent
 }
 
 // info about the current value of a list being paginated

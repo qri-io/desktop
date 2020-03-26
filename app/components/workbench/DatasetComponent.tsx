@@ -1,14 +1,13 @@
 import * as React from 'react'
-import { Action } from 'redux'
+import { Action, bindActionCreators, Dispatch } from 'redux'
 import { connect } from 'react-redux'
 import path from 'path'
 import { CSSTransition } from 'react-transition-group'
 
-import { openToast, closeToast, setDetailsBar } from '../../actions/ui'
+import { openToast, closeToast } from '../../actions/ui'
 
-import { Store, StatusInfo, SelectedComponent, PageInfo, ToastType } from '../../models/store'
-import { Details } from '../../models/details'
-import { QriRef } from '../../models/qriRef'
+import Store, { StatusInfo, SelectedComponent, ToastType } from '../../models/store'
+
 import Dataset from '../../models/dataset'
 import { ApiActionThunk } from '../../store/api'
 import { getComponentDisplayProps } from '../ComponentList'
@@ -30,51 +29,37 @@ import Structure from '../Structure'
 import SpinnerWithIcon from '../chrome/SpinnerWithIcon'
 import Transform from './Transform'
 import StructureEditor from './StructureEditor'
+import { writeDataset } from '../../actions/workbench'
+import { selectWorkingDatasetIsLoading, selectOnHistoryTab, selectWorkingDataset, selectSelectedComponent, selectStatusFromMutations, selectHistoryStatus, selectFsiPath, selectHistoryDatasetIsLoading, selectSelectedCommitComponent } from '../../selections'
 
 interface DatasetComponentProps {
-  qriRef: QriRef
-  data: Dataset
-
-  // display details
-  details: Details
-  stats?: Array<Record<string, any>>
-  bodyPageInfo?: PageInfo
-  peername: string
-  name: string
-
   // setting actions
-  setDetailsBar: (details: Record<string, any>) => Action
   openToast: (type: ToastType, name: string, message: string) => Action
   closeToast: () => Action
-
-  // fetching api actions
-  fetchBody: (page?: number, pageSize?: number) => ApiActionThunk
-  write: (peername: string, name: string, dataset: Dataset) => ApiActionThunk | void
+  write: (dataset: Dataset) => ApiActionThunk | void
 
   isLoading: boolean
   component: SelectedComponent
-  componentStatus: StatusInfo
+  statusInfo: StatusInfo
   history?: boolean
   fsiPath?: string
+  bodyPath?: string
 }
 
 export const DatasetComponent: React.FunctionComponent<DatasetComponentProps> = (props) => {
   const {
     component: selectedComponent,
-    componentStatus,
+    statusInfo,
     isLoading,
     history = false,
     fsiPath,
-    data,
-    peername,
-    name,
-    bodyPageInfo,
+    bodyPath,
     write,
     openToast,
     closeToast
   } = props
 
-  const hasParseError = componentStatus.status === 'parse error'
+  const hasParseError = statusInfo && statusInfo.status === 'parse error'
   const component = selectedComponent || 'meta'
   const { displayName, icon, tooltip } = getComponentDisplayProps(component)
 
@@ -99,11 +84,7 @@ export const DatasetComponent: React.FunctionComponent<DatasetComponentProps> = 
       return
     }
 
-    handleWrite({ bodyPath: e.dataTransfer.files[0].path })
-  }
-
-  const handleWrite = (data: Dataset): ApiActionThunk | void => {
-    return write(peername, name, data)
+    write({ bodyPath: e.dataTransfer.files[0].path })
   }
 
   return (
@@ -115,12 +96,12 @@ export const DatasetComponent: React.FunctionComponent<DatasetComponentProps> = 
           </div>
         </div>
         <div className='status-dot-container'>
-          {componentStatus && <StatusDot status={componentStatus.status} />}
+          {statusInfo && <StatusDot status={statusInfo.status} />}
         </div>
       </div>
       <div className='component-content transition-group'>
         <CSSTransition
-          in={!!componentStatus && hasParseError}
+          in={!!statusInfo && hasParseError}
           classNames='fade'
           component='div'
           timeout={300}
@@ -129,7 +110,7 @@ export const DatasetComponent: React.FunctionComponent<DatasetComponentProps> = 
           appear={true}
         >
           <div className='transition-wrap'>
-            <ParseError fsiPath={fsiPath || ''} filename={componentStatus && componentStatus.filepath} component={component} />
+            <ParseError fsiPath={fsiPath || ''} filename={statusInfo && statusInfo.filepath} component={component} />
           </div>
         </CSSTransition>
         <CSSTransition
@@ -165,7 +146,7 @@ export const DatasetComponent: React.FunctionComponent<DatasetComponentProps> = 
           </div>
         </CSSTransition>
         <CSSTransition
-          in={component === 'body' && bodyPageInfo && !isLoading && !hasParseError}
+          in={component === 'body' && !isLoading && !hasParseError}
           classNames='fade'
           component='div'
           timeout={300}
@@ -182,11 +163,11 @@ export const DatasetComponent: React.FunctionComponent<DatasetComponentProps> = 
               setDragging={setDragging}
               onDrop={dropHandler}
             />}
-            {!history && data.bodyPath && <CalloutBlock
+            {!history && bodyPath && <CalloutBlock
               type='info'
-              text={`body will be replaced with file: ${data.bodyPath} when you commit`}
+              text={`body will be replaced with file: ${bodyPath} when you commit`}
               cancelText='unstage file'
-              onCancel={() => { handleWrite({ bodyPath: '' }) }}
+              onCancel={() => { write({ bodyPath: '' }) }}
             />}
             <Body />
           </div>
@@ -245,13 +226,30 @@ export const DatasetComponent: React.FunctionComponent<DatasetComponentProps> = 
 }
 
 const mapStateToProps = (state: Store, ownProps: DatasetComponentProps) => {
-  // get data for the currently selected component
-  return ownProps
+  const history = selectOnHistoryTab(state)
+  const selectedComponent = history ? selectSelectedCommitComponent(state) : selectSelectedComponent(state)
+  const status = history ? selectHistoryStatus(state) : selectStatusFromMutations(state)
+  return {
+    isLoading: history ? selectWorkingDatasetIsLoading(state) : selectHistoryDatasetIsLoading(state),
+    history,
+    component: selectedComponent,
+    statusInfo: status[selectedComponent],
+    fsiPath: selectFsiPath(state),
+    bodyPath: history ? selectWorkingDataset(state).bodyPath : ''
+
+  }
 }
 
+const mapDispatchToProps = (dispatch: Dispatch) => {
+  return bindActionCreators({
+    openToast,
+    closeToast,
+    write: writeDataset
+  }, dispatch)
+}
+
+const mergeProps = (props: any, actions: any): DatasetComponentProps => {
+  return { ...props, ...actions }
+}
 // TODO (b5) - this component doesn't need to be a container. Just feed it the right data
-export default connect(mapStateToProps, {
-  openToast,
-  closeToast,
-  setDetailsBar
-})(DatasetComponent)
+export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(DatasetComponent)

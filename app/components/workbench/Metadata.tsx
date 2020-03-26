@@ -34,20 +34,20 @@ const renderChips = (value: string[] | undefined) => (
 )
 
 const renderLicense = (license: License) => (
-  <ExternalLink href={license.url}>
+  <ExternalLink id='render-license' href={license.url}>
     {license.type}
   </ExternalLink>
 )
 
 const renderURL = (url: string) => (
-  <ExternalLink href={url}>{url}</ExternalLink>
+  <ExternalLink id='render-url' href={url}>{url}</ExternalLink>
 )
 
 const renderArrayItemsTable = (value: any[]) => {
   return (
     <div className='array-items-table-container'>
       {
-        value.map((item, i) => (<div key={i}><KeyValueTable data={item} /></div>))
+        value.map((item, i) => (<div key={i}><KeyValueTable index={i} data={item} /></div>))
       }
     </div>
   )

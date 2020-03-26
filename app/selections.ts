@@ -1,11 +1,23 @@
 import Dataset, { Commit } from "./models/dataset"
 import cloneDeep from 'clone-deep'
 
-import Store, { CommitDetails, Status, PageInfo } from './models/store'
+import Store, { CommitDetails, Status, PageInfo, SelectedComponent } from './models/store'
 import { Details } from "./models/details"
+
+export function selectSelectedComponent (state: Store): SelectedComponent {
+  return state.selections.component
+}
+
+export function selectSelectedCommitComponent (state: Store): SelectedComponent {
+  return state.selections.commitComponent
+}
 
 export function selectDetails (state: Store): Details {
   return state.ui.detailsBar
+}
+
+export function selectFsiPath (state: Store) {
+  return state.workingDataset.fsiPath
 }
 
 // combines working dataset and mutations dataset to return most
@@ -30,6 +42,22 @@ export function selectHistoryCommit (state: Store): Commit | undefined {
 // returns a dataset that only contains components
 export function selectHistoryDataset (state: Store): Dataset {
   return datasetFromCommitDetails(state.commitDetails)
+}
+
+export function selectHistoryDatasetIsLoading (state: Store): boolean {
+  return state.commitDetails.isLoading
+}
+
+export function selectHistoryDatasetPath (state: Store): string {
+  return state.commitDetails.path
+}
+
+export function selectHistoryDatasetName (state: Store): string {
+  return state.commitDetails.name
+}
+
+export function selectHistoryDatasetPeername (state: Store): string {
+  return state.commitDetails.peername
 }
 
 export function selectHistoryDatasetRef (state: Store): string {

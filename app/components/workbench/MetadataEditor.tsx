@@ -145,7 +145,7 @@ const MetadataEditorComponent: React.FunctionComponent<MetadataEditorProps> = (p
       <h4 className='metadata-viewer-title'>
         Standard Metadata
         &nbsp;
-        <ExternalLink href='https://qri.io/docs/reference/dataset/#meta'>
+        <ExternalLink id='meta-docs' href='https://qri.io/docs/reference/dataset/#meta'>
           <span
             data-tip={'Qri\'s common metadata fields.<br/>Click for more info.'}
             className='text-input-tooltip'

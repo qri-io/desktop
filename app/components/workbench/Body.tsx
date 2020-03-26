@@ -20,6 +20,7 @@ export interface BodyProps {
   details: Details
   pageInfo: PageInfo
   fetchBody: (page?: number, pageSize?: number) => ApiActionThunk
+  fetchCommitBody: (page?: number, pageSize?: number) => ApiActionThunk
   setDetailsBar: (details: Record<string, any>) => Action
 }
 
@@ -65,7 +66,9 @@ export const BodyComponent: React.FunctionComponent<BodyProps> = (props) => {
     stats,
     details,
     setDetailsBar,
-    fetchBody
+    fetchBody,
+    fetchCommitBody,
+    history
   } = props
 
   const { body, structure } = data
@@ -112,7 +115,7 @@ export const BodyComponent: React.FunctionComponent<BodyProps> = (props) => {
           body={body}
           pageInfo={pageInfo}
           highlighedColumnIndex={details.type !== DetailsType.NoDetails ? details.index : undefined}
-          onFetch={fetchBody}
+          onFetch={history ? fetchCommitBody : fetchBody}
           setDetailsBar={handleToggleDetailsBar}
         />
       }
@@ -133,11 +136,10 @@ const mapStateToProps = (state: Store) => {
   }
 }
 
-const mapDispatchToProps = (dispatch: Dispatch, ownProps: BodyProps) => {
-  // TODO(ramfox): when we get a BodyEditor component, pull out all references
-  // to history
+const mapDispatchToProps = (dispatch: Dispatch) => {
   return bindActionCreators({
-    fetchBody: ownProps.history ? fetchBody : fetchCommitBody,
+    fetchBody,
+    fetchCommitBody,
     setDetailsBar
   }, dispatch)
 }
