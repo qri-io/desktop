@@ -29,6 +29,7 @@ import StatusDot from '../chrome/StatusDot'
 import Structure from '../Structure'
 import SpinnerWithIcon from '../chrome/SpinnerWithIcon'
 import Transform from './Transform'
+import StructureEditor from './StructureEditor'
 
 interface DatasetComponentProps {
   qriRef: QriRef
@@ -216,12 +217,11 @@ export const DatasetComponent: React.FunctionComponent<DatasetComponentProps> = 
           appear={true}
         >
           <div className='transition-wrap'>
-            <Structure
-              data={data.structure}
-              history={history}
-              write={handleWrite}
-              loading={isLoading}
-            />
+            {
+              history
+                ? <Structure />
+                : <StructureEditor />
+            }
           </div>
         </CSSTransition>
         <CSSTransition

@@ -31,6 +31,10 @@ export function selectHistoryStatus (state: Store): Status {
   return state.commitDetails.status
 }
 
+export function selectHistoryIsLoading (state: Store): boolean {
+  return state.commitDetails.isLoading
+}
+
 export function selectIsCommiting (state: Store): boolean {
   return state.mutations.save.isLoading
 }

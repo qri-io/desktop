@@ -1,9 +1,9 @@
 import * as React from 'react'
-import { Structure as IStructure } from '../models/dataset'
-import { formatConfigOptions } from './Structure'
+import { Structure as IStructure } from '../../models/dataset'
+import { formatConfigOptions } from '../Structure'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faInfoCircle } from '@fortawesome/free-solid-svg-icons'
-import TextInput from './form/TextInput'
+import TextInput from '../form/TextInput'
 
 export interface FormatConfigFSIProps {
   structure: IStructure
