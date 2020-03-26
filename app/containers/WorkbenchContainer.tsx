@@ -10,6 +10,7 @@ import {
   fetchCommitDataset,
   fetchHistory,
   fetchWorkingDataset,
+  fetchWorkingDatasetDetails,
   fetchWorkingStatus,
 
   publishDataset,
@@ -121,6 +122,7 @@ const WorkbenchContainer = connect(
 
     fetchHistory,
     fetchWorkingDataset,
+    fetchWorkingDatasetDetails,
     fetchWorkingStatus,
     fetchBody,
     fetchWorkbench,

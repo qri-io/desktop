@@ -83,6 +83,7 @@ export interface WorkbenchProps extends RouteComponentProps {
   fetchHistory: (page?: number, pageSize?: number) => ApiActionThunk
   fetchWorkingDataset: () => ApiActionThunk
   fetchWorkingStatus: () => ApiActionThunk
+  fetchWorkingDatasetDetails: () => ApiActionThunk
   fetchBody: (page: number) => ApiActionThunk
 
   fetchCommitDataset: () => ApiActionThunk
@@ -383,6 +384,10 @@ class Workbench extends React.Component<WorkbenchProps, Status> {
       <>
         <Prompt when={modified} message={(location) => {
           if (location.pathname.includes('workbench')) return false
+          if (fsiPath !== '') {
+            this.props.fetchWorkingDatasetDetails()
+            return true
+          }
           return `You have uncommited changes! Click 'cancel' and commit these changes before you navigate away or you will lose your work.`
         }}/>
         <div className='main-content-header'>
