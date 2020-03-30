@@ -4,7 +4,7 @@ export interface TableDiffSchemaHeadProps {
   data: any[]
 }
 
-const TableDiffSchemaHead: React.FC<TableDiffSchemaHeadProps> = ({ data }) => {
+const TableDiffSchemaHead: React.FunctionComponent<TableDiffSchemaHeadProps> = ({ data }) => {
   if (!data) {
     return null
   }

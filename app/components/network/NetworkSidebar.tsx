@@ -1,6 +1,6 @@
 import React from 'react'
 
-const NetworkSidebar: React.FC<void> = (props) => {
+const NetworkSidebar: React.FunctionComponent<void> = (props) => {
   const { children } = props
   return (
     <div id='network-sidebar'>

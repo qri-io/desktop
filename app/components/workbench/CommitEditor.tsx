@@ -26,7 +26,7 @@ export interface CommitEditorProps {
   setCommitMessage: (message: string) => Action
 }
 
-export const CommitEditorComponent: React.FC<CommitEditorProps> = (props) => {
+export const CommitEditorComponent: React.FunctionComponent<CommitEditorProps> = (props) => {
   const {
     isLoading,
     status,

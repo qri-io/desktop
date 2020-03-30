@@ -26,7 +26,7 @@ interface CollectionProps {
   closeToast: () => Action
 }
 
-const Collection: React.FC<CollectionProps> = (props) => {
+const Collection: React.FunctionComponent<CollectionProps> = (props) => {
   const {
     myDatasets,
     workingDataset,

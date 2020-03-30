@@ -16,7 +16,7 @@ export interface TransformProps {
   write?: (dataset: Dataset) => ApiActionThunk | void
 }
 
-export const TransformComponent: React.FC<TransformProps> = ({ data = '' }) => (
+export const TransformComponent: React.FunctionComponent<TransformProps> = ({ data = '' }) => (
   <Code data={data} />
 )
 
