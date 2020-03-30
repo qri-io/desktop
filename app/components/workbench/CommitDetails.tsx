@@ -6,6 +6,7 @@ import Store, { ComponentType, SelectedComponent, Selections, Status } from '../
 import Dataset from '../../models/dataset'
 import { setSelectedListItem } from '../../actions/selections'
 import { selectHistoryDataset, selectHistoryStatus, selectHistoryDatasetPeername, selectHistoryDatasetName, selectHistoryDatasetPath } from '../../selections'
+import { QriRef } from '../../models/qriRef'
 
 import HistoryComponentList from '../HistoryComponentList'
 import DatasetComponent from './DatasetComponent'
@@ -13,10 +14,8 @@ import Layout from '../Layout'
 import CommitDetailsHeader from './CommitDetailsHeader'
 
 export interface CommitDetailsProps {
+  qriRef: QriRef
   dataset: Dataset
-  peername: string
-  name: string
-  path: string
   status: Status
   selections: Selections
 
@@ -26,14 +25,14 @@ export interface CommitDetailsProps {
 export const CommitDetailsComponent: React.FunctionComponent<CommitDetailsProps> = (props) => {
   const {
     dataset,
-    peername,
-    name,
-    path,
+    qriRef,
     status,
     selections,
     setComponent
   } = props
   const { commitComponent: selectedComponent } = selections
+
+  const { username = '', name = '', path = '' } = qriRef
 
   const getComponents = () => {
     const components: SelectedComponent[] = []
@@ -59,7 +58,7 @@ export const CommitDetailsComponent: React.FunctionComponent<CommitDetailsProps>
         }
         sidebarContent={(
           <HistoryComponentList
-            datasetSelected={peername !== '' && name !== ''}
+            datasetSelected={username !== '' && name !== ''}
             status={status}
             components={getComponents()}
             selectedComponent={selectedComponent}
@@ -69,15 +68,16 @@ export const CommitDetailsComponent: React.FunctionComponent<CommitDetailsProps>
         )}
         sidebarWidth={150}
         mainContent={(
-          <DatasetComponent />
+          <DatasetComponent qriRef={qriRef} />
         )}
       />
     </div>
   )
 }
 
-const mapStateToProps = (state: Store) => {
+const mapStateToProps = (state: Store, ownProps: CommitDetailsProps) => {
   return {
+    ...ownProps,
     dataset: selectHistoryDataset(state),
     peername: selectHistoryDatasetPeername(state),
     name: selectHistoryDatasetName(state),

@@ -4,7 +4,7 @@ import { ipcRenderer, shell, clipboard } from 'electron'
 import { CSSTransition } from 'react-transition-group'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faFolderOpen, faFile, faLink, faCloud, faCloudUploadAlt } from '@fortawesome/free-solid-svg-icons'
-import { withRouter, RouteComponentProps, Prompt } from 'react-router-dom'
+import { RouteComponentProps, Prompt } from 'react-router-dom'
 
 import { QRI_CLOUD_URL } from '../../constants'
 import { Details } from '../../models/details'
@@ -22,6 +22,7 @@ import Dataset from '../../models/dataset'
 import { Modal, ModalType } from '../../models/modals'
 import { ApiActionThunk, LaunchedFetchesAction } from '../../store/api'
 import { defaultSidebarWidth } from '../../reducers/ui'
+import { QriRef } from '../../models/qriRef'
 
 import { Resizable } from '../Resizable'
 import Layout from '../Layout'
@@ -39,8 +40,6 @@ import NotInNamespace from './NotInNamespace'
 require('../../assets/qri-blob-logo-tiny.png')
 
 export interface WorkbenchData {
-  location: string
-
   workingDataset: WorkingDataset
   head: ICommitDetails
   history: History
@@ -54,6 +53,7 @@ export interface WorkbenchProps extends RouteComponentProps {
   data: WorkbenchData
 
   // display details
+  qriRef: QriRef
   selections: Selections
   session: Session
   hasDatasets: boolean
@@ -135,7 +135,7 @@ class Workbench extends React.Component<WorkbenchProps, Status> {
   }
 
   async componentDidUpdate (prevProps: WorkbenchProps) {
-    if (prevProps.data.location !== this.props.data.location) {
+    if (prevProps.qriRef.location !== this.props.qriRef.location) {
       // TODO (b5) - this was bailing early when fetch happened
       this.props.fetchWorkbench()
     }
@@ -169,6 +169,8 @@ class Workbench extends React.Component<WorkbenchProps, Status> {
     const {
       data,
 
+      qriRef,
+      // TODO(ramfox): selections on slate for removal, should be passing in qriRefs in order to get location
       selections,
       hasDatasets,
       sidebarWidth,
@@ -185,12 +187,12 @@ class Workbench extends React.Component<WorkbenchProps, Status> {
 
       renameDataset
     } = this.props
+
     const { peername: username } = session
-    const {
-      peername,
-      name,
-      activeTab
-    } = selections
+
+    const peername = qriRef.username
+    const name = qriRef.name
+    const activeTab = qriRef.path ? 'history' : 'status'
 
     const datasetSelected = peername !== '' && name !== ''
 
@@ -325,7 +327,7 @@ class Workbench extends React.Component<WorkbenchProps, Status> {
               unmountOnExit
             >
               { inNamespace
-                ? <DatasetComponent />
+                ? <DatasetComponent qriRef={qriRef} />
                 : <NotInNamespace />
               }
             </CSSTransition>
@@ -336,7 +338,7 @@ class Workbench extends React.Component<WorkbenchProps, Status> {
               mountOnEnter
               unmountOnExit
             >
-              <CommitDetails />
+              <CommitDetails qriRef={qriRef} />
             </CSSTransition>
           </div>
         </div>
@@ -375,4 +377,4 @@ class Workbench extends React.Component<WorkbenchProps, Status> {
   }
 }
 
-export default withRouter(Workbench)
+export default Workbench

@@ -75,11 +75,11 @@ export default function Routes (props: any) {
           />)
         }} />
 
-        <Route exact path='/workbench' render={() => {
-          return sectionElement('workbench', <WorkbenchContainer />)
+        <Route exact path='/workbench' render={(props) => {
+          return sectionElement('workbench', <WorkbenchContainer {...props} />)
         }}/>
-        <Route path='/workbench/:username/:name' render={() => {
-          return sectionElement('workbench', <WorkbenchContainer />)
+        <Route path='/workbench/:username/:name' render={(props) => {
+          return sectionElement('workbench', <WorkbenchContainer {...props} />)
         }}/>
 
         { __BUILD__.ENABLE_COMPARE_SECTION &&

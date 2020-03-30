@@ -10,14 +10,15 @@ import { saveWorkingDatasetAndFetch } from '../../actions/api'
 import { setCommitTitle, setCommitMessage } from '../../actions/mutations'
 import { validateCommitState } from '../../utils/formValidation'
 import { ApiAction } from '../../store/api'
-import { selectIsCommiting, selectStatusFromMutations, selectMutationsCommit, selectWorkingDatasetRef } from '../../selections'
+import { selectIsCommiting, selectStatusFromMutations, selectMutationsCommit } from '../../selections'
+import { refStringFromQriRef, QriRef } from '../../models/qriRef'
 
 import TextInput from '../form/TextInput'
 import TextAreaInput from '../form/TextAreaInput'
 
 export interface CommitEditorProps {
+  qriRef: QriRef
   isLoading: boolean
-  datasetRef: string
   status: Status
   title: string
   message: string
@@ -28,9 +29,9 @@ export interface CommitEditorProps {
 
 export const CommitEditorComponent: React.FunctionComponent<CommitEditorProps> = (props) => {
   const {
+    qriRef,
     isLoading,
     status,
-    datasetRef,
     title,
     message,
     saveWorkingDatasetAndFetch,
@@ -66,7 +67,7 @@ export const CommitEditorComponent: React.FunctionComponent<CommitEditorProps> =
     <div id='commit-component'>
       <div className='commit-section'>
         <h6> Commit Changes to </h6>
-        <div className='dataset-ref'>{datasetRef}</div>
+        <div className='dataset-ref'>{refStringFromQriRef(qriRef)}</div>
       </div>
       {/* <div className='commit-section'>
         <h6>change stats</h6>
@@ -105,12 +106,12 @@ export const CommitEditorComponent: React.FunctionComponent<CommitEditorProps> =
   )
 }
 
-const mapStateToProps = (state: Store) => {
+const mapStateToProps = (state: Store, ownProps: CommitEditorProps) => {
   const mutationsCommit = selectMutationsCommit(state)
   // get data for the currently selected component
   return {
+    ...ownProps,
     isLoading: selectIsCommiting(state),
-    datasetRef: selectWorkingDatasetRef(state),
     title: mutationsCommit.title,
     message: mutationsCommit.message,
     status: selectStatusFromMutations(state)

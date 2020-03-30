@@ -10,6 +10,7 @@ import fileSize, { abbreviateNumber } from '../../utils/fileSize'
 import { selectMutationsDataset, selectWorkingDatasetIsLoading, selectWorkingDatasetPeername, selectWorkingDatasetName } from '../../selections'
 import Store from '../../models/store'
 import { writeDataset } from '../../actions/workbench'
+import { QriRef } from '../../models/qriRef'
 
 import SpinnerWithIcon from '../chrome/SpinnerWithIcon'
 import LabeledStats from '../item/LabeledStats'
@@ -18,21 +19,22 @@ import ExternalLink from '../ExternalLink'
 import FormatConfigEditor from '../structure/FormatConfigEditor'
 
 export interface StructureEditorProps {
+  qriRef: QriRef
   data: IStructure
-  history: boolean
   showConfig?: boolean
   loading: boolean
   write?: (peername: string, name: string, dataset: Dataset) => ApiActionThunk | void
-  peername: string
-  name: string
 }
 
 export const StructureEditorComponent: React.FunctionComponent<StructureEditorProps> = (props) => {
-  const { data, write, loading, peername, name } = props
+  const { data, write, loading, qriRef } = props
 
   if (loading) {
     return <SpinnerWithIcon loading={true} />
   }
+
+  const username = qriRef.username || ''
+  const name = qriRef.name || ''
 
   const format = data.format || 'csv'
   const handleWriteFormat = (option: string, value: any) => {
@@ -41,7 +43,7 @@ export const StructureEditorComponent: React.FunctionComponent<StructureEditorPr
     // format. Let's pass in whatever the current format is, so that we have unity between
     // what the desktop is seeing and the backend. This can be removed when we have the fsi
     // backend codepaths settled
-    write(peername, name, { structure: {
+    write(username, name, { structure: {
       ...data,
       format,
       formatConfig: {
@@ -52,7 +54,7 @@ export const StructureEditorComponent: React.FunctionComponent<StructureEditorPr
   }
 
   const handleOnChange = (schema: ISchema) => {
-    if (write) write(peername, name, { structure: { ...data, schema } })
+    if (write) write(username, name, { structure: { ...data, schema } })
   }
 
   const stats = [
@@ -94,8 +96,9 @@ export const StructureEditorComponent: React.FunctionComponent<StructureEditorPr
   )
 }
 
-const mapStateToProps = (state: Store) => {
+const mapStateToProps = (state: Store, ownProps: StructureEditorProps) => {
   return {
+    ...ownProps,
     data: selectMutationsDataset(state).structure,
     loading: selectWorkingDatasetIsLoading(state),
     peername: selectWorkingDatasetPeername(state),

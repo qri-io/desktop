@@ -5,6 +5,7 @@ import Store from '../../models/store'
 import { isUserArray } from '../form/MetadataMultiInput'
 import { Meta, Citation, License, User } from '../../models/dataset'
 import { selectHistoryDataset } from '../../selections'
+import { QriRef } from '../../models/qriRef'
 
 import ExternalLink from '../ExternalLink'
 import KeyValueTable from '../KeyValueTable'
@@ -12,6 +13,7 @@ import SpinnerWithIcon from '../chrome/SpinnerWithIcon'
 import { standardFields } from './MetadataEditor'
 
 interface MetadataProps {
+  qriRef: QriRef
   data: Meta
 }
 
@@ -130,9 +132,10 @@ export const MetadataComponent: React.FunctionComponent<MetadataProps> = ({ data
   )
 }
 
-const mapStateToProps = (state: Store) => {
+const mapStateToProps = (state: Store, ownProps: MetadataProps) => {
   // get data for the currently selected component
   return {
+    ...ownProps,
     data: selectHistoryDataset(state).meta
   }
 }

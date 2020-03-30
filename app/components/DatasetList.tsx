@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { Action, AnyAction } from 'redux'
 import ContextMenuArea from 'react-electron-contextmenu'
-import { withRouter } from 'react-router-dom'
+import { withRouter, RouteComponentProps } from 'react-router-dom'
 import { shell, MenuItemConstructorOptions } from 'electron'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTimes } from '@fortawesome/free-solid-svg-icons'
@@ -15,7 +15,7 @@ import VersionInfoItem from './item/VersionInfoItem'
 // assumes an import rate of 4828 bytes per millisecond
 const IMPORT_BYTES_PER_MS = 4828
 
-interface DatasetListProps {
+interface DatasetListProps extends RouteComponentProps {
   myDatasets: MyDatasets
   workingDataset: WorkingDataset
   importFileName: string

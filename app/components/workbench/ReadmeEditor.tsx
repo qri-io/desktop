@@ -7,7 +7,8 @@ import { Dispatch, bindActionCreators } from 'redux'
 import { ApiActionThunk } from '../../store/api'
 import { datasetConvertStringToScriptBytes } from '../../utils/datasetConvertStringToScriptBytes'
 import Dataset from '../../models/dataset'
-import { selectWorkingDatasetRef, selectWorkingDatasetIsLoading, selectMutationsDataset, selectIsLinked, selectWorkingDatasetName, selectWorkingDatasetPeername } from '../../selections'
+import { refStringFromQriRef, QriRef } from '../../models/qriRef'
+import { selectWorkingDatasetIsLoading, selectMutationsDataset, selectIsLinked, selectWorkingDatasetName, selectWorkingDatasetPeername } from '../../selections'
 import Store from '../../models/store'
 import { writeDataset } from '../../actions/workbench'
 
@@ -16,7 +17,7 @@ import SpinnerWithIcon from '../chrome/SpinnerWithIcon'
 const DEBOUNCE_TIMER = 1000
 
 export interface ReadmeEditorProps {
-  datasetRef: string
+  qriRef: QriRef
   data?: string
   loading: boolean
   isLinked: boolean
@@ -26,7 +27,16 @@ export interface ReadmeEditorProps {
 }
 
 export const ReadmeEditorComponent: React.FunctionComponent<ReadmeEditorProps> = (props) => {
-  const { data = '', datasetRef, write, loading, isLinked } = props
+  const {
+    qriRef,
+    data = '',
+    write,
+    loading,
+    isLinked
+  } = props
+
+  const username = qriRef.username || ''
+  const name = qriRef.name || ''
 
   const [internalValue, setInternalValue] = React.useState(data)
   const [debouncedValue] = useDebounce(internalValue, DEBOUNCE_TIMER)
@@ -48,7 +58,7 @@ export const ReadmeEditorComponent: React.FunctionComponent<ReadmeEditorProps> =
 
   React.useEffect(() => {
     if (debouncedValue !== data) {
-      write(peername, name, {
+      write(username, name, {
         readme: internalValue
       })
     }
@@ -67,7 +77,7 @@ export const ReadmeEditorComponent: React.FunctionComponent<ReadmeEditorProps> =
    */
   const getPreview = (plainText: string, preview: HTMLElement) => {
     if (isLinked) {
-      fetch(`http://localhost:2503/render/${datasetRef}?fsi=true`)
+      fetch(`http://localhost:2503/render/${refStringFromQriRef(qriRef)}?fsi=true`)
         .then(async (res) => res.text())
         .then((render) => {
           preview.innerHTML = render
@@ -125,9 +135,9 @@ export const ReadmeEditorComponent: React.FunctionComponent<ReadmeEditorProps> =
   )
 }
 
-const mapStateToProps = (state: Store) => {
+const mapStateToProps = (state: Store, ownProps: ReadmeEditorProps) => {
   return {
-    datasetRef: selectWorkingDatasetRef(state),
+    ...ownProps,
     data: selectMutationsDataset(state).readme,
     loading: selectWorkingDatasetIsLoading(state),
     isLinked: selectIsLinked(state),

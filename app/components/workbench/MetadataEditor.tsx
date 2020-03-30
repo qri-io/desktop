@@ -11,6 +11,7 @@ import { Meta } from '../../models/dataset'
 import { selectMutationsDataset, selectWorkingDatasetIsLoading, selectWorkingDatasetPeername, selectWorkingDatasetName } from '../../selections'
 import Store from '../../models/store'
 import { writeDataset } from '../../actions/workbench'
+import { QriRef } from '../../models/qriRef'
 
 import ExternalLink from '../ExternalLink'
 import TextInput from '../form/TextInput'
@@ -21,9 +22,8 @@ import MetadataMultiInput from '../form/MetadataMultiInput'
 import SpinnerWithIcon from '../chrome/SpinnerWithIcon'
 
 interface MetadataEditorProps {
+  qriRef: QriRef
   data: Meta
-  peername: string
-  name: string
   write: (peername: string, name: string, dataset: any) => ApiActionThunk | void
   loading: boolean
 }
@@ -81,7 +81,15 @@ export const standardFields = [
 ]
 
 const MetadataEditorComponent: React.FunctionComponent<MetadataEditorProps> = (props: MetadataEditorProps) => {
-  const { data = {}, write, loading, peername, name } = props
+  const {
+    data = {},
+    write,
+    loading,
+    qriRef
+  } = props
+
+  const username = qriRef.username || ''
+  const name = qriRef.name || ''
 
   if (loading) {
     return <SpinnerWithIcon loading={true} />
@@ -109,7 +117,7 @@ const MetadataEditorComponent: React.FunctionComponent<MetadataEditorProps> = (p
       update[t] = v
     }
 
-    write(peername, name, {
+    write(username, name, {
       meta: update
     })
   }
@@ -332,8 +340,9 @@ const MetadataEditorComponent: React.FunctionComponent<MetadataEditorProps> = (p
   )
 }
 
-const mapStateToProps = (state: Store) => {
+const mapStateToProps = (state: Store, ownProps: MetadataEditorProps) => {
   return {
+    ...ownProps,
     data: selectMutationsDataset(state).meta,
     loading: selectWorkingDatasetIsLoading(state),
     peername: selectWorkingDatasetPeername(state),

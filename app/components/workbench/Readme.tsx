@@ -2,20 +2,21 @@ import * as React from 'react'
 import { connect } from 'react-redux'
 
 import Store from '../../models/store'
-import { selectHistoryDatasetRef } from '../../selections'
+import { refStringFromQriRef, QriRef } from '../../models/qriRef'
+import { ReadmeEditorProps } from './ReadmeEditor'
 
 export interface ReadmeProps {
-  datasetRef: string
+  qriRef: QriRef
 }
 
 export const ReadmeComponent: React.FunctionComponent<ReadmeProps> = (props) => {
-  const { datasetRef } = props
+  const { qriRef } = props
   const [hasReadme, setHasReadme] = React.useState(true)
   const refWithCallback = () => {
     const ref = React.useRef<HTMLDivElement>(null)
     const setRef = React.useCallback((el: HTMLDivElement) => {
       if (el !== null) {
-        fetch(`http://localhost:2503/render/${datasetRef}`)
+        fetch(`http://localhost:2503/render/${refStringFromQriRef(qriRef)}`)
           .then(async (res) => {
             return res.text()
           })
@@ -24,7 +25,7 @@ export const ReadmeComponent: React.FunctionComponent<ReadmeProps> = (props) => 
             el.innerHTML = render
           })
       }
-    }, [datasetRef])
+    }, [refStringFromQriRef(qriRef)])
     ref.current = setRef
     return [setRef]
   }
@@ -44,11 +45,9 @@ export const ReadmeComponent: React.FunctionComponent<ReadmeProps> = (props) => 
   )
 }
 
-const mapStateToProps = (state: Store) => {
+const mapStateToProps = (state: Store, ownProps: ReadmeEditorProps) => {
   // get data for the currently selected component
-  return {
-    datasetRef: selectHistoryDatasetRef(state)
-  }
+  return ownProps
 }
 
 // TODO (b5) - this doesn't need to be a container at all

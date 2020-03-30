@@ -2,11 +2,13 @@ import * as React from 'react'
 import { connect } from 'react-redux'
 import moment from 'moment'
 
+import { QriRef } from '../../models/qriRef'
 import { Commit } from '../../models/dataset'
 import Store from '../../models/store'
 import { selectHistoryCommit } from '../../selections'
 
 export interface CommitProps {
+  qriRef: QriRef
   commit: Commit
 }
 
@@ -22,8 +24,9 @@ export const CommitComponent: React.FunctionComponent<CommitProps> = ({
   )
 }
 
-const mapStateToProps = (state: Store) => {
+const mapStateToProps = (state: Store, ownProps: CommitProps) => {
   return {
+    ...ownProps,
     commit: selectHistoryCommit(state)
   }
 }

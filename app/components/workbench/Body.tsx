@@ -8,13 +8,14 @@ import Dataset, { Structure } from '../../models/dataset'
 import Store, { PageInfo } from '../../models/store'
 import { fetchBody, fetchCommitBody } from '../../actions/api'
 import { setDetailsBar } from '../../actions/ui'
-import { selectOnHistoryTab, selectHistoryDataset, selectWorkingDataset, selectHistoryStats, selectWorkingStats, selectDetails, selectHistoryDatasetBodyPageInfo, selectWorkingDatasetBodyPageInfo } from '../../selections'
+import { selectHistoryDataset, selectWorkingDataset, selectHistoryStats, selectWorkingStats, selectDetails, selectHistoryDatasetBodyPageInfo, selectWorkingDatasetBodyPageInfo } from '../../selections'
+import { QriRef } from '../../models/qriRef'
 
 import BodyTable from '../BodyTable'
 import BodyJson from '../BodyJson'
 
 export interface BodyProps {
-  showHistory: boolean
+  qriRef: QriRef
   data: Dataset
   stats: Array<Record<string, any>>
   details: Details
@@ -68,8 +69,10 @@ export const BodyComponent: React.FunctionComponent<BodyProps> = (props) => {
     setDetailsBar,
     fetchBody,
     fetchCommitBody,
-    showHistory
+    qriRef
   } = props
+
+  const showHistory = !!qriRef.path
 
   const { body, structure } = data
   const headers = extractColumnHeaders(structure, body)
@@ -123,16 +126,17 @@ export const BodyComponent: React.FunctionComponent<BodyProps> = (props) => {
   )
 }
 
-const mapStateToProps = (state: Store) => {
+const mapStateToProps = (state: Store, ownProps: BodyProps) => {
   // TODO(ramfox): when we get a BodyEditor component, pull out all references
   // to showHistory
-  const showHistory = selectOnHistoryTab(state)
+  const { qriRef } = ownProps
+  const showHistory = !!qriRef.path
   return {
-    showHistory,
     data: showHistory ? selectHistoryDataset(state) : selectWorkingDataset(state),
     stats: showHistory ? selectHistoryStats(state) : selectWorkingStats(state),
     details: selectDetails(state),
-    pageInfo: showHistory ? selectHistoryDatasetBodyPageInfo(state) : selectWorkingDatasetBodyPageInfo(state)
+    pageInfo: showHistory ? selectHistoryDatasetBodyPageInfo(state) : selectWorkingDatasetBodyPageInfo(state),
+    qriRef
   }
 }
 

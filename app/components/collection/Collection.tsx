@@ -37,6 +37,7 @@ const Collection: React.FunctionComponent<CollectionProps> = (props) => {
     setModal,
     importFileName,
     importFileSize,
+    fetchMyDatasets,
 
     openToast,
     closeToast,
@@ -50,6 +51,7 @@ const Collection: React.FunctionComponent<CollectionProps> = (props) => {
         myDatasets={myDatasets}
         workingDataset={workingDataset}
         setFilter={setFilter}
+        fetchMyDatasets={fetchMyDatasets}
         setWorkingDataset={setWorkingDataset}
         setModal={setModal}
         importFileName={importFileName}
