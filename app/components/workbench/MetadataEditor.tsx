@@ -15,7 +15,7 @@ import { ApiActionThunk } from '../../store/api'
 import { Meta } from '../../models/dataset'
 
 import SpinnerWithIcon from '../chrome/SpinnerWithIcon'
-import { selectMutationsDataset, selectWorkingDatasetIsLoading } from '../../selections'
+import { selectMutationsDataset, selectWorkingDatasetIsLoading, selectWorkingDatasetPeername, selectWorkingDatasetName } from '../../selections'
 import Store from '../../models/store'
 import { Dispatch, bindActionCreators } from 'redux'
 import { writeDataset } from '../../actions/workbench'
@@ -23,7 +23,9 @@ import { connect } from 'react-redux'
 
 interface MetadataEditorProps {
   data: Meta
-  write: (dataset: any) => ApiActionThunk | void
+  peername: string
+  name: string
+  write: (peername: string, name: string, dataset: any) => ApiActionThunk | void
   loading: boolean
 }
 
@@ -80,7 +82,7 @@ export const standardFields = [
 ]
 
 const MetadataEditorComponent: React.FunctionComponent<MetadataEditorProps> = (props: MetadataEditorProps) => {
-  const { data = {}, write, loading } = props
+  const { data = {}, write, loading, peername, name } = props
 
   if (loading) {
     return <SpinnerWithIcon loading={true} />
@@ -108,7 +110,7 @@ const MetadataEditorComponent: React.FunctionComponent<MetadataEditorProps> = (p
       update[t] = v
     }
 
-    write({
+    write(peername, name, {
       meta: update
     })
   }
@@ -334,7 +336,9 @@ const MetadataEditorComponent: React.FunctionComponent<MetadataEditorProps> = (p
 const mapStateToProps = (state: Store) => {
   return {
     data: selectMutationsDataset(state).meta,
-    loading: selectWorkingDatasetIsLoading(state)
+    loading: selectWorkingDatasetIsLoading(state),
+    peername: selectWorkingDatasetPeername(state),
+    name: selectWorkingDatasetName(state)
   }
 }
 

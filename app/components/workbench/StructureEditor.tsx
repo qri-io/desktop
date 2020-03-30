@@ -7,7 +7,7 @@ import { bindActionCreators, Dispatch } from 'redux'
 import Dataset, { Structure as IStructure, Schema as ISchema } from '../../models/dataset'
 import { ApiActionThunk } from '../../store/api'
 import fileSize, { abbreviateNumber } from '../../utils/fileSize'
-import { selectMutationsDataset, selectWorkingDatasetIsLoading } from '../../selections'
+import { selectMutationsDataset, selectWorkingDatasetIsLoading, selectWorkingDatasetPeername, selectWorkingDatasetName } from '../../selections'
 import Store from '../../models/store'
 import { writeDataset } from '../../actions/workbench'
 
@@ -22,11 +22,13 @@ export interface StructureEditorProps {
   history: boolean
   showConfig?: boolean
   loading: boolean
-  write?: (dataset: Dataset) => ApiActionThunk | void
+  write?: (peername: string, name: string, dataset: Dataset) => ApiActionThunk | void
+  peername: string
+  name: string
 }
 
 export const StructureEditorComponent: React.FunctionComponent<StructureEditorProps> = (props) => {
-  const { data, write, loading } = props
+  const { data, write, loading, peername, name } = props
 
   if (loading) {
     return <SpinnerWithIcon loading={true} />
@@ -39,7 +41,7 @@ export const StructureEditorComponent: React.FunctionComponent<StructureEditorPr
     // format. Let's pass in whatever the current format is, so that we have unity between
     // what the desktop is seeing and the backend. This can be removed when we have the fsi
     // backend codepaths settled
-    write({ structure: {
+    write(peername, name, { structure: {
       ...data,
       format,
       formatConfig: {
@@ -50,7 +52,7 @@ export const StructureEditorComponent: React.FunctionComponent<StructureEditorPr
   }
 
   const handleOnChange = (schema: ISchema) => {
-    if (write) write({ structure: { ...data, schema } })
+    if (write) write(peername, name, { structure: { ...data, schema } })
   }
 
   const stats = [
@@ -95,7 +97,10 @@ export const StructureEditorComponent: React.FunctionComponent<StructureEditorPr
 const mapStateToProps = (state: Store) => {
   return {
     data: selectMutationsDataset(state).structure,
-    loading: selectWorkingDatasetIsLoading(state)
+    loading: selectWorkingDatasetIsLoading(state),
+    peername: selectWorkingDatasetPeername(state),
+    name: selectWorkingDatasetName(state)
+
   }
 }
 

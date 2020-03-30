@@ -8,7 +8,7 @@ import { ApiActionThunk } from '../../store/api'
 import SpinnerWithIcon from '../chrome/SpinnerWithIcon'
 import { datasetConvertStringToScriptBytes } from '../../utils/datasetConvertStringToScriptBytes'
 import Dataset from '../../models/dataset'
-import { selectWorkingDatasetRef, selectWorkingDatasetIsLoading, selectMutationsDataset, selectIsLinked } from '../../selections'
+import { selectWorkingDatasetRef, selectWorkingDatasetIsLoading, selectMutationsDataset, selectIsLinked, selectWorkingDatasetName, selectWorkingDatasetPeername } from '../../selections'
 import Store from '../../models/store'
 import { writeDataset } from '../../actions/workbench'
 import { Dispatch, bindActionCreators } from 'redux'
@@ -20,7 +20,9 @@ export interface ReadmeEditorProps {
   data?: string
   loading: boolean
   isLinked: boolean
-  write: (dataset: any) => ApiActionThunk | void
+  peername: string
+  name: string
+  write: (peername: string, name: string, dataset: any) => ApiActionThunk | void
 }
 
 export const ReadmeEditorComponent: React.FunctionComponent<ReadmeEditorProps> = (props) => {
@@ -46,7 +48,7 @@ export const ReadmeEditorComponent: React.FunctionComponent<ReadmeEditorProps> =
 
   React.useEffect(() => {
     if (debouncedValue !== data) {
-      write({
+      write(peername, name, {
         readme: internalValue
       })
     }
@@ -128,7 +130,9 @@ const mapStateToProps = (state: Store) => {
     datasetRef: selectWorkingDatasetRef(state),
     data: selectMutationsDataset(state).readme,
     loading: selectWorkingDatasetIsLoading(state),
-    isLinked: selectIsLinked(state)
+    isLinked: selectIsLinked(state),
+    peername: selectWorkingDatasetPeername(state),
+    name: selectWorkingDatasetName(state)
   }
 }
 

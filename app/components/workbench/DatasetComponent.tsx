@@ -30,13 +30,13 @@ import SpinnerWithIcon from '../chrome/SpinnerWithIcon'
 import Transform from './Transform'
 import StructureEditor from './StructureEditor'
 import { writeDataset } from '../../actions/workbench'
-import { selectWorkingDatasetIsLoading, selectOnHistoryTab, selectWorkingDataset, selectSelectedComponent, selectStatusFromMutations, selectHistoryStatus, selectFsiPath, selectHistoryDatasetIsLoading, selectSelectedCommitComponent } from '../../selections'
+import { selectWorkingDatasetIsLoading, selectOnHistoryTab, selectWorkingDataset, selectSelectedComponent, selectStatusFromMutations, selectHistoryStatus, selectFsiPath, selectHistoryDatasetIsLoading, selectSelectedCommitComponent, selectWorkingDatasetPeername, selectHistoryDatasetPeername, selectWorkingDatasetName, selectHistoryDatasetName } from '../../selections'
 
 interface DatasetComponentProps {
   // setting actions
   openToast: (type: ToastType, name: string, message: string) => Action
   closeToast: () => Action
-  write: (dataset: Dataset) => ApiActionThunk | void
+  write: (peername: string, name: string, dataset: Dataset) => ApiActionThunk | void
 
   isLoading: boolean
   component: SelectedComponent
@@ -44,6 +44,8 @@ interface DatasetComponentProps {
   history?: boolean
   fsiPath?: string
   bodyPath?: string
+  peername: string
+  name: string
 }
 
 export const DatasetComponent: React.FunctionComponent<DatasetComponentProps> = (props) => {
@@ -56,7 +58,9 @@ export const DatasetComponent: React.FunctionComponent<DatasetComponentProps> = 
     bodyPath,
     write,
     openToast,
-    closeToast
+    closeToast,
+    peername,
+    name
   } = props
 
   const hasParseError = statusInfo && statusInfo.status === 'parse error'
@@ -84,7 +88,7 @@ export const DatasetComponent: React.FunctionComponent<DatasetComponentProps> = 
       return
     }
 
-    write({ bodyPath: e.dataTransfer.files[0].path })
+    write(peername, name, { bodyPath: e.dataTransfer.files[0].path })
   }
 
   return (
@@ -167,7 +171,7 @@ export const DatasetComponent: React.FunctionComponent<DatasetComponentProps> = 
               type='info'
               text={`body will be replaced with file: ${bodyPath} when you commit`}
               cancelText='unstage file'
-              onCancel={() => { write({ bodyPath: '' }) }}
+              onCancel={() => { write(peername, name, { bodyPath: '' }) }}
             />}
             <Body />
           </div>
@@ -235,7 +239,9 @@ const mapStateToProps = (state: Store, ownProps: DatasetComponentProps) => {
     component: selectedComponent,
     statusInfo: status[selectedComponent],
     fsiPath: selectFsiPath(state),
-    bodyPath: history ? selectWorkingDataset(state).bodyPath : ''
+    bodyPath: history ? selectWorkingDataset(state).bodyPath : '',
+    peername: history ? selectHistoryDatasetPeername(state) : selectWorkingDatasetPeername(state),
+    name: history ? selectHistoryDatasetName(state) : selectWorkingDatasetName(state)
 
   }
 }
