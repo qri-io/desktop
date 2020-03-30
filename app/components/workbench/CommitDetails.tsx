@@ -1,16 +1,16 @@
 import * as React from 'react'
 import { Action, bindActionCreators, Dispatch } from 'redux'
+import { connect } from 'react-redux'
 
 import Store, { ComponentType, SelectedComponent, Selections, Status } from '../../models/Store'
 import Dataset from '../../models/dataset'
+import { setSelectedListItem } from '../../actions/selections'
+import { selectHistoryDataset, selectHistoryStatus, selectHistoryDatasetPeername, selectHistoryDatasetName, selectHistoryDatasetPath } from '../../selections'
 
 import HistoryComponentList from '../HistoryComponentList'
 import DatasetComponent from './DatasetComponent'
 import Layout from '../Layout'
 import CommitDetailsHeader from './CommitDetailsHeader'
-import { selectHistoryDataset, selectHistoryStatus, selectHistoryDatasetPeername, selectHistoryDatasetName, selectHistoryDatasetPath } from '../../selections'
-import { setSelectedListItem } from '../../actions/selections'
-import { connect } from 'react-redux'
 
 export interface CommitDetailsProps {
   dataset: Dataset

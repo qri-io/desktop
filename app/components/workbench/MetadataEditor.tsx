@@ -3,6 +3,14 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faInfoCircle } from '@fortawesome/free-solid-svg-icons'
 import cloneDeep from 'clone-deep'
 import ReactTooltip from 'react-tooltip'
+import { connect } from 'react-redux'
+import { Dispatch, bindActionCreators } from 'redux'
+
+import { ApiActionThunk } from '../../store/api'
+import { Meta } from '../../models/dataset'
+import { selectMutationsDataset, selectWorkingDatasetIsLoading, selectWorkingDatasetPeername, selectWorkingDatasetName } from '../../selections'
+import Store from '../../models/store'
+import { writeDataset } from '../../actions/workbench'
 
 import ExternalLink from '../ExternalLink'
 import TextInput from '../form/TextInput'
@@ -10,16 +18,7 @@ import TextAreaInput from '../form/TextAreaInput'
 import MultiTextInput from '../form/MultiTextInput'
 import DropdownInput from '../form/DropdownInput'
 import MetadataMultiInput from '../form/MetadataMultiInput'
-import { ApiActionThunk } from '../../store/api'
-
-import { Meta } from '../../models/dataset'
-
 import SpinnerWithIcon from '../chrome/SpinnerWithIcon'
-import { selectMutationsDataset, selectWorkingDatasetIsLoading, selectWorkingDatasetPeername, selectWorkingDatasetName } from '../../selections'
-import Store from '../../models/store'
-import { Dispatch, bindActionCreators } from 'redux'
-import { writeDataset } from '../../actions/workbench'
-import { connect } from 'react-redux'
 
 interface MetadataEditorProps {
   data: Meta

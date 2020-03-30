@@ -4,12 +4,12 @@ import { connect } from 'react-redux'
 import Store from '../../models/store'
 import { isUserArray } from '../form/MetadataMultiInput'
 import { Meta, Citation, License, User } from '../../models/dataset'
+import { selectHistoryDataset } from '../../selections'
 
 import ExternalLink from '../ExternalLink'
 import KeyValueTable from '../KeyValueTable'
 import SpinnerWithIcon from '../chrome/SpinnerWithIcon'
 import { standardFields } from './MetadataEditor'
-import { selectHistoryDataset } from '../../selections'
 
 interface MetadataProps {
   data: Meta

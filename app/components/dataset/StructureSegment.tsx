@@ -1,6 +1,8 @@
 import React from 'react'
-import Segment from '../chrome/Segment'
+
 import { Structure as IStructure } from '../../models/dataset'
+
+import Segment from '../chrome/Segment'
 import { StructureComponent } from '../Structure'
 
 interface StructureSegmentProps {

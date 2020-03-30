@@ -1,5 +1,6 @@
 import * as React from 'react'
 import { Action, Dispatch, bindActionCreators } from 'redux'
+import { connect } from 'react-redux'
 
 import { ApiActionThunk } from '../../store/api'
 import { DetailsType, StatsDetails, Details } from '../../models/details'
@@ -11,7 +12,6 @@ import { selectOnHistoryTab, selectHistoryDataset, selectWorkingDataset, selectH
 
 import BodyTable from '../BodyTable'
 import BodyJson from '../BodyJson'
-import { connect } from 'react-redux'
 
 export interface BodyProps {
   history: boolean

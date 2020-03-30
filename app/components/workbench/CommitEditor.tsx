@@ -10,10 +10,10 @@ import { saveWorkingDatasetAndFetch } from '../../actions/api'
 import { setCommitTitle, setCommitMessage } from '../../actions/mutations'
 import { validateCommitState } from '../../utils/formValidation'
 import { ApiAction } from '../../store/api'
+import { selectIsCommiting, selectStatusFromMutations, selectMutationsCommit, selectWorkingDatasetRef } from '../../selections'
 
 import TextInput from '../form/TextInput'
 import TextAreaInput from '../form/TextAreaInput'
-import { selectIsCommiting, selectStatusFromMutations, selectMutationsCommit, selectWorkingDatasetRef } from '../../selections'
 
 export interface CommitEditorProps {
   isLoading: boolean

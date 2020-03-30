@@ -5,13 +5,13 @@ import path from 'path'
 import { CSSTransition } from 'react-transition-group'
 
 import { openToast, closeToast } from '../../actions/ui'
-
 import Store, { StatusInfo, SelectedComponent, ToastType } from '../../models/store'
-
 import Dataset from '../../models/dataset'
 import { ApiActionThunk } from '../../store/api'
 import { getComponentDisplayProps } from '../ComponentList'
 import { ToastTypes } from '../chrome/Toast'
+import { writeDataset } from '../../actions/workbench'
+import { selectWorkingDatasetIsLoading, selectOnHistoryTab, selectWorkingDataset, selectSelectedComponent, selectStatusFromMutations, selectHistoryStatus, selectFsiPath, selectHistoryDatasetIsLoading, selectSelectedCommitComponent, selectWorkingDatasetPeername, selectHistoryDatasetPeername, selectWorkingDatasetName, selectHistoryDatasetName } from '../../selections'
 
 import Body from './Body'
 import CalloutBlock from '../chrome/CalloutBlock'
@@ -29,8 +29,6 @@ import Structure from '../Structure'
 import SpinnerWithIcon from '../chrome/SpinnerWithIcon'
 import Transform from './Transform'
 import StructureEditor from './StructureEditor'
-import { writeDataset } from '../../actions/workbench'
-import { selectWorkingDatasetIsLoading, selectOnHistoryTab, selectWorkingDataset, selectSelectedComponent, selectStatusFromMutations, selectHistoryStatus, selectFsiPath, selectHistoryDatasetIsLoading, selectSelectedCommitComponent, selectWorkingDatasetPeername, selectHistoryDatasetPeername, selectWorkingDatasetName, selectHistoryDatasetName } from '../../selections'
 
 interface DatasetComponentProps {
   // setting actions

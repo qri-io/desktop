@@ -2,16 +2,16 @@ import * as React from 'react'
 import SimpleMDE from 'react-simplemde-editor'
 import { useDebounce } from 'use-debounce'
 import { connect } from 'react-redux'
+import { Dispatch, bindActionCreators } from 'redux'
 
 import { ApiActionThunk } from '../../store/api'
-
-import SpinnerWithIcon from '../chrome/SpinnerWithIcon'
 import { datasetConvertStringToScriptBytes } from '../../utils/datasetConvertStringToScriptBytes'
 import Dataset from '../../models/dataset'
 import { selectWorkingDatasetRef, selectWorkingDatasetIsLoading, selectMutationsDataset, selectIsLinked, selectWorkingDatasetName, selectWorkingDatasetPeername } from '../../selections'
 import Store from '../../models/store'
 import { writeDataset } from '../../actions/workbench'
-import { Dispatch, bindActionCreators } from 'redux'
+
+import SpinnerWithIcon from '../chrome/SpinnerWithIcon'
 
 const DEBOUNCE_TIMER = 1000
 

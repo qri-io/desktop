@@ -1,8 +1,10 @@
 import * as React from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faInfoCircle } from '@fortawesome/free-solid-svg-icons'
+import { connect } from 'react-redux'
 
 import { Structure as IStructure } from '../models/dataset'
+import Store from '../models/store'
 import fileSize, { abbreviateNumber } from '../utils/fileSize'
 
 import ExternalLink from './ExternalLink'
@@ -11,8 +13,6 @@ import FormatConfigHistory from './FormatConfigHistory'
 import SpinnerWithIcon from './chrome/SpinnerWithIcon'
 import Schema from './structure/Schema'
 import { selectHistoryDataset, selectHistoryIsLoading } from '../selections'
-import { connect } from 'react-redux'
-import Store from '../models/store'
 
 export interface StructureProps {
   data: IStructure
