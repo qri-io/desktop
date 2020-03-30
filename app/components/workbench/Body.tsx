@@ -14,7 +14,7 @@ import BodyTable from '../BodyTable'
 import BodyJson from '../BodyJson'
 
 export interface BodyProps {
-  history: boolean
+  showHistory: boolean
   data: Dataset
   stats: Array<Record<string, any>>
   details: Details
@@ -68,7 +68,7 @@ export const BodyComponent: React.FunctionComponent<BodyProps> = (props) => {
     setDetailsBar,
     fetchBody,
     fetchCommitBody,
-    history
+    showHistory
   } = props
 
   const { body, structure } = data
@@ -115,7 +115,7 @@ export const BodyComponent: React.FunctionComponent<BodyProps> = (props) => {
           body={body}
           pageInfo={pageInfo}
           highlighedColumnIndex={details.type !== DetailsType.NoDetails ? details.index : undefined}
-          onFetch={history ? fetchCommitBody : fetchBody}
+          onFetch={showHistory ? fetchCommitBody : fetchBody}
           setDetailsBar={handleToggleDetailsBar}
         />
       }
@@ -125,14 +125,14 @@ export const BodyComponent: React.FunctionComponent<BodyProps> = (props) => {
 
 const mapStateToProps = (state: Store) => {
   // TODO(ramfox): when we get a BodyEditor component, pull out all references
-  // to history
-  const history = selectOnHistoryTab(state)
+  // to showHistory
+  const showHistory = selectOnHistoryTab(state)
   return {
-    history,
-    data: history ? selectHistoryDataset(state) : selectWorkingDataset(state),
-    stats: history ? selectHistoryStats(state) : selectWorkingStats(state),
+    showHistory,
+    data: showHistory ? selectHistoryDataset(state) : selectWorkingDataset(state),
+    stats: showHistory ? selectHistoryStats(state) : selectWorkingStats(state),
     details: selectDetails(state),
-    pageInfo: history ? selectHistoryDatasetBodyPageInfo(state) : selectWorkingDatasetBodyPageInfo(state)
+    pageInfo: showHistory ? selectHistoryDatasetBodyPageInfo(state) : selectWorkingDatasetBodyPageInfo(state)
   }
 }
 
