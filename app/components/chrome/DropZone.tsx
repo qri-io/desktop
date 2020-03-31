@@ -10,7 +10,7 @@ export interface DropZoneProps {
   onDrop: (e: React.SyntheticEvent) => void
 }
 
-const DropZone: React.FC<DropZoneProps> = (props) => {
+const DropZone: React.FunctionComponent<DropZoneProps> = (props) => {
   const { title, subtitle, onDrop, setDragging } = props
 
   const setDragStateHandler = (showing: boolean) => {

@@ -1,6 +1,7 @@
 import React from 'react'
+
 import Segment from '../chrome/Segment'
-import { ReadmeHistoryComponent } from '../workbench/ReadmeHistory'
+import { ReadmeComponent } from '../workbench/Readme'
 
 interface ReadmeSegmentProps {
   peername: string
@@ -18,7 +19,7 @@ const ReadmeSegment: React.FunctionComponent<ReadmeSegmentProps> = ({ subhead, p
     name='readme'
     collapsable={collapsable}
     subhead={subhead}
-    content={<ReadmeHistoryComponent peername={peername} name={name} path={path} />}
+    content={<ReadmeComponent datasetRef={`${peername}/${name}/at${path}`} />}
   />
 }
 

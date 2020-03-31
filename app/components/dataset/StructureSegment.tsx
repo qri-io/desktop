@@ -1,7 +1,9 @@
 import React from 'react'
-import Segment from '../chrome/Segment'
+
 import { Structure as IStructure } from '../../models/dataset'
-import Structure from '../Structure'
+
+import Segment from '../chrome/Segment'
+import { StructureComponent } from '../Structure'
 
 interface StructureSegmentProps {
   data: IStructure
@@ -15,7 +17,7 @@ const StructureSegment: React.FunctionComponent<StructureSegmentProps> = ({ data
     icon='structure'
     name='Structure'
     collapsable={collapsable}
-    content={<Structure data={data} showConfig={false} history />}
+    content={<StructureComponent data={data} showConfig={false} loading={!data}/>}
   />
 }
 

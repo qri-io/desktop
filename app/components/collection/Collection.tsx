@@ -26,7 +26,7 @@ interface CollectionProps {
   closeToast: () => Action
 }
 
-const Collection: React.FC<CollectionProps> = (props) => {
+const Collection: React.FunctionComponent<CollectionProps> = (props) => {
   const {
     myDatasets,
     workingDataset,
@@ -37,6 +37,7 @@ const Collection: React.FC<CollectionProps> = (props) => {
     setModal,
     importFileName,
     importFileSize,
+    fetchMyDatasets,
 
     openToast,
     closeToast,
@@ -50,6 +51,7 @@ const Collection: React.FC<CollectionProps> = (props) => {
         myDatasets={myDatasets}
         workingDataset={workingDataset}
         setFilter={setFilter}
+        fetchMyDatasets={fetchMyDatasets}
         setWorkingDataset={setWorkingDataset}
         setModal={setModal}
         importFileName={importFileName}

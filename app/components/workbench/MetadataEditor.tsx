@@ -3,6 +3,15 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faInfoCircle } from '@fortawesome/free-solid-svg-icons'
 import cloneDeep from 'clone-deep'
 import ReactTooltip from 'react-tooltip'
+import { connect } from 'react-redux'
+import { Dispatch, bindActionCreators } from 'redux'
+
+import { ApiActionThunk } from '../../store/api'
+import { Meta } from '../../models/dataset'
+import { selectMutationsDataset, selectWorkingDatasetIsLoading, selectWorkingDatasetPeername, selectWorkingDatasetName } from '../../selections'
+import Store from '../../models/store'
+import { writeDataset } from '../../actions/workbench'
+import { QriRef } from '../../models/qriRef'
 
 import ExternalLink from '../ExternalLink'
 import TextInput from '../form/TextInput'
@@ -10,15 +19,12 @@ import TextAreaInput from '../form/TextAreaInput'
 import MultiTextInput from '../form/MultiTextInput'
 import DropdownInput from '../form/DropdownInput'
 import MetadataMultiInput from '../form/MetadataMultiInput'
-import { ApiActionThunk } from '../../store/api'
-
-import { Meta } from '../../models/dataset'
-
 import SpinnerWithIcon from '../chrome/SpinnerWithIcon'
 
 interface MetadataEditorProps {
+  qriRef: QriRef
   data: Meta
-  write: (dataset: any) => ApiActionThunk | void
+  write: (peername: string, name: string, dataset: any) => ApiActionThunk | void
   loading: boolean
 }
 
@@ -74,8 +80,16 @@ export const standardFields = [
   'version'
 ]
 
-const MetadataEditor: React.FunctionComponent<MetadataEditorProps> = (props: MetadataEditorProps) => {
-  const { data = {}, write, loading } = props
+const MetadataEditorComponent: React.FunctionComponent<MetadataEditorProps> = (props: MetadataEditorProps) => {
+  const {
+    data = {},
+    write,
+    loading,
+    qriRef
+  } = props
+
+  const username = qriRef.username || ''
+  const name = qriRef.name || ''
 
   if (loading) {
     return <SpinnerWithIcon loading={true} />
@@ -103,7 +117,7 @@ const MetadataEditor: React.FunctionComponent<MetadataEditorProps> = (props: Met
       update[t] = v
     }
 
-    write({
+    write(username, name, {
       meta: update
     })
   }
@@ -140,7 +154,7 @@ const MetadataEditor: React.FunctionComponent<MetadataEditorProps> = (props: Met
       <h4 className='metadata-viewer-title'>
         Standard Metadata
         &nbsp;
-        <ExternalLink href='https://qri.io/docs/reference/dataset/#meta'>
+        <ExternalLink id='meta-docs' href='https://qri.io/docs/reference/dataset/#meta'>
           <span
             data-tip={'Qri\'s common metadata fields.<br/>Click for more info.'}
             className='text-input-tooltip'
@@ -326,4 +340,24 @@ const MetadataEditor: React.FunctionComponent<MetadataEditorProps> = (props: Met
   )
 }
 
-export default MetadataEditor
+const mapStateToProps = (state: Store, ownProps: MetadataEditorProps) => {
+  return {
+    ...ownProps,
+    data: selectMutationsDataset(state).meta,
+    loading: selectWorkingDatasetIsLoading(state),
+    peername: selectWorkingDatasetPeername(state),
+    name: selectWorkingDatasetName(state)
+  }
+}
+
+const mapDispatchToProps = (dispatch: Dispatch) => {
+  return bindActionCreators({
+    write: writeDataset
+  }, dispatch)
+}
+
+const mergeProps = (props: any, actions: any): MetadataEditorProps => {
+  return { ...props, ...actions }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(MetadataEditorComponent)

@@ -4,6 +4,8 @@ import { connect } from 'react-redux'
 import Store from '../../models/store'
 import { isUserArray } from '../form/MetadataMultiInput'
 import { Meta, Citation, License, User } from '../../models/dataset'
+import { selectHistoryDataset } from '../../selections'
+import { QriRef } from '../../models/qriRef'
 
 import ExternalLink from '../ExternalLink'
 import KeyValueTable from '../KeyValueTable'
@@ -11,6 +13,7 @@ import SpinnerWithIcon from '../chrome/SpinnerWithIcon'
 import { standardFields } from './MetadataEditor'
 
 interface MetadataProps {
+  qriRef: QriRef
   data: Meta
 }
 
@@ -33,20 +36,20 @@ const renderChips = (value: string[] | undefined) => (
 )
 
 const renderLicense = (license: License) => (
-  <ExternalLink href={license.url}>
+  <ExternalLink id='render-license' href={license.url}>
     {license.type}
   </ExternalLink>
 )
 
 const renderURL = (url: string) => (
-  <ExternalLink href={url}>{url}</ExternalLink>
+  <ExternalLink id='render-url' href={url}>{url}</ExternalLink>
 )
 
 const renderArrayItemsTable = (value: any[]) => {
   return (
     <div className='array-items-table-container'>
       {
-        value.map((item, i) => (<div key={i}><KeyValueTable data={item} /></div>))
+        value.map((item, i) => (<div key={i}><KeyValueTable index={i} data={item} /></div>))
       }
     </div>
   )
@@ -129,12 +132,11 @@ export const MetadataComponent: React.FunctionComponent<MetadataProps> = ({ data
   )
 }
 
-const mapStateToProps = (state: Store) => {
-  const { commitDetails } = state
-
+const mapStateToProps = (state: Store, ownProps: MetadataProps) => {
   // get data for the currently selected component
   return {
-    data: commitDetails.components.meta.value
+    ...ownProps,
+    data: selectHistoryDataset(state).meta
   }
 }
 

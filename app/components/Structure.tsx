@@ -1,22 +1,23 @@
 import * as React from 'react'
-import Schema from './structure/Schema'
-import Dataset, { Structure as IStructure, Schema as ISchema } from '../models/dataset'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faInfoCircle } from '@fortawesome/free-solid-svg-icons'
-import ExternalLink from './ExternalLink'
-import { ApiActionThunk } from '../store/api'
-import FormatConfigHistory from './FormatConfigHistory'
-import FormatConfigFSI from './FormatConfigFSI'
-import LabeledStats from './item/LabeledStats'
+import { connect } from 'react-redux'
+
+import { Structure as IStructure } from '../models/dataset'
+import Store from '../models/store'
 import fileSize, { abbreviateNumber } from '../utils/fileSize'
+
+import ExternalLink from './ExternalLink'
+import LabeledStats from './item/LabeledStats'
+import FormatConfigHistory from './FormatConfigHistory'
 import SpinnerWithIcon from './chrome/SpinnerWithIcon'
+import Schema from './structure/Schema'
+import { selectHistoryDataset, selectHistoryIsLoading } from '../selections'
 
 export interface StructureProps {
   data: IStructure
-  history: boolean
   showConfig?: boolean
   loading: boolean
-  write?: (dataset: Dataset) => ApiActionThunk | void
 }
 
 export interface FormatConfigOption {
@@ -61,52 +62,27 @@ export const formatConfigOptions: { [key: string]: FormatConfigOption } = {
   }
 }
 
-const Structure: React.FunctionComponent<StructureProps> = (props) => {
-  const { data, history, write, showConfig = true, loading } = props
-
-  if (loading) {
-    return <SpinnerWithIcon loading={true} />
-  }
-
-  const format = data.format
-  const handleWriteFormat = (option: string, value: any) => {
-    if (!write) return
-    // TODO (ramfox): sending over format since a user can replace the body with a body of a different
-    // format. Let's pass in whatever the current format is, so that we have unity between
-    // what the desktop is seeing and the backend. This can be removed when we have the fsi
-    // backend codepaths settled
-    write({ structure: {
-      ...data,
-      format,
-      formatConfig: {
-        ...data.formatConfig,
-        [option]: value
-      }
-    } })
-  }
-
-  const handleOnChange = (schema: ISchema) => {
-    if (write) write({ structure: { ...data, schema } })
-  }
-
-  const stats = [
+export function getStats (data: IStructure): any[] {
+  return [
     { 'label': 'format', 'value': data.format ? data.format.toUpperCase() : 'unknown' },
     { 'label': 'body size', 'value': data.length ? fileSize(data.length) : '—' },
     { 'label': 'entries', 'value': abbreviateNumber(data.entries) || '—' },
     { 'label': 'errors', 'value': data.errCount ? abbreviateNumber(data.errCount) : '—' },
     { 'label': 'depth', 'value': data.depth || '—' }
   ]
+}
+
+export const StructureComponent: React.FunctionComponent<StructureProps> = (props) => {
+  const { data, showConfig = true, loading } = props
+
+  if (loading) {
+    return <SpinnerWithIcon loading={true} />
+  }
 
   return (
     <div className='structure'>
-      <div className='stats'><LabeledStats data={stats} size='lg' /></div>
-      { showConfig && (history
-        ? <FormatConfigHistory structure={data} />
-        : <FormatConfigFSI
-          structure={data}
-          format={format}
-          write={handleWriteFormat}
-        />)
+      <div className='stats'><LabeledStats data={getStats(data)} size='lg' /></div>
+      { showConfig && <FormatConfigHistory structure={data} />
       }
       <div>
         <h4 className='schema-title'>
@@ -124,11 +100,17 @@ const Structure: React.FunctionComponent<StructureProps> = (props) => {
       </div>
       <Schema
         data={data ? data.schema : undefined}
-        onChange={handleOnChange}
-        editable={!history}
+        editable={false}
       />
     </div>
   )
 }
 
-export default Structure
+const mapStateToProps = (state: Store) => {
+  return {
+    data: selectHistoryDataset(state).structure,
+    loading: selectHistoryIsLoading(state)
+  }
+}
+
+export default connect(mapStateToProps)(StructureComponent)

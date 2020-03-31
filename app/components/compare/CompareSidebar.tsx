@@ -26,7 +26,7 @@ export interface CompareSidebarProps {
   openToast: (type: ToastType, name: string, message: string) => Action
 }
 
-export const CompareSidebarComponent: React.FC<CompareSidebarProps> = ({ data, onChange, openToast, closeToast }) => {
+export const CompareSidebarComponent: React.FunctionComponent<CompareSidebarProps> = ({ data, onChange, openToast, closeToast }) => {
   const pathPicker = (side: string) => {
     const window = remote.getCurrentWindow()
     const filePaths: string[] | undefined = remote.dialog.showOpenDialogSync(window, {

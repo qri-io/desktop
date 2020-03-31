@@ -15,7 +15,7 @@ interface SidebarActionButtonProps {
  * so that we have the option to, instead of showing a loading spinner, show
  * a progress bar instead
  */
-const SidebarActionButton: React.FC<SidebarActionButtonProps> = (props) => {
+const SidebarActionButton: React.FunctionComponent<SidebarActionButtonProps> = (props) => {
   const [loading, setLoading] = React.useState(false)
 
   const handleOnClick = async (e: React.MouseEvent) => {

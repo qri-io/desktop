@@ -44,7 +44,7 @@ export interface Commit {
   author?: string
   message?: string
   path?: string
-  timestamp: Date
+  timestamp?: Date
   title?: string
 
   count?: number // commit chain height

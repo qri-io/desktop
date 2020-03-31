@@ -1,26 +1,42 @@
 import * as React from 'react'
 import SimpleMDE from 'react-simplemde-editor'
 import { useDebounce } from 'use-debounce'
+import { connect } from 'react-redux'
+import { Dispatch, bindActionCreators } from 'redux'
 
-import { ApiActionThunk } from '../store/api'
+import { ApiActionThunk } from '../../store/api'
+import { datasetConvertStringToScriptBytes } from '../../utils/datasetConvertStringToScriptBytes'
+import Dataset from '../../models/dataset'
+import { refStringFromQriRef, QriRef } from '../../models/qriRef'
+import { selectWorkingDatasetIsLoading, selectMutationsDataset, selectIsLinked, selectWorkingDatasetName, selectWorkingDatasetPeername } from '../../selections'
+import Store from '../../models/store'
+import { writeDataset } from '../../actions/workbench'
 
-import SpinnerWithIcon from './chrome/SpinnerWithIcon'
-import { datasetConvertStringToScriptBytes } from '../utils/datasetConvertStringToScriptBytes'
-import Dataset from '../models/dataset'
+import SpinnerWithIcon from '../chrome/SpinnerWithIcon'
 
 const DEBOUNCE_TIMER = 1000
 
-export interface ReadmeProps {
-  username: string
-  name: string
+export interface ReadmeEditorProps {
+  qriRef: QriRef
   data?: string
   loading: boolean
   isLinked: boolean
-  write: (dataset: any) => ApiActionThunk | void
+  peername: string
+  name: string
+  write: (peername: string, name: string, dataset: any) => ApiActionThunk | void
 }
 
-const Readme: React.FunctionComponent<ReadmeProps> = (props) => {
-  const { data = '', username, name, write, loading, isLinked } = props
+export const ReadmeEditorComponent: React.FunctionComponent<ReadmeEditorProps> = (props) => {
+  const {
+    qriRef,
+    data = '',
+    write,
+    loading,
+    isLinked
+  } = props
+
+  const username = qriRef.username || ''
+  const name = qriRef.name || ''
 
   const [internalValue, setInternalValue] = React.useState(data)
   const [debouncedValue] = useDebounce(internalValue, DEBOUNCE_TIMER)
@@ -42,7 +58,7 @@ const Readme: React.FunctionComponent<ReadmeProps> = (props) => {
 
   React.useEffect(() => {
     if (debouncedValue !== data) {
-      write({
+      write(username, name, {
         readme: internalValue
       })
     }
@@ -61,7 +77,7 @@ const Readme: React.FunctionComponent<ReadmeProps> = (props) => {
    */
   const getPreview = (plainText: string, preview: HTMLElement) => {
     if (isLinked) {
-      fetch(`http://localhost:2503/render/${username}/${name}?fsi=true`)
+      fetch(`http://localhost:2503/render/${refStringFromQriRef(qriRef)}?fsi=true`)
         .then(async (res) => res.text())
         .then((render) => {
           preview.innerHTML = render
@@ -119,4 +135,24 @@ const Readme: React.FunctionComponent<ReadmeProps> = (props) => {
   )
 }
 
-export default Readme
+const mapStateToProps = (state: Store, ownProps: ReadmeEditorProps) => {
+  return {
+    ...ownProps,
+    data: selectMutationsDataset(state).readme,
+    loading: selectWorkingDatasetIsLoading(state),
+    isLinked: selectIsLinked(state),
+    peername: selectWorkingDatasetPeername(state),
+    name: selectWorkingDatasetName(state)
+  }
+}
+
+const mergeProps = (props: any, actions: any): ReadmeEditorProps => { //eslint-disable-line
+  return { ...props, ...actions }
+}
+
+const mapDispatchToProps = (dispatch: Dispatch) => {
+  return bindActionCreators({
+    write: writeDataset
+  }, dispatch)
+}
+export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(ReadmeEditorComponent)

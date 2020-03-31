@@ -1,10 +1,12 @@
 import * as React from 'react'
-import { Action } from 'redux'
+import { Action, bindActionCreators, Dispatch } from 'redux'
+import { connect } from 'react-redux'
 
-import { CommitDetails as ICommitDetails, ComponentType, SelectedComponent, Selections } from '../../models/Store'
+import Store, { ComponentType, SelectedComponent, Selections, Status } from '../../models/Store'
 import Dataset from '../../models/dataset'
-import { Details } from '../../models/details'
-import { ApiActionThunk } from '../../store/api'
+import { setSelectedListItem } from '../../actions/selections'
+import { selectHistoryDataset, selectHistoryStatus, selectHistoryDatasetPeername, selectHistoryDatasetName, selectHistoryDatasetPath } from '../../selections'
+import { QriRef } from '../../models/qriRef'
 
 import HistoryComponentList from '../HistoryComponentList'
 import DatasetComponent from './DatasetComponent'
@@ -12,54 +14,35 @@ import Layout from '../Layout'
 import CommitDetailsHeader from './CommitDetailsHeader'
 
 export interface CommitDetailsProps {
-  data: ICommitDetails
+  qriRef: QriRef
+  dataset: Dataset
+  status: Status
   selections: Selections
-  details: Details
 
-  fetchCommitBody: (page?: number, pageSize?: number) => ApiActionThunk
   setComponent: (type: ComponentType, activeComponent: string) => Action
 }
 
-const CommitDetails: React.FunctionComponent<CommitDetailsProps> = (props) => {
+export const CommitDetailsComponent: React.FunctionComponent<CommitDetailsProps> = (props) => {
   const {
-    data,
-    details,
+    dataset,
+    qriRef,
+    status,
     selections,
-    setComponent,
-    fetchCommitBody
+    setComponent
   } = props
-  // we have to guard against an odd case when we look at history
-  // it is possible that we can get the history of a dataset, but
-  // not have every version of that dataset in our repo
-  // this will cause a specific error.
-  // when we get that error, we should prompt the user to add that
-  // version of the dataset.
-  // for now, we will tell the user to run a command on the command line
-  const { peername, name, status, components, isLoading, path, stats } = data
-  const { structure, commit } = components
-
   const { commitComponent: selectedComponent } = selections
+
+  const { username = '', name = '', path = '' } = qriRef
 
   const getComponents = () => {
     const components: SelectedComponent[] = []
-    if (data && data.components) {
-      Object.keys(data.components).forEach((component: SelectedComponent) => {
-        if (component !== '' && data.components[component].value) components.push(component)
+    if (dataset) {
+      Object.keys(dataset).forEach((component: SelectedComponent) => {
+        if (dataset[component]) components.push(component)
       })
     }
     return components
   }
-
-  let dataset: Dataset = {}
-
-  Object.keys(components).forEach((componentName: string) => {
-    dataset[componentName] = components[componentName].value
-  })
-
-  const { body } = components
-  const { pageInfo } = body
-
-  const loading = !path || (selections.commit && path !== selections.commit) || isLoading
 
   return (
     <div className='dataset-content transition-group'>
@@ -69,13 +52,13 @@ const CommitDetails: React.FunctionComponent<CommitDetailsProps> = (props) => {
         headerContent={
           <CommitDetailsHeader
             path={path}
-            structure={structure.value}
-            commit={data.components && commit.value}
+            structure={dataset.structure}
+            commit={dataset.commit}
           />
         }
         sidebarContent={(
           <HistoryComponentList
-            datasetSelected={peername !== '' && name !== ''}
+            datasetSelected={username !== '' && name !== ''}
             status={status}
             components={getComponents()}
             selectedComponent={selectedComponent}
@@ -85,24 +68,32 @@ const CommitDetails: React.FunctionComponent<CommitDetailsProps> = (props) => {
         )}
         sidebarWidth={150}
         mainContent={(
-          <DatasetComponent
-            qriRef={{}}
-            data={dataset}
-            peername={peername}
-            name={name}
-            details={details}
-            fetchBody={fetchCommitBody}
-            isLoading={loading}
-            bodyPageInfo={pageInfo}
-            stats={stats}
-            component={selectedComponent}
-            componentStatus={status[selectedComponent] || {}}
-            history
-          />
+          <DatasetComponent qriRef={qriRef} />
         )}
       />
     </div>
   )
 }
 
-export default CommitDetails
+const mapStateToProps = (state: Store, ownProps: CommitDetailsProps) => {
+  return {
+    ...ownProps,
+    dataset: selectHistoryDataset(state),
+    peername: selectHistoryDatasetPeername(state),
+    name: selectHistoryDatasetName(state),
+    path: selectHistoryDatasetPath(state),
+    status: selectHistoryStatus(state),
+    selections: state.selections
+  }
+}
+const mapDispatchToProps = (dispatch: Dispatch) => {
+  return bindActionCreators({
+    setComponent: setSelectedListItem
+  }, dispatch)
+}
+
+const mergeProps = (props: any, actions: any): CommitDetailsProps => {
+  return { ...props, ...actions }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(CommitDetailsComponent)

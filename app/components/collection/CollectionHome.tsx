@@ -19,7 +19,7 @@ export interface CollectionHomeProps {
   closeToast: () => Action
 }
 
-const CollectionHome: React.FC<CollectionHomeProps> = (props) => {
+const CollectionHome: React.FunctionComponent<CollectionHomeProps> = (props) => {
   const { setModal, importFile, openToast, closeToast } = props
 
   const [dragging, setDragging] = React.useState(false)

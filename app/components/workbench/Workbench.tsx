@@ -4,9 +4,7 @@ import { ipcRenderer, shell, clipboard } from 'electron'
 import { CSSTransition } from 'react-transition-group'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faFolderOpen, faFile, faLink, faCloud, faCloudUploadAlt } from '@fortawesome/free-solid-svg-icons'
-import { withRouter, RouteComponentProps, Prompt } from 'react-router-dom'
-import fnv from 'fnv-plus'
-import cloneDeep from 'clone-deep'
+import { RouteComponentProps, Prompt } from 'react-router-dom'
 
 import { QRI_CLOUD_URL } from '../../constants'
 import { Details } from '../../models/details'
@@ -24,6 +22,7 @@ import Dataset from '../../models/dataset'
 import { Modal, ModalType } from '../../models/modals'
 import { ApiActionThunk, LaunchedFetchesAction } from '../../store/api'
 import { defaultSidebarWidth } from '../../reducers/ui'
+import { QriRef } from '../../models/qriRef'
 
 import { Resizable } from '../Resizable'
 import Layout from '../Layout'
@@ -41,8 +40,6 @@ import NotInNamespace from './NotInNamespace'
 require('../../assets/qri-blob-logo-tiny.png')
 
 export interface WorkbenchData {
-  location: string
-
   workingDataset: WorkingDataset
   head: ICommitDetails
   history: History
@@ -56,6 +53,7 @@ export interface WorkbenchProps extends RouteComponentProps {
   data: WorkbenchData
 
   // display details
+  qriRef: QriRef
   selections: Selections
   session: Session
   hasDatasets: boolean
@@ -73,20 +71,13 @@ export interface WorkbenchProps extends RouteComponentProps {
   setSidebarWidth: (type: string, sidebarWidth: number) => Action
   setCommit: (path: string) => Action
   setComponent: (type: ComponentType, activeComponent: string) => Action
-  setMutationsDataset: (data: Dataset) => Action
   resetMutationsDataset: () => Action
-  setMutationsStatus: (status: Status) => Action
   resetMutationsStatus: () => Action
 
   // fetching actions
   fetchWorkbench: () => LaunchedFetchesAction
   fetchHistory: (page?: number, pageSize?: number) => ApiActionThunk
-  fetchWorkingDataset: () => ApiActionThunk
-  fetchWorkingStatus: () => ApiActionThunk
-  fetchBody: (page: number) => ApiActionThunk
-
-  fetchCommitDataset: () => ApiActionThunk
-  fetchCommitBody: (page: number) => ApiActionThunk
+  fetchWorkingDatasetDetails: () => ApiActionThunk
 
   // api actions (that aren't fetching)
   publishDataset: () => ApiActionThunk
@@ -106,10 +97,6 @@ class Workbench extends React.Component<WorkbenchProps, Status> {
       'publishUnpublishDataset',
       'handleShowStatus',
       'handleShowHistory',
-      'handleSetDataset',
-      'datasetFromMutations',
-      'determineMutationsStatus',
-      'datasetFromCommitDetails',
       'handleDiscardChanges',
       'handleCopyLink'
     ].forEach((m) => { this[m] = this[m].bind(this) })
@@ -148,7 +135,7 @@ class Workbench extends React.Component<WorkbenchProps, Status> {
   }
 
   async componentDidUpdate (prevProps: WorkbenchProps) {
-    if (prevProps.data.location !== this.props.data.location) {
+    if (prevProps.qriRef.location !== this.props.qriRef.location) {
       // TODO (b5) - this was bailing early when fetch happened
       this.props.fetchWorkbench()
     }
@@ -178,94 +165,16 @@ class Workbench extends React.Component<WorkbenchProps, Status> {
     this.props.discardMutationsChanges(component)
   }
 
-  determineMutationsStatus (head: Dataset, mutation: Dataset, prevStatus: Status): Status {
-    let s = cloneDeep(prevStatus)
-    let d = { ...mutation }
-    Object.keys(d).forEach((componentName: string) => {
-      if (!head[componentName]) {
-        s[componentName] = { ...s[componentName], filepath: componentName, status: 'add' }
-        return
-      }
-      /**
-       * TODO (ramfox): in the near future, let's keep hashes of each dataset
-       * component in the state tree so we don't have to calculate it each time
-       * perhaps as a key value field on workingDataset `componentHashes`?
-       * Don't want to alter the state tree until methodologies are more settled
-       */
-      const headHash = fnv.hash(head[componentName])
-      const mutationHash = fnv.hash(mutation[componentName])
-      if (headHash.value === mutationHash.value) {
-        s[componentName] = { ...s[componentName], filepath: componentName, status: 'unmodified' }
-        return
-      }
-      s[componentName] = { ...s[componentName], filepath: componentName, status: 'modified' }
-    })
-
-    // if there is a bodyPath, adjust the body status
-    /**
-     * TODO (ramfox): We don't know at this current state if the underlying contents
-     * of the body file and the given body are the same, but that is an outlying
-     * error I feel comfortable punting on for now
-     */
-    if (s.bodyPath) {
-      // if bodyPath is empty then there is no
-      s.body = { ...s.body, status: d.bodyPath === '' ? 'unmodified' : 'modified' }
-      delete s.bodyPath
-    }
-    return s
-  }
-
-  // TODO (ramfox): refactor into action
-  handleSetDataset (peername: string, name: string, dataset: Dataset) {
-    const { setMutationsDataset, setMutationsStatus, data, fsiWrite } = this.props
-    const { workingDataset, status } = data
-    const wDataset = this.datasetFromCommitDetails(workingDataset)
-    const mutationsStatus = this.determineMutationsStatus(wDataset, dataset, status)
-    if (workingDataset.fsiPath !== '') fsiWrite(peername, name, dataset)
-    setMutationsStatus(mutationsStatus)
-    setMutationsDataset(dataset)
-  }
-
-  // TODO (refactor into selection) - marked for removal after container refactor
-  datasetFromCommitDetails (commitDetails: ICommitDetails): Dataset {
-    const { components } = commitDetails
-    let d: Dataset = {}
-
-    Object.keys(components).forEach((componentName: string) => {
-      if (componentName === 'bodyPath') return
-      if (components[componentName].value) {
-        d[componentName] = components[componentName].value
-      }
-    })
-    return d
-  }
-
-  // TODO (ramfox): once all dataset components are refactored in containers
-  // will remove this function
-  // replaced by `selectDatasetFromMutations`
-  datasetFromMutations (): Dataset {
-    const { data } = this.props
-    const { workingDataset, mutationsDataset } = data
-    let dataset: Dataset = {}
-
-    Object.keys(workingDataset.components).forEach((componentName: SelectedComponent) => {
-      if (workingDataset.components[componentName].value) {
-        dataset[componentName] = cloneDeep(workingDataset.components[componentName].value)
-      }
-    })
-    const d = { ...dataset, ...mutationsDataset }
-    return d
-  }
-
   render () {
     const {
       data,
 
+      qriRef,
+      // TODO(ramfox): selections on slate for removal, should be passing in qriRefs in order to get location
       selections,
       hasDatasets,
       sidebarWidth,
       session,
-      details,
       modified = false,
       inNamespace,
 
@@ -275,23 +184,20 @@ class Workbench extends React.Component<WorkbenchProps, Status> {
       setComponent,
 
       fetchHistory,
-      fetchBody,
-      fetchCommitBody,
 
       renameDataset
     } = this.props
+
     const { peername: username } = session
-    const {
-      peername,
-      name,
-      activeTab,
-      component: selectedComponent
-    } = selections
+
+    const peername = qriRef.username
+    const name = qriRef.name
+    const activeTab = qriRef.path ? 'history' : 'status'
 
     const datasetSelected = peername !== '' && name !== ''
 
     const { workingDataset, status } = data
-    const { published, fsiPath, stats } = workingDataset
+    const { published, fsiPath } = workingDataset
 
     // isLinked is derived from fsiPath and only used locally
     const isLinked = fsiPath !== ''
@@ -383,6 +289,10 @@ class Workbench extends React.Component<WorkbenchProps, Status> {
       <>
         <Prompt when={modified} message={(location) => {
           if (location.pathname.includes('workbench')) return false
+          if (fsiPath !== '') {
+            this.props.fetchWorkingDatasetDetails()
+            return true
+          }
           return `You have uncommited changes! Click 'cancel' and commit these changes before you navigate away or you will lose your work.`
         }}/>
         <div className='main-content-header'>
@@ -417,21 +327,7 @@ class Workbench extends React.Component<WorkbenchProps, Status> {
               unmountOnExit
             >
               { inNamespace
-                ? <DatasetComponent
-                  qriRef={{ location: data.location, username: peername, name: name }}
-                  peername={peername}
-                  name={name}
-                  data={this.datasetFromMutations()}
-                  details={details}
-                  stats={stats}
-                  bodyPageInfo={workingDataset.components.body.pageInfo}
-                  fetchBody={fetchBody}
-                  write={this.handleSetDataset}
-                  component={selectedComponent}
-                  componentStatus={status}
-                  isLoading={workingDataset.isLoading}
-                  fsiPath={workingDataset.fsiPath}
-                />
+                ? <DatasetComponent qriRef={qriRef} />
                 : <NotInNamespace />
               }
             </CSSTransition>
@@ -442,13 +338,7 @@ class Workbench extends React.Component<WorkbenchProps, Status> {
               mountOnEnter
               unmountOnExit
             >
-              <CommitDetails
-                data={data.head}
-                details={details}
-                fetchCommitBody={fetchCommitBody}
-                selections={selections}
-                setComponent={setComponent}
-              />
+              <CommitDetails qriRef={qriRef} />
             </CSSTransition>
           </div>
         </div>
@@ -487,4 +377,4 @@ class Workbench extends React.Component<WorkbenchProps, Status> {
   }
 }
 
-export default withRouter(Workbench)
+export default Workbench

@@ -1,7 +1,7 @@
 import React from 'react'
 export const lostBlob = require('../../assets/lost_blob.png') // eslint-disable-line
 
-const PreviewNotFound: React.FC = () => {
+const PreviewNotFound: React.FunctionComponent = () => {
   return (
     <div className="preview-not-found">
       <div className="container">

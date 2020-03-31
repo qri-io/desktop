@@ -23,7 +23,7 @@ const initialCompareParams: CompareParams = {
   right: ''
 }
 
-export const CompareComponent: React.FC<CompareProps> = (props) => {
+export const CompareComponent: React.FunctionComponent<CompareProps> = (props) => {
   const { sidebarWidth, setSidebarWidth } = props
 
   const [loading, setLoading] = React.useState(false)

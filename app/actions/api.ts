@@ -559,7 +559,7 @@ export function addDatasetAndFetch (peername: string, name: string): ApiActionTh
       dispatch(setWorkingDataset(peername, name))
       dispatch(setActiveTab('history'))
       dispatch(setSelectedListItem('component', DEFAULT_SELECTED_COMPONENT))
-      dispatch(push('/workbench'))
+      dispatch(push(`/workbench/${peername}/${name}`))
     } catch (action) {
       dispatch(openToast('error', 'add', action.payload.err.message))
       throw action
@@ -847,11 +847,13 @@ export function importFile (filePath: string, fileName: string, fileSize: number
       }
     }
     let response: Action
+    let redirectPath = 'workbench'
     try {
       dispatch(setImportFileDetails(fileName, fileSize))
       response = await dispatch(action)
       const { peername, name } = response.payload.data
       response = await whenOk(fetchMyDatasets(-1))(response)
+      redirectPath = `workbench/${peername}/${name}`
       dispatch(setWorkingDataset(peername, name))
     } catch (action) {
       dispatch(setImportFileDetails('', 0))
@@ -860,7 +862,7 @@ export function importFile (filePath: string, fileName: string, fileSize: number
     }
     dispatch(setActiveTab('history'))
     dispatch(setSelectedListItem('component', DEFAULT_SELECTED_COMPONENT))
-    dispatch(push('workbench'))
+    dispatch(push(redirectPath))
     dispatch(setImportFileDetails('', 0))
     return response
   }

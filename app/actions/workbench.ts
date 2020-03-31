@@ -24,7 +24,7 @@ import {
 import { setCommit } from './selections'
 import { Dataset } from '../models/dataset'
 import { Status } from '../models/store'
-import { selectWorkingDataset, selectStatusFromMutations } from '../selections/workbench'
+import { selectWorkingDataset, selectStatusFromMutations } from '../selections'
 
 // fetchworkBench makes the necessary API requests to populate the workbench
 // based on what we know about the working dataset from the state tree

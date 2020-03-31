@@ -1,8 +1,9 @@
 import { connect } from 'react-redux'
+import { RouteComponentProps } from 'react-router-dom'
 
 import { fetchWorkbench } from '../actions/workbench'
 import { setMutationsDataset, setMutationsStatus, resetMutationsDataset, resetMutationsStatus, discardMutationsChanges } from '../actions/mutations'
-import { Store, Selections, WorkingDataset, Status } from '../models/store'
+import { Store, WorkingDataset, Status, Selections } from '../models/store'
 import { setSidebarWidth, setModal } from '../actions/ui'
 import {
   fetchBody,
@@ -10,6 +11,7 @@ import {
   fetchCommitDataset,
   fetchHistory,
   fetchWorkingDataset,
+  fetchWorkingDatasetDetails,
   fetchWorkingStatus,
 
   publishDataset,
@@ -27,17 +29,10 @@ import {
 import { DetailsType } from '../models/details'
 
 import Workbench, { WorkbenchProps, WorkbenchData } from '../components/workbench/Workbench'
+import { qriRefFromRoute, QriRef } from '../models/qriRef'
 
 const mergeProps = (props: any, actions: any): WorkbenchProps => {
   return { ...props, ...actions }
-}
-
-function locationFromSelection (s: Selections): string {
-  let sel = `/workbench/${s.activeTab}/${s.peername}/${s.name}`
-  if (s.commit && s.commit !== '') {
-    sel += `/${s.commit}`
-  }
-  return sel
 }
 
 // selectStatus sends down the correct status to the Workbench
@@ -64,8 +59,42 @@ function selectStatus (workingDataset: WorkingDataset, mutationsStatus: Status):
   return status
 }
 
+/** TODO (ramfox): in an upcoming refactor we are going to take out the
+ * selections reducer and `setWorkingDataset` function in favor of pulling
+ * all needed info from the router
+ * to bridge this gap, I'm adding this hack that will shape the `location`
+ * param to look like what we expect the route to look like
+ * `workbench/:peername/:name` for the editor
+ * or `workbench/history/:peername/:name:/at:path` for the history
+ * */
+function hackAddSelectionsDetailsToQriRef (selections: Selections, qriRef: QriRef): QriRef {
+  const activeTab = selections.activeTab
+  const ref = { ...qriRef }
+  if (!qriRef.location || !activeTab || activeTab === '') {
+    return ref
+  }
+  if (!qriRef.username) {
+    ref.username = selections.peername
+    ref.location += '/' + selections.peername
+  }
+  if (!qriRef.name) {
+    ref.name = selections.name
+    ref.location += '/' + selections.peername
+  }
+  // when we have the router set correctly, we won't rely on `activeTab` (also
+  // because we are gearing up for a visual change where we no longer have
+  // a 'status' or 'history' tab), instead, if we are given a specific path
+  // we should assume we want to show the dataset at that path. Otherwise, we
+  // should show the editor
+  if (activeTab === 'history' && selections.commit && selections.commit !== '') {
+    ref.path = selections.commit
+    ref.location += '/at' + selections.commit
+  }
+  return ref
+}
+
 const WorkbenchContainer = connect(
-  (state: Store, props) => {
+  (state: Store, ownProps: RouteComponentProps<QriRef>) => {
     const {
       ui,
       selections,
@@ -79,14 +108,6 @@ const WorkbenchContainer = connect(
     const showDetailsBar = ui.detailsBar.type !== DetailsType.NoDetails
 
     const data: WorkbenchData = {
-      // TODO (b5) - here we're intentionally constructing location from selection state,
-      // as it's more accurate than values derived from the route. Refactor away
-      // from selection toward using route match params
-      location: locationFromSelection(selections),
-      tab: props.tab || 'status',
-      peername: props.peername || selections.peername,
-      name: props.name || selections.name,
-      path: props.path || selections.commit,
       mutationsDataset: mutations.dataset.value || {},
       status: selectStatus(workingDataset, mutations.status.value),
 
@@ -96,7 +117,9 @@ const WorkbenchContainer = connect(
       history: workingDataset.history
     }
 
+    const qriRef = hackAddSelectionsDetailsToQriRef(selections, qriRefFromRoute(ownProps))
     return {
+      qriRef,
       data,
       selections,
       session,
@@ -121,6 +144,7 @@ const WorkbenchContainer = connect(
 
     fetchHistory,
     fetchWorkingDataset,
+    fetchWorkingDatasetDetails,
     fetchWorkingStatus,
     fetchBody,
     fetchWorkbench,

@@ -8,7 +8,7 @@ export interface ButtonInputProps {
   children: React.ReactElement
 }
 
-const ButtonInput: React.FC<any> = ({ id = '', disabled = false, onClick, children }) => (
+const ButtonInput: React.FunctionComponent<any> = ({ id = '', disabled = false, onClick, children }) => (
   <button
     id={id}
     onClick={onClick}

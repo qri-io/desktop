@@ -2,21 +2,21 @@ import * as React from 'react'
 import { connect } from 'react-redux'
 
 import Store from '../../models/store'
+import { refStringFromQriRef, QriRef } from '../../models/qriRef'
+import { ReadmeEditorProps } from './ReadmeEditor'
 
-export interface ReadmeHistoryProps {
-  peername: string
-  name: string
-  path: string
+export interface ReadmeProps {
+  qriRef: QriRef
 }
 
-export const ReadmeHistoryComponent: React.FunctionComponent<ReadmeHistoryProps> = (props) => {
-  const { peername, name, path } = props
+export const ReadmeComponent: React.FunctionComponent<ReadmeProps> = (props) => {
+  const { qriRef } = props
   const [hasReadme, setHasReadme] = React.useState(true)
   const refWithCallback = () => {
     const ref = React.useRef<HTMLDivElement>(null)
     const setRef = React.useCallback((el: HTMLDivElement) => {
       if (el !== null) {
-        fetch(`http://localhost:2503/render/${peername}/${name}/at/${path}`)
+        fetch(`http://localhost:2503/render/${refStringFromQriRef(qriRef)}`)
           .then(async (res) => {
             return res.text()
           })
@@ -25,7 +25,7 @@ export const ReadmeHistoryComponent: React.FunctionComponent<ReadmeHistoryProps>
             el.innerHTML = render
           })
       }
-    }, [peername, name, path])
+    }, [refStringFromQriRef(qriRef)])
     ref.current = setRef
     return [setRef]
   }
@@ -45,18 +45,10 @@ export const ReadmeHistoryComponent: React.FunctionComponent<ReadmeHistoryProps>
   )
 }
 
-const mapStateToProps = (state: Store) => {
-  const { selections } = state
-
-  const { peername, name, commit } = selections
-
+const mapStateToProps = (state: Store, ownProps: ReadmeEditorProps) => {
   // get data for the currently selected component
-  return {
-    peername,
-    path: commit,
-    name
-  }
+  return ownProps
 }
 
 // TODO (b5) - this doesn't need to be a container at all
-export default connect(mapStateToProps)(ReadmeHistoryComponent)
+export default connect(mapStateToProps)(ReadmeComponent)

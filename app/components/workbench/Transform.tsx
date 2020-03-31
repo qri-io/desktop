@@ -1,34 +1,34 @@
 import * as React from 'react'
 import { connect } from 'react-redux'
-import { bindActionCreators, Dispatch } from 'redux'
+import { ApiActionThunk } from '../../store/api'
 
+import Dataset from '../../models/dataset'
 import Store from '../../models/store'
-import { QriRef } from '../../models/qriRef'
-import { fsiWrite } from '../../actions/api'
+import { selectHistoryDataset, selectWorkingDataset } from '../../selections'
+
 import Code from '../Code'
+import { QriRef } from '../../models/qriRef'
 
 export interface TransformProps {
-  data: string
   qriRef: QriRef
+  data: string
 
   // TODO (b5) - work in progress
   dryRun?: () => void
+  write?: (username: string, name: string, dataset: Dataset) => ApiActionThunk | void
 }
 
-export const TransformComponent: React.FC<TransformProps> = ({ data = '' }) => (
+export const TransformComponent: React.FunctionComponent<TransformProps> = ({ data = '' }) => (
   <Code data={data} />
 )
 
 const mapStateToProps = (state: Store, ownProps: TransformProps) => {
-  return ownProps
+  const { qriRef } = ownProps
+  const showHistory = !!qriRef.path
+  return {
+    qriRef,
+    data: showHistory ? selectHistoryDataset(state).transform : selectWorkingDataset(state).transform
+  }
 }
 
-const mergeProps = (props: any, actions: any): TransformProps => { //eslint-disable-line
-  return { ...props, ...actions }
-}
-
-const mapDispatchToProps = (dispatch: Dispatch) => {
-  return bindActionCreators({ write: fsiWrite }, dispatch)
-}
-
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(TransformComponent)
+export default connect(mapStateToProps)(TransformComponent)

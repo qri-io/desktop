@@ -1,20 +1,27 @@
 import * as React from 'react'
-import { Action } from 'redux'
+import { Action, Dispatch, bindActionCreators } from 'redux'
+import { connect } from 'react-redux'
 
 import { ApiActionThunk } from '../../store/api'
 import { DetailsType, StatsDetails, Details } from '../../models/details'
 import Dataset, { Structure } from '../../models/dataset'
-import { PageInfo } from '../../models/store'
+import Store, { PageInfo } from '../../models/store'
+import { fetchBody, fetchCommitBody } from '../../actions/api'
+import { setDetailsBar } from '../../actions/ui'
+import { selectHistoryDataset, selectWorkingDataset, selectHistoryStats, selectWorkingStats, selectDetails, selectHistoryDatasetBodyPageInfo, selectWorkingDatasetBodyPageInfo } from '../../selections'
+import { QriRef } from '../../models/qriRef'
 
 import BodyTable from '../BodyTable'
 import BodyJson from '../BodyJson'
 
 export interface BodyProps {
+  qriRef: QriRef
   data: Dataset
   stats: Array<Record<string, any>>
   details: Details
   pageInfo: PageInfo
   fetchBody: (page?: number, pageSize?: number) => ApiActionThunk
+  fetchCommitBody: (page?: number, pageSize?: number) => ApiActionThunk
   setDetailsBar: (details: Record<string, any>) => Action
 }
 
@@ -53,15 +60,19 @@ const extractColumnHeaders = (structure: Structure, value: any[]): undefined | a
     schema.items.items.map((d: { title: string }): Record<string, any> => d)
 }
 
-const Body: React.FunctionComponent<BodyProps> = (props) => {
+export const BodyComponent: React.FunctionComponent<BodyProps> = (props) => {
   const {
     data,
     pageInfo,
     stats,
     details,
     setDetailsBar,
-    fetchBody
+    fetchBody,
+    fetchCommitBody,
+    qriRef
   } = props
+
+  const showHistory = !!qriRef.path
 
   const { body, structure } = data
   const headers = extractColumnHeaders(structure, body)
@@ -107,7 +118,7 @@ const Body: React.FunctionComponent<BodyProps> = (props) => {
           body={body}
           pageInfo={pageInfo}
           highlighedColumnIndex={details.type !== DetailsType.NoDetails ? details.index : undefined}
-          onFetch={fetchBody}
+          onFetch={showHistory ? fetchCommitBody : fetchBody}
           setDetailsBar={handleToggleDetailsBar}
         />
       }
@@ -115,4 +126,30 @@ const Body: React.FunctionComponent<BodyProps> = (props) => {
   )
 }
 
-export default Body
+const mapStateToProps = (state: Store, ownProps: BodyProps) => {
+  // TODO(ramfox): when we get a BodyEditor component, pull out all references
+  // to showHistory
+  const { qriRef } = ownProps
+  const showHistory = !!qriRef.path
+  return {
+    data: showHistory ? selectHistoryDataset(state) : selectWorkingDataset(state),
+    stats: showHistory ? selectHistoryStats(state) : selectWorkingStats(state),
+    details: selectDetails(state),
+    pageInfo: showHistory ? selectHistoryDatasetBodyPageInfo(state) : selectWorkingDatasetBodyPageInfo(state),
+    qriRef
+  }
+}
+
+const mapDispatchToProps = (dispatch: Dispatch) => {
+  return bindActionCreators({
+    fetchBody,
+    fetchCommitBody,
+    setDetailsBar
+  }, dispatch)
+}
+
+const mergeProps = (props: any, actions: any): BodyProps => {
+  return { ...props, ...actions }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(BodyComponent)

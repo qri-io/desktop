@@ -13,7 +13,7 @@ export interface LogListProps extends RouteComponentProps{
   qriRef: QriRef
 }
 
-const LogList: React.FC<LogListProps> = ({ qriRef, history }) => {
+const LogList: React.FunctionComponent<LogListProps> = ({ qriRef, history }) => {
   const [data, setData] = React.useState<VersionInfo[]>([])
   const [error, setError] = React.useState('')
 
