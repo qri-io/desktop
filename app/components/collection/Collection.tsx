@@ -1,67 +1,55 @@
 import * as React from 'react'
-import { Action, AnyAction } from 'redux'
+import { Action, Dispatch, bindActionCreators } from 'redux'
+import { connect } from 'react-redux'
 
-import { MyDatasets, WorkingDataset, ToastType } from '../../models/store'
+import { QriRef } from '../../models/qriRef'
+
+import { selectSidebarWidth } from '../../selections'
+import { setSidebarWidth } from '../../actions/ui'
 
 import DatasetList from '../DatasetList'
 import Layout from '../Layout'
-import { Modal } from '../../models/modals'
 import CollectionHome from './CollectionHome'
 
 interface CollectionProps {
+  qriRef: QriRef
   sidebarWidth: number
-  importFileName: string
-  importFileSize: number
-  myDatasets: MyDatasets
-  workingDataset: WorkingDataset
-
-  toggleCollection: () => Action
-  setFilter: (filter: string) => Action
-  setWorkingDataset: (peername: string, name: string) => Action
   setSidebarWidth: (type: string, sidebarWidth: number) => Action
-  fetchMyDatasets: (page: number, pageSize: number) => Promise<AnyAction>
-  setModal: (modal: Modal) => void
-
-  openToast: (type: ToastType, name: string, message: string) => Action
-  closeToast: () => Action
 }
 
-const Collection: React.FunctionComponent<CollectionProps> = (props) => {
+export const CollectionComponent: React.FunctionComponent<CollectionProps> = (props) => {
   const {
-    myDatasets,
-    workingDataset,
+    qriRef,
     sidebarWidth,
-    setSidebarWidth,
-    setFilter,
-    setWorkingDataset,
-    setModal,
-    importFileName,
-    importFileSize,
-    fetchMyDatasets,
-
-    openToast,
-    closeToast,
-    importFile
+    setSidebarWidth
   } = props
 
   return (
     <Layout
       id='collection-container'
-      sidebarContent={<DatasetList
-        myDatasets={myDatasets}
-        workingDataset={workingDataset}
-        setFilter={setFilter}
-        fetchMyDatasets={fetchMyDatasets}
-        setWorkingDataset={setWorkingDataset}
-        setModal={setModal}
-        importFileName={importFileName}
-        importFileSize={importFileSize}
-      />}
+      sidebarContent={<DatasetList qriRef={qriRef} />}
       sidebarWidth={sidebarWidth}
       onSidebarResize={(width) => { setSidebarWidth('collection', width) }}
-      mainContent={<CollectionHome importFile={importFile} openToast={openToast} closeToast={closeToast} setModal={setModal} />}
+      mainContent={<CollectionHome qriRef={qriRef} />}
     />
   )
 }
 
-export default Collection
+const mapStateToProps = (state: any, ownProps: CollectionProps) => {
+  return {
+    ...ownProps,
+    sidebarWidth: selectSidebarWidth(state, 'collection')
+  }
+}
+
+const mapDispatchToProps = (dispatch: Dispatch) => {
+  return bindActionCreators({
+    setSidebarWidth
+  }, dispatch)
+}
+
+const mergeProps = (props: any, actions: any): CollectionProps => {
+  return { ...props, ...actions }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(CollectionComponent)

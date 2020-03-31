@@ -80,6 +80,14 @@ export function selectIsCommiting (state: Store): boolean {
   return state.mutations.save.isLoading
 }
 
+export function selectImportFileName (state: Store): string {
+  return state.ui.importFileName
+}
+
+export function selectImportFileSize (state: Store): number {
+  return state.ui.importFileSize
+}
+
 export function selectIsLinked (state: Store): boolean {
   return !!state.workingDataset.fsiPath && state.workingDataset.fsiPath !== ''
 }
@@ -117,6 +125,20 @@ export function selectStatusFromMutations (state: Store): Status {
     }
   })
   return status
+}
+
+export function selectSidebarWidth (state: Store, view: 'collection' | 'workbench' | 'network'): number {
+  const { ui } = state
+  switch (view) {
+    case 'collection':
+      return ui.collectionSidebarWidth
+    case 'workbench':
+      return ui.datasetSidebarWidth
+    case 'network':
+      return ui.networkSidebarWidth
+    default:
+      return 0
+  }
 }
 
 export function selectWorkingDatasetBodyPageInfo (state: Store): PageInfo {

@@ -67,6 +67,8 @@ export interface UI {
   datasetDirPath: string
   exportPath: string
   detailsBar: Details
+  importFileName: string
+  importFileSize: number
 }
 
 export type SelectedComponent = 'commit' | 'readme' | 'meta' | 'body' | 'structure' | 'transform' | ''
