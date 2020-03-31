@@ -55,7 +55,9 @@ export function fetchWorkingDatasetDetails (): ApiActionThunk {
       }
       response = await fetchWorkingDataset()(dispatch, getState)
     }
-    response = await whenOk(fetchWorkingStatus())(response)
+    if (response.payload.data.fsiPath) {
+      response = await whenOk(fetchWorkingStatus())(response)
+    }
     response = await whenOk(fetchBody(-1))(response)
     response = await whenOk(fetchStats())(response)
     response = await whenOk(fetchHistory(-1))(response)
