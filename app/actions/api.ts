@@ -2,7 +2,7 @@ import { Action, AnyAction } from 'redux'
 import { push } from 'connected-react-router'
 
 import { CALL_API, ApiAction, ApiActionThunk, chainSuccess } from '../store/api'
-import { SelectedComponent, MyDatasets } from '../models/store'
+import { SelectedComponent } from '../models/store'
 import { actionWithPagination } from '../utils/pagination'
 import { openToast, setImportFileDetails } from './ui'
 import { setSaveComplete, resetMutationsDataset, resetMutationsStatus } from './mutations'
@@ -25,15 +25,6 @@ const pageSizeDefault = 100
 export const bodyPageSizeDefault = 50
 
 const DEFAULT_SELECTED_COMPONENT = 'body'
-
-// look up the username/name in myDatasets, return boolean for existence of fsiPath
-function lookupFsi (username: string | null, name: string | null, myDatasets: MyDatasets) {
-  const dataset = myDatasets.value.find((dataset) => {
-    return dataset.username === username && dataset.name === name
-  })
-
-  return dataset && !!dataset.fsiPath
-}
 
 export function pingApi (): ApiActionThunk {
   return async (dispatch) => {
@@ -64,7 +55,9 @@ export function fetchWorkingDatasetDetails (): ApiActionThunk {
       }
       response = await fetchWorkingDataset()(dispatch, getState)
     }
-    response = await whenOk(fetchWorkingStatus())(response)
+    if (response.payload.data.fsiPath) {
+      response = await whenOk(fetchWorkingStatus())(response)
+    }
     response = await whenOk(fetchBody(-1))(response)
     response = await whenOk(fetchStats())(response)
     response = await whenOk(fetchHistory(-1))(response)
@@ -76,7 +69,7 @@ export function fetchWorkingDatasetDetails (): ApiActionThunk {
 export function fetchModifiedComponents (): ApiActionThunk {
   return async (dispatch, getState) => {
     const { selections, workingDataset } = getState()
-    const { path, fsiPath } = workingDataset
+    const { path } = workingDataset
     const { peername, name } = selections
 
     let response: Action
@@ -86,7 +79,6 @@ export function fetchModifiedComponents (): ApiActionThunk {
       [CALL_API]: {
         endpoint: '',
         method: 'GET',
-        query: { fsi: !!fsiPath },
         segments: {
           peername,
           name
@@ -105,7 +97,6 @@ export function fetchModifiedComponents (): ApiActionThunk {
           page: 1,
           pageSize: bodyPageSizeDefault
         },
-        query: { fsi: !!fsiPath },
         segments: {
           peername,
           name,
@@ -148,25 +139,18 @@ export function fetchMyDatasets (page: number = 1, pageSize: number = pageSizeDe
 
 export function fetchWorkingDataset (): ApiActionThunk {
   return async (dispatch, getState) => {
-    const { selections, myDatasets } = getState()
+    const { selections } = getState()
     const { peername, name } = selections
 
     if (peername === '' || name === '') {
       return Promise.reject(new Error('no peername or name selected'))
     }
-    // look up the peername + name in myDatasets to determine whether it is FSI linked
-    const dataset = myDatasets.value.find((d) => (d.username === peername) && (d.name === name))
-    if (!dataset) {
-      return Promise.reject(new Error('could not find dataset in list'))
-    }
-    const { fsiPath } = dataset
 
     const action = {
       type: 'dataset',
       [CALL_API]: {
         endpoint: '',
         method: 'GET',
-        query: { fsi: !!fsiPath },
         segments: {
           peername,
           name
@@ -239,7 +223,7 @@ export function fetchCommitStatus (): ApiActionThunk {
     const response = await dispatch({
       type: 'commitstatus',
       [CALL_API]: {
-        endpoint: 'status',
+        endpoint: 'whatchanged',
         method: 'GET',
         segments: {
           peername: selections.peername,
@@ -264,17 +248,14 @@ export function fetchHistory (page: number = 1, pageSize: number = pageSizeDefau
     // we need to emit a 'success' type, or our chainSuccess functions will fail
     if (doNotFetch) return new Promise(resolve => resolve({ type: 'SUCCESS' }))
 
-    const { selections, myDatasets } = getState()
+    const { selections } = getState()
     const { peername, name } = selections
-
-    const fsi = lookupFsi(peername, name, myDatasets)
 
     const action = {
       type: 'history',
       [CALL_API]: {
         endpoint: 'history',
         method: 'GET',
-        query: { fsi },
         segments: {
           peername: peername,
           name: name
@@ -293,24 +274,17 @@ export function fetchHistory (page: number = 1, pageSize: number = pageSizeDefau
 
 export function fetchWorkingStatus (): ApiActionThunk {
   return async (dispatch, getState) => {
-    const { selections, myDatasets } = getState()
+    const { selections } = getState()
     const { peername, name } = selections
 
     if (peername === '' || name === '') {
       return Promise.reject(new Error('no peername or name selected'))
     }
-    // look up the peername + name in myDatasets to determine whether it is FSI linked
-    const dataset = myDatasets.value.find((d) => (d.username === peername) && (d.name === name))
-    if (!dataset) {
-      return Promise.reject(new Error('could not find dataset in list'))
-    }
-    const { fsiPath } = dataset
     const action = {
       type: 'status',
       [CALL_API]: {
         endpoint: 'status',
         method: 'GET',
-        query: { fsi: !!fsiPath },
         segments: {
           peername: peername,
           name: name
@@ -326,16 +300,9 @@ export function fetchWorkingStatus (): ApiActionThunk {
 // to invalidate pagination, set page to -1
 export function fetchBody (page: number = 1, pageSize: number = bodyPageSizeDefault): ApiActionThunk {
   return async (dispatch, getState) => {
-    const { workingDataset, selections, myDatasets } = getState()
+    const { workingDataset, selections } = getState()
     const { peername, name } = selections
     const { path } = workingDataset
-
-    // look up the peername + name in myDatasets to determine whether it is FSI linked
-    const dataset = myDatasets.value.find((d) => (d.username === peername) && (d.name === name))
-    if (!dataset) {
-      return Promise.reject(new Error('could not find dataset in list'))
-    }
-    const { fsiPath } = dataset
 
     const { page: confirmedPage, doNotFetch } = actionWithPagination(page, workingDataset.components.body.pageInfo)
 
@@ -351,7 +318,6 @@ export function fetchBody (page: number = 1, pageSize: number = bodyPageSizeDefa
           page: confirmedPage,
           pageSize
         },
-        query: { fsi: !!fsiPath },
         segments: {
           peername,
           name,
@@ -408,7 +374,7 @@ export function fetchCommitBody (page: number = 1, pageSize: number = bodyPageSi
 export function fetchStats ():
 ApiActionThunk {
   return async (dispatch, getState) => {
-    const { selections, workingDataset } = getState()
+    const { selections } = getState()
 
     const response = await dispatch({
       type: 'stats',
@@ -418,9 +384,6 @@ ApiActionThunk {
         segments: {
           peername: selections.peername,
           name: selections.name
-        },
-        query: {
-          fsi: !!workingDataset.fsiPath
         }
       }
     })
@@ -451,9 +414,6 @@ ApiActionThunk {
           peername: selections.peername,
           name: selections.name,
           path: selections.commit
-        },
-        query: {
-          fsi: false
         }
       }
     })
@@ -488,9 +448,6 @@ export function saveWorkingDataset (): ApiActionThunk {
         segments: {
           peername,
           name
-        },
-        query: {
-          fsi: !!workingDataset.fsiPath
         },
         body: datasetConvertStringToScriptBytes(body)
       }
@@ -790,7 +747,6 @@ export function fetchReadmePreview (peername: string, name: string): ApiActionTh
       [CALL_API]: {
         endpoint: 'render',
         method: 'GET',
-        query: { fsi: true },
         segments: {
           peername,
           name

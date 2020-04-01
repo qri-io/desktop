@@ -25,7 +25,6 @@ const MetadataMultiInputItem: React.FunctionComponent<MetadataMultiInputrops> = 
   const handleWrite = (name: string, value: string, e: React.SyntheticEvent) => {
     const i = cloneDeep(item)
     i[name] = value
-    console.log(i)
     write(e, index, i)
   }
 

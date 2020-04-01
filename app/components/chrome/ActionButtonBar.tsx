@@ -38,8 +38,6 @@ const ActionButtonBar: React.FunctionComponent<ActionButtonBarProps> = (props) =
   )
 
   React.useEffect(() => {
-    console.log(size)
-    console.log(buttonSizes)
     if (size.width === null) return
 
     let cumulativeSize = 40 // hamburger width
