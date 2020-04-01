@@ -4,6 +4,7 @@ import {
   SELECTIONS_SET_WORKING_DATASET,
   SELECTIONS_CLEAR
 } from '../reducers/selections'
+import { SelectedComponent } from '../models/store'
 
 export const setActiveTab = (activeTab: string) => {
   return {
@@ -20,6 +21,14 @@ export const setSelectedListItem = (type: string, selectedListItem: string) => {
       selectedListItem
     }
   }
+}
+
+export const setWorkingComponent = (component: SelectedComponent) => {
+  return setSelectedListItem('component', component)
+}
+
+export const setHistoryComponent = (component: SelectedComponent) => {
+  return setSelectedListItem('commitComponent', component)
 }
 
 export const setWorkingDataset = (peername: string, name: string) => {

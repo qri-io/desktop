@@ -1,35 +1,15 @@
 import Dataset, { Commit } from "./models/dataset"
 import cloneDeep from 'clone-deep'
 
-import Store, { CommitDetails, Status, PageInfo, SelectedComponent } from './models/store'
-import { Details } from "./models/details"
+import Store, { CommitDetails, Status, PageInfo, SelectedComponent, History, VersionInfo, Selections } from './models/store'
+import { Details, DetailsType } from "./models/details"
+import { datasetToVersionInfo } from "./actions/mappingFuncs"
 
-export function selectSelectedComponent (state: Store): SelectedComponent {
-  return state.selections.component
-}
-
-export function selectSelectedCommitComponent (state: Store): SelectedComponent {
-  return state.selections.commitComponent
-}
-
-export function selectDetails (state: Store): Details {
-  return state.ui.detailsBar
-}
-
-export function selectFsiPath (state: Store) {
-  return state.workingDataset.fsiPath
-}
-
-// combines working dataset and mutations dataset to return most
-// up-to-date version of the edited dataset
-export function selectMutationsDataset (state: Store): Dataset {
-  const { mutations } = state
-  const mutationsDataset = mutations.dataset.value
-
-  const dataset = selectWorkingDataset(state)
-  const d = { ...dataset, ...mutationsDataset }
-  return d
-}
+/**
+ *
+ * COMMITDETAILS STATE TREE
+ *
+ */
 
 export function selectHistoryDatasetBodyPageInfo (state: Store): PageInfo {
   return state.commitDetails.components.body.pageInfo
@@ -37,6 +17,17 @@ export function selectHistoryDatasetBodyPageInfo (state: Store): PageInfo {
 
 export function selectHistoryCommit (state: Store): Commit | undefined {
   return selectHistoryDataset(state).commit
+}
+
+export function selectHistoryComponentsList (state: Store): SelectedComponent[] {
+  const dataset = selectHistoryDataset(state)
+  const components: SelectedComponent[] = []
+  if (dataset) {
+    Object.keys(dataset).forEach((component: SelectedComponent) => {
+      if (dataset[component]) components.push(component)
+    })
+  }
+  return components
 }
 
 // returns a dataset that only contains components
@@ -76,28 +67,56 @@ export function selectHistoryIsLoading (state: Store): boolean {
   return state.commitDetails.isLoading
 }
 
+function datasetFromCommitDetails (commitDetails: CommitDetails): Dataset {
+  const { components } = commitDetails
+  let d: Dataset = {}
+
+  Object.keys(components).forEach((componentName: string) => {
+    if (componentName === 'bodyPath') return
+    if (components[componentName].value) {
+      d[componentName] = cloneDeep(components[componentName].value)
+    }
+  })
+  return d
+}
+
+/**
+ *
+ * MYDATASETS STATE TREE
+ *
+ */
+
+export function selectMyDatasets (state: Store) {
+  return state.myDatasets.value
+}
+
+/**
+ *
+ * MUTATIONS STATE TREE
+ *
+ */
+
+// combines working dataset and mutations dataset to return most
+// up-to-date version of the edited dataset
+export function selectMutationsDataset (state: Store): Dataset {
+  const { mutations } = state
+  const mutationsDataset = mutations.dataset.value
+
+  const dataset = selectWorkingDataset(state)
+  const d = { ...dataset, ...mutationsDataset }
+  return d
+}
+
+export function selectMutationsIsDirty (state: Store): boolean {
+  return !!state.mutations.dirty
+}
+
 export function selectIsCommiting (state: Store): boolean {
   return state.mutations.save.isLoading
 }
 
-export function selectImportFileName (state: Store): string {
-  return state.ui.importFileName
-}
-
-export function selectImportFileSize (state: Store): number {
-  return state.ui.importFileSize
-}
-
-export function selectIsLinked (state: Store): boolean {
-  return !!state.workingDataset.fsiPath && state.workingDataset.fsiPath !== ''
-}
-
 export function selectMutationsCommit (state: Store): Commit {
   return state.mutations.save.value
-}
-
-export function selectOnHistoryTab (state: Store): boolean {
-  return state.selections.activeTab === 'history'
 }
 
 export function selectStatusFromMutations (state: Store): Status {
@@ -127,6 +146,60 @@ export function selectStatusFromMutations (state: Store): Status {
   return status
 }
 
+/**
+ *
+ * SELECTIONS STATE TREE
+ *
+ */
+
+export function selectSelections (state: Store): Selections {
+  return state.selections
+}
+
+export function selectSelectedComponent (state: Store): SelectedComponent {
+  return state.selections.component
+}
+
+export function selectSelectedCommitComponent (state: Store): SelectedComponent {
+  return state.selections.commitComponent
+}
+
+export function selectOnHistoryTab (state: Store): boolean {
+  return state.selections.activeTab === 'history'
+}
+
+/**
+ *
+ * SESSION STATE TREE
+ *
+ */
+
+export function selectSessionUsername (state: Store): string {
+  return state.session.peername
+}
+
+/**
+ *
+ * UI STATE TREE
+ *
+ */
+
+export function selectDetails (state: Store): Details {
+  return state.ui.detailsBar
+}
+
+export function selectShowDetailsBar (state: Store): boolean {
+  return state.ui.detailsBar.type !== DetailsType.NoDetails
+}
+
+export function selectImportFileName (state: Store): string {
+  return state.ui.importFileName
+}
+
+export function selectImportFileSize (state: Store): number {
+  return state.ui.importFileSize
+}
+
 export function selectSidebarWidth (state: Store, view: 'collection' | 'workbench' | 'network'): number {
   const { ui } = state
   switch (view) {
@@ -141,6 +214,36 @@ export function selectSidebarWidth (state: Store, view: 'collection' | 'workbenc
   }
 }
 
+/**
+ *
+ * WORKINGDATASET STATE TREE
+ *
+ */
+
+export function selectFsiPath (state: Store) {
+  return state.workingDataset.fsiPath
+}
+
+export function selectHistory (state: Store): History {
+  return state.workingDataset.history
+}
+
+export function selectIsLinked (state: Store): boolean {
+  return !!state.workingDataset.fsiPath && state.workingDataset.fsiPath !== ''
+}
+
+export function selectVersionInfoFromWorkingDataset (state: Store): VersionInfo {
+  const { workingDataset } = state
+  const vi = datasetToVersionInfo(selectWorkingDataset(state))
+  return {
+    ...vi,
+    username: workingDataset.peername,
+    name: workingDataset.name,
+    path: workingDataset.path,
+    fsiPath: workingDataset.fsiPath
+  }
+}
+
 export function selectWorkingDatasetBodyPageInfo (state: Store): PageInfo {
   return state.workingDataset.components.body.pageInfo
 }
@@ -152,6 +255,10 @@ export function selectWorkingDataset (state: Store): Dataset {
 
 export function selectWorkingDatasetIsLoading (state: Store): boolean {
   return state.workingDataset.isLoading
+}
+
+export function selectWorkingDatasetIsPublished (state: Store): boolean {
+  return state.workingDataset.published
 }
 
 export function selectWorkingDatasetName (state: Store): string {
@@ -173,17 +280,4 @@ export function selectWorkingStatus (state: Store): Status {
 
 export function selectWorkingStats (state: Store): Array<Record<string, any>> {
   return state.workingDataset.stats
-}
-
-function datasetFromCommitDetails (commitDetails: CommitDetails): Dataset {
-  const { components } = commitDetails
-  let d: Dataset = {}
-
-  Object.keys(components).forEach((componentName: string) => {
-    if (componentName === 'bodyPath') return
-    if (components[componentName].value) {
-      d[componentName] = cloneDeep(components[componentName].value)
-    }
-  })
-  return d
 }

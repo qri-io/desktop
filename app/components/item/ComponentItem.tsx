@@ -2,17 +2,14 @@ import React from 'react'
 import classNames from 'classnames'
 import { Action } from 'redux'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {
-  faArrowRight
-} from '@fortawesome/free-solid-svg-icons'
+import { faArrowRight } from '@fortawesome/free-solid-svg-icons'
 
-import { ComponentType, ComponentStatus } from '../../models/store'
+import { ComponentStatus, SelectedComponent } from '../../models/store'
 
 import Icon from '../chrome/Icon'
 import StatusDot from '../chrome/StatusDot'
 
 export interface ComponentItemProps {
-  name: string
   displayName: string
 
   color?: 'light' | 'dark'
@@ -20,10 +17,9 @@ export interface ComponentItemProps {
   filename?: string
   selected?: boolean
   status?: ComponentStatus
-  selectionType?: ComponentType
   disabled?: boolean
   tooltip?: string
-  onClick?: (type: ComponentType, activeTab: string) => Action
+  onClick?: (component: SelectedComponent) => Action
 }
 
 export const ComponentItem: React.FunctionComponent<ComponentItemProps> = (props) => {
@@ -31,7 +27,7 @@ export const ComponentItem: React.FunctionComponent<ComponentItemProps> = (props
 
   let statusIcon = <StatusDot status={status} />
 
-  if (props.name === 'commit') {
+  if (props.displayName.toLowerCase() === 'commit') {
     statusIcon = <FontAwesomeIcon icon={faArrowRight} style={{ color: '#FFF' }} size='lg' />
   }
 
@@ -42,9 +38,13 @@ export const ComponentItem: React.FunctionComponent<ComponentItemProps> = (props
         'selected': props.selected,
         'disabled': props.disabled
       })}
+      // TODO(ramfox): when we pull out the selections reducer, this should be
+      // replaced by a push() to the correct location
+      // `/workbench/:peername/:name/at:path/:component` or
+      // `/workbench/:peername/:name/:component`
       onClick={() => {
-        if (props.onClick && props.selectionType && props.name) {
-          props.onClick(props.selectionType, props.name.toLowerCase())
+        if (props.onClick && props.displayName) {
+          props.onClick(props.displayName.toLowerCase() as SelectedComponent)
         }
       }}
     >

@@ -2,18 +2,17 @@ import React from 'react'
 import { remote } from 'electron'
 import fs from 'fs'
 import { Action } from 'redux'
+import classNames from 'classnames'
+import { connect } from 'react-redux'
+
+import Store, { ToastType } from '../../models/store'
+
+import { openToast } from '../../actions/ui'
 
 import TextInput from '../form/TextInput'
 import ButtonInput from '../form/ButtonInput'
 import Icon from '../chrome/Icon'
 import ExternalLink from '../ExternalLink'
-import { connect } from 'react-redux'
-import Store, { ToastType } from '../../models/store'
-
-import {
-  openToast
-} from '../../actions/ui'
-import classNames from 'classnames'
 
 export interface CompareParams {
   left: string
@@ -26,7 +25,7 @@ export interface CompareSidebarProps {
   openToast: (type: ToastType, name: string, message: string) => Action
 }
 
-export const CompareSidebarComponent: React.FunctionComponent<CompareSidebarProps> = ({ data, onChange, openToast, closeToast }) => {
+export const CompareSidebarComponent: React.FunctionComponent<CompareSidebarProps> = ({ data, onChange, openToast }) => {
   const pathPicker = (side: string) => {
     const window = remote.getCurrentWindow()
     const filePaths: string[] | undefined = remote.dialog.showOpenDialogSync(window, {

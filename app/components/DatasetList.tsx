@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { Action, AnyAction, bindActionCreators, Dispatch } from 'redux'
 import ContextMenuArea from 'react-electron-contextmenu'
-import { RouteComponentProps } from 'react-router-dom'
+import { RouteComponentProps, withRouter } from 'react-router-dom'
 import { shell, MenuItemConstructorOptions } from 'electron'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTimes } from '@fortawesome/free-solid-svg-icons'
@@ -11,6 +11,8 @@ import { QriRef } from '../models/qriRef'
 import { Modal, ModalType } from '../models/modals'
 import { MyDatasets, WorkingDataset, VersionInfo } from '../models/store'
 
+import { selectImportFileName, selectImportFileSize } from '../selections'
+
 import { setFilter } from '../actions/myDatasets'
 import { fetchMyDatasets } from '../actions/api'
 import { setWorkingDataset } from '../actions/selections'
@@ -18,7 +20,6 @@ import { setModal } from '../actions/ui'
 
 import ProgressBar from './chrome/ProgressBar'
 import VersionInfoItem from './item/VersionInfoItem'
-import { selectImportFileName, selectImportFileSize } from '../selections'
 
 // for displaying a progress bar based on import file size
 // assumes an import rate of 4828 bytes per millisecond
@@ -215,4 +216,4 @@ const mergeProps = (props: any, actions: any): DatasetListProps => {
   return { ...props, ...actions }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(DatasetListComponent)
+export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(withRouter(DatasetListComponent))

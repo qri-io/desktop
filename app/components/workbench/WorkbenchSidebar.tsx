@@ -1,102 +1,56 @@
 import * as React from 'react'
-import { Action } from 'redux'
-
+import { Action, bindActionCreators, Dispatch } from 'redux'
+import { connect } from 'react-redux'
 import { CSSTransition } from 'react-transition-group'
 import classNames from 'classnames'
-import ContextMenuArea from 'react-electron-contextmenu'
-import { MenuItemConstructorOptions, remote, ipcRenderer } from 'electron'
 
-import { ApiActionThunk } from '../../store/api'
-import { Modal } from '../../models/modals'
-import { WorkingDataset, ComponentType, Selections, History, SelectedComponent, Status } from '../../models/store'
+import { QriRef } from '../../models/qriRef'
+import { VersionInfo, PageInfo } from '../../models/store'
 
-import ComponentList from '../ComponentList'
+import { setActiveTab } from '../../actions/selections'
+
+import { selectHistory, selectVersionInfoFromWorkingDataset } from '../../selections'
+
+import ComponentList from './WorkingComponentList'
 import DatasetReference from '../DatasetReference'
 import Spinner from '../chrome/Spinner'
-import HistoryListItem from '../item/HistoryListItem'
+import WorkbenchLogList from './WorkbenchLogList'
 import DatasetDetailsSubtext from '../dataset/DatasetDetailsSubtext'
 
 export interface WorkbenchSidebarData {
-  workingDataset: WorkingDataset
-  history: History
+  versionInfo: VersionInfo
+  historyInfo: PageInfo
+  historyLength: number
 }
 
 export interface WorkbenchSidebarProps {
+  qriRef: QriRef
   data: WorkbenchSidebarData
 
-  // display details
-  selections: Selections
-  status: Status
-
   // setting actions
-  setModal: (modal: Modal) => void
   setActiveTab: (activeTab: string) => Action
-  setCommit: (path: string) => Action
-  setComponent: (type: ComponentType, activeComponent: string) => Action // actually just setSelectedListItem
-
-  // fetching actions
-  fetchHistory: (page?: number, pageSize?: number) => ApiActionThunk
-
-  // api actions (not fetching)
-  discardChanges: (component: SelectedComponent) => void
-  renameDataset: (peername: string, name: string, newName: string) => ApiActionThunk
 }
 
-const WorkbenchSidebar: React.FunctionComponent<WorkbenchSidebarProps> = (props) => {
+export const WorkbenchSidebarComponent: React.FunctionComponent<WorkbenchSidebarProps> = (props) => {
   const {
-    selections,
+    qriRef,
     data,
-    status,
 
-    setActiveTab,
-    setCommit,
-    setComponent,
-
-    fetchHistory,
-
-    renameDataset,
-    discardChanges
+    setActiveTab
   } = props
 
-  const { history, workingDataset } = data
-  const { fsiPath, structure } = workingDataset
-  const format = structure && structure.format
-  const commitCount = history.value.length
-  const lastCommit = history.value.length ? history.value[0].timestamp : ''
+  const { historyInfo, historyLength, versionInfo } = data
 
   const {
-    activeTab,
-    component: selectedComponent,
-    commit: selectedCommit,
-    peername,
-    name
-  } = selections
+    username = '',
+    name = ''
+  } = qriRef
 
-  const datasetSelected = peername !== '' && name !== ''
+  const activeTab = qriRef.path ? 'history' : 'status'
 
-  const historyLoaded = !history.pageInfo.isFetching
-  const statusLoaded = !!status
+  const datasetSelected = username !== '' && name !== ''
 
-  const handleHistoryScroll = (e: any) => {
-    if (e.target.scrollHeight === parseInt(e.target.scrollTop) + parseInt(e.target.offsetHeight)) {
-      fetchHistory(history.pageInfo.page + 1, history.pageInfo.pageSize)
-    }
-  }
-
-  const handleExport = (path: string) => {
-    const window = remote.getCurrentWindow()
-    const selectedPath: string | undefined = remote.dialog.showSaveDialogSync(window, {})
-
-    if (!selectedPath) {
-      return
-    }
-
-    const pathUrl = path === '' ? '' : `/at/${path}`
-    const exportUrl = `http://localhost:2503/export/${peername}/${name}${pathUrl}?download=true&all=true`
-    ipcRenderer.send('export', { url: exportUrl, directory: selectedPath })
-  }
-
-  const historyToolTip = history.value.length !== 0 || !datasetSelected ? 'Explore older versions of this dataset' : 'This dataset has no previous versions'
+  const historyToolTip = historyLength !== 0 || !datasetSelected ? 'Explore older versions of this dataset' : 'This dataset has no previous versions'
 
   // if no dataset is selected, what to return
 
@@ -104,8 +58,8 @@ const WorkbenchSidebar: React.FunctionComponent<WorkbenchSidebarProps> = (props)
     <div className='sidebar'>
       <div className='sidebar-header sidebar-padded-container'>
         <p className='pane-title'>Dataset</p>
-        <DatasetReference peername={peername} name={name} renameDataset={renameDataset}/>
-        <DatasetDetailsSubtext format={format} lastCommit={lastCommit} commitCount={commitCount} />
+        <DatasetReference qriRef={qriRef} />
+        <DatasetDetailsSubtext data={versionInfo} />
       </div>
       <div id='tabs' className='sidebar-padded-container'>
         <div
@@ -122,9 +76,9 @@ const WorkbenchSidebar: React.FunctionComponent<WorkbenchSidebarProps> = (props)
         </div>
         <div
           id='history-tab'
-          className={classNames('tab', { 'active': activeTab === 'history', 'disabled': (history.pageInfo.error && history.pageInfo.error.includes('no history')) || !datasetSelected })}
+          className={classNames('tab', { 'active': activeTab === 'history', 'disabled': (historyInfo.error && historyInfo.error.includes('no history')) || !datasetSelected })}
           onClick={() => {
-            if ((!(history.pageInfo.error && history.pageInfo.error.includes('no history')) && datasetSelected)) {
+            if ((!(historyInfo.error && historyInfo.error.includes('no history')) && datasetSelected)) {
               setActiveTab('history')
             }
           }}
@@ -136,7 +90,7 @@ const WorkbenchSidebar: React.FunctionComponent<WorkbenchSidebarProps> = (props)
       <div id='content' className='transition-group'>
         <CSSTransition
           classNames='fade'
-          in={(!statusLoaded && activeTab === 'status') || (!historyLoaded && activeTab === 'history')}
+          in={activeTab === 'history' && historyInfo.isFetching}
           component='div'
           timeout={300}
           mountOnEnter
@@ -145,7 +99,7 @@ const WorkbenchSidebar: React.FunctionComponent<WorkbenchSidebarProps> = (props)
           <div className='spinner'><Spinner white /></div>
         </CSSTransition>
         <CSSTransition
-          in={statusLoaded && activeTab === 'status'}
+          in={activeTab === 'status'}
           classNames='fade'
           component='div'
           timeout={300}
@@ -153,72 +107,44 @@ const WorkbenchSidebar: React.FunctionComponent<WorkbenchSidebarProps> = (props)
           unmountOnExit
         >
           <div id='status-content' className='sidebar-content'>
-            <ComponentList
-              datasetSelected={datasetSelected}
-              status={status}
-              selectedComponent={selectedComponent}
-              onComponentClick={setComponent}
-              selectionType={'component' as ComponentType}
-              fsiPath={fsiPath}
-              discardChanges={discardChanges}
-            />
+            <ComponentList qriRef={qriRef} />
           </div>
         </CSSTransition>
         <CSSTransition
-          in={historyLoaded && activeTab === 'history'}
+          in={activeTab === 'history' && !historyInfo.isFetching}
           classNames='fade'
           component='div'
           timeout={300}
           mountOnEnter
           unmountOnExit
         >
-          <div
-            id='history-list'
-            className='sidebar-content'
-            onScroll={(e) => handleHistoryScroll(e)}
-            hidden = {activeTab === 'status'}
-          >
-            {
-              history.value.map((item, i) => {
-                if (item.foreign) {
-                  return <HistoryListItem
-                    data={item}
-                    key={item.path}
-                    id={`HEAD-${i + 1}`}
-                    first={i === 0}
-                    last={i === history.value.length - 1}
-                    selected={selectedCommit === item.path}
-                    onClick={setCommit}
-                  />
-                }
-                const menuItems: MenuItemConstructorOptions[] = [
-                  {
-                    label: 'Export this version',
-                    click: () => {
-                      handleExport(item.path)
-                    }
-                  }
-                ]
-                return (
-                  <ContextMenuArea menuItems={menuItems} key={item.path}>
-                    <HistoryListItem
-                      data={item}
-                      key={item.path}
-                      id={`HEAD-${i + 1}`}
-                      first={i === 0}
-                      last={i === history.value.length - 1}
-                      selected={selectedCommit === item.path}
-                      onClick={setCommit}
-                    />
-                  </ContextMenuArea>
-                )
-              })
-            }
-          </div>
+          <WorkbenchLogList qriRef={qriRef} />
         </CSSTransition>
       </div>
     </div>
   )
 }
 
-export default WorkbenchSidebar
+const mapStateToProps = (state: any, ownProps: WorkbenchSidebarProps) => {
+  const history = selectHistory(state)
+  return {
+    ...ownProps,
+    data: {
+      historyInfo: history.pageInfo,
+      historyLength: history.value.length,
+      versionInfo: selectVersionInfoFromWorkingDataset(state)
+    }
+  }
+}
+
+const mapDispatchToProps = (dispatch: Dispatch) => {
+  return bindActionCreators({
+    setActiveTab
+  }, dispatch)
+}
+
+const mergeProps = (props: any, actions: any): WorkbenchSidebarProps => {
+  return { ...props, ...actions }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(WorkbenchSidebarComponent)

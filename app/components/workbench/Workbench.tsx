@@ -1,28 +1,29 @@
 import * as React from 'react'
-import { Action } from 'redux'
+import { Action, Dispatch, bindActionCreators } from 'redux'
 import { ipcRenderer, shell, clipboard } from 'electron'
 import { CSSTransition } from 'react-transition-group'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faFolderOpen, faFile, faLink, faCloud, faCloudUploadAlt } from '@fortawesome/free-solid-svg-icons'
 import { RouteComponentProps, Prompt } from 'react-router-dom'
+import { connect } from 'react-redux'
 
 import { QRI_CLOUD_URL } from '../../constants'
 import { Details } from '../../models/details'
 import { Session } from '../../models/session'
-import {
-  Selections,
-  WorkingDataset,
-  CommitDetails as ICommitDetails,
-  History,
-  ComponentType,
-  SelectedComponent,
-  Status
-} from '../../models/store'
-import Dataset from '../../models/dataset'
+import { SelectedComponent } from '../../models/store'
 import { Modal, ModalType } from '../../models/modals'
+import { QriRef, hackQriRefFromRouteAndSelections } from '../../models/qriRef'
 import { ApiActionThunk, LaunchedFetchesAction } from '../../store/api'
+
+import { setModal, setSidebarWidth } from '../../actions/ui'
+import { setActiveTab } from '../../actions/selections'
+import { resetMutationsDataset, discardMutationsChanges, resetMutationsStatus } from '../../actions/mutations'
+import { fetchWorkbench } from '../../actions/workbench'
+import { discardChanges, fetchWorkingDatasetDetails } from '../../actions/api'
+
+import { selectHistory, selectFsiPath, selectDetails, selectWorkingDatasetIsPublished, selectSessionUsername, selectMyDatasets, selectSidebarWidth, selectShowDetailsBar, selectMutationsIsDirty } from '../../selections'
+
 import { defaultSidebarWidth } from '../../reducers/ui'
-import { QriRef } from '../../models/qriRef'
 
 import { Resizable } from '../Resizable'
 import Layout from '../Layout'
@@ -39,22 +40,12 @@ import NotInNamespace from './NotInNamespace'
 // TODO (b5) - is this still required?
 require('../../assets/qri-blob-logo-tiny.png')
 
-export interface WorkbenchData {
-  workingDataset: WorkingDataset
-  head: ICommitDetails
-  history: History
-  status: Status
-
-  // mutations
-  mutationsDataset: Dataset
-}
-
-export interface WorkbenchProps extends RouteComponentProps {
-  data: WorkbenchData
-
+export interface WorkbenchProps extends RouteComponentProps<QriRef> {
   // display details
   qriRef: QriRef
-  selections: Selections
+  isPublished: boolean
+  historyLength: number
+  fsiPath: string
   session: Session
   hasDatasets: boolean
   showDetailsBar: boolean
@@ -69,26 +60,19 @@ export interface WorkbenchProps extends RouteComponentProps {
   setModal: (modal: Modal) => void
   setActiveTab: (activeTab: string) => Action
   setSidebarWidth: (type: string, sidebarWidth: number) => Action
-  setCommit: (path: string) => Action
-  setComponent: (type: ComponentType, activeComponent: string) => Action
   resetMutationsDataset: () => Action
   resetMutationsStatus: () => Action
 
   // fetching actions
   fetchWorkbench: () => LaunchedFetchesAction
-  fetchHistory: (page?: number, pageSize?: number) => ApiActionThunk
   fetchWorkingDatasetDetails: () => ApiActionThunk
 
   // api actions (that aren't fetching)
-  publishDataset: () => ApiActionThunk
-  unpublishDataset: () => ApiActionThunk
   discardChanges: (component: SelectedComponent) => ApiActionThunk
   discardMutationsChanges: (component: SelectedComponent) => Action
-  renameDataset: (peername: string, name: string, newName: string) => ApiActionThunk
-  fsiWrite: (peername: string, name: string, dataset: Dataset) => ApiActionThunk
 }
 
-class Workbench extends React.Component<WorkbenchProps, Status> {
+export class WorkbenchComponent extends React.Component<WorkbenchProps> {
   constructor (props: WorkbenchProps) {
     super(props);
 
@@ -131,7 +115,7 @@ class Workbench extends React.Component<WorkbenchProps, Status> {
   }
 
   private handleCopyLink () {
-    clipboard.writeText(`${QRI_CLOUD_URL}/${this.props.data.workingDataset.peername}/${this.props.data.workingDataset.name}`)
+    clipboard.writeText(`${QRI_CLOUD_URL}/${this.props.qriRef.username}/${this.props.qriRef.name}`)
   }
 
   async componentDidUpdate (prevProps: WorkbenchProps) {
@@ -142,22 +126,19 @@ class Workbench extends React.Component<WorkbenchProps, Status> {
   }
 
   openWorkingDirectory () {
-    shell.openItem(this.props.data.workingDataset.fsiPath)
+    shell.openItem(this.props.fsiPath)
   }
 
   publishUnpublishDataset () {
-    const { data, setModal } = this.props
-    const { published } = data.workingDataset
+    const { isPublished, setModal } = this.props
 
-    published
+    isPublished
       ? setModal({ type: ModalType.UnpublishDataset })
       : setModal({ type: ModalType.PublishDataset })
   }
 
   handleDiscardChanges (component: SelectedComponent) {
-    const { workingDataset } = this.props.data
-    const { fsiPath } = workingDataset
-    if (fsiPath !== '') {
+    if (this.props.fsiPath !== '') {
       this.props.discardChanges(component)
       this.props.discardMutationsChanges(component)
       return
@@ -167,37 +148,23 @@ class Workbench extends React.Component<WorkbenchProps, Status> {
 
   render () {
     const {
-      data,
-
       qriRef,
-      // TODO(ramfox): selections on slate for removal, should be passing in qriRefs in order to get location
-      selections,
+      isPublished,
       hasDatasets,
       sidebarWidth,
-      session,
       modified = false,
       inNamespace,
+      fsiPath,
+      historyLength,
 
-      setModal,
-      setActiveTab,
-      setCommit,
-      setComponent,
-
-      fetchHistory,
-
-      renameDataset
+      setModal
     } = this.props
-
-    const { peername: username } = session
 
     const peername = qriRef.username
     const name = qriRef.name
     const activeTab = qriRef.path ? 'history' : 'status'
 
     const datasetSelected = peername !== '' && name !== ''
-
-    const { workingDataset, status } = data
-    const { published, fsiPath } = workingDataset
 
     // isLinked is derived from fsiPath and only used locally
     const isLinked = fsiPath !== ''
@@ -209,18 +176,7 @@ class Workbench extends React.Component<WorkbenchProps, Status> {
     } = this.props
 
     const sidebarContent = (
-      <WorkbenchSidebar
-        data= {{ workingDataset: data.workingDataset, history: data.history }}
-        status={status}
-        selections={selections}
-        setModal={setModal}
-        setActiveTab={setActiveTab}
-        setCommit={setCommit}
-        setComponent={setComponent}
-        fetchHistory={fetchHistory}
-        discardChanges={this.handleDiscardChanges}
-        renameDataset={renameDataset}
-      />
+      <WorkbenchSidebar qriRef={qriRef} />
     )
 
     let linkButton
@@ -231,7 +187,7 @@ class Workbench extends React.Component<WorkbenchProps, Status> {
           icon={faFolderOpen}
           label='Show Files'
           onClick={this.openWorkingDirectory}
-        />) : username === peername && (
+        />) : inNamespace && (
         <HeaderColumnButton
           id='checkout'
           label='checkout'
@@ -247,11 +203,11 @@ class Workbench extends React.Component<WorkbenchProps, Status> {
     }
 
     let publishButton
-    if (username === peername && datasetSelected) {
-      publishButton = published ? (
+    if (inNamespace && datasetSelected) {
+      publishButton = isPublished ? (
         <><HeaderColumnButton
           id='view-in-cloud'
-          onClick={() => { shell.openExternal(`${QRI_CLOUD_URL}/${data.workingDataset.peername}/${data.workingDataset.name}`) }}
+          onClick={() => { shell.openExternal(`${QRI_CLOUD_URL}/${qriRef.username}/${qriRef.name}`) }}
           icon={faCloud}
           label='View in Cloud'
         />
@@ -270,7 +226,7 @@ class Workbench extends React.Component<WorkbenchProps, Status> {
         </>
       ) : (
         <span data-tip={
-          data.workingDataset.history.value.length === 0
+          historyLength === 0
             ? 'The dataset must have at least one commit before you can publish'
             : 'Publish this dataset to Qri Cloud'
         }>
@@ -278,7 +234,7 @@ class Workbench extends React.Component<WorkbenchProps, Status> {
             id='publish-button'
             label='Publish'
             icon={faCloudUploadAlt}
-            disabled={data.workingDataset.history.value.length === 0}
+            disabled={historyLength === 0}
             onClick={() => { setModal({ type: ModalType.PublishDataset }) }}
           />
         </span>
@@ -377,4 +333,43 @@ class Workbench extends React.Component<WorkbenchProps, Status> {
   }
 }
 
-export default Workbench
+const mapStateToProps = (state: any, ownProps: WorkbenchProps) => {
+  const qriRef = hackQriRefFromRouteAndSelections(state, ownProps)
+  return {
+    qriRef,
+    /**
+     * TODO (ramfox): when we have a more sophisticated view of publish/unpublish
+     * we should pull the published status of the specific version being shown
+     * rather then the status of the dataset at head.
+     */
+    isPublished: selectWorkingDatasetIsPublished(state),
+    historyLength: selectHistory(state).value.length,
+    fsiPath: selectFsiPath(state),
+    hasDatasets: selectMyDatasets(state).length,
+    showDetailsBar: selectShowDetailsBar(state),
+    sidebarWidth: selectSidebarWidth(state, 'workbench'),
+    details: selectDetails(state),
+    inNamespace: selectSessionUsername(state) === qriRef.username,
+    modified: selectMutationsIsDirty(state)
+  }
+}
+
+const mapDispatchToProps = (dispatch: Dispatch) => {
+  return bindActionCreators({
+    setModal,
+    setActiveTab,
+    setSidebarWidth,
+    resetMutationsDataset,
+    resetMutationsStatus,
+    fetchWorkbench,
+    fetchWorkingDatasetDetails,
+    discardChanges,
+    discardMutationsChanges
+  }, dispatch)
+}
+
+const mergeProps = (props: any, actions: any): WorkbenchProps => {
+  return { ...props, ...actions }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(WorkbenchComponent)

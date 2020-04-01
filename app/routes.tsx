@@ -2,11 +2,12 @@
 import React from 'react'
 import { Switch, Route, Redirect } from 'react-router-dom'
 import { ipcRenderer } from 'electron'
+
 import Welcome from './components/onboard/Welcome'
 import Signup from './components/onboard/Signup'
 import Signin from './components/Signin'
 import Collection from './components/collection/Collection'
-import WorkbenchContainer from './containers/WorkbenchContainer'
+import Workbench from './components/workbench/Workbench'
 import NetworkContainer from './containers/NetworkContainer'
 import Compare from './components/compare/Compare'
 
@@ -75,10 +76,10 @@ export default function Routes (props: any) {
         }} />
 
         <Route exact path='/workbench' render={(props) => {
-          return sectionElement('workbench', <WorkbenchContainer {...props} />)
+          return sectionElement('workbench', <Workbench {...props} />)
         }}/>
         <Route path='/workbench/:username/:name' render={(props) => {
-          return sectionElement('workbench', <WorkbenchContainer {...props} />)
+          return sectionElement('workbench', <Workbench {...props} />)
         }}/>
 
         { __BUILD__.ENABLE_COMPARE_SECTION &&

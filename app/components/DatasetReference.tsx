@@ -2,28 +2,33 @@
 // for dataset rename
 import * as React from 'react'
 import classNames from 'classnames'
+import { connect } from 'react-redux'
+import { Dispatch, bindActionCreators } from 'redux'
 
 import { ApiActionThunk } from '../store/api'
+import { QriRef } from '../models/qriRef'
+
+import { renameDataset } from '../actions/api'
 import { validateDatasetName } from '../utils/formValidation'
 
 interface DatasetReferenceProps {
-  peername: string
-  name: string
-  renameDataset: (peername: string, name: string, newName: string) => ApiActionThunk
+  qriRef: QriRef
+  renameDataset: (username: string, name: string, newName: string) => ApiActionThunk
 }
 
-const DatasetReference: React.FunctionComponent<DatasetReferenceProps> = (props) => {
-  const { peername, name, renameDataset } = props
+const DatasetReferenceComponent: React.FunctionComponent<DatasetReferenceProps> = (props) => {
+  const { qriRef, renameDataset } = props
+  const { username = '', name = '' } = qriRef
   const [ nameEditing, setNameEditing ] = React.useState(false)
   const [ newName, setNewName ] = React.useState(name)
   const [ inValid, setInvalid ] = React.useState(null)
 
-  const commitRename = (peername: string, name: string, newName: string) => {
+  const commitRename = (username: string, name: string, newName: string) => {
     // cancel if no change, change invalid, or empty
     if ((name === newName) || inValid || newName === '') {
       cancelRename()
     } else {
-      renameDataset(peername, name, newName)
+      renameDataset(username, name, newName)
         .then(() => {
           setNameEditing(false)
         })
@@ -44,7 +49,7 @@ const DatasetReference: React.FunctionComponent<DatasetReferenceProps> = (props)
 
     // submit on enter or tab
     if ((e.keyCode === 13) || (e.keyCode === 9)) {
-      commitRename(peername, name, newName)
+      commitRename(username, name, newName)
     }
   }
 
@@ -62,7 +67,7 @@ const DatasetReference: React.FunctionComponent<DatasetReferenceProps> = (props)
     }
 
     if (!nameRef.current.contains(target)) {
-      commitRename(peername, name, newName)
+      commitRename(username, name, newName)
     }
   }
 
@@ -90,7 +95,7 @@ const DatasetReference: React.FunctionComponent<DatasetReferenceProps> = (props)
 
   return (
     <div id='dataset-reference' className='dataset-reference'>
-      <div className='dataset-peername'>{peername || ''}/</div>
+      <div className='dataset-username'>{username || ''}/</div>
       <div className='dataset-name' id='dataset-name' ref={nameRef}>
         { nameEditing && <input
           id='dataset-name-input'
@@ -109,4 +114,18 @@ const DatasetReference: React.FunctionComponent<DatasetReferenceProps> = (props)
   )
 }
 
-export default DatasetReference
+const mapStateToProps = (state: any, ownProps: DatasetReferenceProps) => {
+  return ownProps
+}
+
+const mapDispatchToProps = (dispatch: Dispatch) => {
+  return bindActionCreators({
+    renameDataset
+  }, dispatch)
+}
+
+const mergeProps = (props: any, actions: any): DatasetReferenceProps => {
+  return { ...props, ...actions }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(DatasetReferenceComponent)
