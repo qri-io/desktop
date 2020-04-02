@@ -803,13 +803,13 @@ export function importFile (filePath: string, fileName: string, fileSize: number
       }
     }
     let response: Action
-    let redirectPath = 'workbench'
+    let redirectPath = '/workbench'
     try {
       dispatch(setImportFileDetails(fileName, fileSize))
       response = await dispatch(action)
       const { peername, name } = response.payload.data
       response = await whenOk(fetchMyDatasets(-1))(response)
-      redirectPath = `workbench/${peername}/${name}`
+      redirectPath = `/workbench/${peername}/${name}`
       dispatch(setWorkingDataset(peername, name))
     } catch (action) {
       dispatch(setImportFileDetails('', 0))

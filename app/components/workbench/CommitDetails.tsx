@@ -1,14 +1,12 @@
 import * as React from 'react'
-import { Action, bindActionCreators, Dispatch } from 'redux'
 import { connect } from 'react-redux'
 
-import Store, { ComponentType, SelectedComponent, Selections, Status } from '../../models/Store'
+import Store from '../../models/Store'
 import Dataset from '../../models/dataset'
-import { setSelectedListItem } from '../../actions/selections'
-import { selectHistoryDataset, selectHistoryStatus, selectHistoryDatasetPeername, selectHistoryDatasetName, selectHistoryDatasetPath } from '../../selections'
+import { selectHistoryDataset } from '../../selections'
 import { QriRef } from '../../models/qriRef'
 
-import HistoryComponentList from '../HistoryComponentList'
+import HistoryComponentList from './HistoryComponentList'
 import DatasetComponent from './DatasetComponent'
 import Layout from '../Layout'
 import CommitDetailsHeader from './CommitDetailsHeader'
@@ -16,33 +14,15 @@ import CommitDetailsHeader from './CommitDetailsHeader'
 export interface CommitDetailsProps {
   qriRef: QriRef
   dataset: Dataset
-  status: Status
-  selections: Selections
-
-  setComponent: (type: ComponentType, activeComponent: string) => Action
 }
 
 export const CommitDetailsComponent: React.FunctionComponent<CommitDetailsProps> = (props) => {
   const {
-    dataset,
     qriRef,
-    status,
-    selections,
-    setComponent
+    dataset
   } = props
-  const { commitComponent: selectedComponent } = selections
 
-  const { username = '', name = '', path = '' } = qriRef
-
-  const getComponents = () => {
-    const components: SelectedComponent[] = []
-    if (dataset) {
-      Object.keys(dataset).forEach((component: SelectedComponent) => {
-        if (dataset[component]) components.push(component)
-      })
-    }
-    return components
-  }
+  const { path = '' } = qriRef
 
   return (
     <div className='dataset-content transition-group'>
@@ -57,14 +37,7 @@ export const CommitDetailsComponent: React.FunctionComponent<CommitDetailsProps>
           />
         }
         sidebarContent={(
-          <HistoryComponentList
-            datasetSelected={username !== '' && name !== ''}
-            status={status}
-            components={getComponents()}
-            selectedComponent={selectedComponent}
-            selectionType={'commitComponent' as ComponentType}
-            onComponentClick={setComponent}
-          />
+          <HistoryComponentList qriRef={qriRef}/>
         )}
         sidebarWidth={150}
         mainContent={(
@@ -78,22 +51,8 @@ export const CommitDetailsComponent: React.FunctionComponent<CommitDetailsProps>
 const mapStateToProps = (state: Store, ownProps: CommitDetailsProps) => {
   return {
     ...ownProps,
-    dataset: selectHistoryDataset(state),
-    peername: selectHistoryDatasetPeername(state),
-    name: selectHistoryDatasetName(state),
-    path: selectHistoryDatasetPath(state),
-    status: selectHistoryStatus(state),
-    selections: state.selections
+    dataset: selectHistoryDataset(state)
   }
 }
-const mapDispatchToProps = (dispatch: Dispatch) => {
-  return bindActionCreators({
-    setComponent: setSelectedListItem
-  }, dispatch)
-}
 
-const mergeProps = (props: any, actions: any): CommitDetailsProps => {
-  return { ...props, ...actions }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(CommitDetailsComponent)
+export default connect(mapStateToProps)(CommitDetailsComponent)

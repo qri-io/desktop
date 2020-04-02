@@ -1,21 +1,28 @@
 import * as React from 'react'
-import { Action } from 'redux'
+import { Action, Dispatch, bindActionCreators } from 'redux'
 import path from 'path'
 import classNames from 'classnames'
 import { clipboard, shell, MenuItemConstructorOptions } from 'electron'
+import { connect } from 'react-redux'
 
-import ContextMenuArea from './ContextMenuArea'
-import { checkClearToCommit } from '../utils/formValidation'
-import { Status, SelectedComponent, ComponentType } from '../models/store'
-import ComponentItem from './item/ComponentItem'
+import { checkClearToCommit } from '../../utils/formValidation'
+import { QriRef, selectedComponentFromQriRef } from '../../models/qriRef'
+import { Status, SelectedComponent } from '../../models/store'
 
-interface ComponentListProps {
-  datasetSelected: boolean
+import { discardChanges } from '../../actions/api'
+import { setWorkingComponent } from '../../actions/selections'
+
+import { selectStatusFromMutations, selectFsiPath } from '../../selections'
+
+import ContextMenuArea from '../ContextMenuArea'
+import ComponentItem from '../item/ComponentItem'
+
+interface WorkingComponentListProps {
+  qriRef: QriRef
   status: Status
   selectedComponent: string
-  onComponentClick: (type: ComponentType, activeTab: string) => Action
+  onComponentClick: (component: SelectedComponent) => Action
   discardChanges?: (component: SelectedComponent) => void
-  selectionType: ComponentType
   fsiPath?: string
 }
 
@@ -60,7 +67,7 @@ export const components = [
 
 export const hiddenComponents = ['transform']
 // removes components that don't have content on this dataset
-function hiddenComponentFilter (status: Status, selectionType: ComponentType) {
+function hiddenComponentFilter (status: Status) {
   return (component): boolean => {
     // filtering all componennt, if the component name is NOT in the hidden list, we good, if it is, then it must be in the status
     return !hiddenComponents.includes(component.name) || Object.keys(status).some((statusComponentName: string) => statusComponentName === component.name)
@@ -72,17 +79,16 @@ export const getComponentDisplayProps = (name: string) => {
   return components.filter(d => d.name === name)[0]
 }
 
-const ComponentList: React.FunctionComponent<ComponentListProps> = (props: ComponentListProps) => {
+export const WorkingComponentListComponent: React.FunctionComponent<WorkingComponentListProps> = (props: WorkingComponentListProps) => {
   const {
     status,
     selectedComponent,
     onComponentClick,
-    selectionType,
     discardChanges,
     fsiPath
   } = props
 
-  const visibleComponents = components.filter(hiddenComponentFilter(status, selectionType))
+  const visibleComponents = components.filter(hiddenComponentFilter(status))
 
   // reduce visible component statuses into boolean indicating that there are changes ready to be committed
 
@@ -106,12 +112,10 @@ const ComponentList: React.FunctionComponent<ComponentListProps> = (props: Compo
               <ComponentItem
                 key={name}
                 displayName={displayName}
-                name={name}
                 icon={icon}
                 filename={filename}
                 status={fileStatus}
                 selected={selectedComponent === name}
-                selectionType={selectionType}
                 tooltip={tooltip}
                 onClick={onComponentClick}
                 color='light'
@@ -160,10 +164,8 @@ const ComponentList: React.FunctionComponent<ComponentListProps> = (props: Compo
                 color='light'
                 key={name}
                 displayName={displayName}
-                name={name}
                 icon={icon}
                 selected={selectedComponent === name}
-                selectionType={selectionType}
                 // TODO (ramfox): we should create a 'isDisabled' function and add these specifications & test
                 tooltip={tooltip}
                 onClick={onComponentClick}
@@ -176,4 +178,24 @@ const ComponentList: React.FunctionComponent<ComponentListProps> = (props: Compo
   )
 }
 
-export default ComponentList
+const mapStateToProps = (state: any, ownProps: WorkingComponentListProps) => {
+  return {
+    ...ownProps,
+    status: selectStatusFromMutations(state),
+    selectedComponent: selectedComponentFromQriRef(ownProps.qriRef),
+    fsiPath: selectFsiPath(state)
+  }
+}
+
+const mapDispatchToProps = (dispatch: Dispatch, ownProps: WorkingComponentListProps) => {
+  return bindActionCreators({
+    onComponentClick: setWorkingComponent,
+    discardChanges
+  }, dispatch)
+}
+
+const mergeProps = (props: any, actions: any): WorkingComponentListProps => {
+  return { ...props, ...actions }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(WorkingComponentListComponent)

@@ -2,11 +2,12 @@
 import React from 'react'
 import { Switch, Route, Redirect } from 'react-router-dom'
 import { ipcRenderer } from 'electron'
+
 import Welcome from './components/onboard/Welcome'
 import Signup from './components/onboard/Signup'
 import Signin from './components/Signin'
-import CollectionContainer from './containers/CollectionContainer'
-import WorkbenchContainer from './containers/WorkbenchContainer'
+import Collection from './components/collection/Collection'
+import Workbench from './components/workbench/Workbench'
 import NetworkContainer from './containers/NetworkContainer'
 import Compare from './components/compare/Compare'
 
@@ -17,8 +18,7 @@ export default function Routes (props: any) {
     setQriCloudAuthenticated,
     acceptTOS,
     signup,
-    signin,
-    setModal
+    signin
   } = props
 
   const requireSignin = (dest: React.ReactElement): React.ReactElement => {
@@ -66,7 +66,7 @@ export default function Routes (props: any) {
         }} />
 
         <Route exact path='/collection' render={() => {
-          return sectionElement('collection', <CollectionContainer setModal={setModal} />)
+          return sectionElement('collection', <Collection {...props} />)
         }} />
         <Route path='/collection/:username' render={(props) => {
           return sectionElement('collection', <Placeholder
@@ -76,10 +76,10 @@ export default function Routes (props: any) {
         }} />
 
         <Route exact path='/workbench' render={(props) => {
-          return sectionElement('workbench', <WorkbenchContainer {...props} />)
+          return sectionElement('workbench', <Workbench {...props} />)
         }}/>
         <Route path='/workbench/:username/:name' render={(props) => {
-          return sectionElement('workbench', <WorkbenchContainer {...props} />)
+          return sectionElement('workbench', <Workbench {...props} />)
         }}/>
 
         { __BUILD__.ENABLE_COMPARE_SECTION &&

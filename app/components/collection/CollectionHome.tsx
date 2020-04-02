@@ -1,25 +1,31 @@
 import React from 'react'
-import { Action } from 'redux'
+import { Action, bindActionCreators, Dispatch } from 'redux'
 import path from 'path'
 import { faPlus, faDownload } from '@fortawesome/free-solid-svg-icons'
+import { connect } from 'react-redux'
 
 import { ApiAction } from '../../store/api'
 import { Modal, ModalType } from '../../models/modals'
 import { ToastTypes } from '../chrome/Toast'
 import { ToastType } from '../../models/store'
+import { QriRef } from '../../models/qriRef'
+
+import { setModal, openToast, closeToast } from '../../actions/ui'
+import { importFile } from '../../actions/api'
 
 import HeaderColumnButton from '../chrome/HeaderColumnButton'
 import WelcomeTemplate from '../onboard/WelcomeTemplate'
 import DropZone from '../chrome/DropZone'
 
 export interface CollectionHomeProps {
+  qriRef: QriRef
   setModal: (modal: Modal) => void
   importFile: (filePath: string, fileName: string, fileSize: number) => Promise<ApiAction>
   openToast: (type: ToastType, name: string, message: string) => Action
   closeToast: () => Action
 }
 
-const CollectionHome: React.FunctionComponent<CollectionHomeProps> = (props) => {
+export const CollectionHomeComponent: React.FunctionComponent<CollectionHomeProps> = (props) => {
   const { setModal, importFile, openToast, closeToast } = props
 
   const [dragging, setDragging] = React.useState(false)
@@ -86,4 +92,21 @@ const CollectionHome: React.FunctionComponent<CollectionHomeProps> = (props) => 
   )
 }
 
-export default CollectionHome
+const mapStateToProps = (state: any, ownProps: CollectionHomeProps) => {
+  return ownProps
+}
+
+const mapDispatchToProps = (dispatch: Dispatch) => {
+  return bindActionCreators({
+    setModal,
+    importFile,
+    openToast,
+    closeToast
+  }, dispatch)
+}
+
+const mergeProps = (props: any, actions: any): CollectionHomeProps => {
+  return { ...props, ...actions }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(CollectionHomeComponent)
