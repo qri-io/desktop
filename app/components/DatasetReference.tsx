@@ -23,7 +23,7 @@ const DatasetReferenceComponent: React.FunctionComponent<DatasetReferenceProps> 
   const [ newName, setNewName ] = React.useState(name)
   const [ inValid, setInvalid ] = React.useState(null)
 
-  const commitRename = (username: string, name: string, newName: string) => {
+  const confirmRename = (username: string, name: string, newName: string) => {
     // cancel if no change, change invalid, or empty
     if ((name === newName) || inValid || newName === '') {
       cancelRename()
@@ -49,7 +49,7 @@ const DatasetReferenceComponent: React.FunctionComponent<DatasetReferenceProps> 
 
     // submit on enter or tab
     if ((e.keyCode === 13) || (e.keyCode === 9)) {
-      commitRename(username, name, newName)
+      confirmRename(username, name, newName)
     }
   }
 
@@ -67,7 +67,7 @@ const DatasetReferenceComponent: React.FunctionComponent<DatasetReferenceProps> 
     }
 
     if (!nameRef.current.contains(target)) {
-      commitRename(username, name, newName)
+      confirmRename(username, name, newName)
     }
   }
 
