@@ -1,35 +1,42 @@
 import * as React from 'react'
-import { Action } from 'redux'
+import { Action, Dispatch, bindActionCreators } from 'redux'
 import { remote, ipcRenderer } from 'electron'
+import { connect } from 'react-redux'
+import moment from 'moment'
+
+import { ExportVersionModal } from '../../models/modals'
+
+import { setExportPath, dismissModal } from '../../actions/ui'
+
+import { selectPersistedExportPath, selectModal } from '../../selections'
 
 import Modal from './Modal'
 import TextInput from '../form/TextInput'
 import Buttons from './Buttons'
-import moment from 'moment'
 import ButtonInput from '../form/ButtonInput'
 
 interface ExportVersionProps {
+  modal: ExportVersionModal
+  persistedExportPath: string
   onDismissed: () => void
-  peername: string
-  name: string
-  path: string
-  title: string
-  exportPath: string
-  timestamp: Date
   setExportPath: (path: string) => Action
 }
 
-const ExportVersion: React.FunctionComponent<ExportVersionProps> = (props) => {
+const ExportVersionComponent: React.FunctionComponent<ExportVersionProps> = (props) => {
   const {
+    modal,
+    persistedExportPath,
     onDismissed,
+    setExportPath: saveExportPath
+  } = props
+
+  const {
     peername,
     name,
     path,
     title,
-    timestamp,
-    exportPath: persistedExportPath,
-    setExportPath: saveExportPath
-  } = props
+    timestamp
+  } = modal
 
   const pathUrl = path === '' ? '' : `/at/${path}`
   const exportUrl = `http://localhost:2503/export/${peername}/${name}${pathUrl}?download=true&all=true`
@@ -130,4 +137,27 @@ const ExportVersion: React.FunctionComponent<ExportVersionProps> = (props) => {
   )
 }
 
-export default ExportVersion
+const mapStateToProps = (state: any, ownProps: ExportVersionProps) => {
+  return {
+    ...ownProps,
+    modal: selectModal(state),
+    // the only props that we will pull from the state tree
+    // except for the modal prop itself, is anything persisted in the app
+    // like the export path here, or the default dataset path in the
+    // LinkDataset modal
+    persistedExportPath: selectPersistedExportPath(state)
+  }
+}
+
+const mapDispatchToProps = (dispatch: Dispatch) => {
+  return bindActionCreators({
+    onDismissed: dismissModal,
+    setExportPath: setExportPath
+  }, dispatch)
+}
+
+const mergeProps = (props: any, actions: any): ExportVersionProps => {
+  return { ...props, ...actions }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(ExportVersionComponent)

@@ -1,19 +1,27 @@
 import * as React from 'react'
+import { Dispatch, bindActionCreators } from 'redux'
+import { connect } from 'react-redux'
+
+import { ApiAction } from '../../store/api'
+import { UnpublishDatasetModal } from '../../models/modals'
+
+import { unpublishDataset } from '../../actions/api'
+import { dismissModal } from '../../actions/ui'
+
+import { selectModal } from '../../selections'
 
 import Modal from './Modal'
 import Buttons from './Buttons'
 
-import { ApiAction } from '../../store/api'
-
-interface PublishDatasetProps {
-  peername: string
-  name: string
+interface UnpublishDatasetProps {
+  modal: UnpublishDatasetModal
   onDismissed: () => void
   onSubmit: () => Promise<ApiAction>
 }
 
-const PublishDataset: React.FunctionComponent<PublishDatasetProps> = (props) => {
-  const { peername, name, onDismissed, onSubmit } = props
+const UnpublishDatasetComponent: React.FunctionComponent<UnpublishDatasetProps> = (props) => {
+  const { modal, onDismissed, onSubmit } = props
+  const { username, name } = modal
   const [dismissable, setDismissable] = React.useState(true)
 
   // should come from props
@@ -45,7 +53,7 @@ const PublishDataset: React.FunctionComponent<PublishDatasetProps> = (props) => 
     >
       <div className='content-wrap' >
         <div className='content'>
-          <p>Unpublish <span className='code-highlight'>{peername}/{name}</span></p>
+          <p>Unpublish <span className='code-highlight'>{username}/{name}</span></p>
           <p>Unpublishing will remove your dataset from the Qri network</p>
         </div>
       </div>
@@ -62,4 +70,22 @@ const PublishDataset: React.FunctionComponent<PublishDatasetProps> = (props) => 
   )
 }
 
-export default PublishDataset
+const mapStateToProps = (state: any, ownProps: UnpublishDatasetProps) => {
+  return {
+    modal: selectModal(state),
+    ...ownProps
+  }
+}
+
+const mapDispatchToProps = (dispatch: Dispatch) => {
+  return bindActionCreators({
+    onDismissed: dismissModal,
+    onSubmit: unpublishDataset
+  }, dispatch)
+}
+
+const mergeProps = (props: any, actions: any): UnpublishDatasetProps => {
+  return { ...props, ...actions }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(UnpublishDatasetComponent)

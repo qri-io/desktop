@@ -133,8 +133,16 @@ export class WorkbenchComponent extends React.Component<WorkbenchProps> {
     const { isPublished, setModal } = this.props
 
     isPublished
-      ? setModal({ type: ModalType.UnpublishDataset })
-      : setModal({ type: ModalType.PublishDataset })
+      ? setModal({
+        type: ModalType.UnpublishDataset,
+        username: this.props.qriRef.username,
+        name: this.props.qriRef.name
+      })
+      : setModal({
+        type: ModalType.PublishDataset,
+        username: this.props.qriRef.username,
+        name: this.props.qriRef.name
+      })
   }
 
   handleDiscardChanges (component: SelectedComponent) {
@@ -160,11 +168,11 @@ export class WorkbenchComponent extends React.Component<WorkbenchProps> {
       setModal
     } = this.props
 
-    const peername = qriRef.username
-    const name = qriRef.name
+    const username = qriRef.username || ''
+    const name = qriRef.name || ''
     const activeTab = qriRef.path ? 'history' : 'status'
 
-    const datasetSelected = peername !== '' && name !== ''
+    const datasetSelected = username !== '' && name !== ''
 
     // isLinked is derived from fsiPath and only used locally
     const isLinked = fsiPath !== ''
@@ -198,7 +206,7 @@ export class WorkbenchComponent extends React.Component<WorkbenchProps> {
               <FontAwesomeIcon icon={faLink} transform='shrink-8' />
             </span>
           )}
-          onClick={() => { setModal({ type: ModalType.LinkDataset, modified }) }}
+          onClick={() => { setModal({ type: ModalType.LinkDataset, username, name, modified }) }}
         />)
     }
 
@@ -207,7 +215,7 @@ export class WorkbenchComponent extends React.Component<WorkbenchProps> {
       publishButton = isPublished ? (
         <><HeaderColumnButton
           id='view-in-cloud'
-          onClick={() => { shell.openExternal(`${QRI_CLOUD_URL}/${qriRef.username}/${qriRef.name}`) }}
+          onClick={() => { shell.openExternal(`${QRI_CLOUD_URL}/${username}/${name}`) }}
           icon={faCloud}
           label='View in Cloud'
         />
@@ -220,7 +228,11 @@ export class WorkbenchComponent extends React.Component<WorkbenchProps> {
           {
             icon: 'close',
             text: 'Unpublish',
-            onClick: () => setModal({ type: ModalType.UnpublishDataset })
+            onClick: () => setModal({
+              type: ModalType.UnpublishDataset,
+              username: this.props.qriRef.username,
+              name: this.props.qriRef.name
+            })
           }
         ]} />
         </>
@@ -235,7 +247,13 @@ export class WorkbenchComponent extends React.Component<WorkbenchProps> {
             label='Publish'
             icon={faCloudUploadAlt}
             disabled={historyLength === 0}
-            onClick={() => { setModal({ type: ModalType.PublishDataset }) }}
+            onClick={() => {
+              setModal({
+                type: ModalType.PublishDataset,
+                username: this.props.qriRef.username || '',
+                name: this.props.qriRef.name || ''
+              })
+            }}
           />
         </span>
       )
@@ -258,7 +276,7 @@ export class WorkbenchComponent extends React.Component<WorkbenchProps> {
         <div className='main-content-flex'>
           <div className='transition-group' >
             <CSSTransition
-              in={!peername && !name}
+              in={!username && !name}
               classNames='fade'
               timeout={300}
               mountOnEnter

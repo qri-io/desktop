@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom'
 import 'regenerator-runtime/runtime'
 import { Provider } from 'react-redux'
 import ErrorHandler from './components/ErrorHandler'
-import AppContainer from './containers/AppContainer'
+import App from './components/App'
 
 import './app.global.scss'
 
@@ -16,7 +16,7 @@ const { store } = require('./store/configureStore') // eslint-disable-line
 ReactDOM.render(
   <Provider store={store}>
     <ErrorHandler>
-      <AppContainer />
+      <App />
     </ErrorHandler>
   </Provider>,
   document.getElementById('root')

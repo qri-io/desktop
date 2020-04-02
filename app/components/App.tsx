@@ -1,19 +1,29 @@
 import * as React from 'react'
-import { Action } from 'redux'
+import { Action, Dispatch, bindActionCreators } from 'redux'
 import { CSSTransition } from 'react-transition-group'
-import { ConnectedRouter } from 'connected-react-router'
+import { ConnectedRouter, push } from 'connected-react-router'
 import { ipcRenderer, remote } from 'electron'
 import fs from 'fs'
 import ReactTooltip from 'react-tooltip'
+import { connect } from 'react-redux'
 
+// import constants
 import { DEFAULT_POLL_INTERVAL } from '../constants'
 
 // import models
 import { history } from '../store/configureStore.development'
 import { ApiAction } from '../store/api'
-import { Modal, ModalType, HideModal } from '../models/modals'
-import { Toast as IToast, Selections } from '../models/store'
-import { Dataset } from '../models/dataset'
+import { Modal, ModalType } from '../models/modals'
+import { Selections, ApiConnection } from '../models/store'
+import { Session } from '../models/session'
+
+// import actions
+import { setModal } from '../actions/ui'
+import { pingApi } from '../actions/api'
+import { bootstrap } from '../actions/session'
+
+// import selections
+import { selectSelections, selectModal, selectApiConnection, selectSession } from '../selections'
 
 // import components
 import Toast from './Toast'
@@ -30,64 +40,30 @@ import SearchModal from './modals/SearchModal'
 import RoutesContainer from '../containers/RoutesContainer'
 
 export interface AppProps {
-  hasDatasets: boolean
   loading: boolean
   session: Session
-  name: string
   selections: Selections
-  apiConnection?: number
-  hasAcceptedTOS: boolean
-  datasetDirPath: string // the persited directory path to which the user last saved a dataset
-  qriCloudAuthenticated: boolean
-  toast: IToast
+  apiConnection?: ApiConnection
   modal: Modal
-  workingDataset: Dataset
-  exportPath: string
   children: JSX.Element[] | JSX.Element
 
-  setExportPath: (path: string) => Action
-  acceptTOS: () => Action
   push: (path: string) => void
-  setQriCloudAuthenticated: () => Action
-  setDatasetDirPath: (path: string) => Action
   setModal: (modal: Modal) => Action
-  signout: () => Action
-  closeToast: () => Action
 
   bootstrap: () => Promise<ApiAction>
   pingApi: () => Promise<ApiAction>
-  fetchMyDatasets: (page?: number, pageSize?: number) => Promise<ApiAction>
-  addDataset: (peername: string, name: string) => Promise<ApiAction>
-  linkDataset: (peername: string, name: string, dir: string) => Promise<ApiAction>
-  setWorkingDataset: (peername: string, name: string) => Promise<ApiAction>
-  signup: (username: string, email: string, password: string) => Promise<ApiAction>
-  signin: (username: string, password: string) => Promise<ApiAction>
-  importFile: (filePath: string, fileName: string, fileSize: number) => Promise<ApiAction>
-  removeDatasetAndFetch: (peername: string, name: string, removeFiles: boolean) => Promise<ApiAction>
-  publishDataset: () => Promise<ApiAction>
-  unpublishDataset: () => Promise<ApiAction>
 }
 
 interface AppState {
-  currentModal: Modal
-  sessionID: string
-  peername: string
   showDragDrop: boolean
   debugLogPath: string
 }
 
-const noModalObject: HideModal = {
-  type: ModalType.NoModal
-}
-
-class App extends React.Component<AppProps, AppState> {
+class AppComponent extends React.Component<AppProps, AppState> {
   constructor (props: AppProps) {
     super(props)
 
     this.state = {
-      currentModal: noModalObject,
-      sessionID: this.props.session.sessionID,
-      peername: this.props.session.peername,
       showDragDrop: false,
       debugLogPath: ''
     }
@@ -179,93 +155,60 @@ class App extends React.Component<AppProps, AppState> {
   }
 
   private renderModal (): JSX.Element | null {
-    const { modal, setModal } = this.props
+    const { modal } = this.props
     if (!modal) return null
     let modalComponent = <div />
 
     switch (modal.type) {
-      case ModalType.RemoveDataset: {
+      case ModalType.AddDataset: {
         modalComponent = (
-          <RemoveDataset
-            modal={modal}
-            onSubmit={this.props.removeDatasetAndFetch}
-            onDismissed={async () => setModal(noModalObject)}
-          />
-        )
-        break
-      }
-
-      case ModalType.PublishDataset: {
-        const { peername, name } = this.props.workingDataset
-        modalComponent = (
-          <PublishDataset
-            peername={peername}
-            name={name}
-            onSubmit={this.props.publishDataset}
-            onDismissed={async () => setModal(noModalObject)}
-          />
-        )
-        break
-      }
-
-      case ModalType.UnpublishDataset: {
-        const { peername, name } = this.props.workingDataset
-        modalComponent = (
-          <UnpublishDataset
-            peername={peername}
-            name={name}
-            onSubmit={this.props.unpublishDataset}
-            onDismissed={async () => setModal(noModalObject)}
-          />
+          <AddDataset />
         )
         break
       }
 
       case ModalType.CreateDataset: {
         modalComponent = (
-          <CreateDataset
-            onSubmit={this.props.importFile}
-            onDismissed={async () => setModal(noModalObject)}
-            filePath={modal.bodyPath ? modal.bodyPath : ''}
-          />
-        )
-        break
-      }
-
-      case ModalType.AddDataset: {
-        modalComponent = (
-          <AddDataset
-            onSubmit={this.props.addDataset}
-            onDismissed={async () => setModal(noModalObject)}
-          />
+          <CreateDataset />
         )
         break
       }
 
       case ModalType.LinkDataset: {
-        const { peername, name } = this.props.workingDataset
         modalComponent = (
-          <LinkDataset
-            peername={peername}
-            name={name}
-            modified={modal.modified}
-            onSubmit={this.props.linkDataset}
-            onDismissed={async () => setModal(noModalObject)}
-            setDatasetDirPath={this.props.setDatasetDirPath}
-            datasetDirPath={this.props.datasetDirPath}
-          />
+          <LinkDataset />
+        )
+        break
+      }
+
+      case ModalType.PublishDataset: {
+        modalComponent = (
+          <PublishDataset />
+        )
+        break
+      }
+
+      case ModalType.RemoveDataset: {
+        modalComponent = (
+          <RemoveDataset />
         )
         break
       }
 
       case ModalType.Search: {
         modalComponent = (
-          <SearchModal q={modal.q} onDismissed={() => { setModal(noModalObject) }} setWorkingDataset={this.props.setWorkingDataset}/>
+          <SearchModal />
+        )
+        break
+      }
+
+      case ModalType.UnpublishDataset: {
+        modalComponent = (
+          <UnpublishDataset />
         )
         break
       }
     }
-
     return (
       <div >
         <CSSTransition
@@ -312,18 +255,12 @@ class App extends React.Component<AppProps, AppState> {
 
   render () {
     const {
-      toast,
-      closeToast,
-      loading,
-      session,
-      signout
+      loading
     } = this.props
 
     if (loading) {
       return this.renderAppLoading()
     }
-
-    const { photo: userphoto, peername: username, name } = session
 
     return (
       <div id='app' className='drag'
@@ -336,22 +273,10 @@ class App extends React.Component<AppProps, AppState> {
         {this.state.showDragDrop && this.renderDragDrop() }
         <ConnectedRouter history={history}>
           {this.renderModal()}
-          <Navbar
-            userphoto={userphoto}
-            username={username}
-            name={name}
-            signout={signout}
-          />
+          <Navbar />
           <RoutesContainer />
         </ConnectedRouter>
-        <Toast
-          name={toast.name}
-          type={toast.type}
-          message={toast.message}
-          isVisible={toast.visible}
-          timeout={3000}
-          onClose={closeToast}
-        />
+        <Toast />
         {/*
           This adds react-tooltip to all children of the app component
           To add a tooltip to any element, add a data-tip={'tooltip text'} attribute
@@ -369,4 +294,29 @@ class App extends React.Component<AppProps, AppState> {
   }
 }
 
-export default App
+const mapStateToProps = (state: any, ownProps: AppProps) => {
+  const apiConnection = selectApiConnection(state)
+  return {
+    loading: apiConnection === 0 || selectSession(state).isLoading,
+    session: selectSession(state),
+    selections: selectSelections(state),
+    apiConnection,
+    modal: selectModal(state),
+    ...ownProps
+  }
+}
+
+const mapDispatchToProps = (dispatch: Dispatch) => {
+  return bindActionCreators({
+    push,
+    setModal,
+    bootstrap,
+    pingApi
+  }, dispatch)
+}
+
+const mergeProps = (props: any, actions: any): AppProps => {
+  return { ...props, ...actions }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(AppComponent)

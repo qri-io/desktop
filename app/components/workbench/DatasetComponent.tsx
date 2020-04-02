@@ -16,7 +16,6 @@ import { selectWorkingDatasetIsLoading, selectWorkingDataset, selectSelectedComp
 
 import Body from './Body'
 import { getComponentDisplayProps } from './WorkingComponentList'
-import { ToastTypes } from '../chrome/Toast'
 import CalloutBlock from '../chrome/CalloutBlock'
 import CommitEditor from './CommitEditor'
 import Commit from './Commit'

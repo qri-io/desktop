@@ -1,25 +1,47 @@
 import * as React from 'react'
 import { remote } from 'electron'
-import Modal from './Modal'
+import { connect } from 'react-redux'
+import { Action, Dispatch, bindActionCreators } from 'redux'
+
+import { LinkDatasetModal } from '../../models/modals'
 import { ApiAction } from '../../store/api'
+
+import { linkDatasetAndFetch } from '../../actions/api'
+import { setDatasetDirPath, dismissModal } from '../../actions/ui'
+
+import { selectModal, selectPersistedDatasetDirPath } from '../../selections'
+
+import Modal from './Modal'
 import TextInput from '../form/TextInput'
 import Error from './Error'
 import Buttons from './Buttons'
 import ButtonInput from '../form/ButtonInput'
-import { Action } from 'redux'
 
 interface LinkDatasetProps {
-  peername: string
-  name: string
-  modified?: boolean
+  modal: LinkDatasetModal
+
+  persistedDatasetDirPath: string
+
   onDismissed: () => void
   onSubmit: (peername: string, name: string, dir: string) => Promise<ApiAction>
   setDatasetDirPath: (path: string) => Action
-  datasetDirPath: string
 }
 
-const LinkDataset: React.FunctionComponent<LinkDatasetProps> = ({ peername, name, onDismissed, onSubmit, datasetDirPath, setDatasetDirPath, modified = false }) => {
-  const [path, setPath] = React.useState(datasetDirPath)
+export const LinkDatasetComponent: React.FunctionComponent<LinkDatasetProps> = (props) => {
+  const {
+    modal,
+    onDismissed,
+    onSubmit,
+    persistedDatasetDirPath,
+    setDatasetDirPath
+  } = props
+
+  const {
+    username,
+    name,
+    modified = false
+  } = modal
+  const [path, setPath] = React.useState(persistedDatasetDirPath)
   const [datasetDirectory, setDatasetDirectory] = React.useState(name)
 
   const [dismissable, setDismissable] = React.useState(true)
@@ -29,9 +51,7 @@ const LinkDataset: React.FunctionComponent<LinkDatasetProps> = ({ peername, name
   React.useEffect(() => {
     // if path is empty, disable the button
     setButtonDisabled(!path)
-    if (!path) {
-      setDatasetDirPath(path)
-    }
+    setDatasetDirPath(path)
   }, [path])
 
   // should come from props
@@ -92,7 +112,7 @@ const LinkDataset: React.FunctionComponent<LinkDatasetProps> = ({ peername, name
     setLoading(true)
     error && setError('')
     if (!onSubmit) return
-    onSubmit(peername, name, `${path}/${datasetDirectory}`)
+    onSubmit(username, name, `${path}/${datasetDirectory}`)
       .then(onDismissed)
       .catch((action) => {
         setLoading(false)
@@ -104,7 +124,7 @@ const LinkDataset: React.FunctionComponent<LinkDatasetProps> = ({ peername, name
   return (
     <Modal
       id="checkout-dataset"
-      title={`Checkout ${peername}/${name}`}
+      title={`Checkout ${username}/${name}`}
       onDismissed={onDismissed}
       onSubmit={() => {}}
       dismissable={dismissable}
@@ -157,4 +177,24 @@ const LinkDataset: React.FunctionComponent<LinkDatasetProps> = ({ peername, name
   )
 }
 
-export default LinkDataset
+const mapStateToProps = (state: any, ownProps: LinkDatasetProps) => {
+  return {
+    ...ownProps,
+    modal: selectModal(state),
+    persistedDatasetDirPath: selectPersistedDatasetDirPath(state)
+  }
+}
+
+const mapDispatchToProps = (dispatch: Dispatch) => {
+  return bindActionCreators({
+    onDismissed: dismissModal,
+    onSubmit: linkDatasetAndFetch,
+    setDatasetDirPath
+  }, dispatch)
+}
+
+const mergeProps = (props: any, actions: any): LinkDatasetProps => {
+  return { ...props, ...actions }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(LinkDatasetComponent)

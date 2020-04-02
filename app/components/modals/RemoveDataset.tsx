@@ -1,9 +1,17 @@
 import * as React from 'react'
+import { connect } from 'react-redux'
+import { Dispatch, bindActionCreators } from 'redux'
+
+import { RemoveDatasetModal } from '../../../app/models/modals'
+import { ApiAction } from '../../store/api'
+
+import { dismissModal } from '../../actions/ui'
+import { removeDatasetAndFetch } from '../../actions/api'
+
+import { selectModal } from '../../selections'
 
 import CheckboxInput from '../form/CheckboxInput'
 import Modal from './Modal'
-import { RemoveDatasetModal } from '../../../app/models/modals'
-import { ApiAction } from '../../store/api'
 import Error from './Error'
 import Buttons from './Buttons'
 
@@ -13,7 +21,7 @@ interface RemoveDatasetProps {
   onSubmit: (peername: string, name: string, isLinked: boolean, keepFiles: boolean) => Promise<ApiAction>
 }
 
-const RemoveDataset: React.FunctionComponent<RemoveDatasetProps> = (props: RemoveDatasetProps) => {
+export const RemoveDatasetComponent: React.FunctionComponent<RemoveDatasetProps> = (props: RemoveDatasetProps) => {
   const { modal, onDismissed, onSubmit } = props
   const { peername, name, fsiPath } = modal
 
@@ -82,4 +90,22 @@ const RemoveDataset: React.FunctionComponent<RemoveDatasetProps> = (props: Remov
   )
 }
 
-export default RemoveDataset
+const mapStateToProps = (state: any, ownProps: RemoveDatasetProps) => {
+  return {
+    ...ownProps,
+    modal: selectModal(state)
+  }
+}
+
+const mapDispatchToProps = (dispatch: Dispatch) => {
+  return bindActionCreators({
+    onDismissed: dismissModal,
+    onSubmit: removeDatasetAndFetch
+  }, dispatch)
+}
+
+const mergeProps = (props: any, actions: any): RemoveDatasetProps => {
+  return { ...props, ...actions }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(RemoveDatasetComponent)

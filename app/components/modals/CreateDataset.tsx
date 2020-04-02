@@ -3,10 +3,19 @@ import path from 'path'
 import { remote } from 'electron'
 import fs from 'fs'
 import changeCase from 'change-case'
+import { Dispatch, bindActionCreators } from 'redux'
+import { connect } from 'react-redux'
+
+import { CreateDatasetModal } from '../../models/modals'
+import { ApiAction } from '../../store/api'
+
+import { dismissModal } from '../../actions/ui'
+import { importFile } from '../../actions/api'
+
+import { selectModal } from '../../selections'
 
 import Modal from './Modal'
 import ExternalLink from '../ExternalLink'
-import { ApiAction } from '../../store/api'
 import TextInput from '../form/TextInput'
 import Error from './Error'
 import Buttons from './Buttons'
@@ -14,15 +23,14 @@ import ButtonInput from '../form/ButtonInput'
 
 interface CreateDatasetProps {
   onDismissed: () => void
-  onSubmit: (filePath: string, fileName: string, fileSize: number) => Promise<ApiAction>
-  filePath: string
+  importFile: (filePath: string, fileName: string, fileSize: number) => Promise<ApiAction>
+  modal: CreateDatasetModal
 }
 
-const CreateDataset: React.FunctionComponent<CreateDatasetProps> = (props) => {
+const CreateDatasetComponent: React.FunctionComponent<CreateDatasetProps> = (props) => {
   const {
     onDismissed,
-    onSubmit,
-    filePath: givenFilePath
+    importFile
   } = props
 
   const validName = (name: string): string => {
@@ -33,7 +41,7 @@ const CreateDataset: React.FunctionComponent<CreateDatasetProps> = (props) => {
     return coercedName.replace(/^[^a-z0-9_]+$/g, '')
   }
 
-  const [filePath, setFilePath] = React.useState(givenFilePath)
+  const [filePath, setFilePath] = React.useState('')
   const [datasetName, setDatasetName] = React.useState(validName(path.basename(filePath, path.extname(filePath))))
 
   const [dismissable, setDismissable] = React.useState(true)
@@ -94,8 +102,8 @@ const CreateDataset: React.FunctionComponent<CreateDatasetProps> = (props) => {
     const stats = fs.statSync(filePath)
 
     error && setError('')
-    if (!onSubmit) return
-    onSubmit(filePath, fileName, stats.size)
+    if (!importFile) return
+    importFile(filePath, fileName, stats.size)
     onDismissed()
   }
 
@@ -143,4 +151,21 @@ const CreateDataset: React.FunctionComponent<CreateDatasetProps> = (props) => {
   )
 }
 
-export default CreateDataset
+const mapStateToProps = (state: any, ownProps: CreateDatasetProps) => {
+  return {
+    modal: selectModal(state)
+  }
+}
+
+const mapDispatchToProps = (dispatch: Dispatch) => {
+  return bindActionCreators({
+    importFile,
+    onDismissed: dismissModal
+  }, dispatch)
+}
+
+const mergeProps = (props: any, actions: any): CreateDatasetProps => {
+  return { ...props, ...actions }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(CreateDatasetComponent)

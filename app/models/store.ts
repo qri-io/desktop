@@ -3,7 +3,7 @@ import { Meta, Structure, Commit } from './dataset'
 import { Session } from './session'
 import { Details } from './details'
 
-enum ApiConnection {
+export enum ApiConnection {
   neverConnected = 0,
   connected = 1,
   connectionFailure = -1

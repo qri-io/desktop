@@ -16,7 +16,7 @@ import {
 } from '../reducers/ui'
 
 import { ToastType } from '../models/store'
-import { Modal } from '../models/modals'
+import { Modal, ModalType } from '../models/modals'
 import { Details } from '../models/details'
 
 export type SidebarTypes = 'dataset' | 'commit' | 'collection'
@@ -58,6 +58,10 @@ export const setModal = (modal: Modal) => {
     type: UI_SET_MODAL,
     payload: modal
   }
+}
+
+export const dismissModal = () => {
+  return setModal({ type: ModalType.NoModal })
 }
 
 export const signout = () => {
