@@ -30,13 +30,7 @@ import Toast from './Toast'
 import Navbar from './Navbar'
 import AppError from './AppError'
 import AppLoading from './AppLoading'
-import AddDataset from './modals/AddDataset'
-import LinkDataset from './modals/LinkDataset'
-import RemoveDataset from './modals/RemoveDataset'
-import CreateDataset from './modals/CreateDataset'
-import PublishDataset from './modals/PublishDataset'
-import UnpublishDataset from './modals/UnpublishDataset'
-import SearchModal from './modals/SearchModal'
+import Modals from './modals/Modals'
 import RoutesContainer from '../containers/RoutesContainer'
 
 export interface AppProps {
@@ -68,9 +62,6 @@ class AppComponent extends React.Component<AppProps, AppState> {
       debugLogPath: ''
     }
 
-    this.renderModal = this.renderModal.bind(this)
-    this.renderAppLoading = this.renderAppLoading.bind(this)
-    this.renderAppError = this.renderAppError.bind(this)
     this.handleCreateDataset = this.handleCreateDataset.bind(this)
     this.handleAddDataset = this.handleAddDataset.bind(this)
     this.handlePush = this.handlePush.bind(this)
@@ -154,112 +145,22 @@ class AppComponent extends React.Component<AppProps, AppState> {
     ReactTooltip.rebuild()
   }
 
-  private renderModal (): JSX.Element | null {
-    const { modal } = this.props
-    if (!modal) return null
-    let modalComponent = <div />
-
-    switch (modal.type) {
-      case ModalType.AddDataset: {
-        modalComponent = (
-          <AddDataset />
-        )
-        break
-      }
-
-      case ModalType.CreateDataset: {
-        modalComponent = (
-          <CreateDataset />
-        )
-        break
-      }
-
-      case ModalType.LinkDataset: {
-        modalComponent = (
-          <LinkDataset />
-        )
-        break
-      }
-
-      case ModalType.PublishDataset: {
-        modalComponent = (
-          <PublishDataset />
-        )
-        break
-      }
-
-      case ModalType.RemoveDataset: {
-        modalComponent = (
-          <RemoveDataset />
-        )
-        break
-      }
-
-      case ModalType.Search: {
-        modalComponent = (
-          <SearchModal />
-        )
-        break
-      }
-
-      case ModalType.UnpublishDataset: {
-        modalComponent = (
-          <UnpublishDataset />
-        )
-        break
-      }
-    }
-    return (
-      <div >
-        <CSSTransition
-          in={modal.type !== ModalType.NoModal}
-          classNames='fade'
-          component='div'
-          timeout={300}
-          unmountOnExit
-        >
-          {modalComponent}
-        </CSSTransition>
-      </div>
-    )
-  }
-
-  private renderAppLoading () {
-    return (
-      <CSSTransition
-        in={this.props.loading}
-        classNames="fade"
-        component="div"
-        timeout={1000}
-        mountOnEnter
-        unmountOnExit
-      >
-        <AppLoading />
-      </CSSTransition>
-    )
-  }
-
-  private renderAppError () {
-    return (
-      <CSSTransition
-        in={this.props.apiConnection === -1}
-        classNames="fade"
-        component="div"
-        timeout={1000}
-        unmountOnExit
-      >
-        <AppError />
-      </CSSTransition>
-    )
-  }
-
   render () {
-    const {
-      loading
-    } = this.props
+    const { apiConnection, modal, loading } = this.props
 
     if (loading) {
-      return this.renderAppLoading()
+      return (
+        <CSSTransition
+          in={loading}
+          classNames="fade"
+          component="div"
+          timeout={1000}
+          mountOnEnter
+          unmountOnExit
+        >
+          <AppLoading />
+        </CSSTransition>
+      )
     }
 
     return (
@@ -269,10 +170,25 @@ class AppComponent extends React.Component<AppProps, AppState> {
           position: 'relative',
           overflow: 'hidden'
         }}>
-        {this.renderAppError()}
-        {this.state.showDragDrop && this.renderDragDrop() }
+        <CSSTransition
+          in={apiConnection === -1}
+          classNames="fade"
+          component="div"
+          timeout={1000}
+          unmountOnExit
+        >
+          <AppError />
+        </CSSTransition>
         <ConnectedRouter history={history}>
-          {this.renderModal()}
+          <CSSTransition
+            in={modal.type !== ModalType.NoModal}
+            classNames='fade'
+            component='div'
+            timeout={300}
+            unmountOnExit
+          >
+            <Modals type={modal.type} />
+          </CSSTransition>
           <Navbar />
           <RoutesContainer />
         </ConnectedRouter>
