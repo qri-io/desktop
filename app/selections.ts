@@ -1,9 +1,21 @@
 import Dataset, { Commit } from "./models/dataset"
 import cloneDeep from 'clone-deep'
 
-import Store, { CommitDetails, Status, PageInfo, SelectedComponent, History, VersionInfo, Selections } from './models/store'
+import Store, { CommitDetails, Status, PageInfo, SelectedComponent, History, VersionInfo, Selections, Toast, ApiConnection } from './models/store'
 import { Details, DetailsType } from "./models/details"
 import { datasetToVersionInfo } from "./actions/mappingFuncs"
+import { Modal, ModalType } from "./models/modals"
+import { Session } from "./models/session"
+
+/**
+ *
+ * CONNECTION STATE TREE
+ *
+ */
+
+export function selectApiConnection (state: Store): ApiConnection {
+  return state.connection.apiConnection
+}
 
 /**
  *
@@ -174,6 +186,10 @@ export function selectOnHistoryTab (state: Store): boolean {
  *
  */
 
+export function selectSession (state: Store): Session {
+  return state.session
+}
+
 export function selectSessionUsername (state: Store): string {
   return state.session.peername
 }
@@ -188,16 +204,28 @@ export function selectDetails (state: Store): Details {
   return state.ui.detailsBar
 }
 
-export function selectShowDetailsBar (state: Store): boolean {
-  return state.ui.detailsBar.type !== DetailsType.NoDetails
-}
-
 export function selectImportFileName (state: Store): string {
   return state.ui.importFileName
 }
 
 export function selectImportFileSize (state: Store): number {
   return state.ui.importFileSize
+}
+
+export function selectModal (state: Store): Modal {
+  return state.ui.modal || { type: ModalType.NoModal }
+}
+
+export function selectPersistedDatasetDirPath (state: Store): string {
+  return state.ui.datasetDirPath || ''
+}
+
+export function selectPersistedExportPath (state: Store): string {
+  return state.ui.exportPath || ''
+}
+
+export function selectShowDetailsBar (state: Store): boolean {
+  return state.ui.detailsBar.type !== DetailsType.NoDetails
 }
 
 export function selectSidebarWidth (state: Store, view: 'collection' | 'workbench' | 'network'): number {
@@ -212,6 +240,10 @@ export function selectSidebarWidth (state: Store, view: 'collection' | 'workbenc
     default:
       return 0
   }
+}
+
+export function selectToast (state: Store): Toast {
+  return state.ui.toast
 }
 
 /**

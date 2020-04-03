@@ -1,25 +1,31 @@
 import * as React from 'react'
+import { Dispatch, bindActionCreators } from 'redux'
+import { connect } from 'react-redux'
+import { CSSTransition } from 'react-transition-group'
 
 import { ApiAction } from '../../store/api'
-import { CSSTransition } from 'react-transition-group'
+import { validateDatasetReference } from '../../utils/formValidation'
+
+import { addDataset } from '../../actions/api'
+import { dismissModal } from '../../actions/ui'
+
 import Modal from './Modal'
 import ExternalLink from '../ExternalLink'
 import DebouncedTextInput from '../form/DebouncedTextInput'
 import Error from './Error'
 import Buttons from './Buttons'
-import { validateDatasetReference } from '../../utils/formValidation'
 
 interface AddDatasetProps {
   // func to call when we cancel or click away from the modal
   onDismissed: () => void
   // func to call when we hit submit, this adds the dataset from the network
-  onSubmit: (peername: string, name: string) => Promise<ApiAction>
+  addDataset: (peername: string, name: string) => Promise<ApiAction>
 }
 
-const AddDataset: React.FunctionComponent<AddDatasetProps> = (props) => {
+const AddDatasetComponent: React.FunctionComponent<AddDatasetProps> = (props) => {
   const {
     onDismissed,
-    onSubmit
+    addDataset
   } = props
 
   const [datasetReference, setDatasetReference] = React.useState('')
@@ -51,10 +57,10 @@ const AddDataset: React.FunctionComponent<AddDatasetProps> = (props) => {
     setLoading(true)
     error && setError('')
 
-    if (!onSubmit) return
+    if (!addDataset) return
     const [peername, datasetName] = datasetReference.split('/')
 
-    onSubmit(peername, datasetName)
+    addDataset(peername, datasetName)
       .then(() => { onDismissed() })
       .catch((action) => {
         setDismissable(true)
@@ -111,4 +117,19 @@ const AddDataset: React.FunctionComponent<AddDatasetProps> = (props) => {
   )
 }
 
-export default AddDataset
+const mapStateToProps = (state: any, ownProps: AddDatasetProps) => {
+  return ownProps
+}
+
+const mapDispatchToProps = (dispatch: Dispatch) => {
+  return bindActionCreators({
+    addDataset: addDataset,
+    onDismissed: dismissModal
+  }, dispatch)
+}
+
+const mergeProps = (props: any, actions: any): AddDatasetProps => {
+  return { ...props, ...actions }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(AddDatasetComponent)

@@ -1,7 +1,7 @@
 // globals __BUILD__
 import * as React from 'react'
-import { Action } from 'redux'
-import { withRouter } from 'react-router-dom'
+import { Action, bindActionCreators, Dispatch } from 'redux'
+import { withRouter, RouteComponentProps } from 'react-router-dom'
 import { shell } from 'electron'
 import {
   faExternalLinkAlt,
@@ -13,10 +13,17 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { IconDefinition } from '@fortawesome/free-regular-svg-icons'
+import { connect } from 'react-redux'
+
+import { DISCORD_URL, QRI_CLOUD_URL } from '../constants'
+
+import { signout } from '../actions/ui'
+
+import { selectSession } from '../selections'
 
 import ExternalLink from './ExternalLink'
-import { DISCORD_URL, QRI_CLOUD_URL } from '../constants'
 import NavbarItem from './chrome/NavbarItem'
+import { Session } from '../models/session'
 
 const defaultPhoto = require('../assets/default_46x46.png') //eslint-disable-line
 
@@ -48,19 +55,19 @@ const MenuItem: React.FunctionComponent<MenuItemProps> = (props: MenuItemProps) 
     : menuItem
 }
 
-interface NavbarProps {
-  userphoto?: string | undefined
-  username?: string
-  name?: string
+interface NavbarProps extends RouteComponentProps{
+  session: Session
   signout: () => Action
-
-  location: {
-    pathname: string
-  }
 }
 
-const Navbar: React.FunctionComponent<NavbarProps> = (props: NavbarProps) => {
-  const { userphoto = defaultPhoto, location, signout, username = '', name = '' } = props
+export const NavbarComponent: React.FunctionComponent<NavbarProps> = (props: NavbarProps) => {
+  const { session, location, signout } = props
+
+  const {
+    photo = defaultPhoto,
+    peername: username = '',
+    name = ''
+  } = session
 
   const { pathname } = location
 
@@ -131,7 +138,7 @@ const Navbar: React.FunctionComponent<NavbarProps> = (props: NavbarProps) => {
           <div className='user-menu-section'>
             <div className='user-menu-info'>
               <div className='userphoto' style={{
-                backgroundImage: `url(${userphoto})`
+                backgroundImage: `url(${photo})`
               }}/>
               <div className='text'>
                 <div className='username'>{username}</div>
@@ -168,8 +175,8 @@ const Navbar: React.FunctionComponent<NavbarProps> = (props: NavbarProps) => {
           <NavbarItem
             id='nav-options'
             icon={
-              <div className='userphoto' style={{
-                backgroundImage: `url(${userphoto})`
+              <div className='photo' style={{
+                backgroundImage: `url(${photo})`
               }}/>
             }
             onClick={toggleUserMenu}
@@ -180,4 +187,21 @@ const Navbar: React.FunctionComponent<NavbarProps> = (props: NavbarProps) => {
   )
 }
 
-export default withRouter(Navbar)
+const mapStateToProps = (state: any, ownProps: NavbarProps) => {
+  return {
+    session: selectSession(state),
+    ...ownProps
+  }
+}
+
+const mapDispatchToProps = (dispatch: Dispatch) => {
+  return bindActionCreators({
+    signout
+  }, dispatch)
+}
+
+const mergeProps = (props: any, actions: any): NavbarProps => {
+  return { ...props, ...actions }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(withRouter(NavbarComponent))

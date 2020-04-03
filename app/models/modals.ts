@@ -10,36 +10,12 @@ export enum ModalType {
   Search
 }
 
-interface CreateDatasetModal {
-  type: ModalType.CreateDataset
-  dirPath?: string
-  bodyPath?: string
-}
-
-interface AddDatasetModal {
+export interface AddDatasetModal {
   type: ModalType.AddDataset
-  initialURL?: string | null
 }
 
-interface LinkDatasetModal {
-  type: ModalType.LinkDataset
-  dirPath?: string
-  modified?: boolean
-}
-
-interface PublishDataset {
-  type: ModalType.PublishDataset
-}
-
-interface UnpublishDataset {
-  type: ModalType.UnpublishDataset
-}
-
-export interface RemoveDatasetModal {
-  type: ModalType.RemoveDataset
-  peername: string
-  name: string
-  fsiPath: string
+export interface CreateDatasetModal {
+  type: ModalType.CreateDataset
 }
 
 export interface ExportVersionModal {
@@ -51,21 +27,47 @@ export interface ExportVersionModal {
   title: string
 }
 
+export interface HideModal {
+  type: ModalType.NoModal
+}
+
+export interface LinkDatasetModal {
+  type: ModalType.LinkDataset
+  username: string
+  name: string
+  modified?: boolean
+}
+
+export interface PublishDatasetModal {
+  type: ModalType.PublishDataset
+  username: string
+  name: string
+}
+
+export interface RemoveDatasetModal {
+  type: ModalType.RemoveDataset
+  peername: string
+  name: string
+  fsiPath: string
+}
+
 export interface SearchModal {
   type: ModalType.Search
   q: string
 }
 
-export interface HideModal {
-  type: ModalType.NoModal
+export interface UnpublishDatasetModal {
+  type: ModalType.UnpublishDataset
+  username: string
+  name: string
 }
 
-export type Modal = CreateDatasetModal
-| AddDatasetModal
-| LinkDatasetModal
-| RemoveDatasetModal
-| PublishDataset
-| UnpublishDataset
-| HideModal
+export type Modal = AddDatasetModal
+| CreateDatasetModal
 | ExportVersionModal
+| LinkDatasetModal
+| HideModal
+| PublishDataset
+| RemoveDatasetModal
 | SearchModal
+| UnpublishDataset

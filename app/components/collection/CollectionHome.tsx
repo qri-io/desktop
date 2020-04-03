@@ -6,7 +6,6 @@ import { connect } from 'react-redux'
 
 import { ApiAction } from '../../store/api'
 import { Modal, ModalType } from '../../models/modals'
-import { ToastTypes } from '../chrome/Toast'
 import { ToastType } from '../../models/store'
 import { QriRef } from '../../models/qriRef'
 
