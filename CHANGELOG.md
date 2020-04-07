@@ -1,3 +1,41 @@
+## [0.4.1](https://github.com/qri-io/desktop/compare/v0.4.0...v0.4.1) (2020-04-07)
+
+This release is all about minor bug fixes, clean up, stabilization, and updating the desktop app to work with the latest qri release!
+
+Be sure to check out the latest [qri backend release](https://github.com/qri-io/qri/releases/tag/v0.9.7) to see the lovely fixes we inherit.
+
+## Export
+In a combined effort from the backend and desktop, we've fixed the export bug! Right-clicking the version you want to export, and clicking 'export this version', opens the save dialog, prefilled with a default zipname.
+
+## API changes
+This desktop update adjusts our requests to meet the expectations of the latest qri backend's API
+
+## Reloading
+Because of those wonderful backend api changes, we were able to fix a long-standing bug where re-loading on the `workbench` page broke the app. Now you can reload to your heart's content
+
+## Websockets
+Combining websockets and the backend status request changes, we are able to more intelligently re-fetch fsi linked datasets as you make changes to them using a text editor and the qri desktop app.
+
+## Editing
+Cleaned up a whole lotta bugs surrounding ui flickering in meta and structure editing. Also, all meta and structure fields are now tested in our visual end to end tests.
+
+### Bug Fixes
+
+* **export:** send correct path for export ([726e0eb](https://github.com/qri-io/desktop/commit/726e0eb))
+* **fetchWorkingDatasetDetails:** don't fetch status unless dataset is linked ([04625de](https://github.com/qri-io/desktop/commit/04625de))
+* **mappingFunc:** account for different expected history response behavior ([32f757a](https://github.com/qri-io/desktop/commit/32f757a))
+* **MultiStructuredInput:** fix bug that caused component flickering ([5e52a7f](https://github.com/qri-io/desktop/commit/5e52a7f))
+* **selectStatusFromMutations:** corrently pull or create a status ([028f40b](https://github.com/qri-io/desktop/commit/028f40b))
+* **websockets:** use websocket responses more intelligently ([2e6aad2](https://github.com/qri-io/desktop/commit/2e6aad2))
+* **workbench:** when fsi true, don't prompt the user about unsaved changes ([ba958b2](https://github.com/qri-io/desktop/commit/ba958b2))
+
+
+### Features
+
+* **selections:** adding workbench selections and actions ([d32d201](https://github.com/qri-io/desktop/commit/d32d201))
+
+
+
 # [0.4.0](https://github.com/qri-io/desktop/compare/v0.3.5...v0.4.0) (2020-03-05)
 
 Release notes 0.4.0
