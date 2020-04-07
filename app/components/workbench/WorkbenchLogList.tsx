@@ -5,8 +5,8 @@ import { Action, Dispatch, bindActionCreators } from 'redux'
 import ContextMenuArea from 'react-electron-contextmenu'
 
 import { ApiActionThunk } from '../../store/api'
-import { QriRef } from '../../models/qriRef'
-import { History } from '../../models/store'
+import { QriRef, refStringFromQriRef } from '../../models/qriRef'
+import { History, VersionInfo } from '../../models/store'
 
 import { setCommit } from '../../actions/selections'
 import { fetchHistory } from '../../actions/api'
@@ -14,6 +14,7 @@ import { fetchHistory } from '../../actions/api'
 import { selectHistory } from '../../selections'
 
 import HistoryListItem from '../item/HistoryListItem'
+import moment from 'moment'
 
 interface WorkbenchLogListProps {
   qriRef: QriRef
@@ -37,16 +38,16 @@ export const WorkbenchLogListComponent: React.FunctionComponent<WorkbenchLogList
     }
   }
 
-  const handleExport = (path: string) => {
+  const handleExport = (versionInfo: VersionInfo) => {
     const window = remote.getCurrentWindow()
-    const selectedPath: string | undefined = remote.dialog.showSaveDialogSync(window, {})
+    const zipName = `${qriRef.username}-${qriRef.name}-${moment(versionInfo.commitTime).format('MM-DD-YYYY-hh-mm-ss-a')}.zip`
+    const selectedPath: string | undefined = remote.dialog.showSaveDialogSync(window, { defaultPath: zipName })
 
     if (!selectedPath) {
       return
     }
 
-    const pathUrl = path === '' ? '' : `/at/${path}`
-    const exportUrl = `http://localhost:2503/export/${username}/${name}${pathUrl}?download=true&all=true`
+    const exportUrl = `http://localhost:2503/export/${refStringFromQriRef(qriRef)}?download=true&all=true`
     ipcRenderer.send('export', { url: exportUrl, directory: selectedPath })
   }
 
@@ -73,7 +74,7 @@ export const WorkbenchLogListComponent: React.FunctionComponent<WorkbenchLogList
             {
               label: 'Export this version',
               click: () => {
-                handleExport(item.path)
+                handleExport(item)
               }
             }
           ]
