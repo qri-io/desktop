@@ -1,40 +1,38 @@
 import * as React from 'react'
 import { connect } from 'react-redux'
 import { MenuItemConstructorOptions, remote, ipcRenderer } from 'electron'
-import { Action, Dispatch, bindActionCreators } from 'redux'
+import { Dispatch, bindActionCreators } from 'redux'
 import ContextMenuArea from 'react-electron-contextmenu'
+import { RouteComponentProps, withRouter } from 'react-router-dom'
+import moment from 'moment'
 
 import { ApiActionThunk } from '../../store/api'
 import { QriRef, refStringFromQriRef } from '../../models/qriRef'
 import { History, VersionInfo } from '../../models/store'
 
-import { setCommit } from '../../actions/selections'
 import { fetchHistory } from '../../actions/api'
 
 import { selectHistory } from '../../selections'
 
 import HistoryListItem from '../item/HistoryListItem'
-import moment from 'moment'
 
-interface WorkbenchLogListProps {
+interface WorkbenchLogListProps extends RouteComponentProps<QriRef> {
   qriRef: QriRef
-  history: History
-  setCommit: (path: string) => Action
+  versions: History
   fetchHistory: (page?: number, pageSize?: number) => ApiActionThunk
 }
 
 export const WorkbenchLogListComponent: React.FunctionComponent<WorkbenchLogListProps> = (props) => {
   const {
     qriRef,
+    versions,
     history,
-
-    fetchHistory,
-    setCommit
+    fetchHistory
   } = props
 
   const handleHistoryScroll = (e: any) => {
     if (e.target.scrollHeight === parseInt(e.target.scrollTop) + parseInt(e.target.offsetHeight)) {
-      fetchHistory(history.pageInfo.page + 1, history.pageInfo.pageSize)
+      fetchHistory(versions.pageInfo.page + 1, versions.pageInfo.pageSize)
     }
   }
 
@@ -58,16 +56,19 @@ export const WorkbenchLogListComponent: React.FunctionComponent<WorkbenchLogList
       onScroll={(e) => handleHistoryScroll(e)}
     >
       {
-        history.value.map((item, i) => {
+        versions.value.map((item, i) => {
           if (item.foreign) {
             return <HistoryListItem
               data={item}
               key={item.path}
               id={`HEAD-${i + 1}`}
               first={i === 0}
-              last={i === history.value.length - 1}
+              last={i === versions.value.length - 1}
               selected={qriRef.path === item.path}
-              onClick={setCommit}
+              onClick={() => {
+                history.push(`/workbench/${item.username}/${item.name}/at${item.path}`)
+              }
+              }
             />
           }
           const menuItems: MenuItemConstructorOptions[] = [
@@ -78,6 +79,7 @@ export const WorkbenchLogListComponent: React.FunctionComponent<WorkbenchLogList
               }
             }
           ]
+          console.log(qriRef.path, item.path)
           return (
             <ContextMenuArea menuItems={menuItems} key={item.path}>
               <HistoryListItem
@@ -85,9 +87,11 @@ export const WorkbenchLogListComponent: React.FunctionComponent<WorkbenchLogList
                 key={item.path}
                 id={`HEAD-${i + 1}`}
                 first={i === 0}
-                last={i === history.value.length - 1}
+                last={i === versions.value.length - 1}
                 selected={qriRef.path === item.path}
-                onClick={setCommit}
+                onClick={() => {
+                  history.push(`/workbench/${item.username}/${item.name}/at${item.path}`)
+                }}
               />
             </ContextMenuArea>
           )
@@ -99,13 +103,12 @@ export const WorkbenchLogListComponent: React.FunctionComponent<WorkbenchLogList
 const mapStateToProps = (state: any, ownProps: WorkbenchLogListProps) => {
   return {
     ...ownProps,
-    history: selectHistory(state)
+    versions: selectHistory(state)
   }
 }
 
 const mapDispatchToProps = (dispatch: Dispatch) => {
   return bindActionCreators({
-    setCommit,
     fetchHistory
   }, dispatch)
 }
@@ -114,4 +117,4 @@ const mergeProps = (props: any, actions: any): WorkbenchLogListProps => {
   return { ...props, ...actions }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(WorkbenchLogListComponent)
+export default withRouter(connect(mapStateToProps, mapDispatchToProps, mergeProps)(WorkbenchLogListComponent))

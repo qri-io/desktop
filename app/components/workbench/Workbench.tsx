@@ -1,10 +1,10 @@
 import * as React from 'react'
 import { Action, Dispatch, bindActionCreators } from 'redux'
 import { ipcRenderer, shell, clipboard } from 'electron'
-import { CSSTransition } from 'react-transition-group'
+import { CSSTransition, TransitionGroup } from 'react-transition-group'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faFolderOpen, faFile, faLink, faCloud, faCloudUploadAlt } from '@fortawesome/free-solid-svg-icons'
-import { RouteComponentProps, Prompt } from 'react-router-dom'
+import { RouteComponentProps, Prompt, Switch, Route, useLocation, useRouteMatch, Redirect } from 'react-router-dom'
 import { connect } from 'react-redux'
 
 import { QRI_CLOUD_URL } from '../../constants'
@@ -12,7 +12,7 @@ import { Details } from '../../models/details'
 import { Session } from '../../models/session'
 import { SelectedComponent } from '../../models/store'
 import { Modal, ModalType } from '../../models/modals'
-import { QriRef, hackQriRefFromRouteAndSelections } from '../../models/qriRef'
+import { QriRef, hackQriRefFromRouteAndSelections, qriRefFromRoute } from '../../models/qriRef'
 import { ApiActionThunk, LaunchedFetchesAction } from '../../store/api'
 
 import { setModal, setSidebarWidth } from '../../actions/ui'
@@ -35,7 +35,7 @@ import WorkbenchSidebar from './WorkbenchSidebar'
 import DetailsBarContainer from '../../containers/DetailsBarContainer'
 import CommitDetails from './CommitDetails'
 import NoDatasets from '../NoDatasets'
-import NotInNamespace from './NotInNamespace'
+// import NotInNamespace from './NotInNamespace'
 
 // TODO (b5) - is this still required?
 require('../../assets/qri-blob-logo-tiny.png')
@@ -44,7 +44,8 @@ export interface WorkbenchProps extends RouteComponentProps<QriRef> {
   // display details
   qriRef: QriRef
   isPublished: boolean
-  historyLength: number
+  // if latestPath is the empty string, this dataset does not have a history
+  latestPath: string
   fsiPath: string
   session: Session
   hasDatasets: boolean
@@ -163,14 +164,14 @@ export class WorkbenchComponent extends React.Component<WorkbenchProps> {
       modified = false,
       inNamespace,
       fsiPath,
-      historyLength,
+      latestPath,
 
       setModal
     } = this.props
 
     const username = qriRef.username || ''
     const name = qriRef.name || ''
-    const activeTab = qriRef.path ? 'history' : 'status'
+    // const activeTab = qriRef.path ? 'history' : 'status'
 
     const datasetSelected = username !== '' && name !== ''
 
@@ -183,9 +184,9 @@ export class WorkbenchComponent extends React.Component<WorkbenchProps> {
       showDetailsBar
     } = this.props
 
-    const sidebarContent = (
-      <WorkbenchSidebar qriRef={qriRef} />
-    )
+    // const sidebarContent = (
+    //   <WorkbenchSidebar qriRef={qriRef} />
+    // )
 
     let linkButton
     if (datasetSelected) {
@@ -238,7 +239,7 @@ export class WorkbenchComponent extends React.Component<WorkbenchProps> {
         </>
       ) : (
         <span data-tip={
-          historyLength === 0
+          latestPath === ''
             ? 'The dataset must have at least one commit before you can publish'
             : 'Publish this dataset to Qri Cloud'
         }>
@@ -246,7 +247,7 @@ export class WorkbenchComponent extends React.Component<WorkbenchProps> {
             id='publish-button'
             label='Publish'
             icon={faCloudUploadAlt}
-            disabled={historyLength === 0}
+            disabled={latestPath === ''}
             onClick={() => {
               setModal({
                 type: ModalType.PublishDataset,
@@ -259,65 +260,65 @@ export class WorkbenchComponent extends React.Component<WorkbenchProps> {
       )
     }
 
-    const mainContent = (
-      <>
-        <Prompt when={modified} message={(location) => {
-          if (location.pathname.includes('workbench')) return false
-          if (fsiPath !== '') {
-            this.props.fetchWorkingDatasetDetails()
-            return true
-          }
-          return `You have uncommited changes! Click 'cancel' and commit these changes before you navigate away or you will lose your work.`
-        }}/>
-        <div className='main-content-header'>
-          {linkButton}
-          {publishButton}
-        </div>
-        <div className='main-content-flex'>
-          <div className='transition-group' >
-            <CSSTransition
-              in={!username && !name}
-              classNames='fade'
-              timeout={300}
-              mountOnEnter
-              unmountOnExit
-            >
-              <NoDatasets setModal={setModal} />
-            </CSSTransition>
-            <CSSTransition
-              in={!datasetSelected && hasDatasets}
-              classNames='fade'
-              timeout={300}
-              mountOnEnter
-              unmountOnExit
-            >
-              <NoDatasetSelected />
-            </CSSTransition>
-            <CSSTransition
-              in={datasetSelected && activeTab === 'status'}
-              classNames='fade'
-              timeout={300}
-              mountOnEnter
-              unmountOnExit
-            >
-              { inNamespace
-                ? <DatasetComponent qriRef={qriRef} />
-                : <NotInNamespace />
-              }
-            </CSSTransition>
-            <CSSTransition
-              in={datasetSelected && activeTab === 'history'}
-              classNames='fade'
-              timeout={300}
-              mountOnEnter
-              unmountOnExit
-            >
-              <CommitDetails qriRef={qriRef} />
-            </CSSTransition>
-          </div>
-        </div>
-      </>
-    )
+    // const mainContent = (
+    //   <>
+    //     <Prompt when={modified} message={(location) => {
+    //       if (location.pathname.includes('workbench')) return false
+    //       if (fsiPath !== '') {
+    //         this.props.fetchWorkingDatasetDetails()
+    //         return true
+    //       }
+    //       return `You have uncommited changes! Click 'cancel' and commit these changes before you navigate away or you will lose your work.`
+    //     }}/>
+    //     <div className='main-content-header'>
+    //       {linkButton}
+    //       {publishButton}
+    //     </div>
+    //     <div className='main-content-flex'>
+    //       <div className='transition-group' >
+    //         <CSSTransition
+    //           in={!username && !name}
+    //           classNames='fade'
+    //           timeout={300}
+    //           mountOnEnter
+    //           unmountOnExit
+    //         >
+    //           <NoDatasets setModal={setModal} />
+    //         </CSSTransition>
+    //         <CSSTransition
+    //           in={!datasetSelected && hasDatasets}
+    //           classNames='fade'
+    //           timeout={300}
+    //           mountOnEnter
+    //           unmountOnExit
+    //         >
+    //           <NoDatasetSelected />
+    //         </CSSTransition>
+    //         <CSSTransition
+    //           in={datasetSelected && activeTab === 'status'}
+    //           classNames='fade'
+    //           timeout={300}
+    //           mountOnEnter
+    //           unmountOnExit
+    //         >
+    //           { inNamespace
+    //             ? <DatasetComponent qriRef={qriRef} />
+    //             : <NotInNamespace />
+    //           }
+    //         </CSSTransition>
+    //         <CSSTransition
+    //           in={datasetSelected && activeTab === 'history'}
+    //           classNames='fade'
+    //           timeout={300}
+    //           mountOnEnter
+    //           unmountOnExit
+    //         >
+    //           <CommitDetails qriRef={qriRef} />
+    //         </CSSTransition>
+    //       </div>
+    //     </div>
+    //   </>
+    // )
 
     return (
       <>
@@ -338,21 +339,129 @@ export class WorkbenchComponent extends React.Component<WorkbenchProps> {
             </Resizable>
           </div>
         </div>
-        <Layout
-          id='dataset-container'
-          sidebarContent={sidebarContent}
+        <WorkbenchRouter
+          qriRef={qriRef}
           sidebarWidth={sidebarWidth}
-          onSidebarResize={(width) => { setSidebarWidth('dataset', width) }}
-          maximumSidebarWidth={495}
-          mainContent={mainContent}
+          setModal={setModal}
+          hasDatasets={hasDatasets}
+          fetchWorkingDatasetDetails={fetchWorkingDatasetDetails}
+          fsiPath={fsiPath}
+          modified={modified}
+          linkButton={linkButton}
+          publishButton={publishButton}
+          latestPath={latestPath}
         />
       </>
     )
   }
 }
 
+interface WorkbenchRouterProps {
+  qriRef: QriRef
+  sidebarWidth: number
+  hasDatasets: boolean
+  setModal: (modal: Modal) => void
+  fsiPath: string
+  fetchWorkingDatasetDetails: () => ApiActionThunk
+  linkButton: boolean | JSX.Element | undefined
+  publishButton: boolean | JSX.Element | undefined
+  modified: boolean
+  latestPath: string
+}
+
+const WorkbenchRouter: React.FunctionComponent<WorkbenchRouterProps> = (props) => {
+  const { qriRef, sidebarWidth, latestPath, modified, hasDatasets, setModal, fsiPath, linkButton, publishButton } = props
+  const location = useLocation()
+  const { path } = useRouteMatch()
+
+  const wrap = <><Prompt when={modified} message={(location) => {
+    if (location.pathname.includes('workbench')) return false
+    if (fsiPath !== '') {
+      fetchWorkingDatasetDetails()
+      return true
+    }
+    return `You have uncommited changes! Click 'cancel' and commit these changes before you navigate away or you will lose your work.`
+  }}/>
+  <div className='main-content-header'>
+    {linkButton}
+    {publishButton}
+  </div>
+  </>
+
+  return (
+    <TransitionGroup component={null}>
+      {/*
+      This is no different than other usage of
+      <CSSTransition>, just make sure to pass
+      `location` to `Switch` so it can match
+      the old location as it animates out.
+    */}
+      <CSSTransition
+        id='workbench-router-transition'
+        key={location.key}
+        classNames="fade"
+        timeout={300}
+      >
+        <Switch location={location}>
+          <Route exact path={path} render={() => {
+            return (
+              <Layout
+                id='dataset-container'
+                sidebarContent={<WorkbenchSidebar qriRef={qriRef} />}
+                sidebarWidth={sidebarWidth}
+                onSidebarResize={(width) => { setSidebarWidth('dataset', width) }}
+                maximumSidebarWidth={495}
+                mainContent={<>{wrap}{hasDatasets ? <NoDatasetSelected /> : <NoDatasets setModal={setModal} />}</>}
+              />
+            )
+          } }/>
+          <Route path={`${path}/edit/:username/:name`} render={() => {
+            return (
+              <Layout
+                id='dataset-container'
+                sidebarContent={<WorkbenchSidebar qriRef={qriRef} />}
+                sidebarWidth={sidebarWidth}
+                onSidebarResize={(width) => { setSidebarWidth('dataset', width) }}
+                maximumSidebarWidth={495}
+                mainContent={<>{wrap}{hasDatasets ? <DatasetComponent qriRef={qriRef}/> : <NoDatasets setModal={setModal} />}</>}
+              />
+            )
+          } }/>
+          <Route path={`${path}/:username/:name/at/ipfs/:path`} render={() => {
+            return (
+              <Layout
+                id='dataset-container'
+                sidebarContent={<WorkbenchSidebar qriRef={qriRef} />}
+                sidebarWidth={sidebarWidth}
+                onSidebarResize={(width) => { setSidebarWidth('dataset', width) }}
+                maximumSidebarWidth={495}
+                mainContent={<>{wrap}{hasDatasets ? <CommitDetails qriRef={qriRef} /> : <NoDatasets setModal={setModal} />}</>}
+              />
+            )
+          } }/>
+          <Route path={`${path}/:username/:name`} render={({ match }) => {
+            const { params } = match
+            if (latestPath === '') {
+              return <Redirect
+                to={`/workbench/edit/${params.username}/${params.name}`}
+              />
+            }
+            return <Redirect
+              to={`/workbench/${params.username}/${params.name}/at${latestPath}`}
+            />
+          }}/>
+          {/* <Route path="/rgb/:r/:g/:b" children={<RGB />} /> */}
+        </Switch>
+      </CSSTransition>
+    </TransitionGroup>
+  )
+}
+
 const mapStateToProps = (state: any, ownProps: WorkbenchProps) => {
+  console.log('workbench')
+  console.log(qriRefFromRoute(ownProps))
   const qriRef = hackQriRefFromRouteAndSelections(state, ownProps)
+  const versions = selectHistory(state)
   return {
     qriRef,
     /**
@@ -361,7 +470,7 @@ const mapStateToProps = (state: any, ownProps: WorkbenchProps) => {
      * rather then the status of the dataset at head.
      */
     isPublished: selectWorkingDatasetIsPublished(state),
-    historyLength: selectHistory(state).value.length,
+    latestPath: versions.value.length !== 0 ? versions.value[0].path : '',
     fsiPath: selectFsiPath(state),
     hasDatasets: selectMyDatasets(state).length,
     showDetailsBar: selectShowDetailsBar(state),
