@@ -1,17 +1,18 @@
 import * as React from 'react'
 import { connect } from 'react-redux'
 import { ApiActionThunk } from '../../store/api'
+import { RouteComponentProps } from 'react-router-dom'
 
 import Dataset from '../../models/dataset'
 import Store from '../../models/store'
-import { QriRef } from '../../models/qriRef'
+import { QriRef, qriRefFromRoute } from '../../models/qriRef'
 
 import { selectHistoryDataset, selectWorkingDataset, selectHistoryDatasetIsLoading, selectWorkingDatasetIsLoading } from '../../selections'
 
 import Code from '../Code'
 import SpinnerWithIcon from '../chrome/SpinnerWithIcon'
 
-export interface TransformProps {
+export interface TransformProps extends RouteComponentProps {
   qriRef: QriRef
   data: string
   isLoading: boolean
@@ -29,7 +30,7 @@ export const TransformComponent: React.FunctionComponent<TransformProps> = ({ da
 }
 
 const mapStateToProps = (state: Store, ownProps: TransformProps) => {
-  const { qriRef } = ownProps
+  const qriRef = qriRefFromRoute(ownProps)
   const showHistory = !!qriRef.path
   return {
     qriRef,

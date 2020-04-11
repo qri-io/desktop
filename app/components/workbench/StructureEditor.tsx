@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import { faInfoCircle } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { bindActionCreators, Dispatch } from 'redux'
+import { RouteComponentProps } from 'react-router-dom'
 
 import Dataset, { Structure as IStructure, Schema as ISchema } from '../../models/dataset'
 import { ApiActionThunk } from '../../store/api'
@@ -10,7 +11,7 @@ import fileSize, { abbreviateNumber } from '../../utils/fileSize'
 import { selectMutationsDataset, selectWorkingDatasetIsLoading, selectWorkingDatasetPeername, selectWorkingDatasetName } from '../../selections'
 import Store from '../../models/store'
 import { writeDataset } from '../../actions/workbench'
-import { QriRef } from '../../models/qriRef'
+import { QriRef, qriRefFromRoute } from '../../models/qriRef'
 
 import SpinnerWithIcon from '../chrome/SpinnerWithIcon'
 import LabeledStats from '../item/LabeledStats'
@@ -18,7 +19,7 @@ import Schema from '../structure/Schema'
 import ExternalLink from '../ExternalLink'
 import FormatConfigEditor from '../structure/FormatConfigEditor'
 
-export interface StructureEditorProps {
+export interface StructureEditorProps extends RouteComponentProps {
   qriRef: QriRef
   data: IStructure
   showConfig?: boolean
@@ -99,6 +100,7 @@ export const StructureEditorComponent: React.FunctionComponent<StructureEditorPr
 const mapStateToProps = (state: Store, ownProps: StructureEditorProps) => {
   return {
     ...ownProps,
+    qriRef: qriRefFromRoute(ownProps),
     data: selectMutationsDataset(state).structure,
     loading: selectWorkingDatasetIsLoading(state),
     peername: selectWorkingDatasetPeername(state),

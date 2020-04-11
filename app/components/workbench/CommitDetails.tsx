@@ -4,14 +4,15 @@ import { connect } from 'react-redux'
 import Store from '../../models/Store'
 import Dataset from '../../models/dataset'
 import { selectHistoryDataset } from '../../selections'
-import { QriRef } from '../../models/qriRef'
+import { QriRef, qriRefFromRoute } from '../../models/qriRef'
 
 import HistoryComponentList from './HistoryComponentList'
-import DatasetComponent from './DatasetComponent'
+import DatasetComponent from './ComponentRouter'
 import Layout from '../Layout'
 import CommitDetailsHeader from './CommitDetailsHeader'
+import { withRouter, RouteComponentProps } from 'react-router-dom'
 
-export interface CommitDetailsProps {
+export interface CommitDetailsProps extends RouteComponentProps {
   qriRef: QriRef
   dataset: Dataset
 }
@@ -41,7 +42,7 @@ export const CommitDetailsComponent: React.FunctionComponent<CommitDetailsProps>
         )}
         sidebarWidth={150}
         mainContent={(
-          <DatasetComponent qriRef={qriRef} />
+          <DatasetComponent />
         )}
       />
     </div>
@@ -51,8 +52,9 @@ export const CommitDetailsComponent: React.FunctionComponent<CommitDetailsProps>
 const mapStateToProps = (state: Store, ownProps: CommitDetailsProps) => {
   return {
     ...ownProps,
+    qriRef: qriRefFromRoute(ownProps),
     dataset: selectHistoryDataset(state)
   }
 }
 
-export default connect(mapStateToProps)(CommitDetailsComponent)
+export default withRouter(connect(mapStateToProps)(CommitDetailsComponent))

@@ -3,11 +3,12 @@ import SimpleMDE from 'react-simplemde-editor'
 import { useDebounce } from 'use-debounce'
 import { connect } from 'react-redux'
 import { Dispatch, bindActionCreators } from 'redux'
+import { RouteComponentProps } from 'react-router-dome'
 
 import { ApiActionThunk } from '../../store/api'
 import { datasetConvertStringToScriptBytes } from '../../utils/datasetConvertStringToScriptBytes'
 import Dataset from '../../models/dataset'
-import { refStringFromQriRef, QriRef } from '../../models/qriRef'
+import { refStringFromQriRef, QriRef, qriRefFromRoute } from '../../models/qriRef'
 import { selectWorkingDatasetIsLoading, selectMutationsDataset, selectIsLinked, selectWorkingDatasetName, selectWorkingDatasetPeername } from '../../selections'
 import Store from '../../models/store'
 import { writeDataset } from '../../actions/workbench'
@@ -16,7 +17,7 @@ import SpinnerWithIcon from '../chrome/SpinnerWithIcon'
 
 const DEBOUNCE_TIMER = 1000
 
-export interface ReadmeEditorProps {
+export interface ReadmeEditorProps extends RouteComponentProps {
   qriRef: QriRef
   data?: string
   loading: boolean
@@ -138,6 +139,7 @@ export const ReadmeEditorComponent: React.FunctionComponent<ReadmeEditorProps> =
 const mapStateToProps = (state: Store, ownProps: ReadmeEditorProps) => {
   return {
     ...ownProps,
+    qriRef: qriRefFromRoute(ownProps),
     data: selectMutationsDataset(state).readme,
     loading: selectWorkingDatasetIsLoading(state),
     isLinked: selectIsLinked(state),

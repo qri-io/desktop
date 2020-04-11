@@ -1,18 +1,19 @@
 import * as React from 'react'
 import { connect } from 'react-redux'
+import { RouteComponentProps } from 'react-router-dom'
 
 import Store from '../../models/store'
 import { isUserArray } from '../form/MetadataMultiInput'
 import { Meta, Citation, License, User } from '../../models/dataset'
 import { selectHistoryDataset, selectHistoryDatasetIsLoading } from '../../selections'
-import { QriRef } from '../../models/qriRef'
+import { QriRef, qriRefFromRoute } from '../../models/qriRef'
 
 import ExternalLink from '../ExternalLink'
 import KeyValueTable from '../KeyValueTable'
 import SpinnerWithIcon from '../chrome/SpinnerWithIcon'
 import { standardFields } from './MetadataEditor'
 
-interface MetadataProps {
+interface MetadataProps extends RouteComponentProps {
   qriRef: QriRef
   data: Meta
   isLoading: boolean
@@ -137,6 +138,7 @@ const mapStateToProps = (state: Store, ownProps: MetadataProps) => {
   // get data for the currently selected component
   return {
     ...ownProps,
+    qriRef: qriRefFromRoute(ownProps),
     isLoading: selectHistoryDatasetIsLoading(state),
     data: selectHistoryDataset(state).meta
   }

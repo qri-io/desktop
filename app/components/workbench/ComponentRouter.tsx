@@ -3,11 +3,12 @@ import { Action, bindActionCreators, Dispatch } from 'redux'
 import { connect } from 'react-redux'
 import { CSSTransition, TransitionGroup } from 'react-transition-group'
 import path from 'path'
+import { useLocation, Switch, useRouteMatch, Redirect, Route, RouteComponentProps, withRouter } from 'react-router-dom'
 
 import { ApiActionThunk } from '../../store/api'
 import Store, { StatusInfo, SelectedComponent, ToastType } from '../../models/store'
 import Dataset from '../../models/dataset'
-import { QriRef } from '../../models/qriRef'
+import { QriRef, qriRefFromRoute } from '../../models/qriRef'
 
 import { openToast, closeToast } from '../../actions/ui'
 import { writeDataset } from '../../actions/workbench'
@@ -30,9 +31,8 @@ import StatusDot from '../chrome/StatusDot'
 import Structure from '../Structure'
 import Transform from './Transform'
 import StructureEditor from './StructureEditor'
-import { useLocation, Switch, useRouteMatch, Redirect, Route } from 'react-router-dom'
 
-interface ComponentRouterProps {
+interface ComponentRouterProps extends RouteComponentProps {
   // setting actions
   openToast: (type: ToastType, name: string, message: string) => Action
   closeToast: () => Action
@@ -124,63 +124,77 @@ export const ComponentRouterComponent: React.FunctionComponent<ComponentRouterPr
                   : <Redirect to={`${url}/commit`} />
                 }
               </Route>
-              <Route path={`${routePath}/meta`}>
-                {
-                  !routePath.includes('/edit')
-                    ? <Metadata qriRef={qriRef} />
-                    : hasParseError
-                      ? <ParseError fsiPath={fsiPath || ''} filename={statusInfo && statusInfo.filepath} component={component} />
-                      : <MetadataEditor qriRef={qriRef} />
+              <Route path={`${routePath}/meta`} render={(props) => {
+                if (routePath.includes('/edit')) {
+                  if (hasParseError) {
+                    return <ParseError fsiPath={fsiPath || ''} filename={statusInfo && statusInfo.filepath} component={component} />
+                  }
+                  return <MetadataEditor {...props} />
                 }
+                return <Metadata {...props} />
+              }}>
               </Route>
-              <Route path={`${routePath}/readme`}>
-                { !routePath.includes('/edit')
-                  ? <Readme qriRef={qriRef} />
-                  : hasParseError
+              <Route path={`${routePath}/readme`} render={(props) => {
+                if (routePath.includes('/edit')) {
+                  if (hasParseError) {
+                    return <ParseError fsiPath={fsiPath || ''} filename={statusInfo && statusInfo.filepath} component={component} />
+                  }
+                  return <ReadmeEditor {...props} />
+                }
+                return <Readme {...props} />
+              }
+              }>
+              </Route>
+              <Route path={`${routePath}/body`} render={(props) => {
+                return <>
+                  {dragging && fsiPath === '' && <DropZone
+                    title='Drop a body update'
+                    subtitle='import either csv or json file'
+                    setDragging={setDragging}
+                    onDrop={dropHandler}
+                  />}
+                  {routePath.includes('/edit') && bodyPath && <CalloutBlock
+                    type='info'
+                    text={`body will be replaced with file: ${bodyPath} when you commit`}
+                    cancelText='unstage file'
+                    onCancel={() => { write(username, name, { bodyPath: '' }) }}
+                  />}
+                  { hasParseError
                     ? <ParseError fsiPath={fsiPath || ''} filename={statusInfo && statusInfo.filepath} component={component} />
-                    : <ReadmeEditor qriRef={qriRef} />}
+                    : <Body {...props} />
+                  }
+                </>
+              }}>
               </Route>
-              <Route path={`${routePath}/body`}>
-                {dragging && fsiPath === '' && <DropZone
-                  title='Drop a body update'
-                  subtitle='import either csv or json file'
-                  setDragging={setDragging}
-                  onDrop={dropHandler}
-                />}
-                {routePath.includes('/edit') && bodyPath && <CalloutBlock
-                  type='info'
-                  text={`body will be replaced with file: ${bodyPath} when you commit`}
-                  cancelText='unstage file'
-                  onCancel={() => { write(username, name, { bodyPath: '' }) }}
-                />}
-                { hasParseError
-                  ? <ParseError fsiPath={fsiPath || ''} filename={statusInfo && statusInfo.filepath} component={component} />
-                  : <Body qriRef={qriRef} />
+              <Route path={`${routePath}/structure`} render={(props) => {
+                if (routePath.includes('/edit')) {
+                  if (hasParseError) {
+                    return <ParseError fsiPath={fsiPath || ''} filename={statusInfo && statusInfo.filepath} component={component} />
+                  }
+                  return <StructureEditor {...props} />
                 }
+                return <Structure {...props} />
+              }
+              }>
               </Route>
-              <Route path={`${routePath}/structure`}>
-                {
-                  !routePath.includes('/edit')
-                    ? <Structure qriRef={qriRef} />
-                    : hasParseError
-                      ? <ParseError fsiPath={fsiPath || ''} filename={statusInfo && statusInfo.filepath} component={component} />
-                      : <StructureEditor qriRef={qriRef} />
+              <Route path={`${routePath}/transform`} render={(props) => {
+                if (hasParseError) {
+                  return <ParseError fsiPath={fsiPath || ''} filename={statusInfo && statusInfo.filepath} component={component} />
                 }
+                return <Transform {...props} />
+              }
+              }>
               </Route>
-              <Route path={`${routePath}/transform`}>
-                { hasParseError
-                  ? <ParseError fsiPath={fsiPath || ''} filename={statusInfo && statusInfo.filepath} component={component} />
-                  : <Transform qriRef={qriRef} />
+              <Route path={`${routePath}/commit`} render={(props) => {
+                if (routePath.includes('/edit')) {
+                  if (hasParseError) {
+                    return <ParseError fsiPath={fsiPath || ''} filename={statusInfo && statusInfo.filepath} component={component} />
+                  }
+                  return <CommitEditor {...props} />
                 }
-              </Route>
-              <Route path={`${routePath}/commit`}>
-                {
-                  !routePath.includes('/edit')
-                    ? <Commit qriRef={qriRef} />
-                    : hasParseError
-                      ? <ParseError fsiPath={fsiPath || ''} filename={statusInfo && statusInfo.filepath} component={component} />
-                      : <CommitEditor qriRef={qriRef} />
-                }
+                return <Commit {...props} />
+              }
+              }>
               </Route>
             </Switch>
           </CSSTransition>
@@ -191,7 +205,7 @@ export const ComponentRouterComponent: React.FunctionComponent<ComponentRouterPr
 }
 
 const mapStateToProps = (state: Store, ownProps: ComponentRouterProps) => {
-  const { qriRef } = ownProps
+  const qriRef = qriRefFromRoute(ownProps)
   const showHistory = !!qriRef.path
   const selectedComponent = showHistory ? selectSelectedCommitComponent(state) : selectSelectedComponent(state)
   const status = showHistory ? selectHistoryStatus(state) : selectStatusFromMutations(state)
@@ -217,4 +231,4 @@ const mergeProps = (props: any, actions: any): ComponentRouterProps => {
   return { ...props, ...actions }
 }
 // TODO (b5) - this component doesn't need to be a container. Just feed it the right data
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(ComponentRouterComponent)
+export default withRouter(connect(mapStateToProps, mapDispatchToProps, mergeProps)(ComponentRouterComponent))

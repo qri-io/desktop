@@ -5,13 +5,14 @@ import cloneDeep from 'clone-deep'
 import ReactTooltip from 'react-tooltip'
 import { connect } from 'react-redux'
 import { Dispatch, bindActionCreators } from 'redux'
+import { RouteComponentProps } from 'react-router-dom'
 
 import { ApiActionThunk } from '../../store/api'
 import { Meta } from '../../models/dataset'
 import { selectMutationsDataset, selectWorkingDatasetIsLoading, selectWorkingDatasetPeername, selectWorkingDatasetName } from '../../selections'
 import Store from '../../models/store'
 import { writeDataset } from '../../actions/workbench'
-import { QriRef } from '../../models/qriRef'
+import { QriRef, qriRefFromRoute } from '../../models/qriRef'
 
 import ExternalLink from '../ExternalLink'
 import TextInput from '../form/TextInput'
@@ -21,7 +22,7 @@ import DropdownInput from '../form/DropdownInput'
 import MetadataMultiInput from '../form/MetadataMultiInput'
 import SpinnerWithIcon from '../chrome/SpinnerWithIcon'
 
-interface MetadataEditorProps {
+interface MetadataEditorProps extends RouteComponentProps {
   qriRef: QriRef
   data: Meta
   write: (peername: string, name: string, dataset: any) => ApiActionThunk | void
@@ -343,6 +344,7 @@ const MetadataEditorComponent: React.FunctionComponent<MetadataEditorProps> = (p
 const mapStateToProps = (state: Store, ownProps: MetadataEditorProps) => {
   return {
     ...ownProps,
+    qriRef: qriRefFromRoute(ownProps),
     data: selectMutationsDataset(state).meta,
     loading: selectWorkingDatasetIsLoading(state),
     peername: selectWorkingDatasetPeername(state),

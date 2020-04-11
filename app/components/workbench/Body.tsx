@@ -1,6 +1,7 @@
 import * as React from 'react'
 import { Action, Dispatch, bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
+import { RouteComponentProps } from 'react-router-dom'
 
 import { ApiActionThunk } from '../../store/api'
 import { DetailsType, StatsDetails, Details } from '../../models/details'
@@ -9,12 +10,12 @@ import Store, { PageInfo } from '../../models/store'
 import { fetchBody, fetchCommitBody } from '../../actions/api'
 import { setDetailsBar } from '../../actions/ui'
 import { selectHistoryDataset, selectWorkingDataset, selectHistoryStats, selectWorkingStats, selectDetails, selectHistoryDatasetBodyPageInfo, selectWorkingDatasetBodyPageInfo } from '../../selections'
-import { QriRef } from '../../models/qriRef'
+import { QriRef, qriRefFromRoute } from '../../models/qriRef'
 
 import BodyTable from '../BodyTable'
 import BodyJson from '../BodyJson'
 
-export interface BodyProps {
+export interface BodyProps extends RouteComponentProps {
   qriRef: QriRef
   data: Dataset
   stats: Array<Record<string, any>>
@@ -129,7 +130,7 @@ export const BodyComponent: React.FunctionComponent<BodyProps> = (props) => {
 const mapStateToProps = (state: Store, ownProps: BodyProps) => {
   // TODO(ramfox): when we get a BodyEditor component, pull out all references
   // to showHistory
-  const { qriRef } = ownProps
+  const qriRef = qriRefFromRoute(ownProps)
   const showHistory = !!qriRef.path
   return {
     data: showHistory ? selectHistoryDataset(state) : selectWorkingDataset(state),

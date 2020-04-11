@@ -27,7 +27,7 @@ import { defaultSidebarWidth } from '../../reducers/ui'
 
 import { Resizable } from '../Resizable'
 import Layout from '../Layout'
-import DatasetComponent from './DatasetComponent'
+import ComponentRouter from './ComponentRouter'
 import NoDatasetSelected from './NoDatasetSelected'
 import HeaderColumnButton from '../chrome/HeaderColumnButton'
 import Hamburger from '../chrome/Hamburger'
@@ -65,8 +65,8 @@ export interface WorkbenchProps extends RouteComponentProps<QriRef> {
   resetMutationsStatus: () => Action
 
   // fetching actions
-  fetchWorkbench: (qriRef: QriRef) => LaunchedFetchesAction
-  fetchWorkingDatasetDetails: (qriRef: QriRef) => ApiActionThunk
+  fetchWorkbench: () => LaunchedFetchesAction
+  fetchWorkingDatasetDetails: () => ApiActionThunk
 
   // api actions (that aren't fetching)
   discardChanges: (component: SelectedComponent) => ApiActionThunk
@@ -122,7 +122,7 @@ export class WorkbenchComponent extends React.Component<WorkbenchProps> {
   async componentDidUpdate (prevProps: WorkbenchProps) {
     if (prevProps.qriRef.location !== this.props.qriRef.location) {
       // TODO (b5) - this was bailing early when fetch happened
-      this.props.fetchWorkbench(qriRef)
+      this.props.fetchWorkbench()
     }
   }
 
@@ -260,66 +260,6 @@ export class WorkbenchComponent extends React.Component<WorkbenchProps> {
       )
     }
 
-    // const mainContent = (
-    //   <>
-    //     <Prompt when={modified} message={(location) => {
-    //       if (location.pathname.includes('workbench')) return false
-    //       if (fsiPath !== '') {
-    //         this.props.fetchWorkingDatasetDetails()
-    //         return true
-    //       }
-    //       return `You have uncommited changes! Click 'cancel' and commit these changes before you navigate away or you will lose your work.`
-    //     }}/>
-    //     <div className='main-content-header'>
-    //       {linkButton}
-    //       {publishButton}
-    //     </div>
-    //     <div className='main-content-flex'>
-    //       <div className='transition-group' >
-    //         <CSSTransition
-    //           in={!username && !name}
-    //           classNames='fade'
-    //           timeout={300}
-    //           mountOnEnter
-    //           unmountOnExit
-    //         >
-    //           <NoDatasets setModal={setModal} />
-    //         </CSSTransition>
-    //         <CSSTransition
-    //           in={!datasetSelected && hasDatasets}
-    //           classNames='fade'
-    //           timeout={300}
-    //           mountOnEnter
-    //           unmountOnExit
-    //         >
-    //           <NoDatasetSelected />
-    //         </CSSTransition>
-    //         <CSSTransition
-    //           in={datasetSelected && activeTab === 'status'}
-    //           classNames='fade'
-    //           timeout={300}
-    //           mountOnEnter
-    //           unmountOnExit
-    //         >
-    //           { inNamespace
-    //             ? <DatasetComponent qriRef={qriRef} />
-    //             : <NotInNamespace />
-    //           }
-    //         </CSSTransition>
-    //         <CSSTransition
-    //           in={datasetSelected && activeTab === 'history'}
-    //           classNames='fade'
-    //           timeout={300}
-    //           mountOnEnter
-    //           unmountOnExit
-    //         >
-    //           <CommitDetails qriRef={qriRef} />
-    //         </CSSTransition>
-    //       </div>
-    //     </div>
-    //   </>
-    // )
-
     return (
       <>
         <div className='details-bar-wrapper'
@@ -370,7 +310,7 @@ interface WorkbenchRouterProps {
 }
 
 const WorkbenchRouter: React.FunctionComponent<WorkbenchRouterProps> = (props) => {
-  const { qriRef, sidebarWidth, latestPath, modified, hasDatasets, setModal, fsiPath, linkButton, publishButton } = props
+  const { sidebarWidth, latestPath, modified, hasDatasets, setModal, fsiPath, linkButton, publishButton } = props
   const location = useLocation()
   const { path } = useRouteMatch()
 
@@ -407,7 +347,7 @@ const WorkbenchRouter: React.FunctionComponent<WorkbenchRouterProps> = (props) =
             return (
               <Layout
                 id='dataset-container'
-                sidebarContent={<WorkbenchSidebar qriRef={qriRef} />}
+                sidebarContent={<WorkbenchSidebar />}
                 sidebarWidth={sidebarWidth}
                 onSidebarResize={(width) => { setSidebarWidth('dataset', width) }}
                 maximumSidebarWidth={495}
@@ -419,11 +359,11 @@ const WorkbenchRouter: React.FunctionComponent<WorkbenchRouterProps> = (props) =
             return (
               <Layout
                 id='dataset-container'
-                sidebarContent={<WorkbenchSidebar qriRef={qriRef} />}
+                sidebarContent={<WorkbenchSidebar />}
                 sidebarWidth={sidebarWidth}
                 onSidebarResize={(width) => { setSidebarWidth('dataset', width) }}
                 maximumSidebarWidth={495}
-                mainContent={<>{wrap}{hasDatasets ? <DatasetComponent qriRef={qriRef}/> : <NoDatasets setModal={setModal} />}</>}
+                mainContent={<>{wrap}{hasDatasets ? <ComponentRouter /> : <NoDatasets setModal={setModal} />}</>}
               />
             )
           } }/>
@@ -433,11 +373,11 @@ const WorkbenchRouter: React.FunctionComponent<WorkbenchRouterProps> = (props) =
             return (
               <Layout
                 id='dataset-container'
-                sidebarContent={<WorkbenchSidebar qriRef={qriRef} />}
+                sidebarContent={<WorkbenchSidebar />}
                 sidebarWidth={sidebarWidth}
                 onSidebarResize={(width) => { setSidebarWidth('dataset', width) }}
                 maximumSidebarWidth={495}
-                mainContent={<>{wrap}{hasDatasets ? <CommitDetails qriRef={qriRef} /> : <NoDatasets setModal={setModal} />}</>}
+                mainContent={<>{wrap}{hasDatasets ? <CommitDetails /> : <NoDatasets setModal={setModal} />}</>}
               />
             )
           } }/>
