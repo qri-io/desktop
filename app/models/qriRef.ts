@@ -41,13 +41,15 @@ export interface QriRef {
   // string this ref parsed from
   location: string
   // human-readble name of the owner of this dataset
-  username?: string
+  username: string
   // user identifier
   profileId?: string
   // dataset name
-  name?: string
+  name: string
   // commit hash, eg: /ipfs/QmY9WcXXUnHJbYRA28LRctiL4qu4y...
   path?: string
+  // optional: a specific component the user is trying to index into component
+  component?: string
   // address into dataset structure
   selector?: string
 }
@@ -102,6 +104,7 @@ export function qriRefFromRoute (p: RouteComponentProps<QriRef>): QriRef {
     username: p.match.params.username,
     name: p.match.params.name,
     path: p.match.params.path ? '/ipfs/' + p.match.params.path : undefined,
+    component: p.match.params.component,
     selector: p.match.params.selector
   }
 }

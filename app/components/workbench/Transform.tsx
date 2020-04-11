@@ -4,29 +4,36 @@ import { ApiActionThunk } from '../../store/api'
 
 import Dataset from '../../models/dataset'
 import Store from '../../models/store'
-import { selectHistoryDataset, selectWorkingDataset } from '../../selections'
+import { QriRef } from '../../models/qriRef'
+
+import { selectHistoryDataset, selectWorkingDataset, selectHistoryDatasetIsLoading, selectWorkingDatasetIsLoading } from '../../selections'
 
 import Code from '../Code'
-import { QriRef } from '../../models/qriRef'
+import SpinnerWithIcon from '../chrome/SpinnerWithIcon'
 
 export interface TransformProps {
   qriRef: QriRef
   data: string
+  isLoading: boolean
 
   // TODO (b5) - work in progress
   dryRun?: () => void
   write?: (username: string, name: string, dataset: Dataset) => ApiActionThunk | void
 }
 
-export const TransformComponent: React.FunctionComponent<TransformProps> = ({ data = '' }) => (
-  <Code data={data} />
-)
+export const TransformComponent: React.FunctionComponent<TransformProps> = ({ data = '', isLoading }) => {
+  if (isLoading) {
+    return <SpinnerWithIcon loading />
+  }
+  return <Code data={data} />
+}
 
 const mapStateToProps = (state: Store, ownProps: TransformProps) => {
   const { qriRef } = ownProps
   const showHistory = !!qriRef.path
   return {
     qriRef,
+    isLoading: showHistory ? selectHistoryDatasetIsLoading(state) : selectWorkingDatasetIsLoading(state),
     data: showHistory ? selectHistoryDataset(state).transform : selectWorkingDataset(state).transform
   }
 }

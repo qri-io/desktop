@@ -92,7 +92,7 @@ const MetadataEditorComponent: React.FunctionComponent<MetadataEditorProps> = (p
   const name = qriRef.name || ''
 
   if (loading) {
-    return <SpinnerWithIcon loading={true} />
+    return <SpinnerWithIcon loading />
   }
 
   React.useEffect(() => {

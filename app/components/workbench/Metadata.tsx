@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 import Store from '../../models/store'
 import { isUserArray } from '../form/MetadataMultiInput'
 import { Meta, Citation, License, User } from '../../models/dataset'
-import { selectHistoryDataset } from '../../selections'
+import { selectHistoryDataset, selectHistoryDatasetIsLoading } from '../../selections'
 import { QriRef } from '../../models/qriRef'
 
 import ExternalLink from '../ExternalLink'
@@ -15,6 +15,7 @@ import { standardFields } from './MetadataEditor'
 interface MetadataProps {
   qriRef: QriRef
   data: Meta
+  isLoading: boolean
 }
 
 const renderValue = (value: string | string[] | object) => {
@@ -107,9 +108,9 @@ const renderTable = (keys: string[], data: Meta) => {
   )
 }
 
-export const MetadataComponent: React.FunctionComponent<MetadataProps> = ({ data }) => {
-  if (!data) {
-    return <SpinnerWithIcon loading={true} />
+export const MetadataComponent: React.FunctionComponent<MetadataProps> = ({ data, isLoading }) => {
+  if (isLoading) {
+    return <SpinnerWithIcon loading />
   }
 
   // TODO (b5) - this should happen at the point of ingest from the API
@@ -136,6 +137,7 @@ const mapStateToProps = (state: Store, ownProps: MetadataProps) => {
   // get data for the currently selected component
   return {
     ...ownProps,
+    isLoading: selectHistoryDatasetIsLoading(state),
     data: selectHistoryDataset(state).meta
   }
 }

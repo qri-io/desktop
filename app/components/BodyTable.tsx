@@ -7,6 +7,7 @@ import { TypeLabel } from './TwoDSchemaLayout'
 import { bodyPageSizeDefault } from '../actions/api'
 import { PageInfo } from '../models/store'
 import { ApiActionThunk } from '../store/api'
+import SpinnerWithIcon from './chrome/SpinnerWithIcon'
 
 interface BodyTableProps {
   headers?: any[]
@@ -100,7 +101,7 @@ export default class BodyTable extends React.Component<BodyTableProps> {
     const { body, headers, pageInfo, highlighedColumnIndex, setDetailsBar } = this.props
     const { isFetching, fetchedAll } = pageInfo
 
-    if (isFetching && !body) return null
+    if (isFetching && !body) return <SpinnerWithIcon loading />
 
     const tableRows = body.map((row, i) => {
       return (

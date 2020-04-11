@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Action, Dispatch, bindActionCreators } from 'redux'
+import { Dispatch, bindActionCreators } from 'redux'
 import path from 'path'
 import classNames from 'classnames'
 import { clipboard, shell, MenuItemConstructorOptions } from 'electron'
@@ -10,18 +10,18 @@ import { QriRef, selectedComponentFromQriRef } from '../../models/qriRef'
 import { Status, SelectedComponent } from '../../models/store'
 
 import { discardChanges } from '../../actions/api'
-import { setWorkingComponent } from '../../actions/selections'
 
 import { selectStatusFromMutations, selectFsiPath } from '../../selections'
+import { pathToEditComponent } from '../../paths'
 
 import ContextMenuArea from '../ContextMenuArea'
 import ComponentItem from '../item/ComponentItem'
+import { withRouter, RouteComponentProps } from 'react-router-dom'
 
-interface WorkingComponentListProps {
+interface WorkingComponentListProps extends RouteComponentProps {
   qriRef: QriRef
   status: Status
   selectedComponent: string
-  onComponentClick: (component: SelectedComponent) => Action
   discardChanges?: (component: SelectedComponent) => void
   fsiPath?: string
 }
@@ -81,12 +81,15 @@ export const getComponentDisplayProps = (name: string) => {
 
 export const WorkingComponentListComponent: React.FunctionComponent<WorkingComponentListProps> = (props: WorkingComponentListProps) => {
   const {
+    qriRef,
     status,
+    history,
     selectedComponent,
-    onComponentClick,
     discardChanges,
     fsiPath
   } = props
+
+  const { username = '', name: datasetName = '' } = qriRef
 
   const visibleComponents = components.filter(hiddenComponentFilter(status))
 
@@ -117,7 +120,7 @@ export const WorkingComponentListComponent: React.FunctionComponent<WorkingCompo
                 status={fileStatus}
                 selected={selectedComponent === name}
                 tooltip={tooltip}
-                onClick={onComponentClick}
+                onClick={(component: SelectedComponent) => history.push(pathToEditComponent(username, datasetName, component))}
                 color='light'
               />
             )
@@ -168,7 +171,7 @@ export const WorkingComponentListComponent: React.FunctionComponent<WorkingCompo
                 selected={selectedComponent === name}
                 // TODO (ramfox): we should create a 'isDisabled' function and add these specifications & test
                 tooltip={tooltip}
-                onClick={onComponentClick}
+                onClick={(component: SelectedComponent) => history.push(pathToEditComponent(username, datasetName, component))}
               />
             )
           }
@@ -189,7 +192,6 @@ const mapStateToProps = (state: any, ownProps: WorkingComponentListProps) => {
 
 const mapDispatchToProps = (dispatch: Dispatch, ownProps: WorkingComponentListProps) => {
   return bindActionCreators({
-    onComponentClick: setWorkingComponent,
     discardChanges
   }, dispatch)
 }
@@ -198,4 +200,4 @@ const mergeProps = (props: any, actions: any): WorkingComponentListProps => {
   return { ...props, ...actions }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(WorkingComponentListComponent)
+export default withRouter(connect(mapStateToProps, mapDispatchToProps, mergeProps)(WorkingComponentListComponent))

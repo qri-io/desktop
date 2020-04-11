@@ -12,7 +12,7 @@ import { Details } from '../../models/details'
 import { Session } from '../../models/session'
 import { SelectedComponent } from '../../models/store'
 import { Modal, ModalType } from '../../models/modals'
-import { QriRef, hackQriRefFromRouteAndSelections, qriRefFromRoute } from '../../models/qriRef'
+import { QriRef, qriRefFromRoute } from '../../models/qriRef'
 import { ApiActionThunk, LaunchedFetchesAction } from '../../store/api'
 
 import { setModal, setSidebarWidth } from '../../actions/ui'
@@ -65,8 +65,8 @@ export interface WorkbenchProps extends RouteComponentProps<QriRef> {
   resetMutationsStatus: () => Action
 
   // fetching actions
-  fetchWorkbench: () => LaunchedFetchesAction
-  fetchWorkingDatasetDetails: () => ApiActionThunk
+  fetchWorkbench: (qriRef: QriRef) => LaunchedFetchesAction
+  fetchWorkingDatasetDetails: (qriRef: QriRef) => ApiActionThunk
 
   // api actions (that aren't fetching)
   discardChanges: (component: SelectedComponent) => ApiActionThunk
@@ -122,7 +122,7 @@ export class WorkbenchComponent extends React.Component<WorkbenchProps> {
   async componentDidUpdate (prevProps: WorkbenchProps) {
     if (prevProps.qriRef.location !== this.props.qriRef.location) {
       // TODO (b5) - this was bailing early when fetch happened
-      this.props.fetchWorkbench()
+      this.props.fetchWorkbench(qriRef)
     }
   }
 
@@ -427,7 +427,9 @@ const WorkbenchRouter: React.FunctionComponent<WorkbenchRouterProps> = (props) =
               />
             )
           } }/>
-          <Route path={`${path}/:username/:name/at/ipfs/:path`} render={() => {
+          <Route path={`${path}/:username/:name/at/ipfs/:path`} render={(props) => {
+            console.log('workbench in route')
+            console.log(props)
             return (
               <Layout
                 id='dataset-container'
@@ -450,7 +452,6 @@ const WorkbenchRouter: React.FunctionComponent<WorkbenchRouterProps> = (props) =
               to={`/workbench/${params.username}/${params.name}/at${latestPath}`}
             />
           }}/>
-          {/* <Route path="/rgb/:r/:g/:b" children={<RGB />} /> */}
         </Switch>
       </CSSTransition>
     </TransitionGroup>
@@ -458,9 +459,7 @@ const WorkbenchRouter: React.FunctionComponent<WorkbenchRouterProps> = (props) =
 }
 
 const mapStateToProps = (state: any, ownProps: WorkbenchProps) => {
-  console.log('workbench')
-  console.log(qriRefFromRoute(ownProps))
-  const qriRef = hackQriRefFromRouteAndSelections(state, ownProps)
+  const qriRef = qriRefFromRoute(ownProps)
   const versions = selectHistory(state)
   return {
     qriRef,

@@ -67,6 +67,7 @@ export function fetchWorkingDatasetDetails (): ApiActionThunk {
 }
 
 export function fetchModifiedComponents (): ApiActionThunk {
+export function fetchModifiedComponents (qriRef: QriRef): ApiActionThunk {
   return async (dispatch, getState) => {
     const { selections, workingDataset } = getState()
     const { path } = workingDataset

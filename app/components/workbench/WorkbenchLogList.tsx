@@ -79,7 +79,6 @@ export const WorkbenchLogListComponent: React.FunctionComponent<WorkbenchLogList
               }
             }
           ]
-          console.log(qriRef.path, item.path)
           return (
             <ContextMenuArea menuItems={menuItems} key={item.path}>
               <HistoryListItem

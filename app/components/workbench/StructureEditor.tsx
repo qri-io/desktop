@@ -30,7 +30,7 @@ export const StructureEditorComponent: React.FunctionComponent<StructureEditorPr
   const { data, write, loading, qriRef } = props
 
   if (loading) {
-    return <SpinnerWithIcon loading={true} />
+    return <SpinnerWithIcon loading />
   }
 
   const username = qriRef.username || ''

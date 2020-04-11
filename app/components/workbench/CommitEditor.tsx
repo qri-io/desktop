@@ -18,7 +18,7 @@ import TextAreaInput from '../form/TextAreaInput'
 
 export interface CommitEditorProps {
   qriRef: QriRef
-  isLoading: boolean
+  isSaving: boolean
   status: Status
   title: string
   message: string
@@ -30,7 +30,7 @@ export interface CommitEditorProps {
 export const CommitEditorComponent: React.FunctionComponent<CommitEditorProps> = (props) => {
   const {
     qriRef,
-    isLoading,
+    isSaving,
     status,
     title,
     message,
@@ -96,7 +96,7 @@ export const CommitEditorComponent: React.FunctionComponent<CommitEditorProps> =
         />
         <div className='submit'>
           {
-            isLoading
+            isSaving
               ? <button className='sync-spinner btn btn-large btn-primary'><FontAwesomeIcon icon={faSync} /> Saving...</button>
               : <button id='submit' className={classNames('btn btn-primary btn-large', { 'disabled': !isValid })} type='submit'>Commit</button>
           }
@@ -111,7 +111,7 @@ const mapStateToProps = (state: Store, ownProps: CommitEditorProps) => {
   // get data for the currently selected component
   return {
     ...ownProps,
-    isLoading: selectIsCommiting(state),
+    isSaving: selectIsCommiting(state),
     title: mutationsCommit.title,
     message: mutationsCommit.message,
     status: selectStatusFromMutations(state)

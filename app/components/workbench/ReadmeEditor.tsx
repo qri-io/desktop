@@ -100,7 +100,7 @@ export const ReadmeEditorComponent: React.FunctionComponent<ReadmeEditorProps> =
   }
 
   if (loading) {
-    return <SpinnerWithIcon loading={true} />
+    return <SpinnerWithIcon loading />
   }
 
   return (

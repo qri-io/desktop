@@ -5,7 +5,7 @@ import { CSSTransition } from 'react-transition-group'
 import classNames from 'classnames'
 import { RouteComponentProps, withRouter, useRouteMatch } from 'react-router-dom'
 
-import { QriRef, refStringFromQriRef, qriRefFromRoute } from '../../models/qriRef'
+import { QriRef, qriRefFromRoute } from '../../models/qriRef'
 import { VersionInfo, PageInfo } from '../../models/store'
 
 import { setActiveTab } from '../../actions/selections'
@@ -17,6 +17,7 @@ import DatasetReference from '../DatasetReference'
 import Spinner from '../chrome/Spinner'
 import WorkbenchLogList from './WorkbenchLogList'
 import DatasetDetailsSubtext from '../dataset/DatasetDetailsSubtext'
+import { pathToEdit, pathToHistory } from '../../paths'
 
 export interface WorkbenchSidebarData {
   versionInfo: VersionInfo
@@ -45,14 +46,13 @@ export const WorkbenchSidebarComponent: React.FunctionComponent<WorkbenchSidebar
 
   const {
     username = '',
-    name = ''
+    name = '',
+    path = ''
   } = qriRef
 
-  const { path, url } = useRouteMatch()
-  console.log(path)
-  console.log(url)
+  const { path: routePath } = useRouteMatch()
 
-  const activeTab = path.includes('/edit') ? 'status' : 'history'
+  const activeTab = routePath.includes('/edit') ? 'status' : 'history'
 
   const datasetSelected = username !== '' && name !== ''
 
@@ -73,11 +73,7 @@ export const WorkbenchSidebarComponent: React.FunctionComponent<WorkbenchSidebar
           className={classNames('tab', { 'active': activeTab === 'status' && datasetSelected, 'disabled': !datasetSelected })}
           onClick={() => {
             if (datasetSelected) {
-              const uri = `/workbench/edit/${qriRef.username}/${qriRef.name}`
-              console.log(uri)
-              console.log(history)
-              history.push(uri)
-              // setActiveTab('status')
+              history.push(pathToEdit(username, name))
             }
           }}
           data-tip='View the working changes<br/> to this dataset&apos;s components'
@@ -89,8 +85,7 @@ export const WorkbenchSidebarComponent: React.FunctionComponent<WorkbenchSidebar
           className={classNames('tab', { 'active': activeTab === 'history', 'disabled': (historyInfo.error && historyInfo.error.includes('no history')) || !datasetSelected })}
           onClick={() => {
             if ((!(historyInfo.error && historyInfo.error.includes('no history')) && datasetSelected)) {
-              // setActiveTab('history')
-              history.push(`/workbench/${refStringFromQriRef(qriRef)}`)
+              history.push(pathToHistory(username, name, path))
             }
           }}
           data-tip={historyToolTip}
@@ -138,6 +133,9 @@ export const WorkbenchSidebarComponent: React.FunctionComponent<WorkbenchSidebar
 
 const mapStateToProps = (state: any, ownProps: WorkbenchSidebarProps) => {
   const history = selectHistory(state)
+  console.log('sidebar match state to props')
+  console.log(ownProps)
+  console.log(qriRefFromRoute(ownProps))
   return {
     ...ownProps,
     qriRef: qriRefFromRoute(ownProps),
