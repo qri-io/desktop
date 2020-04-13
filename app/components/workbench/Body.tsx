@@ -21,8 +21,8 @@ export interface BodyProps extends RouteComponentProps {
   stats: Array<Record<string, any>>
   details: Details
   pageInfo: PageInfo
-  fetchBody: (page?: number, pageSize?: number) => ApiActionThunk
-  fetchCommitBody: (page?: number, pageSize?: number) => ApiActionThunk
+  fetchBody: (username: string, name: string, page?: number, pageSize?: number) => ApiActionThunk
+  fetchCommitBody: (username: string, name: string, path: string, page?: number, pageSize?: number) => ApiActionThunk
   setDetailsBar: (details: Record<string, any>) => Action
 }
 
@@ -106,6 +106,14 @@ export const BodyComponent: React.FunctionComponent<BodyProps> = (props) => {
     }
   }
 
+  const handleFetch = (page?: number, pageSize?: number) => {
+    const { username, name, path = '' } = qriRef
+    if (showHistory) {
+      return fetchCommitBody(username, name, path, page, pageSize)
+    }
+    return fetchBody(username, name, page, pageSize)
+  }
+
   return (
     <div className='transition-group'>
       {shouldDisplayJsonViewer(structure.format)
@@ -119,7 +127,7 @@ export const BodyComponent: React.FunctionComponent<BodyProps> = (props) => {
           body={body}
           pageInfo={pageInfo}
           highlighedColumnIndex={details.type !== DetailsType.NoDetails ? details.index : undefined}
-          onFetch={showHistory ? fetchCommitBody : fetchBody}
+          onFetch={handleFetch}
           setDetailsBar={handleToggleDetailsBar}
         />
       }

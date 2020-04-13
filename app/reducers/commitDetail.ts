@@ -158,7 +158,7 @@ const commitDetailsReducer: Reducer = (state = initialState, action: AnyAction):
     case CLEAR_DATASET_HEAD:
       return {
         ...initialState,
-        peername: action.peername,
+        peername: action.username,
         name: action.name
       }
 

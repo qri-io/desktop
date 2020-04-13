@@ -23,7 +23,7 @@ export interface CommitEditorProps extends RouteComponentProps {
   status: Status
   title: string
   message: string
-  saveWorkingDatasetAndFetch: () => Promise<ApiAction>
+  saveWorkingDatasetAndFetch: (username: string, name: string) => Promise<ApiAction>
   setCommitTitle: (title: string) => Action
   setCommitMessage: (message: string) => Action
 }
@@ -42,6 +42,8 @@ export const CommitEditorComponent: React.FunctionComponent<CommitEditorProps> =
 
   const [isValid, setIsValid] = React.useState(false)
 
+  const { username, name } = qriRef
+
   React.useEffect(() => {
     // validate form -AND- make sure dataset status is in a commitable state
     const valid = validateCommitState(title, status)
@@ -56,7 +58,7 @@ export const CommitEditorComponent: React.FunctionComponent<CommitEditorProps> =
   const handleSubmit = (event: any) => {
     event.preventDefault()
     if (isValid) {
-      saveWorkingDatasetAndFetch()
+      saveWorkingDatasetAndFetch(username, name)
         .then(() => {
           setCommitTitle('')
           setCommitMessage('')

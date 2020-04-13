@@ -19,7 +19,7 @@ import { setModal, setSidebarWidth } from '../../actions/ui'
 import { setActiveTab } from '../../actions/selections'
 import { resetMutationsDataset, discardMutationsChanges, resetMutationsStatus } from '../../actions/mutations'
 import { fetchWorkbench } from '../../actions/workbench'
-import { discardChanges, fetchWorkingDatasetDetails } from '../../actions/api'
+import { discardChangesAndFetch, fetchWorkingDatasetDetails } from '../../actions/api'
 
 import { selectHistory, selectFsiPath, selectDetails, selectWorkingDatasetIsPublished, selectSessionUsername, selectMyDatasets, selectSidebarWidth, selectShowDetailsBar, selectMutationsIsDirty } from '../../selections'
 
@@ -65,11 +65,11 @@ export interface WorkbenchProps extends RouteComponentProps<QriRef> {
   resetMutationsStatus: () => Action
 
   // fetching actions
-  fetchWorkbench: () => LaunchedFetchesAction
-  fetchWorkingDatasetDetails: () => ApiActionThunk
+  fetchWorkbench: (qriRef: QriRef) => LaunchedFetchesAction
+  fetchWorkingDatasetDetails: (username: string, name: string) => ApiActionThunk
 
   // api actions (that aren't fetching)
-  discardChanges: (component: SelectedComponent) => ApiActionThunk
+  discardChangesAndFetch: (username: string, name: string, component: SelectedComponent) => ApiActionThunk
   discardMutationsChanges: (component: SelectedComponent) => Action
 }
 
@@ -82,7 +82,7 @@ export class WorkbenchComponent extends React.Component<WorkbenchProps> {
       'publishUnpublishDataset',
       'handleShowStatus',
       'handleShowHistory',
-      'handleDiscardChanges',
+      'handleDiscardChangesAndFetch',
       'handleCopyLink'
     ].forEach((m) => { this[m] = this[m].bind(this) })
   }
@@ -94,7 +94,7 @@ export class WorkbenchComponent extends React.Component<WorkbenchProps> {
     ipcRenderer.on('open-working-directory', this.openWorkingDirectory)
     ipcRenderer.on('publish-unpublish-dataset', this.publishUnpublishDataset)
 
-    this.props.fetchWorkbench()
+    this.props.fetchWorkbench(this.props.qriRef)
   }
 
   componentWillUnmount () {
@@ -122,7 +122,7 @@ export class WorkbenchComponent extends React.Component<WorkbenchProps> {
   async componentDidUpdate (prevProps: WorkbenchProps) {
     if (prevProps.qriRef.location !== this.props.qriRef.location) {
       // TODO (b5) - this was bailing early when fetch happened
-      this.props.fetchWorkbench()
+      this.props.fetchWorkbench(this.props.qriRef)
     }
   }
 
@@ -146,9 +146,10 @@ export class WorkbenchComponent extends React.Component<WorkbenchProps> {
       })
   }
 
-  handleDiscardChanges (component: SelectedComponent) {
+  handleDiscardChangesAndFetch (component: SelectedComponent) {
+    const { username, name } = this.props.qriRef
     if (this.props.fsiPath !== '') {
-      this.props.discardChanges(component)
+      this.props.discardChangesAndFetch(username, name, component)
       this.props.discardMutationsChanges(component)
       return
     }
@@ -302,7 +303,7 @@ interface WorkbenchRouterProps {
   hasDatasets: boolean
   setModal: (modal: Modal) => void
   fsiPath: string
-  fetchWorkingDatasetDetails: () => ApiActionThunk
+  fetchWorkingDatasetDetails: (username: string, name: string) => ApiActionThunk
   linkButton: boolean | JSX.Element | undefined
   publishButton: boolean | JSX.Element | undefined
   modified: boolean
@@ -310,14 +311,14 @@ interface WorkbenchRouterProps {
 }
 
 const WorkbenchRouter: React.FunctionComponent<WorkbenchRouterProps> = (props) => {
-  const { sidebarWidth, latestPath, modified, hasDatasets, setModal, fsiPath, linkButton, publishButton } = props
+  const { qriRef, sidebarWidth, latestPath, modified, hasDatasets, setModal, fsiPath, linkButton, publishButton } = props
   const location = useLocation()
   const { path } = useRouteMatch()
 
   const wrap = <><Prompt when={modified} message={(location) => {
     if (location.pathname.includes('workbench')) return false
     if (fsiPath !== '') {
-      fetchWorkingDatasetDetails()
+      fetchWorkingDatasetDetails(qriRef.username, qriRef.name)
       return true
     }
     return `You have uncommited changes! Click 'cancel' and commit these changes before you navigate away or you will lose your work.`
@@ -399,6 +400,8 @@ const WorkbenchRouter: React.FunctionComponent<WorkbenchRouterProps> = (props) =
 }
 
 const mapStateToProps = (state: any, ownProps: WorkbenchProps) => {
+  console.log('in workbench map state to props')
+  console.log(ownProps)
   const qriRef = qriRefFromRoute(ownProps)
   const versions = selectHistory(state)
   return {
@@ -429,7 +432,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
     resetMutationsStatus,
     fetchWorkbench,
     fetchWorkingDatasetDetails,
-    discardChanges,
+    discardChangesAndFetch,
     discardMutationsChanges
   }, dispatch)
 }

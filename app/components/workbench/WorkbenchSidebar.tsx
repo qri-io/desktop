@@ -133,9 +133,6 @@ export const WorkbenchSidebarComponent: React.FunctionComponent<WorkbenchSidebar
 
 const mapStateToProps = (state: any, ownProps: WorkbenchSidebarProps) => {
   const history = selectHistory(state)
-  console.log('sidebar match state to props')
-  console.log(ownProps)
-  console.log(qriRefFromRoute(ownProps))
   return {
     ...ownProps,
     qriRef: qriRefFromRoute(ownProps),

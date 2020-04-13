@@ -6,7 +6,7 @@ import { CSSTransition } from 'react-transition-group'
 import { ApiAction } from '../../store/api'
 import { validateDatasetReference } from '../../utils/formValidation'
 
-import { addDataset } from '../../actions/api'
+import { addDatasetAndFetch } from '../../actions/api'
 import { dismissModal } from '../../actions/ui'
 
 import Modal from './Modal'
@@ -19,13 +19,13 @@ interface AddDatasetProps {
   // func to call when we cancel or click away from the modal
   onDismissed: () => void
   // func to call when we hit submit, this adds the dataset from the network
-  addDataset: (peername: string, name: string) => Promise<ApiAction>
+  addDatasetAndFetch: (peername: string, name: string) => Promise<ApiAction>
 }
 
 const AddDatasetComponent: React.FunctionComponent<AddDatasetProps> = (props) => {
   const {
     onDismissed,
-    addDataset
+    addDatasetAndFetch
   } = props
 
   const [datasetReference, setDatasetReference] = React.useState('')
@@ -57,10 +57,10 @@ const AddDatasetComponent: React.FunctionComponent<AddDatasetProps> = (props) =>
     setLoading(true)
     error && setError('')
 
-    if (!addDataset) return
+    if (!addDatasetAndFetch) return
     const [peername, datasetName] = datasetReference.split('/')
 
-    addDataset(peername, datasetName)
+    addDatasetAndFetch(peername, datasetName)
       .then(() => { onDismissed() })
       .catch((action) => {
         setDismissable(true)
@@ -123,7 +123,7 @@ const mapStateToProps = (state: any, ownProps: AddDatasetProps) => {
 
 const mapDispatchToProps = (dispatch: Dispatch) => {
   return bindActionCreators({
-    addDataset: addDataset,
+    addDatasetAndFetch,
     onDismissed: dismissModal
   }, dispatch)
 }

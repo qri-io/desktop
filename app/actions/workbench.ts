@@ -25,13 +25,21 @@ import { setCommit } from './selections'
 import { Dataset } from '../models/dataset'
 import { Status } from '../models/store'
 import { selectWorkingDataset, selectStatusFromMutations } from '../selections'
+import { QriRef } from '../models/qriRef'
 
 // fetchworkBench makes the necessary API requests to populate the workbench
 // based on what we know about the working dataset from the state tree
 // the returned promise resolves to true if loading thunks have been kicked off
-export function fetchWorkbench (): LaunchedFetchesAction {
+export function fetchWorkbench (qriRef: QriRef): LaunchedFetchesAction {
   return async (dispatch, getState) => {
+    console.log('in fetchWorkbench')
+    console.log(qriRef)
     const { workingDataset, selections, commitDetails } = getState()
+    const { username, name, path = '' } = qriRef
+
+    if (!username || !name) {
+      return false
+    }
     const head = commitDetails
     const history = workingDataset.history
     let fetching: boolean = true
@@ -39,11 +47,11 @@ export function fetchWorkbench (): LaunchedFetchesAction {
     if (!workingDataset.isLoading &&
        (selections.peername !== workingDataset.peername ||
         selections.name !== workingDataset.name)) {
-      dispatch(fetchHistory())
-      dispatch(fetchWorkingDataset())
-      dispatch(fetchWorkingStatus())
-      dispatch(fetchStats())
-      dispatch(fetchBody(-1))
+      dispatch(fetchHistory(username, name))
+      dispatch(fetchWorkingDataset(username, name))
+      dispatch(fetchWorkingStatus(username, name))
+      dispatch(fetchStats(username, name))
+      dispatch(fetchBody(username, name, -1))
       dispatch(setCommitTitle(''))
       dispatch(setCommitMessage(''))
       return fetching
@@ -53,10 +61,10 @@ export function fetchWorkbench (): LaunchedFetchesAction {
         (selections.peername !== head.peername ||
          selections.name !== head.name ||
          selections.commit !== head.path)) {
-      dispatch(fetchCommitDataset())
-      dispatch(fetchCommitStats())
-      dispatch(fetchCommitStatus())
-      dispatch(fetchCommitBody(-1))
+      dispatch(fetchCommitDataset(username, name, path))
+      dispatch(fetchCommitStats(username, name, path))
+      dispatch(fetchCommitStatus(username, name, path))
+      dispatch(fetchCommitBody(username, name, path, -1))
       return fetching
     }
 

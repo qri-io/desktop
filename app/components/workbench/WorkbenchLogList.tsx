@@ -15,11 +15,12 @@ import { fetchHistory } from '../../actions/api'
 import { selectHistory } from '../../selections'
 
 import HistoryListItem from '../item/HistoryListItem'
+import { pathToHistory } from '../../paths'
 
 interface WorkbenchLogListProps extends RouteComponentProps<QriRef> {
   qriRef: QriRef
   versions: History
-  fetchHistory: (page?: number, pageSize?: number) => ApiActionThunk
+  fetchHistory: (username: string, name: string, page?: number, pageSize?: number) => ApiActionThunk
 }
 
 export const WorkbenchLogListComponent: React.FunctionComponent<WorkbenchLogListProps> = (props) => {
@@ -30,15 +31,17 @@ export const WorkbenchLogListComponent: React.FunctionComponent<WorkbenchLogList
     fetchHistory
   } = props
 
+  const { username, name } = qriRef
+
   const handleHistoryScroll = (e: any) => {
     if (e.target.scrollHeight === parseInt(e.target.scrollTop) + parseInt(e.target.offsetHeight)) {
-      fetchHistory(versions.pageInfo.page + 1, versions.pageInfo.pageSize)
+      fetchHistory(username, name, versions.pageInfo.page + 1, versions.pageInfo.pageSize)
     }
   }
 
   const handleExport = (versionInfo: VersionInfo) => {
     const window = remote.getCurrentWindow()
-    const zipName = `${qriRef.username}-${qriRef.name}-${moment(versionInfo.commitTime).format('MM-DD-YYYY-hh-mm-ss-a')}.zip`
+    const zipName = `${username}-${name}-${moment(versionInfo.commitTime).format('MM-DD-YYYY-hh-mm-ss-a')}.zip`
     const selectedPath: string | undefined = remote.dialog.showSaveDialogSync(window, { defaultPath: zipName })
 
     if (!selectedPath) {
@@ -66,7 +69,7 @@ export const WorkbenchLogListComponent: React.FunctionComponent<WorkbenchLogList
               last={i === versions.value.length - 1}
               selected={qriRef.path === item.path}
               onClick={() => {
-                history.push(`/workbench/${item.username}/${item.name}/at${item.path}`)
+                history.push(pathToHistory(username, name, item.path))
               }
               }
             />
@@ -89,7 +92,7 @@ export const WorkbenchLogListComponent: React.FunctionComponent<WorkbenchLogList
                 last={i === versions.value.length - 1}
                 selected={qriRef.path === item.path}
                 onClick={() => {
-                  history.push(`/workbench/${item.username}/${item.name}/at${item.path}`)
+                  history.push(pathToHistory(username, name, item.path))
                 }}
               />
             </ContextMenuArea>

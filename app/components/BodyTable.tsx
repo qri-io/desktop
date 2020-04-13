@@ -3,10 +3,11 @@ import * as _ from 'underscore'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSync } from '@fortawesome/free-solid-svg-icons'
 
-import { TypeLabel } from './TwoDSchemaLayout'
-import { bodyPageSizeDefault } from '../actions/api'
 import { PageInfo } from '../models/store'
+import { bodyPageSizeDefault } from '../actions/api'
 import { ApiActionThunk } from '../store/api'
+
+import { TypeLabel } from './TwoDSchemaLayout'
 import SpinnerWithIcon from './chrome/SpinnerWithIcon'
 
 interface BodyTableProps {

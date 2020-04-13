@@ -46,7 +46,7 @@ export interface PublishDatasetModal {
 
 export interface RemoveDatasetModal {
   type: ModalType.RemoveDataset
-  peername: string
+  username: string
   name: string
   fsiPath: string
 }
@@ -67,7 +67,7 @@ export type Modal = AddDatasetModal
 | ExportVersionModal
 | LinkDatasetModal
 | HideModal
-| PublishDataset
+| PublishDatasetModal
 | RemoveDatasetModal
 | SearchModal
-| UnpublishDataset
+| UnpublishDatasetModal

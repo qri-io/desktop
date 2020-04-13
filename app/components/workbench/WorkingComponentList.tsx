@@ -9,7 +9,7 @@ import { checkClearToCommit } from '../../utils/formValidation'
 import { QriRef, selectedComponentFromQriRef } from '../../models/qriRef'
 import { Status, SelectedComponent } from '../../models/store'
 
-import { discardChanges } from '../../actions/api'
+import { discardChangesAndFetch } from '../../actions/api'
 
 import { selectStatusFromMutations, selectFsiPath } from '../../selections'
 import { pathToEditComponent } from '../../paths'
@@ -22,7 +22,7 @@ interface WorkingComponentListProps extends RouteComponentProps {
   qriRef: QriRef
   status: Status
   selectedComponent: string
-  discardChanges?: (component: SelectedComponent) => void
+  discardChangesAndFetch?: (username: string, name: string, component: SelectedComponent) => void
   fsiPath?: string
 }
 
@@ -85,11 +85,11 @@ export const WorkingComponentListComponent: React.FunctionComponent<WorkingCompo
     status,
     history,
     selectedComponent,
-    discardChanges,
+    discardChangesAndFetch,
     fsiPath
   } = props
 
-  const { username = '', name: datasetName = '' } = qriRef
+  const { username, name: datasetName } = qriRef
 
   const visibleComponents = components.filter(hiddenComponentFilter(status))
 
@@ -125,7 +125,7 @@ export const WorkingComponentListComponent: React.FunctionComponent<WorkingCompo
               />
             )
 
-            if (discardChanges || fsiPath) {
+            if (discardChangesAndFetch || fsiPath) {
               let menuItems: MenuItemConstructorOptions[] = []
               if (fsiPath) {
                 menuItems = [
@@ -141,11 +141,11 @@ export const WorkingComponentListComponent: React.FunctionComponent<WorkingCompo
               }
 
               // add discard changes option of file is modified
-              if (discardChanges && fileStatus !== 'unmodified') {
+              if (discardChangesAndFetch && fileStatus !== 'unmodified') {
                 menuItems.unshift({
                   label: 'Discard Changes...',
                   click: () => {
-                    discardChanges(name as SelectedComponent)
+                    discardChangesAndFetch(username, datasetName, name as SelectedComponent)
                   }
                 })
                 if (menuItems.length > 1) {
@@ -192,7 +192,7 @@ const mapStateToProps = (state: any, ownProps: WorkingComponentListProps) => {
 
 const mapDispatchToProps = (dispatch: Dispatch, ownProps: WorkingComponentListProps) => {
   return bindActionCreators({
-    discardChanges
+    discardChangesAndFetch
   }, dispatch)
 }
 

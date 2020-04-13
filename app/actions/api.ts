@@ -21,6 +21,8 @@ import { datasetConvertStringToScriptBytes } from '../utils/datasetConvertString
 import { CLEAR_DATASET_HEAD } from '../reducers/commitDetail'
 import Dataset from '../models/dataset'
 
+import { pathToHistory } from '../paths'
+
 const pageSizeDefault = 100
 export const bodyPageSizeDefault = 50
 
@@ -41,11 +43,11 @@ export function pingApi (): ApiActionThunk {
 }
 
 // fetchWorkingDatasetDetails grabs the working dataset status, and history
-export function fetchWorkingDatasetDetails (): ApiActionThunk {
+export function fetchWorkingDatasetDetails (username: string, name: string): ApiActionThunk {
   return async (dispatch, getState) => {
     const whenOk = chainSuccess(dispatch, getState)
     let response: AnyAction
-    response = await fetchWorkingDataset()(dispatch, getState)
+    response = await fetchWorkingDataset(username, name)(dispatch, getState)
     // if the response returned in error, check the error
     // if it's 422, it means the dataset exists, it's just not linked to the filesystem
     // we still need the working dataset because it contains the history
@@ -53,25 +55,23 @@ export function fetchWorkingDatasetDetails (): ApiActionThunk {
       if (response.payload.err.code !== 422) {
         return response
       }
-      response = await fetchWorkingDataset()(dispatch, getState)
+      response = await fetchWorkingDataset(username, name)(dispatch, getState)
     }
     if (response.payload.data.fsiPath) {
-      response = await whenOk(fetchWorkingStatus())(response)
+      response = await whenOk(fetchWorkingStatus(username, name))(response)
     }
-    response = await whenOk(fetchBody(-1))(response)
-    response = await whenOk(fetchStats())(response)
-    response = await whenOk(fetchHistory(-1))(response)
+    response = await whenOk(fetchBody(username, name, -1))(response)
+    response = await whenOk(fetchStats(username, name))(response)
+    response = await whenOk(fetchHistory(username, name, -1))(response)
 
     return response
   }
 }
 
-export function fetchModifiedComponents (): ApiActionThunk {
-export function fetchModifiedComponents (qriRef: QriRef): ApiActionThunk {
+export function fetchModifiedComponents (username: string, name: string): ApiActionThunk {
   return async (dispatch, getState) => {
-    const { selections, workingDataset } = getState()
+    const { workingDataset } = getState()
     const { path } = workingDataset
-    const { peername, name } = selections
 
     let response: Action
 
@@ -81,7 +81,7 @@ export function fetchModifiedComponents (qriRef: QriRef): ApiActionThunk {
         endpoint: '',
         method: 'GET',
         segments: {
-          peername,
+          peername: username,
           name
         },
         map: mapDataset
@@ -99,7 +99,7 @@ export function fetchModifiedComponents (qriRef: QriRef): ApiActionThunk {
           pageSize: bodyPageSizeDefault
         },
         segments: {
-          peername,
+          peername: username,
           name,
           path
         },
@@ -138,12 +138,9 @@ export function fetchMyDatasets (page: number = 1, pageSize: number = pageSizeDe
   }
 }
 
-export function fetchWorkingDataset (): ApiActionThunk {
-  return async (dispatch, getState) => {
-    const { selections } = getState()
-    const { peername, name } = selections
-
-    if (peername === '' || name === '') {
+export function fetchWorkingDataset (username: string, name: string): ApiActionThunk {
+  return async (dispatch) => {
+    if (username === '' || name === '') {
       return Promise.reject(new Error('no peername or name selected'))
     }
 
@@ -153,7 +150,7 @@ export function fetchWorkingDataset (): ApiActionThunk {
         endpoint: '',
         method: 'GET',
         segments: {
-          peername,
+          peername: username,
           name
         },
         map: mapDataset
@@ -163,30 +160,27 @@ export function fetchWorkingDataset (): ApiActionThunk {
   }
 }
 
-export function fetchCommitDetail (): ApiActionThunk {
+export function fetchCommitDetail (username: string, name: string, path: string): ApiActionThunk {
   return async (dispatch, getState) => {
     const whenOk = chainSuccess(dispatch, getState)
     let response: Action
 
-    response = await fetchCommitDataset()(dispatch, getState)
-    response = await whenOk(fetchCommitStatus())(response)
-    response = await whenOk(fetchCommitBody(-1))(response)
-    response = await whenOk(fetchCommitStats())(response)
+    response = await fetchCommitDataset(username, name, path)(dispatch, getState)
+    response = await whenOk(fetchCommitStatus(username, name, path))(response)
+    response = await whenOk(fetchCommitBody(username, name, path, -1))(response)
+    response = await whenOk(fetchCommitStats(username, name, path))(response)
 
     return response
   }
 }
 
-export function fetchCommitDataset (): ApiActionThunk {
-  return async (dispatch, getState) => {
-    const { selections } = getState()
-    const { commit } = selections
-
-    if (commit === '') {
+export function fetchCommitDataset (username: string, name: string, path: string): ApiActionThunk {
+  return async (dispatch) => {
+    if (path === '') {
       return dispatch({
         type: CLEAR_DATASET_HEAD,
-        peername: selections.peername,
-        name: selections.name
+        username,
+        name
       })
     }
 
@@ -196,9 +190,9 @@ export function fetchCommitDataset (): ApiActionThunk {
         endpoint: '',
         method: 'GET',
         segments: {
-          peername: selections.peername,
-          name: selections.name,
-          path: commit
+          username,
+          name,
+          path
         },
         map: mapDataset
       }
@@ -208,16 +202,13 @@ export function fetchCommitDataset (): ApiActionThunk {
   }
 }
 
-export function fetchCommitStatus (): ApiActionThunk {
-  return async (dispatch, getState) => {
-    const { selections } = getState()
-    const { commit } = selections
-
-    if (commit === '') {
+export function fetchCommitStatus (username: string, name: string, path: string): ApiActionThunk {
+  return async (dispatch) => {
+    if (path === '') {
       return dispatch({
         type: CLEAR_DATASET_HEAD,
-        peername: selections.peername,
-        name: selections.name
+        username,
+        name
       })
     }
 
@@ -227,9 +218,9 @@ export function fetchCommitStatus (): ApiActionThunk {
         endpoint: 'whatchanged',
         method: 'GET',
         segments: {
-          peername: selections.peername,
-          name: selections.name,
-          path: commit
+          username,
+          name,
+          path
         },
         map: mapStatus
       }
@@ -240,7 +231,7 @@ export function fetchCommitStatus (): ApiActionThunk {
 }
 
 // to invalidate pagination, set page to -1
-export function fetchHistory (page: number = 1, pageSize: number = pageSizeDefault): ApiActionThunk {
+export function fetchHistory (username: string, name: string, page: number = 1, pageSize: number = pageSizeDefault): ApiActionThunk {
   return async (dispatch, getState) => {
     const state = getState()
 
@@ -249,17 +240,14 @@ export function fetchHistory (page: number = 1, pageSize: number = pageSizeDefau
     // we need to emit a 'success' type, or our chainSuccess functions will fail
     if (doNotFetch) return new Promise(resolve => resolve({ type: 'SUCCESS' }))
 
-    const { selections } = getState()
-    const { peername, name } = selections
-
     const action = {
       type: 'history',
       [CALL_API]: {
         endpoint: 'history',
         method: 'GET',
         segments: {
-          peername: peername,
-          name: name
+          username,
+          name
         },
         pageInfo: {
           page: confirmedPage,
@@ -273,12 +261,9 @@ export function fetchHistory (page: number = 1, pageSize: number = pageSizeDefau
   }
 }
 
-export function fetchWorkingStatus (): ApiActionThunk {
-  return async (dispatch, getState) => {
-    const { selections } = getState()
-    const { peername, name } = selections
-
-    if (peername === '' || name === '') {
+export function fetchWorkingStatus (username: string, name: string): ApiActionThunk {
+  return async (dispatch) => {
+    if (username === '' || name === '') {
       return Promise.reject(new Error('no peername or name selected'))
     }
     const action = {
@@ -287,8 +272,8 @@ export function fetchWorkingStatus (): ApiActionThunk {
         endpoint: 'status',
         method: 'GET',
         segments: {
-          peername: peername,
-          name: name
+          username,
+          name
         },
         map: mapStatus
       }
@@ -299,11 +284,9 @@ export function fetchWorkingStatus (): ApiActionThunk {
 }
 
 // to invalidate pagination, set page to -1
-export function fetchBody (page: number = 1, pageSize: number = bodyPageSizeDefault): ApiActionThunk {
+export function fetchBody (username: string, name: string, page: number = 1, pageSize: number = bodyPageSizeDefault): ApiActionThunk {
   return async (dispatch, getState) => {
-    const { workingDataset, selections } = getState()
-    const { peername, name } = selections
-    const { path } = workingDataset
+    const { workingDataset } = getState()
 
     const { page: confirmedPage, doNotFetch } = actionWithPagination(page, workingDataset.components.body.pageInfo)
 
@@ -320,9 +303,8 @@ export function fetchBody (page: number = 1, pageSize: number = bodyPageSizeDefa
           pageSize
         },
         segments: {
-          peername,
-          name,
-          path
+          username,
+          name
         },
         map: mapBody
       }
@@ -333,16 +315,15 @@ export function fetchBody (page: number = 1, pageSize: number = bodyPageSizeDefa
 }
 
 // to invalidate pagination, set page to -1
-export function fetchCommitBody (page: number = 1, pageSize: number = bodyPageSizeDefault): ApiActionThunk {
+export function fetchCommitBody (username: string, name: string, path: string, page: number = 1, pageSize: number = bodyPageSizeDefault): ApiActionThunk {
   return async (dispatch, getState) => {
-    const { selections, commitDetails } = getState()
-    let { peername, name, commit: path } = selections
+    const { commitDetails } = getState()
 
     if (path === '') {
       return dispatch({
         type: CLEAR_DATASET_HEAD,
-        peername: selections.peername,
-        name: selections.name
+        username,
+        name
       })
     }
 
@@ -361,7 +342,7 @@ export function fetchCommitBody (page: number = 1, pageSize: number = bodyPageSi
           pageSize
         },
         segments: {
-          peername,
+          username,
           name,
           path
         },
@@ -372,19 +353,17 @@ export function fetchCommitBody (page: number = 1, pageSize: number = bodyPageSi
   }
 }
 
-export function fetchStats ():
+export function fetchStats (username: string, name: string):
 ApiActionThunk {
-  return async (dispatch, getState) => {
-    const { selections } = getState()
-
+  return async (dispatch) => {
     const response = await dispatch({
       type: 'stats',
       [CALL_API]: {
         endpoint: 'stats',
         method: 'GET',
         segments: {
-          peername: selections.peername,
-          name: selections.name
+          username,
+          name
         }
       }
     })
@@ -393,16 +372,14 @@ ApiActionThunk {
   }
 }
 
-export function fetchCommitStats ():
+export function fetchCommitStats (username: string, name: string, path: string):
 ApiActionThunk {
-  return async (dispatch, getState) => {
-    const { selections } = getState()
-
-    if (selections.commit === '') {
+  return async (dispatch) => {
+    if (path === '') {
       return dispatch({
         type: CLEAR_DATASET_HEAD,
-        peername: selections.peername,
-        name: selections.name
+        username,
+        name
       })
     }
 
@@ -412,9 +389,9 @@ ApiActionThunk {
         endpoint: 'stats',
         method: 'GET',
         segments: {
-          peername: selections.peername,
-          name: selections.name,
-          path: selections.commit
+          username,
+          name,
+          path
         }
       }
     })
@@ -423,10 +400,9 @@ ApiActionThunk {
   }
 }
 
-export function saveWorkingDataset (): ApiActionThunk {
+export function saveWorkingDataset (username: string, name: string): ApiActionThunk {
   return async (dispatch, getState) => {
     const { workingDataset, mutations } = getState()
-    const { peername, name } = workingDataset
     const { title, message } = mutations.save.value
     let body: Dataset
     const commit = { title, message }
@@ -447,7 +423,7 @@ export function saveWorkingDataset (): ApiActionThunk {
         endpoint: 'save',
         method: 'POST',
         segments: {
-          peername,
+          username,
           name
         },
         body: datasetConvertStringToScriptBytes(body)
@@ -458,24 +434,22 @@ export function saveWorkingDataset (): ApiActionThunk {
   }
 }
 
-export function saveWorkingDatasetAndFetch (): ApiActionThunk {
+export function saveWorkingDatasetAndFetch (username: string, name: string): ApiActionThunk {
   return async (dispatch, getState) => {
     let path: string
 
-    return saveWorkingDataset()(dispatch, getState)
+    return saveWorkingDataset(username, name)(dispatch, getState)
       .then(async (response) => {
         if (getActionType(response) === 'failure') throw response
         path = response.payload.data.path
-        response = await fetchWorkingDatasetDetails()(dispatch, getState)
+        response = await fetchWorkingDatasetDetails(username, name)(dispatch, getState)
         return response
       })
       .then((response) => {
         if (getActionType(response) === 'success') {
           dispatch(setSaveComplete())
           dispatch(openToast('success', 'commit', 'commit success!'))
-          dispatch(setSelectedListItem('commit', path))
-          dispatch(setActiveTab('history'))
-          dispatch(setSelectedListItem('commitComponent', DEFAULT_SELECTED_COMPONENT))
+          dispatch(push(pathToHistory(username, name, path)))
         }
         return response
       })
@@ -487,7 +461,7 @@ export function saveWorkingDatasetAndFetch (): ApiActionThunk {
   }
 }
 
-export function addDataset (peername: string, name: string): ApiActionThunk {
+export function addDataset (username: string, name: string): ApiActionThunk {
   return async (dispatch) => {
     const action = {
       type: 'add',
@@ -495,7 +469,7 @@ export function addDataset (peername: string, name: string): ApiActionThunk {
         endpoint: 'add',
         method: 'POST',
         segments: {
-          peername,
+          username,
           name
         },
         map: mapDataset
@@ -505,19 +479,16 @@ export function addDataset (peername: string, name: string): ApiActionThunk {
   }
 }
 
-export function addDatasetAndFetch (peername: string, name: string): ApiActionThunk {
+export function addDatasetAndFetch (username: string, name: string): ApiActionThunk {
   return async (dispatch, getState) => {
     const whenOk = chainSuccess(dispatch, getState)
     let response: Action
 
     try {
-      response = await addDataset(peername, name)(dispatch, getState)
+      response = await addDataset(username, name)(dispatch, getState)
       // reset pagination
       response = await whenOk(fetchMyDatasets(-1))(response)
-      dispatch(setWorkingDataset(peername, name))
-      dispatch(setActiveTab('history'))
-      dispatch(setSelectedListItem('component', DEFAULT_SELECTED_COMPONENT))
-      dispatch(push(`/workbench/${peername}/${name}`))
+      dispatch(push(pathToHistory(username, name, '')))
     } catch (action) {
       dispatch(openToast('error', 'add', action.payload.err.message))
       throw action
@@ -526,10 +497,8 @@ export function addDatasetAndFetch (peername: string, name: string): ApiActionTh
   }
 }
 
-export function publishDataset (): ApiActionThunk {
+export function publishDataset (username: string, name: string): ApiActionThunk {
   return async (dispatch, getState) => {
-    const { workingDataset } = getState()
-    const { peername, name } = workingDataset
     const whenOk = chainSuccess(dispatch, getState)
     const action = {
       type: 'publish',
@@ -537,7 +506,7 @@ export function publishDataset (): ApiActionThunk {
         endpoint: 'publish',
         method: 'POST',
         segments: {
-          peername,
+          username,
           name
         }
       }
@@ -546,7 +515,7 @@ export function publishDataset (): ApiActionThunk {
     try {
       let response: Action
       response = await dispatch(action)
-      await whenOk(fetchWorkingDataset())(response)
+      await whenOk(fetchWorkingDataset(username, name))(response)
     } catch (action) {
       throw action
     }
@@ -555,10 +524,8 @@ export function publishDataset (): ApiActionThunk {
   }
 }
 
-export function unpublishDataset (): ApiActionThunk {
+export function unpublishDataset (username: string, name: string): ApiActionThunk {
   return async (dispatch, getState) => {
-    const { workingDataset } = getState()
-    const { peername, name } = workingDataset
     const whenOk = chainSuccess(dispatch, getState)
     const action = {
       type: 'unpublish',
@@ -566,7 +533,7 @@ export function unpublishDataset (): ApiActionThunk {
         endpoint: 'publish',
         method: 'DELETE',
         segments: {
-          peername,
+          username,
           name
         }
       }
@@ -575,7 +542,7 @@ export function unpublishDataset (): ApiActionThunk {
     try {
       let response: Action
       response = await dispatch(action)
-      await whenOk(fetchWorkingDataset())(response)
+      await whenOk(fetchWorkingDataset(username, name))(response)
     } catch (action) {
       throw action
     }
@@ -584,7 +551,7 @@ export function unpublishDataset (): ApiActionThunk {
   }
 }
 
-export function linkDataset (peername: string, name: string, dir: string): ApiActionThunk {
+export function linkDataset (username: string, name: string, dir: string): ApiActionThunk {
   return async (dispatch) => {
     const action = {
       type: 'checkout',
@@ -592,7 +559,7 @@ export function linkDataset (peername: string, name: string, dir: string): ApiAc
         endpoint: 'checkout',
         method: 'POST',
         segments: {
-          peername,
+          username,
           name
         },
         query: {
@@ -604,20 +571,20 @@ export function linkDataset (peername: string, name: string, dir: string): ApiAc
   }
 }
 
-export function linkDatasetAndFetch (peername: string, name: string, dir: string): ApiActionThunk {
+export function linkDatasetAndFetch (username: string, name: string, dir: string): ApiActionThunk {
   return async (dispatch, getState) => {
     const whenOk = chainSuccess(dispatch, getState)
     let response: Action
 
     try {
-      response = await linkDataset(peername, name, dir)(dispatch, getState).then((response) => {
+      response = await linkDataset(username, name, dir)(dispatch, getState).then((response) => {
         dispatch(resetMutationsDataset())
         dispatch(resetMutationsStatus())
         return response
       })
       // reset pagination
       response = await whenOk(fetchMyDatasets(-1))(response)
-      response = await whenOk(fetchWorkingDatasetDetails())(response)
+      response = await whenOk(fetchWorkingDatasetDetails(username, name))(response)
     } catch (action) {
       throw action
     }
@@ -625,18 +592,15 @@ export function linkDatasetAndFetch (peername: string, name: string, dir: string
   }
 }
 
-export function discardChanges (component: SelectedComponent): ApiActionThunk {
-  return async (dispatch, getState) => {
-    const { selections } = getState()
-    const { peername, name } = selections
-
+export function discardChanges (username: string, name: string, component: SelectedComponent): ApiActionThunk {
+  return async (dispatch) => {
     const action = {
       type: 'restore',
       [CALL_API]: {
         endpoint: 'restore',
         method: 'POST',
         segments: {
-          peername,
+          username,
           name
         },
         query: {
@@ -648,13 +612,13 @@ export function discardChanges (component: SelectedComponent): ApiActionThunk {
   }
 }
 
-export function discardChangesAndFetch (component: SelectedComponent): ApiActionThunk {
+export function discardChangesAndFetch (username: string, name: string, component: SelectedComponent): ApiActionThunk {
   return async (dispatch, getState) => {
     let response: Action
-    response = await discardChanges(component)(dispatch, getState)
+    response = await discardChanges(username, name, component)(dispatch, getState)
       .then((res) => {
-        dispatch(fetchWorkingDataset())
-        dispatch(fetchWorkingStatus())
+        dispatch(fetchWorkingDataset(username, name))
+        dispatch(fetchWorkingStatus(username, name))
         return res
       })
     return response
@@ -662,7 +626,7 @@ export function discardChangesAndFetch (component: SelectedComponent): ApiAction
 }
 
 export function removeDataset (
-  peername: string,
+  username: string,
   name: string,
   isLinked: boolean = false,
   keepFiles: boolean = true
@@ -683,7 +647,7 @@ export function removeDataset (
         endpoint: 'remove',
         method: 'DELETE',
         segments: {
-          peername,
+          username,
           name
         },
         query
@@ -693,7 +657,7 @@ export function removeDataset (
     let response: Action
     try {
       response = await dispatch(action)
-      dispatch(openToast('success', 'remove', `Removed ${peername}/${name}`))
+      dispatch(openToast('success', 'remove', `Removed ${username}/${name}`))
     } catch (action) {
       dispatch(openToast('error', 'remove', action.payload.err.message))
       throw action
@@ -704,12 +668,12 @@ export function removeDataset (
 }
 
 // remove the specified dataset, then refresh the dataset list
-export function removeDatasetAndFetch (peername: string, name: string, isLinked: boolean, keepFiles: boolean): ApiActionThunk {
+export function removeDatasetAndFetch (username: string, name: string, isLinked: boolean, keepFiles: boolean): ApiActionThunk {
   return async (dispatch, getState) => {
     let response: Action
 
     try {
-      response = await removeDataset(peername, name, isLinked, keepFiles)(dispatch, getState)
+      response = await removeDataset(username, name, isLinked, keepFiles)(dispatch, getState)
     } catch (action) {
       if (!action.payload.err.message.contains('directory not empty')) {
         throw action

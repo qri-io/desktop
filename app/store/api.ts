@@ -44,7 +44,7 @@ const identityFunc = <T>(a: T): T => a
 // ApiSegments is an interface for all possible query parameters passed to
 // the API
 export interface ApiSegments {
-  peername?: string
+  username?: string
   name?: string
   peerID?: string
   path?: string
@@ -132,8 +132,8 @@ function apiUrl (endpoint: string, segments?: ApiSegments, query?: ApiQuery, pag
   }
   let url = `http://localhost:2503/${endpoint}`
   if (segments) {
-    if (segments.peername) {
-      url = addToUrl(url, segments.peername)
+    if (segments.username) {
+      url = addToUrl(url, segments.username)
     }
     if (segments.name) {
       url = addToUrl(url, segments.name)
