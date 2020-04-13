@@ -1,7 +1,15 @@
 import Dataset, { Commit } from "./models/dataset"
 import cloneDeep from 'clone-deep'
 
-import Store, { CommitDetails, Status, PageInfo, SelectedComponent, History, VersionInfo, Selections, Toast, ApiConnection } from './models/store'
+import Store, {
+  CommitDetails,
+  Status, PageInfo,
+  SelectedComponent,
+  VersionInfo,
+  Selections,
+  Toast,
+  ApiConnection
+} from './models/store'
 import { Details, DetailsType } from "./models/details"
 import { datasetToVersionInfo } from "./actions/mappingFuncs"
 import { Modal, ModalType } from "./models/modals"
@@ -94,12 +102,30 @@ function datasetFromCommitDetails (commitDetails: CommitDetails): Dataset {
 
 /**
  *
+ * LOG STATE TREE
+ *
+ */
+
+export function selectLog (state: Store): VersionInfo[] {
+  return state.log.value
+}
+
+export function selectLogPageInfo (state: Store): PageInfo {
+  return state.log.pageInfo
+}
+
+/**
+ *
  * MYDATASETS STATE TREE
  *
  */
 
 export function selectMyDatasets (state: Store) {
   return state.myDatasets.value
+}
+
+export function selectMyDatasetsPageInfo (state: Store) {
+  return state.myDatasets.pageInfo
 }
 
 /**
@@ -254,10 +280,6 @@ export function selectToast (state: Store): Toast {
 
 export function selectFsiPath (state: Store) {
   return state.workingDataset.fsiPath
-}
-
-export function selectHistory (state: Store): History {
-  return state.workingDataset.history
 }
 
 export function selectIsLinked (state: Store): boolean {

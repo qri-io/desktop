@@ -8,34 +8,36 @@ import moment from 'moment'
 
 import { ApiActionThunk } from '../../store/api'
 import { QriRef, refStringFromQriRef } from '../../models/qriRef'
-import { History, VersionInfo } from '../../models/store'
+import { VersionInfo, PageInfo } from '../../models/store'
 
-import { fetchHistory } from '../../actions/api'
+import { fetchLog } from '../../actions/api'
 
-import { selectHistory } from '../../selections'
+import { selectLog, selectLogPageInfo } from '../../selections'
 
 import HistoryListItem from '../item/HistoryListItem'
 import { pathToHistory } from '../../paths'
 
 interface WorkbenchLogListProps extends RouteComponentProps<QriRef> {
   qriRef: QriRef
-  versions: History
-  fetchHistory: (username: string, name: string, page?: number, pageSize?: number) => ApiActionThunk
+  log: VersionInfo[]
+  logPageInfo: PageInfo
+  fetchLog: (username: string, name: string, page?: number, pageSize?: number) => ApiActionThunk
 }
 
 export const WorkbenchLogListComponent: React.FunctionComponent<WorkbenchLogListProps> = (props) => {
   const {
     qriRef,
-    versions,
+    log,
+    logPageInfo,
     history,
-    fetchHistory
+    fetchLog
   } = props
 
   const { username, name } = qriRef
 
   const handleHistoryScroll = (e: any) => {
     if (e.target.scrollHeight === parseInt(e.target.scrollTop) + parseInt(e.target.offsetHeight)) {
-      fetchHistory(username, name, versions.pageInfo.page + 1, versions.pageInfo.pageSize)
+      fetchLog(username, name, logPageInfo.page + 1, logPageInfo.pageSize)
     }
   }
 
@@ -59,14 +61,14 @@ export const WorkbenchLogListComponent: React.FunctionComponent<WorkbenchLogList
       onScroll={(e) => handleHistoryScroll(e)}
     >
       {
-        versions.value.map((item, i) => {
+        log.map((item, i) => {
           if (item.foreign) {
             return <HistoryListItem
               data={item}
               key={item.path}
               id={`HEAD-${i + 1}`}
               first={i === 0}
-              last={i === versions.value.length - 1}
+              last={i === log.length - 1}
               selected={qriRef.path === item.path}
               onClick={() => {
                 history.push(pathToHistory(username, name, item.path))
@@ -89,7 +91,7 @@ export const WorkbenchLogListComponent: React.FunctionComponent<WorkbenchLogList
                 key={item.path}
                 id={`HEAD-${i + 1}`}
                 first={i === 0}
-                last={i === versions.value.length - 1}
+                last={i === log.length - 1}
                 selected={qriRef.path === item.path}
                 onClick={() => {
                   history.push(pathToHistory(username, name, item.path))
@@ -105,13 +107,14 @@ export const WorkbenchLogListComponent: React.FunctionComponent<WorkbenchLogList
 const mapStateToProps = (state: any, ownProps: WorkbenchLogListProps) => {
   return {
     ...ownProps,
-    versions: selectHistory(state)
+    log: selectLog(state),
+    logPageInfo: selectLogPageInfo(state)
   }
 }
 
 const mapDispatchToProps = (dispatch: Dispatch) => {
   return bindActionCreators({
-    fetchHistory
+    fetchLog
   }, dispatch)
 }
 

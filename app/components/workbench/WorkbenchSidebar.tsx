@@ -10,7 +10,7 @@ import { VersionInfo, PageInfo } from '../../models/store'
 
 import { setActiveTab } from '../../actions/selections'
 
-import { selectHistory, selectVersionInfoFromWorkingDataset } from '../../selections'
+import { selectLog, selectVersionInfoFromWorkingDataset, selectLogPageInfo } from '../../selections'
 
 import ComponentList from './WorkingComponentList'
 import DatasetReference from '../DatasetReference'
@@ -21,8 +21,8 @@ import { pathToEdit, pathToHistory } from '../../paths'
 
 export interface WorkbenchSidebarData {
   versionInfo: VersionInfo
-  historyInfo: PageInfo
-  historyLength: number
+  logPageInfo: PageInfo
+  logLength: number
 }
 
 export interface WorkbenchSidebarProps extends RouteComponentProps<QriRef> {
@@ -42,7 +42,7 @@ export const WorkbenchSidebarComponent: React.FunctionComponent<WorkbenchSidebar
     // setActiveTab
   } = props
 
-  const { historyInfo, historyLength, versionInfo } = data
+  const { logPageInfo, logLength, versionInfo } = data
 
   const {
     username = '',
@@ -56,7 +56,7 @@ export const WorkbenchSidebarComponent: React.FunctionComponent<WorkbenchSidebar
 
   const datasetSelected = username !== '' && name !== ''
 
-  const historyToolTip = historyLength !== 0 || !datasetSelected ? 'Explore older versions of this dataset' : 'This dataset has no previous versions'
+  const historyToolTip = logLength !== 0 || !datasetSelected ? 'Explore older versions of this dataset' : 'This dataset has no previous versions'
 
   // if no dataset is selected, what to return
 
@@ -82,9 +82,9 @@ export const WorkbenchSidebarComponent: React.FunctionComponent<WorkbenchSidebar
         </div>
         <div
           id='history-tab'
-          className={classNames('tab', { 'active': activeTab === 'history', 'disabled': (historyInfo.error && historyInfo.error.includes('no history')) || !datasetSelected })}
+          className={classNames('tab', { 'active': activeTab === 'history', 'disabled': (logPageInfo.error && logPageInfo.error.includes('no history')) || !datasetSelected })}
           onClick={() => {
-            if ((!(historyInfo.error && historyInfo.error.includes('no history')) && datasetSelected)) {
+            if ((!(logPageInfo.error && logPageInfo.error.includes('no history')) && datasetSelected)) {
               history.push(pathToHistory(username, name, path))
             }
           }}
@@ -96,7 +96,7 @@ export const WorkbenchSidebarComponent: React.FunctionComponent<WorkbenchSidebar
       <div id='content' className='transition-group'>
         <CSSTransition
           classNames='fade'
-          in={activeTab === 'history' && historyInfo.isFetching}
+          in={activeTab === 'history' && logPageInfo.isFetching}
           component='div'
           timeout={300}
           mountOnEnter
@@ -117,7 +117,7 @@ export const WorkbenchSidebarComponent: React.FunctionComponent<WorkbenchSidebar
           </div>
         </CSSTransition>
         <CSSTransition
-          in={activeTab === 'history' && !historyInfo.isFetching}
+          in={activeTab === 'history' && !logPageInfo.isFetching}
           classNames='fade'
           component='div'
           timeout={300}
@@ -132,13 +132,12 @@ export const WorkbenchSidebarComponent: React.FunctionComponent<WorkbenchSidebar
 }
 
 const mapStateToProps = (state: any, ownProps: WorkbenchSidebarProps) => {
-  const history = selectHistory(state)
   return {
     ...ownProps,
     qriRef: qriRefFromRoute(ownProps),
     data: {
-      historyInfo: history.pageInfo,
-      historyLength: history.value.length,
+      logPageInfo: selectLogPageInfo(state),
+      logLength: selectLog(state).length,
       versionInfo: selectVersionInfoFromWorkingDataset(state)
     }
   }

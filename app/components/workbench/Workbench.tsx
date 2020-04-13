@@ -21,7 +21,7 @@ import { resetMutationsDataset, discardMutationsChanges, resetMutationsStatus } 
 import { fetchWorkbench } from '../../actions/workbench'
 import { discardChangesAndFetch, fetchWorkingDatasetDetails } from '../../actions/api'
 
-import { selectHistory, selectFsiPath, selectDetails, selectWorkingDatasetIsPublished, selectSessionUsername, selectMyDatasets, selectSidebarWidth, selectShowDetailsBar, selectMutationsIsDirty } from '../../selections'
+import { selectLog, selectFsiPath, selectDetails, selectWorkingDatasetIsPublished, selectSessionUsername, selectMyDatasets, selectSidebarWidth, selectShowDetailsBar, selectMutationsIsDirty } from '../../selections'
 
 import { defaultSidebarWidth } from '../../reducers/ui'
 
@@ -403,7 +403,7 @@ const mapStateToProps = (state: any, ownProps: WorkbenchProps) => {
   console.log('in workbench map state to props')
   console.log(ownProps)
   const qriRef = qriRefFromRoute(ownProps)
-  const versions = selectHistory(state)
+  const log = selectLog(state)
   return {
     qriRef,
     /**
@@ -412,7 +412,7 @@ const mapStateToProps = (state: any, ownProps: WorkbenchProps) => {
      * rather then the status of the dataset at head.
      */
     isPublished: selectWorkingDatasetIsPublished(state),
-    latestPath: versions.value.length !== 0 ? versions.value[0].path : '',
+    latestPath: log.value.length !== 0 ? log.value[0].path : '',
     fsiPath: selectFsiPath(state),
     hasDatasets: selectMyDatasets(state).length,
     showDetailsBar: selectShowDetailsBar(state),

@@ -205,14 +205,13 @@ export interface CommitDetails {
 
 export interface WorkingDataset extends CommitDetails {
   fsiPath: string
-  hasHistory: boolean
   published: boolean
-  history: History
+  log: Log
   isSaving: boolean
   isWriting: boolean
 }
 
-export interface History {
+export interface Log {
   pageInfo: PageInfo
   value: VersionInfo[]
 }
@@ -225,6 +224,7 @@ export default interface Store {
   myDatasets: MyDatasets
   workingDataset: WorkingDataset
   commitDetails: CommitDetails
+  log: Log
   mutations: Mutations
   router: RouterState
 }

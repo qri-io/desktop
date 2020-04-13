@@ -9,6 +9,7 @@ import myDatasetsReducer from './myDatasets'
 import workingDatasetReducer from './workingDataset'
 import commitDetailReducer from './commitDetail'
 import mutationsReducer from './mutations'
+import logReducer from './log'
 
 import { Session } from '../models/session'
 
@@ -62,6 +63,7 @@ const createRootReducer = (history) => combineReducers({
   myDatasets: myDatasetsReducer,
   workingDataset: workingDatasetReducer,
   commitDetails: commitDetailReducer,
+  log: logReducer,
   mutations: mutationsReducer,
   router: connectRouter(history)
 })

@@ -6,7 +6,7 @@ import { SelectedComponent } from '../models/store'
 import { actionWithPagination } from '../utils/pagination'
 import { openToast, setImportFileDetails } from './ui'
 import { setSaveComplete, resetMutationsDataset, resetMutationsStatus } from './mutations'
-import { setWorkingDataset, setSelectedListItem, setActiveTab, clearSelection } from './selections'
+import { clearSelection } from './selections'
 import {
   mapDataset,
   mapRecord,
@@ -22,11 +22,18 @@ import { CLEAR_DATASET_HEAD } from '../reducers/commitDetail'
 import Dataset from '../models/dataset'
 
 import { pathToHistory } from '../paths'
+import { selectWorkingDatasetBodyPageInfo,
+  selectFsiPath,
+  selectMutationsCommit,
+  selectMutationsDataset,
+  selectSessionUsername,
+  selectMyDatasetsPageInfo,
+  selectHistoryDatasetBodyPageInfo,
+  selectLogPageInfo
+} from '../selections'
 
 const pageSizeDefault = 100
 export const bodyPageSizeDefault = 50
-
-const DEFAULT_SELECTED_COMPONENT = 'body'
 
 export function pingApi (): ApiActionThunk {
   return async (dispatch) => {
@@ -62,51 +69,7 @@ export function fetchWorkingDatasetDetails (username: string, name: string): Api
     }
     response = await whenOk(fetchBody(username, name, -1))(response)
     response = await whenOk(fetchStats(username, name))(response)
-    response = await whenOk(fetchHistory(username, name, -1))(response)
-
-    return response
-  }
-}
-
-export function fetchModifiedComponents (username: string, name: string): ApiActionThunk {
-  return async (dispatch, getState) => {
-    const { workingDataset } = getState()
-    const { path } = workingDataset
-
-    let response: Action
-
-    const resetComponents = {
-      type: 'resetComponents',
-      [CALL_API]: {
-        endpoint: '',
-        method: 'GET',
-        segments: {
-          peername: username,
-          name
-        },
-        map: mapDataset
-      }
-    }
-    response = await dispatch(resetComponents)
-
-    const resetBody = {
-      type: 'resetBody',
-      [CALL_API]: {
-        endpoint: 'body',
-        method: 'GET',
-        pageInfo: {
-          page: 1,
-          pageSize: bodyPageSizeDefault
-        },
-        segments: {
-          peername: username,
-          name,
-          path
-        },
-        map: mapDataset
-      }
-    }
-    response = await dispatch(resetBody)
+    response = await whenOk(fetchLog(username, name, -1))(response)
 
     return response
   }
@@ -115,8 +78,8 @@ export function fetchModifiedComponents (username: string, name: string): ApiAct
 // to invalidate pagination, set page to -1
 export function fetchMyDatasets (page: number = 1, pageSize: number = pageSizeDefault): ApiActionThunk {
   return async (dispatch, getState) => {
-    const state = getState()
-    const { page: confirmedPage, doNotFetch } = actionWithPagination(page, state.myDatasets.pageInfo)
+    const pageInfo = selectMyDatasetsPageInfo(getState())
+    const { page: confirmedPage, doNotFetch } = actionWithPagination(page, pageInfo)
 
     // we need to emit a 'success' type, or our chainSuccess functions will fail
     if (doNotFetch) return new Promise(resolve => resolve({ type: 'SUCCESS' }))
@@ -231,11 +194,10 @@ export function fetchCommitStatus (username: string, name: string, path: string)
 }
 
 // to invalidate pagination, set page to -1
-export function fetchHistory (username: string, name: string, page: number = 1, pageSize: number = pageSizeDefault): ApiActionThunk {
+export function fetchLog (username: string, name: string, page: number = 1, pageSize: number = pageSizeDefault): ApiActionThunk {
   return async (dispatch, getState) => {
-    const state = getState()
-
-    const { page: confirmedPage, doNotFetch } = actionWithPagination(page, state.workingDataset.history.pageInfo)
+    const pageInfo = selectLogPageInfo(getState())
+    const { page: confirmedPage, doNotFetch } = actionWithPagination(page, pageInfo)
 
     // we need to emit a 'success' type, or our chainSuccess functions will fail
     if (doNotFetch) return new Promise(resolve => resolve({ type: 'SUCCESS' }))
@@ -286,9 +248,9 @@ export function fetchWorkingStatus (username: string, name: string): ApiActionTh
 // to invalidate pagination, set page to -1
 export function fetchBody (username: string, name: string, page: number = 1, pageSize: number = bodyPageSizeDefault): ApiActionThunk {
   return async (dispatch, getState) => {
-    const { workingDataset } = getState()
+    const bodyPageInfo = selectWorkingDatasetBodyPageInfo(getState())
 
-    const { page: confirmedPage, doNotFetch } = actionWithPagination(page, workingDataset.components.body.pageInfo)
+    const { page: confirmedPage, doNotFetch } = actionWithPagination(page, bodyPageInfo)
 
     // we need to emit a 'success' type, or our chainSuccess functions will fail
     if (doNotFetch) return new Promise(resolve => resolve({ type: 'SUCCESS' }))
@@ -317,7 +279,7 @@ export function fetchBody (username: string, name: string, page: number = 1, pag
 // to invalidate pagination, set page to -1
 export function fetchCommitBody (username: string, name: string, path: string, page: number = 1, pageSize: number = bodyPageSizeDefault): ApiActionThunk {
   return async (dispatch, getState) => {
-    const { commitDetails } = getState()
+    const bodyPageInfo = selectHistoryDatasetBodyPageInfo(getState())
 
     if (path === '') {
       return dispatch({
@@ -327,7 +289,7 @@ export function fetchCommitBody (username: string, name: string, path: string, p
       })
     }
 
-    const { page: confirmedPage, doNotFetch } = actionWithPagination(page, commitDetails.components.body.pageInfo)
+    const { page: confirmedPage, doNotFetch } = actionWithPagination(page, bodyPageInfo)
 
     // we need to emit a 'success' type, or our chainSuccess functions will fail
     if (doNotFetch) return new Promise(resolve => resolve({ type: 'SUCCESS' }))
@@ -402,17 +364,22 @@ ApiActionThunk {
 
 export function saveWorkingDataset (username: string, name: string): ApiActionThunk {
   return async (dispatch, getState) => {
-    const { workingDataset, mutations } = getState()
-    const { title, message } = mutations.save.value
-    let body: Dataset
-    const commit = { title, message }
-    if (workingDataset.fsiPath) {
-      body = {
+    const state = getState()
+    const fsiPath = selectFsiPath(state)
+    const commit = selectMutationsCommit(state)
+    const mutationsDataset = selectMutationsDataset(state)
+    let dataset: Dataset
+
+    // When a dataset is linked, qri will look to the filesystem to pull the dataset save
+    // therefore we only need to send over the contents of the commit in order to save
+    // correctly
+    if (fsiPath) {
+      dataset = {
         commit
       }
     } else {
-      body = {
-        ...mutations.dataset.value,
+      dataset = {
+        ...mutationsDataset,
         commit
       }
     }
@@ -426,7 +393,7 @@ export function saveWorkingDataset (username: string, name: string): ApiActionTh
           username,
           name
         },
-        body: datasetConvertStringToScriptBytes(body)
+        body: datasetConvertStringToScriptBytes(dataset)
       }
     }
 
@@ -722,11 +689,15 @@ export function fetchReadmePreview (peername: string, name: string): ApiActionTh
   }
 }
 
-// peername and name are the dataset to be renamed
+// username and name are the dataset to be renamed
 // newName is the new dataset's name, which will be in the user's namespace
-export function renameDataset (peername: string, name: string, newName: string): ApiActionThunk {
+export function renameDataset (username: string, name: string, newName: string): ApiActionThunk {
   return async (dispatch, getState) => {
-    const { peername: newPeername } = getState().session
+    const sessionUsername = selectSessionUsername(getState())
+    if (username !== sessionUsername) {
+      dispatch(openToast('error', 'rename', 'you can only change the name of a dataset in your namespace'))
+      throw new Error('user is attempting to change the name of dataset that is not in their namespace')
+    }
     const whenOk = chainSuccess(dispatch, getState)
     const action = {
       type: 'rename',
@@ -734,8 +705,8 @@ export function renameDataset (peername: string, name: string, newName: string):
         endpoint: 'rename',
         method: 'POST',
         body: {
-          current: `${peername}/${name}`,
-          new: `${newPeername}/${newName}`
+          current: `${username}/${name}`,
+          new: `${username}/${newName}`
         }
       }
     }
@@ -768,23 +739,19 @@ export function importFile (filePath: string, fileName: string, fileSize: number
       }
     }
     let response: Action
-    let redirectPath = '/workbench'
     try {
       dispatch(setImportFileDetails(fileName, fileSize))
       response = await dispatch(action)
       const { peername, name } = response.payload.data
       response = await whenOk(fetchMyDatasets(-1))(response)
-      redirectPath = `/workbench/${peername}/${name}`
-      dispatch(setWorkingDataset(peername, name))
+      dispatch(push(pathToHistory(peername, name, '')))
+      dispatch(setImportFileDetails('', 0))
     } catch (action) {
       dispatch(setImportFileDetails('', 0))
       dispatch(openToast('error', 'import', action.payload.err.message))
       throw action
     }
-    dispatch(setActiveTab('history'))
-    dispatch(setSelectedListItem('component', DEFAULT_SELECTED_COMPONENT))
-    dispatch(push(redirectPath))
-    dispatch(setImportFileDetails('', 0))
+
     return response
   }
 }

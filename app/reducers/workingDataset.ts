@@ -21,7 +21,6 @@ const initialState: WorkingDataset = {
   isLoading: false,
   fsiPath: '',
   published: true,
-  hasHistory: true,
   components: {
     readme: {
       value: ''
@@ -40,20 +39,10 @@ const initialState: WorkingDataset = {
       value: ''
     }
   },
-  history: {
-    pageInfo: {
-      isFetching: true,
-      page: 0,
-      fetchedAll: false,
-      pageSize: 0
-    },
-    value: []
-  },
   stats: []
 }
 
 export const [DATASET_REQ, DATASET_SUCC, DATASET_FAIL] = apiActionTypes('dataset')
-export const [HISTORY_REQ, HISTORY_SUCC, HISTORY_FAIL] = apiActionTypes('history')
 export const [DATASET_STATUS_REQ, DATASET_STATUS_SUCC, DATASET_STATUS_FAIL] = apiActionTypes('status')
 const [DATASET_BODY_REQ, DATASET_BODY_SUCC, DATASET_BODY_FAIL] = apiActionTypes('body')
 const [, RESETOTHERCOMPONENTS_SUCC, RESETOTHERCOMPONENTS_FAIL] = apiActionTypes('resetOtherComponents')
@@ -118,39 +107,6 @@ const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction
       }
       return {
         ...initialState
-      }
-
-    case HISTORY_REQ:
-      return {
-        ...state,
-        history: {
-          ...state.history,
-          pageInfo: reducerWithPagination(action, state.history.pageInfo),
-          value: action.pageInfo.page === 1 ? [] : state.history.value
-        }
-      }
-
-    case HISTORY_SUCC:
-      return {
-        ...state,
-        hasHistory: true,
-        history: {
-          ...state.history,
-          value: [
-            ...state.history.value,
-            ...action.payload.data
-          ],
-          pageInfo: reducerWithPagination(action, state.history.pageInfo)
-        }
-      }
-    case HISTORY_FAIL:
-      return {
-        ...state,
-        hasHistory: !action.payload.err.message.includes('no history'),
-        history: {
-          ...state.history,
-          pageInfo: reducerWithPagination(action, state.history.pageInfo)
-        }
       }
 
     case DATASET_STATUS_REQ:

@@ -15,7 +15,7 @@ import {
   fetchCommitDataset,
   fetchCommitStats,
   fetchCommitStatus,
-  fetchHistory,
+  fetchLog,
   fetchStats,
   fetchWorkingDataset,
   fetchWorkingStatus,
@@ -24,7 +24,7 @@ import {
 import { setCommit } from './selections'
 import { Dataset } from '../models/dataset'
 import { Status } from '../models/store'
-import { selectWorkingDataset, selectStatusFromMutations } from '../selections'
+import { selectWorkingDataset, selectStatusFromMutations, selectWorkingDatasetIsLoading, selectWorkingDatasetPeername, selectWorkingDatasetName, selectLog, selectHistoryDatasetIsLoading, selectHistoryDatasetPath, selectHistoryDatasetName, selectHistoryDatasetPeername } from '../selections'
 import { QriRef } from '../models/qriRef'
 
 // fetchworkBench makes the necessary API requests to populate the workbench
@@ -32,44 +32,50 @@ import { QriRef } from '../models/qriRef'
 // the returned promise resolves to true if loading thunks have been kicked off
 export function fetchWorkbench (qriRef: QriRef): LaunchedFetchesAction {
   return async (dispatch, getState) => {
-    console.log('in fetchWorkbench')
-    console.log(qriRef)
-    const { workingDataset, selections, commitDetails } = getState()
-    const { username, name, path = '' } = qriRef
+    const state = getState()
+    const workingIsLoading = selectWorkingDatasetIsLoading(state)
+    const workingUsername = selectWorkingDatasetPeername(state)
+    const workingName = selectWorkingDatasetName(state)
+    const log = selectLog(state)
+    const { username: routeUsername, name: routeName, path: routePath = '' } = qriRef
 
-    if (!username || !name) {
+    if (!routeUsername || !routeName) {
       return false
     }
-    const head = commitDetails
-    const history = workingDataset.history
+
     let fetching: boolean = true
 
-    if (!workingDataset.isLoading &&
-       (selections.peername !== workingDataset.peername ||
-        selections.name !== workingDataset.name)) {
-      dispatch(fetchHistory(username, name))
-      dispatch(fetchWorkingDataset(username, name))
-      dispatch(fetchWorkingStatus(username, name))
-      dispatch(fetchStats(username, name))
-      dispatch(fetchBody(username, name, -1))
+    if (!workingIsLoading &&
+       (routeUsername !== workingUsername ||
+        routeName !== workingName)) {
+      dispatch(fetchLog(routeUsername, routeName))
+      dispatch(fetchWorkingDataset(routeUsername, routeName))
+      dispatch(fetchWorkingStatus(routeUsername, routeName))
+      dispatch(fetchStats(routeUsername, routeName))
+      dispatch(fetchBody(routeUsername, routeName, -1))
       dispatch(setCommitTitle(''))
       dispatch(setCommitMessage(''))
       return fetching
     }
 
-    if (!head.isLoading &&
-        (selections.peername !== head.peername ||
-         selections.name !== head.name ||
-         selections.commit !== head.path)) {
-      dispatch(fetchCommitDataset(username, name, path))
-      dispatch(fetchCommitStats(username, name, path))
-      dispatch(fetchCommitStatus(username, name, path))
-      dispatch(fetchCommitBody(username, name, path, -1))
+    const versionIsLoading = selectHistoryDatasetIsLoading(state)
+    const versionUsername = selectHistoryDatasetPeername(state)
+    const versionName = selectHistoryDatasetName(state)
+    const versionPath = selectHistoryDatasetPath(state)
+
+    if (!versionIsLoading &&
+        (routeUsername !== versionUsername ||
+         routeName !== versionName ||
+         routePath !== versionPath)) {
+      dispatch(fetchCommitDataset(routeUsername, routeName, routePath))
+      dispatch(fetchCommitStats(routeUsername, routeName, routePath))
+      dispatch(fetchCommitStatus(routeUsername, routeName, routePath))
+      dispatch(fetchCommitBody(routeUsername, routeName, routePath, -1))
       return fetching
     }
 
-    if (selections.commit === '' && history.value.length !== 0) {
-      dispatch(setCommit(history.value[0].path))
+    if (routePath === '' && log.length !== 0) {
+      dispatch(setCommit(log[0].path))
     }
 
     return false
