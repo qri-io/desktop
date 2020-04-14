@@ -1,9 +1,51 @@
 .CodeMirror {
   padding: 1rem;
+
+  .CodeMirror-lines {
+    font-family: $font-family-monospace;
+  }
 }
+
+
 
 .editor-preview {
   padding: 1rem;
+
+  h1, h2 {
+    padding-bottom: .3em;
+    border-bottom: 1px solid #eaecef;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    margin-top: 24px;
+    margin-bottom: 16px;
+    font-weight: 600;
+    line-height: 1.25;
+  }
+
+  h1 {
+    font-size: 32px;
+  }
+
+  h2 {
+    font-size: 20px;
+  }
+
+  h3 {
+    font-size: 16px;
+  }
+
+  h4 {
+    font-size: 24px;
+  }
+
+  h5 {
+    font-size: 14px;
+  }
+
+  h6 {
+    font-size: 13.6px;
+  }
 }
 
 .editor-preview > blockquote {

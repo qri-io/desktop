@@ -176,7 +176,7 @@ export const NavbarComponent: React.FunctionComponent<NavbarProps> = (props: Nav
           <NavbarItem
             id='nav-options'
             icon={
-              <div className='photo' style={{
+              <div className='userphoto' style={{
                 backgroundImage: `url(${photo})`
               }}/>
             }
