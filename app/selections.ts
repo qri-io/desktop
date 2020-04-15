@@ -8,12 +8,15 @@ import Store, {
   VersionInfo,
   Selections,
   Toast,
-  ApiConnection
+  ApiConnection,
+  StatusInfo
 } from './models/store'
 import { Details, DetailsType } from "./models/details"
 import { datasetToVersionInfo } from "./actions/mappingFuncs"
 import { Modal, ModalType } from "./models/modals"
 import { Session } from "./models/session"
+import { SidebarTypes } from "./actions/ui"
+import { QriRef } from "./models/qriRef"
 
 /**
  *
@@ -114,6 +117,13 @@ export function selectLogPageInfo (state: Store): PageInfo {
   return state.log.pageInfo
 }
 
+export function selectLatestPath (state: Store): string {
+  if (selectLogPageInfo(state).isFetching) return ''
+  const log = selectLog(state)
+  if (log.length === 0) return ''
+  return log[0].path
+}
+
 /**
  *
  * MYDATASETS STATE TREE
@@ -128,6 +138,12 @@ export function selectMyDatasetsPageInfo (state: Store) {
   return state.myDatasets.pageInfo
 }
 
+export function selectHasDatasets (state: Store) {
+  const pageInfo = selectMyDatasetsPageInfo(state)
+  const length = selectMyDatasets(state).length
+  return pageInfo.isFetching || length > 0
+}
+
 /**
  *
  * MUTATIONS STATE TREE
@@ -136,13 +152,16 @@ export function selectMyDatasetsPageInfo (state: Store) {
 
 // combines working dataset and mutations dataset to return most
 // up-to-date version of the edited dataset
-export function selectMutationsDataset (state: Store): Dataset {
-  const { mutations } = state
-  const mutationsDataset = mutations.dataset.value
+export function selectDatasetFromMutations (state: Store): Dataset {
+  const mutationsDataset = selectMutationsDataset(state)
 
   const dataset = selectWorkingDataset(state)
   const d = { ...dataset, ...mutationsDataset }
   return d
+}
+
+export function selectMutationsDataset (state: Store): Dataset {
+  return state.mutations.dataset.value
 }
 
 export function selectMutationsIsDirty (state: Store): boolean {
@@ -220,6 +239,10 @@ export function selectSessionUsername (state: Store): string {
   return state.session.peername
 }
 
+export function selectInNamespace (state: Store, qriRef: QriRef): boolean {
+  return selectSessionUsername(state) === qriRef.username
+}
+
 /**
  *
  * UI STATE TREE
@@ -254,7 +277,7 @@ export function selectShowDetailsBar (state: Store): boolean {
   return state.ui.detailsBar.type !== DetailsType.NoDetails
 }
 
-export function selectSidebarWidth (state: Store, view: 'collection' | 'workbench' | 'network'): number {
+export function selectSidebarWidth (state: Store, view: SidebarTypes): number {
   const { ui } = state
   switch (view) {
     case 'collection':
@@ -284,6 +307,10 @@ export function selectFsiPath (state: Store) {
 
 export function selectIsLinked (state: Store): boolean {
   return !!state.workingDataset.fsiPath && state.workingDataset.fsiPath !== ''
+}
+
+export function selectIsPublished (state: Store): boolean {
+  return state.workingDataset.published
 }
 
 export function selectVersionInfoFromWorkingDataset (state: Store): VersionInfo {
@@ -332,6 +359,19 @@ export function selectWorkingStatus (state: Store): Status {
   return state.workingDataset.status
 }
 
+export function selectWorkingStatusInfo (state: Store, component: SelectedComponent): StatusInfo {
+  const status = selectWorkingStatus(state)
+  return status[component] || generateUnmodifiedStatusInfo(component)
+}
+
 export function selectWorkingStats (state: Store): Array<Record<string, any>> {
   return state.workingDataset.stats
+}
+
+function generateUnmodifiedStatusInfo (componentName: SelectedComponent): StatusInfo {
+  return {
+    filepath: componentName,
+    status: 'unmodified',
+    component: componentName
+  }
 }

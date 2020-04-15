@@ -177,6 +177,7 @@ export interface CommitDetails {
   name: string
   status: Status
   isLoading: boolean
+  published: boolean
   components: {
     commit: {
       value: Commit
@@ -205,7 +206,6 @@ export interface CommitDetails {
 
 export interface WorkingDataset extends CommitDetails {
   fsiPath: string
-  published: boolean
   log: Log
   isSaving: boolean
   isWriting: boolean

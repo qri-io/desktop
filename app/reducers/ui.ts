@@ -76,7 +76,7 @@ export default (state = initialState, action: AnyAction) => {
     case UI_SET_SIDEBAR_WIDTH:
       const { type, sidebarWidth } = action.payload
       switch (type) {
-        case 'dataset':
+        case 'workbench':
           store().setItem('datasetSidebarWidth', sidebarWidth)
           return {
             ...state,

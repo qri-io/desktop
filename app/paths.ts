@@ -18,3 +18,7 @@ export function pathToHistoryComponent (username: string, name: string, path: st
   if (path === '') return pathToHistory(username, name, path)
   return `${pathToHistory(username, name, path)}/${component}`
 }
+
+export function pathToNoDatasetSelected (): string {
+  return `/workbench`
+}
