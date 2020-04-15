@@ -7,7 +7,7 @@ import { RouteComponentProps, withRouter } from 'react-router-dom'
 import moment from 'moment'
 
 import { ApiActionThunk } from '../../store/api'
-import { QriRef, refStringFromQriRef } from '../../models/qriRef'
+import { QriRef, refStringFromQriRef, qriRefFromRoute } from '../../models/qriRef'
 import { VersionInfo, PageInfo } from '../../models/store'
 
 import { fetchLog } from '../../actions/api'
@@ -106,9 +106,10 @@ export const WorkbenchLogListComponent: React.FunctionComponent<WorkbenchLogList
 
 const mapStateToProps = (state: any, ownProps: WorkbenchLogListProps) => {
   return {
-    ...ownProps,
+    qriRef: qriRefFromRoute(ownProps),
     log: selectLog(state),
-    logPageInfo: selectLogPageInfo(state)
+    logPageInfo: selectLogPageInfo(state),
+    ...ownProps
   }
 }
 

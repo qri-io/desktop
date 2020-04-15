@@ -3,7 +3,7 @@ import { bindActionCreators, Dispatch } from 'redux'
 import { connect } from 'react-redux'
 
 import { Status, SelectedComponent, ComponentStatus } from '../../models/store'
-import { selectedComponentFromQriRef, QriRef, qriRefFromRoute } from '../../models/qriRef'
+import { QriRef, qriRefFromRoute } from '../../models/qriRef'
 
 import { setHistoryComponent } from '../../actions/selections'
 
@@ -14,7 +14,7 @@ import { components as componentsInfo } from './WorkingComponentList'
 import { withRouter, RouteComponentProps } from 'react-router-dom'
 import { pathToHistoryComponent } from '../../paths'
 
-interface HistoryComponentListProps extends RouteComponentProps {
+interface HistoryComponentListProps extends RouteComponentProps<QriRef> {
   qriRef: QriRef
   components?: SelectedComponent[]
   status: Status
@@ -73,11 +73,12 @@ export const HistoryComponentListComponent: React.FunctionComponent<HistoryCompo
 }
 
 const mapStateToProps = (state: any, ownProps: HistoryComponentListProps) => {
+  const qriRef = qriRefFromRoute(ownProps)
   return {
     ...ownProps,
-    qriRef: qriRefFromRoute(ownProps),
+    qriRef,
     status: selectHistoryStatus(state),
-    selectedComponent: selectedComponentFromQriRef(ownProps.qriRef),
+    selectedComponent: qriRef.component,
     components: selectHistoryComponentsList(state)
   }
 }

@@ -1,13 +1,10 @@
 import * as React from 'react'
 import { Action, Dispatch, bindActionCreators } from 'redux'
-import { ipcRenderer, shell, clipboard } from 'electron'
+import { ipcRenderer, shell } from 'electron'
 import { CSSTransition, TransitionGroup } from 'react-transition-group'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faFolderOpen, faFile, faLink, faCloud, faCloudUploadAlt } from '@fortawesome/free-solid-svg-icons'
-import { RouteComponentProps, Prompt, Switch, Route, useLocation, useRouteMatch, Redirect } from 'react-router-dom'
+import { RouteComponentProps, Switch, Route, useLocation, useRouteMatch, Redirect } from 'react-router-dom'
 import { connect } from 'react-redux'
 
-import { QRI_CLOUD_URL } from '../../constants'
 import { Details } from '../../models/details'
 import { Session } from '../../models/session'
 import { SelectedComponent } from '../../models/store'
@@ -21,20 +18,26 @@ import { resetMutationsDataset, discardMutationsChanges, resetMutationsStatus } 
 import { fetchWorkbench } from '../../actions/workbench'
 import { discardChangesAndFetch, fetchWorkingDatasetDetails } from '../../actions/api'
 
-import { selectLog, selectFsiPath, selectDetails, selectWorkingDatasetIsPublished, selectSessionUsername, selectMyDatasets, selectSidebarWidth, selectShowDetailsBar, selectMutationsIsDirty } from '../../selections'
+import {
+  selectLog,
+  selectFsiPath,
+  selectDetails,
+  selectWorkingDatasetIsPublished,
+  selectSessionUsername,
+  selectShowDetailsBar,
+  selectMutationsIsDirty,
+  selectSidebarWidth,
+  selectHasDatasets
+} from '../../selections'
 
 import { defaultSidebarWidth } from '../../reducers/ui'
 
 import { Resizable } from '../Resizable'
-import Layout from '../Layout'
-import ComponentRouter from './ComponentRouter'
-import NoDatasetSelected from './NoDatasetSelected'
-import HeaderColumnButton from '../chrome/HeaderColumnButton'
-import Hamburger from '../chrome/Hamburger'
-import WorkbenchSidebar from './WorkbenchSidebar'
 import DetailsBarContainer from '../../containers/DetailsBarContainer'
 import CommitDetails from './CommitDetails'
-import NoDatasets from '../NoDatasets'
+import { pathToNoDatasetSelected, pathToEdit, pathToHistory } from '../../paths'
+import NoDatasets from './NoDatasets'
+import EditDataset from './EditDataset'
 // import NotInNamespace from './NotInNamespace'
 
 // TODO (b5) - is this still required?
@@ -81,9 +84,7 @@ export class WorkbenchComponent extends React.Component<WorkbenchProps> {
       'openWorkingDirectory',
       'publishUnpublishDataset',
       'handleShowStatus',
-      'handleShowHistory',
-      'handleDiscardChangesAndFetch',
-      'handleCopyLink'
+      'handleShowHistory'
     ].forEach((m) => { this[m] = this[m].bind(this) })
   }
 
@@ -115,10 +116,6 @@ export class WorkbenchComponent extends React.Component<WorkbenchProps> {
     this.props.setActiveTab('history')
   }
 
-  private handleCopyLink () {
-    clipboard.writeText(`${QRI_CLOUD_URL}/${this.props.qriRef.username}/${this.props.qriRef.name}`)
-  }
-
   async componentDidUpdate (prevProps: WorkbenchProps) {
     if (prevProps.qriRef.location !== this.props.qriRef.location) {
       // TODO (b5) - this was bailing early when fetch happened
@@ -146,120 +143,19 @@ export class WorkbenchComponent extends React.Component<WorkbenchProps> {
       })
   }
 
-  handleDiscardChangesAndFetch (component: SelectedComponent) {
-    const { username, name } = this.props.qriRef
-    if (this.props.fsiPath !== '') {
-      this.props.discardChangesAndFetch(username, name, component)
-      this.props.discardMutationsChanges(component)
-      return
-    }
-    this.props.discardMutationsChanges(component)
-  }
-
   render () {
     const {
       qriRef,
-      isPublished,
       hasDatasets,
       sidebarWidth,
-      modified = false,
-      inNamespace,
-      fsiPath,
-      latestPath,
-
-      setModal
+      latestPath
     } = this.props
-
-    const username = qriRef.username || ''
-    const name = qriRef.name || ''
-    // const activeTab = qriRef.path ? 'history' : 'status'
-
-    const datasetSelected = username !== '' && name !== ''
-
-    // isLinked is derived from fsiPath and only used locally
-    const isLinked = fsiPath !== ''
 
     // actions
     const {
       setSidebarWidth,
       showDetailsBar
     } = this.props
-
-    // const sidebarContent = (
-    //   <WorkbenchSidebar qriRef={qriRef} />
-    // )
-
-    let linkButton
-    if (datasetSelected) {
-      linkButton = isLinked ? (
-        <HeaderColumnButton
-          id='show-files'
-          icon={faFolderOpen}
-          label='Show Files'
-          onClick={this.openWorkingDirectory}
-        />) : inNamespace && (
-        <HeaderColumnButton
-          id='checkout'
-          label='checkout'
-          tooltip='Checkout this dataset to a folder on your computer'
-          icon={(
-            <span className='fa-layers fa-fw'>
-              <FontAwesomeIcon icon={faFile} size='lg'/>
-              <FontAwesomeIcon icon={faLink} transform='shrink-8' />
-            </span>
-          )}
-          onClick={() => { setModal({ type: ModalType.LinkDataset, username, name, modified }) }}
-        />)
-    }
-
-    let publishButton
-    if (inNamespace && datasetSelected) {
-      publishButton = isPublished ? (
-        <><HeaderColumnButton
-          id='view-in-cloud'
-          onClick={() => { shell.openExternal(`${QRI_CLOUD_URL}/${username}/${name}`) }}
-          icon={faCloud}
-          label='View in Cloud'
-        />
-        <Hamburger id='workbench-hamburger' data={[
-          {
-            icon: 'clone',
-            text: 'Copy Cloud Link',
-            onClick: this.handleCopyLink
-          },
-          {
-            icon: 'close',
-            text: 'Unpublish',
-            onClick: () => setModal({
-              type: ModalType.UnpublishDataset,
-              username: this.props.qriRef.username,
-              name: this.props.qriRef.name
-            })
-          }
-        ]} />
-        </>
-      ) : (
-        <span data-tip={
-          latestPath === ''
-            ? 'The dataset must have at least one commit before you can publish'
-            : 'Publish this dataset to Qri Cloud'
-        }>
-          <HeaderColumnButton
-            id='publish-button'
-            label='Publish'
-            icon={faCloudUploadAlt}
-            disabled={latestPath === ''}
-            onClick={() => {
-              setModal({
-                type: ModalType.PublishDataset,
-                username: this.props.qriRef.username || '',
-                name: this.props.qriRef.name || ''
-              })
-            }}
-          />
-        </span>
-      )
-    }
 
     return (
       <>
@@ -272,8 +168,8 @@ export class WorkbenchComponent extends React.Component<WorkbenchProps> {
             <Resizable
               id='details'
               width={sidebarWidth}
-              onResize={(width) => { setSidebarWidth('dataset', width) }}
-              onReset={() => { setSidebarWidth('dataset', defaultSidebarWidth) }}
+              onResize={(width) => { setSidebarWidth('workbench', width) }}
+              onReset={() => { setSidebarWidth('workbench', defaultSidebarWidth) }}
               maximumWidth={495}
             >
               <DetailsBarContainer />
@@ -282,14 +178,7 @@ export class WorkbenchComponent extends React.Component<WorkbenchProps> {
         </div>
         <WorkbenchRouter
           qriRef={qriRef}
-          sidebarWidth={sidebarWidth}
-          setModal={setModal}
           hasDatasets={hasDatasets}
-          fetchWorkingDatasetDetails={fetchWorkingDatasetDetails}
-          fsiPath={fsiPath}
-          modified={modified}
-          linkButton={linkButton}
-          publishButton={publishButton}
           latestPath={latestPath}
         />
       </>
@@ -299,35 +188,32 @@ export class WorkbenchComponent extends React.Component<WorkbenchProps> {
 
 interface WorkbenchRouterProps {
   qriRef: QriRef
-  sidebarWidth: number
   hasDatasets: boolean
-  setModal: (modal: Modal) => void
-  fsiPath: string
-  fetchWorkingDatasetDetails: (username: string, name: string) => ApiActionThunk
-  linkButton: boolean | JSX.Element | undefined
-  publishButton: boolean | JSX.Element | undefined
-  modified: boolean
   latestPath: string
 }
 
 const WorkbenchRouter: React.FunctionComponent<WorkbenchRouterProps> = (props) => {
-  const { qriRef, sidebarWidth, latestPath, modified, hasDatasets, setModal, fsiPath, linkButton, publishButton } = props
+  const { latestPath, hasDatasets } = props
   const location = useLocation()
   const { path } = useRouteMatch()
 
-  const wrap = <><Prompt when={modified} message={(location) => {
-    if (location.pathname.includes('workbench')) return false
-    if (fsiPath !== '') {
-      fetchWorkingDatasetDetails(qriRef.username, qriRef.name)
-      return true
+  // const wrap = <><Prompt when={modified} message={(location) => {
+  //   if (location.pathname.includes('workbench')) return false
+  //   if (fsiPath !== '') {
+  //     fetchWorkingDatasetDetails(qriRef.username, qriRef.name)
+  //     return true
+  //   }
+  //   return `You have uncommited changes! Click 'cancel' and commit these changes before you navigate away or you will lose your work.`
+  // }}/>
+  // </>
+
+  const noDatasetsRedirect = (component: JSX.Element) => {
+    if (!hasDatasets) {
+      return <Redirect to={pathToNoDatasetSelected()} />
+    } else {
+      return component
     }
-    return `You have uncommited changes! Click 'cancel' and commit these changes before you navigate away or you will lose your work.`
-  }}/>
-  <div className='main-content-header'>
-    {linkButton}
-    {publishButton}
-  </div>
-  </>
+  }
 
   return (
     <TransitionGroup component={null}>
@@ -345,52 +231,27 @@ const WorkbenchRouter: React.FunctionComponent<WorkbenchRouterProps> = (props) =
       >
         <Switch location={location}>
           <Route exact path={path} render={() => {
-            return (
-              <Layout
-                id='dataset-container'
-                sidebarContent={<WorkbenchSidebar />}
-                sidebarWidth={sidebarWidth}
-                onSidebarResize={(width) => { setSidebarWidth('dataset', width) }}
-                maximumSidebarWidth={495}
-                mainContent={<>{wrap}{hasDatasets ? <NoDatasetSelected /> : <NoDatasets setModal={setModal} />}</>}
-              />
-            )
+            return <NoDatasets />
           } }/>
           <Route path={`${path}/edit/:username/:name`} render={() => {
-            return (
-              <Layout
-                id='dataset-container'
-                sidebarContent={<WorkbenchSidebar />}
-                sidebarWidth={sidebarWidth}
-                onSidebarResize={(width) => { setSidebarWidth('dataset', width) }}
-                maximumSidebarWidth={495}
-                mainContent={<>{wrap}{hasDatasets ? <ComponentRouter /> : <NoDatasets setModal={setModal} />}</>}
-              />
+            return noDatasetsRedirect(
+              <EditDataset />
             )
-          } }/>
+          }}/>
           <Route path={`${path}/:username/:name/at/ipfs/:path`} render={(props) => {
-            console.log('workbench in route')
-            console.log(props)
-            return (
-              <Layout
-                id='dataset-container'
-                sidebarContent={<WorkbenchSidebar />}
-                sidebarWidth={sidebarWidth}
-                onSidebarResize={(width) => { setSidebarWidth('dataset', width) }}
-                maximumSidebarWidth={495}
-                mainContent={<>{wrap}{hasDatasets ? <CommitDetails /> : <NoDatasets setModal={setModal} />}</>}
-              />
+            return noDatasetsRedirect(
+              <CommitDetails {...props} />
             )
           } }/>
           <Route path={`${path}/:username/:name`} render={({ match }) => {
             const { params } = match
             if (latestPath === '') {
               return <Redirect
-                to={`/workbench/edit/${params.username}/${params.name}`}
+                to={pathToEdit(params.username, params.name)}
               />
             }
             return <Redirect
-              to={`/workbench/${params.username}/${params.name}/at${latestPath}`}
+              to={pathToHistory(params.username, params.name, latestPath)}
             />
           }}/>
         </Switch>
@@ -400,8 +261,6 @@ const WorkbenchRouter: React.FunctionComponent<WorkbenchRouterProps> = (props) =
 }
 
 const mapStateToProps = (state: any, ownProps: WorkbenchProps) => {
-  console.log('in workbench map state to props')
-  console.log(ownProps)
   const qriRef = qriRefFromRoute(ownProps)
   const log = selectLog(state)
   return {
@@ -412,9 +271,9 @@ const mapStateToProps = (state: any, ownProps: WorkbenchProps) => {
      * rather then the status of the dataset at head.
      */
     isPublished: selectWorkingDatasetIsPublished(state),
-    latestPath: log.value.length !== 0 ? log.value[0].path : '',
+    latestPath: log.length !== 0 ? log[0].path : '',
     fsiPath: selectFsiPath(state),
-    hasDatasets: selectMyDatasets(state).length,
+    hasDatasets: selectHasDatasets(state),
     showDetailsBar: selectShowDetailsBar(state),
     sidebarWidth: selectSidebarWidth(state, 'workbench'),
     details: selectDetails(state),
@@ -427,10 +286,10 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
   return bindActionCreators({
     setModal,
     setActiveTab,
-    setSidebarWidth,
     resetMutationsDataset,
     resetMutationsStatus,
     fetchWorkbench,
+    setSidebarWidth,
     fetchWorkingDatasetDetails,
     discardChangesAndFetch,
     discardMutationsChanges

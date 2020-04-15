@@ -4,9 +4,10 @@ import path from 'path'
 import classNames from 'classnames'
 import { clipboard, shell, MenuItemConstructorOptions } from 'electron'
 import { connect } from 'react-redux'
+import { withRouter, RouteComponentProps } from 'react-router-dom'
 
 import { checkClearToCommit } from '../../utils/formValidation'
-import { QriRef, selectedComponentFromQriRef } from '../../models/qriRef'
+import { QriRef, qriRefFromRoute } from '../../models/qriRef'
 import { Status, SelectedComponent } from '../../models/store'
 
 import { discardChangesAndFetch } from '../../actions/api'
@@ -16,9 +17,8 @@ import { pathToEditComponent } from '../../paths'
 
 import ContextMenuArea from '../ContextMenuArea'
 import ComponentItem from '../item/ComponentItem'
-import { withRouter, RouteComponentProps } from 'react-router-dom'
 
-interface WorkingComponentListProps extends RouteComponentProps {
+interface WorkingComponentListProps extends RouteComponentProps<QriRef> {
   qriRef: QriRef
   status: Status
   selectedComponent: string
@@ -182,11 +182,13 @@ export const WorkingComponentListComponent: React.FunctionComponent<WorkingCompo
 }
 
 const mapStateToProps = (state: any, ownProps: WorkingComponentListProps) => {
+  const qriRef = qriRefFromRoute(ownProps)
   return {
-    ...ownProps,
     status: selectStatusFromMutations(state),
-    selectedComponent: selectedComponentFromQriRef(ownProps.qriRef),
-    fsiPath: selectFsiPath(state)
+    selectedComponent: qriRef.component,
+    fsiPath: selectFsiPath(state),
+    qriRef,
+    ...ownProps
   }
 }
 
