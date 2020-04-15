@@ -3,27 +3,32 @@ import SimpleMDE from 'react-simplemde-editor'
 import { useDebounce } from 'use-debounce'
 import { connect } from 'react-redux'
 import { Dispatch, bindActionCreators } from 'redux'
-import { RouteComponentProps } from 'react-router-dome'
+import { RouteComponentProps } from 'react-router-dom'
 
-import { ApiActionThunk } from '../../store/api'
-import { datasetConvertStringToScriptBytes } from '../../utils/datasetConvertStringToScriptBytes'
-import Dataset from '../../models/dataset'
-import { refStringFromQriRef, QriRef, qriRefFromRoute } from '../../models/qriRef'
-import { selectWorkingDatasetIsLoading, selectMutationsDataset, selectIsLinked, selectWorkingDatasetName, selectWorkingDatasetPeername } from '../../selections'
-import Store from '../../models/store'
-import { writeDataset } from '../../actions/workbench'
+import { ApiActionThunk } from '../../../store/api'
+import { datasetConvertStringToScriptBytes } from '../../../utils/datasetConvertStringToScriptBytes'
+import hasParseError from '../../../utils/hasParseError'
+import Dataset from '../../../models/dataset'
+import { refStringFromQriRef, QriRef, qriRefFromRoute } from '../../../models/qriRef'
+import Store, { StatusInfo } from '../../../models/store'
 
-import SpinnerWithIcon from '../chrome/SpinnerWithIcon'
+import { writeDataset } from '../../../actions/workbench'
+
+import { selectWorkingDatasetIsLoading, selectDatasetFromMutations, selectIsLinked, selectWorkingDatasetName, selectWorkingDatasetPeername, selectWorkingStatusInfo } from '../../../selections'
+
+import SpinnerWithIcon from '../../chrome/SpinnerWithIcon'
+import ParseError from '../ParseError'
 
 const DEBOUNCE_TIMER = 1000
 
-export interface ReadmeEditorProps extends RouteComponentProps {
+export interface ReadmeEditorProps extends RouteComponentProps<QriRef> {
   qriRef: QriRef
   data?: string
   loading: boolean
   isLinked: boolean
   peername: string
   name: string
+  statusInfo: StatusInfo
   write: (peername: string, name: string, dataset: any) => ApiActionThunk | void
 }
 
@@ -33,8 +38,13 @@ export const ReadmeEditorComponent: React.FunctionComponent<ReadmeEditorProps> =
     data = '',
     write,
     loading,
-    isLinked
+    isLinked,
+    statusInfo
   } = props
+
+  if (hasParseError(statusInfo)) {
+    return <ParseError component='readme' />
+  }
 
   const username = qriRef.username || ''
   const name = qriRef.name || ''
@@ -140,10 +150,11 @@ const mapStateToProps = (state: Store, ownProps: ReadmeEditorProps) => {
   return {
     ...ownProps,
     qriRef: qriRefFromRoute(ownProps),
-    data: selectMutationsDataset(state).readme,
+    data: selectDatasetFromMutations(state).readme,
     loading: selectWorkingDatasetIsLoading(state),
     isLinked: selectIsLinked(state),
     peername: selectWorkingDatasetPeername(state),
+    statusInfo: selectWorkingStatusInfo(state, 'readme'),
     name: selectWorkingDatasetName(state)
   }
 }

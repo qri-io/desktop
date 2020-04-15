@@ -5,33 +5,40 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { bindActionCreators, Dispatch } from 'redux'
 import { RouteComponentProps } from 'react-router-dom'
 
-import Dataset, { Structure as IStructure, Schema as ISchema } from '../../models/dataset'
-import { ApiActionThunk } from '../../store/api'
-import fileSize, { abbreviateNumber } from '../../utils/fileSize'
-import { selectMutationsDataset, selectWorkingDatasetIsLoading, selectWorkingDatasetPeername, selectWorkingDatasetName } from '../../selections'
-import Store from '../../models/store'
-import { writeDataset } from '../../actions/workbench'
-import { QriRef, qriRefFromRoute } from '../../models/qriRef'
+import Dataset, { Structure as IStructure, Schema as ISchema } from '../../../models/dataset'
+import { ApiActionThunk } from '../../../store/api'
+import fileSize, { abbreviateNumber } from '../../../utils/fileSize'
+import { selectDatasetFromMutations, selectWorkingDatasetIsLoading, selectWorkingDatasetPeername, selectWorkingDatasetName, selectWorkingStatusInfo } from '../../../selections'
+import Store, { StatusInfo } from '../../../models/store'
+import { writeDataset } from '../../../actions/workbench'
+import { QriRef, qriRefFromRoute } from '../../../models/qriRef'
+import hasParseError from '../../../utils/hasParseError'
 
-import SpinnerWithIcon from '../chrome/SpinnerWithIcon'
-import LabeledStats from '../item/LabeledStats'
-import Schema from '../structure/Schema'
-import ExternalLink from '../ExternalLink'
-import FormatConfigEditor from '../structure/FormatConfigEditor'
+import SpinnerWithIcon from '../../chrome/SpinnerWithIcon'
+import LabeledStats from '../../item/LabeledStats'
+import Schema from '../../structure/Schema'
+import ExternalLink from '../../ExternalLink'
+import FormatConfigEditor from '../../structure/FormatConfigEditor'
+import ParseError from '../ParseError'
 
-export interface StructureEditorProps extends RouteComponentProps {
+export interface StructureEditorProps extends RouteComponentProps<QriRef> {
   qriRef: QriRef
   data: IStructure
   showConfig?: boolean
   loading: boolean
+  statusInfo: StatusInfo
   write?: (peername: string, name: string, dataset: Dataset) => ApiActionThunk | void
 }
 
 export const StructureEditorComponent: React.FunctionComponent<StructureEditorProps> = (props) => {
-  const { data, write, loading, qriRef } = props
+  const { data, write, loading, qriRef, statusInfo } = props
 
   if (loading) {
     return <SpinnerWithIcon loading />
+  }
+
+  if (hasParseError(statusInfo)) {
+    return <ParseError component='structure' />
   }
 
   const username = qriRef.username || ''
@@ -101,9 +108,10 @@ const mapStateToProps = (state: Store, ownProps: StructureEditorProps) => {
   return {
     ...ownProps,
     qriRef: qriRefFromRoute(ownProps),
-    data: selectMutationsDataset(state).structure,
+    data: selectDatasetFromMutations(state).structure,
     loading: selectWorkingDatasetIsLoading(state),
     peername: selectWorkingDatasetPeername(state),
+    statusInfo: selectWorkingStatusInfo(state, 'structure'),
     name: selectWorkingDatasetName(state)
 
   }

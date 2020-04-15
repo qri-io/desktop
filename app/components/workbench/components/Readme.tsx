@@ -2,11 +2,10 @@ import * as React from 'react'
 import { connect } from 'react-redux'
 import { RouteComponentProps } from 'react-router-dom'
 
-import Store from '../../models/store'
-import { refStringFromQriRef, QriRef, qriRefFromRoute } from '../../models/qriRef'
-import { ReadmeEditorProps } from './ReadmeEditor'
+import Store from '../../../models/store'
+import { refStringFromQriRef, QriRef, qriRefFromRoute } from '../../../models/qriRef'
 
-export interface ReadmeProps extends RouteComponentProps {
+export interface ReadmeProps extends RouteComponentProps<QriRef> {
   qriRef: QriRef
 }
 
@@ -46,7 +45,7 @@ export const ReadmeComponent: React.FunctionComponent<ReadmeProps> = (props) => 
   )
 }
 
-const mapStateToProps = (state: Store, ownProps: ReadmeEditorProps) => {
+const mapStateToProps = (state: Store, ownProps: ReadmeProps) => {
   // get data for the currently selected component
   return {
     ...ownProps,

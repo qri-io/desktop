@@ -6,33 +6,32 @@ import path from 'path'
 import { useLocation, Switch, useRouteMatch, Redirect, Route, RouteComponentProps, withRouter } from 'react-router-dom'
 
 import { ApiActionThunk } from '../../store/api'
-import Store, { StatusInfo, SelectedComponent, ToastType } from '../../models/store'
+import Store, { SelectedComponent, ToastType } from '../../models/store'
 import Dataset from '../../models/dataset'
 import { QriRef, qriRefFromRoute } from '../../models/qriRef'
 
 import { openToast, closeToast } from '../../actions/ui'
 import { writeDataset } from '../../actions/workbench'
 
-import { selectWorkingDatasetIsLoading, selectWorkingDataset, selectSelectedComponent, selectStatusFromMutations, selectHistoryStatus, selectFsiPath, selectHistoryDatasetIsLoading, selectSelectedCommitComponent } from '../../selections'
+import { selectWorkingDatasetIsLoading, selectWorkingDataset, selectFsiPath, selectHistoryDatasetIsLoading } from '../../selections'
+// import { selectWorkingDatasetIsLoading, selectWorkingDataset, selectSelectedComponent, selectStatusFromMutations, selectHistoryStatus, selectFsiPath, selectHistoryDatasetIsLoading, selectSelectedCommitComponent } from '../../selections'
 
-import Body from './Body'
-import { getComponentDisplayProps } from './WorkingComponentList'
+import Body from './components/Body'
+// import { getComponentDisplayProps } from './WorkingComponentList'
 import CalloutBlock from '../chrome/CalloutBlock'
-import CommitEditor from './CommitEditor'
-import Commit from './Commit'
+import CommitEditor from './components/CommitEditor'
+import Commit from './components/Commit'
 import DropZone from '../chrome/DropZone'
-import Icon from '../chrome/Icon'
-import Metadata from './Metadata'
-import MetadataEditor from './MetadataEditor'
-import ReadmeEditor from './ReadmeEditor'
-import Readme from './Readme'
-import ParseError from './ParseError'
-import StatusDot from '../chrome/StatusDot'
+// import Icon from '../chrome/Icon'
+import Metadata from './components/Metadata'
+import MetadataEditor from './components/MetadataEditor'
+import ReadmeEditor from './components/ReadmeEditor'
+import Readme from './components/Readme'
 import Structure from '../Structure'
-import Transform from './Transform'
-import StructureEditor from './StructureEditor'
+import Transform from './components/Transform'
+import StructureEditor from './components/StructureEditor'
 
-interface ComponentRouterProps extends RouteComponentProps {
+interface ComponentRouterProps extends RouteComponentProps<QriRef> {
   // setting actions
   openToast: (type: ToastType, name: string, message: string) => Action
   closeToast: () => Action
@@ -40,7 +39,6 @@ interface ComponentRouterProps extends RouteComponentProps {
 
   isLoading: boolean
   component: SelectedComponent
-  statusInfo: StatusInfo
   fsiPath?: string
   bodyPath?: string
 
@@ -49,8 +47,6 @@ interface ComponentRouterProps extends RouteComponentProps {
 
 export const ComponentRouterComponent: React.FunctionComponent<ComponentRouterProps> = (props) => {
   const {
-    component: selectedComponent,
-    statusInfo,
     fsiPath,
     bodyPath,
     write,
@@ -63,9 +59,7 @@ export const ComponentRouterComponent: React.FunctionComponent<ComponentRouterPr
   const username = qriRef.username || ''
   const name = qriRef.name || ''
 
-  const hasParseError = statusInfo && statusInfo.status === 'parse error'
-  const component = selectedComponent || 'meta'
-  const { displayName, icon, tooltip } = getComponentDisplayProps(component)
+  // const { displayName, icon, tooltip } = getComponentDisplayProps(component)
 
   const [dragging, setDragging] = React.useState(false)
 
@@ -98,13 +92,13 @@ export const ComponentRouterComponent: React.FunctionComponent<ComponentRouterPr
     <div className='component-container'>
       <div className='component-header'>
         <div className='component-display-name-container'>
-          <div className='component-display-name' data-tip={tooltip}>
+          {/* <div className='component-display-name' data-tip={tooltip}>
             <Icon icon={icon} size='sm'/> {displayName}
-          </div>
+          </div> */}
         </div>
-        <div className='status-dot-container'>
+        {/* <div className='status-dot-container'>
           {statusInfo && <StatusDot status={statusInfo.status} />}
-        </div>
+        </div> */}
       </div>
       <div className='component-content transition-group' onDragEnter={dragHandler(true)}>
         <TransitionGroup component={null}>
@@ -119,16 +113,10 @@ export const ComponentRouterComponent: React.FunctionComponent<ComponentRouterPr
           >
             <Switch location={location}>
               <Route exact path={routePath}>
-                { routePath.includes('/edit')
-                  ? <Redirect to={`${url}/readme`} />
-                  : <Redirect to={`${url}/commit`} />
-                }
+                <Redirect to={`${url}/body`} />
               </Route>
               <Route path={`${routePath}/meta`} render={(props) => {
                 if (routePath.includes('/edit')) {
-                  if (hasParseError) {
-                    return <ParseError fsiPath={fsiPath || ''} filename={statusInfo && statusInfo.filepath} component={component} />
-                  }
                   return <MetadataEditor {...props} />
                 }
                 return <Metadata {...props} />
@@ -136,9 +124,6 @@ export const ComponentRouterComponent: React.FunctionComponent<ComponentRouterPr
               </Route>
               <Route path={`${routePath}/readme`} render={(props) => {
                 if (routePath.includes('/edit')) {
-                  if (hasParseError) {
-                    return <ParseError fsiPath={fsiPath || ''} filename={statusInfo && statusInfo.filepath} component={component} />
-                  }
                   return <ReadmeEditor {...props} />
                 }
                 return <Readme {...props} />
@@ -159,18 +144,12 @@ export const ComponentRouterComponent: React.FunctionComponent<ComponentRouterPr
                     cancelText='unstage file'
                     onCancel={() => { write(username, name, { bodyPath: '' }) }}
                   />}
-                  { hasParseError
-                    ? <ParseError fsiPath={fsiPath || ''} filename={statusInfo && statusInfo.filepath} component={component} />
-                    : <Body {...props} />
-                  }
+                  <Body {...props} />
                 </>
               }}>
               </Route>
               <Route path={`${routePath}/structure`} render={(props) => {
                 if (routePath.includes('/edit')) {
-                  if (hasParseError) {
-                    return <ParseError fsiPath={fsiPath || ''} filename={statusInfo && statusInfo.filepath} component={component} />
-                  }
                   return <StructureEditor {...props} />
                 }
                 return <Structure {...props} />
@@ -178,18 +157,12 @@ export const ComponentRouterComponent: React.FunctionComponent<ComponentRouterPr
               }>
               </Route>
               <Route path={`${routePath}/transform`} render={(props) => {
-                if (hasParseError) {
-                  return <ParseError fsiPath={fsiPath || ''} filename={statusInfo && statusInfo.filepath} component={component} />
-                }
                 return <Transform {...props} />
               }
               }>
               </Route>
               <Route path={`${routePath}/commit`} render={(props) => {
                 if (routePath.includes('/edit')) {
-                  if (hasParseError) {
-                    return <ParseError fsiPath={fsiPath || ''} filename={statusInfo && statusInfo.filepath} component={component} />
-                  }
                   return <CommitEditor {...props} />
                 }
                 return <Commit {...props} />
@@ -207,12 +180,8 @@ export const ComponentRouterComponent: React.FunctionComponent<ComponentRouterPr
 const mapStateToProps = (state: Store, ownProps: ComponentRouterProps) => {
   const qriRef = qriRefFromRoute(ownProps)
   const showHistory = !!qriRef.path
-  const selectedComponent = showHistory ? selectSelectedCommitComponent(state) : selectSelectedComponent(state)
-  const status = showHistory ? selectHistoryStatus(state) : selectStatusFromMutations(state)
   return {
     isLoading: showHistory ? selectWorkingDatasetIsLoading(state) : selectHistoryDatasetIsLoading(state),
-    component: selectedComponent,
-    statusInfo: status[selectedComponent],
     fsiPath: selectFsiPath(state),
     bodyPath: showHistory ? selectWorkingDataset(state).bodyPath : '',
     qriRef

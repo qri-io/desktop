@@ -6,18 +6,18 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSync } from '@fortawesome/free-solid-svg-icons'
 import { RouteComponentProps } from 'react-router-dom'
 
-import Store, { Status } from '../../models/store'
-import { saveWorkingDatasetAndFetch } from '../../actions/api'
-import { setCommitTitle, setCommitMessage } from '../../actions/mutations'
-import { validateCommitState } from '../../utils/formValidation'
-import { ApiAction } from '../../store/api'
-import { selectIsCommiting, selectStatusFromMutations, selectMutationsCommit } from '../../selections'
-import { refStringFromQriRef, QriRef } from '../../models/qriRef'
+import Store, { Status } from '../../../models/store'
+import { saveWorkingDatasetAndFetch } from '../../../actions/api'
+import { setCommitTitle, setCommitMessage } from '../../../actions/mutations'
+import { validateCommitState } from '../../../utils/formValidation'
+import { ApiAction } from '../../../store/api'
+import { selectIsCommiting, selectStatusFromMutations, selectMutationsCommit } from '../../../selections'
+import { refStringFromQriRef, QriRef, qriRefFromRoute } from '../../../models/qriRef'
 
-import TextInput from '../form/TextInput'
-import TextAreaInput from '../form/TextAreaInput'
+import TextInput from '../../form/TextInput'
+import TextAreaInput from '../../form/TextAreaInput'
 
-export interface CommitEditorProps extends RouteComponentProps {
+export interface CommitEditorProps extends RouteComponentProps<QriRef> {
   qriRef: QriRef
   isSaving: boolean
   status: Status
@@ -114,6 +114,7 @@ const mapStateToProps = (state: Store, ownProps: CommitEditorProps) => {
   // get data for the currently selected component
   return {
     ...ownProps,
+    qriRef: qriRefFromRoute(ownProps),
     isSaving: selectIsCommiting(state),
     title: mutationsCommit.title,
     message: mutationsCommit.message,
