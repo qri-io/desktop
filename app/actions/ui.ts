@@ -19,7 +19,7 @@ import { ToastType } from '../models/store'
 import { Modal, ModalType } from '../models/modals'
 import { Details } from '../models/details'
 
-export type SidebarTypes = 'dataset' | 'commit' | 'collection'
+export type SidebarTypes = 'workbench' | 'network' | 'collection'
 
 export const setSidebarWidth = (type: SidebarTypes, sidebarWidth: number) => {
   return {

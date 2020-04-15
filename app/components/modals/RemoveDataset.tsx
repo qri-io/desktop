@@ -63,7 +63,7 @@ export const RemoveDatasetComponent: React.FunctionComponent<RemoveDatasetProps>
     >
       <div className='content-wrap'>
         <div className='content'>
-          <div className='content-main'>Are you sure you want to remove <br/> <div className='code-highlight'>{peername}/{name}</div>&nbsp;?</div>
+          <div className='content-main'>Are you sure you want to remove <br/> <div className='code-highlight'>{username}/{name}</div>&nbsp;?</div>
           { fsiPath &&
             <CheckboxInput
               name='should-remove-files'

@@ -25,7 +25,7 @@ import VersionInfoItem from './item/VersionInfoItem'
 // assumes an import rate of 4828 bytes per millisecond
 const IMPORT_BYTES_PER_MS = 4828
 
-interface DatasetListProps extends RouteComponentProps {
+interface DatasetListProps extends RouteComponentProps<QriRef> {
   qriRef: QriRef
   myDatasets: MyDatasets
   workingDataset: WorkingDataset
@@ -107,7 +107,7 @@ export class DatasetListComponent extends React.Component<DatasetListProps> {
             click: () => {
               setModal({
                 type: ModalType.RemoveDataset,
-                peername: username,
+                username,
                 name,
                 fsiPath
               })

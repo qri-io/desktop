@@ -24,7 +24,7 @@ import {
 import { setCommit } from './selections'
 import { Dataset } from '../models/dataset'
 import { Status } from '../models/store'
-import { selectWorkingDataset, selectStatusFromMutations, selectWorkingDatasetIsLoading, selectWorkingDatasetPeername, selectWorkingDatasetName, selectLog, selectHistoryDatasetIsLoading, selectHistoryDatasetPath, selectHistoryDatasetName, selectHistoryDatasetPeername } from '../selections'
+import { selectWorkingDataset, selectStatusFromMutations, selectWorkingDatasetIsLoading, selectWorkingDatasetPeername, selectWorkingDatasetName, selectHistoryDatasetIsLoading, selectHistoryDatasetPath, selectHistoryDatasetName, selectHistoryDatasetPeername } from '../selections'
 import { QriRef } from '../models/qriRef'
 
 // fetchworkBench makes the necessary API requests to populate the workbench
@@ -36,7 +36,6 @@ export function fetchWorkbench (qriRef: QriRef): LaunchedFetchesAction {
     const workingIsLoading = selectWorkingDatasetIsLoading(state)
     const workingUsername = selectWorkingDatasetPeername(state)
     const workingName = selectWorkingDatasetName(state)
-    const log = selectLog(state)
     const { username: routeUsername, name: routeName, path: routePath = '' } = qriRef
 
     if (!routeUsername || !routeName) {
@@ -48,7 +47,12 @@ export function fetchWorkbench (qriRef: QriRef): LaunchedFetchesAction {
     if (!workingIsLoading &&
        (routeUsername !== workingUsername ||
         routeName !== workingName)) {
-      dispatch(fetchLog(routeUsername, routeName))
+      fetchLog(routeUsername, routeName)(dispatch, getState)
+        .then((response) => {
+          if (routePath === '' && response && response.payload && response.payload.data && response.payload.data.length !== 0) {
+            dispatch(setCommit(response.payload.data[0].path))
+          }
+        })
       dispatch(fetchWorkingDataset(routeUsername, routeName))
       dispatch(fetchWorkingStatus(routeUsername, routeName))
       dispatch(fetchStats(routeUsername, routeName))
@@ -64,6 +68,7 @@ export function fetchWorkbench (qriRef: QriRef): LaunchedFetchesAction {
     const versionPath = selectHistoryDatasetPath(state)
 
     if (!versionIsLoading &&
+        routePath !== '' &&
         (routeUsername !== versionUsername ||
          routeName !== versionName ||
          routePath !== versionPath)) {
@@ -72,10 +77,6 @@ export function fetchWorkbench (qriRef: QriRef): LaunchedFetchesAction {
       dispatch(fetchCommitStatus(routeUsername, routeName, routePath))
       dispatch(fetchCommitBody(routeUsername, routeName, routePath, -1))
       return fetching
-    }
-
-    if (routePath === '' && log.length !== 0) {
-      dispatch(setCommit(log[0].path))
     }
 
     return false

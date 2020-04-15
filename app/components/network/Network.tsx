@@ -12,7 +12,7 @@ import LogList from './LogList'
 import SidebarActionButton from '../chrome/SidebarActionButton'
 import { RouteComponentProps } from 'react-router'
 
-export interface NetworkProps extends RouteComponentProps{
+export interface NetworkProps extends RouteComponentProps<QriRef> {
   qriRef: QriRef
 
   inCollection: boolean
@@ -23,7 +23,6 @@ export interface NetworkProps extends RouteComponentProps{
 
   addDatasetAndFetch: (username: string, name: string) => ApiActionThunk
   toggleNetwork: () => Action
-  setSidebarWidth: (type: string, sidebarWidth: number) => Action
 }
 
 const Network: React.FunctionComponent<NetworkProps> = (props) => {

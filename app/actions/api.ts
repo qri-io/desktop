@@ -25,11 +25,11 @@ import { pathToHistory } from '../paths'
 import { selectWorkingDatasetBodyPageInfo,
   selectFsiPath,
   selectMutationsCommit,
-  selectMutationsDataset,
   selectSessionUsername,
   selectMyDatasetsPageInfo,
   selectHistoryDatasetBodyPageInfo,
-  selectLogPageInfo
+  selectLogPageInfo,
+  selectMutationsDataset
 } from '../selections'
 
 const pageSizeDefault = 100
@@ -104,7 +104,7 @@ export function fetchMyDatasets (page: number = 1, pageSize: number = pageSizeDe
 export function fetchWorkingDataset (username: string, name: string): ApiActionThunk {
   return async (dispatch) => {
     if (username === '' || name === '') {
-      return Promise.reject(new Error('no peername or name selected'))
+      return Promise.reject(new Error('no username or name selected'))
     }
 
     const action = {
@@ -113,7 +113,7 @@ export function fetchWorkingDataset (username: string, name: string): ApiActionT
         endpoint: '',
         method: 'GET',
         segments: {
-          peername: username,
+          username,
           name
         },
         map: mapDataset
@@ -226,7 +226,7 @@ export function fetchLog (username: string, name: string, page: number = 1, page
 export function fetchWorkingStatus (username: string, name: string): ApiActionThunk {
   return async (dispatch) => {
     if (username === '' || name === '') {
-      return Promise.reject(new Error('no peername or name selected'))
+      return Promise.reject(new Error('no username or name selected'))
     }
     const action = {
       type: 'status',
@@ -653,7 +653,7 @@ export function removeDatasetAndFetch (username: string, name: string, isLinked:
   }
 }
 
-export function fsiWrite (peername: string, name: string, dataset: any): ApiActionThunk {
+export function fsiWrite (username: string, name: string, dataset: any): ApiActionThunk {
   return async (dispatch) => {
     const action = {
       type: 'fsiWrite',
@@ -661,7 +661,7 @@ export function fsiWrite (peername: string, name: string, dataset: any): ApiActi
         endpoint: 'fsi/write',
         method: 'POST',
         segments: {
-          peername,
+          username,
           name
         },
         map: mapStatus,
@@ -672,7 +672,7 @@ export function fsiWrite (peername: string, name: string, dataset: any): ApiActi
   }
 }
 
-export function fetchReadmePreview (peername: string, name: string): ApiActionThunk {
+export function fetchReadmePreview (username: string, name: string): ApiActionThunk {
   return async (dispatch) => {
     const action = {
       type: 'render',
@@ -680,7 +680,7 @@ export function fetchReadmePreview (peername: string, name: string): ApiActionTh
         endpoint: 'render',
         method: 'GET',
         segments: {
-          peername,
+          username,
           name
         }
       }
