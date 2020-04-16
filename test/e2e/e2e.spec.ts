@@ -653,7 +653,8 @@ describe('Qri End to End tests', function spec () {
       click,
       expectTextToBe,
       onHistoryTab,
-      checkStatus
+      checkStatus,
+      waitForExist
     } = utils
 
     // make sure we are on the collection page
@@ -682,6 +683,7 @@ describe('Qri End to End tests', function spec () {
     // to get the reference to match. It looks like because the #dataset-reference
     // div divides the peername and name among multiple divs, we get this odd
     // whitespace character
+    await waitForExist('#dataset-reference')
     const reference = `${username}/\n${jsonDatasetName}`
     await expectTextToBe('#dataset-reference', reference)
 

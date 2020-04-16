@@ -117,13 +117,6 @@ export function selectLogPageInfo (state: Store): PageInfo {
   return state.log.pageInfo
 }
 
-export function selectLatestPath (state: Store): string {
-  if (selectLogPageInfo(state).isFetching) return ''
-  const log = selectLog(state)
-  if (log.length === 0) return ''
-  return log[0].path
-}
-
 /**
  *
  * MYDATASETS STATE TREE
@@ -142,6 +135,21 @@ export function selectHasDatasets (state: Store) {
   const pageInfo = selectMyDatasetsPageInfo(state)
   const length = selectMyDatasets(state).length
   return pageInfo.isFetching || length > 0
+}
+
+export function selectDatasetByName (state: Store, username: string, name: string): VersionInfo | undefined {
+  const myDatasets = selectMyDatasets(state)
+  return myDatasets.find((vi: VersionInfo) => {
+    return vi.username === username && vi.name === name
+  })
+}
+
+export function selectLatestPath (state: Store, username: string, name: string): string {
+  const vi = selectDatasetByName(state, username, name)
+  if (!vi) {
+    return ''
+  }
+  return vi.path
 }
 
 /**
@@ -374,4 +382,22 @@ function generateUnmodifiedStatusInfo (componentName: SelectedComponent): Status
     status: 'unmodified',
     component: componentName
   }
+}
+
+/**
+ *
+ * WORKBENCHROUTER STATE TREE
+ *
+ */
+
+export function selectRecentHistoryRef (state: Store): QriRef {
+  return state.workbenchRoutes.historyRef
+}
+
+export function selectRecentEditRef (state: Store): QriRef {
+  return state.workbenchRoutes.editRef
+}
+
+export function selectRecentWorkbenchLocation (state: Store): string {
+  return state.workbenchRoutes.location
 }

@@ -20,6 +20,7 @@ import { setModal } from '../actions/ui'
 
 import ProgressBar from './chrome/ProgressBar'
 import VersionInfoItem from './item/VersionInfoItem'
+import { pathToHistory } from '../paths'
 
 // for displaying a progress bar based on import file size
 // assumes an import rate of 4828 bytes per millisecond
@@ -77,7 +78,6 @@ export class DatasetListComponent extends React.Component<DatasetListProps> {
     const {
       workingDataset,
       setModal,
-      setWorkingDataset,
       myDatasets,
       importFileName,
       importFileSize
@@ -133,10 +133,7 @@ export class DatasetListComponent extends React.Component<DatasetListProps> {
             data={ddr}
             selected={(username === workingDataset.peername) && (name === workingDataset.name)}
             onClick={(data: VersionInfo) => {
-              setWorkingDataset(data.username, data.name)
-                .then(() => {
-                  this.props.history.push(`/workbench/${data.username}/${name}`)
-                })
+              this.props.history.push(pathToHistory(data.username, data.name, data.path))
             }}
           />
         </ContextMenuArea>)

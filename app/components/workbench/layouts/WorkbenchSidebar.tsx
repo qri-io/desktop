@@ -3,14 +3,15 @@ import { connect } from 'react-redux'
 import classNames from 'classnames'
 import { RouteComponentProps, withRouter } from 'react-router-dom'
 
-import { QriRef, qriRefFromRoute } from '../../../models/qriRef'
+import { QriRef, qriRefFromRoute, qriRefIsEmpty } from '../../../models/qriRef'
 import { VersionInfo, PageInfo } from '../../../models/store'
 
-import { selectLog, selectVersionInfoFromWorkingDataset, selectLogPageInfo } from '../../../selections'
+import { selectLog, selectVersionInfoFromWorkingDataset, selectLogPageInfo, selectLatestPath, selectRecentEditRef, selectRecentHistoryRef } from '../../../selections'
 import { pathToEdit, pathToHistory } from '../../../paths'
 
 import DatasetReference from '../../DatasetReference'
 import DatasetDetailsSubtext from '../../dataset/DatasetDetailsSubtext'
+import ReactTooltip from 'react-tooltip'
 
 export interface WorkbenchSidebarData {
   versionInfo: VersionInfo
@@ -21,6 +22,9 @@ export interface WorkbenchSidebarData {
 export interface WorkbenchSidebarProps extends RouteComponentProps<QriRef> {
   qriRef: QriRef
   data: WorkbenchSidebarData
+  lastEditRef: QriRef
+  lastHistoryRef: QriRef
+  latestPath: string
 
   // passed in props
   activeTab: string
@@ -32,16 +36,22 @@ export const WorkbenchSidebarComponent: React.FunctionComponent<WorkbenchSidebar
     data,
     history,
     children,
-    activeTab
+    activeTab,
+    lastEditRef,
+    lastHistoryRef,
+    latestPath
   } = props
 
   const { logPageInfo, logLength, versionInfo } = data
 
   const {
-    username = '',
-    name = '',
-    path = ''
+    username,
+    name
   } = qriRef
+
+  React.useEffect(() => {
+    ReactTooltip.rebuild()
+  }, [])
 
   const datasetSelected = username !== '' && name !== ''
 
@@ -61,7 +71,11 @@ export const WorkbenchSidebarComponent: React.FunctionComponent<WorkbenchSidebar
           className={classNames('tab', { 'active': activeTab === 'status' && datasetSelected, 'disabled': activeTab === 'disabled' || !datasetSelected })}
           onClick={() => {
             if (datasetSelected) {
-              history.push(pathToEdit(username, name))
+              if (qriRefIsEmpty(lastEditRef)) {
+                history.push(pathToEdit(username, name))
+              } else {
+                history.push(lastEditRef.location)
+              }
             }
           }}
           data-tip='View the working changes<br/> to this dataset&apos;s components'
@@ -73,7 +87,11 @@ export const WorkbenchSidebarComponent: React.FunctionComponent<WorkbenchSidebar
           className={classNames('tab', { 'active': activeTab === 'history', 'disabled': (logPageInfo.error && logPageInfo.error.includes('no history')) || activeTab === 'disabled' || !datasetSelected })}
           onClick={() => {
             if ((!(logPageInfo.error && logPageInfo.error.includes('no history')) && datasetSelected)) {
-              history.push(pathToHistory(username, name, path))
+              if (qriRefIsEmpty(lastHistoryRef)) {
+                history.push(pathToHistory(username, name, latestPath))
+              } else {
+                history.push(lastHistoryRef.location)
+              }
             }
           }}
           data-tip={historyToolTip}
@@ -87,9 +105,13 @@ export const WorkbenchSidebarComponent: React.FunctionComponent<WorkbenchSidebar
 }
 
 const mapStateToProps = (state: any, ownProps: WorkbenchSidebarProps) => {
+  const qriRef = qriRefFromRoute(ownProps)
   return {
     ...ownProps,
-    qriRef: qriRefFromRoute(ownProps),
+    qriRef,
+    lastEditRef: selectRecentEditRef(state),
+    lastHistoryRef: selectRecentHistoryRef(state),
+    latestPath: selectLatestPath(state, qriRef.username, qriRef.name),
     data: {
       logPageInfo: selectLogPageInfo(state),
       logLength: selectLog(state).length,

@@ -1,4 +1,5 @@
 import { RouteComponentProps } from "react-router"
+import { SelectedComponent } from "./store"
 
 // QriRef models a reference to a user, dataset, or part of a dataset within Qri
 // We use "QriRef" instead of "Ref" to disambiguate with the react "ref"
@@ -54,13 +55,14 @@ export interface QriRef {
 
 // qriRefFromRoute parses route props into a Ref
 export function qriRefFromRoute (p: RouteComponentProps<QriRef>): QriRef {
+  const selectedComponent = selectedComponentFromLocation(p.location.pathname)
   return {
     location: p.location.pathname,
 
     username: p.match.params.username || '',
     name: p.match.params.name || '',
     path: p.match.params.path ? '/ipfs/' + p.match.params.path : undefined,
-    component: p.match.params.component,
+    component: p.match.params.component ? p.match.params.component : selectedComponent,
     selector: p.match.params.selector
   }
 }
@@ -70,4 +72,33 @@ export function refStringFromQriRef (qriRef: QriRef): string {
   let route = `${qriRef.username}/${qriRef.name}`
   if (qriRef.path) route += `/at${qriRef.path}`
   return route
+}
+
+// checks if qriRef has location, username, and name
+export function qriRefIsEmpty (qriRef: QriRef): boolean {
+  return !qriRef.location || qriRef.location === '' || !qriRef.username || qriRef.username === '' || !qriRef.name || qriRef.name === ''
+}
+
+// selectedComponentFromQriRef takes a qriRef and gets the selected component
+// from the location param
+export function selectedComponentFromLocation (location: string): SelectedComponent | undefined {
+  if (location.endsWith('/body')) {
+    return 'body'
+  }
+  if (location.endsWith('/transform')) {
+    return 'transform'
+  }
+  if (location.endsWith('/structure')) {
+    return 'structure'
+  }
+  if (location.endsWith('/readme')) {
+    return 'readme'
+  }
+  if (location.endsWith('/commit')) {
+    return 'commit'
+  }
+  if (location.endsWith('/meta')) {
+    return 'meta'
+  }
+  return undefined
 }

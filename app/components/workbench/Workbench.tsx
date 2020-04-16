@@ -19,7 +19,6 @@ import { fetchWorkbench } from '../../actions/workbench'
 import { discardChangesAndFetch, fetchWorkingDatasetDetails } from '../../actions/api'
 
 import {
-  selectLog,
   selectFsiPath,
   selectDetails,
   selectWorkingDatasetIsPublished,
@@ -35,10 +34,9 @@ import { defaultSidebarWidth } from '../../reducers/ui'
 import { Resizable } from '../Resizable'
 import DetailsBarContainer from '../../containers/DetailsBarContainer'
 import CommitDetails from './CommitDetails'
-import { pathToNoDatasetSelected, pathToEdit, pathToHistory } from '../../paths'
+import { pathToNoDatasetSelected, pathToEdit } from '../../paths'
 import NoDatasets from './NoDatasets'
 import EditDataset from './EditDataset'
-// import NotInNamespace from './NotInNamespace'
 
 // TODO (b5) - is this still required?
 require('../../assets/qri-blob-logo-tiny.png')
@@ -47,8 +45,6 @@ export interface WorkbenchProps extends RouteComponentProps<QriRef> {
   // display details
   qriRef: QriRef
   isPublished: boolean
-  // if latestPath is the empty string, this dataset does not have a history
-  latestPath: string
   fsiPath: string
   session: Session
   hasDatasets: boolean
@@ -147,8 +143,7 @@ export class WorkbenchComponent extends React.Component<WorkbenchProps> {
     const {
       qriRef,
       hasDatasets,
-      sidebarWidth,
-      latestPath
+      sidebarWidth
     } = this.props
 
     // actions
@@ -179,7 +174,6 @@ export class WorkbenchComponent extends React.Component<WorkbenchProps> {
         <WorkbenchRouter
           qriRef={qriRef}
           hasDatasets={hasDatasets}
-          latestPath={latestPath}
         />
       </>
     )
@@ -189,11 +183,10 @@ export class WorkbenchComponent extends React.Component<WorkbenchProps> {
 interface WorkbenchRouterProps {
   qriRef: QriRef
   hasDatasets: boolean
-  latestPath: string
 }
 
 const WorkbenchRouter: React.FunctionComponent<WorkbenchRouterProps> = (props) => {
-  const { latestPath, hasDatasets } = props
+  const { hasDatasets } = props
   const location = useLocation()
   const { path } = useRouteMatch()
 
@@ -245,13 +238,8 @@ const WorkbenchRouter: React.FunctionComponent<WorkbenchRouterProps> = (props) =
           } }/>
           <Route path={`${path}/:username/:name`} render={({ match }) => {
             const { params } = match
-            if (latestPath === '') {
-              return <Redirect
-                to={pathToEdit(params.username, params.name)}
-              />
-            }
             return <Redirect
-              to={pathToHistory(params.username, params.name, latestPath)}
+              to={pathToEdit(params.username, params.name)}
             />
           }}/>
         </Switch>
@@ -262,7 +250,6 @@ const WorkbenchRouter: React.FunctionComponent<WorkbenchRouterProps> = (props) =
 
 const mapStateToProps = (state: any, ownProps: WorkbenchProps) => {
   const qriRef = qriRefFromRoute(ownProps)
-  const log = selectLog(state)
   return {
     qriRef,
     /**
@@ -271,7 +258,6 @@ const mapStateToProps = (state: any, ownProps: WorkbenchProps) => {
      * rather then the status of the dataset at head.
      */
     isPublished: selectWorkingDatasetIsPublished(state),
-    latestPath: log.length !== 0 ? log[0].path : '',
     fsiPath: selectFsiPath(state),
     hasDatasets: selectHasDatasets(state),
     showDetailsBar: selectShowDetailsBar(state),

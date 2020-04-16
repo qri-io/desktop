@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { QriRef, refStringFromQriRef } from '../../models/qriRef'
+import { QriRef } from '../../models/qriRef'
 import { VersionInfo } from '../../models/store'
 import { FetchOptions } from '../../store/api'
 import { BACKEND_URL } from '../../constants'
@@ -8,6 +8,7 @@ import { mapHistory } from '../../actions/mappingFuncs'
 
 import HistoryListItem from '../item/HistoryListItem'
 import { RouteComponentProps, withRouter } from 'react-router-dom'
+import { pathToNetworkDataset } from '../../paths'
 
 export interface LogListProps extends RouteComponentProps{
   qriRef: QriRef
@@ -37,7 +38,7 @@ const LogList: React.FunctionComponent<LogListProps> = ({ qriRef, history }) => 
 
   const handleOnClick = (item: VersionInfo) => {
     return () => {
-      history.push(`/network/${refStringFromQriRef({ location: '', username: item.username, name: item.name, path: item.path })}`)
+      history.push(pathToNetworkDataset(item.username, item.name, item.path))
     }
   }
 

@@ -12,6 +12,7 @@ import { QriRef, qriRefFromRoute } from '../../models/qriRef'
 
 import { openToast, closeToast } from '../../actions/ui'
 import { writeDataset } from '../../actions/workbench'
+import { setRecentEditRef, setRecentHistoryRef } from '../../actions/workbenchRoutes'
 
 import { selectWorkingDatasetIsLoading, selectWorkingDataset, selectFsiPath, selectHistoryDatasetIsLoading } from '../../selections'
 // import { selectWorkingDatasetIsLoading, selectWorkingDataset, selectSelectedComponent, selectStatusFromMutations, selectHistoryStatus, selectFsiPath, selectHistoryDatasetIsLoading, selectSelectedCommitComponent } from '../../selections'
@@ -36,6 +37,8 @@ interface ComponentRouterProps extends RouteComponentProps<QriRef> {
   openToast: (type: ToastType, name: string, message: string) => Action
   closeToast: () => Action
   write: (peername: string, name: string, dataset: Dataset) => ApiActionThunk | void
+  setRecentHistoryRef: (qriRef: QriRef) => Action
+  setRecentEditRef: (qriRef: QriRef) => Action
 
   isLoading: boolean
   component: SelectedComponent
@@ -52,6 +55,8 @@ export const ComponentRouterComponent: React.FunctionComponent<ComponentRouterPr
     write,
     openToast,
     closeToast,
+    setRecentHistoryRef,
+    setRecentEditRef,
     qriRef
   } = props
 
@@ -65,6 +70,14 @@ export const ComponentRouterComponent: React.FunctionComponent<ComponentRouterPr
 
   const location = useLocation()
   const { path: routePath, url } = useRouteMatch()
+
+  React.useEffect(() => {
+    if (routePath.includes('/edit')) {
+      setRecentEditRef(qriRef)
+    } else {
+      setRecentHistoryRef(qriRef)
+    }
+  }, [qriRef.location])
 
   const dragHandler = (drag: boolean) => (e: React.DragEvent) => {
     if (showHistory) {
@@ -192,7 +205,9 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
   return bindActionCreators({
     openToast,
     closeToast,
-    write: writeDataset
+    write: writeDataset,
+    setRecentEditRef,
+    setRecentHistoryRef
   }, dispatch)
 }
 

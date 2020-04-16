@@ -52,11 +52,13 @@ const PublishButtonComponent: React.FunctionComponent<PublishButtonProps> = (pro
       extraActions.push({
         icon: 'close',
         text: 'Unpublish',
-        onClick: () => setModal({
-          type: ModalType.UnpublishDataset,
-          username,
-          name
-        })
+        onClick: () => {
+          setModal({
+            type: ModalType.UnpublishDataset,
+            username,
+            name
+          })
+        }
       })
     }
     return (
@@ -71,29 +73,26 @@ const PublishButtonComponent: React.FunctionComponent<PublishButtonProps> = (pro
     )
   }
 
-  return (
-    <span data-tip={
-      !atHead
-        ? 'You must be at the latest version of the dataset to publish'
-        : latestPath === ''
-          ? 'The dataset must have at least one commit before you can publish'
-          : 'Publish this dataset to Qri Cloud'
-    }>
-      <HeaderColumnButton
-        id='publish-button'
-        label='Publish'
-        icon={faCloudUploadAlt}
-        disabled={!atHead || latestPath === ''}
-        onClick={() => {
-          setModal({
-            type: ModalType.PublishDataset,
-            username: username || '',
-            name: name || ''
-          })
-        }}
-      />
-    </span>
-  )
+  if (atHead) {
+    return (
+      <span data-tip={'Publish this dataset to Qri Cloud'}>
+        <HeaderColumnButton
+          id='publish-button'
+          label='Publish'
+          icon={faCloudUploadAlt}
+          disabled={!atHead || latestPath === ''}
+          onClick={() => {
+            setModal({
+              type: ModalType.PublishDataset,
+              username,
+              name
+            })
+          }}
+        />
+      </span>
+    )
+  }
+  return null
 }
 
 const mapStateToProps = (state: any, ownProps: PublishButtonProps) => {
@@ -102,7 +101,7 @@ const mapStateToProps = (state: any, ownProps: PublishButtonProps) => {
     qriRef,
     inNamespace: selectInNamespace(state, qriRef),
     isPublished: selectIsPublished(state),
-    latestPath: selectLatestPath(state),
+    latestPath: selectLatestPath(state, qriRef.username, qriRef.name),
     ...ownProps
   }
 }

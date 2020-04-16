@@ -6,7 +6,7 @@ import { SelectedComponent } from '../models/store'
 import { actionWithPagination } from '../utils/pagination'
 import { openToast, setImportFileDetails } from './ui'
 import { setSaveComplete, resetMutationsDataset, resetMutationsStatus } from './mutations'
-import { clearSelection } from './selections'
+
 import {
   mapDataset,
   mapRecord,
@@ -21,7 +21,7 @@ import { datasetConvertStringToScriptBytes } from '../utils/datasetConvertString
 import { CLEAR_DATASET_HEAD } from '../reducers/commitDetail'
 import Dataset from '../models/dataset'
 
-import { pathToHistory } from '../paths'
+import { pathToHistory, pathToCollection } from '../paths'
 import { selectWorkingDatasetBodyPageInfo,
   selectFsiPath,
   selectMutationsCommit,
@@ -415,6 +415,7 @@ export function saveWorkingDatasetAndFetch (username: string, name: string): Api
       .then((response) => {
         if (getActionType(response) === 'success') {
           dispatch(setSaveComplete())
+          dispatch(fetchMyDatasets(-1))
           dispatch(openToast('success', 'commit', 'commit success!'))
           dispatch(push(pathToHistory(username, name, path)))
         }
@@ -647,7 +648,7 @@ export function removeDatasetAndFetch (username: string, name: string, isLinked:
       }
     }
     // reset pagination
-    dispatch(clearSelection())
+    dispatch(push(pathToCollection()))
     response = await fetchMyDatasets(-1)(dispatch, getState)
     return response
   }
@@ -693,7 +694,8 @@ export function fetchReadmePreview (username: string, name: string): ApiActionTh
 // newName is the new dataset's name, which will be in the user's namespace
 export function renameDataset (username: string, name: string, newName: string): ApiActionThunk {
   return async (dispatch, getState) => {
-    const sessionUsername = selectSessionUsername(getState())
+    const state = getState()
+    const sessionUsername = selectSessionUsername(state)
     if (username !== sessionUsername) {
       dispatch(openToast('error', 'rename', 'you can only change the name of a dataset in your namespace'))
       throw new Error('user is attempting to change the name of dataset that is not in their namespace')
@@ -714,6 +716,7 @@ export function renameDataset (username: string, name: string, newName: string):
     try {
       response = await dispatch(action)
       response = await whenOk(fetchMyDatasets(-1))(response)
+      dispatch(push(state.router.location.pathname.replace(`${username}/${name}`, `${username}/${newName}`)))
       dispatch(openToast('success', 'rename', `Dataset renamed`))
     } catch (action) {
       dispatch(openToast('error', 'rename', action.payload.err.message))
@@ -742,9 +745,9 @@ export function importFile (filePath: string, fileName: string, fileSize: number
     try {
       dispatch(setImportFileDetails(fileName, fileSize))
       response = await dispatch(action)
-      const { peername, name } = response.payload.data
+      const { peername, name, path } = response.payload.data
       response = await whenOk(fetchMyDatasets(-1))(response)
-      dispatch(push(pathToHistory(peername, name, '')))
+      dispatch(push(pathToHistory(peername, name, path)))
       dispatch(setImportFileDetails('', 0))
     } catch (action) {
       dispatch(setImportFileDetails('', 0))

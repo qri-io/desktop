@@ -37,8 +37,6 @@ export const CommitDetailsComponent: React.FunctionComponent<CommitDetailsProps>
     fetchWorkbench(qriRef)
   }, [qriRef.location])
 
-  const { path = '' } = qriRef
-
   return (
     <WorkbenchLayout
       id='dataset-history'
@@ -50,7 +48,7 @@ export const CommitDetailsComponent: React.FunctionComponent<CommitDetailsProps>
             id={'commit-details'}
             headerContent={
               <CommitDetailsHeader
-                path={path}
+                path={qriRef.path || ''}
                 structure={dataset.structure}
                 commit={dataset.commit}
               />

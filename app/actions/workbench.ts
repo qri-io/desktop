@@ -21,7 +21,7 @@ import {
   fetchWorkingStatus,
   fsiWrite
 } from './api'
-import { setCommit } from './selections'
+
 import { Dataset } from '../models/dataset'
 import { Status } from '../models/store'
 import { selectWorkingDataset, selectStatusFromMutations, selectWorkingDatasetIsLoading, selectWorkingDatasetPeername, selectWorkingDatasetName, selectHistoryDatasetIsLoading, selectHistoryDatasetPath, selectHistoryDatasetName, selectHistoryDatasetPeername } from '../selections'
@@ -48,11 +48,6 @@ export function fetchWorkbench (qriRef: QriRef): LaunchedFetchesAction {
        (routeUsername !== workingUsername ||
         routeName !== workingName)) {
       fetchLog(routeUsername, routeName)(dispatch, getState)
-        .then((response) => {
-          if (routePath === '' && response && response.payload && response.payload.data && response.payload.data.length !== 0) {
-            dispatch(setCommit(response.payload.data[0].path))
-          }
-        })
       dispatch(fetchWorkingDataset(routeUsername, routeName))
       dispatch(fetchWorkingStatus(routeUsername, routeName))
       dispatch(fetchStats(routeUsername, routeName))

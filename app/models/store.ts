@@ -2,6 +2,7 @@ import { RouterState } from 'connected-react-router'
 import { Meta, Structure, Commit } from './dataset'
 import { Session } from './session'
 import { Details } from './details'
+import { QriRef } from './qriRef'
 
 export enum ApiConnection {
   neverConnected = 0,
@@ -216,6 +217,12 @@ export interface Log {
   value: VersionInfo[]
 }
 
+export interface WorkbenchRoutes {
+  historyRef: QriRef
+  editRef: QriRef
+  location: string
+}
+
 export default interface Store {
   session: Session
   connection: Connection
@@ -223,6 +230,7 @@ export default interface Store {
   selections: Selections
   myDatasets: MyDatasets
   workingDataset: WorkingDataset
+  workbenchRoutes: WorkbenchRoutes
   commitDetails: CommitDetails
   log: Log
   mutations: Mutations

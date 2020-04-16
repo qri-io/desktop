@@ -8,22 +8,21 @@ import classNames from 'classnames'
 interface DatasetItemProps {
   id?: string
   data: VersionInfo
-  onClick: (username: string, name: string) => void
+  onClick: (username: string, name: string, path?: string) => void
   fullWidth: boolean
-  path?: string
   hideUsername?: boolean
 }
 
-const DatasetItem: React.FunctionComponent<DatasetItemProps> = ({ id, data, path, hideUsername, fullWidth = false, onClick }) => {
+const DatasetItem: React.FunctionComponent<DatasetItemProps> = ({ id, data, hideUsername, fullWidth = false, onClick }) => {
   if (!data) { return null }
-  const { metaTitle, themeList, username, name } = data
+  const { metaTitle, themeList, username, name, path } = data
 
   const theme = themeList ? themeList.split(',', -1) : []
 
   return (
     <div id={id} className={classNames('dataset-item', { 'full': fullWidth })} key={path} data-ref={`${username}/${name}`}>
       <div className='header'>
-        <a onClick={() => onClick(username, name)}>{hideUsername ? `${name}` : `${username}/${name}`}</a>
+        <a onClick={() => onClick(username, name, path)}>{hideUsername ? `${name}` : `${username}/${name}`}</a>
         {theme && theme.length > 0 && <Tag type='category' tag={theme[0]} />}
       </div>
       <div className='title'>{ metaTitle }</div>

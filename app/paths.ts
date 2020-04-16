@@ -1,24 +1,39 @@
 import { SelectedComponent } from "./models/store"
 
-export function pathToEditComponent (username: string, name: string, component: SelectedComponent): string {
-  return `${pathToEdit(username, name)}/${component}`
-}
-
-export function pathToEdit (username: string, name: string): string {
-  return `/workbench/edit/${username}/${name}`
+export function pathToEdit (username: string, name: string, component?: SelectedComponent): string {
+  let uri = `/workbench/edit/${username}/${name}`
+  if (!component || component === '') {
+    return uri
+  }
+  return uri + `/${component}`
 }
 
 // assumes path is of the format `/ipfs/Qmhash`
-export function pathToHistory (username: string, name: string, path: string): string {
-  if (path === '') return `/workbench/${username}/${name}`
-  return `/workbench/${username}/${name}/at${path}`
-}
+export function pathToHistory (username: string, name: string, path: string, component?: SelectedComponent): string {
+  let uri = `/workbench/${username}/${name}`
+  if (path === '') {
+    return uri
+  }
+  uri += `/at${path}`
+  if (!component || component === '') {
+    return uri
+  }
 
-export function pathToHistoryComponent (username: string, name: string, path: string, component: SelectedComponent): string {
-  if (path === '') return pathToHistory(username, name, path)
-  return `${pathToHistory(username, name, path)}/${component}`
+  return uri + `/${component}`
 }
 
 export function pathToNoDatasetSelected (): string {
   return `/workbench`
+}
+
+export function pathToCollection (): string {
+  return `/collection`
+}
+
+export function pathToNetworkDataset (username: string, name: string, path?: string): string {
+  let uri = `/network/${username}/${name}`
+  if (path && path !== '') {
+    uri += `/${path}`
+  }
+  return uri
 }

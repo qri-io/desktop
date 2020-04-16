@@ -12,7 +12,7 @@ import { selectHistoryStatus, selectHistoryComponentsList } from '../../selectio
 import ComponentItem from '../item/ComponentItem'
 import { components as componentsInfo } from './WorkingComponentList'
 import { withRouter, RouteComponentProps } from 'react-router-dom'
-import { pathToHistoryComponent } from '../../paths'
+import { pathToHistory } from '../../paths'
 
 interface HistoryComponentListProps extends RouteComponentProps<QriRef> {
   qriRef: QriRef
@@ -54,7 +54,7 @@ export const HistoryComponentListComponent: React.FunctionComponent<HistoryCompo
                 status={fileStatus}
                 selected={selectedComponent === name}
                 tooltip={tooltip}
-                onClick={(component: SelectedComponent) => history.push(pathToHistoryComponent(username, datasetName, path, component))}
+                onClick={(component: SelectedComponent) => history.push(pathToHistory(username, datasetName, path, component))}
               />
             )
           }

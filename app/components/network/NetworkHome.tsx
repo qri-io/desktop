@@ -7,6 +7,7 @@ import { VersionInfo } from '../../models/store'
 
 import Spinner from '../chrome/Spinner'
 import DatasetItem from '../item/DatasetItem'
+import { pathToNetworkDataset } from '../../paths'
 
 const initialDataState: NetworkHomeData = {
   featured: [],
@@ -47,7 +48,7 @@ const NetworkHome: React.FunctionComponent<RouteComponentProps> = ({ history }) 
         <h4>Featured Datasets</h4>
         {featured.map((vi: VersionInfo, i) => <div key={i} className='featured-datasets-item'>
           <DatasetItem onClick={(username: string, name: string) => {
-            history.push(`/network/${username}/${name}`)
+            history.push(pathToNetworkDataset(username, name))
           }} data={vi} id={`featured-${i}`}/>
         </div>)}
       </div>}
@@ -55,7 +56,7 @@ const NetworkHome: React.FunctionComponent<RouteComponentProps> = ({ history }) 
         <h4>Recent Datasets</h4>
         {recent.map((vi: VersionInfo, i) => <div key={i} className='recent-datasets-item'>
           <DatasetItem onClick={(username: string, name: string) => {
-            history.push(`/network/${username}/${name}`)
+            history.push(pathToNetworkDataset(username, name))
           }} data={vi} id={`recent-${i}`} />
         </div>)}
       </div>}

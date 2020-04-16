@@ -72,8 +72,7 @@ export const WorkbenchLogListComponent: React.FunctionComponent<WorkbenchLogList
               selected={qriRef.path === item.path}
               onClick={() => {
                 history.push(pathToHistory(username, name, item.path))
-              }
-              }
+              }}
             />
           }
           const menuItems: MenuItemConstructorOptions[] = [

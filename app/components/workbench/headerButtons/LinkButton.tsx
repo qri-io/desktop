@@ -28,13 +28,14 @@ const LinkButtonComponent: React.FunctionComponent<LinkButtonProps> = (props) =>
     qriRef,
     inNamespace,
     fsiPath,
-    modified
+    modified,
+    setModal
   } = props
 
   const { username, name } = qriRef
   const datasetSelected = username !== '' && name !== ''
 
-  if (!inNamespace || datasetSelected) {
+  if (!inNamespace || !datasetSelected) {
     return null
   }
 
@@ -57,7 +58,10 @@ const LinkButtonComponent: React.FunctionComponent<LinkButtonProps> = (props) =>
         <FontAwesomeIcon icon={faLink} transform='shrink-8' />
       </span>
     )}
-    onClick={() => { setModal({ type: ModalType.LinkDataset, username, name, modified }) }}
+    onClick={() => {
+      console.log('click')
+      setModal({ type: ModalType.LinkDataset, username, name, modified })
+    }}
   />)
 }
 
