@@ -71,7 +71,7 @@ export function selectHistoryDatasetName (state: Store): string {
   return state.historyDataset.name
 }
 
-export function selectHistoryDatasetPeername (state: Store): string {
+export function selectHistoryDatasetUsername (state: Store): string {
   return state.historyDataset.peername
 }
 
@@ -364,7 +364,7 @@ export function selectWorkingDatasetName (state: Store): string {
   return state.workingDataset.name
 }
 
-export function selectWorkingDatasetPeername (state: Store): string {
+export function selectWorkingDatasetUsername (state: Store): string {
   return state.workingDataset.peername
 }
 

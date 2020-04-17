@@ -9,6 +9,7 @@ import { ApiActionThunk } from '../../store/api'
 import Store, { SelectedComponent, ToastType } from '../../models/store'
 import Dataset from '../../models/dataset'
 import { QriRef, qriRefFromRoute } from '../../models/qriRef'
+import { isEditPath } from '../../paths'
 
 import { openToast, closeToast } from '../../actions/ui'
 import { writeDataset } from '../../actions/workbench'
@@ -70,7 +71,7 @@ export const ComponentRouterComponent: React.FunctionComponent<ComponentRouterPr
   const { path: routePath, url } = useRouteMatch()
 
   React.useEffect(() => {
-    if (routePath.includes('/edit')) {
+    if (isEditPath(routePath)) {
       setRecentEditRef(qriRef)
     } else {
       setRecentHistoryRef(qriRef)
@@ -114,14 +115,14 @@ export const ComponentRouterComponent: React.FunctionComponent<ComponentRouterPr
                 <Redirect to={`${url}/body`} />
               </Route>
               <Route path={`${routePath}/meta`} render={(props) => {
-                if (routePath.includes('/edit')) {
+                if (isEditPath(routePath)) {
                   return <><ComponentHeader {...props} /><MetadataEditor {...props} /></>
                 }
                 return <><ComponentHeader {...props} /><Metadata {...props} /></>
               }}>
               </Route>
               <Route path={`${routePath}/readme`} render={(props) => {
-                if (routePath.includes('/edit')) {
+                if (isEditPath(routePath)) {
                   return <><ComponentHeader {...props} /><ReadmeEditor {...props} /></>
                 }
                 return <><ComponentHeader {...props} /><Readme {...props} /></>
@@ -136,7 +137,7 @@ export const ComponentRouterComponent: React.FunctionComponent<ComponentRouterPr
                     setDragging={setDragging}
                     onDrop={dropHandler}
                   />}
-                  {routePath.includes('/edit') && bodyPath && <CalloutBlock
+                  {isEditPath(routePath) && bodyPath && <CalloutBlock
                     type='info'
                     text={`body will be replaced with file: ${bodyPath} when you commit`}
                     cancelText='unstage file'
@@ -147,7 +148,7 @@ export const ComponentRouterComponent: React.FunctionComponent<ComponentRouterPr
               }}>
               </Route>
               <Route path={`${routePath}/structure`} render={(props) => {
-                if (routePath.includes('/edit')) {
+                if (isEditPath(routePath)) {
                   return <><ComponentHeader {...props} /><StructureEditor {...props} /></>
                 }
                 return <><ComponentHeader {...props} /><Structure {...props} /></>
@@ -160,7 +161,7 @@ export const ComponentRouterComponent: React.FunctionComponent<ComponentRouterPr
               }>
               </Route>
               <Route path={`${routePath}/commit`} render={(props) => {
-                if (routePath.includes('/edit')) {
+                if (isEditPath(routePath)) {
                   return <><ComponentHeader {...props} /><CommitEditor {...props} /></>
                 }
                 return <><ComponentHeader {...props} /><Commit {...props} /></>
@@ -180,7 +181,7 @@ const ComponentHeader: React.FunctionComponent<RouteComponentProps<QriRef>> = (p
   const { component = '' } = qriRef
   const { path: routePath } = useRouteMatch()
   const statusInfo = useSelector((state: Store) => {
-    if (routePath.includes('/edit')) {
+    if (isEditPath(routePath)) {
       return selectStatusInfoFromMutations(state, component as SelectedComponent)
     } else {
       return selectHistoryStatusInfo(state, component as SelectedComponent)

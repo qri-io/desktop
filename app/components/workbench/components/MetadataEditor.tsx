@@ -15,7 +15,7 @@ import hasParseError from '../../../utils/hasParseError'
 
 import { writeDataset } from '../../../actions/workbench'
 
-import { selectDatasetFromMutations, selectWorkingDatasetIsLoading, selectWorkingDatasetPeername, selectWorkingDatasetName, selectWorkingStatusInfo } from '../../../selections'
+import { selectDatasetFromMutations, selectWorkingDatasetIsLoading, selectWorkingDatasetUsername, selectWorkingDatasetName, selectWorkingStatusInfo } from '../../../selections'
 
 import ExternalLink from '../../ExternalLink'
 import TextInput from '../../form/TextInput'
@@ -357,7 +357,7 @@ const mapStateToProps = (state: Store, ownProps: MetadataEditorProps) => {
     qriRef: qriRefFromRoute(ownProps),
     data: selectDatasetFromMutations(state).meta,
     loading: selectWorkingDatasetIsLoading(state),
-    peername: selectWorkingDatasetPeername(state),
+    peername: selectWorkingDatasetUsername(state),
     statusInfo: selectWorkingStatusInfo(state, 'meta'),
     name: selectWorkingDatasetName(state)
   }

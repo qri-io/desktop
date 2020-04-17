@@ -8,7 +8,7 @@ import { RouteComponentProps } from 'react-router-dom'
 import Dataset, { Structure as IStructure, Schema as ISchema } from '../../../models/dataset'
 import { ApiActionThunk } from '../../../store/api'
 import fileSize, { abbreviateNumber } from '../../../utils/fileSize'
-import { selectDatasetFromMutations, selectWorkingDatasetIsLoading, selectWorkingDatasetPeername, selectWorkingDatasetName, selectWorkingStatusInfo } from '../../../selections'
+import { selectDatasetFromMutations, selectWorkingDatasetIsLoading, selectWorkingDatasetUsername, selectWorkingDatasetName, selectWorkingStatusInfo } from '../../../selections'
 import Store, { StatusInfo } from '../../../models/store'
 import { writeDataset } from '../../../actions/workbench'
 import { QriRef, qriRefFromRoute } from '../../../models/qriRef'
@@ -110,7 +110,7 @@ const mapStateToProps = (state: Store, ownProps: StructureEditorProps) => {
     qriRef: qriRefFromRoute(ownProps),
     data: selectDatasetFromMutations(state).structure,
     loading: selectWorkingDatasetIsLoading(state),
-    peername: selectWorkingDatasetPeername(state),
+    peername: selectWorkingDatasetUsername(state),
     statusInfo: selectWorkingStatusInfo(state, 'structure'),
     name: selectWorkingDatasetName(state)
 

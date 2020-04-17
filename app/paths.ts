@@ -37,3 +37,7 @@ export function pathToNetworkDataset (username: string, name: string, path?: str
   }
   return uri
 }
+
+export function isEditPath (path: string): boolean {
+  return path.includes('/edit')
+}

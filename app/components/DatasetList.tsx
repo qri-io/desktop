@@ -34,7 +34,7 @@ interface DatasetListProps extends RouteComponentProps<QriRef> {
   importFileSize: number
 
   setFilter: (filter: string) => Action
-  setWorkingDataset: (peername: string, name: string) => Action
+  setWorkingDataset: (username: string, name: string) => Action
   fetchMyDatasets: (page: number, pageSize: number) => Promise<AnyAction>
   setModal: (modal: Modal) => void
 }
@@ -86,7 +86,7 @@ export class DatasetListComponent extends React.Component<DatasetListProps> {
     const { filter, value: datasets } = myDatasets
 
     const filteredDatasets = datasets.filter(({ username, name, metaTitle = '' }) => {
-      // if there's a non-empty filter string, only show matches on peername, name, and title
+      // if there's a non-empty filter string, only show matches on username, name, and title
       // TODO (chriswhong) replace this simple filtering with an API call for deeper matches
       if (filter !== '') {
         const lowercasedFilterString = filter.toLowerCase()

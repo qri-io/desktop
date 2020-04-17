@@ -24,7 +24,7 @@ import {
 
 import { Dataset } from '../models/dataset'
 import { Status } from '../models/store'
-import { selectWorkingDataset, selectStatusFromMutations, selectWorkingDatasetIsLoading, selectWorkingDatasetPeername, selectWorkingDatasetName, selectHistoryDatasetIsLoading, selectHistoryDatasetPath, selectHistoryDatasetName, selectHistoryDatasetPeername } from '../selections'
+import { selectWorkingDataset, selectStatusFromMutations, selectWorkingDatasetIsLoading, selectWorkingDatasetUsername, selectWorkingDatasetName, selectHistoryDatasetIsLoading, selectHistoryDatasetPath, selectHistoryDatasetName, selectHistoryDatasetUsername } from '../selections'
 import { QriRef } from '../models/qriRef'
 
 // fetchworkBench makes the necessary API requests to populate the workbench
@@ -34,7 +34,7 @@ export function fetchWorkbench (qriRef: QriRef): LaunchedFetchesAction {
   return async (dispatch, getState) => {
     const state = getState()
     const workingIsLoading = selectWorkingDatasetIsLoading(state)
-    const workingUsername = selectWorkingDatasetPeername(state)
+    const workingUsername = selectWorkingDatasetUsername(state)
     const workingName = selectWorkingDatasetName(state)
     const { username: routeUsername, name: routeName, path: routePath = '' } = qriRef
 
@@ -58,7 +58,7 @@ export function fetchWorkbench (qriRef: QriRef): LaunchedFetchesAction {
     }
 
     const versionIsLoading = selectHistoryDatasetIsLoading(state)
-    const versionUsername = selectHistoryDatasetPeername(state)
+    const versionUsername = selectHistoryDatasetUsername(state)
     const versionName = selectHistoryDatasetName(state)
     const versionPath = selectHistoryDatasetPath(state)
 
@@ -78,14 +78,14 @@ export function fetchWorkbench (qriRef: QriRef): LaunchedFetchesAction {
   }
 }
 
-export function writeDataset (peername: string, name: string, writeDataset: Dataset): ApiActionThunk {
+export function writeDataset (username: string, name: string, writeDataset: Dataset): ApiActionThunk {
   return async (dispatch, getState) => {
     const state = getState()
     const head = selectWorkingDataset(state)
     const prevStatus = selectStatusFromMutations(state)
     const newStatus = determineMutationsStatus(head, writeDataset, prevStatus)
     if (state.workingDataset.fsiPath !== '') {
-      fsiWrite(peername, name, writeDataset)(dispatch, getState)
+      fsiWrite(username, name, writeDataset)(dispatch, getState)
     }
     dispatch(setMutationsStatus(newStatus))
     return dispatch(setMutationsDataset(writeDataset))

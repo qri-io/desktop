@@ -14,7 +14,7 @@ import Store, { StatusInfo } from '../../../models/store'
 
 import { writeDataset } from '../../../actions/workbench'
 
-import { selectWorkingDatasetIsLoading, selectDatasetFromMutations, selectIsLinked, selectWorkingDatasetName, selectWorkingDatasetPeername, selectWorkingStatusInfo } from '../../../selections'
+import { selectWorkingDatasetIsLoading, selectDatasetFromMutations, selectIsLinked, selectWorkingDatasetName, selectWorkingDatasetUsername, selectWorkingStatusInfo } from '../../../selections'
 
 import SpinnerWithIcon from '../../chrome/SpinnerWithIcon'
 import ParseError from '../ParseError'
@@ -153,7 +153,7 @@ const mapStateToProps = (state: Store, ownProps: ReadmeEditorProps) => {
     data: selectDatasetFromMutations(state).readme,
     loading: selectWorkingDatasetIsLoading(state),
     isLinked: selectIsLinked(state),
-    peername: selectWorkingDatasetPeername(state),
+    peername: selectWorkingDatasetUsername(state),
     statusInfo: selectWorkingStatusInfo(state, 'readme'),
     name: selectWorkingDatasetName(state)
   }
