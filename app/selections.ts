@@ -2,8 +2,9 @@ import Dataset, { Commit } from "./models/dataset"
 import cloneDeep from 'clone-deep'
 
 import Store, {
-  CommitDetails,
-  Status, PageInfo,
+  HistoryDataset,
+  Status,
+  PageInfo,
   SelectedComponent,
   VersionInfo,
   Selections,
@@ -30,12 +31,12 @@ export function selectApiConnection (state: Store): ApiConnection {
 
 /**
  *
- * COMMITDETAILS STATE TREE
+ * HISTORYDATASET STATE TREE
  *
  */
 
 export function selectHistoryDatasetBodyPageInfo (state: Store): PageInfo {
-  return state.commitDetails.components.body.pageInfo
+  return state.historyDataset.components.body.pageInfo
 }
 
 export function selectHistoryCommit (state: Store): Commit | undefined {
@@ -55,43 +56,43 @@ export function selectHistoryComponentsList (state: Store): SelectedComponent[] 
 
 // returns a dataset that only contains components
 export function selectHistoryDataset (state: Store): Dataset {
-  return datasetFromCommitDetails(state.commitDetails)
+  return datasetFromHistoryDataset(state.historyDataset)
 }
 
 export function selectHistoryDatasetIsLoading (state: Store): boolean {
-  return state.commitDetails.isLoading
+  return state.historyDataset.isLoading
 }
 
 export function selectHistoryDatasetPath (state: Store): string {
-  return state.commitDetails.path
+  return state.historyDataset.path
 }
 
 export function selectHistoryDatasetName (state: Store): string {
-  return state.commitDetails.name
+  return state.historyDataset.name
 }
 
 export function selectHistoryDatasetPeername (state: Store): string {
-  return state.commitDetails.peername
+  return state.historyDataset.peername
 }
 
 export function selectHistoryDatasetRef (state: Store): string {
-  return `${state.commitDetails.peername}/${state.commitDetails.name}/at${state.commitDetails.path}`
+  return `${state.historyDataset.peername}/${state.historyDataset.name}/at${state.historyDataset.path}`
 }
 
 export function selectHistoryStats (state: Store): Array<Record<string, any>> {
-  return state.commitDetails.stats
+  return state.historyDataset.stats
 }
 
 export function selectHistoryStatus (state: Store): Status {
-  return state.commitDetails.status
+  return state.historyDataset.status
 }
 
 export function selectHistoryIsLoading (state: Store): boolean {
-  return state.commitDetails.isLoading
+  return state.historyDataset.isLoading
 }
 
-function datasetFromCommitDetails (commitDetails: CommitDetails): Dataset {
-  const { components } = commitDetails
+function datasetFromHistoryDataset (historyDataset: HistoryDataset): Dataset {
+  const { components } = historyDataset
   let d: Dataset = {}
 
   Object.keys(components).forEach((componentName: string) => {
@@ -339,7 +340,7 @@ export function selectWorkingDatasetBodyPageInfo (state: Store): PageInfo {
 
 // returns a dataset that only contains components
 export function selectWorkingDataset (state: Store): Dataset {
-  return datasetFromCommitDetails(state.workingDataset)
+  return datasetFromHistoryDataset(state.workingDataset)
 }
 
 export function selectWorkingDatasetIsLoading (state: Store): boolean {

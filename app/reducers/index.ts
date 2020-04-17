@@ -8,7 +8,7 @@ import selectionsReducer from './selections'
 import myDatasetsReducer from './myDatasets'
 import workingDatasetReducer from './workingDataset'
 import workbenchRoutesReducer from './workbenchRoutes'
-import commitDetailReducer from './commitDetail'
+import historyDatasetReducer from './historyDataset'
 import mutationsReducer from './mutations'
 import logReducer from './log'
 
@@ -64,7 +64,7 @@ const createRootReducer = (history) => combineReducers({
   myDatasets: myDatasetsReducer,
   workingDataset: workingDatasetReducer,
   workbenchRoutes: workbenchRoutesReducer,
-  commitDetails: commitDetailReducer,
+  historyDataset: historyDatasetReducer,
   log: logReducer,
   mutations: mutationsReducer,
   router: connectRouter(history)

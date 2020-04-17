@@ -171,7 +171,7 @@ export interface Status {
   [key: string]: StatusInfo
 }
 
-export interface CommitDetails {
+export interface HistoryDataset {
   path: string
   prevPath: string
   peername: string
@@ -205,9 +205,8 @@ export interface CommitDetails {
   structure: Structure
 }
 
-export interface WorkingDataset extends CommitDetails {
+export interface WorkingDataset extends HistoryDataset {
   fsiPath: string
-  log: Log
   isSaving: boolean
   isWriting: boolean
 }
@@ -231,7 +230,7 @@ export default interface Store {
   myDatasets: MyDatasets
   workingDataset: WorkingDataset
   workbenchRoutes: WorkbenchRoutes
-  commitDetails: CommitDetails
+  historyDataset: HistoryDataset
   log: Log
   mutations: Mutations
   router: RouterState

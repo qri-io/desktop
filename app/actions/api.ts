@@ -18,7 +18,7 @@ import {
 import { getActionType } from '../utils/actionType'
 import { datasetConvertStringToScriptBytes } from '../utils/datasetConvertStringToScriptBytes'
 
-import { CLEAR_DATASET_HEAD } from '../reducers/commitDetail'
+import { CLEAR_DATASET_HEAD } from '../reducers/historyDataset'
 import Dataset from '../models/dataset'
 
 import { pathToHistory, pathToCollection } from '../paths'

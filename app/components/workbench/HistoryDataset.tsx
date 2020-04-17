@@ -16,17 +16,17 @@ import { selectHistoryDataset } from '../../selections'
 import HistoryComponentList from './HistoryComponentList'
 import ComponentRouter from './ComponentRouter'
 import Layout from '../Layout'
-import CommitDetailsHeader from './CommitDetailsHeader'
+import HistoryDatasetHeader from './HistoryDatasetHeader'
 import WorkbenchLayout from './layouts/WorkbenchLayout'
 import WorkbenchLogList from './WorkbenchLogList'
 
-export interface CommitDetailsProps extends RouteComponentProps<QriRef> {
+export interface HistoryDatasetProps extends RouteComponentProps<QriRef> {
   qriRef: QriRef
   dataset: Dataset
   fetchWorkbench: (qriRef: QriRef) => LaunchedFetchesAction
 }
 
-export const CommitDetailsComponent: React.FunctionComponent<CommitDetailsProps> = (props) => {
+export const HistoryDatasetComponent: React.FunctionComponent<HistoryDatasetProps> = (props) => {
   const {
     qriRef,
     dataset,
@@ -47,7 +47,7 @@ export const CommitDetailsComponent: React.FunctionComponent<CommitDetailsProps>
             showNav={false}
             id={'commit-details'}
             headerContent={
-              <CommitDetailsHeader
+              <HistoryDatasetHeader
                 path={qriRef.path || ''}
                 structure={dataset.structure}
                 commit={dataset.commit}
@@ -67,7 +67,7 @@ export const CommitDetailsComponent: React.FunctionComponent<CommitDetailsProps>
   )
 }
 
-const mapStateToProps = (state: Store, ownProps: CommitDetailsProps) => {
+const mapStateToProps = (state: Store, ownProps: HistoryDatasetProps) => {
   return {
     ...ownProps,
     qriRef: qriRefFromRoute(ownProps),
@@ -81,8 +81,8 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
   }, dispatch)
 }
 
-const mergeProps = (props: any, actions: any): CommitDetailsProps => {
+const mergeProps = (props: any, actions: any): HistoryDatasetProps => {
   return { ...props, ...actions }
 }
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps, mergeProps)(CommitDetailsComponent))
+export default withRouter(connect(mapStateToProps, mapDispatchToProps, mergeProps)(HistoryDatasetComponent))
