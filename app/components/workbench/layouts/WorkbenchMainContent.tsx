@@ -29,7 +29,7 @@ const WorkbenchMainContentComponent: React.FunctionComponent<WorkbenchMainConten
   return <>
     <div className='main-content-header'>
       <Prompt when={modified} message={(location) => {
-        if (location.pathname.includes('workbench')) return false
+        if (location.pathname.includes('workbench')) return true
         if (fsiPath !== '') {
           fetchWorkingDatasetDetails(qriRef.username, qriRef.name)
           return true

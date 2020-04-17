@@ -33,7 +33,7 @@ export function pathToCollection (): string {
 export function pathToNetworkDataset (username: string, name: string, path?: string): string {
   let uri = `/network/${username}/${name}`
   if (path && path !== '') {
-    uri += `/${path}`
+    uri += `/at${path}`
   }
   return uri
 }

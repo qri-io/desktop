@@ -59,7 +59,6 @@ const LinkButtonComponent: React.FunctionComponent<LinkButtonProps> = (props) =>
       </span>
     )}
     onClick={() => {
-      console.log('click')
       setModal({ type: ModalType.LinkDataset, username, name, modified })
     }}
   />)

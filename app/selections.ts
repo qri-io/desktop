@@ -87,6 +87,11 @@ export function selectHistoryStatus (state: Store): Status {
   return state.historyDataset.status
 }
 
+export function selectHistoryStatusInfo (state: Store, component: SelectedComponent): StatusInfo {
+  const status = selectHistoryStatus(state)
+  return status[component]
+}
+
 export function selectHistoryIsLoading (state: Store): boolean {
   return state.historyDataset.isLoading
 }
@@ -210,6 +215,10 @@ export function selectStatusFromMutations (state: Store): Status {
     }
   })
   return status
+}
+
+export function selectStatusInfoFromMutations (state: Store, component: SelectedComponent): StatusInfo {
+  return selectStatusFromMutations(state)[component] || generateUnmodifiedStatusInfo(component)
 }
 
 /**

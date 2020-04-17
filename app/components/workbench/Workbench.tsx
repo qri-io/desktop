@@ -190,16 +190,6 @@ const WorkbenchRouter: React.FunctionComponent<WorkbenchRouterProps> = (props) =
   const location = useLocation()
   const { path } = useRouteMatch()
 
-  // const wrap = <><Prompt when={modified} message={(location) => {
-  //   if (location.pathname.includes('workbench')) return false
-  //   if (fsiPath !== '') {
-  //     fetchWorkingDatasetDetails(qriRef.username, qriRef.name)
-  //     return true
-  //   }
-  //   return `You have uncommited changes! Click 'cancel' and commit these changes before you navigate away or you will lose your work.`
-  // }}/>
-  // </>
-
   const noDatasetsRedirect = (component: JSX.Element) => {
     if (!hasDatasets) {
       return <Redirect to={pathToNoDatasetSelected()} />
@@ -210,12 +200,6 @@ const WorkbenchRouter: React.FunctionComponent<WorkbenchRouterProps> = (props) =
 
   return (
     <TransitionGroup component={null}>
-      {/*
-      This is no different than other usage of
-      <CSSTransition>, just make sure to pass
-      `location` to `Switch` so it can match
-      the old location as it animates out.
-    */}
       <CSSTransition
         id='workbench-router-transition'
         key={location.key}

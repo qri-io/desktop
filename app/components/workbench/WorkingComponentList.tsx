@@ -120,7 +120,9 @@ export const WorkingComponentListComponent: React.FunctionComponent<WorkingCompo
                 status={fileStatus}
                 selected={selectedComponent === name}
                 tooltip={tooltip}
-                onClick={(component: SelectedComponent) => history.push(pathToEdit(username, datasetName, component))}
+                onClick={(component: SelectedComponent) => {
+                  history.push(pathToEdit(username, datasetName, component))
+                }}
                 color='light'
               />
             )
@@ -171,7 +173,9 @@ export const WorkingComponentListComponent: React.FunctionComponent<WorkingCompo
                 selected={selectedComponent === name}
                 // TODO (ramfox): we should create a 'isDisabled' function and add these specifications & test
                 tooltip={tooltip}
-                onClick={(component: SelectedComponent) => history.push(pathToEdit(username, datasetName, component))}
+                onClick={(component: SelectedComponent) => {
+                  history.push(pathToEdit(username, datasetName, component))
+                }}
               />
             )
           }
