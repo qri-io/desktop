@@ -120,9 +120,6 @@ export const ComponentRouterComponent: React.FunctionComponent<ComponentRouterPr
             classNames='fade'
             component='div'
             timeout={300}
-            mountOnEnter
-            unmountOnExit
-            appear={true}
           >
             <Switch location={location}>
               <Route exact path={routePath}>
