@@ -1,3 +1,16 @@
+## [0.4.2](https://github.com/qri-io/desktop/compare/v0.4.1...v0.4.2) (2020-04-20)
+
+The Qri Desktop 0.4.2 patch fixes a major export bug! It also fixes two minor bugs surrounding fetching datasets for display in the Workbench.
+
+Be sure to check out the latest [qri backend release](https://github.com/qri-io/qri/releases/tag/v0.9.8) to see the other fixes we inherit.
+
+### Bug Fixes
+
+* **workbench:** adjust action to fall through and load history dataset if path is provided ([a16367b](https://github.com/qri-io/desktop/commit/a16367b))
+* **workbench:** if we are given a path, fall through and allow the commit to be fetched ([73277ec](https://github.com/qri-io/desktop/commit/73277ec))
+
+
+
 ## [0.4.1](https://github.com/qri-io/desktop/compare/v0.4.0...v0.4.1) (2020-04-07)
 
 This release is all about minor bug fixes, clean up, stabilization, and updating the desktop app to work with the latest qri release!
