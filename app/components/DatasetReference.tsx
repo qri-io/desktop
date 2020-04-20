@@ -18,10 +18,12 @@ interface DatasetReferenceProps {
 
 const DatasetReferenceComponent: React.FunctionComponent<DatasetReferenceProps> = (props) => {
   const { qriRef, renameDataset } = props
-  const { username = '', name = '' } = qriRef
+  const { username, name } = qriRef
   const [ nameEditing, setNameEditing ] = React.useState(false)
   const [ newName, setNewName ] = React.useState(name)
   const [ inValid, setInvalid ] = React.useState(null)
+
+  const datasetSelected = username !== '' && name !== ''
 
   const confirmRename = (username: string, name: string, newName: string) => {
     // cancel if no change, change invalid, or empty
@@ -95,9 +97,9 @@ const DatasetReferenceComponent: React.FunctionComponent<DatasetReferenceProps> 
 
   return (
     <div id='dataset-reference' className='dataset-reference'>
-      <div className='dataset-username'>{username || ''}/</div>
-      <div className='dataset-name' id='dataset-name' ref={nameRef}>
-        { nameEditing && <input
+      <div className='dataset-username'>{username}/</div>
+      <div className={classNames('dataset-name', { 'no-pointer': !datasetSelected })} id='dataset-name' ref={nameRef}>
+        { nameEditing && datasetSelected && <input
           id='dataset-name-input'
           className={classNames({ invalid: inValid })}
           type='text'
@@ -108,7 +110,7 @@ const DatasetReferenceComponent: React.FunctionComponent<DatasetReferenceProps> 
           onFocus={onFocus}
           pattern='^(?![0_9])[a-z0-9_]{1,144}$'
         /> }
-        { !nameEditing && (<>{name || ''}</>)}
+        { !nameEditing && (<>{name}</>)}
       </div>
     </div>
   )

@@ -2,16 +2,17 @@ import * as React from 'react'
 import ReactJson from 'react-json-view'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons'
+import SpinnerWithIcon from './chrome/SpinnerWithIcon'
 
 interface BodyJsonProps {
   data: any[]
-
+  isLoading: boolean
   previewWarning?: boolean
 }
 
 const BodyJson: React.FunctionComponent<BodyJsonProps> = (props) => {
-  const { data, previewWarning = true } = props
-
+  const { data, previewWarning = true, isLoading } = props
+  if (isLoading && !!data) return <SpinnerWithIcon loading />
   if (!data) return null
 
   return (

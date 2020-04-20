@@ -6,8 +6,6 @@ import SelectionsReducer, {
   SELECTIONS_SET_SELECTED_LISTITEM,
   SELECTIONS_SET_WORKING_DATASET,
   SELECTIONS_CLEAR,
-  ADD_SUCC,
-  INIT_SUCC,
   DATASET_SUCC,
   DATASET_FAIL,
   COMMIT_SUCC,
@@ -15,11 +13,6 @@ import SelectionsReducer, {
   SIGNUP_SUCC,
   REMOVE_SUCC
 } from '../../../app/reducers/selections'
-
-import {
-  HISTORY_REQ,
-  HISTORY_SUCC
-} from '../../../app/reducers/workingDataset'
 
 // TODO (ramfox): test local storage
 // TODO (ramfox): test on non-empty/not initialState
@@ -317,79 +310,6 @@ describe('Body Reducer', () => {
     }
     it(`case ${describe} of ${type}`, () => {
       Reducer(SelectionsReducer).withState(initialState).expect(action).toChangeInState({ ...expected })
-    })
-  })
-
-  const fullState = {
-    peername: 'foo',
-    name: 'bar',
-    activeTab: 'history',
-    component: 'meta',
-    commit: 'baz',
-    commitComponent: 'meta'
-  }
-
-  const historyCases = [
-    {
-      describe: 'HISTORY_REQ & fetching not first page',
-      state: fullState,
-      action: {
-        type: HISTORY_REQ,
-        pageInfo: {
-          page: 10
-        }
-      },
-      expectedChange: {}
-    },
-    {
-      describe: 'HISTORY_SUCC & already have commit selected',
-      state: fullState,
-      action: {
-        type: HISTORY_SUCC
-      },
-      expectedChange: {}
-    },
-    {
-      describe: 'HISTORY_SUCC & no commits returned',
-      state: {
-        ...fullState,
-        commit: ''
-      },
-      action: {
-        type: HISTORY_SUCC,
-        payload: {
-          data: []
-        }
-      },
-      expectedChange: {}
-    },
-    {
-      describe: 'HISTORY_SUCC & commits returned',
-      state: {
-        commit: ''
-      },
-      action: {
-        type: HISTORY_SUCC,
-        payload: {
-          data: [
-            {
-              path: 'foo'
-            },
-            {
-              path: 'bar'
-            }
-          ]
-        }
-      },
-      expectedChange: {
-        commit: 'foo'
-      }
-    },
-  ]
-
-  historyCases.forEach(({describe, state, action, expectedChange}) => {
-    it(`case ${describe}`, () => {
-      Reducer(SelectionsReducer).withState(state).expect(action).toChangeInState(expectedChange)
     })
   })
 })

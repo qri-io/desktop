@@ -7,6 +7,7 @@ import fakeDialog from 'spectron-fake-dialog'
 import { E2ETestUtils, newE2ETestUtils } from '../utils/e2eTestUtils'
 import http from 'http'
 import Dataset, { Commit, Meta, Structure } from '../../app/models/dataset'
+import { createConfigItem } from '@babel/core'
 
 const { Application } = require('spectron')
 
@@ -34,15 +35,17 @@ describe('Qri End to End tests', function spec () {
   let utils: E2ETestUtils
 
   const filename = 'all_week.csv'
-  const datasetName = 'all_weekcsv'
+  const datasetName = 'all_week'
   const datasetRename = 'earthquakes'
 
   const jsonFilename = 'test_dataset.json'
-  const jsonDatasetName = 'test_datasetjson'
+  const jsonDatasetName = 'test_dataset'
 
   const username = 'fred'
   const email = 'fred@qri.io'
   const password = '1234567890!!'
+
+  const createdCommitTitle = 'created dataset from all_week.csv'
 
   const metaCommit: Commit = {
     title: 'edited meta',
@@ -113,9 +116,9 @@ describe('Qri End to End tests', function spec () {
   const healthCheck = async () => {
     return new Promise((res, rej) => {
       http.get('http://localhost:2503/health', (data: http.IncomingMessage) => {
-        res(true);
+        res(true)
       }).on('error', (e) => {
-        res(false);
+        res(false)
       })
     })
   }
@@ -126,7 +129,7 @@ describe('Qri End to End tests', function spec () {
     var isQriRunning = await healthCheck()
 
     if (isQriRunning) {
-      throw("An instance of Qri is already running. Aborting e2e tests.")
+      throw ("An instance of Qri is already running. Aborting e2e tests.")
     }
 
     registry = new TestTempRegistry()
@@ -374,7 +377,7 @@ describe('Qri End to End tests', function spec () {
     // ensure we are still at the history tab
     await onHistoryTab()
     // ensure we have a commit title
-    await expectTextToBe('#commit-title', 'created dataset', artifactPath('new-csv-commit-title-created-datasets.png'))
+    await expectTextToBe('#commit-title', createdCommitTitle, artifactPath('new-csv-commit-title-created-datasets.png'))
   })
 
   // checkout
@@ -532,7 +535,7 @@ describe('Qri End to End tests', function spec () {
     // click the original commit and check commit-title
     await click('#HEAD-4', artifactPath('switch-between-commits-click-head-3.png'))
     await delay(500)
-    await expectTextToBe('#commit-title', 'created dataset', artifactPath('fsi-editing-commit-title-created-dataset.png'))
+    await expectTextToBe('#commit-title', createdCommitTitle, artifactPath('fsi-editing-commit-title-created-dataset.png'))
 
     // click the third commit and check commit-title
     await click('#HEAD-3')
@@ -634,7 +637,7 @@ describe('Qri End to End tests', function spec () {
     // click the third commit and check commit-title
     await click('#HEAD-3', artifactPath('in-app-editing-switch-between-commits-click-head-3.png'))
     await delay(500)
-    await expectTextToBe('#commit-title', 'created dataset', artifactPath('in-app-editing-commit-title-created-dataset.png'))
+    await expectTextToBe('#commit-title', createdCommitTitle, artifactPath('in-app-editing-commit-title-created-dataset.png'))
 
     // click the third commit and check commit-title
     await click('#HEAD-2')
@@ -653,7 +656,8 @@ describe('Qri End to End tests', function spec () {
       click,
       expectTextToBe,
       onHistoryTab,
-      checkStatus
+      checkStatus,
+      waitForExist
     } = utils
 
     // make sure we are on the collection page
@@ -682,6 +686,7 @@ describe('Qri End to End tests', function spec () {
     // to get the reference to match. It looks like because the #dataset-reference
     // div divides the peername and name among multiple divs, we get this odd
     // whitespace character
+    await waitForExist('#dataset-reference')
     const reference = `${username}/\n${jsonDatasetName}`
     await expectTextToBe('#dataset-reference', reference)
 

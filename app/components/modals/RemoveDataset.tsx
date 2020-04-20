@@ -18,12 +18,12 @@ import Buttons from './Buttons'
 interface RemoveDatasetProps {
   modal: RemoveDatasetModal
   onDismissed: () => void
-  onSubmit: (peername: string, name: string, isLinked: boolean, keepFiles: boolean) => Promise<ApiAction>
+  onSubmit: (username: string, name: string, isLinked: boolean, keepFiles: boolean) => Promise<ApiAction>
 }
 
 export const RemoveDatasetComponent: React.FunctionComponent<RemoveDatasetProps> = (props: RemoveDatasetProps) => {
   const { modal, onDismissed, onSubmit } = props
-  const { peername, name, fsiPath } = modal
+  const { username, name, fsiPath } = modal
 
   const [keepFiles, setKeepFiles] = React.useState(true)
 
@@ -43,7 +43,7 @@ export const RemoveDatasetComponent: React.FunctionComponent<RemoveDatasetProps>
     if (!onSubmit) return
 
     const isLinked = !!fsiPath
-    onSubmit(peername, name, isLinked, keepFiles)
+    onSubmit(username, name, isLinked, keepFiles)
       .then(onDismissed)
       .catch((action) => {
         setLoading(false)
@@ -63,7 +63,7 @@ export const RemoveDatasetComponent: React.FunctionComponent<RemoveDatasetProps>
     >
       <div className='content-wrap'>
         <div className='content'>
-          <div className='content-main'>Are you sure you want to remove <br/> <div className='code-highlight'>{peername}/{name}</div>&nbsp;?</div>
+          <div className='content-main'>Are you sure you want to remove <br/> <div className='code-highlight'>{username}/{name}</div>&nbsp;?</div>
           { fsiPath &&
             <CheckboxInput
               name='should-remove-files'

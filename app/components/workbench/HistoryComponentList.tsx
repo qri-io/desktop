@@ -1,9 +1,9 @@
 import * as React from 'react'
-import { Action, bindActionCreators, Dispatch } from 'redux'
+import { bindActionCreators, Dispatch } from 'redux'
 import { connect } from 'react-redux'
 
 import { Status, SelectedComponent, ComponentStatus } from '../../models/store'
-import { selectedComponentFromQriRef, QriRef } from '../../models/qriRef'
+import { QriRef, qriRefFromRoute } from '../../models/qriRef'
 
 import { setHistoryComponent } from '../../actions/selections'
 
@@ -11,22 +11,30 @@ import { selectHistoryStatus, selectHistoryComponentsList } from '../../selectio
 
 import ComponentItem from '../item/ComponentItem'
 import { components as componentsInfo } from './WorkingComponentList'
+import { withRouter, RouteComponentProps } from 'react-router-dom'
+import { pathToHistory } from '../../paths'
 
-interface HistoryComponentListProps {
+interface HistoryComponentListProps extends RouteComponentProps<QriRef> {
   qriRef: QriRef
   components?: SelectedComponent[]
   status: Status
   selectedComponent: SelectedComponent
-  onComponentClick: (activeTab: string) => Action
 }
 
 export const HistoryComponentListComponent: React.FunctionComponent<HistoryComponentListProps> = (props: HistoryComponentListProps) => {
   const {
+    qriRef,
     status,
     components = [],
     selectedComponent,
-    onComponentClick
+    history
   } = props
+
+  const {
+    username = '',
+    name: datasetName = '',
+    path = ''
+  } = qriRef
 
   return (
     <div>
@@ -46,7 +54,7 @@ export const HistoryComponentListComponent: React.FunctionComponent<HistoryCompo
                 status={fileStatus}
                 selected={selectedComponent === name}
                 tooltip={tooltip}
-                onClick={onComponentClick}
+                onClick={(component: SelectedComponent) => history.push(pathToHistory(username, datasetName, path, component))}
               />
             )
           }
@@ -65,10 +73,12 @@ export const HistoryComponentListComponent: React.FunctionComponent<HistoryCompo
 }
 
 const mapStateToProps = (state: any, ownProps: HistoryComponentListProps) => {
+  const qriRef = qriRefFromRoute(ownProps)
   return {
     ...ownProps,
+    qriRef,
     status: selectHistoryStatus(state),
-    selectedComponent: selectedComponentFromQriRef(ownProps.qriRef),
+    selectedComponent: qriRef.component,
     components: selectHistoryComponentsList(state)
   }
 }
@@ -83,4 +93,4 @@ const mergeProps = (props: any, actions: any): HistoryComponentListProps => {
   return { ...props, ...actions }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(HistoryComponentListComponent)
+export default withRouter(connect(mapStateToProps, mapDispatchToProps, mergeProps)(HistoryComponentListComponent))

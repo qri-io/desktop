@@ -1,20 +1,22 @@
 import * as React from 'react'
 import { connect } from 'react-redux'
+import { RouteComponentProps } from 'react-router-dom'
 
-import Store from '../../models/store'
-import { isUserArray } from '../form/MetadataMultiInput'
-import { Meta, Citation, License, User } from '../../models/dataset'
-import { selectHistoryDataset } from '../../selections'
-import { QriRef } from '../../models/qriRef'
+import Store from '../../../models/store'
+import { isUserArray } from '../../form/MetadataMultiInput'
+import { Meta, Citation, License, User } from '../../../models/dataset'
+import { selectHistoryDataset, selectHistoryDatasetIsLoading } from '../../../selections'
+import { QriRef, qriRefFromRoute } from '../../../models/qriRef'
 
-import ExternalLink from '../ExternalLink'
-import KeyValueTable from '../KeyValueTable'
-import SpinnerWithIcon from '../chrome/SpinnerWithIcon'
+import ExternalLink from '../../ExternalLink'
+import KeyValueTable from '../../KeyValueTable'
+import SpinnerWithIcon from '../../chrome/SpinnerWithIcon'
 import { standardFields } from './MetadataEditor'
 
-interface MetadataProps {
+interface MetadataProps extends RouteComponentProps<QriRef> {
   qriRef: QriRef
   data: Meta
+  isLoading: boolean
 }
 
 const renderValue = (value: string | string[] | object) => {
@@ -107,9 +109,9 @@ const renderTable = (keys: string[], data: Meta) => {
   )
 }
 
-export const MetadataComponent: React.FunctionComponent<MetadataProps> = ({ data }) => {
-  if (!data) {
-    return <SpinnerWithIcon loading={true} />
+export const MetadataComponent: React.FunctionComponent<MetadataProps> = ({ data, isLoading }) => {
+  if (isLoading) {
+    return <SpinnerWithIcon loading />
   }
 
   // TODO (b5) - this should happen at the point of ingest from the API
@@ -136,6 +138,8 @@ const mapStateToProps = (state: Store, ownProps: MetadataProps) => {
   // get data for the currently selected component
   return {
     ...ownProps,
+    qriRef: qriRefFromRoute(ownProps),
+    isLoading: selectHistoryDatasetIsLoading(state),
     data: selectHistoryDataset(state).meta
   }
 }

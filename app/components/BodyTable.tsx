@@ -3,10 +3,12 @@ import * as _ from 'underscore'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSync } from '@fortawesome/free-solid-svg-icons'
 
-import { TypeLabel } from './TwoDSchemaLayout'
-import { bodyPageSizeDefault } from '../actions/api'
 import { PageInfo } from '../models/store'
+import { bodyPageSizeDefault } from '../actions/api'
 import { ApiActionThunk } from '../store/api'
+
+import { TypeLabel } from './TwoDSchemaLayout'
+import SpinnerWithIcon from './chrome/SpinnerWithIcon'
 
 interface BodyTableProps {
   headers?: any[]
@@ -100,7 +102,7 @@ export default class BodyTable extends React.Component<BodyTableProps> {
     const { body, headers, pageInfo, highlighedColumnIndex, setDetailsBar } = this.props
     const { isFetching, fetchedAll } = pageInfo
 
-    if (isFetching && !body) return null
+    if (isFetching && !body) return <SpinnerWithIcon loading />
 
     const tableRows = body.map((row, i) => {
       return (

@@ -1,46 +1,49 @@
 import * as React from 'react'
 import { connect } from 'react-redux'
 import { MenuItemConstructorOptions, remote, ipcRenderer } from 'electron'
-import { Action, Dispatch, bindActionCreators } from 'redux'
+import { Dispatch, bindActionCreators } from 'redux'
 import ContextMenuArea from 'react-electron-contextmenu'
-
-import { ApiActionThunk } from '../../store/api'
-import { QriRef, refStringFromQriRef } from '../../models/qriRef'
-import { History, VersionInfo } from '../../models/store'
-
-import { setCommit } from '../../actions/selections'
-import { fetchHistory } from '../../actions/api'
-
-import { selectHistory } from '../../selections'
-
-import HistoryListItem from '../item/HistoryListItem'
+import { RouteComponentProps, withRouter } from 'react-router-dom'
 import moment from 'moment'
 
-interface WorkbenchLogListProps {
+import { ApiActionThunk } from '../../store/api'
+import { QriRef, refStringFromQriRef, qriRefFromRoute } from '../../models/qriRef'
+import { VersionInfo, PageInfo } from '../../models/store'
+
+import { fetchLog } from '../../actions/api'
+
+import { selectLog, selectLogPageInfo } from '../../selections'
+
+import HistoryListItem from '../item/HistoryListItem'
+import { pathToHistory } from '../../paths'
+
+interface WorkbenchLogListProps extends RouteComponentProps<QriRef> {
   qriRef: QriRef
-  history: History
-  setCommit: (path: string) => Action
-  fetchHistory: (page?: number, pageSize?: number) => ApiActionThunk
+  log: VersionInfo[]
+  logPageInfo: PageInfo
+  fetchLog: (username: string, name: string, page?: number, pageSize?: number) => ApiActionThunk
 }
 
 export const WorkbenchLogListComponent: React.FunctionComponent<WorkbenchLogListProps> = (props) => {
   const {
     qriRef,
+    log,
+    logPageInfo,
     history,
-
-    fetchHistory,
-    setCommit
+    fetchLog
   } = props
+
+  const { username, name } = qriRef
 
   const handleHistoryScroll = (e: any) => {
     if (e.target.scrollHeight === parseInt(e.target.scrollTop) + parseInt(e.target.offsetHeight)) {
-      fetchHistory(history.pageInfo.page + 1, history.pageInfo.pageSize)
+      fetchLog(username, name, logPageInfo.page + 1, logPageInfo.pageSize)
     }
   }
 
   const handleExport = (versionInfo: VersionInfo) => {
     const window = remote.getCurrentWindow()
-    const zipName = `${qriRef.username}-${qriRef.name}-${moment(versionInfo.commitTime).format('MM-DD-YYYY-hh-mm-ss-a')}.zip`
+    const zipName = `${username}-${name}-${moment(versionInfo.commitTime).format('MM-DD-YYYY-hh-mm-ss-a')}.zip`
     const selectedPath: string | undefined = remote.dialog.showSaveDialogSync(window, { defaultPath: zipName })
 
     if (!selectedPath) {
@@ -58,16 +61,18 @@ export const WorkbenchLogListComponent: React.FunctionComponent<WorkbenchLogList
       onScroll={(e) => handleHistoryScroll(e)}
     >
       {
-        history.value.map((item, i) => {
+        log.map((item, i) => {
           if (item.foreign) {
             return <HistoryListItem
               data={item}
               key={item.path}
               id={`HEAD-${i + 1}`}
               first={i === 0}
-              last={i === history.value.length - 1}
+              last={i === log.length - 1}
               selected={qriRef.path === item.path}
-              onClick={setCommit}
+              onClick={() => {
+                history.push(pathToHistory(username, name, item.path))
+              }}
             />
           }
           const menuItems: MenuItemConstructorOptions[] = [
@@ -85,9 +90,11 @@ export const WorkbenchLogListComponent: React.FunctionComponent<WorkbenchLogList
                 key={item.path}
                 id={`HEAD-${i + 1}`}
                 first={i === 0}
-                last={i === history.value.length - 1}
+                last={i === log.length - 1}
                 selected={qriRef.path === item.path}
-                onClick={setCommit}
+                onClick={() => {
+                  history.push(pathToHistory(username, name, item.path))
+                }}
               />
             </ContextMenuArea>
           )
@@ -98,15 +105,16 @@ export const WorkbenchLogListComponent: React.FunctionComponent<WorkbenchLogList
 
 const mapStateToProps = (state: any, ownProps: WorkbenchLogListProps) => {
   return {
-    ...ownProps,
-    history: selectHistory(state)
+    qriRef: qriRefFromRoute(ownProps),
+    log: selectLog(state),
+    logPageInfo: selectLogPageInfo(state),
+    ...ownProps
   }
 }
 
 const mapDispatchToProps = (dispatch: Dispatch) => {
   return bindActionCreators({
-    setCommit,
-    fetchHistory
+    fetchLog
   }, dispatch)
 }
 
@@ -114,4 +122,4 @@ const mergeProps = (props: any, actions: any): WorkbenchLogListProps => {
   return { ...props, ...actions }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(WorkbenchLogListComponent)
+export default withRouter(connect(mapStateToProps, mapDispatchToProps, mergeProps)(WorkbenchLogListComponent))

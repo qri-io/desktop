@@ -1,27 +1,31 @@
 import * as React from 'react'
 import { Action, Dispatch, bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
+import { RouteComponentProps } from 'react-router-dom'
 
-import { ApiActionThunk } from '../../store/api'
-import { DetailsType, StatsDetails, Details } from '../../models/details'
-import Dataset, { Structure } from '../../models/dataset'
-import Store, { PageInfo } from '../../models/store'
-import { fetchBody, fetchCommitBody } from '../../actions/api'
-import { setDetailsBar } from '../../actions/ui'
-import { selectHistoryDataset, selectWorkingDataset, selectHistoryStats, selectWorkingStats, selectDetails, selectHistoryDatasetBodyPageInfo, selectWorkingDatasetBodyPageInfo } from '../../selections'
-import { QriRef } from '../../models/qriRef'
+import { ApiActionThunk } from '../../../store/api'
+import { DetailsType, StatsDetails, Details } from '../../../models/details'
+import Dataset, { Structure } from '../../../models/dataset'
+import Store, { PageInfo, StatusInfo } from '../../../models/store'
+import { fetchBody, fetchCommitBody } from '../../../actions/api'
+import { setDetailsBar } from '../../../actions/ui'
+import { selectHistoryDataset, selectWorkingDataset, selectHistoryStats, selectWorkingStats, selectDetails, selectHistoryDatasetBodyPageInfo, selectWorkingDatasetBodyPageInfo, selectWorkingStatusInfo } from '../../../selections'
+import { QriRef, qriRefFromRoute } from '../../../models/qriRef'
 
-import BodyTable from '../BodyTable'
-import BodyJson from '../BodyJson'
+import BodyTable from '../../BodyTable'
+import BodyJson from '../../BodyJson'
+import ParseError from '../ParseError'
+import hasParseError from '../../../utils/hasParseError'
 
-export interface BodyProps {
+export interface BodyProps extends RouteComponentProps<QriRef> {
   qriRef: QriRef
   data: Dataset
   stats: Array<Record<string, any>>
   details: Details
   pageInfo: PageInfo
-  fetchBody: (page?: number, pageSize?: number) => ApiActionThunk
-  fetchCommitBody: (page?: number, pageSize?: number) => ApiActionThunk
+  statusInfo: StatusInfo
+  fetchBody: (username: string, name: string, page?: number, pageSize?: number) => ApiActionThunk
+  fetchCommitBody: (username: string, name: string, path: string, page?: number, pageSize?: number) => ApiActionThunk
   setDetailsBar: (details: Record<string, any>) => Action
 }
 
@@ -69,8 +73,13 @@ export const BodyComponent: React.FunctionComponent<BodyProps> = (props) => {
     setDetailsBar,
     fetchBody,
     fetchCommitBody,
+    statusInfo,
     qriRef
   } = props
+
+  if (hasParseError(statusInfo)) {
+    return <ParseError component='body' />
+  }
 
   const showHistory = !!qriRef.path
 
@@ -105,6 +114,14 @@ export const BodyComponent: React.FunctionComponent<BodyProps> = (props) => {
     }
   }
 
+  const handleFetch = (page?: number, pageSize?: number) => {
+    const { username, name, path = '' } = qriRef
+    if (showHistory) {
+      return fetchCommitBody(username, name, path, page, pageSize)
+    }
+    return fetchBody(username, name, page, pageSize)
+  }
+
   return (
     <div className='transition-group'>
       {shouldDisplayJsonViewer(structure.format)
@@ -118,7 +135,7 @@ export const BodyComponent: React.FunctionComponent<BodyProps> = (props) => {
           body={body}
           pageInfo={pageInfo}
           highlighedColumnIndex={details.type !== DetailsType.NoDetails ? details.index : undefined}
-          onFetch={showHistory ? fetchCommitBody : fetchBody}
+          onFetch={handleFetch}
           setDetailsBar={handleToggleDetailsBar}
         />
       }
@@ -129,13 +146,14 @@ export const BodyComponent: React.FunctionComponent<BodyProps> = (props) => {
 const mapStateToProps = (state: Store, ownProps: BodyProps) => {
   // TODO(ramfox): when we get a BodyEditor component, pull out all references
   // to showHistory
-  const { qriRef } = ownProps
+  const qriRef = qriRefFromRoute(ownProps)
   const showHistory = !!qriRef.path
   return {
     data: showHistory ? selectHistoryDataset(state) : selectWorkingDataset(state),
     stats: showHistory ? selectHistoryStats(state) : selectWorkingStats(state),
     details: selectDetails(state),
     pageInfo: showHistory ? selectHistoryDatasetBodyPageInfo(state) : selectWorkingDatasetBodyPageInfo(state),
+    statusInfo: selectWorkingStatusInfo(state, 'body'),
     qriRef
   }
 }

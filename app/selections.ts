@@ -1,11 +1,23 @@
 import Dataset, { Commit } from "./models/dataset"
 import cloneDeep from 'clone-deep'
 
-import Store, { CommitDetails, Status, PageInfo, SelectedComponent, History, VersionInfo, Selections, Toast, ApiConnection } from './models/store'
+import Store, {
+  HistoryDataset,
+  Status,
+  PageInfo,
+  SelectedComponent,
+  VersionInfo,
+  Selections,
+  Toast,
+  ApiConnection,
+  StatusInfo
+} from './models/store'
 import { Details, DetailsType } from "./models/details"
 import { datasetToVersionInfo } from "./actions/mappingFuncs"
 import { Modal, ModalType } from "./models/modals"
 import { Session } from "./models/session"
+import { SidebarTypes } from "./actions/ui"
+import { QriRef } from "./models/qriRef"
 
 /**
  *
@@ -19,12 +31,12 @@ export function selectApiConnection (state: Store): ApiConnection {
 
 /**
  *
- * COMMITDETAILS STATE TREE
+ * HISTORYDATASET STATE TREE
  *
  */
 
 export function selectHistoryDatasetBodyPageInfo (state: Store): PageInfo {
-  return state.commitDetails.components.body.pageInfo
+  return state.historyDataset.components.body.pageInfo
 }
 
 export function selectHistoryCommit (state: Store): Commit | undefined {
@@ -44,43 +56,48 @@ export function selectHistoryComponentsList (state: Store): SelectedComponent[] 
 
 // returns a dataset that only contains components
 export function selectHistoryDataset (state: Store): Dataset {
-  return datasetFromCommitDetails(state.commitDetails)
+  return datasetFromHistoryDataset(state.historyDataset)
 }
 
 export function selectHistoryDatasetIsLoading (state: Store): boolean {
-  return state.commitDetails.isLoading
+  return state.historyDataset.isLoading
 }
 
 export function selectHistoryDatasetPath (state: Store): string {
-  return state.commitDetails.path
+  return state.historyDataset.path
 }
 
 export function selectHistoryDatasetName (state: Store): string {
-  return state.commitDetails.name
+  return state.historyDataset.name
 }
 
-export function selectHistoryDatasetPeername (state: Store): string {
-  return state.commitDetails.peername
+export function selectHistoryDatasetUsername (state: Store): string {
+  return state.historyDataset.peername
 }
 
 export function selectHistoryDatasetRef (state: Store): string {
-  return `${state.commitDetails.peername}/${state.commitDetails.name}/at${state.commitDetails.path}`
+  return `${state.historyDataset.peername}/${state.historyDataset.name}/at${state.historyDataset.path}`
 }
 
 export function selectHistoryStats (state: Store): Array<Record<string, any>> {
-  return state.commitDetails.stats
+  return state.historyDataset.stats
 }
 
 export function selectHistoryStatus (state: Store): Status {
-  return state.commitDetails.status
+  return state.historyDataset.status
+}
+
+export function selectHistoryStatusInfo (state: Store, component: SelectedComponent): StatusInfo {
+  const status = selectHistoryStatus(state)
+  return status[component]
 }
 
 export function selectHistoryIsLoading (state: Store): boolean {
-  return state.commitDetails.isLoading
+  return state.historyDataset.isLoading
 }
 
-function datasetFromCommitDetails (commitDetails: CommitDetails): Dataset {
-  const { components } = commitDetails
+function datasetFromHistoryDataset (historyDataset: HistoryDataset): Dataset {
+  const { components } = historyDataset
   let d: Dataset = {}
 
   Object.keys(components).forEach((componentName: string) => {
@@ -94,12 +111,51 @@ function datasetFromCommitDetails (commitDetails: CommitDetails): Dataset {
 
 /**
  *
+ * LOG STATE TREE
+ *
+ */
+
+export function selectLog (state: Store): VersionInfo[] {
+  return state.log.value
+}
+
+export function selectLogPageInfo (state: Store): PageInfo {
+  return state.log.pageInfo
+}
+
+/**
+ *
  * MYDATASETS STATE TREE
  *
  */
 
 export function selectMyDatasets (state: Store) {
   return state.myDatasets.value
+}
+
+export function selectMyDatasetsPageInfo (state: Store) {
+  return state.myDatasets.pageInfo
+}
+
+export function selectHasDatasets (state: Store) {
+  const pageInfo = selectMyDatasetsPageInfo(state)
+  const length = selectMyDatasets(state).length
+  return pageInfo.isFetching || length > 0
+}
+
+export function selectDatasetByName (state: Store, username: string, name: string): VersionInfo | undefined {
+  const myDatasets = selectMyDatasets(state)
+  return myDatasets.find((vi: VersionInfo) => {
+    return vi.username === username && vi.name === name
+  })
+}
+
+export function selectLatestPath (state: Store, username: string, name: string): string {
+  const vi = selectDatasetByName(state, username, name)
+  if (!vi) {
+    return ''
+  }
+  return vi.path
 }
 
 /**
@@ -110,13 +166,16 @@ export function selectMyDatasets (state: Store) {
 
 // combines working dataset and mutations dataset to return most
 // up-to-date version of the edited dataset
-export function selectMutationsDataset (state: Store): Dataset {
-  const { mutations } = state
-  const mutationsDataset = mutations.dataset.value
+export function selectDatasetFromMutations (state: Store): Dataset {
+  const mutationsDataset = selectMutationsDataset(state)
 
   const dataset = selectWorkingDataset(state)
   const d = { ...dataset, ...mutationsDataset }
   return d
+}
+
+export function selectMutationsDataset (state: Store): Dataset {
+  return state.mutations.dataset.value
 }
 
 export function selectMutationsIsDirty (state: Store): boolean {
@@ -158,6 +217,10 @@ export function selectStatusFromMutations (state: Store): Status {
   return status
 }
 
+export function selectStatusInfoFromMutations (state: Store, component: SelectedComponent): StatusInfo {
+  return selectStatusFromMutations(state)[component] || generateUnmodifiedStatusInfo(component)
+}
+
 /**
  *
  * SELECTIONS STATE TREE
@@ -194,6 +257,10 @@ export function selectSessionUsername (state: Store): string {
   return state.session.peername
 }
 
+export function selectInNamespace (state: Store, qriRef: QriRef): boolean {
+  return selectSessionUsername(state) === qriRef.username
+}
+
 /**
  *
  * UI STATE TREE
@@ -228,7 +295,7 @@ export function selectShowDetailsBar (state: Store): boolean {
   return state.ui.detailsBar.type !== DetailsType.NoDetails
 }
 
-export function selectSidebarWidth (state: Store, view: 'collection' | 'workbench' | 'network'): number {
+export function selectSidebarWidth (state: Store, view: SidebarTypes): number {
   const { ui } = state
   switch (view) {
     case 'collection':
@@ -256,12 +323,12 @@ export function selectFsiPath (state: Store) {
   return state.workingDataset.fsiPath
 }
 
-export function selectHistory (state: Store): History {
-  return state.workingDataset.history
-}
-
 export function selectIsLinked (state: Store): boolean {
   return !!state.workingDataset.fsiPath && state.workingDataset.fsiPath !== ''
+}
+
+export function selectIsPublished (state: Store): boolean {
+  return state.workingDataset.published
 }
 
 export function selectVersionInfoFromWorkingDataset (state: Store): VersionInfo {
@@ -282,7 +349,7 @@ export function selectWorkingDatasetBodyPageInfo (state: Store): PageInfo {
 
 // returns a dataset that only contains components
 export function selectWorkingDataset (state: Store): Dataset {
-  return datasetFromCommitDetails(state.workingDataset)
+  return datasetFromHistoryDataset(state.workingDataset)
 }
 
 export function selectWorkingDatasetIsLoading (state: Store): boolean {
@@ -297,7 +364,7 @@ export function selectWorkingDatasetName (state: Store): string {
   return state.workingDataset.name
 }
 
-export function selectWorkingDatasetPeername (state: Store): string {
+export function selectWorkingDatasetUsername (state: Store): string {
   return state.workingDataset.peername
 }
 
@@ -310,6 +377,37 @@ export function selectWorkingStatus (state: Store): Status {
   return state.workingDataset.status
 }
 
+export function selectWorkingStatusInfo (state: Store, component: SelectedComponent): StatusInfo {
+  const status = selectWorkingStatus(state)
+  return status[component] || generateUnmodifiedStatusInfo(component)
+}
+
 export function selectWorkingStats (state: Store): Array<Record<string, any>> {
   return state.workingDataset.stats
+}
+
+function generateUnmodifiedStatusInfo (componentName: SelectedComponent): StatusInfo {
+  return {
+    filepath: componentName,
+    status: 'unmodified',
+    component: componentName
+  }
+}
+
+/**
+ *
+ * WORKBENCHROUTER STATE TREE
+ *
+ */
+
+export function selectRecentHistoryRef (state: Store): QriRef {
+  return state.workbenchRoutes.historyRef
+}
+
+export function selectRecentEditRef (state: Store): QriRef {
+  return state.workbenchRoutes.editRef
+}
+
+export function selectRecentWorkbenchLocation (state: Store): string {
+  return state.workbenchRoutes.location
 }

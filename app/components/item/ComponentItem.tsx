@@ -19,7 +19,7 @@ export interface ComponentItemProps {
   status?: ComponentStatus
   disabled?: boolean
   tooltip?: string
-  onClick?: (component: SelectedComponent) => Action
+  onClick?: (component: SelectedComponent) => Action | void
 }
 
 export const ComponentItem: React.FunctionComponent<ComponentItemProps> = (props) => {
@@ -38,10 +38,6 @@ export const ComponentItem: React.FunctionComponent<ComponentItemProps> = (props
         'selected': props.selected,
         'disabled': props.disabled
       })}
-      // TODO(ramfox): when we pull out the selections reducer, this should be
-      // replaced by a push() to the correct location
-      // `/workbench/:peername/:name/at:path/:component` or
-      // `/workbench/:peername/:name/:component`
       onClick={() => {
         if (props.onClick && props.displayName) {
           props.onClick(props.displayName.toLowerCase() as SelectedComponent)

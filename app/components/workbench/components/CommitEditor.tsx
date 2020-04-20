@@ -4,25 +4,26 @@ import { connect } from 'react-redux'
 import classNames from 'classnames'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSync } from '@fortawesome/free-solid-svg-icons'
+import { RouteComponentProps } from 'react-router-dom'
 
-import Store, { Status } from '../../models/store'
-import { saveWorkingDatasetAndFetch } from '../../actions/api'
-import { setCommitTitle, setCommitMessage } from '../../actions/mutations'
-import { validateCommitState } from '../../utils/formValidation'
-import { ApiAction } from '../../store/api'
-import { selectIsCommiting, selectStatusFromMutations, selectMutationsCommit } from '../../selections'
-import { refStringFromQriRef, QriRef } from '../../models/qriRef'
+import Store, { Status } from '../../../models/store'
+import { saveWorkingDatasetAndFetch } from '../../../actions/api'
+import { setCommitTitle, setCommitMessage } from '../../../actions/mutations'
+import { validateCommitState } from '../../../utils/formValidation'
+import { ApiAction } from '../../../store/api'
+import { selectIsCommiting, selectStatusFromMutations, selectMutationsCommit } from '../../../selections'
+import { refStringFromQriRef, QriRef, qriRefFromRoute } from '../../../models/qriRef'
 
-import TextInput from '../form/TextInput'
-import TextAreaInput from '../form/TextAreaInput'
+import TextInput from '../../form/TextInput'
+import TextAreaInput from '../../form/TextAreaInput'
 
-export interface CommitEditorProps {
+export interface CommitEditorProps extends RouteComponentProps<QriRef> {
   qriRef: QriRef
-  isLoading: boolean
+  isSaving: boolean
   status: Status
   title: string
   message: string
-  saveWorkingDatasetAndFetch: () => Promise<ApiAction>
+  saveWorkingDatasetAndFetch: (username: string, name: string) => Promise<ApiAction>
   setCommitTitle: (title: string) => Action
   setCommitMessage: (message: string) => Action
 }
@@ -30,7 +31,7 @@ export interface CommitEditorProps {
 export const CommitEditorComponent: React.FunctionComponent<CommitEditorProps> = (props) => {
   const {
     qriRef,
-    isLoading,
+    isSaving,
     status,
     title,
     message,
@@ -40,6 +41,8 @@ export const CommitEditorComponent: React.FunctionComponent<CommitEditorProps> =
   } = props
 
   const [isValid, setIsValid] = React.useState(false)
+
+  const { username, name } = qriRef
 
   React.useEffect(() => {
     // validate form -AND- make sure dataset status is in a commitable state
@@ -55,7 +58,7 @@ export const CommitEditorComponent: React.FunctionComponent<CommitEditorProps> =
   const handleSubmit = (event: any) => {
     event.preventDefault()
     if (isValid) {
-      saveWorkingDatasetAndFetch()
+      saveWorkingDatasetAndFetch(username, name)
         .then(() => {
           setCommitTitle('')
           setCommitMessage('')
@@ -96,7 +99,7 @@ export const CommitEditorComponent: React.FunctionComponent<CommitEditorProps> =
         />
         <div className='submit'>
           {
-            isLoading
+            isSaving
               ? <button className='sync-spinner btn btn-large btn-primary'><FontAwesomeIcon icon={faSync} /> Saving...</button>
               : <button id='submit' className={classNames('btn btn-primary btn-large', { 'disabled': !isValid })} type='submit'>Commit</button>
           }
@@ -111,7 +114,8 @@ const mapStateToProps = (state: Store, ownProps: CommitEditorProps) => {
   // get data for the currently selected component
   return {
     ...ownProps,
-    isLoading: selectIsCommiting(state),
+    qriRef: qriRefFromRoute(ownProps),
+    isSaving: selectIsCommiting(state),
     title: mutationsCommit.title,
     message: mutationsCommit.message,
     status: selectStatusFromMutations(state)

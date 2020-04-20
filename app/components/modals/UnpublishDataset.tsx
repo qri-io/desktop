@@ -16,7 +16,7 @@ import Buttons from './Buttons'
 interface UnpublishDatasetProps {
   modal: UnpublishDatasetModal
   onDismissed: () => void
-  onSubmit: () => Promise<ApiAction>
+  onSubmit: (username: string, name: string) => Promise<ApiAction>
 }
 
 const UnpublishDatasetComponent: React.FunctionComponent<UnpublishDatasetProps> = (props) => {
@@ -33,7 +33,7 @@ const UnpublishDatasetComponent: React.FunctionComponent<UnpublishDatasetProps> 
     setLoading(true)
     error && setError('')
     if (!onSubmit) return
-    onSubmit()
+    onSubmit(username, name)
       .then(() => onDismissed())
       .catch((action: any) => {
         setLoading(false)

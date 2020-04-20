@@ -5,25 +5,31 @@ import cloneDeep from 'clone-deep'
 import ReactTooltip from 'react-tooltip'
 import { connect } from 'react-redux'
 import { Dispatch, bindActionCreators } from 'redux'
+import { RouteComponentProps } from 'react-router-dom'
 
-import { ApiActionThunk } from '../../store/api'
-import { Meta } from '../../models/dataset'
-import { selectMutationsDataset, selectWorkingDatasetIsLoading, selectWorkingDatasetPeername, selectWorkingDatasetName } from '../../selections'
-import Store from '../../models/store'
-import { writeDataset } from '../../actions/workbench'
-import { QriRef } from '../../models/qriRef'
+import { ApiActionThunk } from '../../../store/api'
+import { Meta } from '../../../models/dataset'
+import Store, { StatusInfo } from '../../../models/store'
+import { QriRef, qriRefFromRoute } from '../../../models/qriRef'
+import hasParseError from '../../../utils/hasParseError'
 
-import ExternalLink from '../ExternalLink'
-import TextInput from '../form/TextInput'
-import TextAreaInput from '../form/TextAreaInput'
-import MultiTextInput from '../form/MultiTextInput'
-import DropdownInput from '../form/DropdownInput'
-import MetadataMultiInput from '../form/MetadataMultiInput'
-import SpinnerWithIcon from '../chrome/SpinnerWithIcon'
+import { writeDataset } from '../../../actions/workbench'
 
-interface MetadataEditorProps {
+import { selectDatasetFromMutations, selectWorkingDatasetIsLoading, selectWorkingDatasetUsername, selectWorkingDatasetName, selectWorkingStatusInfo } from '../../../selections'
+
+import ExternalLink from '../../ExternalLink'
+import TextInput from '../../form/TextInput'
+import TextAreaInput from '../../form/TextAreaInput'
+import MultiTextInput from '../../form/MultiTextInput'
+import DropdownInput from '../../form/DropdownInput'
+import MetadataMultiInput from '../../form/MetadataMultiInput'
+import SpinnerWithIcon from '../../chrome/SpinnerWithIcon'
+import ParseError from '../ParseError'
+
+interface MetadataEditorProps extends RouteComponentProps<QriRef> {
   qriRef: QriRef
   data: Meta
+  statusInfo: StatusInfo
   write: (peername: string, name: string, dataset: any) => ApiActionThunk | void
   loading: boolean
 }
@@ -85,6 +91,7 @@ const MetadataEditorComponent: React.FunctionComponent<MetadataEditorProps> = (p
     data = {},
     write,
     loading,
+    statusInfo,
     qriRef
   } = props
 
@@ -92,7 +99,11 @@ const MetadataEditorComponent: React.FunctionComponent<MetadataEditorProps> = (p
   const name = qriRef.name || ''
 
   if (loading) {
-    return <SpinnerWithIcon loading={true} />
+    return <SpinnerWithIcon loading />
+  }
+
+  if (hasParseError(statusInfo)) {
+    return <ParseError component='meta' />
   }
 
   React.useEffect(() => {
@@ -343,9 +354,11 @@ const MetadataEditorComponent: React.FunctionComponent<MetadataEditorProps> = (p
 const mapStateToProps = (state: Store, ownProps: MetadataEditorProps) => {
   return {
     ...ownProps,
-    data: selectMutationsDataset(state).meta,
+    qriRef: qriRefFromRoute(ownProps),
+    data: selectDatasetFromMutations(state).meta,
     loading: selectWorkingDatasetIsLoading(state),
-    peername: selectWorkingDatasetPeername(state),
+    peername: selectWorkingDatasetUsername(state),
+    statusInfo: selectWorkingStatusInfo(state, 'meta'),
     name: selectWorkingDatasetName(state)
   }
 }

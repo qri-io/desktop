@@ -75,10 +75,7 @@ export default function Routes (props: any) {
           />)
         }} />
 
-        <Route exact path='/workbench' render={(props) => {
-          return sectionElement('workbench', <Workbench {...props} />)
-        }}/>
-        <Route path='/workbench/:username/:name' render={(props) => {
+        <Route path='/workbench' render={(props) => {
           return sectionElement('workbench', <Workbench {...props} />)
         }}/>
 

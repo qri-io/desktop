@@ -117,7 +117,7 @@ class AppComponent extends React.Component<AppProps, AppState> {
     ipcRenderer.on('reload', this.handleReload)
 
     setInterval(() => {
-      if (this.props.apiConnection !== 1 || this.props.selections.peername === '' || this.props.selections.name === '') {
+      if (this.props.apiConnection !== 1) {
         this.props.pingApi()
       }
     }, DEFAULT_POLL_INTERVAL)

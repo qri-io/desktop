@@ -15,67 +15,77 @@ import {
   fetchCommitDataset,
   fetchCommitStats,
   fetchCommitStatus,
-  fetchHistory,
+  fetchLog,
   fetchStats,
   fetchWorkingDataset,
   fetchWorkingStatus,
   fsiWrite
 } from './api'
-import { setCommit } from './selections'
+
 import { Dataset } from '../models/dataset'
 import { Status } from '../models/store'
-import { selectWorkingDataset, selectStatusFromMutations } from '../selections'
+import { selectWorkingDataset, selectStatusFromMutations, selectWorkingDatasetIsLoading, selectWorkingDatasetUsername, selectWorkingDatasetName, selectHistoryDatasetIsLoading, selectHistoryDatasetPath, selectHistoryDatasetName, selectHistoryDatasetUsername } from '../selections'
+import { QriRef } from '../models/qriRef'
 
 // fetchworkBench makes the necessary API requests to populate the workbench
 // based on what we know about the working dataset from the state tree
 // the returned promise resolves to true if loading thunks have been kicked off
-export function fetchWorkbench (): LaunchedFetchesAction {
+export function fetchWorkbench (qriRef: QriRef): LaunchedFetchesAction {
   return async (dispatch, getState) => {
-    const { workingDataset, selections, commitDetails } = getState()
-    const head = commitDetails
-    const history = workingDataset.history
+    const state = getState()
+    const workingIsLoading = selectWorkingDatasetIsLoading(state)
+    const workingUsername = selectWorkingDatasetUsername(state)
+    const workingName = selectWorkingDatasetName(state)
+    const { username: routeUsername, name: routeName, path: routePath = '' } = qriRef
+
+    if (!routeUsername || !routeName) {
+      return false
+    }
+
     let fetching: boolean = true
 
-    if (!workingDataset.isLoading &&
-       (selections.peername !== workingDataset.peername ||
-        selections.name !== workingDataset.name)) {
-      dispatch(fetchHistory())
-      dispatch(fetchWorkingDataset())
-      dispatch(fetchWorkingStatus())
-      dispatch(fetchStats())
-      dispatch(fetchBody(-1))
+    if (!workingIsLoading &&
+       (routeUsername !== workingUsername ||
+        routeName !== workingName)) {
+      fetchLog(routeUsername, routeName)(dispatch, getState)
+      dispatch(fetchWorkingDataset(routeUsername, routeName))
+      dispatch(fetchWorkingStatus(routeUsername, routeName))
+      dispatch(fetchStats(routeUsername, routeName))
+      dispatch(fetchBody(routeUsername, routeName, -1))
       dispatch(setCommitTitle(''))
       dispatch(setCommitMessage(''))
       return fetching
     }
 
-    if (!head.isLoading &&
-        (selections.peername !== head.peername ||
-         selections.name !== head.name ||
-         selections.commit !== head.path)) {
-      dispatch(fetchCommitDataset())
-      dispatch(fetchCommitStats())
-      dispatch(fetchCommitStatus())
-      dispatch(fetchCommitBody(-1))
-      return fetching
-    }
+    const versionIsLoading = selectHistoryDatasetIsLoading(state)
+    const versionUsername = selectHistoryDatasetUsername(state)
+    const versionName = selectHistoryDatasetName(state)
+    const versionPath = selectHistoryDatasetPath(state)
 
-    if (selections.commit === '' && history.value.length !== 0) {
-      dispatch(setCommit(history.value[0].path))
+    if (!versionIsLoading &&
+        routePath !== '' &&
+        (routeUsername !== versionUsername ||
+         routeName !== versionName ||
+         routePath !== versionPath)) {
+      dispatch(fetchCommitDataset(routeUsername, routeName, routePath))
+      dispatch(fetchCommitStats(routeUsername, routeName, routePath))
+      dispatch(fetchCommitStatus(routeUsername, routeName, routePath))
+      dispatch(fetchCommitBody(routeUsername, routeName, routePath, -1))
+      return fetching
     }
 
     return false
   }
 }
 
-export function writeDataset (peername: string, name: string, writeDataset: Dataset): ApiActionThunk {
+export function writeDataset (username: string, name: string, writeDataset: Dataset): ApiActionThunk {
   return async (dispatch, getState) => {
     const state = getState()
     const head = selectWorkingDataset(state)
     const prevStatus = selectStatusFromMutations(state)
     const newStatus = determineMutationsStatus(head, writeDataset, prevStatus)
     if (state.workingDataset.fsiPath !== '') {
-      fsiWrite(peername, name, writeDataset)(dispatch, getState)
+      fsiWrite(username, name, writeDataset)(dispatch, getState)
     }
     dispatch(setMutationsStatus(newStatus))
     return dispatch(setMutationsDataset(writeDataset))

@@ -2,6 +2,7 @@ import { RouterState } from 'connected-react-router'
 import { Meta, Structure, Commit } from './dataset'
 import { Session } from './session'
 import { Details } from './details'
+import { QriRef } from './qriRef'
 
 export enum ApiConnection {
   neverConnected = 0,
@@ -170,13 +171,14 @@ export interface Status {
   [key: string]: StatusInfo
 }
 
-export interface CommitDetails {
+export interface HistoryDataset {
   path: string
   prevPath: string
   peername: string
   name: string
   status: Status
   isLoading: boolean
+  published: boolean
   components: {
     commit: {
       value: Commit
@@ -203,18 +205,21 @@ export interface CommitDetails {
   structure: Structure
 }
 
-export interface WorkingDataset extends CommitDetails {
+export interface WorkingDataset extends HistoryDataset {
   fsiPath: string
-  hasHistory: boolean
-  published: boolean
-  history: History
   isSaving: boolean
   isWriting: boolean
 }
 
-export interface History {
+export interface Log {
   pageInfo: PageInfo
   value: VersionInfo[]
+}
+
+export interface WorkbenchRoutes {
+  historyRef: QriRef
+  editRef: QriRef
+  location: string
 }
 
 export default interface Store {
@@ -224,7 +229,9 @@ export default interface Store {
   selections: Selections
   myDatasets: MyDatasets
   workingDataset: WorkingDataset
-  commitDetails: CommitDetails
+  workbenchRoutes: WorkbenchRoutes
+  historyDataset: HistoryDataset
+  log: Log
   mutations: Mutations
   router: RouterState
 }

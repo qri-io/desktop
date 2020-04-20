@@ -1,28 +1,28 @@
 import * as React from 'react'
-import { Action, Dispatch, bindActionCreators } from 'redux'
+import { Dispatch, bindActionCreators } from 'redux'
 import path from 'path'
 import classNames from 'classnames'
 import { clipboard, shell, MenuItemConstructorOptions } from 'electron'
 import { connect } from 'react-redux'
+import { withRouter, RouteComponentProps } from 'react-router-dom'
 
 import { checkClearToCommit } from '../../utils/formValidation'
-import { QriRef, selectedComponentFromQriRef } from '../../models/qriRef'
+import { QriRef, qriRefFromRoute } from '../../models/qriRef'
 import { Status, SelectedComponent } from '../../models/store'
 
-import { discardChanges } from '../../actions/api'
-import { setWorkingComponent } from '../../actions/selections'
+import { discardChangesAndFetch } from '../../actions/api'
 
 import { selectStatusFromMutations, selectFsiPath } from '../../selections'
+import { pathToEdit } from '../../paths'
 
 import ContextMenuArea from '../ContextMenuArea'
 import ComponentItem from '../item/ComponentItem'
 
-interface WorkingComponentListProps {
+interface WorkingComponentListProps extends RouteComponentProps<QriRef> {
   qriRef: QriRef
   status: Status
   selectedComponent: string
-  onComponentClick: (component: SelectedComponent) => Action
-  discardChanges?: (component: SelectedComponent) => void
+  discardChangesAndFetch?: (username: string, name: string, component: SelectedComponent) => void
   fsiPath?: string
 }
 
@@ -81,12 +81,15 @@ export const getComponentDisplayProps = (name: string) => {
 
 export const WorkingComponentListComponent: React.FunctionComponent<WorkingComponentListProps> = (props: WorkingComponentListProps) => {
   const {
+    qriRef,
     status,
+    history,
     selectedComponent,
-    onComponentClick,
-    discardChanges,
+    discardChangesAndFetch,
     fsiPath
   } = props
+
+  const { username, name: datasetName } = qriRef
 
   const visibleComponents = components.filter(hiddenComponentFilter(status))
 
@@ -117,12 +120,14 @@ export const WorkingComponentListComponent: React.FunctionComponent<WorkingCompo
                 status={fileStatus}
                 selected={selectedComponent === name}
                 tooltip={tooltip}
-                onClick={onComponentClick}
+                onClick={(component: SelectedComponent) => {
+                  history.push(pathToEdit(username, datasetName, component))
+                }}
                 color='light'
               />
             )
 
-            if (discardChanges || fsiPath) {
+            if (discardChangesAndFetch || fsiPath) {
               let menuItems: MenuItemConstructorOptions[] = []
               if (fsiPath) {
                 menuItems = [
@@ -138,11 +143,11 @@ export const WorkingComponentListComponent: React.FunctionComponent<WorkingCompo
               }
 
               // add discard changes option of file is modified
-              if (discardChanges && fileStatus !== 'unmodified') {
+              if (discardChangesAndFetch && fileStatus !== 'unmodified') {
                 menuItems.unshift({
                   label: 'Discard Changes...',
                   click: () => {
-                    discardChanges(name as SelectedComponent)
+                    discardChangesAndFetch(username, datasetName, name as SelectedComponent)
                   }
                 })
                 if (menuItems.length > 1) {
@@ -168,7 +173,9 @@ export const WorkingComponentListComponent: React.FunctionComponent<WorkingCompo
                 selected={selectedComponent === name}
                 // TODO (ramfox): we should create a 'isDisabled' function and add these specifications & test
                 tooltip={tooltip}
-                onClick={onComponentClick}
+                onClick={(component: SelectedComponent) => {
+                  history.push(pathToEdit(username, datasetName, component))
+                }}
               />
             )
           }
@@ -179,18 +186,19 @@ export const WorkingComponentListComponent: React.FunctionComponent<WorkingCompo
 }
 
 const mapStateToProps = (state: any, ownProps: WorkingComponentListProps) => {
+  const qriRef = qriRefFromRoute(ownProps)
   return {
-    ...ownProps,
     status: selectStatusFromMutations(state),
-    selectedComponent: selectedComponentFromQriRef(ownProps.qriRef),
-    fsiPath: selectFsiPath(state)
+    selectedComponent: qriRef.component,
+    fsiPath: selectFsiPath(state),
+    qriRef,
+    ...ownProps
   }
 }
 
 const mapDispatchToProps = (dispatch: Dispatch, ownProps: WorkingComponentListProps) => {
   return bindActionCreators({
-    onComponentClick: setWorkingComponent,
-    discardChanges
+    discardChangesAndFetch
   }, dispatch)
 }
 
@@ -198,4 +206,4 @@ const mergeProps = (props: any, actions: any): WorkingComponentListProps => {
   return { ...props, ...actions }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(WorkingComponentListComponent)
+export default withRouter(connect(mapStateToProps, mapDispatchToProps, mergeProps)(WorkingComponentListComponent))

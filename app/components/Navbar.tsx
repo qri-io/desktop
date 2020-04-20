@@ -19,7 +19,7 @@ import { DISCORD_URL, QRI_CLOUD_URL } from '../constants'
 
 import { signout } from '../actions/ui'
 
-import { selectSession } from '../selections'
+import { selectSession, selectRecentWorkbenchLocation } from '../selections'
 
 import ExternalLink from './ExternalLink'
 import NavbarItem from './chrome/NavbarItem'
@@ -57,11 +57,12 @@ const MenuItem: React.FunctionComponent<MenuItemProps> = (props: MenuItemProps) 
 
 interface NavbarProps extends RouteComponentProps{
   session: Session
+  recentWorkbenchLocation: string
   signout: () => Action
 }
 
 export const NavbarComponent: React.FunctionComponent<NavbarProps> = (props: NavbarProps) => {
-  const { session, location, signout } = props
+  const { session, location, signout, recentWorkbenchLocation } = props
 
   const {
     photo = defaultPhoto,
@@ -117,7 +118,7 @@ export const NavbarComponent: React.FunctionComponent<NavbarProps> = (props: Nav
     {
       icon: faFileAlt,
       id: 'workbench',
-      link: '/workbench',
+      link: recentWorkbenchLocation === '' ? '/workbench' : recentWorkbenchLocation,
       tooltip: 'Workbench - Build & Edit Datasets'
     }
   ]
@@ -190,6 +191,7 @@ export const NavbarComponent: React.FunctionComponent<NavbarProps> = (props: Nav
 const mapStateToProps = (state: any, ownProps: NavbarProps) => {
   return {
     session: selectSession(state),
+    recentWorkbenchLocation: selectRecentWorkbenchLocation(state),
     ...ownProps
   }
 }

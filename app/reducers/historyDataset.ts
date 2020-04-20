@@ -1,5 +1,5 @@
 import { Reducer, AnyAction } from 'redux'
-import { CommitDetails } from '../models/store'
+import { HistoryDataset } from '../models/store'
 import { apiActionTypes } from '../utils/actionType'
 import { reducerWithPagination, initialPageInfo } from '../utils/pagination'
 import bodyValue from '../utils/bodyValue'
@@ -7,7 +7,7 @@ import {
   DATASET_REQ
 } from './workingDataset'
 
-const initialState: CommitDetails = {
+const initialState: HistoryDataset = {
   path: '',
   prevPath: '',
   peername: '',
@@ -45,7 +45,7 @@ const [COMMITSTATS_REQ, COMMITSTATS_SUCC, COMMITSTATS_FAIL] = apiActionTypes('co
 
 export const CLEAR_DATASET_HEAD = 'CLEAR_DATASET_HEAD'
 
-const commitDetailsReducer: Reducer = (state = initialState, action: AnyAction): CommitDetails => {
+const HistoryDatasetReducer: Reducer = (state = initialState, action: AnyAction): HistoryDataset => {
   switch (action.type) {
     case DATASET_REQ:
       if (action.segments.peername !== state.peername || action.segments.name !== state.name) {
@@ -158,7 +158,7 @@ const commitDetailsReducer: Reducer = (state = initialState, action: AnyAction):
     case CLEAR_DATASET_HEAD:
       return {
         ...initialState,
-        peername: action.peername,
+        peername: action.username,
         name: action.name
       }
 
@@ -167,4 +167,4 @@ const commitDetailsReducer: Reducer = (state = initialState, action: AnyAction):
   }
 }
 
-export default commitDetailsReducer
+export default HistoryDatasetReducer

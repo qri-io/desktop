@@ -20,12 +20,13 @@ import { setModal } from '../actions/ui'
 
 import ProgressBar from './chrome/ProgressBar'
 import VersionInfoItem from './item/VersionInfoItem'
+import { pathToHistory } from '../paths'
 
 // for displaying a progress bar based on import file size
 // assumes an import rate of 4828 bytes per millisecond
 const IMPORT_BYTES_PER_MS = 4828
 
-interface DatasetListProps extends RouteComponentProps {
+interface DatasetListProps extends RouteComponentProps<QriRef> {
   qriRef: QriRef
   myDatasets: MyDatasets
   workingDataset: WorkingDataset
@@ -33,7 +34,7 @@ interface DatasetListProps extends RouteComponentProps {
   importFileSize: number
 
   setFilter: (filter: string) => Action
-  setWorkingDataset: (peername: string, name: string) => Action
+  setWorkingDataset: (username: string, name: string) => Action
   fetchMyDatasets: (page: number, pageSize: number) => Promise<AnyAction>
   setModal: (modal: Modal) => void
 }
@@ -77,7 +78,6 @@ export class DatasetListComponent extends React.Component<DatasetListProps> {
     const {
       workingDataset,
       setModal,
-      setWorkingDataset,
       myDatasets,
       importFileName,
       importFileSize
@@ -86,7 +86,7 @@ export class DatasetListComponent extends React.Component<DatasetListProps> {
     const { filter, value: datasets } = myDatasets
 
     const filteredDatasets = datasets.filter(({ username, name, metaTitle = '' }) => {
-      // if there's a non-empty filter string, only show matches on peername, name, and title
+      // if there's a non-empty filter string, only show matches on username, name, and title
       // TODO (chriswhong) replace this simple filtering with an API call for deeper matches
       if (filter !== '') {
         const lowercasedFilterString = filter.toLowerCase()
@@ -107,7 +107,7 @@ export class DatasetListComponent extends React.Component<DatasetListProps> {
             click: () => {
               setModal({
                 type: ModalType.RemoveDataset,
-                peername: username,
+                username,
                 name,
                 fsiPath
               })
@@ -133,10 +133,7 @@ export class DatasetListComponent extends React.Component<DatasetListProps> {
             data={ddr}
             selected={(username === workingDataset.peername) && (name === workingDataset.name)}
             onClick={(data: VersionInfo) => {
-              setWorkingDataset(data.username, data.name)
-                .then(() => {
-                  this.props.history.push(`/workbench/${data.username}/${name}`)
-                })
+              this.props.history.push(pathToHistory(data.username, data.name, data.path))
             }}
           />
         </ContextMenuArea>)

@@ -76,7 +76,7 @@ export const StructureComponent: React.FunctionComponent<StructureProps> = (prop
   const { data, showConfig = true, loading } = props
 
   if (loading) {
-    return <SpinnerWithIcon loading={true} />
+    return <SpinnerWithIcon loading />
   }
 
   return (

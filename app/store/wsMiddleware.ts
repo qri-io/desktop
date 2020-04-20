@@ -45,7 +45,7 @@ const socketMiddleware = () => {
               // if there is and mtime or if the ws mtime is older then the status mtime, don't refetch
               if (status[component].mtime && !(status[component].mtime < wsMtime)) return
               // if there is no mtime, or if the ws mtime is newer then the status mtime, fetch!
-              fetchWorkingDatasetDetails()(store.dispatch, store.getState)
+              fetchWorkingDatasetDetails(peername, name)(store.dispatch, store.getState)
               store.dispatch(resetMutationsDataset())
               store.dispatch(resetMutationsStatus())
             }

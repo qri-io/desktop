@@ -17,7 +17,7 @@ import Buttons from './Buttons'
 interface PublishDatasetProps {
   modal: PublishDatasetModal
   onDismissed: () => void
-  onSubmit: () => Promise<ApiAction>
+  onSubmit: (username: string, name: string) => Promise<ApiAction>
 }
 
 export const PublishDatasetComponent: React.FunctionComponent<PublishDatasetProps> = (props) => {
@@ -34,7 +34,7 @@ export const PublishDatasetComponent: React.FunctionComponent<PublishDatasetProp
     setLoading(true)
     error && setError('')
     if (!onSubmit) return
-    onSubmit()
+    onSubmit(username, name)
       .then(() => onDismissed())
       .catch((action: any) => {
         setLoading(false)
