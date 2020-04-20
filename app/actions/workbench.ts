@@ -54,7 +54,9 @@ export function fetchWorkbench (qriRef: QriRef): LaunchedFetchesAction {
       dispatch(fetchBody(routeUsername, routeName, -1))
       dispatch(setCommitTitle(''))
       dispatch(setCommitMessage(''))
-      return fetching
+      if (routePath === '') {
+        return fetching
+      }
     }
 
     const versionIsLoading = selectHistoryDatasetIsLoading(state)
