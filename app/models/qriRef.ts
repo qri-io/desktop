@@ -1,5 +1,4 @@
-import { RouteComponentProps } from "react-router"
-import { SelectedComponent } from "./store"
+import { SelectedComponent, RouteProps } from "./store"
 
 // QriRef models a reference to a user, dataset, or part of a dataset within Qri
 // We use "QriRef" instead of "Ref" to disambiguate with the react "ref"
@@ -54,7 +53,7 @@ export interface QriRef {
 }
 
 // qriRefFromRoute parses route props into a Ref
-export function qriRefFromRoute (p: RouteComponentProps<QriRef>): QriRef {
+export function qriRefFromRoute (p: RouteProps): QriRef {
   const selectedComponent = selectedComponentFromLocation(p.location.pathname)
   return {
     location: p.location.pathname,

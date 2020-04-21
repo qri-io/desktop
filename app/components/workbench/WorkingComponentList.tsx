@@ -4,11 +4,11 @@ import path from 'path'
 import classNames from 'classnames'
 import { clipboard, shell, MenuItemConstructorOptions } from 'electron'
 import { connect } from 'react-redux'
-import { withRouter, RouteComponentProps } from 'react-router-dom'
+import { withRouter } from 'react-router-dom'
 
 import { checkClearToCommit } from '../../utils/formValidation'
 import { QriRef, qriRefFromRoute } from '../../models/qriRef'
-import { Status, SelectedComponent } from '../../models/store'
+import { Status, SelectedComponent, RouteProps } from '../../models/store'
 
 import { discardChangesAndFetch } from '../../actions/api'
 
@@ -18,7 +18,7 @@ import { pathToEdit } from '../../paths'
 import ContextMenuArea from '../ContextMenuArea'
 import ComponentItem from '../item/ComponentItem'
 
-interface WorkingComponentListProps extends RouteComponentProps<QriRef> {
+interface WorkingComponentListProps extends RouteProps {
   qriRef: QriRef
   status: Status
   selectedComponent: string

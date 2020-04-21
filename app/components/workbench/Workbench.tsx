@@ -2,12 +2,12 @@ import * as React from 'react'
 import { Action, Dispatch, bindActionCreators } from 'redux'
 import { ipcRenderer, shell } from 'electron'
 import { CSSTransition, TransitionGroup } from 'react-transition-group'
-import { RouteComponentProps, Switch, Route, useLocation, useRouteMatch, Redirect } from 'react-router-dom'
+import { Switch, Route, useLocation, useRouteMatch, Redirect } from 'react-router-dom'
 import { connect } from 'react-redux'
 
 import { Details } from '../../models/details'
 import { Session } from '../../models/session'
-import { SelectedComponent } from '../../models/store'
+import { SelectedComponent, RouteProps } from '../../models/store'
 import { Modal, ModalType } from '../../models/modals'
 import { QriRef, qriRefFromRoute } from '../../models/qriRef'
 import { ApiActionThunk, LaunchedFetchesAction } from '../../store/api'
@@ -41,7 +41,7 @@ import EditDataset from './EditDataset'
 // TODO (b5) - is this still required?
 require('../../assets/qri-blob-logo-tiny.png')
 
-export interface WorkbenchProps extends RouteComponentProps<QriRef> {
+export interface WorkbenchProps extends RouteProps {
   // display details
   qriRef: QriRef
   isPublished: boolean

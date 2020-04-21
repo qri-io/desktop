@@ -1,9 +1,9 @@
 import * as React from 'react'
 import { connect } from 'react-redux'
-import { withRouter, RouteComponentProps } from 'react-router-dom'
+import { withRouter } from 'react-router-dom'
 import { bindActionCreators, Dispatch } from 'redux'
 
-import Store from '../../models/Store'
+import Store, { RouteProps } from '../../models/Store'
 import Dataset from '../../models/dataset'
 import { QriRef, qriRefFromRoute } from '../../models/qriRef'
 
@@ -20,7 +20,7 @@ import HistoryDatasetHeader from './HistoryDatasetHeader'
 import WorkbenchLayout from './layouts/WorkbenchLayout'
 import WorkbenchLogList from './WorkbenchLogList'
 
-export interface HistoryDatasetProps extends RouteComponentProps<QriRef> {
+export interface HistoryDatasetProps extends RouteProps {
   qriRef: QriRef
   dataset: Dataset
   fetchWorkbench: (qriRef: QriRef) => LaunchedFetchesAction

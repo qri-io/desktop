@@ -4,9 +4,8 @@ import { connect } from 'react-redux'
 import classNames from 'classnames'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSync } from '@fortawesome/free-solid-svg-icons'
-import { RouteComponentProps } from 'react-router-dom'
 
-import Store, { Status } from '../../../models/store'
+import Store, { Status, RouteProps } from '../../../models/store'
 import { saveWorkingDatasetAndFetch } from '../../../actions/api'
 import { setCommitTitle, setCommitMessage } from '../../../actions/mutations'
 import { validateCommitState } from '../../../utils/formValidation'
@@ -17,7 +16,7 @@ import { refStringFromQriRef, QriRef, qriRefFromRoute } from '../../../models/qr
 import TextInput from '../../form/TextInput'
 import TextAreaInput from '../../form/TextAreaInput'
 
-export interface CommitEditorProps extends RouteComponentProps<QriRef> {
+export interface CommitEditorProps extends RouteProps {
   qriRef: QriRef
   isSaving: boolean
   status: Status

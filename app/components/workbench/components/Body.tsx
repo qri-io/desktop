@@ -1,12 +1,11 @@
 import * as React from 'react'
 import { Action, Dispatch, bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import { RouteComponentProps } from 'react-router-dom'
 
 import { ApiActionThunk } from '../../../store/api'
 import { DetailsType, StatsDetails, Details } from '../../../models/details'
 import Dataset, { Structure } from '../../../models/dataset'
-import Store, { PageInfo, StatusInfo } from '../../../models/store'
+import Store, { PageInfo, StatusInfo, RouteProps } from '../../../models/store'
 import { fetchBody, fetchCommitBody } from '../../../actions/api'
 import { setDetailsBar } from '../../../actions/ui'
 import { selectHistoryDataset, selectWorkingDataset, selectHistoryStats, selectWorkingStats, selectDetails, selectHistoryDatasetBodyPageInfo, selectWorkingDatasetBodyPageInfo, selectWorkingStatusInfo } from '../../../selections'
@@ -17,7 +16,7 @@ import BodyJson from '../../BodyJson'
 import ParseError from '../ParseError'
 import hasParseError from '../../../utils/hasParseError'
 
-export interface BodyProps extends RouteComponentProps<QriRef> {
+export interface BodyProps extends RouteProps {
   qriRef: QriRef
   data: Dataset
   stats: Array<Record<string, any>>

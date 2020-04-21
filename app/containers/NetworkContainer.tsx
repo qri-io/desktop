@@ -1,8 +1,8 @@
 import { connect } from 'react-redux'
 import Network, { NetworkProps } from '../components/network/Network'
 
-import Store, { VersionInfo } from '../models/store'
-import { qriRefFromRoute, QriRef } from '../models/qriRef'
+import Store, { VersionInfo, RouteProps } from '../models/store'
+import { qriRefFromRoute } from '../models/qriRef'
 import { setSidebarWidth, openToast } from '../actions/ui'
 import { addDatasetAndFetch } from '../actions/api'
 
@@ -11,14 +11,12 @@ import {
   setSelectedListItem
 } from '../actions/selections'
 
-import { RouteComponentProps } from 'react-router-dom'
-
 const mergeProps = (props: any, actions: any): NetworkProps => {
   return { ...props, ...actions }
 }
 
 const NetworkContainer = connect(
-  (state: Store, ownProps: RouteComponentProps<QriRef>) => {
+  (state: Store, ownProps: RouteProps) => {
     const { ui, myDatasets } = state
     const { networkSidebarWidth } = ui
     const qriRef = qriRefFromRoute(ownProps)

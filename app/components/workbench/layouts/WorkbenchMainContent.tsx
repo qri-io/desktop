@@ -1,9 +1,10 @@
 import * as React from 'react'
 import { Dispatch, bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import { Prompt, RouteComponentProps, withRouter } from 'react-router-dom'
+import { Prompt, withRouter } from 'react-router-dom'
 
 import { QriRef, qriRefFromRoute } from '../../../models/qriRef'
+import { RouteProps } from '../../../models/store'
 import { ApiActionThunk } from '../../../store/api'
 import { fetchWorkingDatasetDetails } from '../../../actions/api'
 import { selectFsiPath, selectMutationsIsDirty } from '../../../selections'
@@ -11,7 +12,7 @@ import { selectFsiPath, selectMutationsIsDirty } from '../../../selections'
 import LinkButton from '../headerButtons/LinkButton'
 import PublishButton from '../headerButtons/PublishButton'
 
-interface WorkbenchMainContentProps extends RouteComponentProps<QriRef> {
+interface WorkbenchMainContentProps extends RouteProps {
   qriRef: QriRef
   modified: boolean
   fsiPath: string

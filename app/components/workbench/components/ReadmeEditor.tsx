@@ -3,14 +3,13 @@ import SimpleMDE from 'react-simplemde-editor'
 import { useDebounce } from 'use-debounce'
 import { connect } from 'react-redux'
 import { Dispatch, bindActionCreators } from 'redux'
-import { RouteComponentProps } from 'react-router-dom'
 
 import { ApiActionThunk } from '../../../store/api'
 import { datasetConvertStringToScriptBytes } from '../../../utils/datasetConvertStringToScriptBytes'
 import hasParseError from '../../../utils/hasParseError'
 import Dataset from '../../../models/dataset'
 import { refStringFromQriRef, QriRef, qriRefFromRoute } from '../../../models/qriRef'
-import Store, { StatusInfo } from '../../../models/store'
+import Store, { StatusInfo, RouteProps } from '../../../models/store'
 
 import { writeDataset } from '../../../actions/workbench'
 
@@ -21,7 +20,7 @@ import ParseError from '../ParseError'
 
 const DEBOUNCE_TIMER = 1000
 
-export interface ReadmeEditorProps extends RouteComponentProps<QriRef> {
+export interface ReadmeEditorProps extends RouteProps {
   qriRef: QriRef
   data?: string
   loading: boolean

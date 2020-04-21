@@ -1,12 +1,14 @@
 import * as React from 'react'
+import { withRouter } from 'react-router-dom'
 
-import { withRouter, RouteComponentProps } from 'react-router-dom'
+import { RouteProps } from '../../models/Store'
+
 import SearchBox from '../chrome/SearchBox'
 import Breadcrumb from '../chrome/Breadcrumb'
 import { Modal, ModalType } from '../../models/modals'
 
-// RouteComponentProps includes `history`, `location`, and `match`
-interface NavbarProps extends RouteComponentProps {
+// RouteProps includes `history`, `location`, and `match`
+interface NavbarProps extends RouteProps {
   setModal: (modal: Modal) => void
 }
 
@@ -61,5 +63,5 @@ const Navbar: React.FunctionComponent<NavbarProps> = ({ location, setModal, hist
 }
 
 // the `withRouter` func from 'react-router-dom' gives the Navbar component
-// access to history, location, and match (the RouteComponentProps)
+// access to history, location, and match (the RouteProps)
 export default withRouter(Navbar)

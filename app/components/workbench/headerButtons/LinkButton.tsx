@@ -3,8 +3,9 @@ import { faFolderOpen, faFile, faLink } from '@fortawesome/free-solid-svg-icons'
 import { shell } from 'electron'
 import { bindActionCreators, Dispatch } from 'redux'
 import { connect } from 'react-redux'
-import { RouteComponentProps, withRouter } from 'react-router-dom'
+import { withRouter } from 'react-router-dom'
 
+import { RouteProps } from '../../../models/store'
 import { Modal, ModalType } from '../../../models/modals'
 import { QriRef, qriRefFromRoute } from '../../../models/qriRef'
 
@@ -15,7 +16,7 @@ import { selectInNamespace, selectFsiPath, selectMutationsIsDirty } from '../../
 import HeaderColumnButton from '../../chrome/HeaderColumnButton'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
-interface LinkButtonProps extends RouteComponentProps<QriRef> {
+interface LinkButtonProps extends RouteProps {
   qriRef: QriRef
   inNamespace: boolean
   fsiPath: string

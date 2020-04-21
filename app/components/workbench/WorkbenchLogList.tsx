@@ -3,12 +3,12 @@ import { connect } from 'react-redux'
 import { MenuItemConstructorOptions, remote, ipcRenderer } from 'electron'
 import { Dispatch, bindActionCreators } from 'redux'
 import ContextMenuArea from 'react-electron-contextmenu'
-import { RouteComponentProps, withRouter } from 'react-router-dom'
+import { withRouter } from 'react-router-dom'
 import moment from 'moment'
 
 import { ApiActionThunk } from '../../store/api'
 import { QriRef, refStringFromQriRef, qriRefFromRoute } from '../../models/qriRef'
-import { VersionInfo, PageInfo } from '../../models/store'
+import { VersionInfo, PageInfo, RouteProps } from '../../models/store'
 
 import { fetchLog } from '../../actions/api'
 
@@ -17,7 +17,7 @@ import { selectLog, selectLogPageInfo } from '../../selections'
 import HistoryListItem from '../item/HistoryListItem'
 import { pathToHistory } from '../../paths'
 
-interface WorkbenchLogListProps extends RouteComponentProps<QriRef> {
+interface WorkbenchLogListProps extends RouteProps {
   qriRef: QriRef
   log: VersionInfo[]
   logPageInfo: PageInfo

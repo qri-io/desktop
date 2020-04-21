@@ -1,15 +1,14 @@
 import * as React from 'react'
 import { connect } from 'react-redux'
 import moment from 'moment'
-import { RouteComponentProps } from 'react-router-dom'
 
 import { QriRef, qriRefFromRoute } from '../../../models/qriRef'
 import { Commit } from '../../../models/dataset'
-import Store from '../../../models/store'
+import Store, { RouteProps } from '../../../models/store'
 import { selectHistoryCommit, selectHistoryDatasetIsLoading } from '../../../selections'
 import SpinnerWithIcon from '../../chrome/SpinnerWithIcon'
 
-export interface CommitProps extends RouteComponentProps<QriRef> {
+export interface CommitProps extends RouteProps {
   qriRef: QriRef
   commit: Commit
   isLoading: boolean

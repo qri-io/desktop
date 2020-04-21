@@ -1,10 +1,9 @@
 import * as React from 'react'
 import { connect } from 'react-redux'
 import { ApiActionThunk } from '../../../store/api'
-import { RouteComponentProps } from 'react-router-dom'
 
 import Dataset from '../../../models/dataset'
-import Store from '../../../models/store'
+import Store, { RouteProps } from '../../../models/store'
 import { QriRef, qriRefFromRoute } from '../../../models/qriRef'
 
 import { selectHistoryDataset, selectWorkingDataset, selectHistoryDatasetIsLoading, selectWorkingDatasetIsLoading } from '../../../selections'
@@ -12,7 +11,7 @@ import { selectHistoryDataset, selectWorkingDataset, selectHistoryDatasetIsLoadi
 import Code from '../../Code'
 import SpinnerWithIcon from '../../chrome/SpinnerWithIcon'
 
-export interface TransformProps extends RouteComponentProps<QriRef> {
+export interface TransformProps extends RouteProps {
   qriRef: QriRef
   data: string
   isLoading: boolean

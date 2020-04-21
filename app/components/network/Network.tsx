@@ -4,15 +4,16 @@ import { Action } from 'redux'
 import { QriRef } from '../../models/qriRef'
 import { ApiActionThunk } from '../../store/api'
 
+import { RouteProps } from '../../models/store'
+
 import Layout from '../Layout'
 import NetworkHome from './NetworkHome'
 import NetworkSidebar from './NetworkSidebar'
 import Preview from '../dataset/Preview'
 import LogList from './LogList'
 import SidebarActionButton from '../chrome/SidebarActionButton'
-import { RouteComponentProps } from 'react-router'
 
-export interface NetworkProps extends RouteComponentProps<QriRef> {
+export interface NetworkProps extends RouteProps {
   qriRef: QriRef
 
   inCollection: boolean

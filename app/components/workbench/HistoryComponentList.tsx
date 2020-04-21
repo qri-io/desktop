@@ -1,8 +1,10 @@
 import * as React from 'react'
 import { bindActionCreators, Dispatch } from 'redux'
 import { connect } from 'react-redux'
+import { withRouter } from 'react-router-dom'
 
-import { Status, SelectedComponent, ComponentStatus } from '../../models/store'
+import { Status, SelectedComponent, ComponentStatus, RouteProps } from '../../models/store'
+import { pathToHistory } from '../../paths'
 import { QriRef, qriRefFromRoute } from '../../models/qriRef'
 
 import { setHistoryComponent } from '../../actions/selections'
@@ -11,10 +13,8 @@ import { selectHistoryStatus, selectHistoryComponentsList } from '../../selectio
 
 import ComponentItem from '../item/ComponentItem'
 import { components as componentsInfo } from './WorkingComponentList'
-import { withRouter, RouteComponentProps } from 'react-router-dom'
-import { pathToHistory } from '../../paths'
 
-interface HistoryComponentListProps extends RouteComponentProps<QriRef> {
+interface HistoryComponentListProps extends RouteProps {
   qriRef: QriRef
   components?: SelectedComponent[]
   status: Status

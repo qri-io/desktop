@@ -1,12 +1,12 @@
 import * as React from 'react'
 import _ from 'underscore'
-import { RouteComponentProps, withRouter } from 'react-router-dom'
+import { withRouter } from 'react-router-dom'
 import { Dispatch, bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 
 import { BACKEND_URL } from '../../constants'
 import { FetchOptions } from '../../store/api'
-import { VersionInfo } from '../../models/store'
+import { VersionInfo, RouteProps } from '../../models/store'
 import { SearchModal } from '../../models/modals'
 
 import { searchResultToVersionInfo } from '../../actions/mappingFuncs'
@@ -22,7 +22,7 @@ import Modal from './Modal'
 import Close from '../chrome/Close'
 import { pathToHistory, pathToNetworkDataset } from '../../paths'
 
-interface SearchProps extends RouteComponentProps {
+interface SearchProps extends RouteProps {
   modal: SearchModal
   onDismissed: () => void
   setWorkingDataset: (username: string, name: string) => void

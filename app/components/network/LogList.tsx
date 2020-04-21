@@ -1,16 +1,16 @@
 import React from 'react'
+import { withRouter } from 'react-router-dom'
 
 import { QriRef } from '../../models/qriRef'
-import { VersionInfo } from '../../models/store'
+import { VersionInfo, RouteProps } from '../../models/store'
 import { FetchOptions } from '../../store/api'
 import { BACKEND_URL } from '../../constants'
 import { mapHistory } from '../../actions/mappingFuncs'
 
 import HistoryListItem from '../item/HistoryListItem'
-import { RouteComponentProps, withRouter } from 'react-router-dom'
 import { pathToNetworkDataset } from '../../paths'
 
-export interface LogListProps extends RouteComponentProps{
+export interface LogListProps extends RouteProps{
   qriRef: QriRef
 }
 

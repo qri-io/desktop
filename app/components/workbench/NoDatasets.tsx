@@ -1,15 +1,14 @@
 import * as React from 'react'
 import { connect } from 'react-redux'
-import { withRouter, RouteComponentProps } from 'react-router-dom'
+import { withRouter } from 'react-router-dom'
 
-import Store from '../../models/Store'
-import { QriRef } from '../../models/qriRef'
+import Store, { RouteProps } from '../../models/Store'
 
 import WorkbenchLayout from './layouts/WorkbenchLayout'
 import NoDatasetsMainContent from './NoDatasetsMainContent'
 import DisabledComponentList from './DisabledComponentList'
 
-export type NoDatasetsProps = RouteComponentProps<QriRef>
+export type NoDatasetsProps = RouteProps
 
 export const NoDatasetsComponent: React.FunctionComponent<NoDatasetsProps> = (props) => {
   return (

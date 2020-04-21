@@ -3,10 +3,10 @@ import { Action, bindActionCreators, Dispatch } from 'redux'
 import { connect, useSelector } from 'react-redux'
 import { CSSTransition, TransitionGroup } from 'react-transition-group'
 import path from 'path'
-import { useLocation, Switch, useRouteMatch, Redirect, Route, RouteComponentProps, withRouter } from 'react-router-dom'
+import { useLocation, Switch, useRouteMatch, Redirect, Route, withRouter } from 'react-router-dom'
 
 import { ApiActionThunk } from '../../store/api'
-import Store, { SelectedComponent, ToastType } from '../../models/store'
+import Store, { SelectedComponent, ToastType, RouteProps } from '../../models/store'
 import Dataset from '../../models/dataset'
 import { QriRef, qriRefFromRoute } from '../../models/qriRef'
 import { isEditPath } from '../../paths'
@@ -33,7 +33,7 @@ import StructureEditor from './components/StructureEditor'
 import StatusDot from '../chrome/StatusDot'
 import { getComponentDisplayProps } from './WorkingComponentList'
 
-interface ComponentRouterProps extends RouteComponentProps<QriRef> {
+interface ComponentRouterProps extends RouteProps {
   // setting actions
   openToast: (type: ToastType, name: string, message: string) => Action
   closeToast: () => Action
@@ -176,7 +176,7 @@ export const ComponentRouterComponent: React.FunctionComponent<ComponentRouterPr
   )
 }
 
-const ComponentHeader: React.FunctionComponent<RouteComponentProps<QriRef>> = (props) => {
+const ComponentHeader: React.FunctionComponent<RouteProps> = (props) => {
   const qriRef = qriRefFromRoute(props)
   const { component = '' } = qriRef
   const { path: routePath } = useRouteMatch()

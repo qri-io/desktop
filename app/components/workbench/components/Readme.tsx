@@ -1,11 +1,10 @@
 import * as React from 'react'
 import { connect } from 'react-redux'
-import { RouteComponentProps } from 'react-router-dom'
 
-import Store from '../../../models/store'
+import Store, { RouteProps } from '../../../models/store'
 import { refStringFromQriRef, QriRef, qriRefFromRoute } from '../../../models/qriRef'
 
-export interface ReadmeProps extends RouteComponentProps<QriRef> {
+export interface ReadmeProps extends RouteProps {
   qriRef: QriRef
 }
 

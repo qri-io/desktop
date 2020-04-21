@@ -1,9 +1,9 @@
 import React from 'react'
-import { withRouter, RouteComponentProps } from 'react-router-dom'
+import { withRouter } from 'react-router-dom'
 
 import { BACKEND_URL } from '../../constants'
 import { NetworkHomeData } from '../../models/network'
-import { VersionInfo } from '../../models/store'
+import { VersionInfo, RouteProps } from '../../models/store'
 
 import Spinner from '../chrome/Spinner'
 import DatasetItem from '../item/DatasetItem'
@@ -15,7 +15,7 @@ const initialDataState: NetworkHomeData = {
 }
 
 // NetworkHome accepts no props
-const NetworkHome: React.FunctionComponent<RouteComponentProps> = ({ history }) => {
+const NetworkHome: React.FunctionComponent<RouteProps> = ({ history }) => {
   const [loading, setLoading] = React.useState(true)
   const [data, setData] = React.useState(initialDataState)
   const [error, setError] = React.useState('')

@@ -1,8 +1,7 @@
 import * as React from 'react'
 import { connect } from 'react-redux'
-import { RouteComponentProps } from 'react-router-dom'
 
-import Store from '../../../models/store'
+import Store, { RouteProps } from '../../../models/store'
 import { isUserArray } from '../../form/MetadataMultiInput'
 import { Meta, Citation, License, User } from '../../../models/dataset'
 import { selectHistoryDataset, selectHistoryDatasetIsLoading } from '../../../selections'
@@ -13,7 +12,7 @@ import KeyValueTable from '../../KeyValueTable'
 import SpinnerWithIcon from '../../chrome/SpinnerWithIcon'
 import { standardFields } from './MetadataEditor'
 
-interface MetadataProps extends RouteComponentProps<QriRef> {
+interface MetadataProps extends RouteProps {
   qriRef: QriRef
   data: Meta
   isLoading: boolean

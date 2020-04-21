@@ -1,10 +1,10 @@
 import * as React from 'react'
 import { connect } from 'react-redux'
 import classNames from 'classnames'
-import { RouteComponentProps, withRouter } from 'react-router-dom'
+import { withRouter } from 'react-router-dom'
 
 import { QriRef, qriRefFromRoute, qriRefIsEmpty } from '../../../models/qriRef'
-import { VersionInfo, PageInfo } from '../../../models/store'
+import { VersionInfo, PageInfo, RouteProps } from '../../../models/store'
 
 import { selectLog, selectVersionInfoFromWorkingDataset, selectLogPageInfo, selectLatestPath, selectRecentEditRef, selectRecentHistoryRef } from '../../../selections'
 import { pathToEdit, pathToHistory } from '../../../paths'
@@ -19,7 +19,7 @@ export interface WorkbenchSidebarData {
   logLength: number
 }
 
-export interface WorkbenchSidebarProps extends RouteComponentProps<QriRef> {
+export interface WorkbenchSidebarProps extends RouteProps {
   qriRef: QriRef
   data: WorkbenchSidebarData
   lastEditRef: QriRef

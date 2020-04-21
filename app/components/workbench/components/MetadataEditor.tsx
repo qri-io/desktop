@@ -5,11 +5,10 @@ import cloneDeep from 'clone-deep'
 import ReactTooltip from 'react-tooltip'
 import { connect } from 'react-redux'
 import { Dispatch, bindActionCreators } from 'redux'
-import { RouteComponentProps } from 'react-router-dom'
 
 import { ApiActionThunk } from '../../../store/api'
 import { Meta } from '../../../models/dataset'
-import Store, { StatusInfo } from '../../../models/store'
+import Store, { StatusInfo, RouteProps } from '../../../models/store'
 import { QriRef, qriRefFromRoute } from '../../../models/qriRef'
 import hasParseError from '../../../utils/hasParseError'
 
@@ -26,7 +25,7 @@ import MetadataMultiInput from '../../form/MetadataMultiInput'
 import SpinnerWithIcon from '../../chrome/SpinnerWithIcon'
 import ParseError from '../ParseError'
 
-interface MetadataEditorProps extends RouteComponentProps<QriRef> {
+interface MetadataEditorProps extends RouteProps {
   qriRef: QriRef
   data: Meta
   statusInfo: StatusInfo

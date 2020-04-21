@@ -3,6 +3,7 @@ import { Meta, Structure, Commit } from './dataset'
 import { Session } from './session'
 import { Details } from './details'
 import { QriRef } from './qriRef'
+import { match, RouteComponentProps } from 'react-router-dom'
 
 export enum ApiConnection {
   neverConnected = 0,
@@ -26,6 +27,10 @@ type Modal =
 | {
   type: ModalType.AddDataset
   initialURL?: string | null
+}
+
+export interface RouteProps extends RouteComponentProps {
+  match: match<QriRef>
 }
 
 export interface Mutation {

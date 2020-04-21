@@ -3,8 +3,9 @@ import { faCloudUploadAlt, faCloud } from '@fortawesome/free-solid-svg-icons'
 import { shell, clipboard } from 'electron'
 import { bindActionCreators, Dispatch } from 'redux'
 import { connect } from 'react-redux'
-import { RouteComponentProps, withRouter } from 'react-router-dom'
+import { withRouter } from 'react-router-dom'
 
+import { RouteProps } from '../../../models/store'
 import { QRI_CLOUD_URL } from '../../../constants'
 import { Modal, ModalType } from '../../../models/modals'
 import { QriRef, qriRefFromRoute } from '../../../models/qriRef'
@@ -16,7 +17,7 @@ import { selectIsPublished, selectInNamespace, selectLatestPath } from '../../..
 import HeaderColumnButton from '../../chrome/HeaderColumnButton'
 import Hamburger from '../../chrome/Hamburger'
 
-interface PublishButtonProps extends RouteComponentProps<QriRef> {
+interface PublishButtonProps extends RouteProps {
   qriRef: QriRef
   inNamespace: boolean
   isPublished: boolean

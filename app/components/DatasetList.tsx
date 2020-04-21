@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { Action, AnyAction, bindActionCreators, Dispatch } from 'redux'
 import ContextMenuArea from 'react-electron-contextmenu'
-import { RouteComponentProps, withRouter } from 'react-router-dom'
+import { withRouter } from 'react-router-dom'
 import { shell, MenuItemConstructorOptions } from 'electron'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTimes } from '@fortawesome/free-solid-svg-icons'
@@ -9,7 +9,7 @@ import { connect } from 'react-redux'
 
 import { QriRef } from '../models/qriRef'
 import { Modal, ModalType } from '../models/modals'
-import { MyDatasets, WorkingDataset, VersionInfo } from '../models/store'
+import { MyDatasets, WorkingDataset, VersionInfo, RouteProps } from '../models/store'
 
 import { selectImportFileName, selectImportFileSize } from '../selections'
 
@@ -26,7 +26,7 @@ import { pathToHistory } from '../paths'
 // assumes an import rate of 4828 bytes per millisecond
 const IMPORT_BYTES_PER_MS = 4828
 
-interface DatasetListProps extends RouteComponentProps<QriRef> {
+interface DatasetListProps extends RouteProps {
   qriRef: QriRef
   myDatasets: MyDatasets
   workingDataset: WorkingDataset
