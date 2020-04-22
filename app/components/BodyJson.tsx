@@ -12,8 +12,13 @@ interface BodyJsonProps {
 
 const BodyJson: React.FunctionComponent<BodyJsonProps> = (props) => {
   const { data, previewWarning = true, loading } = props
-  if (loading && !!data) return <SpinnerWithIcon loading />
   if (!data) return null
+  /**
+   * only show the loading spinner if there is no data loaded already
+   * if we have paginated data, it is possible to be loading and also have data
+   * to display
+   */
+  if (loading && !!data) return <SpinnerWithIcon loading />
 
   return (
     <div

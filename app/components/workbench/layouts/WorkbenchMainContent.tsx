@@ -1,7 +1,5 @@
 import * as React from 'react'
-import { Dispatch, bindActionCreators } from 'redux'
-import { connect } from 'react-redux'
-import { Prompt, withRouter } from 'react-router-dom'
+import { Prompt } from 'react-router-dom'
 
 import { QriRef, qriRefFromRoute } from '../../../models/qriRef'
 import { RouteProps } from '../../../models/store'
@@ -11,6 +9,7 @@ import { selectFsiPath, selectMutationsIsDirty } from '../../../selections'
 
 import LinkButton from '../headerButtons/LinkButton'
 import PublishButton from '../headerButtons/PublishButton'
+import { connectComponentToProps } from '../../../utils/connectComponentToProps'
 
 interface WorkbenchMainContentProps extends RouteProps {
   qriRef: QriRef
@@ -53,14 +52,10 @@ const mapStateToProps = (state: any, ownProps: WorkbenchMainContentProps) => {
   }
 }
 
-const mapDispatchToProps = (dispatch: Dispatch) => {
-  return bindActionCreators({
+const mapDispatchToProps = () => {
+  return {
     fetchWorkingDatasetDetails
-  }, dispatch)
+  }
 }
 
-const mergeProps = (props: any, actions: any): WorkbenchMainContentProps => {
-  return { ...props, ...actions }
-}
-
-export default withRouter(connect(mapStateToProps, mapDispatchToProps, mergeProps)(WorkbenchMainContentComponent))
+export default connectComponentToProps(mapStateToProps, mapDispatchToProps, WorkbenchMainContentComponent, true)
