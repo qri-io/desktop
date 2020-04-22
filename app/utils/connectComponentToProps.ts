@@ -1,26 +1,60 @@
 import * as React from 'react'
-import { Dispatch, bindActionCreators } from 'redux'
-import { connect } from 'react-redux'
+import { Dispatch, bindActionCreators, ActionCreatorsMapObject } from 'redux'
+import { connect, Matching } from 'react-redux'
 import { withRouter } from 'react-router-dom'
 
 import Store from '../models/store'
 
-// want to return two objects,
+type MapStateToProps<T> = (state?: Store, ownProps?: T) => T
+type MapDispatchToProps<T> = (ownProps? : T) => ActionCreatorsMapObject<any>
+
+/**
+ * connectComponentToProps wraps the redux `connect` function
+ * it connects the component params to the store and binds the actions to dispatch
+ *  - `component` - takes a component, it should have props defined
+ *  - `mapStateToPropsFunc` - either a function with `state` and `ownProps`
+ *  params, or an object (can be an object)
+*/
 export function connectComponentToProps<T> (
-  mapStateToPropsFunc: (state?: Store, ownProps?: T) => T,
-  mapDispatchToPropsFunc: (ownProps?: T) => any,
-  component: React.FunctionComponent | React.ComponentClass
+  component: React.ComponentType<Matching <T, T>>,
+  mapStateToPropsFunc?: MapStateToProps<T> | T,
+  mapDispatchToPropsFunc?: MapDispatchToProps<T> | ActionCreatorsMapObject<any>
 ) {
-  const mapStateToProps = (state: any, ownProps: T) => {
-    // need access to this state and ownProps
-    return mapStateToPropsFunc(state, ownProps)
+  let mapStateToProps = (state: any, ownProps: T) => {
+    return ownProps
+  }
+  if (mapStateToPropsFunc && typeof mapStateToPropsFunc === 'function') {
+    mapStateToProps = (state: any, ownProps: T) => {
+      return mapStateToPropsFunc(state, ownProps)
+    }
+  } else {
+    mapStateToProps = (state: any, ownProps: T) => {
+      if (mapStateToPropsFunc) {
+        return {
+          ...ownProps,
+          ...mapStateToPropsFunc
+        }
+      }
+      return ownProps
+    }
   }
 
-  const mapDispatchToProps = (dispatch: Dispatch, ownProps: T) => {
-    // need access to this dispatch and ownProps
+  let mapDispatchToProps = (dispatch: Dispatch, ownProps: T) => {
     return bindActionCreators({
-      ...mapDispatchToPropsFunc(ownProps)
     }, dispatch)
+  }
+  if (mapDispatchToPropsFunc && typeof mapDispatchToPropsFunc === 'function') {
+    mapDispatchToProps = (dispatch: Dispatch, ownProps: T) => {
+      return bindActionCreators({
+        ...mapDispatchToPropsFunc(ownProps)
+      }, dispatch)
+    }
+  } else {
+    mapDispatchToProps = (dispatch: Dispatch, ownProps: T) => {
+      return bindActionCreators({
+        ...mapDispatchToPropsFunc
+      }, dispatch)
+    }
   }
 
   const mergeProps = (props: any, actions: any): T => {
@@ -30,9 +64,9 @@ export function connectComponentToProps<T> (
 }
 
 export function connectComponentToPropsWithRouter<T> (
-  mapStateToPropsFunc: (state?: Store, ownProps?: T) => T,
-  mapDispatchToPropsFunc: (ownProps?: T) => any,
-  component: React.FunctionComponent | React.ComponentClass
+  component: React.ComponentType<Matching <T, T>>,
+  mapStateToPropsFunc?: MapStateToProps<T> | {},
+  mapDispatchToPropsFunc?: MapDispatchToProps<T> | ActionCreatorsMapObject<any>
 ) {
-  return withRouter(connectComponentToProps(mapStateToPropsFunc, mapDispatchToPropsFunc, component))
+  return withRouter(connectComponentToProps(component, mapStateToPropsFunc, mapDispatchToPropsFunc))
 }
