@@ -1,6 +1,7 @@
 import * as React from 'react'
 import { Prompt } from 'react-router-dom'
 
+import { connectComponentToPropsWithRouter } from '../../../utils/connectComponentToProps'
 import { QriRef, qriRefFromRoute } from '../../../models/qriRef'
 import { RouteProps } from '../../../models/store'
 import { ApiActionThunk } from '../../../store/api'
@@ -9,7 +10,6 @@ import { selectFsiPath, selectMutationsIsDirty } from '../../../selections'
 
 import LinkButton from '../headerButtons/LinkButton'
 import PublishButton from '../headerButtons/PublishButton'
-import { connectComponentToProps } from '../../../utils/connectComponentToProps'
 
 interface WorkbenchMainContentProps extends RouteProps {
   qriRef: QriRef
@@ -58,4 +58,4 @@ const mapDispatchToProps = () => {
   }
 }
 
-export default connectComponentToProps(mapStateToProps, mapDispatchToProps, WorkbenchMainContentComponent, true)
+export default connectComponentToPropsWithRouter(mapStateToProps, mapDispatchToProps, WorkbenchMainContentComponent, true)

@@ -6,7 +6,11 @@ import { withRouter } from 'react-router-dom'
 import Store from '../models/store'
 
 // want to return two objects,
-export function connectComponentToProps<T> (mapStateToPropsFunc: (state: Store, ownProps: T) => T, mapDispatchToPropsFunc: (ownProps?: T) => any, component: React.FunctionComponent | React.ComponentClass, needHistory?: boolean) {
+export function connectComponentToProps<T> (
+  mapStateToPropsFunc: (state?: Store, ownProps?: T) => T,
+  mapDispatchToPropsFunc: (ownProps?: T) => any,
+  component: React.FunctionComponent | React.ComponentClass
+) {
   const mapStateToProps = (state: any, ownProps: T) => {
     // need access to this state and ownProps
     return mapStateToPropsFunc(state, ownProps)
@@ -22,9 +26,13 @@ export function connectComponentToProps<T> (mapStateToPropsFunc: (state: Store, 
   const mergeProps = (props: any, actions: any): T => {
     return { ...props, ...actions }
   }
-
-  if (needHistory) {
-    return withRouter(connect(mapStateToProps, mapDispatchToProps, mergeProps)(component))
-  }
   return connect(mapStateToProps, mapDispatchToProps, mergeProps)(component)
+}
+
+export function connectComponentToPropsWithRouter<T> (
+  mapStateToPropsFunc: (state?: Store, ownProps?: T) => T,
+  mapDispatchToPropsFunc: (ownProps?: T) => any,
+  component: React.FunctionComponent | React.ComponentClass
+) {
+  return withRouter(connectComponentToProps(mapStateToPropsFunc, mapDispatchToPropsFunc, component))
 }
