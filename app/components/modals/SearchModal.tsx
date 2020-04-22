@@ -1,13 +1,12 @@
 import * as React from 'react'
 import _ from 'underscore'
-import { RouteComponentProps, withRouter } from 'react-router-dom'
-import { Dispatch, bindActionCreators } from 'redux'
-import { connect } from 'react-redux'
 
 import { BACKEND_URL } from '../../constants'
 import { FetchOptions } from '../../store/api'
-import { VersionInfo } from '../../models/store'
+import { VersionInfo, RouteProps } from '../../models/store'
 import { SearchModal } from '../../models/modals'
+
+import { connectComponentToPropsWithRouter } from '../../utils/connectComponentToProps'
 
 import { searchResultToVersionInfo } from '../../actions/mappingFuncs'
 import { setWorkingDataset } from '../../actions/selections'
@@ -20,9 +19,9 @@ import DatasetItem from '../item/DatasetItem'
 import Switch from '../chrome/Switch'
 import Modal from './Modal'
 import Close from '../chrome/Close'
-import { pathToHistory, pathToNetworkDataset } from '../../paths'
+import { pathToDataset, pathToNetworkDataset } from '../../paths'
 
-interface SearchProps extends RouteComponentProps {
+interface SearchProps extends RouteProps {
   modal: SearchModal
   onDismissed: () => void
   setWorkingDataset: (username: string, name: string) => void
@@ -65,7 +64,7 @@ const SearchComponent: React.FunctionComponent<SearchProps> = (props) => {
   const handleOnClick = () => {
     if (local) {
       return (username: string, name: string, path: string) => {
-        history.push(pathToHistory(username, name, path || ''))
+        history.push(pathToDataset(username, name, path || ''))
         onDismissed()
       }
     }
@@ -111,22 +110,16 @@ const SearchComponent: React.FunctionComponent<SearchProps> = (props) => {
   )
 }
 
-const mapStateToProps = (state: any, ownProps: SearchProps) => {
-  return {
-    modal: selectModal(state),
-    ...ownProps
-  }
-}
-
-const mapDispatchToProps = (dispatch: Dispatch) => {
-  return bindActionCreators({
+export default connectComponentToPropsWithRouter(
+  SearchComponent,
+  (state: any, ownProps: SearchProps) => {
+    return {
+      modal: selectModal(state),
+      ...ownProps
+    }
+  },
+  {
     onDismissed: dismissModal,
     setWorkingDataset
-  }, dispatch)
-}
-
-const mergeProps = (props: any, actions: any): SearchProps => {
-  return { ...props, ...actions }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(withRouter(SearchComponent))
+  }
+)

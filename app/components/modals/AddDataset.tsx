@@ -1,10 +1,10 @@
 import * as React from 'react'
-import { Dispatch, bindActionCreators } from 'redux'
-import { connect } from 'react-redux'
 import { CSSTransition } from 'react-transition-group'
 
 import { ApiAction } from '../../store/api'
+
 import { validateDatasetReference } from '../../utils/formValidation'
+import { connectComponentToProps } from '../../utils/connectComponentToProps'
 
 import { addDatasetAndFetch } from '../../actions/api'
 import { dismissModal } from '../../actions/ui'
@@ -117,19 +117,13 @@ const AddDatasetComponent: React.FunctionComponent<AddDatasetProps> = (props) =>
   )
 }
 
-const mapStateToProps = (state: any, ownProps: AddDatasetProps) => {
-  return ownProps
-}
-
-const mapDispatchToProps = (dispatch: Dispatch) => {
-  return bindActionCreators({
+export default connectComponentToProps(
+  AddDatasetComponent,
+  (state: any, ownProps: AddDatasetProps) => {
+    return ownProps
+  },
+  {
     addDatasetAndFetch,
     onDismissed: dismissModal
-  }, dispatch)
-}
-
-const mergeProps = (props: any, actions: any): AddDatasetProps => {
-  return { ...props, ...actions }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(AddDatasetComponent)
+  }
+)

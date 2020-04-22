@@ -1,7 +1,7 @@
 // a layout component for the resizable sidebar with main content area
 import * as React from 'react'
 import { Resizable } from './Resizable'
-import NavbarContainer from '../containers/NavbarContainer'
+import Navbar from '../components/nav/Navbar'
 
 interface LayoutProps {
   id: string
@@ -45,7 +45,7 @@ const Layout: React.FunctionComponent<LayoutProps> = (props: LayoutProps) => {
           {sidebarContent}
         </Resizable>
         <div id={`${id}-main-content`} className='main-content'>
-          {showNav && <NavbarContainer />}
+          {showNav && <Navbar />}
           {mainContent}
         </div>
       </div>

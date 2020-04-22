@@ -27,7 +27,7 @@ export const setWorkingComponent = (component: SelectedComponent) => {
   return setSelectedListItem('component', component)
 }
 
-export const setHistoryComponent = (component: SelectedComponent) => {
+export const setComponent = (component: SelectedComponent) => {
   return setSelectedListItem('commitComponent', component)
 }
 

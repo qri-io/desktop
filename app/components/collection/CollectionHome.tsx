@@ -1,13 +1,14 @@
 import React from 'react'
-import { Action, bindActionCreators, Dispatch } from 'redux'
+import { Action } from 'redux'
 import path from 'path'
 import { faPlus, faDownload } from '@fortawesome/free-solid-svg-icons'
-import { connect } from 'react-redux'
 
 import { ApiAction } from '../../store/api'
 import { Modal, ModalType } from '../../models/modals'
 import { ToastType } from '../../models/store'
 import { QriRef } from '../../models/qriRef'
+
+import { connectComponentToProps } from '../../utils/connectComponentToProps'
 
 import { setModal, openToast, closeToast } from '../../actions/ui'
 import { importFile } from '../../actions/api'
@@ -91,21 +92,13 @@ export const CollectionHomeComponent: React.FunctionComponent<CollectionHomeProp
   )
 }
 
-const mapStateToProps = (state: any, ownProps: CollectionHomeProps) => {
-  return ownProps
-}
-
-const mapDispatchToProps = (dispatch: Dispatch) => {
-  return bindActionCreators({
+export default connectComponentToProps(
+  CollectionHomeComponent,
+  {},
+  {
     setModal,
     importFile,
     openToast,
     closeToast
-  }, dispatch)
-}
-
-const mergeProps = (props: any, actions: any): CollectionHomeProps => {
-  return { ...props, ...actions }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(CollectionHomeComponent)
+  }
+)

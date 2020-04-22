@@ -1,18 +1,20 @@
 import * as React from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faInfoCircle } from '@fortawesome/free-solid-svg-icons'
-import { connect } from 'react-redux'
 
 import { Structure as IStructure } from '../models/dataset'
 import Store from '../models/store'
+
 import fileSize, { abbreviateNumber } from '../utils/fileSize'
+import { connectComponentToProps } from '../utils/connectComponentToProps'
+
+import { selectDataset, selectDatasetIsLoading } from '../selections'
 
 import ExternalLink from './ExternalLink'
 import LabeledStats from './item/LabeledStats'
 import FormatConfigHistory from './FormatConfigHistory'
 import SpinnerWithIcon from './chrome/SpinnerWithIcon'
 import Schema from './structure/Schema'
-import { selectHistoryDataset, selectHistoryIsLoading } from '../selections'
 
 export interface StructureProps {
   data: IStructure
@@ -79,6 +81,11 @@ export const StructureComponent: React.FunctionComponent<StructureProps> = (prop
     return <SpinnerWithIcon loading />
   }
 
+  let schema
+  if (data && data.schema) {
+    schema = data.schema
+  }
+
   return (
     <div className='structure'>
       <div className='stats'><LabeledStats data={getStats(data)} size='lg' /></div>
@@ -99,18 +106,19 @@ export const StructureComponent: React.FunctionComponent<StructureProps> = (prop
         </h4>
       </div>
       <Schema
-        data={data ? data.schema : undefined}
+        data={schema}
         editable={false}
       />
     </div>
   )
 }
 
-const mapStateToProps = (state: Store) => {
-  return {
-    data: selectHistoryDataset(state).structure,
-    loading: selectHistoryIsLoading(state)
+export default connectComponentToProps(
+  StructureComponent,
+  (state: Store) => {
+    return {
+      data: selectDataset(state).structure,
+      loading: selectDatasetIsLoading(state)
+    }
   }
-}
-
-export default connect(mapStateToProps)(StructureComponent)
+)

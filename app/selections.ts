@@ -2,7 +2,7 @@ import Dataset, { Commit } from "./models/dataset"
 import cloneDeep from 'clone-deep'
 
 import Store, {
-  HistoryDataset,
+  DatasetStore,
   Status,
   PageInfo,
   SelectedComponent,
@@ -31,20 +31,20 @@ export function selectApiConnection (state: Store): ApiConnection {
 
 /**
  *
- * HISTORYDATASET STATE TREE
+ * DATASET STATE TREE
  *
  */
 
-export function selectHistoryDatasetBodyPageInfo (state: Store): PageInfo {
-  return state.historyDataset.components.body.pageInfo
+export function selectDatasetBodyPageInfo (state: Store): PageInfo {
+  return state.dataset.components.body.pageInfo
 }
 
-export function selectHistoryCommit (state: Store): Commit | undefined {
-  return selectHistoryDataset(state).commit
+export function selectDatasetCommit (state: Store): Commit | undefined {
+  return selectDataset(state).commit
 }
 
-export function selectHistoryComponentsList (state: Store): SelectedComponent[] {
-  const dataset = selectHistoryDataset(state)
+export function selectDatasetComponentsList (state: Store): SelectedComponent[] {
+  const dataset = selectDataset(state)
   const components: SelectedComponent[] = []
   if (dataset) {
     Object.keys(dataset).forEach((component: SelectedComponent) => {
@@ -55,48 +55,44 @@ export function selectHistoryComponentsList (state: Store): SelectedComponent[] 
 }
 
 // returns a dataset that only contains components
-export function selectHistoryDataset (state: Store): Dataset {
-  return datasetFromHistoryDataset(state.historyDataset)
+export function selectDataset (state: Store): Dataset {
+  return datasetFromDatasetStore(state.dataset)
 }
 
-export function selectHistoryDatasetIsLoading (state: Store): boolean {
-  return state.historyDataset.isLoading
+export function selectDatasetPath (state: Store): string {
+  return state.dataset.path
 }
 
-export function selectHistoryDatasetPath (state: Store): string {
-  return state.historyDataset.path
+export function selectDatasetName (state: Store): string {
+  return state.dataset.name
 }
 
-export function selectHistoryDatasetName (state: Store): string {
-  return state.historyDataset.name
+export function selectDatasetUsername (state: Store): string {
+  return state.dataset.peername
 }
 
-export function selectHistoryDatasetUsername (state: Store): string {
-  return state.historyDataset.peername
+export function selectDatasetRef (state: Store): string {
+  return `${state.dataset.peername}/${state.dataset.name}/at${state.dataset.path}`
 }
 
-export function selectHistoryDatasetRef (state: Store): string {
-  return `${state.historyDataset.peername}/${state.historyDataset.name}/at${state.historyDataset.path}`
+export function selectDatasetStats (state: Store): Array<Record<string, any>> {
+  return state.dataset.stats
 }
 
-export function selectHistoryStats (state: Store): Array<Record<string, any>> {
-  return state.historyDataset.stats
+export function selectDatasetStatus (state: Store): Status {
+  return state.dataset.status
 }
 
-export function selectHistoryStatus (state: Store): Status {
-  return state.historyDataset.status
-}
-
-export function selectHistoryStatusInfo (state: Store, component: SelectedComponent): StatusInfo {
-  const status = selectHistoryStatus(state)
+export function selectDatasetStatusInfo (state: Store, component: SelectedComponent): StatusInfo {
+  const status = selectDatasetStatus(state)
   return status[component]
 }
 
-export function selectHistoryIsLoading (state: Store): boolean {
-  return state.historyDataset.isLoading
+export function selectDatasetIsLoading (state: Store): boolean {
+  return state.dataset.isLoading
 }
 
-function datasetFromHistoryDataset (historyDataset: HistoryDataset): Dataset {
+function datasetFromDatasetStore (historyDataset: DatasetStore): Dataset {
   const { components } = historyDataset
   let d: Dataset = {}
 
@@ -349,7 +345,7 @@ export function selectWorkingDatasetBodyPageInfo (state: Store): PageInfo {
 
 // returns a dataset that only contains components
 export function selectWorkingDataset (state: Store): Dataset {
-  return datasetFromHistoryDataset(state.workingDataset)
+  return datasetFromDatasetStore(state.workingDataset)
 }
 
 export function selectWorkingDatasetIsLoading (state: Store): boolean {

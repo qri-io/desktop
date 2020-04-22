@@ -1,9 +1,9 @@
 import * as React from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faDownload, faPlus, faFile } from '@fortawesome/free-solid-svg-icons'
-import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
-import { bindActionCreators, Dispatch } from 'redux'
+
+import { connectComponentToProps } from '../../utils/connectComponentToProps'
 
 import { setModal } from '../../actions/ui'
 
@@ -37,18 +37,10 @@ const NoDatasetsMainContentComponent: React.FunctionComponent<NoDatasetsProps> =
     </div>
   </WelcomeTemplate>
 
-const mapStateToProps = (state: any, ownProps: NoDatasetsProps) => {
-  return ownProps
-}
-
-const mapDispatchToProps = (dispatch: Dispatch) => {
-  return bindActionCreators({
+export default connectComponentToProps(
+  NoDatasetsMainContentComponent,
+  {},
+  {
     setModal
-  }, dispatch)
-}
-
-const mergeProps = (props: any, actions: any): NoDatasetsProps => {
-  return { ...props, ...actions }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(NoDatasetsMainContentComponent)
+  }
+)

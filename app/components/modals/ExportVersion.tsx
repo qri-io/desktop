@@ -1,10 +1,11 @@
 import * as React from 'react'
-import { Action, Dispatch, bindActionCreators } from 'redux'
+import { Action } from 'redux'
 import { remote, ipcRenderer } from 'electron'
-import { connect } from 'react-redux'
 import moment from 'moment'
 
 import { ExportVersionModal } from '../../models/modals'
+
+import { connectComponentToProps } from '../../utils/connectComponentToProps'
 
 import { setExportPath, dismissModal } from '../../actions/ui'
 
@@ -137,27 +138,21 @@ const ExportVersionComponent: React.FunctionComponent<ExportVersionProps> = (pro
   )
 }
 
-const mapStateToProps = (state: any, ownProps: ExportVersionProps) => {
-  return {
-    ...ownProps,
-    modal: selectModal(state),
-    // the only props that we will pull from the state tree
-    // except for the modal prop itself, is anything persisted in the app
-    // like the export path here, or the default dataset path in the
-    // LinkDataset modal
-    persistedExportPath: selectPersistedExportPath(state)
-  }
-}
-
-const mapDispatchToProps = (dispatch: Dispatch) => {
-  return bindActionCreators({
+export default connectComponentToProps(
+  ExportVersionComponent,
+  (state: any, ownProps: ExportVersionProps) => {
+    return {
+      ...ownProps,
+      modal: selectModal(state),
+      // the only props that we will pull from the state tree
+      // except for the modal prop itself, is anything persisted in the app
+      // like the export path here, or the default dataset path in the
+      // LinkDataset modal
+      persistedExportPath: selectPersistedExportPath(state)
+    }
+  },
+  {
     onDismissed: dismissModal,
     setExportPath: setExportPath
-  }, dispatch)
-}
-
-const mergeProps = (props: any, actions: any): ExportVersionProps => {
-  return { ...props, ...actions }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(ExportVersionComponent)
+  }
+)

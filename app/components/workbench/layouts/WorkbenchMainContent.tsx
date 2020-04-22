@@ -1,9 +1,9 @@
 import * as React from 'react'
-import { Dispatch, bindActionCreators } from 'redux'
-import { connect } from 'react-redux'
-import { Prompt, RouteComponentProps, withRouter } from 'react-router-dom'
+import { Prompt } from 'react-router-dom'
 
+import { connectComponentToPropsWithRouter } from '../../../utils/connectComponentToProps'
 import { QriRef, qriRefFromRoute } from '../../../models/qriRef'
+import { RouteProps } from '../../../models/store'
 import { ApiActionThunk } from '../../../store/api'
 import { fetchWorkingDatasetDetails } from '../../../actions/api'
 import { selectFsiPath, selectMutationsIsDirty } from '../../../selections'
@@ -11,7 +11,7 @@ import { selectFsiPath, selectMutationsIsDirty } from '../../../selections'
 import LinkButton from '../headerButtons/LinkButton'
 import PublishButton from '../headerButtons/PublishButton'
 
-interface WorkbenchMainContentProps extends RouteComponentProps<QriRef> {
+interface WorkbenchMainContentProps extends RouteProps {
   qriRef: QriRef
   modified: boolean
   fsiPath: string
@@ -43,23 +43,17 @@ const WorkbenchMainContentComponent: React.FunctionComponent<WorkbenchMainConten
   </>
 }
 
-const mapStateToProps = (state: any, ownProps: WorkbenchMainContentProps) => {
-  return {
-    ...ownProps,
-    qriRef: qriRefFromRoute(ownProps),
-    fsiPath: selectFsiPath(state),
-    modified: selectMutationsIsDirty(state)
-  }
-}
-
-const mapDispatchToProps = (dispatch: Dispatch) => {
-  return bindActionCreators({
+export default connectComponentToPropsWithRouter(
+  WorkbenchMainContentComponent,
+  (state: any, ownProps: WorkbenchMainContentProps) => {
+    return {
+      ...ownProps,
+      qriRef: qriRefFromRoute(ownProps),
+      fsiPath: selectFsiPath(state),
+      modified: selectMutationsIsDirty(state)
+    }
+  },
+  {
     fetchWorkingDatasetDetails
-  }, dispatch)
-}
-
-const mergeProps = (props: any, actions: any): WorkbenchMainContentProps => {
-  return { ...props, ...actions }
-}
-
-export default withRouter(connect(mapStateToProps, mapDispatchToProps, mergeProps)(WorkbenchMainContentComponent))
+  }
+)

@@ -6,7 +6,7 @@ import classNames from 'classnames'
 import { VersionInfo } from '../../models/store'
 import moment from 'moment'
 
-interface HistoryListItemProps {
+interface LogListItemProps {
   id: string
   data: VersionInfo
   selected: boolean
@@ -14,7 +14,7 @@ interface HistoryListItemProps {
   last: boolean
   onClick: (path: string | undefined) => Action | void
   /**
-   * in some appearances of the HistoryList, we want to have the option to disable
+   * in some appearances of the LogList, we want to have the option to disable
    * certain items in the list if the version of the dataset is foreign
    * in other appearances, we want the item to still remain clickable and active
    * looking, regardless if the version is foreign or not
@@ -26,7 +26,7 @@ interface HistoryListItemProps {
   allowDisable?: boolean
 }
 
-const HistoryListItem: React.FunctionComponent<HistoryListItemProps> = (props) => {
+const LogListItem: React.FunctionComponent<LogListItemProps> = (props) => {
   const { id, selected, data, first, last, allowDisable = true } = props
   const { path = '', commitTitle, commitTime, foreign } = data
   return (
@@ -43,7 +43,7 @@ const HistoryListItem: React.FunctionComponent<HistoryListItemProps> = (props) =
           foreign: allowDisable && foreign
         })
       }
-      data-tip={allowDisable && foreign ? 'This version is unavailable' : undefined}
+      data-tip={allowDisable && foreign && 'This version is unavailable'}
       onClick={() => { if (!(foreign && allowDisable)) props.onClick(path) }}
     >
       <div className='icon-column'>
@@ -64,4 +64,4 @@ const HistoryListItem: React.FunctionComponent<HistoryListItemProps> = (props) =
   )
 }
 
-export default HistoryListItem
+export default LogListItem

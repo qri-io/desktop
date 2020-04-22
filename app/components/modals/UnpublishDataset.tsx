@@ -1,6 +1,4 @@
 import * as React from 'react'
-import { Dispatch, bindActionCreators } from 'redux'
-import { connect } from 'react-redux'
 
 import { ApiAction } from '../../store/api'
 import { UnpublishDatasetModal } from '../../models/modals'
@@ -12,6 +10,7 @@ import { selectModal } from '../../selections'
 
 import Modal from './Modal'
 import Buttons from './Buttons'
+import { connectComponentToProps } from '../../utils/connectComponentToProps'
 
 interface UnpublishDatasetProps {
   modal: UnpublishDatasetModal
@@ -70,22 +69,16 @@ const UnpublishDatasetComponent: React.FunctionComponent<UnpublishDatasetProps> 
   )
 }
 
-const mapStateToProps = (state: any, ownProps: UnpublishDatasetProps) => {
-  return {
-    modal: selectModal(state),
-    ...ownProps
-  }
-}
-
-const mapDispatchToProps = (dispatch: Dispatch) => {
-  return bindActionCreators({
+export default connectComponentToProps(
+  UnpublishDatasetComponent,
+  (state: any, ownProps: UnpublishDatasetProps) => {
+    return {
+      modal: selectModal(state),
+      ...ownProps
+    }
+  },
+  {
     onDismissed: dismissModal,
     onSubmit: unpublishDataset
-  }, dispatch)
-}
-
-const mergeProps = (props: any, actions: any): UnpublishDatasetProps => {
-  return { ...props, ...actions }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(UnpublishDatasetComponent)
+  }
+)

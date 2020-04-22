@@ -1,11 +1,11 @@
 import * as React from 'react'
-import { connect } from 'react-redux'
-import { RouteComponentProps } from 'react-router-dom'
 
-import Store from '../../../models/store'
+import Store, { RouteProps } from '../../../models/store'
 import { refStringFromQriRef, QriRef, qriRefFromRoute } from '../../../models/qriRef'
 
-export interface ReadmeProps extends RouteComponentProps<QriRef> {
+import { connectComponentToProps } from '../../../utils/connectComponentToProps'
+
+export interface ReadmeProps extends RouteProps {
   qriRef: QriRef
 }
 
@@ -45,13 +45,14 @@ export const ReadmeComponent: React.FunctionComponent<ReadmeProps> = (props) => 
   )
 }
 
-const mapStateToProps = (state: Store, ownProps: ReadmeProps) => {
-  // get data for the currently selected component
-  return {
-    ...ownProps,
-    qriRef: qriRefFromRoute(ownProps)
-  }
-}
-
 // TODO (b5) - this doesn't need to be a container at all
-export default connect(mapStateToProps)(ReadmeComponent)
+export default connectComponentToProps(
+  ReadmeComponent,
+  (state: Store, ownProps: ReadmeProps) => {
+    // get data for the currently selected component
+    return {
+      ...ownProps,
+      qriRef: qriRefFromRoute(ownProps)
+    }
+  }
+)

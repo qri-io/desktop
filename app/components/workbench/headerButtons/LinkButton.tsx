@@ -1,12 +1,12 @@
 import * as React from 'react'
 import { faFolderOpen, faFile, faLink } from '@fortawesome/free-solid-svg-icons'
 import { shell } from 'electron'
-import { bindActionCreators, Dispatch } from 'redux'
-import { connect } from 'react-redux'
-import { RouteComponentProps, withRouter } from 'react-router-dom'
 
+import { RouteProps } from '../../../models/store'
 import { Modal, ModalType } from '../../../models/modals'
 import { QriRef, qriRefFromRoute } from '../../../models/qriRef'
+
+import { connectComponentToPropsWithRouter } from '../../../utils/connectComponentToProps'
 
 import { setModal } from '../../../actions/ui'
 
@@ -15,7 +15,7 @@ import { selectInNamespace, selectFsiPath, selectMutationsIsDirty } from '../../
 import HeaderColumnButton from '../../chrome/HeaderColumnButton'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
-interface LinkButtonProps extends RouteComponentProps<QriRef> {
+interface LinkButtonProps extends RouteProps {
   qriRef: QriRef
   inNamespace: boolean
   fsiPath: string
@@ -64,25 +64,19 @@ const LinkButtonComponent: React.FunctionComponent<LinkButtonProps> = (props) =>
   />)
 }
 
-const mapStateToProps = (state: any, ownProps: LinkButtonProps) => {
-  const qriRef = qriRefFromRoute(ownProps)
-  return {
-    qriRef,
-    inNamespace: selectInNamespace(state, qriRef),
-    fsiPath: selectFsiPath(state),
-    modified: selectMutationsIsDirty(state),
-    ...ownProps
-  }
-}
-
-const mapDispatchToProps = (dispatch: Dispatch) => {
-  return bindActionCreators({
+export default connectComponentToPropsWithRouter(
+  LinkButtonComponent,
+  (state: any, ownProps: LinkButtonProps) => {
+    const qriRef = qriRefFromRoute(ownProps)
+    return {
+      qriRef,
+      inNamespace: selectInNamespace(state, qriRef),
+      fsiPath: selectFsiPath(state),
+      modified: selectMutationsIsDirty(state),
+      ...ownProps
+    }
+  },
+  {
     setModal
-  }, dispatch)
-}
-
-const mergeProps = (props: any, actions: any): LinkButtonProps => {
-  return { ...props, ...actions }
-}
-
-export default withRouter(connect(mapStateToProps, mapDispatchToProps, mergeProps)(LinkButtonComponent))
+  }
+)

@@ -24,7 +24,7 @@ import {
 
 import { Dataset } from '../models/dataset'
 import { Status } from '../models/store'
-import { selectWorkingDataset, selectStatusFromMutations, selectWorkingDatasetIsLoading, selectWorkingDatasetUsername, selectWorkingDatasetName, selectHistoryDatasetIsLoading, selectHistoryDatasetPath, selectHistoryDatasetName, selectHistoryDatasetUsername } from '../selections'
+import { selectWorkingDataset, selectStatusFromMutations, selectWorkingDatasetIsLoading, selectWorkingDatasetUsername, selectWorkingDatasetName, selectDatasetIsLoading, selectDatasetPath, selectDatasetName, selectDatasetUsername } from '../selections'
 import { QriRef } from '../models/qriRef'
 
 // fetchworkBench makes the necessary API requests to populate the workbench
@@ -59,10 +59,10 @@ export function fetchWorkbench (qriRef: QriRef): LaunchedFetchesAction {
       }
     }
 
-    const versionIsLoading = selectHistoryDatasetIsLoading(state)
-    const versionUsername = selectHistoryDatasetUsername(state)
-    const versionName = selectHistoryDatasetName(state)
-    const versionPath = selectHistoryDatasetPath(state)
+    const versionIsLoading = selectDatasetIsLoading(state)
+    const versionUsername = selectDatasetUsername(state)
+    const versionName = selectDatasetName(state)
+    const versionPath = selectDatasetPath(state)
 
     if (!versionIsLoading &&
         routePath !== '' &&

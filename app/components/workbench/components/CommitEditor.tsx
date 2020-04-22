@@ -1,12 +1,10 @@
 import * as React from 'react'
-import { Action, bindActionCreators, Dispatch } from 'redux'
-import { connect } from 'react-redux'
+import { Action } from 'redux'
 import classNames from 'classnames'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSync } from '@fortawesome/free-solid-svg-icons'
-import { RouteComponentProps } from 'react-router-dom'
 
-import Store, { Status } from '../../../models/store'
+import Store, { Status, RouteProps } from '../../../models/store'
 import { saveWorkingDatasetAndFetch } from '../../../actions/api'
 import { setCommitTitle, setCommitMessage } from '../../../actions/mutations'
 import { validateCommitState } from '../../../utils/formValidation'
@@ -16,8 +14,9 @@ import { refStringFromQriRef, QriRef, qriRefFromRoute } from '../../../models/qr
 
 import TextInput from '../../form/TextInput'
 import TextAreaInput from '../../form/TextAreaInput'
+import { connectComponentToProps } from '../../../utils/connectComponentToProps'
 
-export interface CommitEditorProps extends RouteComponentProps<QriRef> {
+export interface CommitEditorProps extends RouteProps {
   qriRef: QriRef
   isSaving: boolean
   status: Status
@@ -109,29 +108,23 @@ export const CommitEditorComponent: React.FunctionComponent<CommitEditorProps> =
   )
 }
 
-const mapStateToProps = (state: Store, ownProps: CommitEditorProps) => {
-  const mutationsCommit = selectMutationsCommit(state)
-  // get data for the currently selected component
-  return {
-    ...ownProps,
-    qriRef: qriRefFromRoute(ownProps),
-    isSaving: selectIsCommiting(state),
-    title: mutationsCommit.title,
-    message: mutationsCommit.message,
-    status: selectStatusFromMutations(state)
-  }
-}
-
-const mergeProps = (props: any, actions: any): CommitEditorProps => { //eslint-disable-line
-  return { ...props, ...actions }
-}
-
-const mapDispatchToProps = (dispatch: Dispatch) => {
-  return bindActionCreators({
+export default connectComponentToProps(
+  CommitEditorComponent,
+  (state: Store, ownProps: CommitEditorProps) => {
+    const mutationsCommit = selectMutationsCommit(state)
+    // get data for the currently selected component
+    return {
+      ...ownProps,
+      qriRef: qriRefFromRoute(ownProps),
+      isSaving: selectIsCommiting(state),
+      title: mutationsCommit.title,
+      message: mutationsCommit.message,
+      status: selectStatusFromMutations(state)
+    }
+  },
+  {
     setCommitTitle,
     setCommitMessage,
     saveWorkingDatasetAndFetch
-  }, dispatch)
-}
-
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(CommitEditorComponent)
+  }
+)

@@ -1,9 +1,9 @@
 import * as React from 'react'
-import { bindActionCreators, Dispatch } from 'redux'
-import { connect } from 'react-redux'
 
 import { ApiAction } from '../../store/api'
 import { PublishDatasetModal } from '../../models/modals'
+
+import { connectComponentToProps } from '../../utils/connectComponentToProps'
 
 import { dismissModal } from '../../actions/ui'
 import { publishDataset } from '../../actions/api'
@@ -71,22 +71,16 @@ export const PublishDatasetComponent: React.FunctionComponent<PublishDatasetProp
   )
 }
 
-const mapStateToProps = (state: any, ownProps: PublishDatasetProps) => {
-  return {
-    ...ownProps,
-    modal: selectModal(state)
-  }
-}
-
-const mapDispatchToProps = (dispatch: Dispatch) => {
-  return bindActionCreators({
+export default connectComponentToProps(
+  PublishDatasetComponent,
+  (state: any, ownProps: PublishDatasetProps) => {
+    return {
+      ...ownProps,
+      modal: selectModal(state)
+    }
+  },
+  {
     onDismissed: dismissModal,
     onSubmit: publishDataset
-  }, dispatch)
-}
-
-const mergeProps = (props: any, actions: any): PublishDatasetProps => {
-  return { ...props, ...actions }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(PublishDatasetComponent)
+  }
+)

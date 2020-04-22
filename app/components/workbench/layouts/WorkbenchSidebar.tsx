@@ -1,13 +1,13 @@
 import * as React from 'react'
-import { connect } from 'react-redux'
 import classNames from 'classnames'
-import { RouteComponentProps, withRouter } from 'react-router-dom'
 
 import { QriRef, qriRefFromRoute, qriRefIsEmpty } from '../../../models/qriRef'
-import { VersionInfo, PageInfo } from '../../../models/store'
+import { VersionInfo, PageInfo, RouteProps } from '../../../models/store'
+
+import { connectComponentToPropsWithRouter } from '../../../utils/connectComponentToProps'
+import { pathToEdit, pathToDataset } from '../../../paths'
 
 import { selectLog, selectVersionInfoFromWorkingDataset, selectLogPageInfo, selectLatestPath, selectRecentEditRef, selectRecentHistoryRef } from '../../../selections'
-import { pathToEdit, pathToHistory } from '../../../paths'
 
 import DatasetReference from '../../DatasetReference'
 import DatasetDetailsSubtext from '../../dataset/DatasetDetailsSubtext'
@@ -19,7 +19,7 @@ export interface WorkbenchSidebarData {
   logLength: number
 }
 
-export interface WorkbenchSidebarProps extends RouteComponentProps<QriRef> {
+export interface WorkbenchSidebarProps extends RouteProps {
   qriRef: QriRef
   data: WorkbenchSidebarData
   lastEditRef: QriRef
@@ -88,7 +88,7 @@ export const WorkbenchSidebarComponent: React.FunctionComponent<WorkbenchSidebar
           onClick={() => {
             if ((!(logPageInfo.error && logPageInfo.error.includes('no history')) && datasetSelected)) {
               if (qriRefIsEmpty(lastHistoryRef)) {
-                history.push(pathToHistory(username, name, latestPath))
+                history.push(pathToDataset(username, name, latestPath))
               } else {
                 history.push(lastHistoryRef.location)
               }
@@ -104,20 +104,21 @@ export const WorkbenchSidebarComponent: React.FunctionComponent<WorkbenchSidebar
   )
 }
 
-const mapStateToProps = (state: any, ownProps: WorkbenchSidebarProps) => {
-  const qriRef = qriRefFromRoute(ownProps)
-  return {
-    ...ownProps,
-    qriRef,
-    lastEditRef: selectRecentEditRef(state),
-    lastHistoryRef: selectRecentHistoryRef(state),
-    latestPath: selectLatestPath(state, qriRef.username, qriRef.name),
-    data: {
-      logPageInfo: selectLogPageInfo(state),
-      logLength: selectLog(state).length,
-      versionInfo: selectVersionInfoFromWorkingDataset(state)
+export default connectComponentToPropsWithRouter(
+  WorkbenchSidebarComponent,
+  (state: any, ownProps: WorkbenchSidebarProps) => {
+    const qriRef = qriRefFromRoute(ownProps)
+    return {
+      ...ownProps,
+      qriRef,
+      lastEditRef: selectRecentEditRef(state),
+      lastHistoryRef: selectRecentHistoryRef(state),
+      latestPath: selectLatestPath(state, qriRef.username, qriRef.name),
+      data: {
+        logPageInfo: selectLogPageInfo(state),
+        logLength: selectLog(state).length,
+        versionInfo: selectVersionInfoFromWorkingDataset(state)
+      }
     }
   }
-}
-
-export default withRouter(connect(mapStateToProps)(WorkbenchSidebarComponent))
+)

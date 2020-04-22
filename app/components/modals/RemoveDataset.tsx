@@ -1,9 +1,9 @@
 import * as React from 'react'
-import { connect } from 'react-redux'
-import { Dispatch, bindActionCreators } from 'redux'
 
 import { RemoveDatasetModal } from '../../../app/models/modals'
 import { ApiAction } from '../../store/api'
+
+import { connectComponentToProps } from '../../utils/connectComponentToProps'
 
 import { dismissModal } from '../../actions/ui'
 import { removeDatasetAndFetch } from '../../actions/api'
@@ -90,22 +90,16 @@ export const RemoveDatasetComponent: React.FunctionComponent<RemoveDatasetProps>
   )
 }
 
-const mapStateToProps = (state: any, ownProps: RemoveDatasetProps) => {
-  return {
-    ...ownProps,
-    modal: selectModal(state)
-  }
-}
-
-const mapDispatchToProps = (dispatch: Dispatch) => {
-  return bindActionCreators({
+export default connectComponentToProps(
+  RemoveDatasetComponent,
+  (state: any, ownProps: RemoveDatasetProps) => {
+    return {
+      ...ownProps,
+      modal: selectModal(state)
+    }
+  },
+  {
     onDismissed: dismissModal,
     onSubmit: removeDatasetAndFetch
-  }, dispatch)
-}
-
-const mergeProps = (props: any, actions: any): RemoveDatasetProps => {
-  return { ...props, ...actions }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(RemoveDatasetComponent)
+  }
+)

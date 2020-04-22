@@ -1,7 +1,6 @@
 // globals __BUILD__
 import * as React from 'react'
-import { Action, bindActionCreators, Dispatch } from 'redux'
-import { withRouter, RouteComponentProps } from 'react-router-dom'
+import { Action } from 'redux'
 import { shell } from 'electron'
 import {
   faExternalLinkAlt,
@@ -13,8 +12,8 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { IconDefinition } from '@fortawesome/free-regular-svg-icons'
-import { connect } from 'react-redux'
 
+import { connectComponentToPropsWithRouter } from '../utils/connectComponentToProps'
 import { DISCORD_URL, QRI_CLOUD_URL } from '../constants'
 
 import { signout } from '../actions/ui'
@@ -24,6 +23,7 @@ import { selectSession, selectRecentWorkbenchLocation } from '../selections'
 import ExternalLink from './ExternalLink'
 import NavbarItem from './chrome/NavbarItem'
 import { Session } from '../models/session'
+import { RouteProps } from '../models/store'
 
 const defaultPhoto = require('../assets/default_46x46.png') //eslint-disable-line
 
@@ -55,7 +55,7 @@ const MenuItem: React.FunctionComponent<MenuItemProps> = (props: MenuItemProps) 
     : menuItem
 }
 
-interface NavbarProps extends RouteComponentProps{
+interface NavbarProps extends RouteProps{
   session: Session
   recentWorkbenchLocation: string
   signout: () => Action
@@ -188,22 +188,16 @@ export const NavbarComponent: React.FunctionComponent<NavbarProps> = (props: Nav
   )
 }
 
-const mapStateToProps = (state: any, ownProps: NavbarProps) => {
-  return {
-    session: selectSession(state),
-    recentWorkbenchLocation: selectRecentWorkbenchLocation(state),
-    ...ownProps
-  }
-}
-
-const mapDispatchToProps = (dispatch: Dispatch) => {
-  return bindActionCreators({
+export default connectComponentToPropsWithRouter(
+  NavbarComponent,
+  (state: any, ownProps: NavbarProps) => {
+    return {
+      session: selectSession(state),
+      recentWorkbenchLocation: selectRecentWorkbenchLocation(state),
+      ...ownProps
+    }
+  },
+  {
     signout
-  }, dispatch)
-}
-
-const mergeProps = (props: any, actions: any): NavbarProps => {
-  return { ...props, ...actions }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(withRouter(NavbarComponent))
+  }
+)

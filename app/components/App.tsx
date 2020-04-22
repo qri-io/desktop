@@ -1,11 +1,10 @@
 import * as React from 'react'
-import { Action, Dispatch, bindActionCreators } from 'redux'
+import { Action } from 'redux'
 import { CSSTransition } from 'react-transition-group'
 import { ConnectedRouter, push } from 'connected-react-router'
 import { ipcRenderer, remote } from 'electron'
 import fs from 'fs'
 import ReactTooltip from 'react-tooltip'
-import { connect } from 'react-redux'
 
 // import constants
 import { DEFAULT_POLL_INTERVAL } from '../constants'
@@ -16,6 +15,9 @@ import { ApiAction } from '../store/api'
 import { Modal, ModalType } from '../models/modals'
 import { Selections, ApiConnection } from '../models/store'
 import { Session } from '../models/session'
+
+// import util funcs
+import { connectComponentToProps } from '../utils/connectComponentToProps'
 
 // import actions
 import { setModal } from '../actions/ui'
@@ -31,8 +33,9 @@ import Navbar from './Navbar'
 import AppError from './AppError'
 import AppLoading from './AppLoading'
 import Modals from './modals/Modals'
-import RoutesContainer from '../containers/RoutesContainer'
+import Routes from '../routes'
 
+// declare interface for props
 export interface AppProps {
   loading: boolean
   session: Session
@@ -48,11 +51,13 @@ export interface AppProps {
   pingApi: () => Promise<ApiAction>
 }
 
+// declare interface for state
 interface AppState {
   showDragDrop: boolean
   debugLogPath: string
 }
 
+// declare class/function component
 class AppComponent extends React.Component<AppProps, AppState> {
   constructor (props: AppProps) {
     super(props)
@@ -190,7 +195,7 @@ class AppComponent extends React.Component<AppProps, AppState> {
             <Modals type={modal.type} />
           </CSSTransition>
           <Navbar />
-          <RoutesContainer />
+          <Routes />
         </ConnectedRouter>
         <Toast />
         {/*
@@ -210,29 +215,27 @@ class AppComponent extends React.Component<AppProps, AppState> {
   }
 }
 
-const mapStateToProps = (state: any, ownProps: AppProps) => {
-  const apiConnection = selectApiConnection(state)
-  return {
-    loading: apiConnection === 0 || selectSession(state).isLoading,
-    session: selectSession(state),
-    selections: selectSelections(state),
-    apiConnection,
-    modal: selectModal(state),
-    ...ownProps
-  }
-}
-
-const mapDispatchToProps = (dispatch: Dispatch) => {
-  return bindActionCreators({
+// connect the component to the redux store
+export default connectComponentToProps(
+  // component
+  AppComponent,
+  // mapStateToProps function or object
+  (state: any, ownProps: AppProps) => {
+    const apiConnection = selectApiConnection(state)
+    return {
+      loading: apiConnection === 0 || selectSession(state).isLoading,
+      session: selectSession(state),
+      selections: selectSelections(state),
+      apiConnection,
+      modal: selectModal(state),
+      ...ownProps
+    }
+  },
+  // mapDispatchToProps function or object
+  {
     push,
     setModal,
     bootstrap,
     pingApi
-  }, dispatch)
-}
-
-const mergeProps = (props: any, actions: any): AppProps => {
-  return { ...props, ...actions }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(AppComponent)
+  }
+)

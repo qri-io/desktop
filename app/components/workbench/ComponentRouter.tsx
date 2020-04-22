@@ -1,21 +1,23 @@
 import * as React from 'react'
-import { Action, bindActionCreators, Dispatch } from 'redux'
-import { connect, useSelector } from 'react-redux'
+import { Action } from 'redux'
+import { useSelector } from 'react-redux'
 import { CSSTransition, TransitionGroup } from 'react-transition-group'
 import path from 'path'
-import { useLocation, Switch, useRouteMatch, Redirect, Route, RouteComponentProps, withRouter } from 'react-router-dom'
+import { useLocation, Switch, useRouteMatch, Redirect, Route } from 'react-router-dom'
 
 import { ApiActionThunk } from '../../store/api'
-import Store, { SelectedComponent, ToastType } from '../../models/store'
+import Store, { SelectedComponent, ToastType, RouteProps } from '../../models/store'
 import Dataset from '../../models/dataset'
 import { QriRef, qriRefFromRoute } from '../../models/qriRef'
 import { isEditPath } from '../../paths'
 
+import { connectComponentToPropsWithRouter } from '../../utils/connectComponentToProps'
+
 import { openToast, closeToast } from '../../actions/ui'
 import { writeDataset } from '../../actions/workbench'
-import { setRecentEditRef, setRecentHistoryRef } from '../../actions/workbenchRoutes'
+import { setRecentEditRef, setRecentDatasetRef } from '../../actions/workbenchRoutes'
 
-import { selectWorkingDatasetIsLoading, selectWorkingDataset, selectFsiPath, selectHistoryDatasetIsLoading, selectHistoryStatusInfo, selectStatusInfoFromMutations } from '../../selections'
+import { selectWorkingDatasetIsLoading, selectWorkingDataset, selectFsiPath, selectDatasetIsLoading, selectDatasetStatusInfo, selectStatusInfoFromMutations } from '../../selections'
 
 import Body from './components/Body'
 import CalloutBlock from '../chrome/CalloutBlock'
@@ -33,15 +35,15 @@ import StructureEditor from './components/StructureEditor'
 import StatusDot from '../chrome/StatusDot'
 import { getComponentDisplayProps } from './WorkingComponentList'
 
-interface ComponentRouterProps extends RouteComponentProps<QriRef> {
+interface ComponentRouterProps extends RouteProps {
   // setting actions
   openToast: (type: ToastType, name: string, message: string) => Action
   closeToast: () => Action
   write: (peername: string, name: string, dataset: Dataset) => ApiActionThunk | void
-  setRecentHistoryRef: (qriRef: QriRef) => Action
+  setRecentDatasetRef: (qriRef: QriRef) => Action
   setRecentEditRef: (qriRef: QriRef) => Action
 
-  isLoading: boolean
+  loading: boolean
   component: SelectedComponent
   fsiPath?: string
   bodyPath?: string
@@ -56,7 +58,7 @@ export const ComponentRouterComponent: React.FunctionComponent<ComponentRouterPr
     write,
     openToast,
     closeToast,
-    setRecentHistoryRef,
+    setRecentDatasetRef,
     setRecentEditRef,
     qriRef
   } = props
@@ -74,7 +76,7 @@ export const ComponentRouterComponent: React.FunctionComponent<ComponentRouterPr
     if (isEditPath(routePath)) {
       setRecentEditRef(qriRef)
     } else {
-      setRecentHistoryRef(qriRef)
+      setRecentDatasetRef(qriRef)
     }
   }, [qriRef.location])
 
@@ -176,7 +178,7 @@ export const ComponentRouterComponent: React.FunctionComponent<ComponentRouterPr
   )
 }
 
-const ComponentHeader: React.FunctionComponent<RouteComponentProps<QriRef>> = (props) => {
+const ComponentHeader: React.FunctionComponent<RouteProps> = (props) => {
   const qriRef = qriRefFromRoute(props)
   const { component = '' } = qriRef
   const { path: routePath } = useRouteMatch()
@@ -184,7 +186,7 @@ const ComponentHeader: React.FunctionComponent<RouteComponentProps<QriRef>> = (p
     if (isEditPath(routePath)) {
       return selectStatusInfoFromMutations(state, component as SelectedComponent)
     } else {
-      return selectHistoryStatusInfo(state, component as SelectedComponent)
+      return selectDatasetStatusInfo(state, component as SelectedComponent)
     }
   })
   const { displayName, icon, tooltip } = getComponentDisplayProps(component)
@@ -202,30 +204,24 @@ const ComponentHeader: React.FunctionComponent<RouteComponentProps<QriRef>> = (p
   )
 }
 
-const mapStateToProps = (state: Store, ownProps: ComponentRouterProps) => {
-  const qriRef = qriRefFromRoute(ownProps)
-  const showHistory = !!qriRef.path
-  return {
-    ...ownProps,
-    isLoading: showHistory ? selectWorkingDatasetIsLoading(state) : selectHistoryDatasetIsLoading(state),
-    fsiPath: selectFsiPath(state),
-    bodyPath: showHistory ? selectWorkingDataset(state).bodyPath : '',
-    qriRef
-  }
-}
-
-const mapDispatchToProps = (dispatch: Dispatch) => {
-  return bindActionCreators({
+export default connectComponentToPropsWithRouter(
+  ComponentRouterComponent,
+  (state: Store, ownProps: ComponentRouterProps) => {
+    const qriRef = qriRefFromRoute(ownProps)
+    const showHistory = !!qriRef.path
+    return {
+      ...ownProps,
+      loading: showHistory ? selectWorkingDatasetIsLoading(state) : selectDatasetIsLoading(state),
+      fsiPath: selectFsiPath(state),
+      bodyPath: showHistory ? selectWorkingDataset(state).bodyPath : '',
+      qriRef
+    }
+  },
+  {
     openToast,
     closeToast,
     write: writeDataset,
     setRecentEditRef,
-    setRecentHistoryRef
-  }, dispatch)
-}
-
-const mergeProps = (props: any, actions: any): ComponentRouterProps => {
-  return { ...props, ...actions }
-}
-// TODO (b5) - this component doesn't need to be a container. Just feed it the right data
-export default withRouter(connect(mapStateToProps, mapDispatchToProps, mergeProps)(ComponentRouterComponent))
+    setRecentDatasetRef
+  }
+)

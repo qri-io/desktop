@@ -1,14 +1,11 @@
 import * as React from 'react'
-import { Dispatch, bindActionCreators } from 'redux'
 import path from 'path'
 import classNames from 'classnames'
 import { clipboard, shell, MenuItemConstructorOptions } from 'electron'
-import { connect } from 'react-redux'
-import { withRouter, RouteComponentProps } from 'react-router-dom'
 
 import { checkClearToCommit } from '../../utils/formValidation'
 import { QriRef, qriRefFromRoute } from '../../models/qriRef'
-import { Status, SelectedComponent } from '../../models/store'
+import { Status, SelectedComponent, RouteProps } from '../../models/store'
 
 import { discardChangesAndFetch } from '../../actions/api'
 
@@ -17,8 +14,9 @@ import { pathToEdit } from '../../paths'
 
 import ContextMenuArea from '../ContextMenuArea'
 import ComponentItem from '../item/ComponentItem'
+import { connectComponentToPropsWithRouter } from '../../utils/connectComponentToProps'
 
-interface WorkingComponentListProps extends RouteComponentProps<QriRef> {
+interface WorkingComponentListProps extends RouteProps {
   qriRef: QriRef
   status: Status
   selectedComponent: string
@@ -185,25 +183,19 @@ export const WorkingComponentListComponent: React.FunctionComponent<WorkingCompo
   )
 }
 
-const mapStateToProps = (state: any, ownProps: WorkingComponentListProps) => {
-  const qriRef = qriRefFromRoute(ownProps)
-  return {
-    status: selectStatusFromMutations(state),
-    selectedComponent: qriRef.component,
-    fsiPath: selectFsiPath(state),
-    qriRef,
-    ...ownProps
-  }
-}
-
-const mapDispatchToProps = (dispatch: Dispatch, ownProps: WorkingComponentListProps) => {
-  return bindActionCreators({
+export default connectComponentToPropsWithRouter(
+  WorkingComponentListComponent,
+  (state: any, ownProps: WorkingComponentListProps) => {
+    const qriRef = qriRefFromRoute(ownProps)
+    return {
+      status: selectStatusFromMutations(state),
+      selectedComponent: qriRef.component,
+      fsiPath: selectFsiPath(state),
+      qriRef,
+      ...ownProps
+    }
+  },
+  {
     discardChangesAndFetch
-  }, dispatch)
-}
-
-const mergeProps = (props: any, actions: any): WorkingComponentListProps => {
-  return { ...props, ...actions }
-}
-
-export default withRouter(connect(mapStateToProps, mapDispatchToProps, mergeProps)(WorkingComponentListComponent))
+  }
+)

@@ -42,7 +42,10 @@ export function mapHistory (data: any[]): VersionInfo[] {
 // versionInfoToDataset converts a detailed ref to a sparsely-populated
 // dataset object without using any fetching
 export function versionInfoToDataset (vi: VersionInfo): Dataset {
-  const theme = (vi.themeList) ? vi.themeList.split(',', -1) : undefined
+  let theme
+  if (vi.themeList) {
+    theme = vi.themeList.split(',', -1)
+  }
 
   return {
     username: vi.username,

@@ -1,22 +1,23 @@
 import * as React from 'react'
-import { connect } from 'react-redux'
-import { RouteComponentProps } from 'react-router-dom'
 
-import Store from '../../../models/store'
-import { isUserArray } from '../../form/MetadataMultiInput'
+import Store, { RouteProps } from '../../../models/store'
 import { Meta, Citation, License, User } from '../../../models/dataset'
-import { selectHistoryDataset, selectHistoryDatasetIsLoading } from '../../../selections'
 import { QriRef, qriRefFromRoute } from '../../../models/qriRef'
 
+import { connectComponentToProps } from '../../../utils/connectComponentToProps'
+
+import { selectDataset, selectDatasetIsLoading } from '../../../selections'
+
+import { isUserArray } from '../../form/MetadataMultiInput'
 import ExternalLink from '../../ExternalLink'
 import KeyValueTable from '../../KeyValueTable'
 import SpinnerWithIcon from '../../chrome/SpinnerWithIcon'
 import { standardFields } from './MetadataEditor'
 
-interface MetadataProps extends RouteComponentProps<QriRef> {
+interface MetadataProps extends RouteProps {
   qriRef: QriRef
   data: Meta
-  isLoading: boolean
+  loading: boolean
 }
 
 const renderValue = (value: string | string[] | object) => {
@@ -109,8 +110,8 @@ const renderTable = (keys: string[], data: Meta) => {
   )
 }
 
-export const MetadataComponent: React.FunctionComponent<MetadataProps> = ({ data, isLoading }) => {
-  if (isLoading) {
+export const MetadataComponent: React.FunctionComponent<MetadataProps> = ({ data, loading }) => {
+  if (loading) {
     return <SpinnerWithIcon loading />
   }
 
@@ -134,15 +135,16 @@ export const MetadataComponent: React.FunctionComponent<MetadataProps> = ({ data
   )
 }
 
-const mapStateToProps = (state: Store, ownProps: MetadataProps) => {
-  // get data for the currently selected component
-  return {
-    ...ownProps,
-    qriRef: qriRefFromRoute(ownProps),
-    isLoading: selectHistoryDatasetIsLoading(state),
-    data: selectHistoryDataset(state).meta
-  }
-}
-
 // TODO (b5) - this component doesn't need to be a container. Just feed it the right data
-export default connect(mapStateToProps, {})(MetadataComponent)
+export default connectComponentToProps(
+  MetadataComponent,
+  (state: Store, ownProps: MetadataProps) => {
+    // get data for the currently selected component
+    return {
+      ...ownProps,
+      qriRef: qriRefFromRoute(ownProps),
+      loading: selectDatasetIsLoading(state),
+      data: selectDataset(state).meta
+    }
+  }
+)

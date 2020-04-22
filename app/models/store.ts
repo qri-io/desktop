@@ -3,6 +3,7 @@ import { Meta, Structure, Commit } from './dataset'
 import { Session } from './session'
 import { Details } from './details'
 import { QriRef } from './qriRef'
+import { match, RouteComponentProps } from 'react-router-dom'
 
 export enum ApiConnection {
   neverConnected = 0,
@@ -26,6 +27,10 @@ type Modal =
 | {
   type: ModalType.AddDataset
   initialURL?: string | null
+}
+
+export interface RouteProps extends RouteComponentProps {
+  match: match<QriRef>
 }
 
 export interface Mutation {
@@ -171,7 +176,7 @@ export interface Status {
   [key: string]: StatusInfo
 }
 
-export interface HistoryDataset {
+export interface DatasetStore {
   path: string
   prevPath: string
   peername: string
@@ -205,7 +210,7 @@ export interface HistoryDataset {
   structure: Structure
 }
 
-export interface WorkingDataset extends HistoryDataset {
+export interface WorkingDataset extends DatasetStore {
   fsiPath: string
   isSaving: boolean
   isWriting: boolean
@@ -230,7 +235,7 @@ export default interface Store {
   myDatasets: MyDatasets
   workingDataset: WorkingDataset
   workbenchRoutes: WorkbenchRoutes
-  historyDataset: HistoryDataset
+  dataset: DatasetStore
   log: Log
   mutations: Mutations
   router: RouterState

@@ -1,23 +1,22 @@
 import * as React from 'react'
-import { Action, Dispatch, bindActionCreators } from 'redux'
-import { connect } from 'react-redux'
-import { RouteComponentProps } from 'react-router-dom'
+import { Action } from 'redux'
 
 import { ApiActionThunk } from '../../../store/api'
 import { DetailsType, StatsDetails, Details } from '../../../models/details'
 import Dataset, { Structure } from '../../../models/dataset'
-import Store, { PageInfo, StatusInfo } from '../../../models/store'
+import Store, { PageInfo, StatusInfo, RouteProps } from '../../../models/store'
 import { fetchBody, fetchCommitBody } from '../../../actions/api'
 import { setDetailsBar } from '../../../actions/ui'
-import { selectHistoryDataset, selectWorkingDataset, selectHistoryStats, selectWorkingStats, selectDetails, selectHistoryDatasetBodyPageInfo, selectWorkingDatasetBodyPageInfo, selectWorkingStatusInfo } from '../../../selections'
+import { selectDataset, selectWorkingDataset, selectDatasetStats, selectWorkingStats, selectDetails, selectDatasetBodyPageInfo, selectWorkingDatasetBodyPageInfo, selectWorkingStatusInfo } from '../../../selections'
 import { QriRef, qriRefFromRoute } from '../../../models/qriRef'
 
 import BodyTable from '../../BodyTable'
 import BodyJson from '../../BodyJson'
 import ParseError from '../ParseError'
 import hasParseError from '../../../utils/hasParseError'
+import { connectComponentToProps } from '../../../utils/connectComponentToProps'
 
-export interface BodyProps extends RouteComponentProps<QriRef> {
+export interface BodyProps extends RouteProps {
   qriRef: QriRef
   data: Dataset
   stats: Array<Record<string, any>>
@@ -122,6 +121,11 @@ export const BodyComponent: React.FunctionComponent<BodyProps> = (props) => {
     return fetchBody(username, name, page, pageSize)
   }
 
+  let highlightedColumnIndex
+  if (details.type !== DetailsType.NoDetails) {
+    highlightedColumnIndex = details.index
+  }
+
   return (
     <div className='transition-group'>
       {shouldDisplayJsonViewer(structure.format)
@@ -134,7 +138,7 @@ export const BodyComponent: React.FunctionComponent<BodyProps> = (props) => {
           headers={headers}
           body={body}
           pageInfo={pageInfo}
-          highlighedColumnIndex={details.type !== DetailsType.NoDetails ? details.index : undefined}
+          highlighedColumnIndex={highlightedColumnIndex}
           onFetch={handleFetch}
           setDetailsBar={handleToggleDetailsBar}
         />
@@ -143,31 +147,25 @@ export const BodyComponent: React.FunctionComponent<BodyProps> = (props) => {
   )
 }
 
-const mapStateToProps = (state: Store, ownProps: BodyProps) => {
-  // TODO(ramfox): when we get a BodyEditor component, pull out all references
-  // to showHistory
-  const qriRef = qriRefFromRoute(ownProps)
-  const showHistory = !!qriRef.path
-  return {
-    data: showHistory ? selectHistoryDataset(state) : selectWorkingDataset(state),
-    stats: showHistory ? selectHistoryStats(state) : selectWorkingStats(state),
-    details: selectDetails(state),
-    pageInfo: showHistory ? selectHistoryDatasetBodyPageInfo(state) : selectWorkingDatasetBodyPageInfo(state),
-    statusInfo: selectWorkingStatusInfo(state, 'body'),
-    qriRef
-  }
-}
-
-const mapDispatchToProps = (dispatch: Dispatch) => {
-  return bindActionCreators({
+export default connectComponentToProps(
+  BodyComponent,
+  (state: Store, ownProps: BodyProps) => {
+    // TODO(ramfox): when we get a BodyEditor component, pull out all references
+    // to showHistory
+    const qriRef = qriRefFromRoute(ownProps)
+    const showHistory = !!qriRef.path
+    return {
+      data: showHistory ? selectDataset(state) : selectWorkingDataset(state),
+      stats: showHistory ? selectDatasetStats(state) : selectWorkingStats(state),
+      details: selectDetails(state),
+      pageInfo: showHistory ? selectDatasetBodyPageInfo(state) : selectWorkingDatasetBodyPageInfo(state),
+      statusInfo: selectWorkingStatusInfo(state, 'body'),
+      qriRef
+    }
+  },
+  {
     fetchBody,
     fetchCommitBody,
     setDetailsBar
-  }, dispatch)
-}
-
-const mergeProps = (props: any, actions: any): BodyProps => {
-  return { ...props, ...actions }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(BodyComponent)
+  }
+)

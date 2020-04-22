@@ -1,15 +1,15 @@
 import * as React from 'react'
-import { Action, AnyAction, bindActionCreators, Dispatch } from 'redux'
+import { Action, AnyAction } from 'redux'
 import ContextMenuArea from 'react-electron-contextmenu'
-import { RouteComponentProps, withRouter } from 'react-router-dom'
 import { shell, MenuItemConstructorOptions } from 'electron'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTimes } from '@fortawesome/free-solid-svg-icons'
-import { connect } from 'react-redux'
 
 import { QriRef } from '../models/qriRef'
 import { Modal, ModalType } from '../models/modals'
-import { MyDatasets, WorkingDataset, VersionInfo } from '../models/store'
+import { MyDatasets, WorkingDataset, VersionInfo, RouteProps } from '../models/store'
+
+import { connectComponentToPropsWithRouter } from '../utils/connectComponentToProps'
 
 import { selectImportFileName, selectImportFileSize } from '../selections'
 
@@ -20,13 +20,13 @@ import { setModal } from '../actions/ui'
 
 import ProgressBar from './chrome/ProgressBar'
 import VersionInfoItem from './item/VersionInfoItem'
-import { pathToHistory } from '../paths'
+import { pathToDataset } from '../paths'
 
 // for displaying a progress bar based on import file size
 // assumes an import rate of 4828 bytes per millisecond
 const IMPORT_BYTES_PER_MS = 4828
 
-interface DatasetListProps extends RouteComponentProps<QriRef> {
+interface DatasetListProps extends RouteProps {
   qriRef: QriRef
   myDatasets: MyDatasets
   workingDataset: WorkingDataset
@@ -133,7 +133,7 @@ export class DatasetListComponent extends React.Component<DatasetListProps> {
             data={ddr}
             selected={(username === workingDataset.peername) && (name === workingDataset.name)}
             onClick={(data: VersionInfo) => {
-              this.props.history.push(pathToHistory(data.username, data.name, data.path))
+              this.props.history.push(pathToDataset(data.username, data.name, data.path))
             }}
           />
         </ContextMenuArea>)
@@ -188,29 +188,23 @@ export class DatasetListComponent extends React.Component<DatasetListProps> {
   }
 }
 
-const mapStateToProps = (state: any, ownProps: DatasetListProps) => {
-  const { myDatasets, workingDataset } = state
+export default connectComponentToPropsWithRouter(
+  DatasetListComponent,
+  (state: any, ownProps: DatasetListProps) => {
+    const { myDatasets, workingDataset } = state
 
-  return {
-    ...ownProps,
-    myDatasets,
-    importFileName: selectImportFileName(state),
-    importFileSize: selectImportFileSize(state),
-    workingDataset
-  }
-}
-
-const mapDispatchToProps = (dispatch: Dispatch) => {
-  return bindActionCreators({
+    return {
+      ...ownProps,
+      myDatasets,
+      importFileName: selectImportFileName(state),
+      importFileSize: selectImportFileSize(state),
+      workingDataset
+    }
+  },
+  {
     setFilter,
     setWorkingDataset,
     fetchMyDatasets,
     setModal
-  }, dispatch)
-}
-
-const mergeProps = (props: any, actions: any): DatasetListProps => {
-  return { ...props, ...actions }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(withRouter(DatasetListComponent))
+  }
+)

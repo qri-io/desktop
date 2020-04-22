@@ -128,13 +128,18 @@ const TypePicker: React.FunctionComponent<TypePickerProps> = ({
     }
   }, [activeTab])
 
+  let onClick
+  if (editable) {
+    onClick = handleToggleOverlay
+  }
+
   return (
     <div className='type-picker'>
       <input type='hidden' name={`${name}-type`} value={pickedType} />
       <ColumnType
         type={pickedType}
         active={isOverlayOpen}
-        onClick={editable ? handleToggleOverlay : undefined}
+        onClick={onClick}
         expanded={expanded}
       />
       <div className='type-picker-overlay'>

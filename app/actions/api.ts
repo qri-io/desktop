@@ -18,16 +18,16 @@ import {
 import { getActionType } from '../utils/actionType'
 import { datasetConvertStringToScriptBytes } from '../utils/datasetConvertStringToScriptBytes'
 
-import { CLEAR_DATASET_HEAD } from '../reducers/historyDataset'
+import { CLEAR_DATASET_HEAD } from '../reducers/dataset'
 import Dataset from '../models/dataset'
 
-import { pathToHistory, pathToCollection } from '../paths'
+import { pathToDataset, pathToCollection } from '../paths'
 import { selectWorkingDatasetBodyPageInfo,
   selectFsiPath,
   selectMutationsCommit,
   selectSessionUsername,
   selectMyDatasetsPageInfo,
-  selectHistoryDatasetBodyPageInfo,
+  selectDatasetBodyPageInfo,
   selectLogPageInfo,
   selectMutationsDataset
 } from '../selections'
@@ -203,7 +203,7 @@ export function fetchLog (username: string, name: string, page: number = 1, page
     if (doNotFetch) return new Promise(resolve => resolve({ type: 'SUCCESS' }))
 
     const action = {
-      type: 'history',
+      type: 'log',
       [CALL_API]: {
         endpoint: 'history',
         method: 'GET',
@@ -279,7 +279,7 @@ export function fetchBody (username: string, name: string, page: number = 1, pag
 // to invalidate pagination, set page to -1
 export function fetchCommitBody (username: string, name: string, path: string, page: number = 1, pageSize: number = bodyPageSizeDefault): ApiActionThunk {
   return async (dispatch, getState) => {
-    const bodyPageInfo = selectHistoryDatasetBodyPageInfo(getState())
+    const bodyPageInfo = selectDatasetBodyPageInfo(getState())
 
     if (path === '') {
       return dispatch({
@@ -417,7 +417,7 @@ export function saveWorkingDatasetAndFetch (username: string, name: string): Api
           dispatch(setSaveComplete())
           dispatch(fetchMyDatasets(-1))
           dispatch(openToast('success', 'commit', 'commit success!'))
-          dispatch(push(pathToHistory(username, name, path)))
+          dispatch(push(pathToDataset(username, name, path)))
         }
         return response
       })
@@ -456,7 +456,7 @@ export function addDatasetAndFetch (username: string, name: string): ApiActionTh
       response = await addDataset(username, name)(dispatch, getState)
       // reset pagination
       response = await whenOk(fetchMyDatasets(-1))(response)
-      dispatch(push(pathToHistory(username, name, '')))
+      dispatch(push(pathToDataset(username, name, '')))
     } catch (action) {
       dispatch(openToast('error', 'add', action.payload.err.message))
       throw action
@@ -747,7 +747,7 @@ export function importFile (filePath: string, fileName: string, fileSize: number
       response = await dispatch(action)
       const { peername, name, path } = response.payload.data
       response = await whenOk(fetchMyDatasets(-1))(response)
-      dispatch(push(pathToHistory(peername, name, path)))
+      dispatch(push(pathToDataset(peername, name, path)))
       dispatch(setImportFileDetails('', 0))
     } catch (action) {
       dispatch(setImportFileDetails('', 0))

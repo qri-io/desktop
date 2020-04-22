@@ -1,42 +1,43 @@
 import * as React from 'react'
-import { connect } from 'react-redux'
 import { ApiActionThunk } from '../../../store/api'
-import { RouteComponentProps } from 'react-router-dom'
 
 import Dataset from '../../../models/dataset'
-import Store from '../../../models/store'
+import Store, { RouteProps } from '../../../models/store'
 import { QriRef, qriRefFromRoute } from '../../../models/qriRef'
 
-import { selectHistoryDataset, selectWorkingDataset, selectHistoryDatasetIsLoading, selectWorkingDatasetIsLoading } from '../../../selections'
+import { connectComponentToProps } from '../../../utils/connectComponentToProps'
+
+import { selectDataset, selectWorkingDataset, selectDatasetIsLoading, selectWorkingDatasetIsLoading } from '../../../selections'
 
 import Code from '../../Code'
 import SpinnerWithIcon from '../../chrome/SpinnerWithIcon'
 
-export interface TransformProps extends RouteComponentProps<QriRef> {
+export interface TransformProps extends RouteProps {
   qriRef: QriRef
   data: string
-  isLoading: boolean
+  loading: boolean
 
   // TODO (b5) - work in progress
   dryRun?: () => void
   write?: (username: string, name: string, dataset: Dataset) => ApiActionThunk | void
 }
 
-export const TransformComponent: React.FunctionComponent<TransformProps> = ({ data = '', isLoading }) => {
-  if (isLoading) {
+export const TransformComponent: React.FunctionComponent<TransformProps> = ({ data = '', loading }) => {
+  if (loading) {
     return <SpinnerWithIcon loading />
   }
   return <Code data={data} />
 }
 
-const mapStateToProps = (state: Store, ownProps: TransformProps) => {
-  const qriRef = qriRefFromRoute(ownProps)
-  const showHistory = !!qriRef.path
-  return {
-    qriRef,
-    isLoading: showHistory ? selectHistoryDatasetIsLoading(state) : selectWorkingDatasetIsLoading(state),
-    data: showHistory ? selectHistoryDataset(state).transform : selectWorkingDataset(state).transform
+export default connectComponentToProps(
+  TransformComponent,
+  (state: Store, ownProps: TransformProps) => {
+    const qriRef = qriRefFromRoute(ownProps)
+    const showHistory = !!qriRef.path
+    return {
+      qriRef,
+      loading: showHistory ? selectDatasetIsLoading(state) : selectWorkingDatasetIsLoading(state),
+      data: showHistory ? selectDataset(state).transform : selectWorkingDataset(state).transform
+    }
   }
-}
-
-export default connect(mapStateToProps)(TransformComponent)
+)

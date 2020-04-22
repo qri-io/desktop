@@ -49,7 +49,7 @@ const Schema: React.FunctionComponent<SchemaProps> = ({
         {items.map((item: SchemaItemType, i: number) => {
           return (
             <SchemaItem
-              onChange={onChange ? onChangeHandler : undefined}
+              onChange={onChange && onChangeHandler}
               data={{ ...item, row: i }}
               editable={editable}
               key={i}

@@ -1,32 +1,31 @@
 import * as React from 'react'
-import { connect } from 'react-redux'
-import { withRouter, RouteComponentProps } from 'react-router-dom'
-import { bindActionCreators, Dispatch } from 'redux'
 
-import Store from '../../models/Store'
+import Store, { RouteProps } from '../../models/Store'
 import Dataset from '../../models/dataset'
 import { QriRef, qriRefFromRoute } from '../../models/qriRef'
 
 import { LaunchedFetchesAction } from '../../store/api'
 
+import { connectComponentToPropsWithRouter } from '../../utils/connectComponentToProps'
+
 import { fetchWorkbench } from '../../actions/workbench'
 
-import { selectHistoryDataset } from '../../selections'
+import { selectDataset } from '../../selections'
 
-import HistoryComponentList from './HistoryComponentList'
+import ComponentList from './ComponentList'
 import ComponentRouter from './ComponentRouter'
 import Layout from '../Layout'
-import HistoryDatasetHeader from './HistoryDatasetHeader'
+import DatasetHeader from './DatasetHeader'
 import WorkbenchLayout from './layouts/WorkbenchLayout'
 import WorkbenchLogList from './WorkbenchLogList'
 
-export interface HistoryDatasetProps extends RouteComponentProps<QriRef> {
+export interface DatasetProps extends RouteProps {
   qriRef: QriRef
   dataset: Dataset
   fetchWorkbench: (qriRef: QriRef) => LaunchedFetchesAction
 }
 
-export const HistoryDatasetComponent: React.FunctionComponent<HistoryDatasetProps> = (props) => {
+export const DatasetComponent: React.FunctionComponent<DatasetProps> = (props) => {
   const {
     qriRef,
     dataset,
@@ -47,14 +46,14 @@ export const HistoryDatasetComponent: React.FunctionComponent<HistoryDatasetProp
             showNav={false}
             id={'commit-details'}
             headerContent={
-              <HistoryDatasetHeader
+              <DatasetHeader
                 path={qriRef.path || ''}
                 structure={dataset.structure}
                 commit={dataset.commit}
               />
             }
             sidebarContent={(
-              <HistoryComponentList qriRef={qriRef}/>
+              <ComponentList qriRef={qriRef}/>
             )}
             sidebarWidth={150}
             mainContent={(
@@ -67,22 +66,16 @@ export const HistoryDatasetComponent: React.FunctionComponent<HistoryDatasetProp
   )
 }
 
-const mapStateToProps = (state: Store, ownProps: HistoryDatasetProps) => {
-  return {
-    ...ownProps,
-    qriRef: qriRefFromRoute(ownProps),
-    dataset: selectHistoryDataset(state)
-  }
-}
-
-const mapDispatchToProps = (dispatch: Dispatch) => {
-  return bindActionCreators({
+export default connectComponentToPropsWithRouter(
+  DatasetComponent,
+  (state: Store, ownProps: DatasetProps) => {
+    return {
+      ...ownProps,
+      qriRef: qriRefFromRoute(ownProps),
+      dataset: selectDataset(state)
+    }
+  },
+  {
     fetchWorkbench
-  }, dispatch)
-}
-
-const mergeProps = (props: any, actions: any): HistoryDatasetProps => {
-  return { ...props, ...actions }
-}
-
-export default withRouter(connect(mapStateToProps, mapDispatchToProps, mergeProps)(HistoryDatasetComponent))
+  }
+)

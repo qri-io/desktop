@@ -1,16 +1,16 @@
 import * as React from 'react'
 import { CSSTransition } from 'react-transition-group'
 import classNames from 'classnames'
-import { Action, Dispatch, bindActionCreators } from 'redux'
+import { Action } from 'redux'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCheck, faExclamationTriangle } from '@fortawesome/free-solid-svg-icons'
-import { connect } from 'react-redux'
 
 import { Toast } from '../models/store'
 
 import { closeToast } from '../actions/ui'
 
 import { selectToast } from '../selections'
+import { connectComponentToProps } from '../utils/connectComponentToProps'
 
 interface ToastProps {
   toast: Toast
@@ -52,21 +52,15 @@ export const ToastComponent: React.FunctionComponent<ToastProps> = (props: Toast
   )
 }
 
-const mapStateToProps = (state: any, ownProps: ToastProps) => {
-  return {
-    toast: selectToast(state),
-    ...ownProps
-  }
-}
-
-const mapDispatchToProps = (dispatch: Dispatch) => {
-  return bindActionCreators({
+export default connectComponentToProps(
+  ToastComponent,
+  (state: any, ownProps: ToastProps) => {
+    return {
+      toast: selectToast(state),
+      ...ownProps
+    }
+  },
+  {
     onClose: closeToast
-  }, dispatch)
-}
-
-const mergeProps = (props: any, actions: any): ToastProps => {
-  return { ...props, ...actions }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(ToastComponent)
+  }
+)

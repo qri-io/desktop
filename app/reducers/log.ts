@@ -14,17 +14,17 @@ const initialState: Log = {
   value: []
 }
 
-export const [HISTORY_REQ, HISTORY_SUCC, HISTORY_FAIL] = apiActionTypes('history')
+export const [LOG_REQ, LOG_SUCC, LOG_FAIL] = apiActionTypes('log')
 
 const logReducer: Reducer = (state = initialState, action: AnyAction): Log | null => {
   switch (action.type) {
-    case HISTORY_REQ:
+    case LOG_REQ:
       return {
         ...state,
         pageInfo: reducerWithPagination(action, state.pageInfo),
         value: action.pageInfo.page === 1 ? [] : state.value
       }
-    case HISTORY_SUCC:
+    case LOG_SUCC:
       return {
         ...state,
         value: [
@@ -33,7 +33,7 @@ const logReducer: Reducer = (state = initialState, action: AnyAction): Log | nul
         ],
         pageInfo: reducerWithPagination(action, state.pageInfo)
       }
-    case HISTORY_FAIL:
+    case LOG_FAIL:
       return {
         ...state,
         pageInfo: reducerWithPagination(action, state.log.pageInfo)
