@@ -6,13 +6,13 @@ import SpinnerWithIcon from './chrome/SpinnerWithIcon'
 
 interface BodyJsonProps {
   data: any[]
-  isLoading: boolean
+  loading: boolean
   previewWarning?: boolean
 }
 
 const BodyJson: React.FunctionComponent<BodyJsonProps> = (props) => {
-  const { data, previewWarning = true, isLoading } = props
-  if (isLoading && !!data) return <SpinnerWithIcon loading />
+  const { data, previewWarning = true, loading } = props
+  if (loading && !!data) return <SpinnerWithIcon loading />
   if (!data) return null
 
   return (

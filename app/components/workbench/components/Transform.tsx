@@ -14,15 +14,15 @@ import SpinnerWithIcon from '../../chrome/SpinnerWithIcon'
 export interface TransformProps extends RouteProps {
   qriRef: QriRef
   data: string
-  isLoading: boolean
+  loading: boolean
 
   // TODO (b5) - work in progress
   dryRun?: () => void
   write?: (username: string, name: string, dataset: Dataset) => ApiActionThunk | void
 }
 
-export const TransformComponent: React.FunctionComponent<TransformProps> = ({ data = '', isLoading }) => {
-  if (isLoading) {
+export const TransformComponent: React.FunctionComponent<TransformProps> = ({ data = '', loading }) => {
+  if (loading) {
     return <SpinnerWithIcon loading />
   }
   return <Code data={data} />
@@ -33,7 +33,7 @@ const mapStateToProps = (state: Store, ownProps: TransformProps) => {
   const showHistory = !!qriRef.path
   return {
     qriRef,
-    isLoading: showHistory ? selectDatasetIsLoading(state) : selectWorkingDatasetIsLoading(state),
+    loading: showHistory ? selectDatasetIsLoading(state) : selectWorkingDatasetIsLoading(state),
     data: showHistory ? selectDataset(state).transform : selectWorkingDataset(state).transform
   }
 }

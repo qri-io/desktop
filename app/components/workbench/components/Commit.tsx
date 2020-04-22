@@ -11,14 +11,14 @@ import SpinnerWithIcon from '../../chrome/SpinnerWithIcon'
 export interface CommitProps extends RouteProps {
   qriRef: QriRef
   commit: Commit
-  isLoading: boolean
+  loading: boolean
 }
 
 export const CommitComponent: React.FunctionComponent<CommitProps> = ({
   commit,
-  isLoading
+  loading
 }) => {
-  if (isLoading) {
+  if (loading) {
     return <SpinnerWithIcon loading />
   }
   return (
@@ -34,7 +34,7 @@ const mapStateToProps = (state: Store, ownProps: CommitProps) => {
   return {
     ...ownProps,
     qriRef: qriRefFromRoute(ownProps),
-    isLoading: selectDatasetIsLoading(state),
+    loading: selectDatasetIsLoading(state),
     commit: selectDatasetCommit(state)
   }
 }

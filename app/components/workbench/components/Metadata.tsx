@@ -15,7 +15,7 @@ import { standardFields } from './MetadataEditor'
 interface MetadataProps extends RouteProps {
   qriRef: QriRef
   data: Meta
-  isLoading: boolean
+  loading: boolean
 }
 
 const renderValue = (value: string | string[] | object) => {
@@ -108,8 +108,8 @@ const renderTable = (keys: string[], data: Meta) => {
   )
 }
 
-export const MetadataComponent: React.FunctionComponent<MetadataProps> = ({ data, isLoading }) => {
-  if (isLoading) {
+export const MetadataComponent: React.FunctionComponent<MetadataProps> = ({ data, loading }) => {
+  if (loading) {
     return <SpinnerWithIcon loading />
   }
 
@@ -138,7 +138,7 @@ const mapStateToProps = (state: Store, ownProps: MetadataProps) => {
   return {
     ...ownProps,
     qriRef: qriRefFromRoute(ownProps),
-    isLoading: selectDatasetIsLoading(state),
+    loading: selectDatasetIsLoading(state),
     data: selectDataset(state).meta
   }
 }

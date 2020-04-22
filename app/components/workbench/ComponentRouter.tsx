@@ -41,7 +41,7 @@ interface ComponentRouterProps extends RouteProps {
   setRecentDatasetRef: (qriRef: QriRef) => Action
   setRecentEditRef: (qriRef: QriRef) => Action
 
-  isLoading: boolean
+  loading: boolean
   component: SelectedComponent
   fsiPath?: string
   bodyPath?: string
@@ -207,7 +207,7 @@ const mapStateToProps = (state: Store, ownProps: ComponentRouterProps) => {
   const showHistory = !!qriRef.path
   return {
     ...ownProps,
-    isLoading: showHistory ? selectWorkingDatasetIsLoading(state) : selectDatasetIsLoading(state),
+    loading: showHistory ? selectWorkingDatasetIsLoading(state) : selectDatasetIsLoading(state),
     fsiPath: selectFsiPath(state),
     bodyPath: showHistory ? selectWorkingDataset(state).bodyPath : '',
     qriRef
