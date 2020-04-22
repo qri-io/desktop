@@ -7,7 +7,7 @@ import { QriRef, qriRefFromRoute, qriRefIsEmpty } from '../../../models/qriRef'
 import { VersionInfo, PageInfo, RouteProps } from '../../../models/store'
 
 import { selectLog, selectVersionInfoFromWorkingDataset, selectLogPageInfo, selectLatestPath, selectRecentEditRef, selectRecentHistoryRef } from '../../../selections'
-import { pathToEdit, pathToHistory } from '../../../paths'
+import { pathToEdit, pathToDataset } from '../../../paths'
 
 import DatasetReference from '../../DatasetReference'
 import DatasetDetailsSubtext from '../../dataset/DatasetDetailsSubtext'
@@ -88,7 +88,7 @@ export const WorkbenchSidebarComponent: React.FunctionComponent<WorkbenchSidebar
           onClick={() => {
             if ((!(logPageInfo.error && logPageInfo.error.includes('no history')) && datasetSelected)) {
               if (qriRefIsEmpty(lastHistoryRef)) {
-                history.push(pathToHistory(username, name, latestPath))
+                history.push(pathToDataset(username, name, latestPath))
               } else {
                 history.push(lastHistoryRef.location)
               }

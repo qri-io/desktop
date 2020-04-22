@@ -4,24 +4,22 @@ import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
 
 import { Status, SelectedComponent, ComponentStatus, RouteProps } from '../../models/store'
-import { pathToHistory } from '../../paths'
+import { pathToDataset } from '../../paths'
 import { QriRef, qriRefFromRoute } from '../../models/qriRef'
 
-import { setHistoryComponent } from '../../actions/selections'
-
-import { selectHistoryStatus, selectHistoryComponentsList } from '../../selections'
+import { selectDatasetStatus, selectDatasetComponentsList } from '../../selections'
 
 import ComponentItem from '../item/ComponentItem'
 import { components as componentsInfo } from './WorkingComponentList'
 
-interface HistoryComponentListProps extends RouteProps {
+interface ComponentListProps extends RouteProps {
   qriRef: QriRef
   components?: SelectedComponent[]
   status: Status
   selectedComponent: SelectedComponent
 }
 
-export const HistoryComponentListComponent: React.FunctionComponent<HistoryComponentListProps> = (props: HistoryComponentListProps) => {
+export const ComponentListComponent: React.FunctionComponent<ComponentListProps> = (props: ComponentListProps) => {
   const {
     qriRef,
     status,
@@ -54,7 +52,7 @@ export const HistoryComponentListComponent: React.FunctionComponent<HistoryCompo
                 status={fileStatus}
                 selected={selectedComponent === name}
                 tooltip={tooltip}
-                onClick={(component: SelectedComponent) => history.push(pathToHistory(username, datasetName, path, component))}
+                onClick={(component: SelectedComponent) => history.push(pathToDataset(username, datasetName, path, component))}
               />
             )
           }
@@ -72,25 +70,24 @@ export const HistoryComponentListComponent: React.FunctionComponent<HistoryCompo
   )
 }
 
-const mapStateToProps = (state: any, ownProps: HistoryComponentListProps) => {
+const mapStateToProps = (state: any, ownProps: ComponentListProps) => {
   const qriRef = qriRefFromRoute(ownProps)
   return {
     ...ownProps,
     qriRef,
-    status: selectHistoryStatus(state),
+    status: selectDatasetStatus(state),
     selectedComponent: qriRef.component,
-    components: selectHistoryComponentsList(state)
+    components: selectDatasetComponentsList(state)
   }
 }
 
-const mapDispatchToProps = (dispatch: Dispatch, ownProps: HistoryComponentListProps) => {
+const mapDispatchToProps = (dispatch: Dispatch, ownProps: ComponentListProps) => {
   return bindActionCreators({
-    onComponentClick: setHistoryComponent
   }, dispatch)
 }
 
-const mergeProps = (props: any, actions: any): HistoryComponentListProps => {
+const mergeProps = (props: any, actions: any): ComponentListProps => {
   return { ...props, ...actions }
 }
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps, mergeProps)(HistoryComponentListComponent))
+export default withRouter(connect(mapStateToProps, mapDispatchToProps, mergeProps)(ComponentListComponent))

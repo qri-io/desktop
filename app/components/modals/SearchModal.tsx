@@ -20,7 +20,7 @@ import DatasetItem from '../item/DatasetItem'
 import Switch from '../chrome/Switch'
 import Modal from './Modal'
 import Close from '../chrome/Close'
-import { pathToHistory, pathToNetworkDataset } from '../../paths'
+import { pathToDataset, pathToNetworkDataset } from '../../paths'
 
 interface SearchProps extends RouteProps {
   modal: SearchModal
@@ -65,7 +65,7 @@ const SearchComponent: React.FunctionComponent<SearchProps> = (props) => {
   const handleOnClick = () => {
     if (local) {
       return (username: string, name: string, path: string) => {
-        history.push(pathToHistory(username, name, path || ''))
+        history.push(pathToDataset(username, name, path || ''))
         onDismissed()
       }
     }

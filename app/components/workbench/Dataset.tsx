@@ -11,22 +11,22 @@ import { LaunchedFetchesAction } from '../../store/api'
 
 import { fetchWorkbench } from '../../actions/workbench'
 
-import { selectHistoryDataset } from '../../selections'
+import { selectDataset } from '../../selections'
 
-import HistoryComponentList from './HistoryComponentList'
+import ComponentList from './ComponentList'
 import ComponentRouter from './ComponentRouter'
 import Layout from '../Layout'
-import HistoryDatasetHeader from './HistoryDatasetHeader'
+import DatasetHeader from './DatasetHeader'
 import WorkbenchLayout from './layouts/WorkbenchLayout'
 import WorkbenchLogList from './WorkbenchLogList'
 
-export interface HistoryDatasetProps extends RouteProps {
+export interface DatasetProps extends RouteProps {
   qriRef: QriRef
   dataset: Dataset
   fetchWorkbench: (qriRef: QriRef) => LaunchedFetchesAction
 }
 
-export const HistoryDatasetComponent: React.FunctionComponent<HistoryDatasetProps> = (props) => {
+export const DatasetComponent: React.FunctionComponent<DatasetProps> = (props) => {
   const {
     qriRef,
     dataset,
@@ -47,14 +47,14 @@ export const HistoryDatasetComponent: React.FunctionComponent<HistoryDatasetProp
             showNav={false}
             id={'commit-details'}
             headerContent={
-              <HistoryDatasetHeader
+              <DatasetHeader
                 path={qriRef.path || ''}
                 structure={dataset.structure}
                 commit={dataset.commit}
               />
             }
             sidebarContent={(
-              <HistoryComponentList qriRef={qriRef}/>
+              <ComponentList qriRef={qriRef}/>
             )}
             sidebarWidth={150}
             mainContent={(
@@ -67,11 +67,11 @@ export const HistoryDatasetComponent: React.FunctionComponent<HistoryDatasetProp
   )
 }
 
-const mapStateToProps = (state: Store, ownProps: HistoryDatasetProps) => {
+const mapStateToProps = (state: Store, ownProps: DatasetProps) => {
   return {
     ...ownProps,
     qriRef: qriRefFromRoute(ownProps),
-    dataset: selectHistoryDataset(state)
+    dataset: selectDataset(state)
   }
 }
 
@@ -81,8 +81,8 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
   }, dispatch)
 }
 
-const mergeProps = (props: any, actions: any): HistoryDatasetProps => {
+const mergeProps = (props: any, actions: any): DatasetProps => {
   return { ...props, ...actions }
 }
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps, mergeProps)(HistoryDatasetComponent))
+export default withRouter(connect(mapStateToProps, mapDispatchToProps, mergeProps)(DatasetComponent))

@@ -176,7 +176,7 @@ export interface Status {
   [key: string]: StatusInfo
 }
 
-export interface HistoryDataset {
+export interface DatasetStore {
   path: string
   prevPath: string
   peername: string
@@ -210,7 +210,7 @@ export interface HistoryDataset {
   structure: Structure
 }
 
-export interface WorkingDataset extends HistoryDataset {
+export interface WorkingDataset extends DatasetStore {
   fsiPath: string
   isSaving: boolean
   isWriting: boolean
@@ -235,7 +235,7 @@ export default interface Store {
   myDatasets: MyDatasets
   workingDataset: WorkingDataset
   workbenchRoutes: WorkbenchRoutes
-  historyDataset: HistoryDataset
+  dataset: DatasetStore
   log: Log
   mutations: Mutations
   router: RouterState

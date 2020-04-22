@@ -1,5 +1,5 @@
 import { Reducer, AnyAction } from 'redux'
-import { HistoryDataset } from '../models/store'
+import { DatasetStore } from '../models/store'
 import { apiActionTypes } from '../utils/actionType'
 import { reducerWithPagination, initialPageInfo } from '../utils/pagination'
 import bodyValue from '../utils/bodyValue'
@@ -7,7 +7,7 @@ import {
   DATASET_REQ
 } from './workingDataset'
 
-const initialState: HistoryDataset = {
+const initialState: DatasetStore = {
   path: '',
   prevPath: '',
   peername: '',
@@ -45,7 +45,7 @@ const [COMMITSTATS_REQ, COMMITSTATS_SUCC, COMMITSTATS_FAIL] = apiActionTypes('co
 
 export const CLEAR_DATASET_HEAD = 'CLEAR_DATASET_HEAD'
 
-const HistoryDatasetReducer: Reducer = (state = initialState, action: AnyAction): HistoryDataset => {
+const DatasetReducer: Reducer = (state = initialState, action: AnyAction): DatasetStore => {
   switch (action.type) {
     case DATASET_REQ:
       if (action.segments.peername !== state.peername || action.segments.name !== state.name) {
@@ -81,7 +81,7 @@ const HistoryDatasetReducer: Reducer = (state = initialState, action: AnyAction)
             value: dataset.readme
           },
           transform: {
-            value: dataset && dataset.transform && dataset.transform.scriptBytes ? atob(dataset.transform.scriptBytes) : undefined
+            value: dataset && dataset.transform && dataset.transform.scriptBytes && atob(dataset.transform.scriptBytes)
           }
         }
       }
@@ -167,4 +167,4 @@ const HistoryDatasetReducer: Reducer = (state = initialState, action: AnyAction)
   }
 }
 
-export default HistoryDatasetReducer
+export default DatasetReducer

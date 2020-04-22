@@ -6,7 +6,7 @@ import Dataset from '../../../models/dataset'
 import Store, { RouteProps } from '../../../models/store'
 import { QriRef, qriRefFromRoute } from '../../../models/qriRef'
 
-import { selectHistoryDataset, selectWorkingDataset, selectHistoryDatasetIsLoading, selectWorkingDatasetIsLoading } from '../../../selections'
+import { selectDataset, selectWorkingDataset, selectDatasetIsLoading, selectWorkingDatasetIsLoading } from '../../../selections'
 
 import Code from '../../Code'
 import SpinnerWithIcon from '../../chrome/SpinnerWithIcon'
@@ -33,8 +33,8 @@ const mapStateToProps = (state: Store, ownProps: TransformProps) => {
   const showHistory = !!qriRef.path
   return {
     qriRef,
-    isLoading: showHistory ? selectHistoryDatasetIsLoading(state) : selectWorkingDatasetIsLoading(state),
-    data: showHistory ? selectHistoryDataset(state).transform : selectWorkingDataset(state).transform
+    isLoading: showHistory ? selectDatasetIsLoading(state) : selectWorkingDatasetIsLoading(state),
+    data: showHistory ? selectDataset(state).transform : selectWorkingDataset(state).transform
   }
 }
 

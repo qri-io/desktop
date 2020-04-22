@@ -33,7 +33,7 @@ import { defaultSidebarWidth } from '../../reducers/ui'
 
 import { Resizable } from '../Resizable'
 import DetailsBarContainer from '../../containers/DetailsBarContainer'
-import HistoryDataset from './HistoryDataset'
+import Dataset from './Dataset'
 import { pathToNoDatasetSelected, pathToEdit } from '../../paths'
 import NoDatasets from './NoDatasets'
 import EditDataset from './EditDataset'
@@ -217,7 +217,7 @@ const WorkbenchRouter: React.FunctionComponent<WorkbenchRouterProps> = (props) =
           }}/>
           <Route path={`${path}/:username/:name/at/ipfs/:path`} render={(props) => {
             return noDatasetsRedirect(
-              <HistoryDataset {...props} />
+              <Dataset {...props} />
             )
           } }/>
           <Route path={`${path}/:username/:name`} render={({ match }) => {

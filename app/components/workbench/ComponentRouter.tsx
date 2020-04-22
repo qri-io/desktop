@@ -13,9 +13,9 @@ import { isEditPath } from '../../paths'
 
 import { openToast, closeToast } from '../../actions/ui'
 import { writeDataset } from '../../actions/workbench'
-import { setRecentEditRef, setRecentHistoryRef } from '../../actions/workbenchRoutes'
+import { setRecentEditRef, setRecentDatasetRef } from '../../actions/workbenchRoutes'
 
-import { selectWorkingDatasetIsLoading, selectWorkingDataset, selectFsiPath, selectHistoryDatasetIsLoading, selectHistoryStatusInfo, selectStatusInfoFromMutations } from '../../selections'
+import { selectWorkingDatasetIsLoading, selectWorkingDataset, selectFsiPath, selectDatasetIsLoading, selectDatasetStatusInfo, selectStatusInfoFromMutations } from '../../selections'
 
 import Body from './components/Body'
 import CalloutBlock from '../chrome/CalloutBlock'
@@ -38,7 +38,7 @@ interface ComponentRouterProps extends RouteProps {
   openToast: (type: ToastType, name: string, message: string) => Action
   closeToast: () => Action
   write: (peername: string, name: string, dataset: Dataset) => ApiActionThunk | void
-  setRecentHistoryRef: (qriRef: QriRef) => Action
+  setRecentDatasetRef: (qriRef: QriRef) => Action
   setRecentEditRef: (qriRef: QriRef) => Action
 
   isLoading: boolean
@@ -56,7 +56,7 @@ export const ComponentRouterComponent: React.FunctionComponent<ComponentRouterPr
     write,
     openToast,
     closeToast,
-    setRecentHistoryRef,
+    setRecentDatasetRef,
     setRecentEditRef,
     qriRef
   } = props
@@ -74,7 +74,7 @@ export const ComponentRouterComponent: React.FunctionComponent<ComponentRouterPr
     if (isEditPath(routePath)) {
       setRecentEditRef(qriRef)
     } else {
-      setRecentHistoryRef(qriRef)
+      setRecentDatasetRef(qriRef)
     }
   }, [qriRef.location])
 
@@ -184,7 +184,7 @@ const ComponentHeader: React.FunctionComponent<RouteProps> = (props) => {
     if (isEditPath(routePath)) {
       return selectStatusInfoFromMutations(state, component as SelectedComponent)
     } else {
-      return selectHistoryStatusInfo(state, component as SelectedComponent)
+      return selectDatasetStatusInfo(state, component as SelectedComponent)
     }
   })
   const { displayName, icon, tooltip } = getComponentDisplayProps(component)
@@ -207,7 +207,7 @@ const mapStateToProps = (state: Store, ownProps: ComponentRouterProps) => {
   const showHistory = !!qriRef.path
   return {
     ...ownProps,
-    isLoading: showHistory ? selectWorkingDatasetIsLoading(state) : selectHistoryDatasetIsLoading(state),
+    isLoading: showHistory ? selectWorkingDatasetIsLoading(state) : selectDatasetIsLoading(state),
     fsiPath: selectFsiPath(state),
     bodyPath: showHistory ? selectWorkingDataset(state).bodyPath : '',
     qriRef
@@ -220,7 +220,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
     closeToast,
     write: writeDataset,
     setRecentEditRef,
-    setRecentHistoryRef
+    setRecentDatasetRef
   }, dispatch)
 }
 

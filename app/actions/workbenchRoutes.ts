@@ -5,7 +5,7 @@ import {
   WORKBENCH_ROUTES_EDIT_REF
 } from '../reducers/workbenchRoutes'
 
-export const setRecentHistoryRef = (qriRef: QriRef) => {
+export const setRecentDatasetRef = (qriRef: QriRef) => {
   return {
     type: WORKBENCH_ROUTES_HISTORY_REF,
     qriRef

@@ -9,7 +9,7 @@ export function pathToEdit (username: string, name: string, component?: Selected
 }
 
 // assumes path is of the format `/ipfs/Qmhash`
-export function pathToHistory (username: string, name: string, path: string, component?: SelectedComponent): string {
+export function pathToDataset (username: string, name: string, path: string, component?: SelectedComponent): string {
   let uri = `/workbench/${username}/${name}`
   if (path === '') {
     return uri

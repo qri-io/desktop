@@ -85,17 +85,17 @@ const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction
         isLoading: false,
         components: {
           readme: {
-            value: dataset && dataset.readme && dataset.readme.scriptBytes ? atob(dataset.readme.scriptBytes) : undefined
+            value: dataset && dataset.readme && dataset.readme.scriptBytes && atob(dataset.readme.scriptBytes)
           },
           body: state.components.body,
           meta: {
-            value: dataset && dataset.meta ? dataset.meta : undefined
+            value: dataset && dataset.meta
           },
           structure: {
-            value: dataset && dataset.structure ? dataset.structure : undefined
+            value: dataset && dataset.structure
           },
           transform: {
-            value: dataset && dataset.transform && dataset.transform.scriptBytes ? atob(dataset.transform.scriptBytes) : undefined
+            value: dataset && dataset.transform && dataset.transform.scriptBytes && atob(dataset.transform.scriptBytes)
           }
         }
       }

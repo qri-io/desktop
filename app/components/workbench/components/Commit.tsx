@@ -5,7 +5,7 @@ import moment from 'moment'
 import { QriRef, qriRefFromRoute } from '../../../models/qriRef'
 import { Commit } from '../../../models/dataset'
 import Store, { RouteProps } from '../../../models/store'
-import { selectHistoryCommit, selectHistoryDatasetIsLoading } from '../../../selections'
+import { selectDatasetCommit, selectDatasetIsLoading } from '../../../selections'
 import SpinnerWithIcon from '../../chrome/SpinnerWithIcon'
 
 export interface CommitProps extends RouteProps {
@@ -34,8 +34,8 @@ const mapStateToProps = (state: Store, ownProps: CommitProps) => {
   return {
     ...ownProps,
     qriRef: qriRefFromRoute(ownProps),
-    isLoading: selectHistoryDatasetIsLoading(state),
-    commit: selectHistoryCommit(state)
+    isLoading: selectDatasetIsLoading(state),
+    commit: selectDatasetCommit(state)
   }
 }
 

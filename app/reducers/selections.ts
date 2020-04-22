@@ -5,7 +5,7 @@ import { apiActionTypes } from '../utils/actionType'
 import chooseDefaultComponent from '../utils/chooseDefaultComponent'
 
 import {
-  HISTORY_SUCC
+  LOG_SUCC
 } from '../reducers/log'
 
 export const SELECTIONS_SET_ACTIVE_TAB = 'SELECTIONS_SET_ACTIVE_TAB'
@@ -32,7 +32,7 @@ export const [, PUBLISH_SUCC] = apiActionTypes('publish')
 export const [, UNPUBLISH_SUCC] = apiActionTypes('unpublish')
 export const [, SIGNIN_SUCC] = apiActionTypes('signin')
 export const [, SIGNUP_SUCC] = apiActionTypes('signup')
-export const [, , HISTORY_FAIL] = apiActionTypes('history')
+export const [, , LOG_FAIL] = apiActionTypes('log')
 export const [, RENAME_SUCC] = apiActionTypes('rename')
 
 export default (state = initialState, action: AnyAction) => {
@@ -102,7 +102,7 @@ export default (state = initialState, action: AnyAction) => {
         commit: ''
       })
 
-    case HISTORY_SUCC:
+    case LOG_SUCC:
       if (state.commit === '') {
         if (action.payload.data && action.payload.data.length > 0) {
           return {
@@ -141,7 +141,7 @@ export default (state = initialState, action: AnyAction) => {
       }
 
     // if dataset history fails, set active tab to status
-    case HISTORY_FAIL:
+    case LOG_FAIL:
       return {
         ...state,
         activeTab: 'status'

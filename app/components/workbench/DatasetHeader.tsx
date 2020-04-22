@@ -6,13 +6,13 @@ import { faClock } from '@fortawesome/free-regular-svg-icons'
 import { Structure, Commit } from '../../models/dataset'
 import fileSize from '../../utils/fileSize'
 
-interface HistoryDatasetHeaderProps {
+interface DatasetHeaderProps {
   path: string
   structure: Structure
   commit: Commit
 }
 
-const HistoryDatasetHeader: React.FunctionComponent<HistoryDatasetHeaderProps> = ({ path, structure, commit }) => {
+const DatasetHeader: React.FunctionComponent<DatasetHeaderProps> = ({ path, structure, commit }) => {
   return (
     <div className='commit-details-header'>
       {structure && commit && <div className='details-flex'>
@@ -38,4 +38,4 @@ const HistoryDatasetHeader: React.FunctionComponent<HistoryDatasetHeaderProps> =
   )
 }
 
-export default HistoryDatasetHeader
+export default DatasetHeader

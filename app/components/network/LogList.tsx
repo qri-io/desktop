@@ -7,7 +7,7 @@ import { FetchOptions } from '../../store/api'
 import { BACKEND_URL } from '../../constants'
 import { mapHistory } from '../../actions/mappingFuncs'
 
-import HistoryListItem from '../item/HistoryListItem'
+import LogListItem from '../item/LogListItem'
 import { pathToNetworkDataset } from '../../paths'
 
 export interface LogListProps extends RouteProps{
@@ -51,7 +51,7 @@ const LogList: React.FunctionComponent<LogListProps> = ({ qriRef, history }) => 
         data.map((item, i) => {
           const selected = qriRef.path ? qriRef.path === item.path : i === 0
           return (
-            <HistoryListItem
+            <LogListItem
               data={item}
               key={item.path}
               id={`HEAD-${i + 1}`}

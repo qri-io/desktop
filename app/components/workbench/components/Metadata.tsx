@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 import Store, { RouteProps } from '../../../models/store'
 import { isUserArray } from '../../form/MetadataMultiInput'
 import { Meta, Citation, License, User } from '../../../models/dataset'
-import { selectHistoryDataset, selectHistoryDatasetIsLoading } from '../../../selections'
+import { selectDataset, selectDatasetIsLoading } from '../../../selections'
 import { QriRef, qriRefFromRoute } from '../../../models/qriRef'
 
 import ExternalLink from '../../ExternalLink'
@@ -138,8 +138,8 @@ const mapStateToProps = (state: Store, ownProps: MetadataProps) => {
   return {
     ...ownProps,
     qriRef: qriRefFromRoute(ownProps),
-    isLoading: selectHistoryDatasetIsLoading(state),
-    data: selectHistoryDataset(state).meta
+    isLoading: selectDatasetIsLoading(state),
+    data: selectDataset(state).meta
   }
 }
 
