@@ -1,10 +1,11 @@
 import * as React from 'react'
 import { remote } from 'electron'
-import { connect } from 'react-redux'
-import { Action, Dispatch, bindActionCreators } from 'redux'
+import { Action } from 'redux'
 
 import { LinkDatasetModal } from '../../models/modals'
 import { ApiAction } from '../../store/api'
+
+import { connectComponentToProps } from '../../utils/connectComponentToProps'
 
 import { linkDatasetAndFetch } from '../../actions/api'
 import { setDatasetDirPath, dismissModal } from '../../actions/ui'
@@ -177,24 +178,18 @@ export const LinkDatasetComponent: React.FunctionComponent<LinkDatasetProps> = (
   )
 }
 
-const mapStateToProps = (state: any, ownProps: LinkDatasetProps) => {
-  return {
-    ...ownProps,
-    modal: selectModal(state),
-    persistedDatasetDirPath: selectPersistedDatasetDirPath(state)
-  }
-}
-
-const mapDispatchToProps = (dispatch: Dispatch) => {
-  return bindActionCreators({
+export default connectComponentToProps(
+  LinkDatasetComponent,
+  (state: any, ownProps: LinkDatasetProps) => {
+    return {
+      ...ownProps,
+      modal: selectModal(state),
+      persistedDatasetDirPath: selectPersistedDatasetDirPath(state)
+    }
+  },
+  {
     onDismissed: dismissModal,
     onSubmit: linkDatasetAndFetch,
     setDatasetDirPath
-  }, dispatch)
-}
-
-const mergeProps = (props: any, actions: any): LinkDatasetProps => {
-  return { ...props, ...actions }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(LinkDatasetComponent)
+  }
+)

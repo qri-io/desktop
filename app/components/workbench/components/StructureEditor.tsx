@@ -1,8 +1,6 @@
 import * as React from 'react'
-import { connect } from 'react-redux'
 import { faInfoCircle } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { bindActionCreators, Dispatch } from 'redux'
 
 import Dataset, { Structure as IStructure, Schema as ISchema } from '../../../models/dataset'
 import { ApiActionThunk } from '../../../store/api'
@@ -19,10 +17,11 @@ import Schema from '../../structure/Schema'
 import ExternalLink from '../../ExternalLink'
 import FormatConfigEditor from '../../structure/FormatConfigEditor'
 import ParseError from '../ParseError'
+import { connectComponentToProps } from '../../../utils/connectComponentToProps'
 
 export interface StructureEditorProps extends RouteProps {
   qriRef: QriRef
-  data: IStructure
+  data?: IStructure
   showConfig?: boolean
   loading: boolean
   statusInfo: StatusInfo
@@ -39,6 +38,8 @@ export const StructureEditorComponent: React.FunctionComponent<StructureEditorPr
   if (hasParseError(statusInfo)) {
     return <ParseError component='structure' />
   }
+
+  if (!data) { return null }
 
   const username = qriRef.username || ''
   const name = qriRef.name || ''
@@ -108,27 +109,20 @@ export const StructureEditorComponent: React.FunctionComponent<StructureEditorPr
   )
 }
 
-const mapStateToProps = (state: Store, ownProps: StructureEditorProps) => {
-  return {
-    ...ownProps,
-    qriRef: qriRefFromRoute(ownProps),
-    data: selectDatasetFromMutations(state).structure,
-    loading: selectWorkingDatasetIsLoading(state),
-    peername: selectWorkingDatasetUsername(state),
-    statusInfo: selectWorkingStatusInfo(state, 'structure'),
-    name: selectWorkingDatasetName(state)
-
-  }
-}
-
-const mergeProps = (props: any, actions: any): StructureEditorProps => {
-  return { ...props, ...actions }
-}
-
-const mapDispatchToProps = (dispatch: Dispatch) => {
-  return bindActionCreators({
+export default connectComponentToProps(
+  StructureEditorComponent,
+  (state: Store, ownProps: StructureEditorProps) => {
+    return {
+      ...ownProps,
+      qriRef: qriRefFromRoute(ownProps),
+      data: selectDatasetFromMutations(state).structure,
+      loading: selectWorkingDatasetIsLoading(state),
+      peername: selectWorkingDatasetUsername(state),
+      statusInfo: selectWorkingStatusInfo(state, 'structure'),
+      name: selectWorkingDatasetName(state)
+    }
+  },
+  {
     write: writeDataset
-  }, dispatch)
-}
-
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(StructureEditorComponent)
+  }
+)

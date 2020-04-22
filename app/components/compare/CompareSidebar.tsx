@@ -1,11 +1,12 @@
-import React from 'react'
+import * as React from 'react'
 import { remote } from 'electron'
 import fs from 'fs'
 import { Action } from 'redux'
 import classNames from 'classnames'
-import { connect } from 'react-redux'
 
 import Store, { ToastType } from '../../models/store'
+
+import { connectComponentToProps } from '../../utils/connectComponentToProps'
 
 import { openToast } from '../../actions/ui'
 
@@ -125,10 +126,12 @@ export const CompareSidebarComponent: React.FunctionComponent<CompareSidebarProp
   )
 }
 
-const mapStateToProps = (state: Store, ownProps: CompareSidebarProps) => {
-  return ownProps
-}
-
-export default connect(mapStateToProps, {
-  openToast
-})(CompareSidebarComponent)
+export default connectComponentToProps(
+  CompareSidebarComponent,
+  (state: Store, ownProps: CompareSidebarProps) => {
+    return ownProps
+  },
+  {
+    openToast
+  }
+)

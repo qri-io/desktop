@@ -1,9 +1,6 @@
 import * as React from 'react'
 import { faCloudUploadAlt, faCloud } from '@fortawesome/free-solid-svg-icons'
 import { shell, clipboard } from 'electron'
-import { bindActionCreators, Dispatch } from 'redux'
-import { connect } from 'react-redux'
-import { withRouter } from 'react-router-dom'
 
 import { RouteProps } from '../../../models/store'
 import { QRI_CLOUD_URL } from '../../../constants'
@@ -16,6 +13,7 @@ import { selectIsPublished, selectInNamespace, selectLatestPath } from '../../..
 
 import HeaderColumnButton from '../../chrome/HeaderColumnButton'
 import Hamburger from '../../chrome/Hamburger'
+import { connectComponentToPropsWithRouter } from '../../../utils/connectComponentToProps'
 
 interface PublishButtonProps extends RouteProps {
   qriRef: QriRef
@@ -96,25 +94,19 @@ const PublishButtonComponent: React.FunctionComponent<PublishButtonProps> = (pro
   return null
 }
 
-const mapStateToProps = (state: any, ownProps: PublishButtonProps) => {
-  const qriRef = qriRefFromRoute(ownProps)
-  return {
-    qriRef,
-    inNamespace: selectInNamespace(state, qriRef),
-    isPublished: selectIsPublished(state),
-    latestPath: selectLatestPath(state, qriRef.username, qriRef.name),
-    ...ownProps
-  }
-}
-
-const mapDispatchToProps = (dispatch: Dispatch) => {
-  return bindActionCreators({
+export default connectComponentToPropsWithRouter(
+  PublishButtonComponent,
+  (state: any, ownProps: PublishButtonProps) => {
+    const qriRef = qriRefFromRoute(ownProps)
+    return {
+      qriRef,
+      inNamespace: selectInNamespace(state, qriRef),
+      isPublished: selectIsPublished(state),
+      latestPath: selectLatestPath(state, qriRef.username, qriRef.name),
+      ...ownProps
+    }
+  },
+  {
     setModal
-  }, dispatch)
-}
-
-const mergeProps = (props: any, actions: any): PublishButtonProps => {
-  return { ...props, ...actions }
-}
-
-export default withRouter(connect(mapStateToProps, mapDispatchToProps, mergeProps)(PublishButtonComponent))
+  }
+)

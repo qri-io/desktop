@@ -1,8 +1,8 @@
 import * as React from 'react'
-import { connect } from 'react-redux'
-import { withRouter } from 'react-router-dom'
 
-import Store, { RouteProps } from '../../models/Store'
+import { RouteProps } from '../../models/Store'
+
+import { connectComponentToPropsWithRouter } from '../../utils/connectComponentToProps'
 
 import WorkbenchLayout from './layouts/WorkbenchLayout'
 import NoDatasetsMainContent from './NoDatasetsMainContent'
@@ -21,8 +21,4 @@ export const NoDatasetsComponent: React.FunctionComponent<NoDatasetsProps> = (pr
   )
 }
 
-const mapStateToProps = (state: Store, ownProps: NoDatasetsProps) => {
-  return ownProps
-}
-
-export default withRouter(connect(mapStateToProps)(NoDatasetsComponent))
+export default connectComponentToPropsWithRouter(NoDatasetsComponent)

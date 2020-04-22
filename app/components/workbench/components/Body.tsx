@@ -1,6 +1,5 @@
 import * as React from 'react'
-import { Action, Dispatch, bindActionCreators } from 'redux'
-import { connect } from 'react-redux'
+import { Action } from 'redux'
 
 import { ApiActionThunk } from '../../../store/api'
 import { DetailsType, StatsDetails, Details } from '../../../models/details'
@@ -15,6 +14,7 @@ import BodyTable from '../../BodyTable'
 import BodyJson from '../../BodyJson'
 import ParseError from '../ParseError'
 import hasParseError from '../../../utils/hasParseError'
+import { connectComponentToProps } from '../../../utils/connectComponentToProps'
 
 export interface BodyProps extends RouteProps {
   qriRef: QriRef
@@ -147,31 +147,25 @@ export const BodyComponent: React.FunctionComponent<BodyProps> = (props) => {
   )
 }
 
-const mapStateToProps = (state: Store, ownProps: BodyProps) => {
-  // TODO(ramfox): when we get a BodyEditor component, pull out all references
-  // to showHistory
-  const qriRef = qriRefFromRoute(ownProps)
-  const showHistory = !!qriRef.path
-  return {
-    data: showHistory ? selectDataset(state) : selectWorkingDataset(state),
-    stats: showHistory ? selectDatasetStats(state) : selectWorkingStats(state),
-    details: selectDetails(state),
-    pageInfo: showHistory ? selectDatasetBodyPageInfo(state) : selectWorkingDatasetBodyPageInfo(state),
-    statusInfo: selectWorkingStatusInfo(state, 'body'),
-    qriRef
-  }
-}
-
-const mapDispatchToProps = (dispatch: Dispatch) => {
-  return bindActionCreators({
+export default connectComponentToProps(
+  BodyComponent,
+  (state: Store, ownProps: BodyProps) => {
+    // TODO(ramfox): when we get a BodyEditor component, pull out all references
+    // to showHistory
+    const qriRef = qriRefFromRoute(ownProps)
+    const showHistory = !!qriRef.path
+    return {
+      data: showHistory ? selectDataset(state) : selectWorkingDataset(state),
+      stats: showHistory ? selectDatasetStats(state) : selectWorkingStats(state),
+      details: selectDetails(state),
+      pageInfo: showHistory ? selectDatasetBodyPageInfo(state) : selectWorkingDatasetBodyPageInfo(state),
+      statusInfo: selectWorkingStatusInfo(state, 'body'),
+      qriRef
+    }
+  },
+  {
     fetchBody,
     fetchCommitBody,
     setDetailsBar
-  }, dispatch)
-}
-
-const mergeProps = (props: any, actions: any): BodyProps => {
-  return { ...props, ...actions }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(BodyComponent)
+  }
+)

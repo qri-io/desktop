@@ -1,10 +1,11 @@
 import * as React from 'react'
 import { Action } from 'redux'
-import { connect } from 'react-redux'
 
 import { BACKEND_URL } from '../../constants'
 import Store from '../../models/store'
 import { setSidebarWidth } from '../../actions/ui'
+
+import { connectComponentToProps } from '../../utils/connectComponentToProps'
 
 import Spinner from '../chrome/Spinner'
 import CompareSidebar, { CompareParams } from './CompareSidebar'
@@ -92,12 +93,14 @@ async function diff (left: string, right: string): Promise<any[]> {
   return res.data as any[]
 }
 
-const mapStateToProps = (state: Store) => {
-  return {
-    sidebarWidth: state.ui.datasetSidebarWidth
+export default connectComponentToProps(
+  CompareComponent,
+  (state: Store) => {
+    return {
+      sidebarWidth: state.ui.datasetSidebarWidth
+    }
+  },
+  {
+    setSidebarWidth
   }
-}
-
-export default connect(mapStateToProps, {
-  setSidebarWidth
-})(CompareComponent)
+)

@@ -43,19 +43,17 @@ const WorkbenchMainContentComponent: React.FunctionComponent<WorkbenchMainConten
   </>
 }
 
-const mapStateToProps = (state: any, ownProps: WorkbenchMainContentProps) => {
-  return {
-    ...ownProps,
-    qriRef: qriRefFromRoute(ownProps),
-    fsiPath: selectFsiPath(state),
-    modified: selectMutationsIsDirty(state)
-  }
-}
-
-const mapDispatchToProps = () => {
-  return {
+export default connectComponentToPropsWithRouter(
+  WorkbenchMainContentComponent,
+  (state: any, ownProps: WorkbenchMainContentProps) => {
+    return {
+      ...ownProps,
+      qriRef: qriRefFromRoute(ownProps),
+      fsiPath: selectFsiPath(state),
+      modified: selectMutationsIsDirty(state)
+    }
+  },
+  {
     fetchWorkingDatasetDetails
   }
-}
-
-export default connectComponentToPropsWithRouter(mapStateToProps, mapDispatchToProps, WorkbenchMainContentComponent, true)
+)

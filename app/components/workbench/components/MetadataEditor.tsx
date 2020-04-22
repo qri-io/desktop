@@ -3,8 +3,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faInfoCircle } from '@fortawesome/free-solid-svg-icons'
 import cloneDeep from 'clone-deep'
 import ReactTooltip from 'react-tooltip'
-import { connect } from 'react-redux'
-import { Dispatch, bindActionCreators } from 'redux'
 
 import { ApiActionThunk } from '../../../store/api'
 import { Meta } from '../../../models/dataset'
@@ -24,10 +22,11 @@ import DropdownInput from '../../form/DropdownInput'
 import MetadataMultiInput from '../../form/MetadataMultiInput'
 import SpinnerWithIcon from '../../chrome/SpinnerWithIcon'
 import ParseError from '../ParseError'
+import { connectComponentToProps } from '../../../utils/connectComponentToProps'
 
 interface MetadataEditorProps extends RouteProps {
   qriRef: QriRef
-  data: Meta
+  data?: Meta
   statusInfo: StatusInfo
   write: (peername: string, name: string, dataset: any) => ApiActionThunk | void
   loading: boolean
@@ -350,26 +349,20 @@ const MetadataEditorComponent: React.FunctionComponent<MetadataEditorProps> = (p
   )
 }
 
-const mapStateToProps = (state: Store, ownProps: MetadataEditorProps) => {
-  return {
-    ...ownProps,
-    qriRef: qriRefFromRoute(ownProps),
-    data: selectDatasetFromMutations(state).meta,
-    loading: selectWorkingDatasetIsLoading(state),
-    peername: selectWorkingDatasetUsername(state),
-    statusInfo: selectWorkingStatusInfo(state, 'meta'),
-    name: selectWorkingDatasetName(state)
-  }
-}
-
-const mapDispatchToProps = (dispatch: Dispatch) => {
-  return bindActionCreators({
+export default connectComponentToProps(
+  MetadataEditorComponent,
+  (state: Store, ownProps: MetadataEditorProps) => {
+    return {
+      ...ownProps,
+      qriRef: qriRefFromRoute(ownProps),
+      data: selectDatasetFromMutations(state).meta,
+      loading: selectWorkingDatasetIsLoading(state),
+      peername: selectWorkingDatasetUsername(state),
+      statusInfo: selectWorkingStatusInfo(state, 'meta'),
+      name: selectWorkingDatasetName(state)
+    }
+  },
+  {
     write: writeDataset
-  }, dispatch)
-}
-
-const mergeProps = (props: any, actions: any): MetadataEditorProps => {
-  return { ...props, ...actions }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(MetadataEditorComponent)
+  }
+)

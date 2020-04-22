@@ -1,10 +1,19 @@
 import * as React from 'react'
 import { Action } from 'redux'
 
-import { QriRef } from '../../models/qriRef'
+import { QriRef, qriRefFromRoute } from '../../models/qriRef'
 import { ApiActionThunk } from '../../store/api'
 
-import { RouteProps } from '../../models/store'
+import Store, { RouteProps, VersionInfo } from '../../models/store'
+
+import { connectComponentToProps } from '../../utils/connectComponentToProps'
+
+import { setSidebarWidth, openToast, SidebarTypes } from '../../actions/ui'
+import { addDatasetAndFetch } from '../../actions/api'
+import {
+  setActiveTab,
+  setSelectedListItem
+} from '../../actions/selections'
 
 import Layout from '../Layout'
 import NetworkHome from './NetworkHome'
@@ -24,9 +33,10 @@ export interface NetworkProps extends RouteProps {
 
   addDatasetAndFetch: (username: string, name: string) => ApiActionThunk
   toggleNetwork: () => Action
+  setSidebarWidth: (type: SidebarTypes, sidebarWidth: number) => Action
 }
 
-const Network: React.FunctionComponent<NetworkProps> = (props) => {
+const NetworkComponent: React.FunctionComponent<NetworkProps> = (props) => {
   const {
     qriRef,
 
@@ -84,7 +94,13 @@ const Network: React.FunctionComponent<NetworkProps> = (props) => {
             onChange={(d: P2PConnection) => { alert(`change connection: ${d.enabled}`) }}
           /> */}
           {qriRef.username && qriRef.name && <LogList qriRef={qriRef} />}
-          {qriRef.username && qriRef.name && !inCollection && <SidebarActionButton text='Clone Dataset' onClick={() => addDatasetAndFetch(qriRef.username, qriRef.name)} />}
+          {
+            qriRef.username && qriRef.name && !inCollection &&
+              <SidebarActionButton
+                text='Clone Dataset'
+                onClick={() => addDatasetAndFetch(qriRef.username, qriRef.name)}
+              />
+          }
         </NetworkSidebar>
       }
       sidebarWidth={sidebarWidth}
@@ -94,4 +110,33 @@ const Network: React.FunctionComponent<NetworkProps> = (props) => {
   )
 }
 
-export default Network
+export default connectComponentToProps(
+  NetworkComponent,
+  (state: Store, ownProps: RouteProps) => {
+    const { ui, myDatasets } = state
+    const { networkSidebarWidth } = ui
+    const qriRef = qriRefFromRoute(ownProps)
+
+    // TODO (ramfox): right now, we are getting the first 100 of a user's
+    // datasets. This is fine for now, as no one has 100 datasets, but we will need
+    // different logic eventually. If we move to a paradigm where the previews are no
+    // longer ephemeral or if the fetching happens in a different location, then
+    // we can check the 'foreign' flag in the versionInfo
+    const inCollection = myDatasets.value.some((vi: VersionInfo, i: number) => {
+      return vi.username === qriRef.username && vi.name === qriRef.name
+    })
+    return {
+      sidebarWidth: networkSidebarWidth,
+      inCollection,
+      qriRef,
+      ...ownProps
+    }
+  },
+  {
+    openToast,
+    addDatasetAndFetch,
+    setActiveTab,
+    setSidebarWidth,
+    setSelectedListItem
+  }
+)

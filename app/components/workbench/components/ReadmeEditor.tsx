@@ -1,8 +1,6 @@
 import * as React from 'react'
 import SimpleMDE from 'react-simplemde-editor'
 import { useDebounce } from 'use-debounce'
-import { connect } from 'react-redux'
-import { Dispatch, bindActionCreators } from 'redux'
 
 import { ApiActionThunk } from '../../../store/api'
 import { datasetConvertStringToScriptBytes } from '../../../utils/datasetConvertStringToScriptBytes'
@@ -17,6 +15,7 @@ import { selectWorkingDatasetIsLoading, selectDatasetFromMutations, selectIsLink
 
 import SpinnerWithIcon from '../../chrome/SpinnerWithIcon'
 import ParseError from '../ParseError'
+import { connectComponentToProps } from '../../../utils/connectComponentToProps'
 
 const DEBOUNCE_TIMER = 1000
 
@@ -145,26 +144,21 @@ export const ReadmeEditorComponent: React.FunctionComponent<ReadmeEditorProps> =
   )
 }
 
-const mapStateToProps = (state: Store, ownProps: ReadmeEditorProps) => {
-  return {
-    ...ownProps,
-    qriRef: qriRefFromRoute(ownProps),
-    data: selectDatasetFromMutations(state).readme,
-    loading: selectWorkingDatasetIsLoading(state),
-    isLinked: selectIsLinked(state),
-    peername: selectWorkingDatasetUsername(state),
-    statusInfo: selectWorkingStatusInfo(state, 'readme'),
-    name: selectWorkingDatasetName(state)
-  }
-}
-
-const mergeProps = (props: any, actions: any): ReadmeEditorProps => { //eslint-disable-line
-  return { ...props, ...actions }
-}
-
-const mapDispatchToProps = (dispatch: Dispatch) => {
-  return bindActionCreators({
+export default connectComponentToProps(
+  ReadmeEditorComponent,
+  (state: Store, ownProps: ReadmeEditorProps) => {
+    return {
+      ...ownProps,
+      qriRef: qriRefFromRoute(ownProps),
+      data: selectDatasetFromMutations(state).readme,
+      loading: selectWorkingDatasetIsLoading(state),
+      isLinked: selectIsLinked(state),
+      peername: selectWorkingDatasetUsername(state),
+      statusInfo: selectWorkingStatusInfo(state, 'readme'),
+      name: selectWorkingDatasetName(state)
+    }
+  },
+  {
     write: writeDataset
-  }, dispatch)
-}
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(ReadmeEditorComponent)
+  }
+)

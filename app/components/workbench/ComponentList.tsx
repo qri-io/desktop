@@ -1,11 +1,10 @@
 import * as React from 'react'
-import { bindActionCreators, Dispatch } from 'redux'
-import { connect } from 'react-redux'
-import { withRouter } from 'react-router-dom'
 
 import { Status, SelectedComponent, ComponentStatus, RouteProps } from '../../models/store'
 import { pathToDataset } from '../../paths'
 import { QriRef, qriRefFromRoute } from '../../models/qriRef'
+
+import { connectComponentToPropsWithRouter } from '../../utils/connectComponentToProps'
 
 import { selectDatasetStatus, selectDatasetComponentsList } from '../../selections'
 
@@ -70,24 +69,16 @@ export const ComponentListComponent: React.FunctionComponent<ComponentListProps>
   )
 }
 
-const mapStateToProps = (state: any, ownProps: ComponentListProps) => {
-  const qriRef = qriRefFromRoute(ownProps)
-  return {
-    ...ownProps,
-    qriRef,
-    status: selectDatasetStatus(state),
-    selectedComponent: qriRef.component,
-    components: selectDatasetComponentsList(state)
+export default connectComponentToPropsWithRouter(
+  ComponentListComponent,
+  (state: any, ownProps: ComponentListProps) => {
+    const qriRef = qriRefFromRoute(ownProps)
+    return {
+      ...ownProps,
+      qriRef,
+      status: selectDatasetStatus(state),
+      selectedComponent: qriRef.component,
+      components: selectDatasetComponentsList(state)
+    }
   }
-}
-
-const mapDispatchToProps = (dispatch: Dispatch, ownProps: ComponentListProps) => {
-  return bindActionCreators({
-  }, dispatch)
-}
-
-const mergeProps = (props: any, actions: any): ComponentListProps => {
-  return { ...props, ...actions }
-}
-
-export default withRouter(connect(mapStateToProps, mapDispatchToProps, mergeProps)(ComponentListComponent))
+)

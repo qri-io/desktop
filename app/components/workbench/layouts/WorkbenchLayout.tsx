@@ -1,12 +1,15 @@
 import * as React from 'react'
 
+import Store from '../../../models/store'
+
+import { connectComponentToProps } from '../../../utils/connectComponentToProps'
+
+import { setSidebarWidth } from '../../../actions/ui'
+
+import { selectSidebarWidth } from '../../../selections'
+
 import Layout from '../../Layout'
 import WorkbenchSidebar from './WorkbenchSidebar'
-import { selectSidebarWidth } from '../../../selections'
-import Store from '../../../models/store'
-import { bindActionCreators, Dispatch } from 'redux'
-import { setSidebarWidth } from '../../../actions/ui'
-import { connect } from 'react-redux'
 import WorkbenchMainContent from './WorkbenchMainContent'
 
 interface WorkbenchLayoutProps {
@@ -47,21 +50,15 @@ const WorkbenchLayoutComponent: React.FunctionComponent<WorkbenchLayoutProps> = 
   )
 }
 
-const mapStateToProps = (state: Store, ownProps: WorkbenchLayoutProps) => {
-  return {
-    sidebarWidth: selectSidebarWidth(state, 'workbench'),
-    ...ownProps
-  }
-}
-
-const mapDispatchToProps = (dispatch: Dispatch) => {
-  return bindActionCreators({
+export default connectComponentToProps(
+  WorkbenchLayoutComponent,
+  (state: Store, ownProps: WorkbenchLayoutProps) => {
+    return {
+      sidebarWidth: selectSidebarWidth(state, 'workbench'),
+      ...ownProps
+    }
+  },
+  {
     onSidebarResize: (width: number) => setSidebarWidth('workbench', width)
-  }, dispatch)
-}
-
-const mergeProps = (props: any, actions: any): WorkbenchLayoutProps => {
-  return { ...props, ...actions }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(WorkbenchLayoutComponent)
+  }
+)

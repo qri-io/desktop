@@ -3,11 +3,11 @@ import path from 'path'
 import { remote } from 'electron'
 import fs from 'fs'
 import changeCase from 'change-case'
-import { Dispatch, bindActionCreators } from 'redux'
-import { connect } from 'react-redux'
 
 import { CreateDatasetModal } from '../../models/modals'
 import { ApiAction } from '../../store/api'
+
+import { connectComponentToProps } from '../../utils/connectComponentToProps'
 
 import { dismissModal } from '../../actions/ui'
 import { importFile } from '../../actions/api'
@@ -151,21 +151,15 @@ const CreateDatasetComponent: React.FunctionComponent<CreateDatasetProps> = (pro
   )
 }
 
-const mapStateToProps = (state: any, ownProps: CreateDatasetProps) => {
-  return {
-    modal: selectModal(state)
-  }
-}
-
-const mapDispatchToProps = (dispatch: Dispatch) => {
-  return bindActionCreators({
+export default connectComponentToProps(
+  CreateDatasetComponent,
+  (state: any, ownProps: CreateDatasetProps) => {
+    return {
+      modal: selectModal(state)
+    }
+  },
+  {
     importFile,
     onDismissed: dismissModal
-  }, dispatch)
-}
-
-const mergeProps = (props: any, actions: any): CreateDatasetProps => {
-  return { ...props, ...actions }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(CreateDatasetComponent)
+  }
+)

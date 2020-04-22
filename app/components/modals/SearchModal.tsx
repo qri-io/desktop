@@ -1,13 +1,12 @@
 import * as React from 'react'
 import _ from 'underscore'
-import { withRouter } from 'react-router-dom'
-import { Dispatch, bindActionCreators } from 'redux'
-import { connect } from 'react-redux'
 
 import { BACKEND_URL } from '../../constants'
 import { FetchOptions } from '../../store/api'
 import { VersionInfo, RouteProps } from '../../models/store'
 import { SearchModal } from '../../models/modals'
+
+import { connectComponentToPropsWithRouter } from '../../utils/connectComponentToProps'
 
 import { searchResultToVersionInfo } from '../../actions/mappingFuncs'
 import { setWorkingDataset } from '../../actions/selections'
@@ -111,22 +110,16 @@ const SearchComponent: React.FunctionComponent<SearchProps> = (props) => {
   )
 }
 
-const mapStateToProps = (state: any, ownProps: SearchProps) => {
-  return {
-    modal: selectModal(state),
-    ...ownProps
-  }
-}
-
-const mapDispatchToProps = (dispatch: Dispatch) => {
-  return bindActionCreators({
+export default connectComponentToPropsWithRouter(
+  SearchComponent,
+  (state: any, ownProps: SearchProps) => {
+    return {
+      modal: selectModal(state),
+      ...ownProps
+    }
+  },
+  {
     onDismissed: dismissModal,
     setWorkingDataset
-  }, dispatch)
-}
-
-const mergeProps = (props: any, actions: any): SearchProps => {
-  return { ...props, ...actions }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(withRouter(SearchComponent))
+  }
+)

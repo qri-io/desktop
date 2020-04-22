@@ -1,9 +1,8 @@
 import * as React from 'react'
-import { Action, Dispatch, bindActionCreators } from 'redux'
+import { Action } from 'redux'
 import { ipcRenderer, shell } from 'electron'
 import { CSSTransition, TransitionGroup } from 'react-transition-group'
 import { Switch, Route, useLocation, useRouteMatch, Redirect } from 'react-router-dom'
-import { connect } from 'react-redux'
 
 import { Details } from '../../models/details'
 import { Session } from '../../models/session'
@@ -32,11 +31,12 @@ import {
 import { defaultSidebarWidth } from '../../reducers/ui'
 
 import { Resizable } from '../Resizable'
-import DetailsBarContainer from '../../containers/DetailsBarContainer'
+import DetailsBar from '../DetailsBar'
 import Dataset from './Dataset'
 import { pathToNoDatasetSelected, pathToEdit } from '../../paths'
 import NoDatasets from './NoDatasets'
 import EditDataset from './EditDataset'
+import { connectComponentToProps } from '../../utils/connectComponentToProps'
 
 // TODO (b5) - is this still required?
 require('../../assets/qri-blob-logo-tiny.png')
@@ -167,7 +167,7 @@ export class WorkbenchComponent extends React.Component<WorkbenchProps> {
               onReset={() => { setSidebarWidth('workbench', defaultSidebarWidth) }}
               maximumWidth={495}
             >
-              <DetailsBarContainer />
+              <DetailsBar />
             </Resizable>
           </div>
         </div>
@@ -232,28 +232,29 @@ const WorkbenchRouter: React.FunctionComponent<WorkbenchRouterProps> = (props) =
   )
 }
 
-const mapStateToProps = (state: any, ownProps: WorkbenchProps) => {
-  const qriRef = qriRefFromRoute(ownProps)
-  return {
-    qriRef,
-    /**
-     * TODO (ramfox): when we have a more sophisticated view of publish/unpublish
-     * we should pull the published status of the specific version being shown
-     * rather then the status of the dataset at head.
-     */
-    isPublished: selectWorkingDatasetIsPublished(state),
-    fsiPath: selectFsiPath(state),
-    hasDatasets: selectHasDatasets(state),
-    showDetailsBar: selectShowDetailsBar(state),
-    sidebarWidth: selectSidebarWidth(state, 'workbench'),
-    details: selectDetails(state),
-    inNamespace: selectSessionUsername(state) === qriRef.username,
-    modified: selectMutationsIsDirty(state)
-  }
-}
-
-const mapDispatchToProps = (dispatch: Dispatch) => {
-  return bindActionCreators({
+export default connectComponentToProps(
+  WorkbenchComponent,
+  (state: any, ownProps: WorkbenchProps) => {
+    const qriRef = qriRefFromRoute(ownProps)
+    return {
+      qriRef,
+      /**
+       * TODO (ramfox): when we have a more sophisticated view of publish/unpublish
+       * we should pull the published status of the specific version being shown
+       * rather then the status of the dataset at head.
+       */
+      isPublished: selectWorkingDatasetIsPublished(state),
+      fsiPath: selectFsiPath(state),
+      hasDatasets: selectHasDatasets(state),
+      showDetailsBar: selectShowDetailsBar(state),
+      sidebarWidth: selectSidebarWidth(state, 'workbench'),
+      details: selectDetails(state),
+      inNamespace: selectSessionUsername(state) === qriRef.username,
+      modified: selectMutationsIsDirty(state),
+      ...ownProps
+    }
+  },
+  {
     setModal,
     setActiveTab,
     resetMutationsDataset,
@@ -263,11 +264,5 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
     fetchWorkingDatasetDetails,
     discardChangesAndFetch,
     discardMutationsChanges
-  }, dispatch)
-}
-
-const mergeProps = (props: any, actions: any): WorkbenchProps => {
-  return { ...props, ...actions }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(WorkbenchComponent)
+  }
+)

@@ -1,12 +1,14 @@
 import * as React from 'react'
-import { connect } from 'react-redux'
 
 import Store, { RouteProps } from '../../../models/store'
-import { isUserArray } from '../../form/MetadataMultiInput'
 import { Meta, Citation, License, User } from '../../../models/dataset'
-import { selectDataset, selectDatasetIsLoading } from '../../../selections'
 import { QriRef, qriRefFromRoute } from '../../../models/qriRef'
 
+import { connectComponentToProps } from '../../../utils/connectComponentToProps'
+
+import { selectDataset, selectDatasetIsLoading } from '../../../selections'
+
+import { isUserArray } from '../../form/MetadataMultiInput'
 import ExternalLink from '../../ExternalLink'
 import KeyValueTable from '../../KeyValueTable'
 import SpinnerWithIcon from '../../chrome/SpinnerWithIcon'
@@ -133,15 +135,16 @@ export const MetadataComponent: React.FunctionComponent<MetadataProps> = ({ data
   )
 }
 
-const mapStateToProps = (state: Store, ownProps: MetadataProps) => {
-  // get data for the currently selected component
-  return {
-    ...ownProps,
-    qriRef: qriRefFromRoute(ownProps),
-    loading: selectDatasetIsLoading(state),
-    data: selectDataset(state).meta
-  }
-}
-
 // TODO (b5) - this component doesn't need to be a container. Just feed it the right data
-export default connect(mapStateToProps, {})(MetadataComponent)
+export default connectComponentToProps(
+  MetadataComponent,
+  (state: Store, ownProps: MetadataProps) => {
+    // get data for the currently selected component
+    return {
+      ...ownProps,
+      qriRef: qriRefFromRoute(ownProps),
+      loading: selectDatasetIsLoading(state),
+      data: selectDataset(state).meta
+    }
+  }
+)

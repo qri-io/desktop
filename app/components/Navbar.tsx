@@ -1,8 +1,6 @@
 // globals __BUILD__
 import * as React from 'react'
-import { Action, bindActionCreators, Dispatch } from 'redux'
-import { withRouter } from 'react-router-dom'
-import { connect } from 'react-redux'
+import { Action } from 'redux'
 import { shell } from 'electron'
 import {
   faExternalLinkAlt,
@@ -15,6 +13,7 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { IconDefinition } from '@fortawesome/free-regular-svg-icons'
 
+import { connectComponentToPropsWithRouter } from '../utils/connectComponentToProps'
 import { DISCORD_URL, QRI_CLOUD_URL } from '../constants'
 
 import { signout } from '../actions/ui'
@@ -189,22 +188,16 @@ export const NavbarComponent: React.FunctionComponent<NavbarProps> = (props: Nav
   )
 }
 
-const mapStateToProps = (state: any, ownProps: NavbarProps) => {
-  return {
-    session: selectSession(state),
-    recentWorkbenchLocation: selectRecentWorkbenchLocation(state),
-    ...ownProps
-  }
-}
-
-const mapDispatchToProps = (dispatch: Dispatch) => {
-  return bindActionCreators({
+export default connectComponentToPropsWithRouter(
+  NavbarComponent,
+  (state: any, ownProps: NavbarProps) => {
+    return {
+      session: selectSession(state),
+      recentWorkbenchLocation: selectRecentWorkbenchLocation(state),
+      ...ownProps
+    }
+  },
+  {
     signout
-  }, dispatch)
-}
-
-const mergeProps = (props: any, actions: any): NavbarProps => {
-  return { ...props, ...actions }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(withRouter(NavbarComponent))
+  }
+)

@@ -1,8 +1,9 @@
 import * as React from 'react'
-import { connect } from 'react-redux'
 import { shell } from 'electron'
 
 import { SelectedComponent } from '../../models/store'
+
+import { connectComponentToProps } from '../../utils/connectComponentToProps'
 
 import { selectWorkingStatusInfo, selectFsiPath } from '../../selections'
 
@@ -16,7 +17,7 @@ interface ParseErrorProps {
   fsiPath?: string
 }
 
-const ParseErrorComponent: React.FunctionComponent<ParseErrorProps> = ({ component, filename, fsiPath }) => (
+const ParseErrorComponent: React.FunctionComponent<ParseErrorProps> = ({ component, filename, fsiPath = '' }) => (
   <div className='unlinked-dataset'>
     <div className='message-container'>
       <div>
@@ -28,12 +29,14 @@ const ParseErrorComponent: React.FunctionComponent<ParseErrorProps> = ({ compone
   </div>
 )
 
-const mapStateToProps = (state: any, ownProps: ParseErrorProps) => {
-  const statusInfo = selectWorkingStatusInfo(state, ownProps.component as SelectedComponent)
-  return {
-    filename: statusInfo.filepath,
-    fsiPath: selectFsiPath(state)
+export default connectComponentToProps(
+  ParseErrorComponent,
+  (state: any, ownProps: ParseErrorProps) => {
+    const statusInfo = selectWorkingStatusInfo(state, ownProps.component as SelectedComponent)
+    return {
+      ...ownProps,
+      filename: statusInfo.filepath,
+      fsiPath: selectFsiPath(state)
+    }
   }
-}
-
-export default connect(mapStateToProps)(ParseErrorComponent)
+)

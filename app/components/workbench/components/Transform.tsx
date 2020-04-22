@@ -1,10 +1,11 @@
 import * as React from 'react'
-import { connect } from 'react-redux'
 import { ApiActionThunk } from '../../../store/api'
 
 import Dataset from '../../../models/dataset'
 import Store, { RouteProps } from '../../../models/store'
 import { QriRef, qriRefFromRoute } from '../../../models/qriRef'
+
+import { connectComponentToProps } from '../../../utils/connectComponentToProps'
 
 import { selectDataset, selectWorkingDataset, selectDatasetIsLoading, selectWorkingDatasetIsLoading } from '../../../selections'
 
@@ -28,14 +29,15 @@ export const TransformComponent: React.FunctionComponent<TransformProps> = ({ da
   return <Code data={data} />
 }
 
-const mapStateToProps = (state: Store, ownProps: TransformProps) => {
-  const qriRef = qriRefFromRoute(ownProps)
-  const showHistory = !!qriRef.path
-  return {
-    qriRef,
-    loading: showHistory ? selectDatasetIsLoading(state) : selectWorkingDatasetIsLoading(state),
-    data: showHistory ? selectDataset(state).transform : selectWorkingDataset(state).transform
+export default connectComponentToProps(
+  TransformComponent,
+  (state: Store, ownProps: TransformProps) => {
+    const qriRef = qriRefFromRoute(ownProps)
+    const showHistory = !!qriRef.path
+    return {
+      qriRef,
+      loading: showHistory ? selectDatasetIsLoading(state) : selectWorkingDatasetIsLoading(state),
+      data: showHistory ? selectDataset(state).transform : selectWorkingDataset(state).transform
+    }
   }
-}
-
-export default connect(mapStateToProps)(TransformComponent)
+)

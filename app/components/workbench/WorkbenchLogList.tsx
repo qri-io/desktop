@@ -1,15 +1,14 @@
 import * as React from 'react'
 import path from 'path'
-import { connect } from 'react-redux'
 import { MenuItemConstructorOptions, remote, ipcRenderer } from 'electron'
-import { Dispatch, bindActionCreators } from 'redux'
 import ContextMenuArea from 'react-electron-contextmenu'
-import { withRouter } from 'react-router-dom'
 import moment from 'moment'
 
 import { ApiActionThunk } from '../../store/api'
 import { QriRef, refStringFromQriRef, qriRefFromRoute } from '../../models/qriRef'
 import { VersionInfo, PageInfo, RouteProps } from '../../models/store'
+
+import { connectComponentToPropsWithRouter } from '../../utils/connectComponentToProps'
 
 import { fetchLog } from '../../actions/api'
 
@@ -104,23 +103,17 @@ export const WorkbenchLogListComponent: React.FunctionComponent<WorkbenchLogList
     </div>)
 }
 
-const mapStateToProps = (state: any, ownProps: WorkbenchLogListProps) => {
-  return {
-    qriRef: qriRefFromRoute(ownProps),
-    log: selectLog(state),
-    logPageInfo: selectLogPageInfo(state),
-    ...ownProps
-  }
-}
-
-const mapDispatchToProps = (dispatch: Dispatch) => {
-  return bindActionCreators({
+export default connectComponentToPropsWithRouter(
+  WorkbenchLogListComponent,
+  (state: any, ownProps: WorkbenchLogListProps) => {
+    return {
+      qriRef: qriRefFromRoute(ownProps),
+      log: selectLog(state),
+      logPageInfo: selectLogPageInfo(state),
+      ...ownProps
+    }
+  },
+  {
     fetchLog
-  }, dispatch)
-}
-
-const mergeProps = (props: any, actions: any): WorkbenchLogListProps => {
-  return { ...props, ...actions }
-}
-
-export default withRouter(connect(mapStateToProps, mapDispatchToProps, mergeProps)(WorkbenchLogListComponent))
+  }
+)

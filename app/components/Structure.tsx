@@ -1,18 +1,20 @@
 import * as React from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faInfoCircle } from '@fortawesome/free-solid-svg-icons'
-import { connect } from 'react-redux'
 
 import { Structure as IStructure } from '../models/dataset'
 import Store from '../models/store'
+
 import fileSize, { abbreviateNumber } from '../utils/fileSize'
+import { connectComponentToProps } from '../utils/connectComponentToProps'
+
+import { selectDataset, selectDatasetIsLoading } from '../selections'
 
 import ExternalLink from './ExternalLink'
 import LabeledStats from './item/LabeledStats'
 import FormatConfigHistory from './FormatConfigHistory'
 import SpinnerWithIcon from './chrome/SpinnerWithIcon'
 import Schema from './structure/Schema'
-import { selectDataset, selectDatasetIsLoading } from '../selections'
 
 export interface StructureProps {
   data: IStructure
@@ -111,11 +113,12 @@ export const StructureComponent: React.FunctionComponent<StructureProps> = (prop
   )
 }
 
-const mapStateToProps = (state: Store) => {
-  return {
-    data: selectDataset(state).structure,
-    loading: selectDatasetIsLoading(state)
+export default connectComponentToProps(
+  StructureComponent,
+  (state: Store) => {
+    return {
+      data: selectDataset(state).structure,
+      loading: selectDatasetIsLoading(state)
+    }
   }
-}
-
-export default connect(mapStateToProps)(StructureComponent)
+)

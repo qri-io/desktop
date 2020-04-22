@@ -1,11 +1,10 @@
 import * as React from 'react'
-import { connect } from 'react-redux'
-import { withRouter } from 'react-router-dom'
-import { bindActionCreators, Dispatch } from 'redux'
 
 import Store, { RouteProps } from '../../models/Store'
 import { LaunchedFetchesAction } from '../store/api'
 import { QriRef, qriRefFromRoute } from '../../models/qriRef'
+
+import { connectComponentToPropsWithRouter } from '../../utils/connectComponentToProps'
 
 import { fetchWorkbench } from '../../actions/workbench'
 
@@ -46,23 +45,17 @@ export const EditDatasetComponent: React.FunctionComponent<EditDatasetProps> = (
   )
 }
 
-const mapStateToProps = (state: Store, ownProps: EditDatasetProps) => {
-  const qriRef = qriRefFromRoute(ownProps)
-  return {
-    ...ownProps,
-    inNamespace: selectInNamespace(state, qriRef),
-    qriRef
-  }
-}
-
-const mapDispatchToProps = (dispatch: Dispatch) => {
-  return bindActionCreators({
+export default connectComponentToPropsWithRouter(
+  EditDatasetComponent,
+  (state: Store, ownProps: EditDatasetProps) => {
+    const qriRef = qriRefFromRoute(ownProps)
+    return {
+      ...ownProps,
+      inNamespace: selectInNamespace(state, qriRef),
+      qriRef
+    }
+  },
+  {
     fetchWorkbench
-  }, dispatch)
-}
-
-const mergeProps = (props: any, actions: any): EditDatasetProps => {
-  return { ...props, ...actions }
-}
-
-export default withRouter(connect(mapStateToProps, mapDispatchToProps, mergeProps)(EditDatasetComponent))
+  }
+)

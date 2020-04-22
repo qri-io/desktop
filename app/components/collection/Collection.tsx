@@ -1,6 +1,5 @@
 import * as React from 'react'
-import { Action, Dispatch, bindActionCreators } from 'redux'
-import { connect } from 'react-redux'
+import { Action } from 'redux'
 
 import { QriRef } from '../../models/qriRef'
 
@@ -10,6 +9,7 @@ import { setSidebarWidth } from '../../actions/ui'
 import DatasetList from '../DatasetList'
 import Layout from '../Layout'
 import CollectionHome from './CollectionHome'
+import { connectComponentToProps } from '../../utils/connectComponentToProps'
 
 interface CollectionProps {
   qriRef: QriRef
@@ -35,21 +35,15 @@ export const CollectionComponent: React.FunctionComponent<CollectionProps> = (pr
   )
 }
 
-const mapStateToProps = (state: any, ownProps: CollectionProps) => {
-  return {
-    ...ownProps,
-    sidebarWidth: selectSidebarWidth(state, 'collection')
-  }
-}
-
-const mapDispatchToProps = (dispatch: Dispatch) => {
-  return bindActionCreators({
+export default connectComponentToProps(
+  CollectionComponent,
+  (state: any, ownProps: CollectionProps) => {
+    return {
+      ...ownProps,
+      sidebarWidth: selectSidebarWidth(state, 'collection')
+    }
+  },
+  {
     setSidebarWidth
-  }, dispatch)
-}
-
-const mergeProps = (props: any, actions: any): CollectionProps => {
-  return { ...props, ...actions }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(CollectionComponent)
+  }
+)

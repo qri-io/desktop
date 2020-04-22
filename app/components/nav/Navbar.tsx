@@ -1,7 +1,10 @@
 import * as React from 'react'
-import { withRouter } from 'react-router-dom'
 
 import { RouteProps } from '../../models/Store'
+
+import { connectComponentToPropsWithRouter } from '../../utils/connectComponentToProps'
+
+import { setModal } from '../../actions/ui'
 
 import SearchBox from '../chrome/SearchBox'
 import Breadcrumb from '../chrome/Breadcrumb'
@@ -44,7 +47,7 @@ const ForwardArrow: React.FunctionComponent<ArrowProps> = (props) => {
 }
 
 // Navbar is persistent chrome from app-wide navigation
-const Navbar: React.FunctionComponent<NavbarProps> = ({ location, setModal, history }) => {
+const NavbarComponent: React.FunctionComponent<NavbarProps> = ({ location, setModal, history }) => {
   const handleOnEnter = (e: React.KeyboardEvent) => {
     setModal({ q: e.target.value, type: ModalType.Search })
   }
@@ -62,6 +65,8 @@ const Navbar: React.FunctionComponent<NavbarProps> = ({ location, setModal, hist
   )
 }
 
-// the `withRouter` func from 'react-router-dom' gives the Navbar component
-// access to history, location, and match (the RouteProps)
-export default withRouter(Navbar)
+export default connectComponentToPropsWithRouter(
+  NavbarComponent,
+  {},
+  { setModal }
+)

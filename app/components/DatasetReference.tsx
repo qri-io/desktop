@@ -2,14 +2,14 @@
 // for dataset rename
 import * as React from 'react'
 import classNames from 'classnames'
-import { connect } from 'react-redux'
-import { Dispatch, bindActionCreators } from 'redux'
 
 import { ApiActionThunk } from '../store/api'
 import { QriRef } from '../models/qriRef'
 
-import { renameDataset } from '../actions/api'
+import { connectComponentToPropsWithRouter } from '../utils/connectComponentToProps'
 import { validateDatasetName } from '../utils/formValidation'
+
+import { renameDataset } from '../actions/api'
 
 interface DatasetReferenceProps {
   qriRef: QriRef
@@ -116,18 +116,8 @@ const DatasetReferenceComponent: React.FunctionComponent<DatasetReferenceProps> 
   )
 }
 
-const mapStateToProps = (state: any, ownProps: DatasetReferenceProps) => {
-  return ownProps
-}
-
-const mapDispatchToProps = (dispatch: Dispatch) => {
-  return bindActionCreators({
-    renameDataset
-  }, dispatch)
-}
-
-const mergeProps = (props: any, actions: any): DatasetReferenceProps => {
-  return { ...props, ...actions }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(DatasetReferenceComponent)
+export default connectComponentToPropsWithRouter<DatasetReferenceProps>(
+  DatasetReferenceComponent,
+  {},
+  { renameDataset }
+)

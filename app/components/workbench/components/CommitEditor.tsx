@@ -1,6 +1,5 @@
 import * as React from 'react'
-import { Action, bindActionCreators, Dispatch } from 'redux'
-import { connect } from 'react-redux'
+import { Action } from 'redux'
 import classNames from 'classnames'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSync } from '@fortawesome/free-solid-svg-icons'
@@ -15,6 +14,7 @@ import { refStringFromQriRef, QriRef, qriRefFromRoute } from '../../../models/qr
 
 import TextInput from '../../form/TextInput'
 import TextAreaInput from '../../form/TextAreaInput'
+import { connectComponentToProps } from '../../../utils/connectComponentToProps'
 
 export interface CommitEditorProps extends RouteProps {
   qriRef: QriRef
@@ -108,29 +108,23 @@ export const CommitEditorComponent: React.FunctionComponent<CommitEditorProps> =
   )
 }
 
-const mapStateToProps = (state: Store, ownProps: CommitEditorProps) => {
-  const mutationsCommit = selectMutationsCommit(state)
-  // get data for the currently selected component
-  return {
-    ...ownProps,
-    qriRef: qriRefFromRoute(ownProps),
-    isSaving: selectIsCommiting(state),
-    title: mutationsCommit.title,
-    message: mutationsCommit.message,
-    status: selectStatusFromMutations(state)
-  }
-}
-
-const mergeProps = (props: any, actions: any): CommitEditorProps => { //eslint-disable-line
-  return { ...props, ...actions }
-}
-
-const mapDispatchToProps = (dispatch: Dispatch) => {
-  return bindActionCreators({
+export default connectComponentToProps(
+  CommitEditorComponent,
+  (state: Store, ownProps: CommitEditorProps) => {
+    const mutationsCommit = selectMutationsCommit(state)
+    // get data for the currently selected component
+    return {
+      ...ownProps,
+      qriRef: qriRefFromRoute(ownProps),
+      isSaving: selectIsCommiting(state),
+      title: mutationsCommit.title,
+      message: mutationsCommit.message,
+      status: selectStatusFromMutations(state)
+    }
+  },
+  {
     setCommitTitle,
     setCommitMessage,
     saveWorkingDatasetAndFetch
-  }, dispatch)
-}
-
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(CommitEditorComponent)
+  }
+)

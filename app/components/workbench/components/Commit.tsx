@@ -1,11 +1,14 @@
 import * as React from 'react'
-import { connect } from 'react-redux'
 import moment from 'moment'
 
 import { QriRef, qriRefFromRoute } from '../../../models/qriRef'
 import { Commit } from '../../../models/dataset'
 import Store, { RouteProps } from '../../../models/store'
+
+import { connectComponentToProps } from '../../../utils/connectComponentToProps'
+
 import { selectDatasetCommit, selectDatasetIsLoading } from '../../../selections'
+
 import SpinnerWithIcon from '../../chrome/SpinnerWithIcon'
 
 export interface CommitProps extends RouteProps {
@@ -30,14 +33,15 @@ export const CommitComponent: React.FunctionComponent<CommitProps> = ({
   )
 }
 
-const mapStateToProps = (state: Store, ownProps: CommitProps) => {
-  return {
-    ...ownProps,
-    qriRef: qriRefFromRoute(ownProps),
-    loading: selectDatasetIsLoading(state),
-    commit: selectDatasetCommit(state)
-  }
-}
-
 // TODO (b5) - this doesn't need to be a container
-export default connect(mapStateToProps)(CommitComponent)
+export default connectComponentToProps(
+  CommitComponent,
+  (state: Store, ownProps: CommitProps) => {
+    return {
+      ...ownProps,
+      qriRef: qriRefFromRoute(ownProps),
+      loading: selectDatasetIsLoading(state),
+      commit: selectDatasetCommit(state)
+    }
+  }
+)
