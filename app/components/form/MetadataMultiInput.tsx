@@ -127,6 +127,16 @@ const MetadataMultiInput: React.FunctionComponent<MetadataMultiInputProps> = (pr
     return rows
   }
 
+  let onKeyDown
+  if (canAdd) {
+    onKeyDown = (e) => { if (e.key === 'Enter') addItem() }
+  }
+
+  let onClick
+  if (canAdd) {
+    onClick = addItem
+  }
+
   return (
     <div className='input-container'>
       <InputLabel
@@ -164,9 +174,9 @@ const MetadataMultiInput: React.FunctionComponent<MetadataMultiInputProps> = (pr
               <span
                 id={`${name}-add-item`}
                 className={classNames({ 'disabled': !canAdd })}
-                onClick={canAdd ? addItem : undefined}
+                onClick={onClick}
                 tabIndex={0}
-                onKeyDown={canAdd ? (e) => { if (e.key === 'Enter') addItem() } : undefined}
+                onKeyDown={onKeyDown}
               >
                 <FontAwesomeIcon icon={faPlus} /> &nbsp;{placeHolder}
               </span>

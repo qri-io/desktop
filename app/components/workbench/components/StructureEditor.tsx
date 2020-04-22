@@ -72,6 +72,11 @@ export const StructureEditorComponent: React.FunctionComponent<StructureEditorPr
     { 'label': 'depth', 'value': data.depth || '—' }
   ]
 
+  let schema
+  if (data && data.schema) {
+    schema = data.schema
+  }
+
   return (
     <div className='structure'>
       <div className='stats'><LabeledStats data={stats} size='lg' /></div>
@@ -95,7 +100,7 @@ export const StructureEditorComponent: React.FunctionComponent<StructureEditorPr
         </h4>
       </div>
       <Schema
-        data={data ? data.schema : undefined}
+        data={schema}
         onChange={handleOnChange}
         editable
       />

@@ -12,7 +12,7 @@ import LabeledStats from './item/LabeledStats'
 import FormatConfigHistory from './FormatConfigHistory'
 import SpinnerWithIcon from './chrome/SpinnerWithIcon'
 import Schema from './structure/Schema'
-import { selectHistoryDataset, selectHistoryIsLoading } from '../selections'
+import { selectDataset, selectDatasetIsLoading } from '../selections'
 
 export interface StructureProps {
   data: IStructure
@@ -79,6 +79,11 @@ export const StructureComponent: React.FunctionComponent<StructureProps> = (prop
     return <SpinnerWithIcon loading />
   }
 
+  let schema
+  if (data && data.schema) {
+    schema = data.schema
+  }
+
   return (
     <div className='structure'>
       <div className='stats'><LabeledStats data={getStats(data)} size='lg' /></div>
@@ -99,7 +104,7 @@ export const StructureComponent: React.FunctionComponent<StructureProps> = (prop
         </h4>
       </div>
       <Schema
-        data={data ? data.schema : undefined}
+        data={schema}
         editable={false}
       />
     </div>
@@ -108,8 +113,8 @@ export const StructureComponent: React.FunctionComponent<StructureProps> = (prop
 
 const mapStateToProps = (state: Store) => {
   return {
-    data: selectHistoryDataset(state).structure,
-    loading: selectHistoryIsLoading(state)
+    data: selectDataset(state).structure,
+    loading: selectDatasetIsLoading(state)
   }
 }
 

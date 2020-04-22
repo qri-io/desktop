@@ -1,4 +1,5 @@
 import * as React from 'react'
+import path from 'path'
 import { connect } from 'react-redux'
 import { MenuItemConstructorOptions, remote, ipcRenderer } from 'electron'
 import { Dispatch, bindActionCreators } from 'redux'
@@ -14,8 +15,8 @@ import { fetchLog } from '../../actions/api'
 
 import { selectLog, selectLogPageInfo } from '../../selections'
 
-import HistoryListItem from '../item/HistoryListItem'
-import { pathToHistory } from '../../paths'
+import LogListItem from '../item/LogListItem'
+import { pathToDataset } from '../../paths'
 
 interface WorkbenchLogListProps extends RouteProps {
   qriRef: QriRef
@@ -35,7 +36,7 @@ export const WorkbenchLogListComponent: React.FunctionComponent<WorkbenchLogList
 
   const { username, name } = qriRef
 
-  const handleHistoryScroll = (e: any) => {
+  const handleLogScroll = (e: any) => {
     if (e.target.scrollHeight === parseInt(e.target.scrollTop) + parseInt(e.target.offsetHeight)) {
       fetchLog(username, name, logPageInfo.page + 1, logPageInfo.pageSize)
     }
@@ -51,19 +52,19 @@ export const WorkbenchLogListComponent: React.FunctionComponent<WorkbenchLogList
     }
 
     const exportUrl = `http://localhost:2503/export/${refStringFromQriRef(qriRef)}?download=true&all=true`
-    ipcRenderer.send('export', { url: exportUrl, directory: selectedPath })
+    ipcRenderer.send('export', { url: exportUrl, directory: path.dirname(selectedPath) })
   }
 
   return (
     <div
       id='history-list'
       className='sidebar-content'
-      onScroll={(e) => handleHistoryScroll(e)}
+      onScroll={(e) => handleLogScroll(e)}
     >
       {
         log.map((item, i) => {
           if (item.foreign) {
-            return <HistoryListItem
+            return <LogListItem
               data={item}
               key={item.path}
               id={`HEAD-${i + 1}`}
@@ -71,7 +72,7 @@ export const WorkbenchLogListComponent: React.FunctionComponent<WorkbenchLogList
               last={i === log.length - 1}
               selected={qriRef.path === item.path}
               onClick={() => {
-                history.push(pathToHistory(username, name, item.path))
+                history.push(pathToDataset(username, name, item.path))
               }}
             />
           }
@@ -85,7 +86,7 @@ export const WorkbenchLogListComponent: React.FunctionComponent<WorkbenchLogList
           ]
           return (
             <ContextMenuArea menuItems={menuItems} key={item.path}>
-              <HistoryListItem
+              <LogListItem
                 data={item}
                 key={item.path}
                 id={`HEAD-${i + 1}`}
@@ -93,7 +94,7 @@ export const WorkbenchLogListComponent: React.FunctionComponent<WorkbenchLogList
                 last={i === log.length - 1}
                 selected={qriRef.path === item.path}
                 onClick={() => {
-                  history.push(pathToHistory(username, name, item.path))
+                  history.push(pathToDataset(username, name, item.path))
                 }}
               />
             </ContextMenuArea>

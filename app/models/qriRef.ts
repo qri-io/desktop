@@ -55,12 +55,16 @@ export interface QriRef {
 // qriRefFromRoute parses route props into a Ref
 export function qriRefFromRoute (p: RouteProps): QriRef {
   const selectedComponent = selectedComponentFromLocation(p.location.pathname)
+  let path
+  if (p.match.params.path) {
+    path = '/ipfs/' + p.match.params.path
+  }
   return {
     location: p.location.pathname,
 
     username: p.match.params.username || '',
     name: p.match.params.name || '',
-    path: p.match.params.path ? '/ipfs/' + p.match.params.path : undefined,
+    path: path,
     component: p.match.params.component ? p.match.params.component : selectedComponent,
     selector: p.match.params.selector
   }

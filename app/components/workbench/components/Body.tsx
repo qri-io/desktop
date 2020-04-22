@@ -8,7 +8,7 @@ import Dataset, { Structure } from '../../../models/dataset'
 import Store, { PageInfo, StatusInfo, RouteProps } from '../../../models/store'
 import { fetchBody, fetchCommitBody } from '../../../actions/api'
 import { setDetailsBar } from '../../../actions/ui'
-import { selectHistoryDataset, selectWorkingDataset, selectHistoryStats, selectWorkingStats, selectDetails, selectHistoryDatasetBodyPageInfo, selectWorkingDatasetBodyPageInfo, selectWorkingStatusInfo } from '../../../selections'
+import { selectDataset, selectWorkingDataset, selectDatasetStats, selectWorkingStats, selectDetails, selectDatasetBodyPageInfo, selectWorkingDatasetBodyPageInfo, selectWorkingStatusInfo } from '../../../selections'
 import { QriRef, qriRefFromRoute } from '../../../models/qriRef'
 
 import BodyTable from '../../BodyTable'
@@ -121,6 +121,11 @@ export const BodyComponent: React.FunctionComponent<BodyProps> = (props) => {
     return fetchBody(username, name, page, pageSize)
   }
 
+  let highlightedColumnIndex
+  if (details.type !== DetailsType.NoDetails) {
+    highlightedColumnIndex = details.index
+  }
+
   return (
     <div className='transition-group'>
       {shouldDisplayJsonViewer(structure.format)
@@ -133,7 +138,7 @@ export const BodyComponent: React.FunctionComponent<BodyProps> = (props) => {
           headers={headers}
           body={body}
           pageInfo={pageInfo}
-          highlighedColumnIndex={details.type !== DetailsType.NoDetails ? details.index : undefined}
+          highlighedColumnIndex={highlightedColumnIndex}
           onFetch={handleFetch}
           setDetailsBar={handleToggleDetailsBar}
         />
@@ -148,10 +153,10 @@ const mapStateToProps = (state: Store, ownProps: BodyProps) => {
   const qriRef = qriRefFromRoute(ownProps)
   const showHistory = !!qriRef.path
   return {
-    data: showHistory ? selectHistoryDataset(state) : selectWorkingDataset(state),
-    stats: showHistory ? selectHistoryStats(state) : selectWorkingStats(state),
+    data: showHistory ? selectDataset(state) : selectWorkingDataset(state),
+    stats: showHistory ? selectDatasetStats(state) : selectWorkingStats(state),
     details: selectDetails(state),
-    pageInfo: showHistory ? selectHistoryDatasetBodyPageInfo(state) : selectWorkingDatasetBodyPageInfo(state),
+    pageInfo: showHistory ? selectDatasetBodyPageInfo(state) : selectWorkingDatasetBodyPageInfo(state),
     statusInfo: selectWorkingStatusInfo(state, 'body'),
     qriRef
   }
