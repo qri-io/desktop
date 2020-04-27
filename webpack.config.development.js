@@ -106,8 +106,8 @@ module.exports = merge(baseConfig, {
         use: {
           loader: 'url-loader',
           options: {
-            limit: 10000,
-            mimetype: 'application/octet-stream'
+            limit: 110000,
+            mimetype: 'font/ttf'
           }
         }
       },
