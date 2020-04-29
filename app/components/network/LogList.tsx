@@ -22,7 +22,7 @@ const LogList: React.FunctionComponent<LogListProps> = ({ qriRef, history }) => 
     const options: FetchOptions = {
       method: 'GET'
     }
-    const r = await fetch(`${BACKEND_URL}/fetch/${qriRef.username}/${qriRef.name}`, options)
+    const r = await fetch(`${BACKEND_URL}/history/${qriRef.username}/${qriRef.name}`, options)
     const res = await r.json()
     if (res.meta.code !== 200) {
       setError(res.meta.error)
