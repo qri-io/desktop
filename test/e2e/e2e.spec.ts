@@ -796,12 +796,12 @@ describe('Qri End to End tests', function spec () {
     // check we are at the right dataset
     await expectTextToContain('#navbar-breadcrumb ', registryDatasetName)
 
-    // since this dataset has already been cloned, expect NO sidebar action button
-    await waitForNotExist('#sidebar-action')
-
     // there should be two history items
     const historyItems = await app.client.$$('.history-list-item')
     expect(historyItems.length).toBe(2)
+
+    // since this dataset has already been cloned, expect NO sidebar action button
+    await waitForNotExist('#sidebar-action')
   })
 
   it('search: clicking a local dataset brings you to the workbench', async () => {
@@ -925,11 +925,11 @@ describe('Qri End to End tests', function spec () {
     expect(recentDatasets.length).toBe(1)
   })
 
-  // // remove a dataset is commented out until we have a keyboard command in
-  // // place to open the remove modal
-  // // we also must create a `keyboard` function that takes a string
-  // // and mocks the user typing that string into the keyboard
-  // // it must handle both windows and mac defaults (ctrl vs cmd)
+  // TODO(ramfox): remove a dataset is commented out until we have a keyboard command in
+  // place to open the remove modal
+  // we also must create a `keyboard` function that takes a string
+  // and mocks the user typing that string into the keyboard
+  // it must handle both windows and mac defaults (ctrl vs cmd)
   // it('remove a dataset', async () => {
   //   const {
   //     click,

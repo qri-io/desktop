@@ -211,6 +211,9 @@ export function fetchLog (username: string, name: string, page: number = 1, page
           username,
           name
         },
+        query: {
+          local: true
+        },
         pageInfo: {
           page: confirmedPage,
           pageSize
