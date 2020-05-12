@@ -3,6 +3,7 @@
 const BACKEND_URL = 'http://localhost:2503'
 const CRASH_REPORTER_URL = 'https://crashreports.qri.io/desktop'
 const DISCORD_URL = 'https://discordapp.com/invite/thkJHKj'
+const GITHUB_ORG_URL = 'https://github.com/qri-io'
 const QRI_CLOUD_URL = 'https://qri.cloud'
 const WEBSOCKETS_URL = 'ws://localhost:2506'
 const WEBSOCKETS_PROTOCOL = 'qri-websocket'
@@ -15,6 +16,7 @@ module.exports = {
   CRASH_REPORTER_URL,
   DEFAULT_POLL_INTERVAL,
   DISCORD_URL,
+  GITHUB_ORG_URL,
   QRI_CLOUD_URL,
   WEBSOCKETS_URL,
   WEBSOCKETS_PROTOCOL
