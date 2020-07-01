@@ -44,7 +44,7 @@ export default class TestBackendProcess {
 
   launchProcess () {
     try {
-      const [ base, qriPath, ipfsPath ] = this.setupRepo()
+      const [ base, qriPath ] = this.setupRepo()
 
       this.stdout = fs.createWriteStream(path.join(base, 'stdout.log'))
       this.stderr = fs.createWriteStream(path.join(base, 'stderr.log'))
@@ -52,8 +52,7 @@ export default class TestBackendProcess {
         // stdio: ['pipe', this.stdout, this.stderr],
         env: Object.assign(process.env, {
           'QRI_SETUP_CONFIG_DATA': qriConfig,
-          'QRI_PATH': qriPath,
-          'IPFS_PATH': ipfsPath
+          'QRI_PATH': qriPath
         })
       })
 
@@ -103,10 +102,7 @@ export default class TestBackendProcess {
     const qriPath = path.join(this.dir, '.qri')
     fs.mkdirSync(qriPath)
 
-    const ipfsPath = path.join(this.dir, '.ipfs')
-    fs.mkdirSync(ipfsPath)
-
-    return [this.dir, qriPath, ipfsPath]
+    return [this.dir, qriPath]
   }
 
   teardownRepo () {
@@ -122,7 +118,7 @@ export default class TestBackendProcess {
 }
 
 const qriConfig = `{
-  "Revision": 1,
+  "Revision": 2,
   "Profile": {
     "id": "QmboGUXqS1hvxKD92RaSCh2G29bDwJqxVmHUVop5ePxqtz",
     "privkey": "CAASqQkwggSlAgEAAoIBAQDGAumEqEOdSX/PIwfoEYq58Idgnx6Y671OnqHNcBkuK3XTw+vSyZduY10O9Ej9m1+5Yc5/twZ1uHPW3B0sY+uSScnD3L4TLMH/gBFU0GWh3AHiTBcvNZA1zlEq9pKAfXMm5EzSI+4mlo6wlKO8NnJ0Qyb9LaAsA/1aBO19VmxWeVndV4ckjrJ7yN8NvgkUxqpnFnqAP3f6sMSe7bcRUA6+3VXl4UPdpraYeI1W1YCdUBjKZ8F4+f0mEIpd++eQB6TtZ46Ve+SsXJEHB/K2eZcOL4KOkeTcAI9Dl9AkSsZsBeHGjWItOB2VH3MRAQH60hy71ZjbhhpxQD1F6m9bG1mPAgMBAAECggEBAIXzBmGVKlhGlk1bl0eoRj5OtmXoflxYbPG4YiCFiqMvB0BAM1GeyfAFC7jIDHBzIShZP8Yp3BbatpJMyPd0iLGndPQoafSyvHHJAvBrIbWDDUs2yiBHjcy4SzRTJPwC4VkX69fkMoCsLM7LXpA+DOMVYlS2/rmH4WV6G+ZEBnnf37UfW7VRX8L9MHwhZOEpJFYlcR0UChpFpA5zzTt+ePqdYZRFklT2Jwol+xlx/EXFbq2wIuHhxFgubiJ3IHKVyh4mSCDyt1wzfQTe9l33TEhQzJcbWidN8blBlXi2jXqSOTJgkCOHe2EC7VuY9T6EKfdJ9vtxv1QRHvjZmFF4HwECgYEAzQUuRAzjOn6z05vNcy0pKoJtsrwJF6SpTOQrH1/ejHO0snKVyISw9uXBuf6KpNmUAqre0GMnv1shyC7PVXFKX2qaqWne16Nx7EjhA2Tm8kGJ0s9HFxLLgLk3aOUYRfAGGm+k1Y0uOR+GYubWnIcHIeBz+N/MXHCi77n9aeIDFU8CgYEA9z+S2Ncs9UFXUG3r6f/JWldICom8FJAwnSKeTvC+VvfYJ4vgGToHnVm8sleO/1YDIaRuwe6KVn7kPGA5xvf1Gv0t+8aOt5qTTiMThp/UKHfliLaSwarnJLIP2NCnKm20HOlwjiwRnP5Ae4S0oR2te1PtU/Ytj0QRXICX46ES58ECgYEAtsJYhNcMNBfAS/FGStbGLJvKGBtg64+gT+fRvQ0kAQYf3Tch6HbInb8gW6HZi6xdMaeKKi9Jvl4Jlj6MGnl8N+R67Gxw9r8/jcdFtlXbPbdImgCmOZ5KhHwXNc2LPsUBW82MHcXVn5xHmqB2TWBc7kj8eK1fqkPKK3MbwKh14ScCgYB2OjYT7kCXPhlsYkOO7zrvMhFGyLng81nrqaQdh0zc9UKtFlugdHkzqrdqaCf+vLhem+xCW7hWx/KHVFQMaoEP2MTmQfn4nbeWg3tQwpiGiV5+0x618Oz6RRMC0DM/PJoFwTKLKVN6yLE43yooaLKN6IHxxiPe/+N1YiA/PsR1gQKBgQDDSk9hHxfffxVT3fuP1tVHHBL6ubP+U3w97jaa3pplnOSN/gxSamxcaVxPeCmCkIxUifPj1WWCHRkUuUOWT2JkqCvR1/kwCOmYBgpvSD7/R97lCPtVvNXueYZQODZPboeTaJwv2Q9y2YcR2PXO62ZyVyUOybtF1UfhZLXksEuvCQ==",
@@ -141,15 +137,13 @@ const qriConfig = `{
     "twitter": ""
   },
   "Repo": {
-    "middleware": [],
     "type": "fs"
   },
-  "Store": {
-    "type": "ipfs",
-    "options": {
-      "api": true
-    }
-  },
+  "Filesystems": [
+     { "type": "ipfs" },
+     { "type": "local" },
+     { "type": "http" }
+  ],
   "P2P": {
     "enabled": true,
     "peerid": "QmboGUXqS1hvxKD92RaSCh2G29bDwJqxVmHUVop5ePxqtz",
@@ -171,11 +165,6 @@ const qriConfig = `{
     "bootstrapaddrs": null,
     "autoNAT": false
   },
-  "Update": {
-    "type": "fs",
-    "daemonize": true,
-    "address": "127.0.0.1:2506"
-  },
   "Registry": {
     "location": "http://localhost:2500"
   },
@@ -186,7 +175,7 @@ const qriConfig = `{
   },
   "API": {
     "enabled": true,
-    "port": 2503,
+    "address": "/ip4/127.0.0.1/tcp/2503",
     "readonly": false,
     "remotemode": false,
     "remoteacceptsizemax": 0,
@@ -202,16 +191,9 @@ const qriConfig = `{
     ],
     "serveremotetraffic": true
   },
-  "Webapp": {
-    "enabled": true,
-    "port": 2505,
-    "analyticstoken": "",
-    "entrypointupdateaddress": "/ipns/webapp.qri.io",
-    "entrypointhash": "/ipfs/QmXofmXcQKnYTMjsfhgTGqzzLLPyS9enaHsfaRR5AxTGBK"
-  },
   "RPC": {
     "enabled": true,
-    "port": 2504
+    "address":  "/ip4/127.0.0.1/tcp/2504"
   },
   "Logging": {
     "levels": {
@@ -220,9 +202,5 @@ const qriConfig = `{
       "qrip2p": "info",
       "remote": "info"
     }
-  },
-  "Render": {
-    "templateUpdateAddress": "/ipns/defaulttmpl.qri.io",
-    "defaultTemplateHash": "/ipfs/QmeqeRTf2Cvkqdx4xUdWi1nJB2TgCyxmemsL3H4f1eTBaw"
   }
 }`

@@ -33,7 +33,6 @@ const LogList: React.FunctionComponent<LogListProps> = ({ qriRef, history }) => 
 
   React.useEffect(() => {
     if (error !== '') setError('')
-    console.log('fetching!!!')
     fetchLogs()
   }, [qriRef.username, qriRef.name])
 

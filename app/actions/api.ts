@@ -711,7 +711,7 @@ export function renameDataset (username: string, name: string, newName: string):
         method: 'POST',
         body: {
           current: `${username}/${name}`,
-          new: `${username}/${newName}`
+          next: `${username}/${newName}`
         }
       }
     }
