@@ -14,6 +14,17 @@ export const wsConnected = () => ({ type: 'WS_CONNECTED' })
 export const wsDisconnect = () => ({ type: 'WS_DISCONNECT' })
 export const wsDisconnected = () => ({ type: 'WS_DISCONNECTED' })
 
+// ETCreatedNewFile is the event for creating a new file
+var ETCreatedNewFile = "watchfs:CreatedNewFile"
+// ETModifiedFile is the event for modifying a file
+var ETModifiedFile = "watchfs:ModifiedFile"
+// ETDeletedFile is the event for deleting a file
+var ETDeletedFile = "watchfs:DeletedFile"
+// ETRenamedFolder is the event for renaming a folder
+// var ETRenamedFolder = "watchfs:RenamedFolder"
+// ETRemovedFolder is the event for removing a folder
+// var ETRemovedFolder = "watchfs:RemovedFolder"
+
 const socketMiddleware = () => {
   let socket: WebSocket = null
 
@@ -26,22 +37,22 @@ const socketMiddleware = () => {
     store.dispatch(wsDisconnected())
   }
 
-  const onMessage = (store: Store<IStore>) => (event: MessageEvent) => {
-    const payload = JSON.parse(event.data)
-    switch (payload.Type) {
-      case 'modify':
-      case 'create':
-      case 'remove':
+  const onMessage = (store: Store<IStore>) => (e: MessageEvent) => {
+    const event = JSON.parse(e.data)
+    switch (event.type) {
+      case ETCreatedNewFile:
+      case ETModifiedFile:
+      case ETDeletedFile:
         const { workingDataset } = store.getState()
         const { peername, name, status } = workingDataset
         // if the websocket message Username and Dsname match the peername and
         // dataset name of the dataset that is currently being viewed, fetch
         // status
-        if (peername && name && peername === payload.Username && name === payload.Dsname && !workingDataset.isWriting && !workingDataset.isSaving) {
+        if (peername && name && peername === event.data.Username && name === event.Dsname && !workingDataset.isWriting && !workingDataset.isSaving) {
           const components = Object.keys(status)
           components.forEach((component: string) => {
-            if (payload.Source === status[component].filepath) {
-              const wsMtime = new Date(Date.parse(payload.Time))
+            if (event.Source === status[component].filepath) {
+              const wsMtime = new Date(Date.parse(event.Time))
               // if there is and mtime or if the ws mtime is older then the status mtime, don't refetch
               if (status[component].mtime && !(status[component].mtime < wsMtime)) return
               // if there is no mtime, or if the ws mtime is newer then the status mtime, fetch!
