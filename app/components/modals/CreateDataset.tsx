@@ -15,7 +15,7 @@ import { importFile } from '../../actions/api'
 import { selectModal } from '../../selections'
 
 import Modal from './Modal'
-import ExternalLink from '../ExternalLink'
+import ExternalLink from '../ExternalLink.TARGET_PLATFORM'
 import TextInput from '../form/TextInput'
 import Error from './Error'
 import Buttons from './Buttons'

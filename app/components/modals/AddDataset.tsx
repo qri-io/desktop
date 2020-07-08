@@ -10,7 +10,7 @@ import { addDatasetAndFetch } from '../../actions/api'
 import { dismissModal } from '../../actions/ui'
 
 import Modal from './Modal'
-import ExternalLink from '../ExternalLink'
+import ExternalLink from '../ExternalLink.TARGET_PLATFORM'
 import DebouncedTextInput from '../form/DebouncedTextInput'
 import Error from './Error'
 import Buttons from './Buttons'

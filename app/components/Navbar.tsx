@@ -20,7 +20,7 @@ import { signout } from '../actions/ui'
 
 import { selectSession, selectRecentWorkbenchLocation } from '../selections'
 
-import ExternalLink from './ExternalLink'
+import ExternalLink from './ExternalLink.TARGET_PLATFORM'
 import NavbarItem from './chrome/NavbarItem'
 import { Session } from '../models/session'
 import { RouteProps } from '../models/store'

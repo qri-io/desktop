@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { Action } from 'redux'
-import ExternalLink from '../ExternalLink'
-import WelcomeTemplate from './WelcomeTemplate'
+import ExternalLink from '../ExternalLink.TARGET_PLATFORM'
+import WelcomeTemplate from './WelcomeTemplate.TARGET_PLATFORM'
 import { DISCORD_URL, GITHUB_ORG_URL } from '../../constants'
 
 export interface WelcomeProps {

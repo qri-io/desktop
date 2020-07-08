@@ -1,6 +1,6 @@
 import * as React from 'react'
 
-import ExternalLink from '../ExternalLink'
+import ExternalLink from '../ExternalLink.TARGET_PLATFORM'
 import WorkbenchLayout from './layouts/WorkbenchLayout'
 import DisabledComponentList from './DisabledComponentList'
 

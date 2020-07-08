@@ -10,7 +10,7 @@ import { connectComponentToProps } from '../utils/connectComponentToProps'
 
 import { selectDataset, selectDatasetIsLoading } from '../selections'
 
-import ExternalLink from './ExternalLink'
+import ExternalLink from './ExternalLink.TARGET_PLATFORM'
 import LabeledStats from './item/LabeledStats'
 import FormatConfigHistory from './FormatConfigHistory'
 import SpinnerWithIcon from './chrome/SpinnerWithIcon'

@@ -14,7 +14,7 @@ import { setModal, openToast, closeToast } from '../../actions/ui'
 import { importFile } from '../../actions/api'
 
 import HeaderColumnButton from '../chrome/HeaderColumnButton'
-import WelcomeTemplate from '../onboard/WelcomeTemplate'
+import WelcomeTemplate from '../onboard/WelcomeTemplate.TARGET_PLATFORM'
 import DropZone from '../chrome/DropZone'
 
 export interface CollectionHomeProps {

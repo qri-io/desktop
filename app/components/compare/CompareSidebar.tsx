@@ -13,7 +13,7 @@ import { openToast } from '../../actions/ui'
 import TextInput from '../form/TextInput'
 import ButtonInput from '../form/ButtonInput'
 import Icon from '../chrome/Icon'
-import ExternalLink from '../ExternalLink'
+import ExternalLink from '../ExternalLink.TARGET_PLATFORM'
 
 export interface CompareParams {
   left: string
