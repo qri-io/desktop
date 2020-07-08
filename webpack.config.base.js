@@ -3,9 +3,12 @@
  */
 
 const path = require('path');
+const webpack = require('webpack')
 const {
   dependencies: externals
 } = require('./app/package.json');
+
+const targetPlatform = process.env.TARGET_PLATFORM || 'electron'
 
 module.exports = {
   output: {
@@ -25,7 +28,11 @@ module.exports = {
     ]
   },
 
-  plugins: [],
+  plugins: [
+    new webpack.NormalModuleReplacementPlugin(/(.*)\.TARGET_PLATFORM(\.*)/, function (resource) {
+      resource.request = resource.request.replace(/\.TARGET_PLATFORM/, `.${targetPlatform}`)
+    })
+  ],
 
   externals: Object.keys(externals || {})
 };
