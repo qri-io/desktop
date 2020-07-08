@@ -10,7 +10,7 @@ import { QriRef } from '../../models/qriRef'
 
 import { connectComponentToProps } from '../../utils/connectComponentToProps'
 
-import { setModal, openToast, closeToast } from '../../actions/ui.TARGET_PLATFORM'
+import { setModal, openToast, closeToast } from '../../actions/ui'
 import { importFile } from '../../actions/api'
 
 import HeaderColumnButton from '../chrome/HeaderColumnButton'

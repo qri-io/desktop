@@ -5,7 +5,7 @@ import { PublishDatasetModal } from '../../models/modals'
 
 import { connectComponentToProps } from '../../utils/connectComponentToProps'
 
-import { dismissModal } from '../../actions/ui.TARGET_PLATFORM'
+import { dismissModal } from '../../actions/ui'
 import { publishDataset } from '../../actions/api'
 
 import { selectModal } from '../../selections'

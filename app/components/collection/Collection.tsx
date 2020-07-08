@@ -4,7 +4,7 @@ import { Action } from 'redux'
 import { QriRef } from '../../models/qriRef'
 
 import { selectSidebarWidth } from '../../selections'
-import { setSidebarWidth } from '../../actions/ui.TARGET_PLATFORM'
+import { setSidebarWidth } from '../../actions/ui'
 
 import DatasetList from '../DatasetList'
 import Layout from '../Layout'

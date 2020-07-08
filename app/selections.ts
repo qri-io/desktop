@@ -16,7 +16,7 @@ import { Details, DetailsType } from "./models/details"
 import { datasetToVersionInfo } from "./actions/mappingFuncs"
 import { Modal, ModalType } from "./models/modals"
 import { Session } from "./models/session"
-import { SidebarTypes } from "./actions/ui.TARGET_PLATFORM"
+import { SidebarTypes } from "./actions/ui"
 import { QriRef } from "./models/qriRef"
 
 /**

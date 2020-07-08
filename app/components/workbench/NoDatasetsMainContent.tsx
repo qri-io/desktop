@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom'
 
 import { connectComponentToProps } from '../../utils/connectComponentToProps'
 
-import { setModal } from '../../actions/ui.TARGET_PLATFORM'
+import { setModal } from '../../actions/ui'
 
 import { Modal, ModalType } from '../../models/modals'
 import WelcomeTemplate from '../onboard/WelcomeTemplate'

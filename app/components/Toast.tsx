@@ -7,7 +7,7 @@ import { faCheck, faExclamationTriangle } from '@fortawesome/free-solid-svg-icon
 
 import { Toast } from '../models/store'
 
-import { closeToast } from '../actions/ui.TARGET_PLATFORM'
+import { closeToast } from '../actions/ui'
 
 import { selectToast } from '../selections'
 import { connectComponentToProps } from '../utils/connectComponentToProps'

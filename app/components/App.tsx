@@ -20,7 +20,7 @@ import { Session } from '../models/session'
 import { connectComponentToProps } from '../utils/connectComponentToProps'
 
 // import actions
-import { setModal } from '../actions/ui.TARGET_PLATFORM'
+import { setModal } from '../actions/ui'
 import { pingApi } from '../actions/api'
 import { bootstrap } from '../actions/session'
 

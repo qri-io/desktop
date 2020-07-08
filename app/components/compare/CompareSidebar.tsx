@@ -8,7 +8,7 @@ import Store, { ToastType } from '../../models/store'
 
 import { connectComponentToProps } from '../../utils/connectComponentToProps'
 
-import { openToast } from '../../actions/ui.TARGET_PLATFORM'
+import { openToast } from '../../actions/ui'
 
 import TextInput from '../form/TextInput'
 import ButtonInput from '../form/ButtonInput'

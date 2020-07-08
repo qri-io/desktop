@@ -3,7 +3,7 @@ import { Action } from 'redux'
 
 import { BACKEND_URL } from '../../constants'
 import Store from '../../models/store'
-import { setSidebarWidth } from '../../actions/ui.TARGET_PLATFORM'
+import { setSidebarWidth } from '../../actions/ui'
 
 import { connectComponentToProps } from '../../utils/connectComponentToProps'
 

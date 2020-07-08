@@ -61,6 +61,10 @@ export const dismissModal = () => {
   return setModal({ type: ModalType.NoModal })
 }
 
+// signout has platform specific implementation
+// when using the `signout` function, import it from this file
+export { signout } from './platformSpecific/ui.TARGET_PLATFORM'
+
 export const setHideCommitNudge = () => {
   return {
     type: UI_HIDE_COMMIT_NUDGE

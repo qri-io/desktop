@@ -16,7 +16,7 @@ import { selectImportFileName, selectImportFileSize } from '../selections'
 import { setFilter } from '../actions/myDatasets'
 import { fetchMyDatasets } from '../actions/api'
 import { setWorkingDataset } from '../actions/selections'
-import { setModal } from '../actions/ui.TARGET_PLATFORM'
+import { setModal } from '../actions/ui'
 
 import ProgressBar from './chrome/ProgressBar'
 import VersionInfoItem from './item/VersionInfoItem'

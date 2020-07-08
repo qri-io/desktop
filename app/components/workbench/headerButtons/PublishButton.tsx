@@ -7,7 +7,7 @@ import { QRI_CLOUD_URL } from '../../../constants'
 import { Modal, ModalType } from '../../../models/modals'
 import { QriRef, qriRefFromRoute } from '../../../models/qriRef'
 
-import { setModal } from '../../../actions/ui.TARGET_PLATFORM'
+import { setModal } from '../../../actions/ui'
 
 import { selectIsPublished, selectInNamespace, selectLatestPath } from '../../../selections'
 

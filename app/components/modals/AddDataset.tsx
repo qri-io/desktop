@@ -7,7 +7,7 @@ import { validateDatasetReference } from '../../utils/formValidation'
 import { connectComponentToProps } from '../../utils/connectComponentToProps'
 
 import { addDatasetAndFetch } from '../../actions/api'
-import { dismissModal } from '../../actions/ui.TARGET_PLATFORM'
+import { dismissModal } from '../../actions/ui'
 
 import Modal from './Modal'
 import ExternalLink from '../ExternalLink'

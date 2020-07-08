@@ -7,7 +7,7 @@ import { ExportVersionModal } from '../../models/modals'
 
 import { connectComponentToProps } from '../../utils/connectComponentToProps'
 
-import { setExportPath, dismissModal } from '../../actions/ui.TARGET_PLATFORM'
+import { setExportPath, dismissModal } from '../../actions/ui'
 
 import { selectPersistedExportPath, selectModal } from '../../selections'
 

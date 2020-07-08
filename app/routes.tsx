@@ -9,7 +9,7 @@ import {
   acceptTOS,
   setQriCloudAuthenticated,
   setModal
-} from './actions/ui.TARGET_PLATFORM'
+} from './actions/ui'
 
 import { signup, signin } from './actions/session'
 

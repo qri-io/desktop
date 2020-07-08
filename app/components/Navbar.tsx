@@ -16,7 +16,7 @@ import { IconDefinition } from '@fortawesome/free-regular-svg-icons'
 import { connectComponentToPropsWithRouter } from '../utils/connectComponentToProps'
 import { DISCORD_URL, QRI_CLOUD_URL } from '../constants'
 
-import { signout } from '../actions/ui.TARGET_PLATFORM'
+import { signout } from '../actions/ui'
 
 import { selectSession, selectRecentWorkbenchLocation } from '../selections'
 
