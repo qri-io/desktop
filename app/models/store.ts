@@ -121,6 +121,8 @@ export interface VersionInfo {
   fsiPath: string
   // is block data for this commit stored locally?
   foreign: boolean
+  // published tells whether or not a dataset is published
+  published: boolean
 
   // dataset version details
   // dataset meta.Title field

@@ -486,7 +486,7 @@ export function publishDataset (username: string, name: string): ApiActionThunk 
     try {
       let response: Action
       response = await dispatch(action)
-      await whenOk(fetchWorkingDataset(username, name))(response)
+      await whenOk(fetchLog(username, name))(response)
     } catch (action) {
       throw action
     }
@@ -513,7 +513,7 @@ export function unpublishDataset (username: string, name: string): ApiActionThun
     try {
       let response: Action
       response = await dispatch(action)
-      await whenOk(fetchWorkingDataset(username, name))(response)
+      await whenOk(fetchLog(username, name))(response)
     } catch (action) {
       throw action
     }
