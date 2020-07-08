@@ -7,7 +7,7 @@ import { onExit } from '../platformSpecific/WelcomeTemplate.TARGET_PLATFORM'
 
 export const logo = require('../../assets/qri-blob-logo-small.png') // eslint-disable-line
 
-export interface WelcomeTemplateProps {
+interface WelcomeTemplateProps {
   onAccept?: () => any
   acceptText?: string
   exit?: boolean
