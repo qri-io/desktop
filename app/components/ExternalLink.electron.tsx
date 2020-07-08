@@ -1,15 +1,13 @@
 import * as React from 'react'
 import { shell } from 'electron'
+import ExternalLink, { ExternalLinkProps } from './ExternalLink.base'
 
-export interface ExternalLinkProps {
-  id: string
-  href: string
-  children: React.ReactNode
-}
-const ExternalLink: React.FunctionComponent<ExternalLinkProps> = ({ id, href, children }) =>
-  <a id={id} href={href} onClick={(e) => {
+const ExternalLinkElectron: React.FC<ExternalLinkProps> = (props) => {
+  const onClick = (e: React.MouseEvent) => {
     e.preventDefault()
-    shell.openExternal(href)
-  }} >{children}</a>
+    shell.openExternal(props.href)
+  }
+  return <ExternalLink {...props} onClick={onClick}/>
+}
 
-export default ExternalLink
+export default ExternalLinkElectron
