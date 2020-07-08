@@ -4,7 +4,7 @@ import { ApiAction } from '../../store/api'
 import { UnpublishDatasetModal } from '../../models/modals'
 
 import { unpublishDataset } from '../../actions/api'
-import { dismissModal } from '../../actions/ui'
+import { dismissModal } from '../../actions/ui.TARGET_PLATFORM'
 
 import { selectModal } from '../../selections'
 

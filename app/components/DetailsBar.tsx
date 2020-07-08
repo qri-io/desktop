@@ -6,7 +6,7 @@ import { Details, DetailsType, StatsDetails } from '../models/details'
 
 import { connectComponentToProps } from '../utils/connectComponentToProps'
 
-import { setDetailsBar } from '../actions/ui'
+import { setDetailsBar } from '../actions/ui.TARGET_PLATFORM'
 
 import StatsChart from './StatsChart'
 import { Header } from './workbench/components/Body'

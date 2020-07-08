@@ -9,7 +9,7 @@ import { ApiAction } from '../../store/api'
 
 import { connectComponentToProps } from '../../utils/connectComponentToProps'
 
-import { dismissModal } from '../../actions/ui'
+import { dismissModal } from '../../actions/ui.TARGET_PLATFORM'
 import { importFile } from '../../actions/api'
 
 import { selectModal } from '../../selections'

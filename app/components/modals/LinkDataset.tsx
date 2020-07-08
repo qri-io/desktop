@@ -8,7 +8,7 @@ import { ApiAction } from '../../store/api'
 import { connectComponentToProps } from '../../utils/connectComponentToProps'
 
 import { linkDatasetAndFetch } from '../../actions/api'
-import { setDatasetDirPath, dismissModal } from '../../actions/ui'
+import { setDatasetDirPath, dismissModal } from '../../actions/ui.TARGET_PLATFORM'
 
 import { selectModal, selectPersistedDatasetDirPath } from '../../selections'
 

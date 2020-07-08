@@ -8,7 +8,7 @@ import Store, { RouteProps, VersionInfo } from '../../models/store'
 
 import { connectComponentToProps } from '../../utils/connectComponentToProps'
 
-import { setSidebarWidth, openToast, SidebarTypes } from '../../actions/ui'
+import { setSidebarWidth, openToast, SidebarTypes } from '../../actions/ui.TARGET_PLATFORM'
 import { addDatasetAndFetch } from '../../actions/api'
 import {
   setActiveTab,

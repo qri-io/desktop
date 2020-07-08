@@ -6,7 +6,7 @@ import { DetailsType, StatsDetails, Details } from '../../../models/details'
 import Dataset, { Structure } from '../../../models/dataset'
 import Store, { PageInfo, StatusInfo, RouteProps } from '../../../models/store'
 import { fetchBody, fetchCommitBody } from '../../../actions/api'
-import { setDetailsBar } from '../../../actions/ui'
+import { setDetailsBar } from '../../../actions/ui.TARGET_PLATFORM'
 import { selectDataset, selectWorkingDataset, selectDatasetStats, selectWorkingStats, selectDetails, selectDatasetBodyPageInfo, selectWorkingDatasetBodyPageInfo, selectWorkingStatusInfo } from '../../../selections'
 import { QriRef, qriRefFromRoute } from '../../../models/qriRef'
 

@@ -13,7 +13,7 @@ import { isEditPath } from '../../paths'
 
 import { connectComponentToPropsWithRouter } from '../../utils/connectComponentToProps'
 
-import { openToast, closeToast } from '../../actions/ui'
+import { openToast, closeToast } from '../../actions/ui.TARGET_PLATFORM'
 import { writeDataset } from '../../actions/workbench'
 import { setRecentEditRef, setRecentDatasetRef } from '../../actions/workbenchRoutes'
 

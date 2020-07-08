@@ -11,7 +11,7 @@ import { Modal, ModalType } from '../../models/modals'
 import { QriRef, qriRefFromRoute } from '../../models/qriRef'
 import { ApiActionThunk, LaunchedFetchesAction } from '../../store/api'
 
-import { setModal, setSidebarWidth } from '../../actions/ui'
+import { setModal, setSidebarWidth } from '../../actions/ui.TARGET_PLATFORM'
 import { setActiveTab } from '../../actions/selections'
 import { resetMutationsDataset, discardMutationsChanges, resetMutationsStatus } from '../../actions/mutations'
 import { fetchWorkbench } from '../../actions/workbench'

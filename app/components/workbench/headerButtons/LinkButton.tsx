@@ -8,7 +8,7 @@ import { QriRef, qriRefFromRoute } from '../../../models/qriRef'
 
 import { connectComponentToPropsWithRouter } from '../../../utils/connectComponentToProps'
 
-import { setModal } from '../../../actions/ui'
+import { setModal } from '../../../actions/ui.TARGET_PLATFORM'
 
 import { selectInNamespace, selectFsiPath, selectMutationsIsDirty } from '../../../selections'
 

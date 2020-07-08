@@ -4,7 +4,7 @@ import { RouteProps } from '../../models/Store'
 
 import { connectComponentToPropsWithRouter } from '../../utils/connectComponentToProps'
 
-import { setModal } from '../../actions/ui'
+import { setModal } from '../../actions/ui.TARGET_PLATFORM'
 
 import SearchBox from '../chrome/SearchBox'
 import Breadcrumb from '../chrome/Breadcrumb'

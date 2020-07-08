@@ -4,7 +4,7 @@ import Store from '../../../models/store'
 
 import { connectComponentToProps } from '../../../utils/connectComponentToProps'
 
-import { setSidebarWidth } from '../../../actions/ui'
+import { setSidebarWidth } from '../../../actions/ui.TARGET_PLATFORM'
 
 import { selectSidebarWidth } from '../../../selections'
 

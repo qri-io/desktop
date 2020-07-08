@@ -10,7 +10,7 @@ import { connectComponentToPropsWithRouter } from '../../utils/connectComponentT
 
 import { searchResultToVersionInfo } from '../../actions/mappingFuncs'
 import { setWorkingDataset } from '../../actions/selections'
-import { dismissModal } from '../../actions/ui'
+import { dismissModal } from '../../actions/ui.TARGET_PLATFORM'
 
 import { selectModal } from '../../selections'
 

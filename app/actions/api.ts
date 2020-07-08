@@ -4,7 +4,7 @@ import { push } from 'connected-react-router'
 import { CALL_API, ApiAction, ApiActionThunk, chainSuccess } from '../store/api'
 import { SelectedComponent } from '../models/store'
 import { actionWithPagination } from '../utils/pagination'
-import { openToast, setImportFileDetails } from './ui'
+import { openToast, setImportFileDetails } from './ui.TARGET_PLATFORM'
 import { setSaveComplete, resetMutationsDataset, resetMutationsStatus } from './mutations'
 
 import {
