@@ -1,5 +1,5 @@
 import * as React from 'react'
-import WelcomeTemplate from './onboard/WelcomeTemplate.TARGET_PLATFORM'
+import WelcomeTemplate from './onboard/WelcomeTemplate'
 const version: string = require('../../version').desktopVersion
 
 export const AppLoading: React.FunctionComponent<any> = () =>

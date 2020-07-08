@@ -8,7 +8,7 @@ import { connectComponentToProps } from '../../utils/connectComponentToProps'
 import { setModal } from '../../actions/ui.TARGET_PLATFORM'
 
 import { Modal, ModalType } from '../../models/modals'
-import WelcomeTemplate from '../onboard/WelcomeTemplate.TARGET_PLATFORM'
+import WelcomeTemplate from '../onboard/WelcomeTemplate'
 
 interface NoDatasetsProps {
   setModal?: (modal: Modal) => void

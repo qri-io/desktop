@@ -3,12 +3,12 @@ import Spinner from '../chrome/Spinner'
 import classNames from 'classnames'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowRight } from '@fortawesome/free-solid-svg-icons'
+import { onExit } from '../platformSpecific/WelcomeTemplate.TARGET_PLATFORM'
 
 export const logo = require('../../assets/qri-blob-logo-small.png') // eslint-disable-line
 
 export interface WelcomeTemplateProps {
   onAccept?: () => any
-  onExit?: () => any
   acceptText?: string
   exit?: boolean
   title: string
@@ -21,7 +21,7 @@ export interface WelcomeTemplateProps {
 }
 
 const WelcomeTemplate: React.FunctionComponent<WelcomeTemplateProps> = (props) => {
-  const { onAccept, onExit, acceptText, exit, title, subtitle, loading, id, acceptEnabled = true, children, showLogo = true, fullscreen = true } = props
+  const { onAccept, acceptText, exit, title, subtitle, loading, id, acceptEnabled = true, children, showLogo = true, fullscreen = true } = props
   const handleOnClick = () => {
     if (acceptEnabled && onAccept) {
       onAccept()

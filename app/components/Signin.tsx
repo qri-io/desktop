@@ -2,7 +2,7 @@ import * as React from 'react'
 import { Action } from 'redux'
 import { Link } from 'react-router-dom'
 
-import WelcomeTemplate from './onboard/WelcomeTemplate.TARGET_PLATFORM'
+import WelcomeTemplate from './onboard/WelcomeTemplate'
 import DebouncedTextInput from './form/DebouncedTextInput'
 import { getActionType } from '../utils/actionType'
 import { ApiAction } from '../store/api'
