@@ -10,7 +10,7 @@ import {
   UI_SET_EXPORT_PATH,
   UI_SET_DETAILS_BAR,
   UI_SET_IMPORT_FILE_DETAILS
-} from '../reducers/ui.TARGET_PLATFORM'
+} from '../reducers/ui'
 
 import { ToastType } from '../models/store'
 import { Modal, ModalType } from '../models/modals'

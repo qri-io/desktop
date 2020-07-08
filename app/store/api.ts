@@ -8,7 +8,7 @@ import Store from '../models/store'
 import mapError from './mapError'
 import { FAILED_TO_FETCH } from '../reducers/connection'
 import { apiActionTypes, getActionType } from '../utils/actionType'
-import { UNAUTHORIZED } from '../reducers/ui.TARGET_PLATFORM'
+import { UNAUTHORIZED } from '../reducers/ui'
 
 // CALL_API is a global, unique constant for passing actions to API middleware
 export const CALL_API = Symbol('CALL_API')

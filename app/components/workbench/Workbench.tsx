@@ -28,7 +28,7 @@ import {
   selectHasDatasets
 } from '../../selections'
 
-import { defaultSidebarWidth } from '../../reducers/ui.TARGET_PLATFORM'
+import { defaultSidebarWidth } from '../../reducers/ui'
 
 import { Resizable } from '../Resizable'
 import DetailsBar from '../DetailsBar'

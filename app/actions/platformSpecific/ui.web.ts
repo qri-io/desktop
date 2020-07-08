@@ -1,4 +1,4 @@
-import { UI_SIGNOUT } from '../../reducers/ui.TARGET_PLATFORM'
+import { UI_SIGNOUT } from '../../reducers/ui'
 
 export const signout = () => {
   return {
