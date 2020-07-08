@@ -9,7 +9,7 @@ import { connectComponentToProps } from '../../../utils/connectComponentToProps'
 import { selectDataset, selectDatasetIsLoading } from '../../../selections'
 
 import { isUserArray } from '../../form/MetadataMultiInput'
-import ExternalLink from '../../ExternalLink.TARGET_PLATFORM'
+import ExternalLink from '../../ExternalLink'
 import KeyValueTable from '../../KeyValueTable'
 import SpinnerWithIcon from '../../chrome/SpinnerWithIcon'
 import { standardFields } from './MetadataEditor'

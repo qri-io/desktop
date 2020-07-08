@@ -14,7 +14,7 @@ import { writeDataset } from '../../../actions/workbench'
 
 import { selectDatasetFromMutations, selectWorkingDatasetIsLoading, selectWorkingDatasetUsername, selectWorkingDatasetName, selectWorkingStatusInfo } from '../../../selections'
 
-import ExternalLink from '../../ExternalLink.TARGET_PLATFORM'
+import ExternalLink from '../../ExternalLink'
 import TextInput from '../../form/TextInput'
 import TextAreaInput from '../../form/TextAreaInput'
 import MultiTextInput from '../../form/MultiTextInput'

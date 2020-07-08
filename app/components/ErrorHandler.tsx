@@ -3,7 +3,7 @@ import versions from '../../version'
 import { CRASH_REPORTER_URL } from '../constants'
 
 import localStore from '../utils/localStore'
-import ExternalLink from './ExternalLink.TARGET_PLATFORM'
+import ExternalLink from './ExternalLink'
 import Button from './chrome/Button'
 
 export default class ErrorHandler extends React.Component {

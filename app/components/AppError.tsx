@@ -1,6 +1,6 @@
 import * as React from 'react'
 import WelcomeTemplate from './onboard/WelcomeTemplate.TARGET_PLATFORM'
-import ExternalLink from './ExternalLink.TARGET_PLATFORM'
+import ExternalLink from './ExternalLink'
 import { DISCORD_URL } from '../constants'
 
 export const AppError: React.FunctionComponent<any> = () =>
