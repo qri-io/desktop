@@ -3,7 +3,7 @@ import { connectRouter } from 'connected-react-router'
 import { apiActionTypes } from '../utils/actionType'
 
 import connectionReducer from './connection'
-import uiReducer from './ui'
+import uiReducer from './ui.TARGET_PLATFORM'
 import selectionsReducer from './selections'
 import myDatasetsReducer from './myDatasets'
 import workingDatasetReducer from './workingDataset'
