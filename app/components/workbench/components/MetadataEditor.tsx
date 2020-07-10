@@ -14,6 +14,8 @@ import { writeDataset } from '../../../actions/workbench'
 
 import { selectDatasetFromMutations, selectWorkingDatasetIsLoading, selectWorkingDatasetUsername, selectWorkingDatasetName, selectWorkingStatusInfo } from '../../../selections'
 
+import { QRI_IO_URL } from '../../../constants'
+
 import ExternalLink from '../../ExternalLink'
 import TextInput from '../../form/TextInput'
 import TextAreaInput from '../../form/TextAreaInput'
@@ -163,7 +165,7 @@ const MetadataEditorComponent: React.FunctionComponent<MetadataEditorProps> = (p
       <h4 className='metadata-viewer-title'>
         Standard Metadata
         &nbsp;
-        <ExternalLink id='meta-docs' href='https://qri.io/docs/reference/dataset/#meta'>
+        <ExternalLink id='meta-docs' href={`${QRI_IO_URL}/docs/reference/dataset/#meta`}>
           <span
             data-tip={'Qri\'s common metadata fields.<br/>Click for more info.'}
             className='text-input-tooltip'

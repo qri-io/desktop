@@ -1,3 +1,5 @@
+import { QRI_IO_URL } from '../../constants'
+
 export const exitLinkAttributes = {
-  href: 'https://qri.io'
+  href: QRI_IO_URL
 }

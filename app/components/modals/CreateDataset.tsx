@@ -14,6 +14,8 @@ import { importFile } from '../../actions/api'
 
 import { selectModal } from '../../selections'
 
+import { QRI_IO_URL } from '../../constants'
+
 import Modal from './Modal'
 import ExternalLink from '../ExternalLink'
 import TextInput from '../form/TextInput'
@@ -118,8 +120,8 @@ const CreateDatasetComponent: React.FunctionComponent<CreateDatasetProps> = (pro
     >
       <div className='content-wrap' >
         <div className='content'>
-          <p>Qri will create a directory for your new dataset, containing files linked to each of the dataset&apos;s <ExternalLink href='https://qri.io/docs/concepts/dataset/'>components</ExternalLink>.</p>
-          <p>The data file you specify will become your new dataset&apos;s <ExternalLink href='https://qri.io/docs/reference/dataset/#body'>body</ExternalLink> component.</p>
+          <p>Qri will create a directory for your new dataset, containing files linked to each of the dataset&apos;s <ExternalLink href={`${QRI_IO_URL}/docs/concepts/dataset/`}>components</ExternalLink>.</p>
+          <p>The data file you specify will become your new dataset&apos;s <ExternalLink href={`${QRI_IO_URL}/docs/reference/dataset/#body`}>body</ExternalLink> component.</p>
           <div className='flex-space-between'>
             <TextInput
               name='filePath'
