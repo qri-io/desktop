@@ -1,5 +1,4 @@
 import { AnyAction } from 'redux'
-import { ipcRenderer } from 'electron'
 
 import store from '../utils/localStore'
 import { apiActionTypes } from '../utils/actionType'
@@ -11,6 +10,7 @@ import {
   SELECTIONS_CLEAR,
   SELECTIONS_SET_ACTIVE_TAB
 } from './selections'
+import { blockMenusOnFirstLoad, blockMenusIfModalIsOpen } from './platformSpecific/ui.TARGET_PLATFORM'
 
 export const UI_SET_SIDEBAR_WIDTH = 'UI_SET_SIDEBAR_WIDTH'
 export const UI_ACCEPT_TOS = 'UI_ACCEPT_TOS'
@@ -66,7 +66,7 @@ const initialState = {
 }
 
 // send an event to electron to block menus on first load
-ipcRenderer.send('block-menus', true)
+if (blockMenusOnFirstLoad) blockMenusOnFirstLoad()
 
 const [, ADD_SUCC] = apiActionTypes('add')
 const [, INIT_SUCC] = apiActionTypes('init')
@@ -128,8 +128,7 @@ export default (state = initialState, action: AnyAction) => {
       const modal = action.payload
 
       // if modal is open, block electron menus
-      const blockMenus = modal.type !== 0
-      ipcRenderer.send('block-menus', blockMenus)
+      if (blockMenusIfModalIsOpen) blockMenusIfModalIsOpen(modal)
 
       return {
         ...state,

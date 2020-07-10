@@ -1,5 +1,3 @@
-import { ipcRenderer } from 'electron'
-
 import {
   UI_SET_SIDEBAR_WIDTH,
   UI_ACCEPT_TOS,
@@ -7,7 +5,6 @@ import {
   UI_OPEN_TOAST,
   UI_CLOSE_TOAST,
   UI_SET_MODAL,
-  UI_SIGNOUT,
   UI_HIDE_COMMIT_NUDGE,
   UI_SET_DATASET_DIR_PATH,
   UI_SET_EXPORT_PATH,
@@ -64,12 +61,9 @@ export const dismissModal = () => {
   return setModal({ type: ModalType.NoModal })
 }
 
-export const signout = () => {
-  ipcRenderer.send('block-menus', true)
-  return {
-    type: UI_SIGNOUT
-  }
-}
+// signout has platform specific implementation
+// when using the `signout` function, import it from this file
+export { signout } from './platformSpecific/ui.TARGET_PLATFORM'
 
 export const setHideCommitNudge = () => {
   return {

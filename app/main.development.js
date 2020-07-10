@@ -3,7 +3,7 @@ const { app, BrowserWindow, Menu, shell, ipcMain } = require('electron')
 const { autoUpdater } = require('electron-updater')
 const { BackendProcess } = require('./backend')
 const { download } = require('electron-dl')
-const DISCORD_URL = require('./constants').DISCORD_URL
+const { DISCORD_URL, QRI_IO_URL} = require('./constants')
 
 process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = '1'
 
@@ -35,8 +35,8 @@ if (app.setAboutPanelOptions) {
   app.setAboutPanelOptions({
     applicationName: 'Qri Desktop',
     applicationVersion: desktopVersion,
-    credits: 'https://qri.io',
-    website: 'https://qri.io',
+    credits: QRI_IO_URL,
+    website: QRI_IO_URL,
     iconPath: '../assets/qri-blob-logo-large.png'
   })
 }
@@ -447,13 +447,13 @@ app.on('ready', () =>
           {
             label: 'View Documentation...',
             click: () => {
-              shell.openExternal('https://qri.io/')
+              shell.openExternal(`${QRI_IO_URL}/`)
             }
           },
           {
             label: 'Contact Us...',
             click: () => {
-              shell.openExternal('https://qri.io/contact/')
+              shell.openExternal(`${QRI_IO_URL}/contact/`)
             }
           },
           {

@@ -2,7 +2,7 @@ import * as React from 'react'
 import { Action } from 'redux'
 import ExternalLink from '../ExternalLink'
 import WelcomeTemplate from './WelcomeTemplate'
-import { DISCORD_URL, GITHUB_ORG_URL } from '../../constants'
+import { DISCORD_URL, GITHUB_ORG_URL, QRI_IO_URL } from '../../constants'
 
 export interface WelcomeProps {
   onAccept: () => Action
@@ -21,7 +21,7 @@ const Welcome: React.FunctionComponent<WelcomeProps> = ({ onAccept }) =>
       <div>
           A few notes before we get started:<br />
         <ul>
-          <li>By using Qri you agree to our <ExternalLink id='tos' href='https://qri.io/legal/tos'>Terms of Service</ExternalLink></li>
+          <li>By using Qri you agree to our <ExternalLink id='tos' href={`${QRI_IO_URL}/legal/tos`}>Terms of Service</ExternalLink></li>
           <li>All Data on Qri is Public</li>
         </ul>
       </div>
