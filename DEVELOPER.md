@@ -4,8 +4,9 @@
 * [Coding Rules](#rules)
 * [Commit Message Guidelines](#commits)
 * [Writing Documentation](#documentation)
+* [Running Storybook](#storybook)
 
-## <a name="setup"> Development Setup
+## <a name="setup"></a> Development Setup 
 
 This document describes how to set up your development environment to build and test Qri, and
 explains the basic mechanics of using `git` and `yarn`.
@@ -195,3 +196,17 @@ A detailed explanation can be found in this [document][commit-message-format].
 
 
 ###### This documentation has been adapted from the [Data Together](https://github.com/datatogether/datatogether), [Hyper](https://github.com/zeit/hyper), and [AngularJS](https://github.com/angular/angularJS) documentation.
+
+## <a name="setup"></a>Running Storybook
+
+When developing new components for Qri Desktop, our team first builds them in [Storybook](https://storybook.js.org/docs/basics/introduction/). Storybook is a tool which allows us to build and showcase components in an isolated environment from our app.
+
+To run Storybook to view our component library, simply run the `yarn storybook` command in your terminal and you will be re-directed to your browser to view the stories. If you would only like to build the Storybook assets but not launch Storybook to open in-browser, you can run the `yarn build-storybook` command.
+
+When rendering Storybook stories which rely on fetched information from our [`qri` backend](https://github.com/qri-io/qri), you'll need to whitelist the storybook domain to comply with our CORS policy. To do this, follow these steps:
+
+1. Set 'http://localhost:6006' as an entry under `allowedorigins` in the `config.yaml` file of your local qri repo. (Note: your local qri repo is _not_ a refence to [`qri` backend](https://github.com/qri-io/qri) code. It is rather where your qri configuration, peer information, datasets, and other metadata are stored at your `QRI_PATH`.) You can make this change by either using the `qri` command line and running `qri config set` or by directly editing the `config.yaml` located at your `QRI_PATH`.
+2. Ensure the `qri` backend is running to receive your request by running `qri connect` in your terminal.
+
+
+
