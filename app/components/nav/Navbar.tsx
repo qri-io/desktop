@@ -47,7 +47,7 @@ const ForwardArrow: React.FunctionComponent<ArrowProps> = (props) => {
 }
 
 // Navbar is persistent chrome from app-wide navigation
-const NavbarComponent: React.FunctionComponent<NavbarProps> = ({ location, setModal, history }) => {
+export const NavbarComponent: React.FunctionComponent<NavbarProps> = ({ location, setModal, history }) => {
   const handleOnEnter = (e: React.KeyboardEvent) => {
     setModal({ q: e.target.value, type: ModalType.Search })
   }
