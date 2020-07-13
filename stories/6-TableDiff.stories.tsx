@@ -19,7 +19,7 @@ const patchStructuredData = {
     "+++": "djs_edits.csv",
     "add": 8, "rem": 4, "mod": 1
   },
-  "patch": [
+  "schema": [
     [[ [1,3], [1,5] ], [ "dj dj booth", 1,"yes" ] ],
     [" ", [ "mafintosh", 3, "no" ]],
     [" ", [ "lindsey losam", 2, "yes" ]],
@@ -34,7 +34,14 @@ const patchStructuredData = {
     [" ", [ "com truise", 4, "yes" ]],
     [" ", [ "Ryan Hemsworth",4,"yes"]],
     ["+", [ "Susan Collins", 3, "no"]]
-  ]
+  ], 
+  "diff": [],
+  "stat": {
+    data: {
+      inserts: 1,
+      deletes: 3
+    }
+  }
 }
 
 export const threeRemoveOneAdd = () => wrap(<TableDiff data={patchStructuredData} />)
@@ -51,7 +58,7 @@ const patchColSwap = {
     "---": "djs.csv",
     "+++": "djs_column_swap.csv"
   },
-  "patch": [
+  "schema": [
     [ [ [1,4], [1,4] ], null, [
       [" ", "dj dj booth"],
       ["-", 1],
@@ -80,7 +87,14 @@ const patchColSwap = {
       ["-", "yes"],
       ["+", 4]
     ]]
-  ]
+  ],
+  "diff": [],
+  "stat": {
+    data: {
+      inserts: 8,
+      deletes: 8
+    }
+  }
 }
 
 const patchColSwapIndexes = {
@@ -134,7 +148,7 @@ const patchColSwapAndEdits = {
     "---": "djs.csv",
     "+++": "djs_col_swap_and_edits.csv"
   },
-  "patch": [
+  "schema": [
     [ [1,2345], [1,435], null ],
     ["-", ["dj dj booth",1,"yes"] ],
     ["+", ["DJ dj booth","yes",2] ],
@@ -161,7 +175,14 @@ const patchColSwapAndEdits = {
       ["+", 4]
     ]],
     ["+", ["Susan Collins","no",3]]
-  ]
+  ],
+  "diff": [],
+  "stat": {
+    data: {
+      inserts: 1,
+      deletes: 3
+    }
+  }
 }
 
 export const colSwapAndEdits = () => wrap(<TableDiff data={patchColSwapAndEdits} />)
