@@ -16,13 +16,12 @@ export default {
   }
 }
 
-export const Home = () => {
-  return (
-    <Router>
-      <Route render={(props) => <NetworkHome {...props} />} />
-    </Router>
-  )
-}
+export const Home = () =>
+  <Router>
+    <Route render={(props) => <NetworkHome {...props} />} />
+  </Router>
+  
+
 
 Home.story = {
   name: 'Home',

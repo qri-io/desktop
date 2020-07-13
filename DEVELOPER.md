@@ -203,7 +203,7 @@ When developing new components for Qri Desktop, our team first builds them in [S
 
 To run Storybook to view our component library, simply run the `yarn storybook` command in your terminal and you will be re-directed to your browser to view the stories. If you would only like to build the Storybook assets but not launch Storybook to open in-browser, you can run the `yarn build-storybook` command.
 
-When rendering Storybook stories which rely on fetched information from our [`qri` backend](https://github.com/qri-io/qri), you'll need to whitelist the storybook domain to comply with our CORS policy. To do this, follow these steps:
+When rendering Storybook stories which rely on fetched information from our [`qri` backend](https://github.com/qri-io/qri), you'll need to whitelist the Storybook domain to comply with our CORS policy. To do this, follow these steps:
 
 1. Set 'http://localhost:6006' as an entry under `allowedorigins` in the `config.yaml` file of your local qri repo. (Note: your local qri repo is _not_ a refence to [`qri` backend](https://github.com/qri-io/qri) code. It is rather where your qri configuration, peer information, datasets, and other metadata are stored at your `QRI_PATH`.) You can make this change by either using the `qri` command line and running `qri config set` or by directly editing the `config.yaml` located at your `QRI_PATH`.
 2. Ensure the `qri` backend is running to receive your request by running `qri connect` in your terminal.
