@@ -3,8 +3,9 @@
 * [Development Setup](#setup)
 * [Coding Rules](#rules)
 * [Commit Message Guidelines](#commits)
-* [Writing Documentation](#documentation)
+* [Connecting to the Qri backend](#backend)
 * [Running Storybook](#storybook)
+
 
 ## <a name="setup"></a> Development Setup 
 
@@ -197,7 +198,19 @@ A detailed explanation can be found in this [document][commit-message-format].
 
 ###### This documentation has been adapted from the [Data Together](https://github.com/datatogether/datatogether), [Hyper](https://github.com/zeit/hyper), and [AngularJS](https://github.com/angular/angularJS) documentation.
 
-## <a name="setup"></a>Running Storybook
+## <a name="backend"></a>Connecting to the Qri backend
+
+This Qri Desktop application is a Graphical User Interface (GUI) client of our [Qri backend](https://github.com/qri-io/qri). The backend provides an API that this Desktop app utilizes to give our  users all the great features Qri has to offer like creating datasets, viewing dataset commit history and pushing datasets to [Qri cloud](https://qri.cloud/)!
+
+As such, developing on this Qri Desktop project relies on a connection to the Qri backend. To install the Qri backend on your machine, follow the instructions of your choice [here](https://qri.io/docs/reference/installing-qri-cli) and ensure that wherever the qri binary was installed has been [added to your PATH](https://qri.io/docs/reference/installing-qri-cli#configuring-your-path). This will allow you to type `qri` command line commands (e.g. `qri connect`) at your terminal. 
+
+When this Qri Desktop app is running, it will look for the Qri backend in a few places in this order:
+
+1. Is there a qri node already running on your machine? This would happen if you've run `qri connect`. If so, Qri Desktop will use this existing node.
+2. Is there a qri binary already installed on your PATH? If yes, use that binary.
+3. Is there qri binary internal to this Desktop app (at `'/desktop/backend/qri'`)? If so, use that. This Desktop app comes packaged with qri binary when a user [downloads](https://qri.io/download) the app and will look here as a last resort. For most Desktop users this is the only version of Qri backend they may have. If you as a developer have forked this project and not downloaded the app, you will not have this internal binary and need to download it separately.
+
+## <a name="storybook"></a>Running Storybook
 
 When developing new components for Qri Desktop, our team first builds them in [Storybook](https://storybook.js.org/docs/basics/introduction/). Storybook is a tool which allows us to build and showcase components in an isolated environment from our app.
 
@@ -207,6 +220,4 @@ When rendering Storybook stories which rely on fetched information from our [`qr
 
 1. Set 'http://localhost:6006' as an entry under `allowedorigins` in the `config.yaml` file of your local qri repo. (Note: your local qri repo is _not_ a refence to [`qri` backend](https://github.com/qri-io/qri) code. It is rather where your qri configuration, peer information, datasets, and other metadata are stored at your `QRI_PATH`.) You can make this change by either using the `qri` command line and running `qri config set` or by directly editing the `config.yaml` located at your `QRI_PATH`.
 2. Ensure the `qri` backend is running to receive your request by running `qri connect` in your terminal.
-
-
 
