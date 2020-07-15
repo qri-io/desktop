@@ -9,7 +9,7 @@ interface IncompatibleBackendProps {
 
 const IncompatibleBackend: React.FC<IncompatibleBackendProps> = ({ incompatibleVersion }) => (
   <WelcomeTemplate title='Incompatible Backend Version'>
-    <p>{`Incorrect backend version supplied. Expected qri v${backendVersion}, but have ${incompatibleVersion}. Please file an issue `}
+    <p>{`Incorrect backend version supplied. Expected qri v${backendVersion}, but have v${incompatibleVersion}. Please file an issue `}
       <ExternalLink id="file-issue" href="https://github.com/qri-io/desktop/issues/new">here</ExternalLink>.
     </p>
   </WelcomeTemplate>
