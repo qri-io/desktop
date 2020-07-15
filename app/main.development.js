@@ -102,8 +102,6 @@ app.on('ready', () =>
       log.info('main process ready')
       autoUpdater.logger = log
       autoUpdater.checkForUpdatesAndNotify()
-      backendProcess = new BackendProcess()
-      backendProcess.maybeStartup()
 
       mainWindow = new BrowserWindow({
         show: false,
@@ -127,6 +125,43 @@ app.on('ready', () =>
         mainWindow.show()
         mainWindow.focus()
         mainWindow.webContents.send('set-debug-log-path', backendProcess.debugLogPath)
+      })
+
+      backendProcess = new BackendProcess()
+      backendProcess.checkNoActiveBackendProcess()
+      .then(backendProcess.checkBackendCompatibility)
+      .then(backendProcess.checkNeedsMigration)
+      .then((needsMigration) => {
+        if (needsMigration) {
+          log.info("migrating backend")
+          // this doesn't trigger migrations, which happens automatically
+          // when we run `launchProcess`, but instead alerts the user
+          // that we are running a migration and it might take a moment
+          mainWindow.webContents.send("migrating-backend")
+        }
+      })
+      .then(backendProcess.launchProcess)
+      .catch(err => {
+        switch (err.message) {
+          case "backend-already-running":
+            log.info("a qri backend is already running at port 2503")
+            mainWindow.webContents.send("backend-already-running")
+            return
+          case "incompatible-backend":
+            log.info("qri backend is incompatible")
+            mainWindow.webContents.send("incompatible-backend", backendProcess.backendVer)
+            return
+          case "migration-failed":
+            log.debug("migration-failed")
+            mainWindow.webContents.send("migration-failed")
+            return
+          case "error-launching-backend":
+            log.debug("error-launching-backend")
+            mainWindow.webContents.send("error-launching-backend")
+            return
+          default:
+            log.error(err.message)
+        }
       })
 
       mainWindow.on('closed', () => {

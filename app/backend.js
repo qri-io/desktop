@@ -1,10 +1,14 @@
 const log = require('electron-log')
 const childProcess = require('child_process')
 const fs = require('fs')
+const yaml = require('js-yaml')
 const path = require('path')
 const os = require('os')
+const http = require('http')
 const { dialog } = require('electron')
 
+var lowestCompatibleBackend = [0, 9, 9]
+var lowestCompatibleConfigRevision = 2
 
 // BackendProcess runs the qri backend binary in connected'ed mode, to handle api requests.
 class BackendProcess {
@@ -12,10 +16,26 @@ class BackendProcess {
     this.qriBinPath = null
     this.process = null
     this.debugLogPath = null
+    this.backendVer = null
+    this.configRev = null
 
     // Default to writing to stdout & stderr
     this.out = process.stdout
-    this.err = process.stderr
+    this.in = process.in
+    this.err = process.stderr;
+
+    [
+      'setQriBinPath',
+      'setBackendVer',
+      'setConfigRev',
+      'standardRepoPath',
+      'checkNoActiveBackendProcess',
+      'checkBackendCompatibility',
+      'checkNeedsMigration',
+      'launchProcess'
+    ].forEach((m) => { this[m] = this[m].bind(this) })
+
+
     try {
       // Create a log whose filename contains the current day.
       const nowTime = new Date();
@@ -41,9 +61,13 @@ class BackendProcess {
         detail: err
       })
     }
+    this.setQriBinPath()
+    this.setBackendVer()
+    this.setConfigRev()
   }
 
-  maybeStartup () {
+  // running this function will ensure that a qriBinPath exists
+  setQriBinPath () {
     // In development node, use installed qri binary
     if (process.env.NODE_ENV === 'development') {
       let processResult = childProcess.execSync('which qri');
@@ -59,12 +83,31 @@ class BackendProcess {
     }
 
     if (!this.qriBinPath) {
-      log.warn('no qri bin path found, backend launch')
-      return
+      log.warn('no qri bin path found, backend launch failed')
+      throw new Error("no qri bin path found, backend launch failed")
     }
-    // Run the binary if it is found
     log.info(`found qri binary at path: ${this.qriBinPath}`)
-    this.launchProcess()
+  }
+
+  setBackendVer () {
+    let processResult = childProcess.execSync(`"${this.qriBinPath}" version`)
+    this.backendVer = processResult.toString().trim()
+    log.info("qri backend version", this.backendVer)
+
+  }
+
+  setConfigRev () {
+    var qriRepoPath = this.standardRepoPath()
+    var configPath = path.join(qriRepoPath, "config.yaml")
+    log.info(`path to config: ${configPath}`)
+    try {
+      let fileContents = fs.readFileSync(configPath, 'utf8');
+      let config = yaml.safeLoad(fileContents);
+      this.configRev = config.Revision
+    } catch (e) {
+      log.error(`error getting config revision: ${e}`)
+      throw e
+    }
   }
 
   close () {
@@ -74,16 +117,63 @@ class BackendProcess {
     }
   }
 
+  standardRepoPath() {
+    var qriRepoPath = process.env.QRI_PATH
+    if (qriRepoPath === "") {
+      home = os.homedir()
+      qriRepoPath = path.join(home, ".qri")
+    }
+    
+    log.info(`QRI_PATH is ${qriRepoPath}`)
+    return qriRepoPath
+  }
+
+  async checkNoActiveBackendProcess() {
+    const healthCheck = async () => {
+      return new Promise((res, rej) => {
+        http.get('http://localhost:2503/health', (data) => {
+          res(true)
+        }).on('error', (e) => {
+          res(false)
+        })
+      })
+    }
+
+    var isQriRunning = await healthCheck()
+    if (isQriRunning) {
+      throw new Error("backend-already-running")
+    }
+    return
+  }
+
+  async checkBackendCompatibility () {
+    log.info(`checking to see if given backend version ${this.backendVer} is compatible with expected version ${lowestCompatibleBackend.join(".")}`)
+    var compatible = false
+    try {
+      let ver = this.backendVer
+      if (this.backendVer.indexOf("-dev") !== -1) {
+        ver = ver.slice(0, this.backendVer.indexOf("-dev"))
+      }
+      ver = ver.split(".").map((i) => parseInt(i))
+      compatible = lowestCompatibleBackend.every((val, i) => {
+        if (val <= ver[i]) {
+          return
+        }
+        throw new Error("incompatible-backend")
+      })
+    } catch (e) {
+      throw e
+    }
+  }
+
   launchProcess () {
     try {
-      let processResult = childProcess.execSync(`"${this.qriBinPath}" version`)
-      let qriBinVersion = processResult.toString().trim();
-      this.process = childProcess.spawn(this.qriBinPath, ['connect', '--setup', '--log-all'], { stdio: ['ignore', this.out, this.err] })
+      this.process = childProcess.spawn(this.qriBinPath, ['connect', '--migrate', '--log-all'], { stdio: ['ignore', this.out, this.err] })
       this.process.on('error', (err) => { this.handleEvent('error', err) })
       this.process.on('exit', (err) => { this.handleEvent('exit', err) })
       this.process.on('close', (err) => { this.handleEvent('close', err) })
       this.process.on('disconnect', (err) => { this.handleEvent('disconnect', err) })
-      log.info(`starting up qri backend version ${qriBinVersion}`)
+      log.info(`starting up qri backend version ${this.backendVer}`)
     } catch (err) {
       log.error(`starting background process: ${err}`)
     }
@@ -92,8 +182,22 @@ class BackendProcess {
   handleEvent (kind, err) {
     if (err) {
       log.error(`event ${kind} from backend: ${err}`)
+      throw err
     } else {
       log.warn(`event ${kind} from backend`)
+    }
+  }
+
+  checkNeedsMigration() {
+    try {
+      if (lowestCompatibleConfigRevision <= this.configRev) {
+        log.info(`config revisions are compatible`)
+        return false
+      }
+      log.info(`given config revision ${this.configRev} not compatible with expected revision ${lowestCompatibleConfigRevision}`)
+      return true
+    } catch (e) {
+        throw e
     }
   }
 
