@@ -15,7 +15,7 @@ const initialDataState: NetworkHomeData = {
 }
 
 // NetworkHome accepts no props
-const NetworkHome: React.FunctionComponent<RouteProps> = ({ history }) => {
+export const NetworkHome: React.FunctionComponent<RouteProps> = ({ history }) => {
   const [loading, setLoading] = React.useState(true)
   const [data, setData] = React.useState(initialDataState)
   const [error, setError] = React.useState('')

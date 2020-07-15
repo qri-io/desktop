@@ -2,8 +2,10 @@ import React from 'react'
 
 export interface DiffStatProps {
   data: {
-    inserts: number
-    deletes: number
+    // inserts may be undefined if the datasets are identical
+    inserts?: number
+    // deletes may be undefined if the datasets are identical
+    deletes?: number
   }
 }
 

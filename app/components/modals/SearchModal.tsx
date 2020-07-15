@@ -30,7 +30,7 @@ interface SearchProps extends RouteProps {
 // time in milliseconds to wait for debounce
 const debounceTime = 300
 
-const SearchComponent: React.FunctionComponent<SearchProps> = (props) => {
+export const SearchComponent: React.FunctionComponent<SearchProps> = (props) => {
   const { modal, onDismissed, history } = props
   const { q } = modal
   const [local, setLocal] = React.useState(false)

@@ -15,7 +15,7 @@ const LineDiff: React.FunctionComponent<LineDiffProps> = (props: LineDiffProps) 
       <div className='header'>
         <b>{data.meta['---']}</b>
         <div style={{ 'float': 'right' }}>
-          <DiffStat added={data.meta.added} removed={data.meta.removed} />
+          <DiffStat data={{ inserts: data.meta.added, deletes: data.meta.removed }} />
         </div>
       </div>
       <table className='content'>
