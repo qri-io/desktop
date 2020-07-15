@@ -2,8 +2,8 @@ import React from 'react'
 
 export interface DiffStatProps {
   data: {
-    inserts: number
-    deletes: number
+    inserts?: number
+    deletes?: number
   }
 }
 
