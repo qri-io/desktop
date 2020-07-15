@@ -6,7 +6,7 @@ import { FetchOptions } from '../store/api'
 import versions from '../../version'
 import { CRASH_REPORTER_URL } from '../constants'
 
-interface CrashReportSenderProps extends ErrorProps {
+interface ReportCrashAndReloadProps extends ErrorProps {
   title: string
 }
 
@@ -15,7 +15,7 @@ export interface ErrorProps {
   errorInfo?: React.ErrorInfo
 }
 
-const CrashReportSender: React.FC<CrashReportSenderProps> = ({ title, error, errorInfo }) => {
+const ReportCrashAndReload: React.FC<ReportCrashAndReloadProps> = ({ title, error, errorInfo }) => {
   const [sendingReport, setSendingReport] = useState(false)
   const [sentReport, setSentReport] = useState(false)
 
@@ -87,4 +87,4 @@ const postCrashReport = async (error: ErrorProps['error'], errorInfo: ErrorProps
   return res
 }
 
-export default CrashReportSender
+export default ReportCrashAndReload

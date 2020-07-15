@@ -1,6 +1,6 @@
 import React from 'react'
 
-import CrashReportSender, { ErrorProps } from './CrashReportSender'
+import ReportCrashAndReload, { ErrorProps } from './ReportCrashAndReload'
 import localStore from '../utils/localStore'
 
 export default class ErrorHandler extends React.Component {
@@ -27,7 +27,7 @@ export default class ErrorHandler extends React.Component {
     }
 
     return (
-      <CrashReportSender
+      <ReportCrashAndReload
         title='Dang. It broke.'
         error={this.state.error}
         errorInfo={this.state.errorInfo}/>

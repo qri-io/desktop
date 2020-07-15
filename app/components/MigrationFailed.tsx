@@ -1,6 +1,6 @@
 import React from 'react'
-import CrashReportSender from './CrashReportSender'
+import ReportCrashAndReload from './ReportCrashAndReload'
 
-const MigrationFailed: React.FC<{}> = () => <CrashReportSender title='The Qri backend migration failed!'/>
+const MigrationFailed: React.FC<{}> = () => <ReportCrashAndReload title='The Qri backend migration failed!'/>
 
 export default MigrationFailed

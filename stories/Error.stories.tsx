@@ -1,6 +1,6 @@
 import React from 'react'
 
-import CrashReportSender from '../app/components/CrashReportSender'
+import ReportCrashAndReload from '../app/components/ReportCrashAndReload'
 
 export default {
   title: 'Error',
@@ -9,7 +9,7 @@ export default {
   }
 }
 
-const crashReportSenderProps = {
+const reportCrashAndReloadProps = {
   title: 'Storybook test has crashed',
   error: new Error('Test error for Storybook!'),
   errorInfo: { 
@@ -19,9 +19,9 @@ const crashReportSenderProps = {
     in App` }
 }
   
-export const crashReportSender = () => (<CrashReportSender {...crashReportSenderProps}/>)
+export const reportCrashAndReload = () => (<ReportCrashAndReload {...reportCrashAndReloadProps}/>)
   
-crashReportSender.story = {
-  name: 'Crash Report Sender',
+reportCrashAndReload.story = {
+  name: 'Report Crash and Reload',
   parameters: { note: 'Screen when app throws an error and is caught. Prompts error report, issue and reload CTAs' }
 }

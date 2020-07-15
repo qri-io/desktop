@@ -7,7 +7,7 @@ import MigrationFailed from '../app/components/MigrationFailed'
 export default {
   title: 'App Launch',
   parameters: {
-    notes: 'List of migration components rendered on app launch'
+    notes: 'List of migration components conditionally rendered on app launch'
   }
 }
 
