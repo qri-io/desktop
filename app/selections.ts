@@ -10,7 +10,8 @@ import Store, {
   Selections,
   Toast,
   ApiConnection,
-  StatusInfo
+  StatusInfo,
+  BootupComponentType
 } from './models/store'
 import { Details, DetailsType } from "./models/details"
 import { datasetToVersionInfo } from "./actions/mappingFuncs"
@@ -309,6 +310,9 @@ export function selectToast (state: Store): Toast {
   return state.ui.toast
 }
 
+export function selectBootupComponent (state: Store): BootupComponentType {
+  return state.ui.bootupComponent
+}
 /**
  *
  * WORKINGDATASET STATE TREE

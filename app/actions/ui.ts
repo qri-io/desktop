@@ -9,10 +9,11 @@ import {
   UI_SET_DATASET_DIR_PATH,
   UI_SET_EXPORT_PATH,
   UI_SET_DETAILS_BAR,
-  UI_SET_IMPORT_FILE_DETAILS
+  UI_SET_IMPORT_FILE_DETAILS,
+  UI_SET_BOOTUP_COMPONENT
 } from '../reducers/ui'
 
-import { ToastType } from '../models/store'
+import { ToastType, BootupComponentType } from '../models/store'
 import { Modal, ModalType } from '../models/modals'
 import { Details } from '../models/details'
 
@@ -98,5 +99,12 @@ export const setImportFileDetails = (fileName: string, fileSize: number) => {
     type: UI_SET_IMPORT_FILE_DETAILS,
     fileName,
     fileSize
+  }
+}
+
+export const setBootupComponent = (component: BootupComponentType) => {
+  return {
+    type: UI_SET_BOOTUP_COMPONENT,
+    component
   }
 }
