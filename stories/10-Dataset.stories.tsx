@@ -2,6 +2,7 @@ import React from 'react'
 
 import DatasetDetailsSubtext from '../app/components/dataset/DatasetDetailsSubtext'
 import { Dataset as IDataset } from '../app/models/dataset'
+import { VersionInfo } from '../app/models/store'
 import TitleBar from '../app/components/dataset/TitleBar'
 import Overview from '../app/components/dataset/Overview'
 import Dataset from '../app/components/dataset/Dataset'
@@ -42,7 +43,7 @@ titleBar.story = {
 }
 
 export const detailsSubtext = () => {
-  const data: Dataset = overviewDataset
+  const data = versionInfoDataset
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', height: '100%', justifyContent: 'space-between' }}>
       <div style={{ background: 'grey' }}>
@@ -90,6 +91,21 @@ detailsSubtext.story = {
   parameters: {
     notes: 'sm/md, light/muted/dark'
   }
+}
+
+const versionInfoDataset: VersionInfo =  {
+  username: 'owner-username',
+  profileId: '123',
+  name: 'jeopardy_questions',
+  path: '/ipfs/QmY9WcXXUnHJbYRA28LRctiL4qu4y',
+  fsiPath: '/path/to/local',
+  foreign: true,
+  metaTitle: 'Jeopardy questions throughout time',
+  themeList: "trivia,questions",
+  bodyFormat: 'json',
+  commitTitle: 'initial commit',
+  commitMessage: 'uploading bank of all jeopardy questions',
+  commitTime: new Date('2020-07-13'),
 }
 
 const overviewDataset: IDataset = {

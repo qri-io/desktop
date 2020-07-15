@@ -4,7 +4,23 @@ import TableDiffSchemaHead from './TableDiffSchemaHead'
 import DiffStat from './DiffStat'
 
 interface TableDiffProps {
-  data: any
+  data: TableDiffData
+}
+
+interface TableDiffData {
+  stat: TableDiffStat
+  schemaStat: TableDiffStat
+  schema: unknown[][]
+  diff: unknown[][]
+}
+
+interface TableDiffStat {
+  leftNodes: number
+  leftWeight: number
+  rightNodes: number
+  rightWeight: number
+  inserts?: number
+  deletes?: number
 }
 
 const initialState: Record<string, any> = { 'all': true }
