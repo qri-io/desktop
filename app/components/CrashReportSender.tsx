@@ -10,7 +10,7 @@ interface CrashReportSenderProps extends ErrorProps {
   title: string
 }
 
-interface ErrorProps {
+export interface ErrorProps {
   error?: Error
   errorInfo?: React.ErrorInfo
 }
