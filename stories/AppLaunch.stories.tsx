@@ -27,7 +27,7 @@ migratingBackend.story = {
 
 export const migrationFailed = () => <MigrationFailed />
 
-migratingBackend.story = {
+migrationFailed.story = {
   name: 'Migration Failed',
   parameters: { note: 'Screen when backend migration has failed' }
 }
