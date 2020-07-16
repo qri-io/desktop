@@ -102,8 +102,6 @@ app.on('ready', () =>
       log.info('main process ready')
       autoUpdater.logger = log
       autoUpdater.checkForUpdatesAndNotify()
-      backendProcess = new BackendProcess()
-      backendProcess.maybeStartup()
 
       mainWindow = new BrowserWindow({
         show: false,
@@ -553,5 +551,49 @@ app.on('ready', () =>
         quitting = true
       })
 
+      ipcMain.on('app-fully-loaded', () => {
+        log.info("starting backend process")
+        backendProcess = new BackendProcess()
+        backendProcess.checkNoActiveBackendProcess()
+        .then(backendProcess.checkBackendCompatibility)
+        .then(backendProcess.checkNeedsMigration)
+        .then((needsMigration) => {
+          if (needsMigration) {
+            log.info("migrating backend")
+            // this doesn't trigger migrations, which happens automatically
+            // when we run `launchProcess`, but instead alerts the user
+            // that we are running a migration and it might take a moment
+            mainWindow.webContents.send("migrating-backend")
+          }
+        })
+        .then(backendProcess.launchProcess)
+        .catch(err => {
+          switch (err.message) {
+            case "backend-already-running":
+              log.info("a qri backend is already running at port 2503")
+              mainWindow.webContents.send("backend-already-running")
+              break
+            case "incompatible-backend":
+              log.info("qri backend is incompatible")
+              mainWindow.webContents.send("incompatible-backend", backendProcess.backendVer)
+              break
+            case "migration-failed":
+              log.debug("migration-failed")
+              mainWindow.webContents.send("migration-failed")
+              break
+            case "error-launching-backend":
+              log.debug("error-launching-backend")
+              mainWindow.webContents.send("error-launching-backend")
+              break
+            default:
+              log.error(err.message)
+          }
+          // if we error here, we should close the process
+          log.info("closing backend process")
+          backendProcess.close()
+        })
+      })
+
       log.info('app launched')
-    }))
+    })
+  )
