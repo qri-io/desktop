@@ -17,7 +17,6 @@ class BackendProcess {
     this.process = null
     this.debugLogPath = null
     this.backendVer = null
-    this.configRev = null
 
     // Default to writing to stdout & stderr
     this.out = process.stdout
@@ -27,7 +26,6 @@ class BackendProcess {
     [
       'setQriBinPath',
       'setBackendVer',
-      'setConfigRev',
       'standardRepoPath',
       'checkNoActiveBackendProcess',
       'checkBackendCompatibility',
@@ -63,7 +61,6 @@ class BackendProcess {
     }
     this.setQriBinPath()
     this.setBackendVer()
-    this.setConfigRev()
   }
 
   // running this function will ensure that a qriBinPath exists
@@ -94,20 +91,6 @@ class BackendProcess {
     this.backendVer = processResult.toString().trim()
     log.info("qri backend version", this.backendVer)
 
-  }
-
-  setConfigRev () {
-    var qriRepoPath = this.standardRepoPath()
-    var configPath = path.join(qriRepoPath, "config.yaml")
-    log.info(`path to config: ${configPath}`)
-    try {
-      let fileContents = fs.readFileSync(configPath, 'utf8');
-      let config = yaml.safeLoad(fileContents);
-      this.configRev = config.Revision
-    } catch (e) {
-      log.error(`error getting config revision: ${e}`)
-      throw e
-    }
   }
 
   close () {
@@ -192,16 +175,17 @@ class BackendProcess {
   }
 
   checkNeedsMigration() {
+    log.info("checking for backend migrations")
     try {
-      if (lowestCompatibleConfigRevision <= this.configRev) {
-        log.info(`config revisions are compatible`)
-        return false
+      childProcess.execSync(`"${this.qriBinPath}" list`)
+    } catch (err) {
+      // status code 2 means we need to run a migration
+      if (err.status == 2) {
+        return true
       }
-      log.info(`given config revision ${this.configRev} not compatible with expected revision ${lowestCompatibleConfigRevision}`)
-      return true
-    } catch (e) {
-        throw e
+      log.error(`error checking for migration: ${err}`)
     }
+    return false
   }
 
   findQriBin (pathList) {
