@@ -1,7 +1,6 @@
 const log = require('electron-log')
 const childProcess = require('child_process')
 const fs = require('fs')
-const yaml = require('js-yaml')
 const path = require('path')
 const os = require('os')
 const http = require('http')
