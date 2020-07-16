@@ -510,9 +510,9 @@ app.on('ready', () =>
       })
 
       // catch export events
-      ipcMain.on('export', async (e, { url, directory }) => {
+      ipcMain.on('export', async (e, { url, filename, directory }) => {
         const win = BrowserWindow.getFocusedWindow()
-        await download(win, url, { directory })
+        await download(win, url, { filename, directory })
       })
 
       ipcMain.on('block-menus', (e, blockMenus) => {
