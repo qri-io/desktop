@@ -148,7 +148,7 @@ class BackendProcess {
 
   async checkBackendCompatibility () {
     log.info(`checking to see if given backend version ${this.backendVer} is compatible with expected version ${lowestCompatibleBackend.join(".")}`)
-    var compatible = false
+    let compatible = false
     try {
       let ver = this.backendVer
       if (this.backendVer.indexOf("-dev") !== -1) {
@@ -157,12 +157,15 @@ class BackendProcess {
       ver = ver.split(".").map((i) => parseInt(i))
       compatible = lowestCompatibleBackend.every((val, i) => {
         if (val <= ver[i]) {
-          return
+          return true
         }
-        throw new Error("incompatible-backend")
+        return false
       })
     } catch (e) {
       throw e
+    }
+    if (!compatible) {
+      throw new Error("incompatible-backend")
     }
   }
 
