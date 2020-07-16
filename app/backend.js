@@ -7,8 +7,7 @@ const os = require('os')
 const http = require('http')
 const { dialog } = require('electron')
 
-var lowestCompatibleBackend = [0, 9, 9]
-var lowestCompatibleConfigRevision = 2
+const lowestCompatibleBackend = [0, 9, 9]
 
 // BackendProcess runs the qri backend binary in connected'ed mode, to handle api requests.
 class BackendProcess {
@@ -154,7 +153,7 @@ class BackendProcess {
 
   launchProcess () {
     try {
-      this.process = childProcess.spawn(this.qriBinPath, ['connect', '--migrate', '--log-all'], { stdio: ['ignore', this.out, this.err] })
+      this.process = childProcess.spawn(this.qriBinPath, ['connect', '--migrate', '--log-all', '--setup', '--no-prompt'], { stdio: ['ignore', this.out, this.err] })
       this.process.on('error', (err) => { this.handleEvent('error', err) })
       this.process.on('exit', (err) => { this.handleEvent('exit', err) })
       this.process.on('close', (err) => { this.handleEvent('close', err) })
@@ -177,7 +176,7 @@ class BackendProcess {
   checkNeedsMigration() {
     log.info("checking for backend migrations")
     try {
-      childProcess.execSync(`"${this.qriBinPath}" list`)
+      childProcess.execSync(`"${this.qriBinPath}" config get`)
     } catch (err) {
       // status code 2 means we need to run a migration
       if (err.status == 2) {

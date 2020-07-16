@@ -126,17 +126,14 @@ class AppComponent extends React.Component<AppProps, AppState> {
   }
 
   private handleIncompatibleBackend (_: Electron.IpcRendererEvent, ver: string) {
-    console.log('incompatible event triggered')
     this.props.setBootupComponent(ver)
   }
 
   private handleMigratingBackend () {
-    console.log('migration triggered')
     this.props.setBootupComponent('migrating')
   }
 
   private handleMigrationFailure () {
-    console.log("migration failure triggered")
     this.props.setBootupComponent('migrationFailure')
   }
 
