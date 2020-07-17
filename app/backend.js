@@ -110,6 +110,7 @@ class BackendProcess {
   }
 
   async checkNoActiveBackendProcess() {
+    log.info("checking for active backend process")
     const healthCheck = async () => {
       return new Promise((res, rej) => {
         http.get('http://localhost:2503/health', (data) => {

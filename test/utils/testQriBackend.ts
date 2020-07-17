@@ -4,6 +4,7 @@ import fs, { WriteStream } from 'fs'
 import childProcess from 'child_process'
 import path from 'path'
 import rimraf from 'rimraf'
+import http from 'http'
 
 // TestBackendProcess runs the qri backend binary in connected'ed mode,
 // configured for isolated testing in a temporary directory
@@ -21,17 +22,17 @@ export default class TestBackendProcess {
     this.dir = ''
   }
 
-  start () {
+  async start () {
     // const { resourcesPath = '' } = process
     // Locate the binary for the qri backend command-line
     // this.qriBinPath = this.findQriBin(['qri', resourcesPath, path.join(__dirname, '../../')])
     this.qriBinPath = this.findQriBin()
     if (this.qriBinPath === '') {
-      throw `couldn't find a qri binary on your $PATH, please install qri backend to run e2e tests`
+      throw new Error(`couldn't find a qri binary on your $PATH, please install qri backend to run e2e tests`)
     }
     // Run the binary if it is found
     console.log(`using qri binary: '${this.qriBinPath}'`)
-    this.launchProcess()
+    await this.launchProcess()
   }
 
   close () {
@@ -42,13 +43,15 @@ export default class TestBackendProcess {
     }
   }
 
-  launchProcess () {
+  async launchProcess () {
     try {
       const [ base, qriPath ] = this.setupRepo()
 
       this.stdout = fs.createWriteStream(path.join(base, 'stdout.log'))
       this.stderr = fs.createWriteStream(path.join(base, 'stderr.log'))
-      this.process = childProcess.spawn(this.qriBinPath, ['connect', '--setup'], {
+      console.log("backend err log:", path.join(base, 'stderr.log'))
+      console.log("launching backend process")
+      this.process = childProcess.spawn(this.qriBinPath, ['connect', '--setup', '--no-prompt'], {
         // stdio: ['pipe', this.stdout, this.stderr],
         env: Object.assign(process.env, {
           'QRI_SETUP_CONFIG_DATA': qriConfig,
@@ -60,19 +63,47 @@ export default class TestBackendProcess {
       this.process.stderr.pipe(this.stderr)
 
       this.process.on('error', (err: any) => { this.handleEvent('error', err) })
-      this.process.on('exit', () => { /* noop */ })
-      this.process.on('close', (err: any) => { this.teardownRepo() })
+      this.process.on('exit', (err: any) => { this.handleEvent('exit', err) })
+      this.process.on('close', (err: any) => {
+        this.handleEvent('close', err)
+        this.teardownRepo()
+      })
       this.process.on('disconnect', (err: any) => { this.handleEvent('disconnect', err) })
+      console.log("in test backend process, checking for active backend process")
+      const healthCheck = async () => {
+        return new Promise((resolve) => {
+          http.get('http://localhost:2503/health', (data) => {
+            resolve(true)
+          }).on('error', (e) => {
+            resolve(false)
+          })
+        })
+      }
+
+      var isQriRunning = await healthCheck()
+      // TODO (ramfox): this is stupid... but having a hard time understanding
+      // how to get this to block/to sleep for a second rn. Someone plz kill it with fire
+      var attempts = 1000
+      while (!isQriRunning) {
+        isQriRunning = await healthCheck()
+        attempts++
+      }
+      if (!isQriRunning) {
+        throw new Error("Test backend process has not started")
+      }
+      console.log("qri test backend has started after health checks", attempts)
+      return isQriRunning
     } catch (err) {
-      console.log('ERROR, Starting background process: ' + err)
+      console.log('ERROR, Starting background process: ', err)
     }
+    return false
   }
 
   handleEvent (kind: string, err: Error) {
     if (err) {
-      console.log(`err event '${kind}' from backend: ${err}`)
+      console.log(`test backend: err event '${kind}' from backend: ${err}`)
     } else {
-      console.log(`event '${kind}' from backend`)
+      console.log(`test backend: event '${kind}' from backend`)
     }
   }
 
@@ -92,11 +123,12 @@ export default class TestBackendProcess {
     if (fs.existsSync(filename)) {
       return filename
     }
-    throw 'Could not find qri binary'
+    throw new Error('Could not find qri binary')
   }
 
   setupRepo () {
     this.dir = path.join(os.tmpdir(), 'qri_desktop_test_backend')
+    console.log("creating test backend repo dir", this.dir)
     fs.mkdirSync(this.dir)
 
     const qriPath = path.join(this.dir, '.qri')
@@ -107,6 +139,7 @@ export default class TestBackendProcess {
 
   teardownRepo () {
     if (this.dir !== '') {
+      console.log("removing test repo dir")
       rimraf(this.dir, (err) => {
         if (err) {
           console.log(err)

@@ -48,11 +48,11 @@ const socketMiddleware = () => {
         // if the websocket message Username and Dsname match the peername and
         // dataset name of the dataset that is currently being viewed, fetch
         // status
-        if (peername && name && peername === event.data.Username && name === event.Dsname && !workingDataset.isWriting && !workingDataset.isSaving) {
+        if (peername && name && peername === event.data.Username && name === event.data.Dsname && !workingDataset.isWriting && !workingDataset.isSaving) {
           const components = Object.keys(status)
           components.forEach((component: string) => {
-            if (event.Source === status[component].filepath) {
-              const wsMtime = new Date(Date.parse(event.Time))
+            if (event.data.Source === status[component].filepath) {
+              const wsMtime = new Date(Date.parse(event.data.Time))
               // if there is and mtime or if the ws mtime is older then the status mtime, don't refetch
               if (status[component].mtime && !(status[component].mtime < wsMtime)) return
               // if there is no mtime, or if the ws mtime is newer then the status mtime, fetch!
@@ -64,7 +64,7 @@ const socketMiddleware = () => {
         }
         break
       default:
-        console.log('default')
+        console.log(event.type)
     }
   }
 
