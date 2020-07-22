@@ -19,7 +19,7 @@ export interface DatasetStatusProps {
 
 const DatasetStatus: React.FC<DatasetStatusProps> = ({ published, linkedToFilesystem, qriRef: { username, name }, fsiPath, updatesAvailable, updateDataset }) => (
   <div className="flex-space-between">
-    <ExternalLink href={`${QRI_CLOUD_URL}/${username}/${name}`} className="dataset-link" data-tip="Published">
+    <ExternalLink href={`${QRI_CLOUD_URL}/${username}/${name}`} className="dataset-link" tooltip="Published">
       <Icon icon="publish" size="sm" color={published ? 'dark' : 'medium'}/>
     </ExternalLink>
     <a onClick={(e) => onClickOpenInFinder(e, fsiPath)} className="dataset-link" data-tip="Linked to filesystem">

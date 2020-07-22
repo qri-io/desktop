@@ -1,4 +1,5 @@
-import React from 'react'
+import React, { ReactElement } from 'react'
+import ReactTooltip from 'react-tooltip'
 import { AnyAction } from 'redux'
 
 import DatasetStatus, { DatasetStatusProps } from '../app/components/collection-v2/DatasetStatus'
@@ -10,7 +11,21 @@ export default {
   }
 }
 
-const datasetStatusWrapperStyles = { height: '50px', width: '110px', padding: 15 }
+const tooltipWrapper = (component: ReactElement, storyTitle: string) => (
+  <>
+    <ReactTooltip 
+      place='bottom'
+      type='dark'
+      effect='solid'
+      delayShow={200}
+      multiline 
+    />
+    <p>{storyTitle}</p>
+    <div style={{ height: '50px', width: '110px', padding: 15 }}>
+      {component}
+    </div>
+  </>
+)
 
 const qriRef = {
   location: 'foo/bar/at/ipfs/QmFme0d/body',
@@ -32,16 +47,7 @@ const datasetPublishedProps: DatasetStatusProps = {
   updatesAvailable: false,
 }
 
-export const datasetPublished = () => {
-    return (
-    <>
-      <p>Dataset Published</p>  
-      <div style={{...datasetStatusWrapperStyles}}>
-        <DatasetStatus {...datasetPublishedProps} />
-      </div>
-    </>
-  )
-}
+export const datasetPublished = () => tooltipWrapper(<DatasetStatus {...datasetPublishedProps} />, 'Dataset Published')
 
 datasetPublished.story = {
     name: 'Published',
@@ -57,16 +63,7 @@ const datasetLinkedToFilesystemProps: DatasetStatusProps = {
   updatesAvailable: false,
 }
 
-export const datasetLinkedToFilesystem = () => {
-    return (
-    <>
-      <p>Dataset Linked to Filesystem</p>  
-      <div style={{...datasetStatusWrapperStyles}}>
-        <DatasetStatus {...datasetLinkedToFilesystemProps} />
-      </div>
-    </>
-  )
-}
+export const datasetLinkedToFilesystem = () => tooltipWrapper(<DatasetStatus {...datasetLinkedToFilesystemProps} />, 'Dataset Linked to Filesystem')
 
 datasetLinkedToFilesystem.story = {
   name: 'Linked to filesystem',
@@ -82,16 +79,7 @@ const datasetUpdatesAvailableProps: DatasetStatusProps = {
   updatesAvailable: true,
 }
 
-export const datasetUpdatesAvailable = () => {
-    return (
-    <>
-      <p>Dataset Updates Available</p>  
-      <div style={{...datasetStatusWrapperStyles}}>
-        <DatasetStatus {...datasetUpdatesAvailableProps} />
-      </div>
-    </>
-  )
-}
+export const datasetUpdatesAvailable = () => tooltipWrapper(<DatasetStatus {...datasetUpdatesAvailableProps} />, 'Dataset Updates Available')
 
 datasetUpdatesAvailable.story = {
   name: 'Updates Available',
@@ -107,16 +95,7 @@ const datasetLinkedToFSAndUpdatesAvailableProps: DatasetStatusProps = {
   updatesAvailable: true,
 }
 
-export const datasetLinkedToFSAndUpdatesAvailable = () => {
-    return (
-    <>
-      <p>Dataset Linked to Filesystem and Updates Available</p>  
-      <div style={{...datasetStatusWrapperStyles}}>
-        <DatasetStatus {...datasetLinkedToFSAndUpdatesAvailableProps} />
-      </div>
-    </>
-  )
-}
+export const datasetLinkedToFSAndUpdatesAvailable = () => tooltipWrapper(<DatasetStatus {...datasetLinkedToFSAndUpdatesAvailableProps} />, 'Dataset Linked to Filesystem and Updates Available')
 
 datasetLinkedToFSAndUpdatesAvailable.story = {
   name: 'Linked to Filesystem and Updates Available',
