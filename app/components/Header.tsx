@@ -15,7 +15,7 @@ interface HeaderProps {
 }
 
 export const Header: React.FC<HeaderProps> = ({ title, setModal }) => (
-  <header className="header">
+  <header className="collection-header">
     <h3 className="header-title">{title}</h3>
     <div className="header-column">
       <HeaderColumnButton
