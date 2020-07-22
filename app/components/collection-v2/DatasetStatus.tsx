@@ -1,10 +1,12 @@
 import React from 'react'
-import Icon from '../chrome/Icon'
-import ExternalLink from '../ExternalLink'
+
 import { QriRef } from '../../models/qriRef'
 import { QRI_CLOUD_URL } from '../../constants'
 import { onClickOpenInFinder } from '../platformSpecific/DatasetStatus.TARGET_PLATFORM'
 import { ApiActionThunk } from '../../store/api'
+
+import Icon from '../chrome/Icon'
+import ExternalLink from '../ExternalLink'
 
 export interface DatasetStatusProps {
   qriRef: QriRef

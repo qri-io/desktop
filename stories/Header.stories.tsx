@@ -1,5 +1,7 @@
 import React from 'react'
+
 import { Modal } from '../app/models/modals'
+
 import { Header } from '../app/components/Header'
 
 export default {

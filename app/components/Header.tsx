@@ -2,9 +2,7 @@ import React from 'react'
 import { faPlus, faDownload } from '@fortawesome/free-solid-svg-icons'
 
 import { Modal, ModalType } from '../models/modals'
-
 import { connectComponentToProps } from '../utils/connectComponentToProps'
-
 import { setModal } from '../actions/ui'
 
 import HeaderColumnButton from './chrome/HeaderColumnButton'
