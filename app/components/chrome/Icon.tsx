@@ -34,7 +34,8 @@ import {
   faEllipsisH,
   faSort,
   faMinus,
-  faSave
+  faSave,
+  faSync
 } from '@fortawesome/free-solid-svg-icons'
 
 interface IconProps {
@@ -89,7 +90,8 @@ const icons: Record<string, any> = {
   'expand': faExpandArrowsAlt,
   'hamburger': faEllipsisH,
   'minus': faMinus,
-  'plus': faPlus
+  'plus': faPlus,
+  'sync': faSync
 }
 
 export const iconsList = Object.keys(icons)
