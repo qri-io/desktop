@@ -205,11 +205,11 @@ app.on('ready', () =>
             }
           },
           {
-            id: 'add-dataset',
+            id: 'pull-dataset',
             label: 'Add a Dataset...',
             accelerator: 'CmdOrCtrl+D',
             click () {
-              mainWindow.webContents.send('add-dataset')
+              mainWindow.webContents.send('pull-dataset')
             }
           }
         ]
@@ -227,11 +227,11 @@ app.on('ready', () =>
             }
           },
           {
-            id: 'add-dataset',
+            id: 'pull-dataset',
             label: 'Add a Dataset...',
             accelerator: 'CmdOrCtrl+D',
             click () {
-              mainWindow.webContents.send('add-dataset')
+              mainWindow.webContents.send('pull-dataset')
             }
           },
           {
@@ -519,7 +519,7 @@ app.on('ready', () =>
         const blockableMenus = [
           'show-all',
           'new-dataset',
-          'add-dataset',
+          'pull-dataset',
           'show-status',
           'show-history',
           'publish-unpublish-dataset',

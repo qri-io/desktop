@@ -74,9 +74,9 @@ export const CollectionHomeComponent: React.FunctionComponent<CollectionHomeProp
         />
         <HeaderColumnButton
           icon={faDownload}
-          id='add-dataset'
+          id='pull-dataset'
           label='Add existing Dataset'
-          onClick={() => { setModal({ type: ModalType.AddDataset }) }}
+          onClick={() => { setModal({ type: ModalType.PullDataset }) }}
         />
       </div>
       <div className='main-content-flex'>
