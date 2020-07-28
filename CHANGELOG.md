@@ -1,3 +1,59 @@
+## [0.4.3](https://github.com/qri-io/desktop/compare/v0.4.2...v0.4.3) (2020-07-28)
+
+Our latest release for desktop has improved stability, added support for backend migrations, upgraded api calls to match the latest qri backend release, and reduced the codebase without losing functionality!
+
+### refactor to match the new 0.9.10 qri api
+Changes made to match the latest qri api:
+- use `/get?format=zip` instead of  `/export`
+- use `/pull` instead of `/add`
+- use `/push` instead of `/publish`
+- use `/remove?remote=registry` to unpublish a dataset
+- rely on log data to determine if the dataset is published, not on the dataset itself
+
+### dev/codebase improvements:
+We've got storybook back up and running! This involved refactoring certain components to ensure that they can still function as expected inside and outside of the electron framework (so they can be potentially be used in other webapps).
+
+We've solidified terminology in the codebase: anything prefixed with `Working` indicates that has to do with editing a dataset. We've also removed the `History` prefix from components dealing with historical dataset versions.
+
+We've gone through an entire component/container overhaul:
+  * We've removed every container file. 
+  * All connecting of components to react redux and the router happens in the same file that the component is defined. 
+  * The "component" version of this file is exported and has the suffix "Component". 
+  * The "containerized" version of this component is the default export.
+  * The custom connect functions are `connectComponentToProps` and `connectComponentToPropsWithRouter`. 
+  * They take the same parameters and have the same expectations as the redux `connect` function.
+
+### readme markdown
+Make sure you take a look at the improved styling in our readme markdown editor!
+
+### New backend launch process
+
+We've got a revamped backend launch process that coordinates version verifications, migrations, and communication to the user.
+
+We check and inform the user if the backend version they are using in incompatible. We check and inform the user if the backend needs an update. We initiate the update and inform the user if there were any migration errors. And if everything goes well, we launch the backend!
+
+New Components:
+- IncompatibleBackend
+- MigratingBackend
+- MigrationFailed
+
+Be sure to check out the latest [qri backend release](https://github.com/qri-io/qri/releases/tag/v0.9.10) to see the other fixes we inherit.
+
+### Bug Fixes
+
+* **Storybook:** get all Storybook stories to render ([47621a3](https://github.com/qri-io/desktop/commit/47621a3))
+* **Storybook:** re-enable Storybook to build ([a177512](https://github.com/qri-io/desktop/commit/a177512))
+* set correct link to github org on welcome screen ([ba13ef7](https://github.com/qri-io/desktop/commit/ba13ef7))
+
+
+### Features
+
+* **migration:** adjust `BackendProcess`, `main.dev.js` & `App.ts` so we can coordinate migrations! ([#571](https://github.com/qri-io/desktop/issues/571)) ([41cf068](https://github.com/qri-io/desktop/commit/41cf068))
+* **migration components:** add migration components to conditionally render on app-launch ([866a9e4](https://github.com/qri-io/desktop/commit/866a9e4))
+* **readme:** improve markdown css ([2956882](https://github.com/qri-io/desktop/commit/2956882))
+
+
+
 ## [0.4.2](https://github.com/qri-io/desktop/compare/v0.4.1...v0.4.2) (2020-04-20)
 
 The Qri Desktop 0.4.2 patch fixes a major export bug! It also fixes two minor bugs surrounding fetching datasets for display in the Workbench.
