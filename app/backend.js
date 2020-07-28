@@ -6,7 +6,7 @@ const os = require('os')
 const http = require('http')
 const { dialog } = require('electron')
 
-const lowestCompatibleBackend = [0, 9, 9]
+const { backendVersion: expectedBackendVer } = require('../version')
 
 // BackendProcess runs the qri backend binary in connected'ed mode, to handle api requests.
 class BackendProcess {
@@ -129,20 +129,23 @@ class BackendProcess {
   }
 
   async checkBackendCompatibility () {
-    log.info(`checking to see if given backend version ${this.backendVer} is compatible with expected version ${lowestCompatibleBackend.join(".")}`)
+    log.info(`checking to see if given backend version ${this.backendVer} is compatible with expected version ${expectedBackendVer}`)
     let compatible = false
     try {
       let ver = this.backendVer
+      let expVer = expectedBackendVer
+
+      // if folks are using dev versions, then we should assume they know what they are
+      // doing, and not auto-error that the backend is incompatible.
       if (this.backendVer.indexOf("-dev") !== -1) {
         ver = ver.slice(0, this.backendVer.indexOf("-dev"))
       }
-      ver = ver.split(".").map((i) => parseInt(i))
-      compatible = lowestCompatibleBackend.every((val, i) => {
-        if (val <= ver[i]) {
-          return true
-        }
-        return false
-      })
+      if (expectedBackendVer.indexOf("-dev") !== -1) {
+        expVer = expVer.slice(0, expectedBackendVer.indexOf("-dev"))
+      }
+      if (expVer == ver) {
+        compatible = true
+      }
     } catch (e) {
       throw e
     }
