@@ -76,7 +76,7 @@ Run normally (no developer features):
 
 Run end to end tests:
 
-- `go get temp_registry_server`
+- You'll need our `temp_registry_server` package to run e2e tests. You can either use the `go get` command (`go get github.com/qri-io/temp_registry_server`) or you can build it yourself by cloning the `temp_registry_server` [repo](https://github.com/qri-io/temp_registry_server), `cd` into the repo at the command line, running `go install` which will compile the binary for you (and likely put it at `'~/go/bin'`) and then [add that binary to your PATH](https://qri.io/docs/reference/installing-qri-cli#configuring-your-path). You'll know this was successful if you run the `which temp_registry_server` command and see the path to the binary.
 - For macOS users run with `yarn test-e2e` which will also trigger a build, or run `yarn test-e2e-no-build` if you already have a build to test against
 - For Windows users run `yarn test-win-e2e` or `yarn test-win-e2e-no-build`
 
