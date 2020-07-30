@@ -9,7 +9,7 @@ import Store, { RouteProps, VersionInfo } from '../../models/store'
 import { connectComponentToProps } from '../../utils/connectComponentToProps'
 
 import { setSidebarWidth, openToast, SidebarTypes } from '../../actions/ui'
-import { addDatasetAndFetch } from '../../actions/api'
+import { pullDatasetAndFetch } from '../../actions/api'
 import {
   setActiveTab,
   setSelectedListItem
@@ -31,7 +31,7 @@ export interface NetworkProps extends RouteProps {
   importFileName: string
   importFileSize: number
 
-  addDatasetAndFetch: (username: string, name: string) => ApiActionThunk
+  pullDatasetAndFetch: (username: string, name: string) => ApiActionThunk
   toggleNetwork: () => Action
   setSidebarWidth: (type: SidebarTypes, sidebarWidth: number) => Action
 }
@@ -41,7 +41,7 @@ const NetworkComponent: React.FunctionComponent<NetworkProps> = (props) => {
     qriRef,
 
     inCollection,
-    addDatasetAndFetch,
+    pullDatasetAndFetch,
     sidebarWidth,
     setSidebarWidth
   } = props
@@ -98,7 +98,7 @@ const NetworkComponent: React.FunctionComponent<NetworkProps> = (props) => {
             qriRef.username && qriRef.name && !inCollection &&
               <SidebarActionButton
                 text='Clone Dataset'
-                onClick={() => addDatasetAndFetch(qriRef.username, qriRef.name)}
+                onClick={() => pullDatasetAndFetch(qriRef.username, qriRef.name)}
               />
           }
         </NetworkSidebar>
@@ -134,7 +134,7 @@ export default connectComponentToProps(
   },
   {
     openToast,
-    addDatasetAndFetch,
+    pullDatasetAndFetch,
     setActiveTab,
     setSidebarWidth,
     setSelectedListItem

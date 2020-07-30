@@ -205,11 +205,11 @@ app.on('ready', () =>
             }
           },
           {
-            id: 'add-dataset',
+            id: 'pull-dataset',
             label: 'Add a Dataset...',
             accelerator: 'CmdOrCtrl+D',
             click () {
-              mainWindow.webContents.send('add-dataset')
+              mainWindow.webContents.send('pull-dataset')
             }
           }
         ]
@@ -227,11 +227,11 @@ app.on('ready', () =>
             }
           },
           {
-            id: 'add-dataset',
+            id: 'pull-dataset',
             label: 'Add a Dataset...',
             accelerator: 'CmdOrCtrl+D',
             click () {
-              mainWindow.webContents.send('add-dataset')
+              mainWindow.webContents.send('pull-dataset')
             }
           },
           {
@@ -519,7 +519,7 @@ app.on('ready', () =>
         const blockableMenus = [
           'show-all',
           'new-dataset',
-          'add-dataset',
+          'pull-dataset',
           'show-status',
           'show-history',
           'publish-unpublish-dataset',
@@ -555,6 +555,15 @@ app.on('ready', () =>
         log.info("starting backend process")
         backendProcess = new BackendProcess()
         backendProcess.checkNoActiveBackendProcess()
+        .then(() => {
+          // at this point, we know that the backendProcess
+          // we have just created is the one we are going to
+          // be relying one
+          // we need to hold onto a reference to this process
+          // so we can close on app exit
+          log.info("backend process not detected")
+          this.backendProcess = backendProcess
+        })
         .then(backendProcess.checkBackendCompatibility)
         .then(backendProcess.checkNeedsMigration)
         .then((needsMigration) => {
@@ -593,7 +602,6 @@ app.on('ready', () =>
           backendProcess.close()
         })
       })
-
       log.info('app launched')
     })
   )

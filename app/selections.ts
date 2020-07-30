@@ -327,8 +327,12 @@ export function selectIsLinked (state: Store): boolean {
   return !!state.workingDataset.fsiPath && state.workingDataset.fsiPath !== ''
 }
 
+/** TODO (ramfox): right now, we only show the published status of the head
+ * dataset. The dataset is considered published if HEAD is published, and
+ * unpublished if HEAD is not published
+*/
 export function selectIsPublished (state: Store): boolean {
-  return state.workingDataset.published
+  return !!state.log.value && state.log.value.length > 0 && state.log.value[0].published
 }
 
 export function selectVersionInfoFromWorkingDataset (state: Store): VersionInfo {
@@ -356,8 +360,12 @@ export function selectWorkingDatasetIsLoading (state: Store): boolean {
   return state.workingDataset.isLoading
 }
 
+/** TODO (ramfox): right now, we only show the published status of the head
+ * dataset. The dataset is considered published if HEAD is published, and
+ * unpublished if HEAD is not published
+*/
 export function selectWorkingDatasetIsPublished (state: Store): boolean {
-  return state.workingDataset.published
+  return !!state.log.value && state.log.value.length > 0 && state.log.value[0].published
 }
 
 export function selectWorkingDatasetName (state: Store): string {

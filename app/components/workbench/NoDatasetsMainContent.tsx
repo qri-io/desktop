@@ -31,7 +31,7 @@ const NoDatasetsMainContentComponent: React.FunctionComponent<NoDatasetsProps> =
       <h5><FontAwesomeIcon icon={faDownload} />&nbsp;&nbsp;Create a Dataset</h5>
       <p>Choose a data file on your computer to create a new Qri dataset.</p>
     </div>
-    <div id='add_dataset' className='no-datasets-options' onClick={() => setModal && setModal({ type: ModalType.AddDataset })}>
+    <div id='add_dataset' className='no-datasets-options' onClick={() => setModal && setModal({ type: ModalType.PullDataset })}>
       <h5><FontAwesomeIcon icon={faPlus} />&nbsp;&nbsp;Add a Dataset</h5>
       <p>Copy an existing Qri dataset to your computer</p>
     </div>
