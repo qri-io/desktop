@@ -508,7 +508,8 @@ export function unpublishDataset (username: string, name: string): ApiActionThun
           name
         },
         query: {
-          remote: 'registry'
+          remote: 'registry',
+          all: true
         }
       }
     }
