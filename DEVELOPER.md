@@ -245,7 +245,7 @@ A qri repo is configured for a Qri user when they [set up a qri instance](https:
   1. When a CLI user runs `qri setup` at the command line after having [installed](https://qri.io/docs/reference/installing-qri-cli#installing-the-qri-binary) the qri binary
   2. When a user opens the Desktop app for the first time
 
-Qri uses your os home directory (`HOME/.qri`) to store your qri repo unless you override the default by setting the `QRI_PATH` env var.
+Qri uses your os home directory (`HOME/.qri` on macOs and Linux, or `HOME\.qri` on Windows) to store your qri repo unless you override the default by setting the `QRI_PATH` env var.
 
 ### How do I create another qri repo?
 
