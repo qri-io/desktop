@@ -20,7 +20,7 @@ machine:
 - [Git](http://git-scm.com/): The [Github Guide to
   Installing Git][git-setup] is a good source of information.
 
-- [Node.js v8.6.X (LTS)](http://nodejs.org):
+- [Node.js v12.9.X (LTS)](http://nodejs.org):
 
   - If you don't have node installed, we recommend using [homebrew][homebrew] to manage your package of node.
 
