@@ -257,4 +257,4 @@ Let's imagine that we're working on a Desktop feature which relies on a dev vers
   4. **Spin up a new Qri node**: run `./qri connect` in your terminal to spin up a qri node using this new Qri backend.
   5. **Start up the Desktop app**: start up Desktop in a different terminal window (`yarn dev`). 
   
-  If you'd like to switch back to using your default qri instance, kill the currently running node and unset `QRI_PATH` (`unset QRI_PATH`) before spinning up a new qri node. It's recommended that you use the default qri binary on your PATH when interacting with your default qri repo.
+  To switch back to the default qri backend, kill the currently running node (`killall -v qri`). To switch back to the default qri repo, delete `QRI_PATH` (`unset QRI_PATH`). It's recommended that you use the default qri backend when interacting with your default qri repo.
