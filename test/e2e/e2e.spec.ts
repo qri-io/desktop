@@ -7,7 +7,6 @@ import fakeDialog from 'spectron-fake-dialog'
 import { E2ETestUtils, newE2ETestUtils } from '../utils/e2eTestUtils'
 import http from 'http'
 import Dataset, { Commit, Meta, Structure } from '../../app/models/dataset'
-import { createConfigItem } from '@babel/core'
 
 const { Application } = require('spectron')
 
@@ -129,7 +128,7 @@ describe('Qri End to End tests', function spec () {
     var isQriRunning = await healthCheck()
 
     if (isQriRunning) {
-      throw ("An instance of Qri is already running. Aborting e2e tests.")
+      throw new Error("An instance of Qri is already running. Aborting e2e tests.")
     }
 
     registry = new TestTempRegistry()

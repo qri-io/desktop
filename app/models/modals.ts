@@ -1,7 +1,7 @@
 export enum ModalType {
   NoModal,
   CreateDataset,
-  AddDataset,
+  PullDataset,
   LinkDataset,
   RemoveDataset,
   PublishDataset,
@@ -9,8 +9,8 @@ export enum ModalType {
   Search
 }
 
-export interface AddDatasetModal {
-  type: ModalType.AddDataset
+export interface PullDatasetModal {
+  type: ModalType.PullDataset
 }
 
 export interface CreateDatasetModal {
@@ -52,7 +52,7 @@ export interface UnpublishDatasetModal {
   name: string
 }
 
-export type Modal = AddDatasetModal
+export type Modal = PullDatasetModal
 | CreateDatasetModal
 | LinkDatasetModal
 | HideModal

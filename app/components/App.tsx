@@ -73,7 +73,7 @@ class AppComponent extends React.Component<AppProps, AppState> {
     }
 
     this.handleCreateDataset = this.handleCreateDataset.bind(this)
-    this.handleAddDataset = this.handleAddDataset.bind(this)
+    this.handlePullDataset = this.handlePullDataset.bind(this)
     this.handlePush = this.handlePush.bind(this)
     this.handleReload = this.handleReload.bind(this)
     this.handleSetDebugLogPath = this.handleSetDebugLogPath.bind(this)
@@ -92,8 +92,8 @@ class AppComponent extends React.Component<AppProps, AppState> {
     this.props.setModal({ type: ModalType.CreateDataset })
   }
 
-  private handleAddDataset () {
-    this.props.setModal({ type: ModalType.AddDataset })
+  private handlePullDataset () {
+    this.props.setModal({ type: ModalType.PullDataset })
   }
 
   private handlePush (e: any, route: string) {
@@ -140,7 +140,7 @@ class AppComponent extends React.Component<AppProps, AppState> {
   componentDidMount () {
     // handle ipc events from electron menus
     ipcRenderer.on('create-dataset', this.handleCreateDataset)
-    ipcRenderer.on('add-dataset', this.handleAddDataset)
+    ipcRenderer.on('pull-dataset', this.handlePullDataset)
     ipcRenderer.on('history-push', this.handlePush)
     ipcRenderer.on('set-debug-log-path', this.handleSetDebugLogPath)
     ipcRenderer.on('export-debug-log', this.handleExportDebugLog)
@@ -165,7 +165,7 @@ class AppComponent extends React.Component<AppProps, AppState> {
 
   componentWillUnmount () {
     ipcRenderer.removeListener('create-dataset', this.handleCreateDataset)
-    ipcRenderer.removeListener('add-dataset', this.handleAddDataset)
+    ipcRenderer.removeListener('pull-dataset', this.handlePullDataset)
     ipcRenderer.removeListener('history-push', this.handlePush)
     ipcRenderer.removeListener('set-debug-log-path', this.handleSetDebugLogPath)
     ipcRenderer.removeListener('reload', this.handleReload)

@@ -6,7 +6,7 @@ import { ApiAction } from '../../store/api'
 import { validateDatasetReference } from '../../utils/formValidation'
 import { connectComponentToProps } from '../../utils/connectComponentToProps'
 
-import { addDatasetAndFetch } from '../../actions/api'
+import { pullDatasetAndFetch } from '../../actions/api'
 import { dismissModal } from '../../actions/ui'
 
 import Modal from './Modal'
@@ -15,17 +15,17 @@ import DebouncedTextInput from '../form/DebouncedTextInput'
 import Error from './Error'
 import Buttons from './Buttons'
 
-interface AddDatasetProps {
+interface PullDatasetProps {
   // func to call when we cancel or click away from the modal
   onDismissed: () => void
   // func to call when we hit submit, this adds the dataset from the network
-  addDatasetAndFetch: (peername: string, name: string) => Promise<ApiAction>
+  pullDatasetAndFetch: (peername: string, name: string) => Promise<ApiAction>
 }
 
-const AddDatasetComponent: React.FunctionComponent<AddDatasetProps> = (props) => {
+const PullDatasetComponent: React.FunctionComponent<PullDatasetProps> = (props) => {
   const {
     onDismissed,
-    addDatasetAndFetch
+    pullDatasetAndFetch
   } = props
 
   const [datasetReference, setDatasetReference] = React.useState('')
@@ -57,10 +57,10 @@ const AddDatasetComponent: React.FunctionComponent<AddDatasetProps> = (props) =>
     setLoading(true)
     error && setError('')
 
-    if (!addDatasetAndFetch) return
+    if (!pullDatasetAndFetch) return
     const [peername, datasetName] = datasetReference.split('/')
 
-    addDatasetAndFetch(peername, datasetName)
+    pullDatasetAndFetch(peername, datasetName)
       .then(() => { onDismissed() })
       .catch((action) => {
         setDismissable(true)
@@ -118,12 +118,12 @@ const AddDatasetComponent: React.FunctionComponent<AddDatasetProps> = (props) =>
 }
 
 export default connectComponentToProps(
-  AddDatasetComponent,
-  (state: any, ownProps: AddDatasetProps) => {
+  PullDatasetComponent,
+  (state: any, ownProps: PullDatasetProps) => {
     return ownProps
   },
   {
-    addDatasetAndFetch,
+    pullDatasetAndFetch,
     onDismissed: dismissModal
   }
 )

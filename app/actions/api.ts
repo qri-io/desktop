@@ -432,12 +432,12 @@ export function saveWorkingDatasetAndFetch (username: string, name: string): Api
   }
 }
 
-export function addDataset (username: string, name: string): ApiActionThunk {
+export function pullDataset (username: string, name: string): ApiActionThunk {
   return async (dispatch) => {
     const action = {
-      type: 'add',
+      type: 'pull',
       [CALL_API]: {
-        endpoint: 'add',
+        endpoint: 'pull',
         method: 'POST',
         segments: {
           username,
@@ -450,13 +450,13 @@ export function addDataset (username: string, name: string): ApiActionThunk {
   }
 }
 
-export function addDatasetAndFetch (username: string, name: string): ApiActionThunk {
+export function pullDatasetAndFetch (username: string, name: string): ApiActionThunk {
   return async (dispatch, getState) => {
     const whenOk = chainSuccess(dispatch, getState)
     let response: Action
 
     try {
-      response = await addDataset(username, name)(dispatch, getState)
+      response = await pullDataset(username, name)(dispatch, getState)
       // reset pagination
       response = await whenOk(fetchMyDatasets(-1))(response)
       dispatch(push(pathToDataset(username, name, '')))
@@ -474,7 +474,7 @@ export function publishDataset (username: string, name: string): ApiActionThunk 
     const action = {
       type: 'publish',
       [CALL_API]: {
-        endpoint: 'publish',
+        endpoint: 'push',
         method: 'POST',
         segments: {
           username,
@@ -486,7 +486,7 @@ export function publishDataset (username: string, name: string): ApiActionThunk 
     try {
       let response: Action
       response = await dispatch(action)
-      await whenOk(fetchWorkingDataset(username, name))(response)
+      await whenOk(fetchLog(username, name))(response)
     } catch (action) {
       throw action
     }
@@ -501,11 +501,15 @@ export function unpublishDataset (username: string, name: string): ApiActionThun
     const action = {
       type: 'unpublish',
       [CALL_API]: {
-        endpoint: 'publish',
+        endpoint: 'remove',
         method: 'DELETE',
         segments: {
           username,
           name
+        },
+        query: {
+          remote: 'registry',
+          all: true
         }
       }
     }
@@ -513,7 +517,7 @@ export function unpublishDataset (username: string, name: string): ApiActionThun
     try {
       let response: Action
       response = await dispatch(action)
-      await whenOk(fetchWorkingDataset(username, name))(response)
+      await whenOk(fetchLog(username, name))(response)
     } catch (action) {
       throw action
     }
@@ -711,7 +715,7 @@ export function renameDataset (username: string, name: string, newName: string):
         method: 'POST',
         body: {
           current: `${username}/${name}`,
-          new: `${username}/${newName}`
+          next: `${username}/${newName}`
         }
       }
     }

@@ -13,7 +13,7 @@ export enum ApiConnection {
 
 enum ModalType {
   CreateDataset,
-  AddDataset,
+  PullDataset,
 }
 
 export type ComponentType = 'component' | 'commit' | 'commitComponent'
@@ -25,7 +25,7 @@ type Modal =
   bodyPath?: string
 }
 | {
-  type: ModalType.AddDataset
+  type: ModalType.PullDataset
   initialURL?: string | null
 }
 
@@ -121,6 +121,8 @@ export interface VersionInfo {
   fsiPath: string
   // is block data for this commit stored locally?
   foreign: boolean
+  // published tells whether or not a dataset is published
+  published: boolean
 
   // dataset version details
   // dataset meta.Title field
