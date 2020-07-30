@@ -75,7 +75,10 @@ export interface UI {
   detailsBar: Details
   importFileName: string
   importFileSize: number
+  bootupComponent: BootupComponentType
 }
+
+export type BootupComponentType = 'loading' | 'migrating' | 'migrationFailure' | string
 
 export type SelectedComponent = 'commit' | 'readme' | 'meta' | 'body' | 'structure' | 'transform' | ''
 

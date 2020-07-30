@@ -13,19 +13,19 @@ import { DEFAULT_POLL_INTERVAL } from '../constants'
 import { history } from '../store/configureStore.development'
 import { ApiAction } from '../store/api'
 import { Modal, ModalType } from '../models/modals'
-import { Selections, ApiConnection } from '../models/store'
+import { Selections, ApiConnection, BootupComponentType } from '../models/store'
 import { Session } from '../models/session'
 
 // import util funcs
 import { connectComponentToProps } from '../utils/connectComponentToProps'
 
 // import actions
-import { setModal } from '../actions/ui'
+import { setModal, setBootupComponent } from '../actions/ui'
 import { pingApi } from '../actions/api'
 import { bootstrap } from '../actions/session'
 
 // import selections
-import { selectSelections, selectModal, selectApiConnection, selectSession } from '../selections'
+import { selectSelections, selectModal, selectApiConnection, selectSession, selectBootupComponent } from '../selections'
 
 // import components
 import Toast from './Toast'
@@ -34,10 +34,14 @@ import AppError from './AppError'
 import AppLoading from './AppLoading'
 import Modals from './modals/Modals'
 import Routes from '../routes'
+import MigratingBackend from './MigratingBackend'
+import MigrationFailed from './MigrationFailed'
+import IncompatibleBackend from './IncompatibleBackend'
 
 // declare interface for props
 export interface AppProps {
   loading: boolean
+  bootupComponent: BootupComponentType
   session: Session
   selections: Selections
   apiConnection?: ApiConnection
@@ -46,6 +50,7 @@ export interface AppProps {
 
   push: (path: string) => void
   setModal: (modal: Modal) => Action
+  setBootupComponent: (component: BootupComponentType) => Action
 
   bootstrap: () => Promise<ApiAction>
   pingApi: () => Promise<ApiAction>
@@ -73,6 +78,14 @@ class AppComponent extends React.Component<AppProps, AppState> {
     this.handleReload = this.handleReload.bind(this)
     this.handleSetDebugLogPath = this.handleSetDebugLogPath.bind(this)
     this.handleExportDebugLog = this.handleExportDebugLog.bind(this)
+    this.handleIncompatibleBackend = this.handleIncompatibleBackend.bind(this)
+    this.handleMigratingBackend = this.handleMigratingBackend.bind(this)
+    this.handleMigrationFailure = this.handleMigrationFailure.bind(this)
+    this.handleStartingBackend = this.handleStartingBackend.bind(this)
+  }
+
+  private handleStartingBackend () {
+    console.log("started backend message received")
   }
 
   private handleCreateDataset () {
@@ -112,6 +125,18 @@ class AppComponent extends React.Component<AppProps, AppState> {
     fs.copyFileSync(this.state.debugLogPath, exportFilename)
   }
 
+  private handleIncompatibleBackend (_: Electron.IpcRendererEvent, ver: string) {
+    this.props.setBootupComponent(ver)
+  }
+
+  private handleMigratingBackend () {
+    this.props.setBootupComponent('migrating')
+  }
+
+  private handleMigrationFailure () {
+    this.props.setBootupComponent('migrationFailure')
+  }
+
   componentDidMount () {
     // handle ipc events from electron menus
     ipcRenderer.on('create-dataset', this.handleCreateDataset)
@@ -120,6 +145,12 @@ class AppComponent extends React.Component<AppProps, AppState> {
     ipcRenderer.on('set-debug-log-path', this.handleSetDebugLogPath)
     ipcRenderer.on('export-debug-log', this.handleExportDebugLog)
     ipcRenderer.on('reload', this.handleReload)
+    ipcRenderer.on('incompatible-backend', this.handleIncompatibleBackend)
+    ipcRenderer.on('migrating-backend', this.handleMigratingBackend)
+    ipcRenderer.on('migration-failed', this.handleMigrationFailure)
+    ipcRenderer.on("starting-backend", this.handleStartingBackend)
+
+    ipcRenderer.send("app-fully-loaded")
 
     setInterval(() => {
       if (this.props.apiConnection !== 1) {
@@ -138,6 +169,10 @@ class AppComponent extends React.Component<AppProps, AppState> {
     ipcRenderer.removeListener('history-push', this.handlePush)
     ipcRenderer.removeListener('set-debug-log-path', this.handleSetDebugLogPath)
     ipcRenderer.removeListener('reload', this.handleReload)
+    ipcRenderer.removeListener('incompatible-backend', this.handleIncompatibleBackend)
+    ipcRenderer.removeListener('migrating-backend', this.handleMigratingBackend)
+    ipcRenderer.removeListener('migration-failed', this.handleMigrationFailure)
+    ipcRenderer.removeListener("starting-backend", this.handleStartingBackend)
   }
 
   componentDidUpdate (prevProps: AppProps) {
@@ -151,20 +186,52 @@ class AppComponent extends React.Component<AppProps, AppState> {
   }
 
   render () {
-    const { apiConnection, modal, loading } = this.props
+    const { apiConnection, modal, loading, bootupComponent } = this.props
 
     if (loading) {
       return (
-        <CSSTransition
-          in={loading}
-          classNames="fade"
-          component="div"
-          timeout={1000}
-          mountOnEnter
-          unmountOnExit
-        >
-          <AppLoading />
-        </CSSTransition>
+        <>
+          <CSSTransition
+            in={bootupComponent === 'loading'}
+            classNames="fade"
+            component="div"
+            timeout={1000}
+            mountOnEnter
+            unmountOnExit
+          >
+            <AppLoading />
+          </CSSTransition>
+          <CSSTransition
+            in={bootupComponent === 'migrating'}
+            classNames="fade"
+            component="div"
+            timeout={1000}
+            mountOnEnter
+            unmountOnExit
+          >
+            <MigratingBackend />
+          </CSSTransition>
+          <CSSTransition
+            in={bootupComponent === 'migrationFailure'}
+            classNames="fade"
+            component="div"
+            timeout={1000}
+            mountOnEnter
+            unmountOnExit
+          >
+            <MigrationFailed />
+          </CSSTransition>
+          <CSSTransition
+            in={bootupComponent !== 'loading' && bootupComponent !== 'migrating' && bootupComponent !== 'migrationFailure'}
+            classNames="fade"
+            component="div"
+            timeout={1000}
+            mountOnEnter
+            unmountOnExit
+          >
+            <IncompatibleBackend incompatibleVersion={bootupComponent} />
+          </CSSTransition>
+        </>
       )
     }
 
@@ -228,6 +295,7 @@ export default connectComponentToProps(
       selections: selectSelections(state),
       apiConnection,
       modal: selectModal(state),
+      bootupComponent: selectBootupComponent(state),
       ...ownProps
     }
   },
@@ -236,6 +304,7 @@ export default connectComponentToProps(
     push,
     setModal,
     bootstrap,
+    setBootupComponent,
     pingApi
   }
 )

@@ -50,8 +50,10 @@ export const WorkbenchLogListComponent: React.FunctionComponent<WorkbenchLogList
       return
     }
 
-    const exportUrl = `http://localhost:2503/export/${refStringFromQriRef(qriRef)}?download=true&all=true`
-    ipcRenderer.send('export', { url: exportUrl, directory: path.dirname(selectedPath) })
+    const directory = path.dirname(selectedPath)
+    const filename = path.basename(selectedPath)
+    const exportUrl = `http://localhost:2503/${refStringFromQriRef(qriRef)}?format=zip`
+    ipcRenderer.send('export', { url: exportUrl, filename: filename, directory: directory })
   }
 
   return (
