@@ -5,6 +5,7 @@
 - [Commit Message Guidelines](#commits)
 - [Connecting to the Qri backend](#backend)
 - [Running Storybook](#storybook)
+- [Advanced: Managing Different Qri Repos](#repo)
 
 ## <a name="setup"></a> Development Setup
 
@@ -229,3 +230,29 @@ When rendering Storybook stories which rely on fetched information from our [`qr
 
 1. Set 'http://localhost:6006' as an entry under `allowedorigins` in the `config.yaml` file of your local qri repo. (Note: your local qri repo is _not_ a refence to [`qri` backend](https://github.com/qri-io/qri) code. It is rather where your qri configuration, peer information, datasets, and other metadata are stored at your `QRI_PATH`.) You can make this change by either using the `qri` command line and running `qri config set` or by directly editing the `config.yaml` located at your `QRI_PATH`.
 2. Ensure the `qri` backend is running to receive your request by running `qri connect` in your terminal.
+
+## <a name="repo"></a>Advanced: Managing Different Qri Repos
+
+_Note_: the knowledge and management of different local qri repos is only relevant for developers who choose to develop features against different versions of the [Qri backend](https://github.com/qri-io/qri). The vast majority of development against Qri Desktop will not involve the configuration mentioned in this section and can be ignored unless needed.
+
+As Qri Desktop developers, we will be running the most [recently released version](https://github.com/qri-io/qri/releases) of the Qri backend as a dependency of the Desktop application in the vast majority of cases. This is the default version that we [installed](https://qri.io/docs/reference/installing-qri-cli) on our machines and referenced on our PATH. 
+
+In some cases however, we will be working on a feature which relies on a different version of the Qri backend (perhaps a version in development with a new API which is soon to be released). In such cases, we need to separately install that Qri backend binary and point to the correct "qri repo" to successfully run the new backend version.
+
+As a refresher, when the Qri backend is downloaded onto your machine, two important things happen:
+  1. `qri` executable binary is downloaded, which you then add to your PATH so you can access the `qri` command (e.g. `qri connect`, `qri list`, etc)
+  2. A qri repo is established by default at `'~/.qri'` (Mac OS). This is a storage location where Qri stores its local information (e.g. configuration, peer information, IPFS data, Logbooks, etc)
+
+To avoid confusion, it's best to leave the above two items (path to qri binary and default qri repo) as untouched defaults. When we want to run Desktop against a different Qri backend, create new locations for the qri binary and qri repo that we point to only when we'd like to use them. 
+
+### How to keep a different local version of Qri backend
+
+  1. Clone the [version of Qri backend](https://github.com/qri-io/qri/tags) that you'd like locally to a destination of your choice (e.g. `'~/qri-dev'`). Then `cd` into the `qri` folder and build this from source by running `go build`. Running `go build` creates a version of qri binary in the same directory in which you ran the command, meaning this binary will be separate from the default one on your PATH and will only be referenced when you directly call it. We just need to make sure we make this binary executable before running it. Do this by running `chmod +x qri` and then you'll be able run it (`./qri`).
+  2. Before running your local `qri` executable, we also need to let Qri know that we will be referencing a different qri repo than the default. Qri under the hood references an env variable called `QRI_PATH` which points to the default qri repo location (`'~/.qri'`). When running on a different Qri backend than your default, you want to configure a different qri repo location. Do this by setting the `QRI_PATH` to your new desired location (e.g. `export QRI_PATH=~/qri-dev/qri_v{new-version-here}/qri`). NOTE: this qri repo path is not the same as the path where you've just cloned the `qri` source code.
+  3. Now that `QRI_PATH` is pointed to a new location, `cd` into the folder where your local `qri` binary resides (`'~/qri-dev/qri'` in our example) and use your new local `qri` executable to set up a new qri instance which is associated with this Qri backend version (`./qri setup`). For more info on setting up a Qri instance, see [here](https://qri.io/docs/getting-started/qri-cli-quickstart#setup-your-qri-instance).
+  4. Finally, let's get a qri node running to serve our Desktop API requests! Do this by running `./qri connect`
+  5. Now we have a local qri node running on this new Qri backend. To run Desktop against this node, simply start up Desktop in a different terminal window (`yarn dev`). If for some reason you'd like to switch back to using the default version of Qri backend installed on your PATH, kill the currently running node, re-set `QRI_PATH` to its default (`export QRI_PATH=~/.qri`) and start running Desktop again. Per the steps listed in [backend](#backend), the Desktop app will run the default qri binary that it finds on your PATH.
+
+
+
+
