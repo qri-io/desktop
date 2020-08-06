@@ -64,6 +64,7 @@ module.exports = merge(baseConfig, {
       },
       {
         test: /\.scss$/,
+        exclude: /\.module\.scss$/,
         use: [
           {
             loader: MiniCssExtractPlugin.loader,
@@ -73,6 +74,21 @@ module.exports = merge(baseConfig, {
             }
           },
           'css-loader',
+          'resolve-url-loader',
+          'sass-loader'
+        ]
+      },
+      {
+        test: /\.module\.scss$/,
+        use: [
+          {
+            loader: MiniCssExtractPlugin.loader,
+            options: {
+              publicPath: '../',
+              hmr: process.env.NODE_ENV === 'development'
+            }
+          },
+          { loader: 'css-loader', options: { modules: true } },
           'resolve-url-loader',
           'sass-loader'
         ]

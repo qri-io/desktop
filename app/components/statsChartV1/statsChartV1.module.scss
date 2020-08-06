@@ -1,0 +1,49 @@
+.StatsChartV1 {
+    .labeled-stats {
+        display: flex;
+        flex-wrap: wrap;
+      
+        .stats-value {
+          margin: 5px 15px;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+      
+          &.large {
+            margin: 10px 20px;
+          }
+      
+          &:first-child, &.large:first-child {
+            margin-left: 0;
+          }
+      
+          .label {
+            font-size: 12px;
+            font-weight: 300;
+            margin-bottom: 0px;
+            text-transform: uppercase;
+            color: #808080;
+            &.light {
+              color: white;
+            }
+            &.large {
+              font-size: 14px;
+              margin-bottom: 5px;
+            }
+          }
+      
+          .value {
+            margin-bottom: 0;
+            font-size: 14px;
+            font-weight: 600;
+            &.light {
+              color: white;
+            }
+            &.large {
+              font-size: 24px;
+            }
+          }
+        }
+      }
+}

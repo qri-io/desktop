@@ -9,8 +9,11 @@ import { connectComponentToProps } from '../utils/connectComponentToProps'
 import { setDetailsBar } from '../actions/ui'
 
 import StatsChart from './StatsChart'
+import StatsChartV1 from './statsChartV1/StatsChartV1'
 import { Header } from './workbench/components/Body'
 import { TypeLabel } from './TwoDSchemaLayout'
+
+import styles from './detailsBar.module.scss'
 
 export interface DetailsBarProps {
   details: Details
@@ -29,6 +32,7 @@ const DetailsBarComponent: React.FunctionComponent<DetailsBarProps> = (props) =>
         {renderHeader(statsDetails.title, statsDetails.stats.type)}
         <div className="details-bar-content">
           <StatsChart data={statsDetails.stats} />
+          <StatsChartV1 data={statsDetails.stats} fontFamily={styles.fontFamily}/>
         </div>
       </div>
     )
