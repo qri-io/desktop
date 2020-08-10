@@ -1,3 +1,9 @@
+## [0.4.4](https://github.com/qri-io/desktop/compare/v0.4.3...v0.4.4) (2020-08-10)
+
+Quick release to upgrade to the latest qri backend! Fixed a bug some users were experiencing when downloading Qri Desktop for the first time.
+
+Be sure to check out the latest [qri backend release](https://github.com/qri-io/qri/releases/tag/v0.9.11) to see the other fixes we inherit.
+
 ## [0.4.3](https://github.com/qri-io/desktop/compare/v0.4.2...v0.4.3) (2020-07-28)
 
 Our latest release for desktop has improved stability, added support for backend migrations, upgraded api calls to match the latest qri backend release, and reduced the codebase without losing functionality!

@@ -1,4 +1,4 @@
 module.exports = {
-  desktopVersion: '0.4.3',
-  backendVersion: '0.9.10'
+  desktopVersion: '0.4.4',
+  backendVersion: '0.9.11'
 }
