@@ -1,0 +1,23 @@
+{
+    "env": {
+      "compiler": {
+        "bit.envs/compilers/react-typescript@3.1.56": {
+          "rawConfig": {
+            "tsconfig": {
+              "compilerOptions": {
+                "target": "ES5",
+                "module": "CommonJS"
+              }
+            }
+          }
+        }
+      }
+    },
+    "componentsDefaultDirectory": "components/{name}",
+    "packageManager": "yarn",
+    "peerDependencies": {
+      "react": "^16.9.0",
+      "react-dom": "^16.9.0",
+      "classnames": "^2.2.6"
+    }
+  }
