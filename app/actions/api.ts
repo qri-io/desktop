@@ -110,7 +110,7 @@ export function fetchWorkingDataset (username: string, name: string): ApiActionT
     const action = {
       type: 'dataset',
       [CALL_API]: {
-        endpoint: '',
+        endpoint: 'get',
         method: 'GET',
         segments: {
           username,
@@ -150,7 +150,7 @@ export function fetchCommitDataset (username: string, name: string, path: string
     const response = await dispatch({
       type: 'commitdataset',
       [CALL_API]: {
-        endpoint: '',
+        endpoint: 'get',
         method: 'GET',
         segments: {
           username,
