@@ -18,7 +18,6 @@ import {
 import { getActionType } from '../utils/actionType'
 import { datasetConvertStringToScriptBytes } from '../utils/datasetConvertStringToScriptBytes'
 
-import { CLEAR_DATASET_HEAD } from '../reducers/dataset'
 import Dataset from '../models/dataset'
 
 import { pathToDataset, pathToCollection } from '../paths'
@@ -34,6 +33,7 @@ import { selectWorkingDatasetBodyPageInfo,
 
 const pageSizeDefault = 100
 export const bodyPageSizeDefault = 50
+export const CLEAR_DATASET_HEAD = 'CLEAR_DATASET_HEAD'
 
 export function pingApi (): ApiActionThunk {
   return async (dispatch) => {

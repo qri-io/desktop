@@ -1,4 +1,7 @@
 {
   "presets": ["@babel/preset-env"],
-  "plugins": ["react-hot-loader/babel"]
+  "plugins": [
+    "react-hot-loader/babel"
+    // "@babel/plugin-transform-modules-commonjs"
+  ]
 }

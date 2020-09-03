@@ -5,6 +5,7 @@
 const path = require('path')
 const webpack = require('webpack')
 const merge = require('webpack-merge')
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const baseConfig = require('./webpack.config.base')
 
@@ -13,12 +14,14 @@ module.exports = merge(baseConfig, {
 
   devtool: 'cheap-module-source-map',
 
-  entry: ['./app/index'],
+  entry: ['./app/webapp/index.tsx'],
 
   output: {
-    path: path.join(__dirname, 'app/dist'),
-    publicPath: '../app/dist/',
-    filename: 'bundle.js'
+    globalObject: 'self',
+    path: path.join(__dirname, 'app/webapp/dist'),
+    publicPath: './',
+    filename: 'bundle.js',
+    libraryTarget: 'umd'
   },
 
   module: {
@@ -42,14 +45,21 @@ module.exports = merge(baseConfig, {
             plugins: [
               // plugin-proposal-decorators is only needed if you're using experimental decorators in TypeScript
               ['@babel/plugin-proposal-decorators', { legacy: true }],
-              ['@babel/plugin-proposal-class-properties', { loose: true }]
+              ['@babel/plugin-proposal-class-properties', { loose: true }],
+              'react-hot-loader/babel'
             ]
           }
         }
       }
+    ]
   },
 
   plugins: [
+
+    new webpack.HotModuleReplacementPlugin(),
+
+    new webpack.NoEmitOnErrorsPlugin(),
+
     // https://webpack.github.io/docs/list-of-plugins.html#occurrenceorderplugin
     // https://github.com/webpack/webpack/issues/864
     new webpack.optimize.OccurrenceOrderPlugin(),
@@ -64,9 +74,16 @@ module.exports = merge(baseConfig, {
       '__BUILD__': {
         'ENABLE_COMPARE_SECTION': JSON.stringify(true)
       }
+    }),
+    new webpack.LoaderOptionsPlugin({
+      debug: true
+    }),
+
+    new HtmlWebpackPlugin({
+      template: './app/webapp/index.html'
     })
   ],
 
   // https://github.com/chentsulin/webpack-target-electron-renderer#how-this-module-works
-  target: 'electron-renderer'
+  target: 'web'
 })
