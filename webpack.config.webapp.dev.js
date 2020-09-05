@@ -22,7 +22,6 @@ module.exports = merge(baseConfig, {
   output: {
     globalObject: 'self',
     path: path.join(__dirname, 'app/webapp/dist'),
-    // publicPath: './',
     filename: '[name].js',
     sourceMapFilename: '[name].js.map',
     libraryTarget: 'umd'
@@ -84,7 +83,7 @@ module.exports = merge(baseConfig, {
     }),
 
     new HtmlWebpackPlugin({
-      template: './app/webapp/index.html'
+      template: './app/webapp/index_dev.html'
     })
   ],
 

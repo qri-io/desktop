@@ -1,12 +1,7 @@
 import { Action } from 'redux'
-import { push } from 'connected-react-router'
 
 import { CALL_API, ApiAction, ApiActionThunk, chainSuccess } from '../store/api'
-import { SelectedComponent } from '../models/store'
 import { actionWithPagination } from '../utils/pagination'
-import { openToast, setImportFileDetails } from './ui'
-import { setSaveComplete, resetMutationsDataset, resetMutationsStatus } from './mutations'
-
 import {
   mapDataset,
   mapRecord,
@@ -14,22 +9,10 @@ import {
   mapStatus,
   mapBody,
   mapHistory
-} from './mappingFuncs'
-import { getActionType } from '../utils/actionType'
-import { datasetConvertStringToScriptBytes } from '../utils/datasetConvertStringToScriptBytes'
+} from '../actions/mappingFuncs'
 
-import Dataset from '../models/dataset'
-
-import { pathToDataset, pathToCollection } from '../paths'
-import { selectWorkingDatasetBodyPageInfo,
-  selectFsiPath,
-  selectMutationsCommit,
-  selectSessionUsername,
-  selectMyDatasetsPageInfo,
-  selectDatasetBodyPageInfo,
-  selectLogPageInfo,
-  selectMutationsDataset
-} from '../selections'
+import { selectMyDatasetsPageInfo, selectDatasetBodyPageInfo, selectLogPageInfo } from '../selections'
+import { Session } from '../models/session'
 
 const pageSizeDefault = 100
 export const bodyPageSizeDefault = 50
@@ -281,35 +264,18 @@ export function fetchReadmePreview (username: string, name: string): ApiActionTh
   }
 }
 
-export function importFile (filePath: string, fileName: string, fileSize: number): ApiActionThunk {
-  return async (dispatch, getState) => {
-    const whenOk = chainSuccess(dispatch, getState)
+export function fetchSession (): ApiActionThunk {
+  return async (dispatch) => {
     const action = {
-      type: 'import',
+      type: 'session',
       [CALL_API]: {
-        endpoint: 'save',
-        method: 'POST',
-        query: {
-          bodypath: filePath,
-          new: true
-        },
-        body: {}
+        endpoint: 'me',
+        method: 'GET',
+        map: (data: Record<string, any>): Session => {
+          return data as Session
+        }
       }
     }
-    let response: Action
-    try {
-      dispatch(setImportFileDetails(fileName, fileSize))
-      response = await dispatch(action)
-      const { peername, name, path } = response.payload.data
-      response = await whenOk(fetchMyDatasets(-1))(response)
-      dispatch(push(pathToDataset(peername, name, path)))
-      dispatch(setImportFileDetails('', 0))
-    } catch (action) {
-      dispatch(setImportFileDetails('', 0))
-      dispatch(openToast('error', 'import', action.payload.err.message))
-      throw action
-    }
-
-    return response
+    return dispatch(action)
   }
 }

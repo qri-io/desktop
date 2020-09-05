@@ -118,7 +118,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    a {
+    a, .no-link {
       font-family: $font-family-sans-serif;
       text-overflow: ellipsis;
       font-size: 24px;
@@ -126,6 +126,9 @@
       flex: 1 1 auto;
       overflow: hidden;
       white-space: nowrap;
+    };
+    .no-link {
+      color: $primary;
     }
     div {
       flex: 0 0 auto;
