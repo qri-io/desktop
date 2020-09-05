@@ -3,7 +3,6 @@ import { connectRouter } from 'connected-react-router'
 import { apiActionTypes } from '../utils/actionType'
 
 import connectionReducer from '../reducers/connection'
-import uiReducer from '../reducers/ui'
 import myDatasetsReducer from '../reducers/myDatasets'
 
 import { Session } from '../models/session'
@@ -53,7 +52,6 @@ const sessionReducer: Reducer = (state = initialSession, action: AnyAction) => {
 const createRootReducer = (history) => combineReducers({
   session: sessionReducer,
   connection: connectionReducer,
-  ui: uiReducer,
   myDatasets: myDatasetsReducer,
   router: connectRouter(history)
 })
