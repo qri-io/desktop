@@ -72,7 +72,8 @@ module.exports = merge(baseConfig, {
        *
        */
       '__BUILD__': {
-        'ENABLE_COMPARE_SECTION': JSON.stringify(true)
+        'ENABLE_COMPARE_SECTION': JSON.stringify(true),
+        'TARGET_PLATFORM': JSON.stringify('web')
       }
     }),
     new webpack.LoaderOptionsPlugin({

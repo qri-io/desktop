@@ -7,7 +7,6 @@ import { ApiActionThunk } from '../store/api'
 import Spinner from '../components/chrome/Spinner'
 import Layout from './Layout'
 import DatasetItem from '../components/item/DatasetItem'
-import { BACKEND_URL } from '../constants'
 import Icon from '../components/chrome/Icon'
 import Button from '../components/chrome/Button'
 import { faFileExcel } from '@fortawesome/free-solid-svg-icons'
@@ -97,7 +96,7 @@ const MainContentComponent: React.FC<MainContentProps> = (props: MainContentProp
           fullWidth={false}
           noLink
         />
-        <a href={`${BACKEND_URL}/get/${vi.username}/${vi.name}?format=zip`} download={`${vi.username}_${vi.name}.zip`} ><Icon
+        <a href={`${window.location.origin}/get/${vi.username}/${vi.name}?format=zip`} download={`${vi.username}_${vi.name}.zip`} ><Icon
           icon="download"
           color="primary"
         />
