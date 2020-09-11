@@ -656,7 +656,8 @@ describe('Qri End to End tests', function spec () {
       expectTextToBe,
       onHistoryTab,
       checkStatus,
-      waitForExist
+      waitForExist,
+      takeScreenshot
     } = utils
 
     // make sure we are on the collection page
@@ -673,19 +674,28 @@ describe('Qri End to End tests', function spec () {
     fs.writeFileSync(jsonPath, '{"a": 1, "b":2, "c": 3}')
     await fakeDialog.mock([ { method: 'showOpenDialogSync', value: [jsonPath] } ])
     await click('#chooseBodyFilePath')
-
+    if (takeScreenshots) {
+      takeScreenshot(artifactPath('json_dataset-choose_body_file.png'))
+    }
     // submit to create a new dataset
     await click('#submit')
 
+    if (takeScreenshots) {
+      takeScreenshot(artifactPath('json_dataset-submit'))
+    }
+
     // ensure we have redirected to the workbench section
     await atLocation('#/workbench')
+    if (takeScreenshots) {
+      takeScreenshot(artifactPath('json_dataset-at_location_workbench.png'))
+    }
 
     // ensure we have navigated to the correct dataset
     // TODO (ramfox): it's weird that we have to pass in this newline character
     // to get the reference to match. It looks like because the #dataset-reference
     // div divides the peername and name among multiple divs, we get this odd
     // whitespace character
-    await waitForExist('#dataset-reference')
+    await waitForExist('#dataset-reference', artifactPath('json-dataset-from-data-source-wait-for-exist-dataset-reference.png'))
     const reference = `${username}/\n${jsonDatasetName}`
     await expectTextToBe('#dataset-reference', reference)
 
@@ -711,7 +721,7 @@ describe('Qri End to End tests', function spec () {
     } = utils
     // make sure we are on the collection page
     await click('#collection')
-    await atLocation('#/collection')
+    await atLocation('#/collection', artifactPath('search_for_foreign_dataset-at_location_collection.png'))
 
     // send the "Enter" key to the search bar to activate the search modal
     // await waitForExist('#search-box')
@@ -782,7 +792,7 @@ describe('Qri End to End tests', function spec () {
 
     // click the Network tab
     await click('#network')
-    await atLocation('#/network')
+    await atLocation('#/network', artifactPath('network_tab_at_feed-at_location_network.png'))
 
     // there should only be one dataset item in the list
     const recentDatasets = await app.client.$$('.recent-datasets-item')
@@ -815,7 +825,7 @@ describe('Qri End to End tests', function spec () {
     } = utils
     // click the search box to bring up the modal
     // send the "Enter" key to the search bar to activate the search modal
-    await click('#search-box')
+    await click('#search-box', artifactPath('search_local-click_search_box.png'))
     await sendKeys('#search-box', "Enter")
     await waitForExist('#search')
 
@@ -856,7 +866,7 @@ describe('Qri End to End tests', function spec () {
     // check location
     await atLocation('#/workbench')
     // ensure we are on the correct dataset
-    await expectTextToBe('#dataset-reference', username + '/\n' + datasetRename)
+    await expectTextToBe('#dataset-reference', username + '/\n' + datasetRename, artifactPath('publishing_dataset-expect_text_to_be_dataset_reference.png'))
 
     // click publish
     await click('#publish-button')
@@ -897,23 +907,23 @@ describe('Qri End to End tests', function spec () {
 
     // head back to the workbench & unpublish
     // check location
-    await click('#workbench')
-    await atLocation('#/workbench')
+    await click('#workbench', artifactPath('network-click-workbench.png'))
+    await atLocation('#/workbench', artifactPath('network-at-location-workbench.png'))
     // ensure we are on the correct dataset
-    await expectTextToBe('#dataset-reference', username + '/\n' + datasetRename)
+    await expectTextToBe('#dataset-reference', username + '/\n' + datasetRename, artifactPath('network-expect-text-dataset-reference.png'))
 
     // click the hamburger & click the unpublish action
-    await click('#workbench-hamburger')
+    await click('#workbench-hamburger', artifactPath('network-click-hamburger.png'))
 
     if (takeScreenshots) {
       await takeScreenshot(artifactPath('unpublish-hamburger.png'))
     }
 
-    await click('#hamburger-action-unpublish')
-    await click('#submit')
+    await click('#hamburger-action-unpublish', artifactPath('network-click-unpublish-action.png'))
+    await click('#submit', artifactPath('network-click-submit.png'))
 
     // publish button should exist again
-    await waitForExist('#publish-button')
+    await waitForExist('#publish-button', artifactPath('network-after-unpublish-publish-button-should-exit.png'))
 
     // naviate to feed
     await click('#network')
