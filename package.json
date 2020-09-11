@@ -187,7 +187,7 @@
     "jest": "24.9.0",
     "json-loader": "0.5.7",
     "mini-css-extract-plugin": "0.8.0",
-    "node-sass": "4.13.0",
+    "node-sass": "4.13.1",
     "react-hot-loader": "4.12.15",
     "react-test-renderer": "16.11.0",
     "redux-logger": "3.0.6",
