@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Qri Remote Webapp</title>
+    <meta charset='utf-8'>
+    <!-- we have the 'unsafe-eval' security policy here to fix this error when running in dev mode (webpack-dev-server):
+    Uncaught EvalError: Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self' http://localhost:2503 https://qri.io https://qri.cloud".
+    When/if we have more time to work through this, we should find a better solution
+  -->
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-eval' http://localhost:2503 https://qri.io https://qri.cloud">
+  <body>
+    <div class='titlebar'></div>
+    <div id='root'></div>
+  </body>
+</html>

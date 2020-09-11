@@ -11,9 +11,10 @@ interface DatasetItemProps {
   onClick: (username: string, name: string, path?: string) => void
   fullWidth: boolean
   hideUsername?: boolean
+  noLink: boolean
 }
 
-const DatasetItem: React.FunctionComponent<DatasetItemProps> = ({ id, data, hideUsername, fullWidth = false, onClick }) => {
+const DatasetItem: React.FunctionComponent<DatasetItemProps> = ({ id, data, hideUsername, fullWidth = false, onClick, noLink }) => {
   if (!data) { return null }
   const { metaTitle, themeList, username, name, path } = data
 
@@ -22,7 +23,10 @@ const DatasetItem: React.FunctionComponent<DatasetItemProps> = ({ id, data, hide
   return (
     <div id={id} className={classNames('dataset-item', { 'full': fullWidth })} key={path} data-ref={`${username}/${name}`}>
       <div className='header'>
-        <a onClick={() => onClick(username, name, path)}>{hideUsername ? `${name}` : `${username}/${name}`}</a>
+        { noLink
+          ? <div onClick={() => onClick(username, name, path)} className="no-link">{hideUsername ? `${name}` : `${username}/${name}`}</div>
+          : <a onClick={() => onClick(username, name, path)}>{hideUsername ? `${name}` : `${username}/${name}`}</a>
+        }
         {theme && theme.length > 0 && <Tag type='category' tag={theme[0]} />}
       </div>
       <div className='title'>{ metaTitle }</div>

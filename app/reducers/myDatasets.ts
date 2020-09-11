@@ -32,6 +32,7 @@ const myDatasetsReducer: Reducer = (state = initialState, action: AnyAction): My
         pageInfo: reducerWithPagination(action, state.pageInfo)
       }
     case LIST_SUCC:
+      console.log(action.payload.data)
       return {
         ...state,
         pageInfo: reducerWithPagination(action, state.pageInfo),

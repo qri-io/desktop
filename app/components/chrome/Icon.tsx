@@ -45,7 +45,7 @@ interface IconProps {
   // md: 1.33em
   // lg: 2em
   size?: 'xs' | 'sm' | 'md' | 'lg'
-  color?: 'light' | 'medium' | 'dark' | 'red' | 'green'
+  color?: 'light' | 'medium' | 'dark' | 'red' | 'green' | 'primary'
 }
 
 const icons: Record<string, any> = {

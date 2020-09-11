@@ -1,0 +1,27 @@
+.webapp-dataset-list-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  :first-child {
+    flex-grow: 1;
+  }
+  :last-child {
+    margin-left: 10px;
+    margin-right: 10px;
+  }
+
+}
+
+.webapp-home {
+  margin: 0 70px 0 70px;
+  overflow: hidden;
+  height: 100%;
+  max-width: 700px;
+}
+
+.webapp-logo {
+  margin: 15px;
+  margin-left: 20px;
+  width: 35px;
+  height: 35px;
+}

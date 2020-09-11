@@ -5,20 +5,26 @@
 const path = require('path')
 const webpack = require('webpack')
 const merge = require('webpack-merge')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
 
 const baseConfig = require('./webpack.config.base')
 
+var sourcePath = __dirname
+
 module.exports = merge(baseConfig, {
-  mode: 'production',
+  context: sourcePath,
+  mode: 'development',
 
-  devtool: 'cheap-module-source-map',
+  devtool: 'cheap-module-eval-source-map',
 
-  entry: ['./app/index'],
+  entry: ['./app/webapp/index.tsx'],
 
   output: {
-    path: path.join(__dirname, 'app/dist'),
-    publicPath: '../app/dist/',
-    filename: 'bundle.js'
+    globalObject: 'self',
+    path: path.join(__dirname, 'app/webapp/dist'),
+    filename: '[name].js',
+    sourceMapFilename: '[name].js.map',
+    libraryTarget: 'umd'
   },
 
   module: {
@@ -42,14 +48,21 @@ module.exports = merge(baseConfig, {
             plugins: [
               // plugin-proposal-decorators is only needed if you're using experimental decorators in TypeScript
               ['@babel/plugin-proposal-decorators', { legacy: true }],
-              ['@babel/plugin-proposal-class-properties', { loose: true }]
+              ['@babel/plugin-proposal-class-properties', { loose: true }],
+              'react-hot-loader/babel'
             ]
           }
         }
       }
+    ]
   },
 
   plugins: [
+
+    new webpack.HotModuleReplacementPlugin(),
+
+    new webpack.NoEmitOnErrorsPlugin(),
+
     // https://webpack.github.io/docs/list-of-plugins.html#occurrenceorderplugin
     // https://github.com/webpack/webpack/issues/864
     new webpack.optimize.OccurrenceOrderPlugin(),
@@ -64,9 +77,34 @@ module.exports = merge(baseConfig, {
       '__BUILD__': {
         'ENABLE_COMPARE_SECTION': JSON.stringify(true)
       }
+    }),
+    new webpack.LoaderOptionsPlugin({
+      debug: true
+    }),
+
+    new HtmlWebpackPlugin({
+      template: './app/webapp/index_dev.html'
     })
   ],
 
   // https://github.com/chentsulin/webpack-target-electron-renderer#how-this-module-works
-  target: 'electron-renderer'
+  target: 'web',
+
+  devServer: {
+    contentBase: path.join(sourcePath, 'app/webapp'),
+    hot: true,
+    inline: true,
+    historyApiFallback: {
+      disableDotRule: true
+    },
+    stats: 'minimal',
+    clientLogLevel: 'warning'
+  },
+
+  node: {
+    // workaround for webpack-dev-server issue
+    // https://github.com/webpack/webpack-dev-server/issues/60#issuecomment-103411179
+    fs: 'empty',
+    net: 'empty'
+  }
 })

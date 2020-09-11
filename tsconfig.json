@@ -1,46 +1,26 @@
 {
   "compilerOptions": {
-    "target": "es5",
-    "moduleResolution": "node",
-    "module": "commonjs",
-    "jsx": "react",
-    "resolveJsonModule": true,
-    "lib": [
-      "dom",
-      "es6",
-      "dom.iterable",
-      "scripthost"
-    ],
-    "types": [],
-
-    "alwaysStrict": true,
-    "strictNullChecks": true,
-    "noImplicitAny": true,
-    "noImplicitReturns": true,
-    "noImplicitThis": true,
-    "noUnusedLocals": true,
-
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
-
     "sourceMap": true,
-
-    "outDir": "dist",
-
-    "esModuleInterop": true
+    "target": "es5",
+    "jsx": "react",
+    // umd complies the code so that it can be read in the browser
+    // coupled with the field "libraryTarget: 'umd'" inside the `webpack.config.webapp.js` file
+    // the more common `commonjs` cannot be read in the browser, but instead is made for node
+    "module": "umd",
+    "moduleResolution": "node",
+    "experimentalDecorators": true,
+    "declaration": false,
+    "removeComments": true,
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
+    "strict": true,
+    "outDir": "build",
+    "lib": ["es6", "es7", "dom"],
+    "baseUrl": "src",
+    "paths": {
+      "app/*": ["./app/*"]
+    },
+    "allowSyntheticDefaultImports": true
   },
-  "files": [
-    "app/index.tsx"
-  ],
-  "include": [
-    "./*.js",
-    "app/**/*.ts",
-    "app/**/*.tsx",
-    "test/**/*.ts",
-    "test/**/*.tsx",
-    "node_modules/@types/**/*.d.ts"
-  ],
-  "exclude": [
-    "dist"
-  ]
+  "exclude": ["dist", "node_modules"]
 }

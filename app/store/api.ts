@@ -8,7 +8,9 @@ import Store from '../models/store'
 import mapError from './mapError'
 import { FAILED_TO_FETCH } from '../reducers/connection'
 import { apiActionTypes, getActionType } from '../utils/actionType'
-import { UNAUTHORIZED } from '../reducers/ui'
+import { BACKEND_URL } from '../constants'
+
+export const UNAUTHORIZED = 'UNAUTHORIZED'
 
 // CALL_API is a global, unique constant for passing actions to API middleware
 export const CALL_API = Symbol('CALL_API')
@@ -130,7 +132,11 @@ function apiUrl (endpoint: string, segments?: ApiSegments, query?: ApiQuery, pag
     if (!(url[url.length - 1] === '/' || seg[0] === '/')) url += '/'
     return url + seg
   }
-  let url = `http://localhost:2503/${endpoint}`
+
+  // if we are targeting the webapp, we assume that the same place that is serving
+  // the webapp is also where we can ping the api
+  // otherwise, we are using the electron app and have a local node available
+  let url = __BUILD__.TARGET_PLATFORM === 'web' ? `${window.location.origin}/${endpoint}` : `${BACKEND_URL}/${endpoint}`
   if (segments) {
     if (segments.username) {
       url = addToUrl(url, segments.username)

@@ -4,6 +4,7 @@ import store from '../utils/localStore'
 import { apiActionTypes } from '../utils/actionType'
 import { ModalType } from '../models/modals'
 import { DetailsType } from '../models/details'
+import { UNAUTHORIZED } from '../store/api'
 import {
   SELECTIONS_SET_SELECTED_LISTITEM,
   SELECTIONS_SET_WORKING_DATASET,
@@ -25,8 +26,6 @@ export const UI_SET_EXPORT_PATH = 'UI_SET_EXPORT_PATH'
 export const UI_SET_DETAILS_BAR = 'UI_SET_DETAILS_BAR'
 export const UI_SET_IMPORT_FILE_DETAILS = 'UI_SET_IMPORT_FILE_DETAILS'
 export const UI_SET_BOOTUP_COMPONENT = 'UI_SET_BOOTUP_COMPONENT'
-
-export const UNAUTHORIZED = 'UNAUTHORIZED'
 
 export const defaultSidebarWidth = 250
 export const hasAcceptedTOSKey = 'acceptedTOS'
