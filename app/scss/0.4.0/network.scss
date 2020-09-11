@@ -120,4 +120,6 @@
 
 #history-list {
   padding: 10px;
+  flex-grow: 1;
+  overflow: auto;
 }
