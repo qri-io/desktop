@@ -1,3 +1,16 @@
+## [0.4.5](https://github.com/qri-io/desktop/compare/v0.4.4...v0.4.5) (2020-09-11)
+
+This is another quick release to match the latest qri backend! Two small adjustsments: 
+
+1) a small API refactor to match the new qri backend
+2) a fix to a bug that was preventing clicking on the `status` tab, if your dataset history was longer than the lenght of the sidebar
+
+### Bug Fixes
+
+* long dataset history overlaps status button ([af8af55](https://github.com/qri-io/desktop/commit/af8af55))
+
+
+
 ## [0.4.4](https://github.com/qri-io/desktop/compare/v0.4.3...v0.4.4) (2020-08-10)
 
 Quick release to upgrade to the latest qri backend! Fixed a bug some users were experiencing when downloading Qri Desktop for the first time.
