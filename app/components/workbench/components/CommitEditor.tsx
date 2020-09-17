@@ -3,6 +3,7 @@ import { Action } from 'redux'
 import classNames from 'classnames'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSync } from '@fortawesome/free-solid-svg-icons'
+import ReactTooltip from 'react-tooltip'
 
 import Store, { Status, RouteProps } from '../../../models/store'
 import { saveWorkingDatasetAndFetch } from '../../../actions/api'
@@ -42,6 +43,10 @@ export const CommitEditorComponent: React.FunctionComponent<CommitEditorProps> =
   const [isValid, setIsValid] = React.useState(false)
 
   const { username, name } = qriRef
+
+  React.useEffect(() => {
+    ReactTooltip.rebuild()
+  }, [])
 
   React.useEffect(() => {
     // validate form -AND- make sure dataset status is in a commitable state
