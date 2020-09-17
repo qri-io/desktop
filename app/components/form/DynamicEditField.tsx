@@ -1,5 +1,6 @@
 import * as React from 'react'
 import classNames from 'classnames'
+import stripHtml from 'string-strip-html'
 
 interface DynamicEditFieldProps {
   placeholder?: string
@@ -148,6 +149,21 @@ const DynamicEditField: React.FunctionComponent<DynamicEditFieldProps> = ({
         data-placeholder={placeholder}
         onFocus={onFocus}
         onBlur={onBlur}
+        onPaste={(e) => {
+          e.preventDefault()
+          e.stopPropagation()
+          var str = stripHtml(e.clipboardData.getData('text')).result
+
+          /**
+           * TODO (ramfox): this replaces the div text with the pasted text
+           * instead it should:
+           * 1) find the cursor position
+           * 2) insert the text at the cursor position
+           * 3) move the cursor to after the pasted text
+           * 4) trigger an update (maybe just force the 'handleChange' event?)
+           */
+          e.currentTarget.innerHTML = str
+        }}
       >{value}</div>
     </div>
   )
