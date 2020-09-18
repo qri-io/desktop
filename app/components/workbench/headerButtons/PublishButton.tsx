@@ -44,7 +44,7 @@ const PublishButtonComponent: React.FunctionComponent<PublishButtonProps> = (pro
     const extraActions = [{
       icon: 'clone',
       text: 'Copy Cloud Link',
-      onClick: () => clipboard.writeText
+      onClick: () => clipboard.writeText(`${QRI_CLOUD_URL}/${username}/${name}`)
     }]
 
     if (atHead) {
