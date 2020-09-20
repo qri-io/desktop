@@ -46,7 +46,7 @@ export const validateDatasetName = (name: string): ValidationError => {
     const invalidStart = !(/[a-z]/).test(name[0])
     if (invalidStart) return ERR_INVALID_DATASETNAME_START
 
-    const invalidCharacters = !(/^(?![0-9])[a-z0-9_]+$/.test(name))
+    const invalidCharacters = !(/^(?![0-9])[a-z0-9_-]+$/.test(name))
     if (invalidCharacters) return ERR_INVALID_DATASETNAME_CHARACTERS
 
     const tooLong = name.length > 144
