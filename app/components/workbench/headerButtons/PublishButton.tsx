@@ -14,6 +14,7 @@ import { selectIsPublished, selectInNamespace, selectLatestPath } from '../../..
 import HeaderColumnButton from '../../chrome/HeaderColumnButton'
 import Hamburger from '../../chrome/Hamburger'
 import { connectComponentToPropsWithRouter } from '../../../utils/connectComponentToProps'
+import ReactTooltip from 'react-tooltip'
 
 interface PublishButtonProps extends RouteProps {
   qriRef: QriRef
@@ -31,6 +32,10 @@ const PublishButtonComponent: React.FunctionComponent<PublishButtonProps> = (pro
     latestPath,
     setModal
   } = props
+
+  React.useEffect(() => {
+    ReactTooltip.rebuild()
+  }, [])
 
   const { username, name, path = '' } = qriRef
   const datasetSelected = username !== '' && name !== ''
