@@ -181,3 +181,10 @@
     height: 500px;
   }
 }
+
+#history-list {
+  padding: 10px;
+  flex-grow: 1;
+  height: 100%;
+  overflow: auto;
+}
