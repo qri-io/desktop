@@ -84,7 +84,7 @@ export const CommitEditorComponent: React.FunctionComponent<CommitEditorProps> =
         <TextInput
           name='title'
           label='Title'
-          labelTooltip='Briefly describe these changes'
+          labelTooltip='Briefly describe the changes being made in this commit'
           type='text'
           value={title}
           placeHolder='Add a title'
@@ -94,7 +94,7 @@ export const CommitEditorComponent: React.FunctionComponent<CommitEditorProps> =
         <TextAreaInput
           name='message'
           label='Message'
-          labelTooltip={'A detailed summary of the dataset\'s contents'}
+          labelTooltip={'Provide a detailed description of the<br/>changes being made in this commit (optional)'}
           value={message}
           placeHolder='Add a title'
           onChange={handleChange}
