@@ -109,6 +109,7 @@ describe('formValidation', () => {
   const datasetNameGoodCases = [
     'a',
     'hello_world',
+    'hello-world',
     'pmfqbx5bhe7w4nbonqj6zu2abb15txq7vc5yfgysawjbdiqaxghvt4iy3rdyhvxg2v52mcsqeh1yymxe6ciz1lsxwmfsqyzdkhfjdksajfiejfijeilsdjafijdsilafjdkmciejntiesail'
   ]
 
@@ -120,10 +121,6 @@ describe('formValidation', () => {
   })
 
   const datasetNameBadCases = [
-    {
-      string: 'hello-world',
-      err: ERR_INVALID_DATASETNAME_CHARACTERS
-    },
     {
       string: 'hi👋🏻',
       err: ERR_INVALID_DATASETNAME_CHARACTERS
