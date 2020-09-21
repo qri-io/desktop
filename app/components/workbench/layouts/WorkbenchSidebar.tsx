@@ -49,9 +49,10 @@ export const WorkbenchSidebarComponent: React.FunctionComponent<WorkbenchSidebar
     name
   } = qriRef
 
-  React.useEffect(() => {
-    ReactTooltip.rebuild()
-  }, [])
+  // The `ReactTooltip` component relies on the `data-for` and `data-tip` attributes
+  // we need to rebuild `ReactTooltip` so that it can recognize the `data-for`
+  // or `data-tip` attributes that are rendered in this component
+  React.useEffect(ReactTooltip.rebuild, [])
 
   const datasetSelected = username !== '' && name !== ''
 

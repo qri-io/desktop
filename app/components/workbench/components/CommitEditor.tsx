@@ -44,9 +44,10 @@ export const CommitEditorComponent: React.FunctionComponent<CommitEditorProps> =
 
   const { username, name } = qriRef
 
-  React.useEffect(() => {
-    ReactTooltip.rebuild()
-  }, [])
+  // The `ReactTooltip` component relies on the `data-for` and `data-tip` attributes
+  // we need to rebuild `ReactTooltip` so that it can recognize the `data-for`
+  // or `data-tip` attributes that are rendered in this component
+  React.useEffect(ReactTooltip.rebuild, [])
 
   React.useEffect(() => {
     // validate form -AND- make sure dataset status is in a commitable state
