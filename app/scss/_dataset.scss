@@ -180,7 +180,11 @@ $header-font-size: .9rem;
 ////////////////////////////
 
 #network-sidebar {
-  height: 100%
+  height: 100%;
+
+  .sidebar-content {
+    height: 100%;
+  }
 }
 
 .sidebar {
@@ -192,6 +196,7 @@ $header-font-size: .9rem;
   background-color: $qri-blue;
   border-right: 1px solid $border-color;
   color: $white;
+  overflow: hidden;
   padding: 60px 0 0 0;
 
   .sidebar-padded-container {
@@ -325,6 +330,11 @@ $header-font-size: .9rem;
         flex: 1;
       }
     }
+  }
+
+  label {
+    padding: 20px;
+    text-transform: capitalize;
   }
 }
 

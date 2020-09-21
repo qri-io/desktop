@@ -118,8 +118,15 @@
   padding: 0 10px 10px 10px;
 }
 
-#history-list {
+#network-history-list {
   padding: 10px;
   flex-grow: 1;
-  overflow: auto;
+  overflow: hidden;
+  height: 100%;
+  padding-bottom: 120px;
+
+  .list {
+    height: 100%;
+    overflow: auto;
+  }
 }

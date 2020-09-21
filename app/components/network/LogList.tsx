@@ -44,26 +44,28 @@ const LogList: React.FunctionComponent<LogListProps> = ({ qriRef, history }) => 
 
   return (
     <div
-      id='history-list'
+      id='network-history-list'
     >
-      <label className='sidebar light'>Dataset History</label>
-      {
-        data.map((item, i) => {
-          const selected = qriRef.path ? qriRef.path === item.path : i === 0
-          return (
-            <LogListItem
-              data={item}
-              key={item.path}
-              id={`HEAD-${i + 1}`}
-              first={i === 0}
-              last={i === data.length - 1}
-              selected={selected}
-              onClick={handleOnClick(item)}
-              allowDisable={false}
-            />
-          )
-        })
-      }
+      <label className='light'>Dataset History</label>
+      <div className='list'>
+        {
+          data.map((item, i) => {
+            const selected = qriRef.path ? qriRef.path === item.path : i === 0
+            return (
+              <LogListItem
+                data={item}
+                key={item.path}
+                id={`HEAD-${i + 1}`}
+                first={i === 0}
+                last={i === data.length - 1}
+                selected={selected}
+                onClick={handleOnClick(item)}
+                allowDisable={false}
+              />
+            )
+          })
+        }
+      </div>
     </div>
   )
 }

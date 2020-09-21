@@ -106,9 +106,7 @@ const MetadataEditorComponent: React.FunctionComponent<MetadataEditorProps> = (p
     return <ParseError component='meta' />
   }
 
-  React.useEffect(() => {
-    ReactTooltip.rebuild()
-  }, [])
+  React.useEffect(ReactTooltip.rebuild, [])
 
   const ignoreFields = ['qri', 'path']
 

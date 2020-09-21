@@ -14,6 +14,7 @@ import { selectIsPublished, selectInNamespace, selectLatestPath } from '../../..
 import HeaderColumnButton from '../../chrome/HeaderColumnButton'
 import Hamburger from '../../chrome/Hamburger'
 import { connectComponentToPropsWithRouter } from '../../../utils/connectComponentToProps'
+import ReactTooltip from 'react-tooltip'
 
 interface PublishButtonProps extends RouteProps {
   qriRef: QriRef
@@ -32,6 +33,11 @@ const PublishButtonComponent: React.FunctionComponent<PublishButtonProps> = (pro
     setModal
   } = props
 
+  // The `ReactTooltip` component relies on the `data-for` and `data-tip` attributes
+  // we need to rebuild `ReactTooltip` so that it can recognize the `data-for`
+  // or `data-tip` attributes that are rendered in this component
+  React.useEffect(ReactTooltip.rebuild, [])
+
   const { username, name, path = '' } = qriRef
   const datasetSelected = username !== '' && name !== ''
   const atHead = path !== '' && path === latestPath
@@ -44,7 +50,7 @@ const PublishButtonComponent: React.FunctionComponent<PublishButtonProps> = (pro
     const extraActions = [{
       icon: 'clone',
       text: 'Copy Cloud Link',
-      onClick: () => clipboard.writeText
+      onClick: () => clipboard.writeText(`${QRI_CLOUD_URL}/${username}/${name}`)
     }]
 
     if (atHead) {

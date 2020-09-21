@@ -3,6 +3,7 @@ import { Action } from 'redux'
 import classNames from 'classnames'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSync } from '@fortawesome/free-solid-svg-icons'
+import ReactTooltip from 'react-tooltip'
 
 import Store, { Status, RouteProps } from '../../../models/store'
 import { saveWorkingDatasetAndFetch } from '../../../actions/api'
@@ -43,6 +44,11 @@ export const CommitEditorComponent: React.FunctionComponent<CommitEditorProps> =
 
   const { username, name } = qriRef
 
+  // The `ReactTooltip` component relies on the `data-for` and `data-tip` attributes
+  // we need to rebuild `ReactTooltip` so that it can recognize the `data-for`
+  // or `data-tip` attributes that are rendered in this component
+  React.useEffect(ReactTooltip.rebuild, [])
+
   React.useEffect(() => {
     // validate form -AND- make sure dataset status is in a commitable state
     const valid = validateCommitState(title, status)
@@ -79,7 +85,7 @@ export const CommitEditorComponent: React.FunctionComponent<CommitEditorProps> =
         <TextInput
           name='title'
           label='Title'
-          labelTooltip='Briefly describe these changes'
+          labelTooltip='Briefly describe the changes being made in this commit'
           type='text'
           value={title}
           placeHolder='Add a title'
@@ -89,7 +95,7 @@ export const CommitEditorComponent: React.FunctionComponent<CommitEditorProps> =
         <TextAreaInput
           name='message'
           label='Message'
-          labelTooltip={'A detailed summary of the dataset\'s contents'}
+          labelTooltip={'Provide a detailed description of the<br/>changes being made in this commit (optional)'}
           value={message}
           placeHolder='Add a title'
           onChange={handleChange}

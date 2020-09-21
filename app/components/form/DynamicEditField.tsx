@@ -1,5 +1,6 @@
 import * as React from 'react'
 import classNames from 'classnames'
+import stripHtml from 'string-strip-html'
 
 interface DynamicEditFieldProps {
   placeholder?: string
@@ -148,6 +149,60 @@ const DynamicEditField: React.FunctionComponent<DynamicEditFieldProps> = ({
         data-placeholder={placeholder}
         onFocus={onFocus}
         onBlur={onBlur}
+        // TODO (ramfox): refactor as a util `onPasteSanitized` func
+        onPaste={(e) => {
+          e.preventDefault()
+          e.stopPropagation()
+          var paste = stripHtml(e.clipboardData.getData('text')).result
+
+          // we currently don't allow new lines in the description
+          paste = paste.replace(/[\r\n]/gm, " ")
+
+          // the selection is where we want to paste over/into
+          var sel = window.getSelection()
+          if (!sel) {
+            return
+          }
+          // get the start of the selection
+          // get the end of the selection
+          var text = e.currentTarget.innerText
+          var start = sel.anchorOffset
+          var end = sel.focusOffset
+          if (!text) {
+            text = ''
+            start = 0
+            end = 0
+          }
+
+          // if start is after end, switch them
+          if (start - end > 0) {
+            var temp = start
+            start = end
+            end = temp
+          }
+
+          // slice the pasted content
+          text = text.slice(0, start) + paste + text.slice(end)
+          // set the text to be the new content
+          e.currentTarget.innerText = text
+          // force an update!
+          handleChange(e)
+
+          // adjust the selection range to cover the pasted content
+          var range = sel.getRangeAt(0)
+
+          if (!e.currentTarget.firstChild) {
+            return
+          }
+          // determine where the range should end
+          // and adjust the range to start and end over the pasted content
+          end = start + paste.length
+
+          // because we striped html & line breaks we can trust
+          // there is only one node in the current target
+          range.setStart(e.currentTarget.firstChild, start)
+          range.setEnd(e.currentTarget.firstChild, end)
+        }}
       >{value}</div>
     </div>
   )

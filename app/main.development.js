@@ -503,7 +503,7 @@ app.on('ready', () =>
         fsiPath,
         published
       }) => {
-        setMenuItemEnabled(['open-working-directory'], !!fsiPath)
+        setMenuItemEnabled(['open-working-directory'], fsiPath != '')
 
         // enable/disable 'view in qri cloud' menu item
         setMenuItemEnabled(['view-on-qri-cloud'], published)

@@ -1,7 +1,7 @@
 {
   "name": "qri-desktop",
   "productName": "Qri Desktop",
-  "version": "0.4.5",
+  "version": "0.4.6-dev",
   "description": "Version your data with the Qri desktop app!",
   "main": "main.js",
   "scripts": {
@@ -267,6 +267,7 @@
     "regenerator-runtime": "0.13.3",
     "resolve-url-loader": "3.1.1",
     "source-map-support": "0.5.16",
+    "string-strip-html": "^6.0.0",
     "underscore": "1.9.1",
     "use-debounce": "3.1.0",
     "webdriverio": "4.14.4",
