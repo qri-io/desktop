@@ -1,36 +1,42 @@
 import * as React from 'react'
-import { Action } from 'redux'
+import { Switch, Route, useLocation, useRouteMatch } from 'react-router-dom'
+import { ipcRenderer } from 'electron'
 
-import { QriRef } from '../../models/qriRef'
+import { QriRef, qriRefFromRoute } from '../../models/qriRef'
 
-import { selectSidebarWidth } from '../../selections'
-import { setSidebarWidth } from '../../actions/ui'
-
-import DatasetList from '../DatasetList'
 import Layout from '../Layout'
 import CollectionHome from './CollectionHome'
 import { connectComponentToProps } from '../../utils/connectComponentToProps'
+import Workbench from '../workbench/Workbench'
 
 interface CollectionProps {
   qriRef: QriRef
-  sidebarWidth: number
-  setSidebarWidth: (type: string, sidebarWidth: number) => Action
 }
 
-export const CollectionComponent: React.FunctionComponent<CollectionProps> = (props) => {
-  const {
-    qriRef,
-    sidebarWidth,
-    setSidebarWidth
-  } = props
+export const CollectionComponent: React.FunctionComponent<CollectionProps> = (collectionProps) => {
+  const location = useLocation()
+  const { path } = useRouteMatch()
 
   return (
     <Layout
       id='collection-container'
-      sidebarContent={<DatasetList qriRef={qriRef} />}
-      sidebarWidth={sidebarWidth}
-      onSidebarResize={(width) => { setSidebarWidth('collection', width) }}
-      mainContent={<CollectionHome qriRef={qriRef} />}
+      title='Collection'
+      mainContent={
+        <Switch location={location}>
+          <Route path={`${path}/:username/:name/at/:fs/:path`} render={(props) => {
+            ipcRenderer.send('show-dataset-menu', true)
+            return <Workbench {...props} />
+          }} />
+          <Route path={`${path}/:username/:name`} render={(props) => {
+            ipcRenderer.send('show-dataset-menu', true)
+            return <Workbench {...props} />
+          }} />
+          <Route exact path={path} render={() => {
+            ipcRenderer.send('show-dataset-menu', false)
+            return <CollectionHome />
+          }} />
+        </Switch>
+      }
     />
   )
 }
@@ -40,10 +46,8 @@ export default connectComponentToProps(
   (state: any, ownProps: CollectionProps) => {
     return {
       ...ownProps,
-      sidebarWidth: selectSidebarWidth(state, 'collection')
+      qriRef: qriRefFromRoute(ownProps)
     }
   },
-  {
-    setSidebarWidth
-  }
+  {}
 )

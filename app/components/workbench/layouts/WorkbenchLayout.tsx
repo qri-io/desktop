@@ -1,16 +1,13 @@
 import * as React from 'react'
 
 import Store from '../../../models/store'
-
 import { connectComponentToProps } from '../../../utils/connectComponentToProps'
-
 import { setSidebarWidth } from '../../../actions/ui'
-
 import { selectSidebarWidth } from '../../../selections'
 
-import Layout from '../../Layout'
 import WorkbenchSidebar from './WorkbenchSidebar'
 import WorkbenchMainContent from './WorkbenchMainContent'
+import { Resizable } from '../../Resizable'
 
 interface WorkbenchLayoutProps {
   // from connect
@@ -22,7 +19,7 @@ interface WorkbenchLayoutProps {
   sidebarContent: React.ReactElement
   activeTab: string
   showNav?: boolean
-  headerContent?: React.ReactElement
+  // headerContent?: React.ReactElement
 }
 
 const WorkbenchLayoutComponent: React.FunctionComponent<WorkbenchLayoutProps> = (props) => {
@@ -30,23 +27,26 @@ const WorkbenchLayoutComponent: React.FunctionComponent<WorkbenchLayoutProps> = 
     id,
     mainContent,
     sidebarContent,
-    headerContent,
-    showNav = true,
+    // headerContent,
     activeTab,
     sidebarWidth = 0,
     onSidebarResize
   } = props
 
   return (
-    <Layout
-      id={id}
-      showNav={showNav}
-      sidebarWidth={sidebarWidth}
-      headerContent={headerContent}
-      onSidebarResize={onSidebarResize}
-      mainContent={<WorkbenchMainContent>{mainContent}</WorkbenchMainContent>}
-      sidebarContent={<WorkbenchSidebar activeTab={activeTab}>{sidebarContent}</WorkbenchSidebar>}
-    />
+    <div id={id}>
+      <Resizable
+        id={`${id}-sidebar`}
+        width={sidebarWidth}
+        onResize={onSidebarResize}
+        maximumWidth={400}
+      >
+        <WorkbenchSidebar activeTab={activeTab}>{sidebarContent}</WorkbenchSidebar>
+      </Resizable>
+      <div id={`${id}-main-content`} className='main-content'>
+        <WorkbenchMainContent>{mainContent}</WorkbenchMainContent>
+      </div>
+    </div>
   )
 }
 

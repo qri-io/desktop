@@ -153,7 +153,7 @@ module.exports = merge(baseConfig, {
        *
        */
       '__BUILD__': {
-        'ENABLE_COMPARE_SECTION': JSON.stringify(true)
+        'ENABLE_SQL_WORKBENCH': JSON.stringify(true)
       }
     }),
 

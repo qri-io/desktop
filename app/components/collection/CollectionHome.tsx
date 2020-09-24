@@ -7,15 +7,13 @@ import { ApiAction } from '../../store/api'
 import { Modal, ModalType } from '../../models/modals'
 import { ToastType } from '../../models/store'
 import { QriRef } from '../../models/qriRef'
-
 import { connectComponentToProps } from '../../utils/connectComponentToProps'
-
 import { setModal, openToast, closeToast } from '../../actions/ui'
 import { importFile } from '../../actions/api'
 
 import HeaderColumnButton from '../chrome/HeaderColumnButton'
-import WelcomeTemplate from '../onboard/WelcomeTemplate'
 import DropZone from '../chrome/DropZone'
+import DatasetList from './DatasetList'
 
 export interface CollectionHomeProps {
   qriRef: QriRef
@@ -80,13 +78,7 @@ export const CollectionHomeComponent: React.FunctionComponent<CollectionHomeProp
         />
       </div>
       <div className='main-content-flex'>
-        <WelcomeTemplate
-          title='Welcome to Qri!'
-          subtitle={`drop a file to create a new dataset`}
-          id='drop-file'
-          loading={false}
-          fullscreen={false}
-        />
+        <DatasetList />
       </div>
     </div>
   )

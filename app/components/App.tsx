@@ -29,7 +29,7 @@ import { selectSelections, selectModal, selectApiConnection, selectSession, sele
 
 // import components
 import Toast from './Toast'
-import Navbar from './Navbar'
+import NavSidebar from './nav/NavSidebar'
 import AppError from './AppError'
 import AppLoading from './AppLoading'
 import Modals from './modals/Modals'
@@ -37,6 +37,8 @@ import Routes from '../routes'
 import MigratingBackend from './MigratingBackend'
 import MigrationFailed from './MigrationFailed'
 import IncompatibleBackend from './IncompatibleBackend'
+
+const defaultPhoto = require('../assets/default_46x46.png') //eslint-disable-line
 
 // declare interface for props
 export interface AppProps {
@@ -261,7 +263,7 @@ class AppComponent extends React.Component<AppProps, AppState> {
           >
             <Modals type={modal.type} />
           </CSSTransition>
-          <Navbar />
+          <NavSidebar />
           <Routes />
         </ConnectedRouter>
         <Toast />

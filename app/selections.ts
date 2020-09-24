@@ -416,6 +416,7 @@ export function selectRecentEditRef (state: Store): QriRef {
   return state.workbenchRoutes.editRef
 }
 
+// TODO (b5) - we've refactored away from this, should depricate
 export function selectRecentWorkbenchLocation (state: Store): string {
   return state.workbenchRoutes.location
 }

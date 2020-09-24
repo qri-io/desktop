@@ -1,10 +1,10 @@
 // a layout component for the resizable sidebar with main content area
 import * as React from 'react'
-import { Resizable } from './Resizable'
-import Navbar from '../components/nav/Navbar'
+import NavTopbar from './nav/NavTopbar'
 
 interface LayoutProps {
   id: string
+  title: string
   sidebarWidth: number
   sidebarContent: React.ReactElement
   mainContent: React.ReactElement
@@ -23,10 +23,7 @@ interface LayoutProps {
 const Layout: React.FunctionComponent<LayoutProps> = (props: LayoutProps) => {
   const {
     id,
-    sidebarContent,
-    sidebarWidth,
-    onSidebarResize,
-    maximumSidebarWidth = 495,
+    title,
     mainContent,
     headerContent,
     showNav = true
@@ -36,16 +33,8 @@ const Layout: React.FunctionComponent<LayoutProps> = (props: LayoutProps) => {
     <div id={id} className='sidebar-layout'>
       {headerContent}
       <div className='columns'>
-        <Resizable
-          id={`${id}-sidebar`}
-          width={sidebarWidth}
-          onResize={onSidebarResize}
-          maximumWidth={maximumSidebarWidth}
-        >
-          {sidebarContent}
-        </Resizable>
         <div id={`${id}-main-content`} className='main-content'>
-          {showNav && <Navbar />}
+          {showNav && <NavTopbar title={title} />}
           {mainContent}
         </div>
       </div>

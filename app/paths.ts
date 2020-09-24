@@ -10,7 +10,7 @@ export function pathToEdit (username: string, name: string, component?: Selected
 
 // assumes path is of the format `/ipfs/Qmhash`
 export function pathToDataset (username: string, name: string, path: string, component?: SelectedComponent): string {
-  let uri = `/workbench/${username}/${name}`
+  let uri = `/collection/${username}/${name}`
   if (path === '') {
     return uri
   }
@@ -23,7 +23,7 @@ export function pathToDataset (username: string, name: string, path: string, com
 }
 
 export function pathToNoDatasetSelected (): string {
-  return `/workbench`
+  return `/collection`
 }
 
 export function pathToCollection (): string {

@@ -1,17 +1,22 @@
 import * as React from 'react'
 import classNames from 'classnames'
+import ReactTooltip from 'react-tooltip'
 
 import { QriRef, qriRefFromRoute, qriRefIsEmpty } from '../../../models/qriRef'
 import { VersionInfo, PageInfo, RouteProps } from '../../../models/store'
-
 import { connectComponentToPropsWithRouter } from '../../../utils/connectComponentToProps'
 import { pathToEdit, pathToDataset } from '../../../paths'
-
-import { selectLog, selectVersionInfoFromWorkingDataset, selectLogPageInfo, selectLatestPath, selectRecentEditRef, selectRecentHistoryRef } from '../../../selections'
+import {
+  selectLog,
+  selectVersionInfoFromWorkingDataset,
+  selectLogPageInfo,
+  selectLatestPath,
+  selectRecentEditRef,
+  selectRecentHistoryRef
+} from '../../../selections'
 
 import DatasetReference from '../../DatasetReference'
 import DatasetDetailsSubtext from '../../dataset/DatasetDetailsSubtext'
-import ReactTooltip from 'react-tooltip'
 
 export interface WorkbenchSidebarData {
   versionInfo: VersionInfo

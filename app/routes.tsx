@@ -4,20 +4,17 @@ import { Switch, Route, Redirect } from 'react-router-dom'
 import { ipcRenderer } from 'electron'
 
 import Store from '../models/store'
-
 import {
   acceptTOS,
   setQriCloudAuthenticated,
   setModal
 } from './actions/ui'
-
 import { signup, signin } from './actions/session'
 
 import Welcome from './components/onboard/Welcome'
 import Signup from './components/onboard/Signup'
 import Signin from './components/Signin'
 import Collection from './components/collection/Collection'
-import Workbench from './components/workbench/Workbench'
 import Network from './components/network/Network'
 import Compare from './components/compare/Compare'
 import { Action } from 'redux'
@@ -87,22 +84,12 @@ export const RoutesComponent: React.FunctionComponent<RoutesProps> = (props) => 
           return sectionElement('network', <Network {...props} />)
         }} />
 
-        <Route exact path='/collection' render={() => {
+        <Route path='/collection' render={(props) => {
           return sectionElement('collection', <Collection {...props} />)
         }} />
-        <Route path='/collection/:username' render={(props) => {
-          return sectionElement('collection', <Placeholder
-            title='Collection User Datasets'
-            pathname={props.location.pathname}
-          />)
-        }} />
 
-        <Route path='/workbench' render={(props) => {
-          return sectionElement('workbench', <Workbench {...props} />)
-        }}/>
-
-        { __BUILD__.ENABLE_COMPARE_SECTION &&
-          <Route exact path='/compare' render={(props) => sectionElement('compare', <Compare {...props} />)} />
+        { __BUILD__.ENABLE_SQL_WORKBENCH &&
+          <Route exact path='/sql' render={(props) => sectionElement('compare', <Compare {...props} />)} />
         }
 
         <Route path='/' render={() => {
@@ -112,18 +99,6 @@ export const RoutesComponent: React.FunctionComponent<RoutesProps> = (props) => 
       </Switch>
     </div>
   )
-}
-
-interface PlaceholderProps {
-  title: string
-  pathname: string
-}
-
-const Placeholder: React.FunctionComponent<PlaceholderProps> = ({ title, pathname }) => {
-  return <div className='container dataset'>
-    <h1>{title}</h1>
-    <i>a placeholder for: {pathname}</i>
-  </div>
 }
 
 export default connectComponentToProps(

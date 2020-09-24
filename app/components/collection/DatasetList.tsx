@@ -5,22 +5,19 @@ import { shell, MenuItemConstructorOptions } from 'electron'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTimes } from '@fortawesome/free-solid-svg-icons'
 
-import { QriRef } from '../models/qriRef'
-import { Modal, ModalType } from '../models/modals'
-import { MyDatasets, WorkingDataset, VersionInfo, RouteProps } from '../models/store'
+import { QriRef } from '../../models/qriRef'
+import { Modal, ModalType } from '../../models/modals'
+import { MyDatasets, WorkingDataset, VersionInfo, RouteProps } from '../../models/store'
+import { connectComponentToPropsWithRouter } from '../../utils/connectComponentToProps'
+import { selectImportFileName, selectImportFileSize } from '../../selections'
+import { setFilter } from '../../actions/myDatasets'
+import { fetchMyDatasets } from '../../actions/api'
+import { setWorkingDataset } from '../../actions/selections'
+import { setModal } from '../../actions/ui'
 
-import { connectComponentToPropsWithRouter } from '../utils/connectComponentToProps'
-
-import { selectImportFileName, selectImportFileSize } from '../selections'
-
-import { setFilter } from '../actions/myDatasets'
-import { fetchMyDatasets } from '../actions/api'
-import { setWorkingDataset } from '../actions/selections'
-import { setModal } from '../actions/ui'
-
-import ProgressBar from './chrome/ProgressBar'
-import VersionInfoItem from './item/VersionInfoItem'
-import { pathToDataset } from '../paths'
+import ProgressBar from '../chrome/ProgressBar'
+import VersionInfoItem from '../item/VersionInfoItem'
+import { pathToDataset } from '../../paths'
 
 // for displaying a progress bar based on import file size
 // assumes an import rate of 4828 bytes per millisecond
@@ -150,38 +147,33 @@ export class DatasetListComponent extends React.Component<DatasetListProps> {
 
     return (
       <div id='dataset-list'>
-        <div className='sidebar' >
-          <div className='sidebar-header sidebar-padded-container'>
-            <p className='pane-title'>Collection</p>
-          </div>
-          <div id='dataset-list-filter'>
-            <div className='filter-input-container'>
-              <input
-                type='text'
-                name='filter'
-                placeholder='Filter datasets'
-                value={filter}
-                onChange={(e) => this.handleFilterChange(e)}
-              />
-              { filter !== '' &&
-                <a
-                  className='close'
-                  onClick={this.clearFilter}
-                  aria-label='close'
-                  role='button' ><FontAwesomeIcon icon={faTimes} size='lg'/>
-                </a>
-              }
-            </div>
-          </div>
-          <div id='list' onScroll={(e) => this.handleScroll(e)}>
-            {listContent}
-          </div>
-          <div id='list-footer'>
-            {(importFileSize > 0)
-              ? <ProgressBar duration={importTimeEstimate} fileName={importFileName} />
-              : <div className='strong-message'>{countMessage}</div>
+        <div id='dataset-list-filter'>
+          <div className='filter-input-container'>
+            <input
+              type='text'
+              name='filter'
+              placeholder='Filter datasets'
+              value={filter}
+              onChange={(e) => this.handleFilterChange(e)}
+            />
+            { filter !== '' &&
+              <a
+                className='close'
+                onClick={this.clearFilter}
+                aria-label='close'
+                role='button' ><FontAwesomeIcon icon={faTimes} size='lg'/>
+              </a>
             }
           </div>
+        </div>
+        <div id='list' onScroll={(e) => this.handleScroll(e)}>
+          {listContent}
+        </div>
+        <div id='list-footer'>
+          {(importFileSize > 0)
+            ? <ProgressBar duration={importTimeEstimate} fileName={importFileName} />
+            : <div className='strong-message'>{countMessage}</div>
+          }
         </div>
       </div>
     )
