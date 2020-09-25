@@ -14,12 +14,13 @@ import { signup, signin } from './actions/session'
 import Welcome from './components/onboard/Welcome'
 import Signup from './components/onboard/Signup'
 import Signin from './components/Signin'
-import Collection from './components/collection/Collection'
+// import Collection from './components/collection/Collection'
 import Network from './components/network/Network'
 import Compare from './components/compare/Compare'
 import { Action } from 'redux'
 import { ApiAction } from './store/api'
 import { connectComponentToProps } from './utils/connectComponentToProps'
+import Workbench from './components/workbench/Workbench'
 
 interface RoutesProps {
   hasAcceptedTOS: boolean
@@ -85,7 +86,7 @@ export const RoutesComponent: React.FunctionComponent<RoutesProps> = (props) => 
         }} />
 
         <Route path='/collection' render={(props) => {
-          return sectionElement('collection', <Collection {...props} />)
+          return sectionElement('collection', <Workbench {...props} />)
         }} />
 
         { __BUILD__.ENABLE_SQL_WORKBENCH &&

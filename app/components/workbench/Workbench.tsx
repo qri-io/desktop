@@ -34,7 +34,8 @@ import { Resizable } from '../Resizable'
 import DetailsBar from '../DetailsBar'
 import Dataset from './Dataset'
 import { pathToNoDatasetSelected, pathToEdit } from '../../paths'
-import NoDatasets from './NoDatasets'
+import Collection from '../collection/Collection'
+
 import EditDataset from './EditDataset'
 import { connectComponentToProps } from '../../utils/connectComponentToProps'
 
@@ -197,6 +198,7 @@ const WorkbenchRouter: React.FunctionComponent<WorkbenchRouterProps> = (props) =
       return component
     }
   }
+  console.log(useRouteMatch())
 
   return (
     <TransitionGroup component={null}>
@@ -208,8 +210,9 @@ const WorkbenchRouter: React.FunctionComponent<WorkbenchRouterProps> = (props) =
       >
         <Switch location={location}>
           <Route exact path={path} render={() => {
-            return <NoDatasets />
-          } }/>
+            ipcRenderer.send('show-dataset-menu', false)
+            return <Collection />
+          }} />
           <Route path={`${path}/edit/:username/:name`} render={() => {
             return noDatasetsRedirect(
               <EditDataset />

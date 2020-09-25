@@ -1,7 +1,7 @@
 import { SelectedComponent } from "./models/store"
 
 export function pathToEdit (username: string, name: string, component?: SelectedComponent): string {
-  let uri = `/workbench/edit/${username}/${name}`
+  let uri = `/collection/edit/${username}/${name}`
   if (!component || component === '') {
     return uri
   }
@@ -11,7 +11,7 @@ export function pathToEdit (username: string, name: string, component?: Selected
 // assumes path is of the format `/ipfs/Qmhash`
 export function pathToDataset (username: string, name: string, path: string, component?: SelectedComponent): string {
   let uri = `/collection/${username}/${name}`
-  if (path === '') {
+  if (!path) {
     return uri
   }
   uri += `/at${path}`

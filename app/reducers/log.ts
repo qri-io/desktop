@@ -36,7 +36,7 @@ const logReducer: Reducer = (state = initialState, action: AnyAction): Log | nul
     case LOG_FAIL:
       return {
         ...state,
-        pageInfo: reducerWithPagination(action, state.log.pageInfo)
+        pageInfo: reducerWithPagination(action, state.pageInfo)
       }
     default:
       return state
