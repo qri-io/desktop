@@ -1,12 +1,12 @@
 import * as React from 'react'
 
 import ExternalLink from '../ExternalLink'
-import WorkbenchLayout from './layouts/WorkbenchLayout'
+import DatasetLayout from './layouts/DatasetLayout'
 import DisabledComponentList from './DisabledComponentList'
 
 const NotInNamespace: React.FunctionComponent = () => {
   return (
-    <WorkbenchLayout
+    <DatasetLayout
       id='dataset-not-in-namespace'
       activeTab='status'
       mainContent={

@@ -19,7 +19,7 @@ import Layout from '../Layout'
 import NetworkHome from './NetworkHome'
 import NetworkSidebar from './NetworkSidebar'
 import Preview from '../dataset/Preview'
-import LogList from './LogList'
+import NetworkLogList from './NetworkLogList'
 import SidebarActionButton from '../chrome/SidebarActionButton'
 
 export interface NetworkProps extends RouteProps {
@@ -93,7 +93,7 @@ const NetworkComponent: React.FunctionComponent<NetworkProps> = (props) => {
             data={{ enabled: true }}
             onChange={(d: P2PConnection) => { alert(`change connection: ${d.enabled}`) }}
           /> */}
-          {qriRef.username && qriRef.name && <LogList qriRef={qriRef} />}
+          {qriRef.username && qriRef.name && <NetworkLogList qriRef={qriRef} />}
           {
             qriRef.username && qriRef.name && !inCollection &&
               <SidebarActionButton

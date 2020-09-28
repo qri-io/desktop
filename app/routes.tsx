@@ -20,7 +20,7 @@ import Compare from './components/compare/Compare'
 import { Action } from 'redux'
 import { ApiAction } from './store/api'
 import { connectComponentToProps } from './utils/connectComponentToProps'
-import Workbench from './components/workbench/Workbench'
+import Collection from './components/collection/Collection'
 
 interface RoutesProps {
   hasAcceptedTOS: boolean
@@ -86,7 +86,7 @@ export const RoutesComponent: React.FunctionComponent<RoutesProps> = (props) => 
         }} />
 
         <Route path='/collection' render={(props) => {
-          return sectionElement('collection', <Workbench {...props} />)
+          return sectionElement('collection', <Collection {...props} />)
         }} />
 
         { __BUILD__.ENABLE_SQL_WORKBENCH &&

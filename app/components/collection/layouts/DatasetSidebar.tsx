@@ -13,15 +13,15 @@ import DatasetReference from '../../DatasetReference'
 import DatasetDetailsSubtext from '../../dataset/DatasetDetailsSubtext'
 import ReactTooltip from 'react-tooltip'
 
-export interface WorkbenchSidebarData {
+export interface DatasetSidebarData {
   versionInfo: VersionInfo
   logPageInfo: PageInfo
   logLength: number
 }
 
-export interface WorkbenchSidebarProps extends RouteProps {
+export interface DatasetSidebarProps extends RouteProps {
   qriRef: QriRef
-  data: WorkbenchSidebarData
+  data: DatasetSidebarData
   lastEditRef: QriRef
   lastHistoryRef: QriRef
   latestPath: string
@@ -30,7 +30,7 @@ export interface WorkbenchSidebarProps extends RouteProps {
   activeTab: string
 }
 
-export const WorkbenchSidebarComponent: React.FunctionComponent<WorkbenchSidebarProps> = (props) => {
+export const DatasetSidebarComponent: React.FunctionComponent<DatasetSidebarProps> = (props) => {
   const {
     qriRef,
     data,
@@ -106,8 +106,8 @@ export const WorkbenchSidebarComponent: React.FunctionComponent<WorkbenchSidebar
 }
 
 export default connectComponentToPropsWithRouter(
-  WorkbenchSidebarComponent,
-  (state: any, ownProps: WorkbenchSidebarProps) => {
+  DatasetSidebarComponent,
+  (state: any, ownProps: DatasetSidebarProps) => {
     const qriRef = qriRefFromRoute(ownProps)
     return {
       ...ownProps,

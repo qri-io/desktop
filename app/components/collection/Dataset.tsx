@@ -16,8 +16,8 @@ import ComponentList from './ComponentList'
 import ComponentRouter from './ComponentRouter'
 import Layout from '../Layout'
 import DatasetHeader from './DatasetHeader'
-import WorkbenchLayout from './layouts/WorkbenchLayout'
-import WorkbenchLogList from './WorkbenchLogList'
+import DatasetLayout from './layouts/DatasetLayout'
+import LogList from './LogList'
 
 export interface DatasetProps extends RouteProps {
   qriRef: QriRef
@@ -37,7 +37,7 @@ export const DatasetComponent: React.FunctionComponent<DatasetProps> = (props) =
   }, [qriRef.location])
 
   return (
-    <WorkbenchLayout
+    <DatasetLayout
       id='dataset-history'
       activeTab='history'
       mainContent={
@@ -61,7 +61,7 @@ export const DatasetComponent: React.FunctionComponent<DatasetProps> = (props) =
             )}
           />
         </div>}
-      sidebarContent={<WorkbenchLogList qriRef={qriRef}/>}
+      sidebarContent={<LogList qriRef={qriRef}/>}
     />
   )
 }

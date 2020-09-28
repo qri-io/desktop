@@ -11,7 +11,7 @@ import { fetchWorkbench } from '../../actions/workbench'
 import { selectInNamespace } from '../../selections'
 
 import ComponentRouter from './ComponentRouter'
-import WorkbenchLayout from './layouts/WorkbenchLayout'
+import DatasetLayout from './layouts/DatasetLayout'
 import WorkingComponentList from './WorkingComponentList'
 import NotInNamespace from './NotInNamespace'
 
@@ -36,7 +36,7 @@ export const EditDatasetComponent: React.FunctionComponent<EditDatasetProps> = (
   }
 
   return (
-    <WorkbenchLayout
+    <DatasetLayout
       id='dataset-edit'
       activeTab='status'
       mainContent={<ComponentRouter />}

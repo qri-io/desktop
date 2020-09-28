@@ -9,10 +9,10 @@ import { setSidebarWidth } from '../../../actions/ui'
 import { selectSidebarWidth } from '../../../selections'
 
 import Layout from '../../Layout'
-import WorkbenchSidebar from './WorkbenchSidebar'
-import WorkbenchMainContent from './WorkbenchMainContent'
+import DatasetSidebar from './DatasetSidebar'
+import DatasetMainContent from './DatasetMainContent'
 
-interface WorkbenchLayoutProps {
+interface DatasetLayoutProps {
   // from connect
   sidebarWidth?: number
   onSidebarResize?: (width: number) => void
@@ -24,7 +24,7 @@ interface WorkbenchLayoutProps {
   headerContent?: React.ReactElement
 }
 
-const WorkbenchLayoutComponent: React.FunctionComponent<WorkbenchLayoutProps> = (props) => {
+const DatasetLayoutComponent: React.FunctionComponent<DatasetLayoutProps> = (props) => {
   const {
     id,
     mainContent,
@@ -43,15 +43,15 @@ const WorkbenchLayoutComponent: React.FunctionComponent<WorkbenchLayoutProps> = 
       sidebarWidth={sidebarWidth}
       headerContent={headerContent}
       onSidebarResize={onSidebarResize}
-      mainContent={<WorkbenchMainContent>{mainContent}</WorkbenchMainContent>}
-      sidebarContent={<WorkbenchSidebar activeTab={activeTab}>{sidebarContent}</WorkbenchSidebar>}
+      mainContent={<DatasetMainContent>{mainContent}</DatasetMainContent>}
+      sidebarContent={<DatasetSidebar activeTab={activeTab}>{sidebarContent}</DatasetSidebar>}
     />
   )
 }
 
 export default connectComponentToProps(
-  WorkbenchLayoutComponent,
-  (state: Store, ownProps: WorkbenchLayoutProps) => {
+  DatasetLayoutComponent,
+  (state: Store, ownProps: DatasetLayoutProps) => {
     return {
       sidebarWidth: selectSidebarWidth(state, 'workbench'),
       ...ownProps

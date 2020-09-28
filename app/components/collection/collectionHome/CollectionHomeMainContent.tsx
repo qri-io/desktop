@@ -3,19 +3,19 @@ import { Action } from 'redux'
 import path from 'path'
 import { faPlus, faDownload } from '@fortawesome/free-solid-svg-icons'
 
-import { ApiAction } from '../../store/api'
-import { Modal, ModalType } from '../../models/modals'
-import { ToastType } from '../../models/store'
-import { QriRef } from '../../models/qriRef'
-import { connectComponentToProps } from '../../utils/connectComponentToProps'
-import { setModal, openToast, closeToast } from '../../actions/ui'
-import { importFile } from '../../actions/api'
+import { ApiAction } from '../../../store/api'
+import { Modal, ModalType } from '../../../models/modals'
+import { ToastType } from '../../../models/store'
+import { QriRef } from '../../../models/qriRef'
+import { connectComponentToProps } from '../../../utils/connectComponentToProps'
+import { setModal, openToast, closeToast } from '../../../actions/ui'
+import { importFile } from '../../../actions/api'
 
-import HeaderColumnButton from '../chrome/HeaderColumnButton'
-import DropZone from '../chrome/DropZone'
+import HeaderColumnButton from '../../chrome/HeaderColumnButton'
+import DropZone from '../../chrome/DropZone'
 import DatasetList from './DatasetList'
 
-export interface CollectionHomeProps {
+export interface CollectionHomeMainContentProps {
   qriRef: QriRef
   setModal: (modal: Modal) => void
   importFile: (filePath: string, fileName: string, fileSize: number) => Promise<ApiAction>
@@ -23,7 +23,7 @@ export interface CollectionHomeProps {
   closeToast: () => Action
 }
 
-export const CollectionHomeComponent: React.FunctionComponent<CollectionHomeProps> = (props) => {
+export const CollectionHomeMainContentComponent: React.FunctionComponent<CollectionHomeMainContentProps> = (props) => {
   const { setModal, importFile, openToast, closeToast } = props
 
   const [dragging, setDragging] = React.useState(false)
@@ -85,7 +85,7 @@ export const CollectionHomeComponent: React.FunctionComponent<CollectionHomeProp
 }
 
 export default connectComponentToProps(
-  CollectionHomeComponent,
+  CollectionHomeMainContentComponent,
   {},
   {
     setModal,

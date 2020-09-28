@@ -11,14 +11,14 @@ import { selectFsiPath, selectMutationsIsDirty } from '../../../selections'
 import LinkButton from '../headerButtons/LinkButton'
 import PublishButton from '../headerButtons/PublishButton'
 
-interface WorkbenchMainContentProps extends RouteProps {
+interface DatasetMainContentProps extends RouteProps {
   qriRef: QriRef
   modified: boolean
   fsiPath: string
   fetchWorkingDatasetDetails: (username: string, name: string) => ApiActionThunk
 }
 
-const WorkbenchMainContentComponent: React.FunctionComponent<WorkbenchMainContentProps> = (props) => {
+const DatasetMainContentComponent: React.FunctionComponent<DatasetMainContentProps> = (props) => {
   const {
     qriRef,
     modified,
@@ -44,8 +44,8 @@ const WorkbenchMainContentComponent: React.FunctionComponent<WorkbenchMainConten
 }
 
 export default connectComponentToPropsWithRouter(
-  WorkbenchMainContentComponent,
-  (state: any, ownProps: WorkbenchMainContentProps) => {
+  DatasetMainContentComponent,
+  (state: any, ownProps: DatasetMainContentProps) => {
     return {
       ...ownProps,
       qriRef: qriRefFromRoute(ownProps),
