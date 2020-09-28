@@ -4,28 +4,23 @@ import { Action } from 'redux'
 import { shell } from 'electron'
 import {
   faExternalLinkAlt,
-  faFileAlt,
+  faDatabase,
   faCopy,
   faComment,
-  faGlobeEurope,
-  faRandom
+  faGlobeEurope
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { IconDefinition } from '@fortawesome/free-regular-svg-icons'
 
-import { connectComponentToPropsWithRouter } from '../utils/connectComponentToProps'
-import { DISCORD_URL, QRI_CLOUD_URL } from '../constants'
+import { connectComponentToPropsWithRouter } from '../../utils/connectComponentToProps'
+import { DISCORD_URL, QRI_CLOUD_URL } from '../../constants'
+import { signout } from '../../actions/ui'
+import { selectSession } from '../../selections'
 
-import { signout } from '../actions/ui'
-
-import { selectSession, selectRecentWorkbenchLocation } from '../selections'
-
-import ExternalLink from './ExternalLink'
-import NavbarItem from './chrome/NavbarItem'
-import { Session } from '../models/session'
-import { RouteProps } from '../models/store'
-
-const defaultPhoto = require('../assets/default_46x46.png') //eslint-disable-line
+import ExternalLink from '../ExternalLink'
+import NavbarItem from '../chrome/NavbarItem'
+import { Session } from '../../models/session'
+import { RouteProps } from '../../models/store'
 
 interface MenuItemProps {
   id: string
@@ -57,12 +52,11 @@ const MenuItem: React.FunctionComponent<MenuItemProps> = (props: MenuItemProps) 
 
 interface NavbarProps extends RouteProps{
   session: Session
-  recentWorkbenchLocation: string
   signout: () => Action
 }
 
 export const NavbarComponent: React.FunctionComponent<NavbarProps> = (props: NavbarProps) => {
-  const { session, location, signout, recentWorkbenchLocation } = props
+  const { session, location, signout } = props
 
   const {
     photo = defaultPhoto,
@@ -104,31 +98,25 @@ export const NavbarComponent: React.FunctionComponent<NavbarProps> = (props: Nav
 
   let navItems = [
     {
-      icon: faGlobeEurope,
-      id: 'network',
-      link: '/network',
-      tooltip: 'Network - Browse other datasets'
-    },
-    {
       icon: faCopy,
       id: 'collection',
       link: '/collection',
       tooltip: 'Collection - Local Datasets'
     },
     {
-      icon: faFileAlt,
-      id: 'workbench',
-      link: recentWorkbenchLocation === '' ? '/workbench' : recentWorkbenchLocation,
-      tooltip: 'Workbench - Build & Edit Datasets'
+      icon: faGlobeEurope,
+      id: 'network',
+      link: '/network',
+      tooltip: 'Network - Browse other datasets'
     }
   ]
 
-  if (__BUILD__.ENABLE_COMPARE_SECTION) {
+  if (__BUILD__.ENABLE_SQL_WORKBENCH) {
     navItems.push({
-      icon: faRandom,
-      id: 'compare',
-      link: '/compare',
-      tooltip: 'Compare two datasets'
+      icon: faDatabase,
+      id: 'sql',
+      link: '/sql',
+      tooltip: 'SQL workbench'
     })
   }
 
@@ -193,7 +181,6 @@ export default connectComponentToPropsWithRouter(
   (state: any, ownProps: NavbarProps) => {
     return {
       session: selectSession(state),
-      recentWorkbenchLocation: selectRecentWorkbenchLocation(state),
       ...ownProps
     }
   },

@@ -9,7 +9,7 @@ import { connectComponentToProps } from '../utils/connectComponentToProps'
 import { setDetailsBar } from '../actions/ui'
 
 import StatsChart from './StatsChart'
-import { Header } from './workbench/components/Body'
+import { Header } from './collection/datasetComponents/Body'
 import { TypeLabel } from './TwoDSchemaLayout'
 
 export interface DetailsBarProps {

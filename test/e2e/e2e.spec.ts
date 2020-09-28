@@ -7,6 +7,7 @@ import fakeDialog from 'spectron-fake-dialog'
 import { E2ETestUtils, newE2ETestUtils } from '../utils/e2eTestUtils'
 import http from 'http'
 import Dataset, { Commit, Meta, Structure } from '../../app/models/dataset'
+import { delay } from 'underscore'
 
 const { Application } = require('spectron')
 
@@ -307,6 +308,7 @@ describe('Qri End to End tests', function spec () {
   it('create new CSV dataset from a data source', async () => {
     const {
       atLocation,
+      atDataset,
       click,
       expectTextToBe,
       onHistoryTab,
@@ -331,8 +333,8 @@ describe('Qri End to End tests', function spec () {
     // submit to create a new dataset
     await click('#submit')
 
-    // ensure we are redirected to the workbench
-    await atLocation(`#/workbench`)
+    // ensure we are redirected to the dataset
+    await atDataset(username, datasetName)
 
     // ensure we have navigated to the correct dataset
     // TODO (ramfox): it's weird that we have to pass in this newline character
@@ -346,7 +348,7 @@ describe('Qri End to End tests', function spec () {
     await onHistoryTab()
 
     if (takeScreenshots) {
-      await takeScreenshot(artifactPath('csv-workbench-history.png'))
+      await takeScreenshot(artifactPath('csv-dataset-history.png'))
     }
 
     // ensure the body and structure indicate that they were 'added'
@@ -357,6 +359,7 @@ describe('Qri End to End tests', function spec () {
   it('navigate to collection and back to dataset', async () => {
     const {
       atLocation,
+      atDataset,
       click,
       expectTextToBe,
       onHistoryTab
@@ -372,7 +375,7 @@ describe('Qri End to End tests', function spec () {
     const ref = `#${username}-${datasetName}`
     await click(ref)
     // ensure we have redirected to the dataset page
-    await atLocation(`#/workbench/${username}/${datasetName}`)
+    await atDataset(username, datasetName)
     // ensure we are still at the history tab
     await onHistoryTab()
     // ensure we have a commit title
@@ -382,21 +385,21 @@ describe('Qri End to End tests', function spec () {
   // checkout
   it('checkout a dataset', async () => {
     const {
-      atLocation,
+      atDataset,
       click,
       onStatusTab,
       waitForNotExist,
       takeScreenshot
     } = utils
 
-    // at dataset
-    await click('#workbench')
+    // ensure we at at the correct page
+    await atDataset(username, datasetName)
     // at status
     await click('#status-tab')
     await onStatusTab()
 
     if (takeScreenshots) {
-      await takeScreenshot(artifactPath('workbench-checkout.png'))
+      await takeScreenshot(artifactPath('dataset-checkout.png'))
     }
 
     // click #checkout to open checkout modal
@@ -414,13 +417,11 @@ describe('Qri End to End tests', function spec () {
     await click('#submit')
     // expect modal to be gone
     await waitForNotExist('#checkout-dataset')
-    // atLocation
-    await atLocation(`#/workbench`)
     // check we are at status tab
     await onStatusTab()
 
     if (takeScreenshots) {
-      await takeScreenshot(artifactPath('csv-workbench-status.png'))
+      await takeScreenshot(artifactPath('csv-dataset-status.png'))
     }
   })
 
@@ -436,8 +437,6 @@ describe('Qri End to End tests', function spec () {
       waitForExist
     } = utils
 
-    // on dataset page
-    await click('#workbench', artifactPath('write-the-body-to-the-filesystem-and-commit-click-workbench.png'))
     // on status tab
     await click('#status-tab', artifactPath('write-the-body-to-the-filesystem-and-commit-click-status.png'))
     // no changes, so cannot commit
@@ -466,12 +465,14 @@ describe('Qri End to End tests', function spec () {
 
   // meta write and commit
   it('fsi editing - create a meta & commit', async () => {
+    await utils.atDataset(username, datasetName)
     await editMeta('fsi-meta-edit', { meta, commit: metaCommit }, 'added', utils, imagesDir)
   })
 
   // structure write and commit
   it('fsi editing - edit the structure & commit', async () => {
-    await editCSVStructure('fsi-structure-edit', { structure: csvStructure, commit: structureCommit }, 'modified', utils, imagesDir)
+    await utils.atDataset(username, datasetName)
+    await editCSVStructure('fsi-setructure-edit', { structure: csvStructure, commit: structureCommit }, 'modified', utils, imagesDir)
   })
 
   // rename
@@ -479,16 +480,14 @@ describe('Qri End to End tests', function spec () {
     const {
       click,
       waitForExist,
-      atLocation,
+      atDataset,
       setValue,
       doesNotExist,
-      takeScreenshot
+      takeScreenshot,
+      delay
     } = utils
 
-    // on dataset
-    await click('#workbench')
-    // ensure we are on the workbench
-    await atLocation(`#/workbench`)
+    await atDataset(username, datasetName)
     // click #dataset-name
     await click('#dataset-name')
     // make sure the input exists
@@ -501,13 +500,13 @@ describe('Qri End to End tests', function spec () {
     await setValue('#dataset-name-input', datasetRename)
 
     if (takeScreenshots) {
-      await takeScreenshot(artifactPath('csv-workbench-rename.png'))
+      await takeScreenshot(artifactPath('csv-datase-rename.png'))
     }
 
     // get correct class
     await doesNotExist('#dataset-name-input.invalid')
     // submit by clicking away
-    await click('#dataset-reference')
+    await click('#history-tab')
   })
 
   // switch between commits
@@ -516,14 +515,17 @@ describe('Qri End to End tests', function spec () {
       click,
       delay,
       onHistoryTab,
-      atLocation,
+      atDataset,
+      // atLocation,
       expectTextToBe,
       takeScreenshot
     } = utils
 
-    // make sure we are on the dataset page, looking at history
-    await click('#workbench')
-    await atLocation(`#/workbench`)
+    // await click('#collection')
+    // await atLocation('#/collection')
+    // await click(`#${username}-${datasetRename}`)
+    // ensure we have redirected to the dataset page
+    await atDataset(username, datasetRename)
     await click('#history-tab')
     await onHistoryTab()
     await click('#meta-status')
@@ -555,6 +557,7 @@ describe('Qri End to End tests', function spec () {
   it('create another CSV dataset from a data source', async () => {
     const {
       atLocation,
+      atDataset,
       click,
       expectTextToBe,
       onHistoryTab,
@@ -580,8 +583,8 @@ describe('Qri End to End tests', function spec () {
     // submit to create a new dataset
     await click('#submit')
 
-    // ensure we are redirected to the workbench
-    await atLocation(`#/workbench`)
+    // ensure we are redirected to the dataset
+    await atDataset(username, datasetName)
 
     // ensure we have navigated to the correct dataset
     // TODO (ramfox): it's weird that we have to pass in this newline character
@@ -595,7 +598,7 @@ describe('Qri End to End tests', function spec () {
     await onHistoryTab()
 
     if (takeScreenshots) {
-      await takeScreenshot(artifactPath('csv-workbench-history.png'))
+      await takeScreenshot(artifactPath('csv-dataset-history.png'))
     }
 
     // ensure the body and structure indicate that they were 'added'
@@ -605,11 +608,13 @@ describe('Qri End to End tests', function spec () {
 
   // meta write and commit
   it('in app editing - create a meta & commit', async () => {
+    await utils.atDataset(username, datasetName)
     await editMeta('in-app-meta-edit', { meta, commit: metaCommit }, 'added', utils, imagesDir)
   })
 
   // structure write and commit
   it('in app editing - edit the structure & commit', async () => {
+    await utils.atDataset(username, datasetName)
     await editCSVStructure('in-app-structure-edit', { structure: csvStructure, commit: structureCommit }, 'modified', utils, imagesDir)
   })
 
@@ -619,14 +624,13 @@ describe('Qri End to End tests', function spec () {
       delay,
       click,
       onHistoryTab,
-      atLocation,
+      atDataset,
       expectTextToBe,
       takeScreenshot
     } = utils
 
     // make sure we are on the dataset page, looking at history
-    await click('#workbench')
-    await atLocation(`#/workbench`)
+    await atDataset(username, datasetName)
     await click('#history-tab')
     await onHistoryTab()
     await click('#meta-status')
@@ -652,6 +656,7 @@ describe('Qri End to End tests', function spec () {
   it('create a new JSON dataset from a data source', async () => {
     const {
       atLocation,
+      atDataset,
       click,
       expectTextToBe,
       onHistoryTab,
@@ -684,10 +689,10 @@ describe('Qri End to End tests', function spec () {
       takeScreenshot(artifactPath('json_dataset-submit'))
     }
 
-    // ensure we have redirected to the workbench section
-    await atLocation('#/workbench')
+    // ensure we have redirected to the dataset section
+    await atDataset(username, jsonDatasetName)
     if (takeScreenshots) {
-      takeScreenshot(artifactPath('json_dataset-at_location_workbench.png'))
+      takeScreenshot(artifactPath('json_dataset-at_location_dataset.png'))
     }
 
     // ensure we have navigated to the correct dataset
@@ -712,6 +717,7 @@ describe('Qri End to End tests', function spec () {
   it('Search: search for a foreign dataset, navigate it, clone it', async () => {
     const {
       atLocation,
+      atDataset,
       click,
       expectTextToContain,
       waitForExist,
@@ -747,7 +753,6 @@ describe('Qri End to End tests', function spec () {
     await click('#result-0 .header a')
 
     // check location
-    // TODO (ramfox): currently broken
     await atLocation('#/network')
 
     // check we are at the right dataset
@@ -760,7 +765,7 @@ describe('Qri End to End tests', function spec () {
 
     // clone the dataset by clicking on the action button
     await click('#sidebar-action')
-    await atLocation('#/workbench')
+    await atDataset('', registryDatasetName)
 
     // flaky tests, they change whether or not the username is so long that the dataset name is cut off by the dataset sidebar.
     // await waitForExist('#dataset-reference')
@@ -813,14 +818,14 @@ describe('Qri End to End tests', function spec () {
     await waitForNotExist('#sidebar-action')
   })
 
-  it('search: clicking a local dataset brings you to the workbench', async () => {
+  it('search: clicking a local dataset brings you to the dataset page', async () => {
     const {
       click,
       sendKeys,
       waitForExist,
       setValue,
       expectTextToBe,
-      atLocation,
+      atDataset,
       takeScreenshot
     } = utils
     // click the search box to bring up the modal
@@ -849,7 +854,7 @@ describe('Qri End to End tests', function spec () {
     await click('#result-0 .header a')
 
     // check location
-    await atLocation('#/workbench')
+    await atDataset(username, datasetRename)
     // ensure we are on the correct dataset
     await expectTextToBe('#dataset-reference', username + '/\n' + datasetRename)
   })
@@ -858,13 +863,14 @@ describe('Qri End to End tests', function spec () {
     const {
       click,
       atLocation,
+      atDataset,
       expectTextToBe,
       waitForExist,
       takeScreenshot,
       expectTextToContain
     } = utils
     // check location
-    await atLocation('#/workbench')
+    await atDataset(username, datasetRename)
     // ensure we are on the correct dataset
     await expectTextToBe('#dataset-reference', username + '/\n' + datasetRename, artifactPath('publishing_dataset-expect_text_to_be_dataset_reference.png'))
 
@@ -905,10 +911,10 @@ describe('Qri End to End tests', function spec () {
       await takeScreenshot(artifactPath('network-preview-with-local.png'))
     }
 
-    // head back to the workbench & unpublish
-    // check location
-    await click('#workbench', artifactPath('network-click-workbench.png'))
-    await atLocation('#/workbench', artifactPath('network-at-location-workbench.png'))
+    // head back to the dataset & unpublish
+    await click('#collection', artifactPath('network-click-collection.png'))
+    await click(`#${username}-${datasetRename}`)
+    await atDataset(username, datasetRename, artifactPath('network-at-location-navigate-to-dataset.png'))
     // ensure we are on the correct dataset
     await expectTextToBe('#dataset-reference', username + '/\n' + datasetRename, artifactPath('network-expect-text-dataset-reference.png'))
 
@@ -971,16 +977,12 @@ async function editCommit (uniqueName: string, component: string, status: 'added
   const {
     click,
     waitForExist,
-    atLocation,
     setValue,
     takeScreenshot,
     onHistoryTab,
     checkStatus,
     expectTextToBe
   } = utils
-
-  await click('#workbench')
-  await atLocation('#/workbench')
 
   // commit should be enabled
   await waitForExist('.clear-to-commit #commit-status', artifactPathFromDir(imagesDir, `${name}-commit-exists-clear-to-commit.png`))
@@ -1031,8 +1033,6 @@ async function editMeta (uniqueName: string, dataset: Dataset, status: 'added' |
 
   if (!meta || !commit || !commit.title) throw new Error('expected meta and commit to exist when dataset is passed to `editMeta` function')
 
-  // on dataset page
-  await click('#workbench', artifactPathFromDir(imagesDir, `${name}-click-workbench.png`))
   // on status tab
   await click('#status-tab', artifactPathFromDir(imagesDir, `${name}-click-status-tab.png`))
   // commit should be disabled
@@ -1195,7 +1195,7 @@ async function editMeta (uniqueName: string, dataset: Dataset, status: 'added' |
   await checkStatus('meta', status, artifactPathFromDir(imagesDir, `${name}-check-status-${status}.png`))
 
   if (takeScreenshots) {
-    await takeScreenshot(artifactPathFromDir(imagesDir, `${name}-workbench-meta-edit.png`))
+    await takeScreenshot(artifactPathFromDir(imagesDir, `${name}-meta-edit.png`))
   }
 
   // commit!
@@ -1255,8 +1255,6 @@ async function editCSVStructure (uniqueName: string, dataset: Dataset, status: '
 
   const { formatConfig, schema } = structure
 
-  // on dataset page
-  await click('#workbench', artifactPathFromDir(imagesDir, `${name}-click-workbench.png`))
   // on status tab
   await click('#status-tab', artifactPathFromDir(imagesDir, `${name}-click-status-tab.png`))
   // commit should be disabled
@@ -1265,7 +1263,7 @@ async function editCSVStructure (uniqueName: string, dataset: Dataset, status: '
   await click('#structure-status', artifactPathFromDir(imagesDir, `${name}-click-structure-status.png`))
 
   if (takeScreenshots) {
-    await takeScreenshot(artifactPathFromDir(imagesDir, `${name}-workbench-structure-edit.png`))
+    await takeScreenshot(artifactPathFromDir(imagesDir, `${name}-dataset-structure-edit.png`))
   }
 
   if (formatConfig) {
@@ -1346,7 +1344,7 @@ async function editCSVStructure (uniqueName: string, dataset: Dataset, status: '
   }
 
   if (takeScreenshots) {
-    await takeScreenshot(artifactPathFromDir(imagesDir, `${name}-workbench-history-structure.png`))
+    await takeScreenshot(artifactPathFromDir(imagesDir, `${name}-dataset-history-structure.png`))
   }
 }
 

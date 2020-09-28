@@ -17,14 +17,14 @@ import { selectLog, selectLogPageInfo } from '../../selections'
 import LogListItem from '../item/LogListItem'
 import { pathToDataset } from '../../paths'
 
-interface WorkbenchLogListProps extends RouteProps {
+interface LogListProps extends RouteProps {
   qriRef: QriRef
   log: VersionInfo[]
   logPageInfo: PageInfo
   fetchLog: (username: string, name: string, page?: number, pageSize?: number) => ApiActionThunk
 }
 
-export const WorkbenchLogListComponent: React.FunctionComponent<WorkbenchLogListProps> = (props) => {
+export const LogListComponent: React.FunctionComponent<LogListProps> = (props) => {
   const {
     qriRef,
     log,
@@ -106,8 +106,8 @@ export const WorkbenchLogListComponent: React.FunctionComponent<WorkbenchLogList
 }
 
 export default connectComponentToPropsWithRouter(
-  WorkbenchLogListComponent,
-  (state: any, ownProps: WorkbenchLogListProps) => {
+  LogListComponent,
+  (state: any, ownProps: LogListProps) => {
     return {
       qriRef: qriRefFromRoute(ownProps),
       log: selectLog(state),

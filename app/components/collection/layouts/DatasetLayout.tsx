@@ -9,10 +9,10 @@ import { setSidebarWidth } from '../../../actions/ui'
 import { selectSidebarWidth } from '../../../selections'
 
 import Layout from '../../Layout'
-import WorkbenchSidebar from './WorkbenchSidebar'
-import WorkbenchMainContent from './WorkbenchMainContent'
+import DatasetSidebar from './DatasetSidebar'
+import DatasetMainContent from './DatasetMainContent'
 
-interface WorkbenchLayoutProps {
+interface DatasetLayoutProps {
   // from connect
   sidebarWidth?: number
   onSidebarResize?: (width: number) => void
@@ -21,17 +21,15 @@ interface WorkbenchLayoutProps {
   mainContent: React.ReactElement
   sidebarContent: React.ReactElement
   activeTab: string
-  showNav?: boolean
   headerContent?: React.ReactElement
 }
 
-const WorkbenchLayoutComponent: React.FunctionComponent<WorkbenchLayoutProps> = (props) => {
+const DatasetLayoutComponent: React.FunctionComponent<DatasetLayoutProps> = (props) => {
   const {
     id,
     mainContent,
     sidebarContent,
     headerContent,
-    showNav = true,
     activeTab,
     sidebarWidth = 0,
     onSidebarResize
@@ -40,19 +38,20 @@ const WorkbenchLayoutComponent: React.FunctionComponent<WorkbenchLayoutProps> = 
   return (
     <Layout
       id={id}
-      showNav={showNav}
+      showNav={true}
+      title='Collection'
       sidebarWidth={sidebarWidth}
       headerContent={headerContent}
       onSidebarResize={onSidebarResize}
-      mainContent={<WorkbenchMainContent>{mainContent}</WorkbenchMainContent>}
-      sidebarContent={<WorkbenchSidebar activeTab={activeTab}>{sidebarContent}</WorkbenchSidebar>}
+      mainContent={<DatasetMainContent>{mainContent}</DatasetMainContent>}
+      sidebarContent={<DatasetSidebar activeTab={activeTab}>{sidebarContent}</DatasetSidebar>}
     />
   )
 }
 
 export default connectComponentToProps(
-  WorkbenchLayoutComponent,
-  (state: Store, ownProps: WorkbenchLayoutProps) => {
+  DatasetLayoutComponent,
+  (state: Store, ownProps: DatasetLayoutProps) => {
     return {
       sidebarWidth: selectSidebarWidth(state, 'workbench'),
       ...ownProps

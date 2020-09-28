@@ -6,6 +6,7 @@ const delayTime = 300
 
 export interface E2ETestUtils {
   atLocation: (expected: string, screenshotLocation?: string) => Promise<void>
+  atDataset: (username: string, datasetName: string, screenshotLocation?: string) => Promise<void>
   waitForExist: (selector: string, screenshotLocation?: string) => Promise<void>
   waitForNotExist: (selector: string, screenshotLocation?: string) => Promise<void>
   click: (selector: string, screenshotLocation?: string) => Promise<void>
@@ -27,6 +28,7 @@ export function newE2ETestUtils (app: any): E2ETestUtils {
   return {
     delay: delay,
     atLocation: atLocation(app),
+    atDataset: atDataset(app),
     waitForExist: waitForExist(app),
     waitForNotExist: waitForNotExist(app),
     click: click(app),
@@ -85,6 +87,30 @@ function atLocation (app: any) {
   }
 }
 
+// atDataset checks to see if we are at the correct route for the expected dataset
+// the `username` can be empty, for cases where the username is randomaly generated
+// and we don't know what it is at runtime
+function atDataset (app: any) {
+  return async (username: string, datasetName: string, screenshotLocation?: string) => {
+    const { client, browserWindow } = app
+    try {
+      await client.waitUntil(async () => {
+        const currUrl: string = await browserWindow.getURL()
+        const location = new url.URL(currUrl).hash
+        return location.startsWith('#/collection') && username === '' ? true : location.includes(username) && location.includes(datasetName)
+      }, 10000, `expected url to be '#/collection/${username === '' ? 'some_username' : username}/${datasetName}', got: ${location}`)
+    } catch (e) {
+      if (screenshotLocation) {
+        app.browserWindow.capturePage().then(function (imageBuffer) {
+          console.log(`writing screenshot: ${screenshotLocation}`)
+          fs.writeFileSync(screenshotLocation, imageBuffer)
+        })
+      }
+      throw new Error(`function 'atDataset': ${e}`)
+    }
+    if (!headless) await delay(delayTime)
+  }
+}
 // waitForExist checks to see if an element exists on the page. If it does not
 // exists after the timeout, it sends an error
 function waitForExist (app: any) {

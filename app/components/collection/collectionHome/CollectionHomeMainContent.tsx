@@ -3,21 +3,19 @@ import { Action } from 'redux'
 import path from 'path'
 import { faPlus, faDownload } from '@fortawesome/free-solid-svg-icons'
 
-import { ApiAction } from '../../store/api'
-import { Modal, ModalType } from '../../models/modals'
-import { ToastType } from '../../models/store'
-import { QriRef } from '../../models/qriRef'
+import { ApiAction } from '../../../store/api'
+import { Modal, ModalType } from '../../../models/modals'
+import { ToastType } from '../../../models/store'
+import { QriRef } from '../../../models/qriRef'
+import { connectComponentToProps } from '../../../utils/connectComponentToProps'
+import { setModal, openToast, closeToast } from '../../../actions/ui'
+import { importFile } from '../../../actions/api'
 
-import { connectComponentToProps } from '../../utils/connectComponentToProps'
+import HeaderColumnButton from '../../chrome/HeaderColumnButton'
+import DropZone from '../../chrome/DropZone'
+import DatasetList from './DatasetList'
 
-import { setModal, openToast, closeToast } from '../../actions/ui'
-import { importFile } from '../../actions/api'
-
-import HeaderColumnButton from '../chrome/HeaderColumnButton'
-import WelcomeTemplate from '../onboard/WelcomeTemplate'
-import DropZone from '../chrome/DropZone'
-
-export interface CollectionHomeProps {
+export interface CollectionHomeMainContentProps {
   qriRef: QriRef
   setModal: (modal: Modal) => void
   importFile: (filePath: string, fileName: string, fileSize: number) => Promise<ApiAction>
@@ -25,7 +23,7 @@ export interface CollectionHomeProps {
   closeToast: () => Action
 }
 
-export const CollectionHomeComponent: React.FunctionComponent<CollectionHomeProps> = (props) => {
+export const CollectionHomeMainContentComponent: React.FunctionComponent<CollectionHomeMainContentProps> = (props) => {
   const { setModal, importFile, openToast, closeToast } = props
 
   const [dragging, setDragging] = React.useState(false)
@@ -80,20 +78,14 @@ export const CollectionHomeComponent: React.FunctionComponent<CollectionHomeProp
         />
       </div>
       <div className='main-content-flex'>
-        <WelcomeTemplate
-          title='Welcome to Qri!'
-          subtitle={`drop a file to create a new dataset`}
-          id='drop-file'
-          loading={false}
-          fullscreen={false}
-        />
+        <DatasetList />
       </div>
     </div>
   )
 }
 
 export default connectComponentToProps(
-  CollectionHomeComponent,
+  CollectionHomeMainContentComponent,
   {},
   {
     setModal,

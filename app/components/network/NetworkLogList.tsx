@@ -10,11 +10,11 @@ import { mapHistory } from '../../actions/mappingFuncs'
 import LogListItem from '../item/LogListItem'
 import { pathToNetworkDataset } from '../../paths'
 
-export interface LogListProps extends RouteProps{
+export interface NetworkLogListProps extends RouteProps{
   qriRef: QriRef
 }
 
-const LogList: React.FunctionComponent<LogListProps> = ({ qriRef, history }) => {
+const NetworkLogList: React.FunctionComponent<NetworkLogListProps> = ({ qriRef, history }) => {
   const [data, setData] = React.useState<VersionInfo[]>([])
   const [error, setError] = React.useState('')
 
@@ -70,4 +70,4 @@ const LogList: React.FunctionComponent<LogListProps> = ({ qriRef, history }) => 
   )
 }
 
-export default withRouter(LogList)
+export default withRouter(NetworkLogList)

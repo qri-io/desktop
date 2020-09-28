@@ -1,7 +1,7 @@
 import React from 'react'
 
 import Segment from '../chrome/Segment'
-import { ReadmeComponent } from '../workbench/components/Readme'
+import { ReadmeComponent } from '../collection/datasetComponents/Readme'
 
 interface ReadmeSegmentProps {
   peername: string
