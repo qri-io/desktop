@@ -9,18 +9,11 @@
   }
 
   #dataset-list-filter {
-    display: flex;
-    flex-direction: column;
     padding: 12px 10px;
 
     #dataset-list-buttons {
       width: 100%;
-      display: flex;
-      justify-content: space-between;
-      flex-wrap: wrap;
-
       .dataset-list-button {
-        flex: 1;
         text-align: center;
         margin: 0 5px 10px 5px;
         font-weight: 400;
@@ -56,7 +49,13 @@
 
   #list {
     flex: 1;
+    overflow: auto;
+
     border-top: $list-item-bottom-border;
+    table tr td, 
+    table tr th {
+      padding: 8px 12px;
+    }
   }
 
   #list-footer {

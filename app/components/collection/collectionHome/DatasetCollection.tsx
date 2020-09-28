@@ -15,7 +15,7 @@ import HeaderColumnButton from '../../chrome/HeaderColumnButton'
 import DropZone from '../../chrome/DropZone'
 import DatasetList from './DatasetList'
 
-export interface CollectionHomeMainContentProps {
+export interface DatasetCollectionProps {
   qriRef: QriRef
   setModal: (modal: Modal) => void
   importFile: (filePath: string, fileName: string, fileSize: number) => Promise<ApiAction>
@@ -23,7 +23,7 @@ export interface CollectionHomeMainContentProps {
   closeToast: () => Action
 }
 
-export const CollectionHomeMainContentComponent: React.FunctionComponent<CollectionHomeMainContentProps> = (props) => {
+export const DatasetCollection: React.FunctionComponent<DatasetCollectionProps> = (props) => {
   const { setModal, importFile, openToast, closeToast } = props
 
   const [dragging, setDragging] = React.useState(false)
@@ -85,7 +85,7 @@ export const CollectionHomeMainContentComponent: React.FunctionComponent<Collect
 }
 
 export default connectComponentToProps(
-  CollectionHomeMainContentComponent,
+  DatasetCollection,
   {},
   {
     setModal,

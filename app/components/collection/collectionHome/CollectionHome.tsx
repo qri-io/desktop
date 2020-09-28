@@ -2,7 +2,7 @@ import * as React from 'react'
 import { ipcRenderer } from 'electron'
 
 import Layout from '../../Layout'
-import CollectionHomeMainContent from './CollectionHomeMainContent'
+import DatasetCollection from './DatasetCollection'
 
 export const CollectionHome: React.FunctionComponent<any> = () => {
   React.useEffect(() => {
@@ -13,7 +13,7 @@ export const CollectionHome: React.FunctionComponent<any> = () => {
     <Layout
       id='collection-container'
       title='Collection'
-      mainContent={<CollectionHomeMainContent />}
+      mainContent={<DatasetCollection />}
     />
   )
 }
