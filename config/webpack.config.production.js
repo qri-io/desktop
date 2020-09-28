@@ -2,10 +2,10 @@
  * Build config for electron 'Renderer Process' file
  */
 
-const path = require('path')
 const webpack = require('webpack')
 const merge = require('webpack-merge')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const paths =  require('./paths')
 
 const baseConfig = require('./webpack.config.base')
 
@@ -14,11 +14,13 @@ module.exports = merge(baseConfig, {
 
   devtool: 'cheap-module-source-map',
 
-  entry: ['./app/index'],
+  entry: [
+    paths.appIndexJs
+  ],
 
   output: {
-    path: path.join(__dirname, 'app/dist'),
-    publicPath: '../app/dist/',
+    path: paths.appDistDir,
+    publicPath: paths.appDistDir,
     filename: 'bundle.js'
   },
 
@@ -54,7 +56,7 @@ module.exports = merge(baseConfig, {
           {
             loader: MiniCssExtractPlugin.loader,
             options: {
-              publicPath: '../'
+              publicPath: paths.projectRoot
             }
           },
           'css-loader',

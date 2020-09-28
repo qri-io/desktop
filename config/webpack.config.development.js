@@ -4,6 +4,7 @@
  * https://webpack.github.io/docs/hot-module-replacement-with-webpack.html
  */
 
+const paths = require('./paths')
 const webpack = require('webpack')
 const merge = require('webpack-merge')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
@@ -20,7 +21,7 @@ module.exports = merge(baseConfig, {
   entry: [
     'react-hot-loader/patch',
     `webpack-hot-middleware/client?path=http://localhost:${port}/__webpack_hmr`,
-    './app/index'
+    paths.appIndexJs
   ],
 
   output: {
@@ -68,7 +69,7 @@ module.exports = merge(baseConfig, {
           {
             loader: MiniCssExtractPlugin.loader,
             options: {
-              publicPath: '../',
+              publicPath: paths.projectRoot,
               hmr: process.env.NODE_ENV === 'development'
             }
           },
