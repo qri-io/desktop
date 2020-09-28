@@ -2,8 +2,8 @@
  * Base webpack config used across other specific configs
  */
 
-const path = require('path');
-const webpack = require('webpack')
+const webpack = require('webpack');
+const paths = require('./paths');
 const {
   dependencies: externals
 } = require('../app/package.json');
@@ -12,7 +12,7 @@ const targetPlatform = process.env.TARGET_PLATFORM || 'electron'
 
 module.exports = {
   output: {
-    path: path.join(__dirname, 'app'),
+    path: paths.appDir,
     filename: 'bundle.js',
 
     // https://github.com/webpack/webpack/issues/1114
@@ -23,8 +23,8 @@ module.exports = {
   resolve: {
     extensions: ['.js', '.ts', '.tsx', '.json'],
     modules: [
-      path.join(__dirname, 'app'),
-      'node_modules',
+      paths.appDir,
+      paths.appNodeModules,
     ]
   },
 

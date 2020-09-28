@@ -5,15 +5,18 @@
 const webpack = require('webpack');
 const merge = require('webpack-merge');
 const baseConfig = require('./webpack.config.base');
+const paths = require('./paths');
 
 module.exports = merge(baseConfig, {
   devtool: 'source-map',
 
-  entry: ['./app/main.development'],
+  entry: [
+    paths.appMainDevelopmentJs
+  ],
 
-  // 'main.js' in root
+  // 'main.js' in app root
   output: {
-    path: __dirname,
+    path: paths.appDir,
     filename: './app/main.js'
   },
 
@@ -32,13 +35,13 @@ module.exports = merge(baseConfig, {
    */
   target: 'electron-main',
 
-  /**
-   * Disables webpack processing of __dirname and __filename.
-   * If you run the bundle in node.js it falls back to these values of node.js.
-   * https://github.com/webpack/webpack/issues/2010
-   */
-  node: {
-    __dirname: false,
-    __filename: false
-  },
+  // /**
+  //  * Disables webpack processing of __dirname and __filename.
+  //  * If you run the bundle in node.js it falls back to these values of node.js.
+  //  * https://github.com/webpack/webpack/issues/2010
+  //  */
+  // node: {
+  //   __dirname: false,
+  //   __filename: false
+  // },
 });
