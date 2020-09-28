@@ -58,7 +58,7 @@ const installExtensions = () => {
     const installer = require('electron-devtools-installer') // eslint-disable-line global-require
     const forceDownload = !!process.env.UPGRADE_EXTENSIONS
     if (forceDownload) {
-      log.info('downloading extensions')
+      log.info('downloading electron devtool extensions')
     }
 
     const extensions = [
@@ -606,4 +606,8 @@ app.on('ready', () =>
       })
       log.info('app launched')
     })
+   .catch((e) => {
+     log.error('main process crashed!')
+     log.error(e)
+   })
   )
