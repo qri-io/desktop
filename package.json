@@ -13,9 +13,9 @@
     "test-e2e-no-build": "./node_modules/xvfb-maybe/src/xvfb-maybe.js cross-env NODE_ENV=test node --trace-warnings ./test/runTests.js e2e",
     "test-win-e2e": "npm run build && cross-env NODE_ENV=test node --trace-warnings ./test/runTests.js e2e",
     "test-win-e2e-no-build": "cross-env NODE_ENV=test node --trace-warnings ./test/runTests.js e2e",
-    "hot-server": "cross-env NODE_ENV=development node --max_old_space_size=2096 server.js",
-    "build-main": "cross-env NODE_ENV=production node ./node_modules/webpack/bin/webpack --mode=production --config webpack.config.electron.js --progress --profile --colors",
-    "build-renderer": "cross-env NODE_ENV=production node ./node_modules/webpack/bin/webpack --mode=production --config webpack.config.production.js --progress --profile --colors",
+    "hot-server": "cross-env NODE_ENV=development node --max_old_space_size=2096 scripts/dev-server.js",
+    "build-main": "cross-env NODE_ENV=production node ./node_modules/webpack/bin/webpack --mode=production --config config/webpack.config.electron.js --progress --profile --colors",
+    "build-renderer": "cross-env NODE_ENV=production node ./node_modules/webpack/bin/webpack --mode=production --config config/webpack.config.production.js --progress --profile --colors",
     "build": "npm run build-main && npm run build-renderer",
     "start": "cross-env NODE_ENV=production electron ./app/",
     "storybook": "start-storybook -p 6006",
@@ -52,7 +52,7 @@
   "build": {
     "productName": "Qri Desktop",
     "appId": "io.github.qri-io.desktop",
-    "afterSign": "./notarize.js",
+    "afterSign": "./scripts/notarize.js",
     "dmg": {
       "sign": false,
       "icon": "qri_dmg.icns",
@@ -87,8 +87,8 @@
     },
     "mac": {
       "hardenedRuntime": true,
-      "entitlements": "./entitlements.mac.inherit.plist",
-      "entitlementsInherit": "./entitlements.mac.inherit.plist"
+      "entitlements": "./config/entitlements.mac.inherit.plist",
+      "entitlementsInherit": "./config/entitlements.mac.inherit.plist"
     },
     "win": {
       "target": "nsis"

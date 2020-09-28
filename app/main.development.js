@@ -56,13 +56,15 @@ app.on('will-quit', () => {
 const installExtensions = () => {
   if (process.env.NODE_ENV === 'development') {
     const installer = require('electron-devtools-installer') // eslint-disable-line global-require
-    log.info('downloading extensions')
+    const forceDownload = !!process.env.UPGRADE_EXTENSIONS
+    if (forceDownload) {
+      log.info('downloading extensions')
+    }
 
     const extensions = [
       'REACT_DEVELOPER_TOOLS',
       'REDUX_DEVTOOLS'
     ]
-    const forceDownload = !!process.env.UPGRADE_EXTENSIONS
     return Promise.all(extensions.map(name => installer.default(installer[name], forceDownload)))
   }
 

@@ -6,7 +6,7 @@ const path = require('path');
 const webpack = require('webpack')
 const {
   dependencies: externals
-} = require('./app/package.json');
+} = require('../app/package.json');
 
 const targetPlatform = process.env.TARGET_PLATFORM || 'electron'
 
