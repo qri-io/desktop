@@ -83,29 +83,37 @@ const NetworkComponent: React.FunctionComponent<NetworkProps> = (props) => {
     </>
   )
 
+  const renderSidebarContent = () => {
+    if (!qriRef.username || !qriRef.name) {
+      return undefined
+    }
+    return (
+      <NetworkSidebar>
+        {/* TODO (ramfox): add back in when we have accurate network stats */}
+        {/* <P2PConnectionStatus
+        data={{ enabled: true }}
+        onChange={(d: P2PConnection) => { alert(`change connection: ${d.enabled}`) }}
+      /> */}
+        {qriRef.username && qriRef.name && <NetworkLogList qriRef={qriRef} />}
+        {
+          qriRef.username && qriRef.name && !inCollection &&
+          <SidebarActionButton
+            text='Clone Dataset'
+            onClick={() => pullDatasetAndFetch(qriRef.username, qriRef.name)}
+          />
+        }
+      </NetworkSidebar>
+    )
+  }
+
   return (
     <Layout
       id='collection-container'
-      sidebarContent={
-        <NetworkSidebar>
-          {/* TODO (ramfox): add back in when we have accurate network stats */}
-          {/* <P2PConnectionStatus
-            data={{ enabled: true }}
-            onChange={(d: P2PConnection) => { alert(`change connection: ${d.enabled}`) }}
-          /> */}
-          {qriRef.username && qriRef.name && <NetworkLogList qriRef={qriRef} />}
-          {
-            qriRef.username && qriRef.name && !inCollection &&
-              <SidebarActionButton
-                text='Clone Dataset'
-                onClick={() => pullDatasetAndFetch(qriRef.username, qriRef.name)}
-              />
-          }
-        </NetworkSidebar>
-      }
+      sidebarContent={renderSidebarContent()}
       sidebarWidth={sidebarWidth}
       onSidebarResize={(width) => { setSidebarWidth('network', width) }}
       mainContent={mainContent}
+      title='Network'
     />
   )
 }

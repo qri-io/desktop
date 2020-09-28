@@ -49,7 +49,7 @@ export const RoutesComponent: React.FunctionComponent<RoutesProps> = (props) => 
   }
 
   const sectionElement = (section: string, dest: React.ReactElement): React.ReactElement => {
-    ipcRenderer.send('show-dataset-menu', (section === 'workbench'))
+    ipcRenderer.send('show-dataset-menu', false)
     return requireSignin(dest)
   }
 

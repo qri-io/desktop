@@ -213,11 +213,13 @@ const CollectionRouter: React.FunctionComponent<CollectionRouterProps> = (props)
             return <CollectionHome />
           }} />
           <Route path={`${path}/edit/:username/:name`} render={() => {
+            ipcRenderer.send('show-dataset-menu', true)
             return noDatasetsRedirect(
               <EditDataset />
             )
           }}/>
           <Route path={`${path}/:username/:name/at/ipfs/:path`} render={(props) => {
+            ipcRenderer.send('show-dataset-menu', true)
             return noDatasetsRedirect(
               <Dataset {...props} />
             )
