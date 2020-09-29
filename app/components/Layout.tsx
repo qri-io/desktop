@@ -1,7 +1,7 @@
 // a layout component for the resizable sidebar with main content area
 import * as React from 'react'
 import { Resizable } from './Resizable'
-import NavTopbar from '../components/nav/NavTopBar'
+import NavTopbar from '../components/nav/NavTopbar'
 
 interface LayoutProps {
   id: string
