@@ -411,8 +411,8 @@ describe('Qri End to End tests', function spec () {
 
     // mock the dialog
     await fakeDialog.mock([ { method: 'showOpenDialogSync', value: [backend.dir] } ])
-    // click #chooseSavePath to open dialog
-    await click('#chooseSavePath')
+    // click #chooseCheckoutLocation to open dialog
+    await click('#chooseCheckoutLocation')
     // click #submit
     await click('#submit')
     // expect modal to be gone

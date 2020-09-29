@@ -142,23 +142,28 @@ export const LinkDatasetComponent: React.FunctionComponent<LinkDatasetProps> = (
           <TextInput
             name='datasetDirectory'
             label='Dataset Directory'
+            helpText="The name of the directory which will contain this dataset's components"
+            showHelpText
             type=''
             value={datasetDirectory}
             onChange={handleChanges}
             maxLength={600}
             errorText={alreadyDatasetError}
           />
+          <br />
           <div className='flex-space-between'>
             <TextInput
               name='path'
-              label='Save Path'
+              label='Checkout Location'
+              helpText='The file path where the dataset directory will be saved on your machine'
+              showHelpText
               type=''
               value={path}
               onChange={handleChanges}
               maxLength={600}
               errorText={alreadyDatasetError}
             />
-            <div className='margin-left'><ButtonInput id='chooseSavePath' onClick={() => handlePickerDialog(showDirectoryPicker)} >Choose...</ButtonInput></div>
+            <div className='margin-left'><ButtonInput id='chooseCheckoutLocation' onClick={() => handlePickerDialog(showDirectoryPicker)} >Choose...</ButtonInput></div>
           </div>
         </div>
       </div>
