@@ -1,4 +1,4 @@
-import * as React from 'react'
+import React from 'react'
 import { ipcRenderer } from 'electron'
 import { faDownload, faPlus } from '@fortawesome/free-solid-svg-icons'
 
@@ -28,14 +28,14 @@ export const CollectionHome: React.FC<CollectionHomeProps> = ({ setModal }) => {
             type: 'button',
             id: 'create-dataset',
             icon: faPlus,
-            label: 'Create New Dataset',
+            label: 'New Dataset',
             onClick: () => { setModal({ type: ModalType.CreateDataset }) }
           },
           {
             type: 'button',
             id: 'pull-dataset',
             icon: faDownload,
-            label: 'Pull existing Dataset',
+            label: 'Pull Dataset',
             onClick: () => { setModal({ type: ModalType.PullDataset }) }
           }
         ]

@@ -4,74 +4,118 @@
   z-index: 110;
   height: 100%;
 
-  #dataset-list-header {
-    height: 50px;
-  }
+  header {
+    display: flex;
+    flex-direction: column;
 
-  #dataset-list-filter {
-    padding: 12px 10px;
-
-    #dataset-list-buttons {
-      width: 100%;
-      .dataset-list-button {
-        text-align: center;
-        margin: 0 5px 10px 5px;
-        font-weight: 400;
-        font-size: .8rem;
-        padding: 0.5rem;
-        min-width: unset;
-      }
-    }
-
-    .filter-input-container {
+    #dataset-list-filter {
+      padding: 12px 10px;
       width: 100%;
       display: flex;
-      input {
-        width: 100%;
-        border: 1px solid #e1e4e8;
-        border-radius: 3px;
-        padding: 2px 5px;
+  
+      .filter-input-container {
+        width: 30%;
+        max-width: 40%;
+        flex: 1;
+        display: flex;
+        position: relative;
 
-        &:focus {
-          outline: none;
-          border-color: $primary;
-          box-shadow: 0 0 0 1px #afafaf4d;
+        input {
+          height: 40px;
+          width: 100%;
+          background: #e1e4e8;
+          border-radius: 4px;
+          padding: 2px 5px;
+          box-shadow: none;
+          border: 1px solid transparent;
+  
+          &:focus {
+            outline: none;
+            border-color: $primary;
+          }
+        }
+
+        .close {
+          position: absolute;
+          right: 10px;
+          top: 10px;
         }
       }
     }
-  }
 
-  a {
-    position: absolute;
-    right: 18px;
-    line-height: 1.7rem;
+    .list-picker-and-bulk-actions {
+      display: flex;
+      padding: 12px 40px 0 40px; 
+
+      button {
+        border: none;
+        background: transparent;
+      }
+
+      .active {
+        font-weight: bold;
+        border-bottom: 2px solid #4FC7F3;
+      }
+
+      .list-picker {
+        flex: 1;
+        max-width: 30%;
+        button {
+          padding: 6px 10px;
+          margin: 0 4px;
+        }
+      }
+
+      .bulk-actions {
+        flex: 1;
+        text-align: center;
+        padding-top: 10px;
+        
+        button {
+          margin: 4px 5px;
+          font-weight: bold;
+          color: #4FC7F3;
+        }
+      }
+
+      .count-message {
+        padding: 14px 20px 6px 12px;
+      }
+    }
   }
 
   #list {
     flex: 1;
+    width: 100%;
     overflow: auto;
 
-    border-top: $list-item-bottom-border;
-    table tr td, 
-    table tr th {
-      padding: 8px 12px;
-    }
-  }
+    table {
+      width: 100%;
+      thead {
+        border-bottom: $list-item-bottom-border;
+      }
+      thead th {
+        position: -webkit-sticky;
+        position: sticky;
+        top: 0;
+        z-index: 2;
+        background: white;
+        border-bottom: $list-item-bottom-border;
+        box-shadow: 0 0 3px #00000002;
+      }
 
-  #list-footer {
-    flex: 0;
-    padding: 8px;
-    border-top: $list-item-bottom-border;
+      .ref.text {
+        cursor: pointer;
+      }
 
-    .strong-message {
-      text-align: center;
-      font-weight: 500;
-      font-size: 0.8rem;
-    }
-
-    .import-message {
-      text-align: left;
-      font-size: .7rem;
+      tr td, 
+      tr th {
+        padding: 8px 12px;
+      }
+      tr td.icons {
+        position: relative;
+        padding: 0;
+      }
     }
   }
 }

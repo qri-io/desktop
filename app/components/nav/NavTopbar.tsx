@@ -46,19 +46,21 @@ export const NavbarComponent: React.FunctionComponent<NavbarProps> = ({ title, l
         </div>
         <SearchBox onEnter={handleOnEnter} id='search-box' />
       </div>
-      <div>
-        <Breadcrumb id='navbar-breadcrumb' value={location.pathname} />
-        {title && <h3 className='title'>{title}</h3>}
-      </div>
-      <div>
-        {buttons.map((props) => {
-          switch (props.type) {
-            case 'button-dropdown':
-              return <HeaderColumnButtonDropdown key={props.id} {...props} items={props.dropdownItems} />
-            default:
-              return <HeaderColumnButton key={props.id} {...props} />
-          }
-        })}
+      <div className='page-details'>
+        <div className='title-and-breadcrumb'>
+          <Breadcrumb id='navbar-breadcrumb' value={location.pathname} />
+          {title && <h3 className='title'>{title}</h3>}
+        </div>
+        <div className='buttons'>
+          {buttons.map((props) => {
+            switch (props.type) {
+              case 'button-dropdown':
+                return <HeaderColumnButtonDropdown key={props.id} {...props} items={props.dropdownItems} />
+              default:
+                return <HeaderColumnButton key={props.id} {...props} />
+            }
+          })}
+        </div>
       </div>
     </div>
   )

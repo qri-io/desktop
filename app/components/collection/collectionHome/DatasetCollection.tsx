@@ -60,7 +60,7 @@ export const DatasetCollection: React.FunctionComponent<DatasetCollectionProps> 
         onDrop={dropHandler}
       />}
       <div className='main-content-flex'>
-        <DatasetList />
+        <DatasetList showFSI />
       </div>
     </div>
   )
