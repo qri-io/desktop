@@ -470,7 +470,7 @@ select.form-control-lg {
   display: inline-block;
   border: $border-color solid 1px;
   width: 100%;
-  padding: 7px;
+  padding: 7px 14px;
   border-radius: 5px;
   background-image: none;
   background: $white;
@@ -479,10 +479,6 @@ select.form-control-lg {
 
 .react-select>div {
   border: $border-color solid 1px;
-}
-
-.input:hover {
-  border-color: #0061a682;
 }
 
 .input:active,

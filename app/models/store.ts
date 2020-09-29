@@ -12,7 +12,7 @@ export enum ApiConnection {
 }
 
 enum ModalType {
-  CreateDataset,
+  NewDataset,
   PullDataset,
 }
 
@@ -20,7 +20,7 @@ export type ComponentType = 'component' | 'commit' | 'commitComponent'
 
 type Modal =
 | {
-  type: ModalType.CreateDataset
+  type: ModalType.NewDataset
   dirPath?: string
   bodyPath?: string
 }

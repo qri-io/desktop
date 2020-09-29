@@ -64,18 +64,18 @@ export const RemoveDatasetComponent: React.FunctionComponent<RemoveDatasetProps>
     >
       <div className='content-wrap'>
         <div className='content'>
-          <div className='content-main'>
-            Are you sure you want to remove <br/> <div className='code-highlight'>{username}/{name}</div>&nbsp;?
+          <div className='dialog-text-small'>
+            <p>Are you sure you want to remove <br/> <code>{username}/{name}</code>&nbsp;?</p>
             <br/><br/>
             {sessionUsername === username && <div className='warning'>Warning: removing a dataset which belongs to you means you cannot return to that dataset&apos;s history.</div>}
           </div>
           { fsiPath &&
-            <CheckboxInput
-              name='should-remove-files'
-              checked={!keepFiles}
-              onChange={handleChanges}
-              label={'Also remove the dataset\'s files'}
-            />
+              <CheckboxInput
+                name='should-remove-files'
+                checked={!keepFiles}
+                onChange={handleChanges}
+                label={'Also remove the dataset\'s files'}
+              />
           }
         </div>
       </div>

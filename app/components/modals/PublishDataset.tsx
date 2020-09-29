@@ -54,8 +54,10 @@ export const PublishDatasetComponent: React.FunctionComponent<PublishDatasetProp
     >
       <div className='content-wrap' >
         <div className='content'>
-          <h4>Publish <span className='code-highlight'>{username}/{name}</span></h4>
-          <p><i>Publishing will make your dataset visible to anyone on the internet</i></p>
+          <div className='dialog-text-small'>
+            <p>Push <code>{username}/{name}</code></p>
+            <p><i>Pushing to qri.cloud will make your dataset visible to anyone on the internet</i></p>
+          </div>
         </div>
       </div>
       <Error text={error} />

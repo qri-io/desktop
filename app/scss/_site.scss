@@ -615,7 +615,6 @@ header > hr {
 
 a {
   text-decoration: none;
-  transition: color 0.5s;
   cursor: pointer;
   color: $primary;
 }
@@ -720,13 +719,14 @@ b {
   border: $border-color solid 2px;
 }
 
-.code-highlight {
+.code-highlight, code {
   padding: 2px 8px;
   background: #e2e2e2;
   display: inline-block;
   border-radius: 3px;
   margin-top: 8px;
   font-weight: 500;
+  margin-top: 0;
 }
 
 .pseudo-link {

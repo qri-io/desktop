@@ -81,8 +81,9 @@ const PullDatasetComponent: React.FunctionComponent<PullDatasetProps> = (props) 
       <div className='content-wrap'>
         <div>
           <div className='content'>
-            <p>Add an existing dataset by entering its dataset reference, like <span className='code-highlight'>b5/world_bank_population</span></p>
-            <p>Search for datasets on <ExternalLink href='https://qri.cloud'>Qri Cloud</ExternalLink>.</p>
+            <div className='dialog-text-small'>
+              <p>Add an existing dataset by entering its dataset reference, like <code>b5/world_bank_population</code></p>
+            </div>
             <DebouncedTextInput
               name='datasetName'
               label='Dataset Reference'
@@ -94,6 +95,9 @@ const PullDatasetComponent: React.FunctionComponent<PullDatasetProps> = (props) 
               errorText={datasetReferenceError}
               maxLength={300}
             />
+            <div className='dialog-text-small'>
+              <p>Search for datasets to add on <ExternalLink href='https://qri.cloud'>Qri Cloud</ExternalLink>.</p>
+            </div>
           </div>
         </div>
         <CSSTransition
