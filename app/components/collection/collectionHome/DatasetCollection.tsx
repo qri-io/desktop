@@ -1,30 +1,26 @@
 import React from 'react'
 import { Action } from 'redux'
 import path from 'path'
-import { faPlus, faDownload } from '@fortawesome/free-solid-svg-icons'
 
 import { ApiAction } from '../../../store/api'
-import { Modal, ModalType } from '../../../models/modals'
 import { ToastType } from '../../../models/store'
 import { QriRef } from '../../../models/qriRef'
 import { connectComponentToProps } from '../../../utils/connectComponentToProps'
 import { setModal, openToast, closeToast } from '../../../actions/ui'
 import { importFile } from '../../../actions/api'
 
-import HeaderColumnButton from '../../chrome/HeaderColumnButton'
 import DropZone from '../../chrome/DropZone'
 import DatasetList from './DatasetList'
 
 export interface DatasetCollectionProps {
   qriRef: QriRef
-  setModal: (modal: Modal) => void
   importFile: (filePath: string, fileName: string, fileSize: number) => Promise<ApiAction>
   openToast: (type: ToastType, name: string, message: string) => Action
   closeToast: () => Action
 }
 
 export const DatasetCollection: React.FunctionComponent<DatasetCollectionProps> = (props) => {
-  const { setModal, importFile, openToast, closeToast } = props
+  const { importFile, openToast, closeToast } = props
 
   const [dragging, setDragging] = React.useState(false)
 
@@ -63,20 +59,6 @@ export const DatasetCollection: React.FunctionComponent<DatasetCollectionProps> 
         setDragging={setDragging}
         onDrop={dropHandler}
       />}
-      <div className='main-content-header'>
-        <HeaderColumnButton
-          id='create-dataset'
-          icon={faPlus}
-          label='Create new Dataset'
-          onClick={() => { setModal({ type: ModalType.CreateDataset }) }}
-        />
-        <HeaderColumnButton
-          icon={faDownload}
-          id='pull-dataset'
-          label='Add existing Dataset'
-          onClick={() => { setModal({ type: ModalType.PullDataset }) }}
-        />
-      </div>
       <div className='main-content-flex'>
         <DatasetList />
       </div>

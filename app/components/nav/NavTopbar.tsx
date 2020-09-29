@@ -1,52 +1,39 @@
-import * as React from 'react'
+import React from 'react'
+import { IconDefinition } from '@fortawesome/free-regular-svg-icons'
 
 import { RouteProps } from '../../models/Store'
 import { connectComponentToPropsWithRouter } from '../../utils/connectComponentToProps'
 import { setModal } from '../../actions/ui'
 
 import SearchBox from '../chrome/SearchBox'
+import BackArrow from '../chrome/BackArrow'
+import ForwardArrow from '../chrome/ForwardArrow'
 import Breadcrumb from '../chrome/Breadcrumb'
+import HeaderColumnButton from '../chrome/HeaderColumnButton'
+import HeaderColumnButtonDropdown from '../chrome/HeaderColumnButtonDropdown'
 import { Modal, ModalType } from '../../models/modals'
 
 // RouteProps includes `history`, `location`, and `match`
-interface NavTopbarProps extends RouteProps {
+interface NavbarProps extends RouteProps {
   title: string
+  buttons: NavbarButtonProps[]
   setModal: (modal: Modal) => void
 }
 
-interface ArrowProps {
-  disabled?: boolean
-}
-const BackArrow: React.FunctionComponent<ArrowProps> = (props) => {
-  const { disabled = false } = props
-  return (
-    <svg width="20px" height="18px" viewBox="0 0 20 18" version="1.1">
-      <g id="chrome/back_button" stroke="none" strokeWidth="1" fill="none" fillRule="evenodd" strokeLinecap="round">
-        <g id="Group" transform="translate(3.000000, 2.000000)" stroke={disabled ? '#c2c2c2' : '#4D4D4D'} strokeWidth="4">
-          <line x1="14.75" y1="7.04861111" x2="1.75" y2="7.04861111" id="Line-3"></line>
-          <polyline id="Path-3" points="6.125 0.243055556 0.125 7.04861111 6.125 13.8541667"></polyline>
-        </g>
-      </g>
-    </svg>
-  )
-}
+export interface NavbarButtonProps {
+  type: 'button' | 'button-dropdown'
+  id: string
+  label: string
+  onClick: (event: React.MouseEvent) => void
 
-const ForwardArrow: React.FunctionComponent<ArrowProps> = (props) => {
-  const { disabled = false } = props
-  return (
-    <svg width="20px" height="18px" viewBox="0 0 20 18" version="1.1">
-      <g id="chrome/forward_button" stroke="none" strokeWidth="1" fill="none" fillRule="evenodd" strokeLinecap="round">
-        <g id="Group-Copy" transform="translate(9.000000, 9.000000) rotate(-180.000000) translate(-9.000000, -9.000000) translate(1.000000, 2.000000)" stroke={disabled ? '#c2c2c2' : '#4D4D4D'} strokeWidth="4">
-          <line x1="14.75" y1="7.04861111" x2="1.75" y2="7.04861111" id="Line-3"></line>
-          <polyline id="Path-3" points="6.125 0.243055556 0.125 7.04861111 6.125 13.8541667"></polyline>
-        </g>
-      </g>
-    </svg>
-  )
+  tooltip?: string
+  icon?: IconDefinition | React.ReactElement
+  disabled?: boolean
+  dropdownItems?: React.ReactElement[]
 }
 
 // Navbar is persistent chrome from app-wide navigation
-export const NavTopbarComponent: React.FunctionComponent<NavTopbarProps> = ({ title, location, setModal, history }) => {
+export const NavbarComponent: React.FunctionComponent<NavbarProps> = ({ title, location, setModal, history, buttons = [] }) => {
   const handleOnEnter = (e: React.KeyboardEvent) => {
     setModal({ q: e.target.value, type: ModalType.Search })
   }
@@ -59,8 +46,20 @@ export const NavTopbarComponent: React.FunctionComponent<NavTopbarProps> = ({ ti
         </div>
         <SearchBox onEnter={handleOnEnter} id='search-box' />
       </div>
-      <Breadcrumb id='navbar-breadcrumb' value={location.pathname} />
-      {title && <h3 className='title'>{title}</h3>}
+      <div>
+        <Breadcrumb id='navbar-breadcrumb' value={location.pathname} />
+        {title && <h3 className='title'>{title}</h3>}
+      </div>
+      <div>
+        {buttons.map((props) => {
+          switch (props.type) {
+            case 'button-dropdown':
+              return <HeaderColumnButtonDropdown key={props.id} {...props} items={props.dropdownItems} />
+            default:
+              return <HeaderColumnButton key={props.id} {...props} />
+          }
+        })}
+      </div>
     </div>
   )
 }
