@@ -163,7 +163,7 @@ export const LinkDatasetComponent: React.FunctionComponent<LinkDatasetProps> = (
               maxLength={600}
               errorText={alreadyDatasetError}
             />
-            <div className='margin-left'><ButtonInput id='chooseSavePath' onClick={() => handlePickerDialog(showDirectoryPicker)} >Choose...</ButtonInput></div>
+            <div className='margin-left'><ButtonInput id='chooseCheckoutLocation' onClick={() => handlePickerDialog(showDirectoryPicker)} >Choose...</ButtonInput></div>
           </div>
         </div>
       </div>
