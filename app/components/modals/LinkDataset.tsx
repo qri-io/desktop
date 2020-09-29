@@ -154,7 +154,7 @@ export const LinkDatasetComponent: React.FunctionComponent<LinkDatasetProps> = (
           <div className='flex-space-between'>
             <TextInput
               name='path'
-              label='Save Path'
+              label='Checkout Location'
               helpText='The file path where the dataset directory will be saved on your machine'
               showHelpText
               type=''
