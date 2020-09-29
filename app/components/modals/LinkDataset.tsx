@@ -142,7 +142,7 @@ export const LinkDatasetComponent: React.FunctionComponent<LinkDatasetProps> = (
           <TextInput
             name='datasetDirectory'
             label='Dataset Directory'
-            helpText="The name of the directory which contains this dataset's components"
+            helpText="The name of the directory which will contain this dataset's components"
             showHelpText
             type=''
             value={datasetDirectory}
@@ -155,7 +155,7 @@ export const LinkDatasetComponent: React.FunctionComponent<LinkDatasetProps> = (
             <TextInput
               name='path'
               label='Save Path'
-              helpText='The file path where the dataset will be saved on your machine'
+              helpText='The file path where the dataset directory will be saved on your machine'
               showHelpText
               type=''
               value={path}
