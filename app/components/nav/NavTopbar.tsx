@@ -14,7 +14,7 @@ import HeaderColumnButtonDropdown from '../chrome/HeaderColumnButtonDropdown'
 import { Modal, ModalType } from '../../models/modals'
 
 // RouteProps includes `history`, `location`, and `match`
-interface NavbarProps extends RouteProps {
+interface NavTopbarProps extends RouteProps {
   title: string
   buttons: NavbarButtonProps[]
   setModal: (modal: Modal) => void
@@ -33,7 +33,7 @@ export interface NavbarButtonProps {
 }
 
 // Navbar is persistent chrome from app-wide navigation
-export const NavbarComponent: React.FunctionComponent<NavbarProps> = ({ title, location, setModal, history, buttons = [] }) => {
+export const NavTopbar: React.FunctionComponent<NavTopbarProps> = ({ title, location, setModal, history, buttons = [] }) => {
   const handleOnEnter = (e: React.KeyboardEvent) => {
     setModal({ q: e.target.value, type: ModalType.Search })
   }
@@ -67,7 +67,7 @@ export const NavbarComponent: React.FunctionComponent<NavbarProps> = ({ title, l
 }
 
 export default connectComponentToPropsWithRouter(
-  NavTopbarComponent,
+  NavTopbar,
   {},
   { setModal }
 )
