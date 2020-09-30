@@ -3,7 +3,6 @@ dialog {
   border-radius: 5px;
   background: #F5F7FA;
   border: 1px solid #E8EDF2;
-  box-shadow: 0 0 6px #00000055;
   background: $appBackground;
   opacity: 1;
   position: absolute;
@@ -20,7 +19,7 @@ dialog {
   }
 
   &::backdrop {
-    background-color: rgba(0, 0, 0, 0.1);
+    background-color: rgba(0, 0, 0, 0.5);
     opacity: 1;
     z-index: $zindex-modal;
   }
@@ -28,18 +27,16 @@ dialog {
   .dialog-header {
     padding: 0 1.5rem;
     height: 60px;
-    border-bottom: solid 1px $border-color;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
 
     .title {
-      font-weight: $font-weight-medium;
+      font-weight: $font-weight-bold;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      font-size: $font-size-lg;
       margin: 0;
       padding: 0;
       margin-right: $spacer;
@@ -47,7 +44,7 @@ dialog {
 
     .close {
       flex-shrink: 0;
-
+      text-align: right;
       border: 0;
       height: 18px;
       width: 18px;
@@ -68,7 +65,7 @@ dialog {
   }
 
   form {
-    padding: 1.5rem;
+    padding: 0 1.5rem 1.5rem 1.5rem;
 
     &.no-padding {
       padding: 0;
@@ -102,6 +99,7 @@ dialog {
       display: flex;
       flex-direction: column;
       background: $appBackground;
+      overflow-x: hidden;
 
       .content-main {
         flex: 1;
@@ -183,5 +181,20 @@ dialog {
     display: flex;
     justify-content: space-between;
     align-items: center;
+  }
+
+  .dialog-text-small {
+    font-size: 0.8rem;
+  }
+
+  code {
+    margin: 5px 0 4px 0;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: bottom;
+    position: relative;
+    top: 4px;
+    white-space: nowrap;
   }
 }

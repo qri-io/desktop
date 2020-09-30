@@ -22,7 +22,7 @@ export const Header: React.FC<HeaderProps> = ({ title, setModal }) => (
         id="create-dataset"
         icon={faPlus}
         label="Create new Dataset"
-        onClick={() => setModal({ type: ModalType.CreateDataset })}
+        onClick={() => setModal({ type: ModalType.NewDataset })}
       />
       <HeaderColumnButton
         id="add-dataset"

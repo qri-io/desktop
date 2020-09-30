@@ -52,8 +52,10 @@ const UnpublishDatasetComponent: React.FunctionComponent<UnpublishDatasetProps> 
     >
       <div className='content-wrap' >
         <div className='content'>
-          <p>Unpublish <span className='code-highlight'>{username}/{name}</span></p>
-          <p>Unpublishing will remove your dataset from the Qri network</p>
+          <div className='dialog-text-small'>
+            <p>Unpublish <code>{username}/{name}</code></p>
+            <p>Unpublishing will remove your dataset from the Qri network</p>
+          </div>
         </div>
       </div>
 

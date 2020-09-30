@@ -5,7 +5,7 @@ import { ModalType } from '../../models/modals'
 import PullDataset from './PullDataset'
 import LinkDataset from './LinkDataset'
 import RemoveDataset from './RemoveDataset'
-import CreateDataset from './CreateDataset'
+import NewDatasetModal from './NewDatasetModal'
 import PublishDataset from './PublishDataset'
 import UnpublishDataset from './UnpublishDataset'
 import SearchModal from './SearchModal'
@@ -18,8 +18,8 @@ const Modals: React.FunctionComponent<ModalsProps> = ({ type }) => {
   switch (type) {
     case ModalType.PullDataset:
       return <PullDataset />
-    case ModalType.CreateDataset:
-      return <CreateDataset />
+    case ModalType.NewDataset:
+      return <NewDatasetModal />
     case ModalType.LinkDataset:
       return <LinkDataset />
     case ModalType.PublishDataset:
