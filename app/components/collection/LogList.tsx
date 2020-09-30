@@ -5,22 +5,25 @@ import ContextMenuArea from 'react-electron-contextmenu'
 import moment from 'moment'
 
 import { ApiActionThunk } from '../../store/api'
-import { QriRef, refStringFromQriRef, qriRefFromRoute } from '../../models/qriRef'
+import { QriRef, refStringFromQriRef, qriRefFromRoute, qriRefIsEmpty } from '../../models/qriRef'
 import { VersionInfo, PageInfo, RouteProps } from '../../models/store'
 
 import { connectComponentToPropsWithRouter } from '../../utils/connectComponentToProps'
 
 import { fetchLog } from '../../actions/api'
 
-import { selectLog, selectLogPageInfo } from '../../selections'
+import { selectLog, selectLogPageInfo, selectInNamespace, selectRecentEditRef } from '../../selections'
 
 import LogListItem from '../item/LogListItem'
-import { pathToDataset } from '../../paths'
+import { pathToDataset, pathToEdit } from '../../paths'
+import HeadLogListItem from '../item/HeadLogListItem'
 
 interface LogListProps extends RouteProps {
   qriRef: QriRef
+  recentEditRef: QriRef
   log: VersionInfo[]
   logPageInfo: PageInfo
+  editableDataset?: boolean
   fetchLog: (username: string, name: string, page?: number, pageSize?: number) => ApiActionThunk
 }
 
@@ -30,6 +33,8 @@ export const LogListComponent: React.FunctionComponent<LogListProps> = (props) =
     log,
     logPageInfo,
     history,
+    editableDataset = false,
+    recentEditRef,
     fetchLog
   } = props
 
@@ -52,7 +57,7 @@ export const LogListComponent: React.FunctionComponent<LogListProps> = (props) =
 
     const directory = path.dirname(selectedPath)
     const filename = path.basename(selectedPath)
-    const exportUrl = `http://localhost:2503/${refStringFromQriRef(qriRef)}?format=zip`
+    const exportUrl = `http://localhost:2503/get/${refStringFromQriRef(qriRef)}?format=zip`
     ipcRenderer.send('export', { url: exportUrl, filename: filename, directory: directory })
   }
 
@@ -62,6 +67,19 @@ export const LogListComponent: React.FunctionComponent<LogListProps> = (props) =
       className='sidebar-content'
       onScroll={(e) => handleLogScroll(e)}
     >
+      {
+        editableDataset && <HeadLogListItem
+          onClick={() => {
+            if (qriRefIsEmpty(recentEditRef)) {
+              history.push(pathToEdit(username, name))
+            } else {
+              history.push(recentEditRef.location)
+            }
+          }}
+          selected={!qriRef.path || qriRef.path === ''}
+          last={log.length === 0}
+        />
+      }
       {
         log.map((item, i) => {
           if (item.foreign) {
@@ -108,10 +126,13 @@ export const LogListComponent: React.FunctionComponent<LogListProps> = (props) =
 export default connectComponentToPropsWithRouter(
   LogListComponent,
   (state: any, ownProps: LogListProps) => {
+    const qriRef = qriRefFromRoute(ownProps)
     return {
-      qriRef: qriRefFromRoute(ownProps),
+      qriRef,
       log: selectLog(state),
       logPageInfo: selectLogPageInfo(state),
+      editableDataset: selectInNamespace(state, qriRef),
+      recentEditRef: selectRecentEditRef(state),
       ...ownProps
     }
   },

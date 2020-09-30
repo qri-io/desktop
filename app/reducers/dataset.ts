@@ -48,7 +48,7 @@ export const CLEAR_DATASET_HEAD = 'CLEAR_DATASET_HEAD'
 const DatasetReducer: Reducer = (state = initialState, action: AnyAction): DatasetStore => {
   switch (action.type) {
     case DATASET_REQ:
-      if (action.segments.peername !== state.peername || action.segments.name !== state.name) {
+      if (action.segments.username !== state.peername || action.segments.name !== state.name) {
         return initialState
       }
       return state

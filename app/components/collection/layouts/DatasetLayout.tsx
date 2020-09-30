@@ -28,9 +28,7 @@ const DatasetLayoutComponent: React.FunctionComponent<DatasetLayoutProps> = (pro
   const {
     id,
     mainContent,
-    sidebarContent,
     headerContent,
-    activeTab,
     sidebarWidth = 0,
     onSidebarResize
   } = props
@@ -44,7 +42,7 @@ const DatasetLayoutComponent: React.FunctionComponent<DatasetLayoutProps> = (pro
       headerContent={headerContent}
       onSidebarResize={onSidebarResize}
       mainContent={<DatasetMainContent>{mainContent}</DatasetMainContent>}
-      sidebarContent={<DatasetSidebar activeTab={activeTab}>{sidebarContent}</DatasetSidebar>}
+      sidebarContent={<DatasetSidebar />}
     />
   )
 }
