@@ -134,3 +134,22 @@ $navbar-item-margin: 6px;
     }
   }
 }
+
+
+.page-navbar {
+  .page-details {
+    display: flex;
+    .title-and-breadcrumb {
+      flex: 1;
+    }
+    .buttons {
+      flex: 1;
+      padding: 10px;
+
+      .header-column {
+        float: right;
+        margin: 0 10px;
+      }
+    }
+  }
+}

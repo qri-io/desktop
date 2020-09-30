@@ -9,6 +9,7 @@ interface LayoutProps {
   sidebarContent?: React.ReactElement
   mainContent: React.ReactElement
   headerContent?: React.ReactElement
+  topbarButtons: NavbarButtonProps[]
   onSidebarResize?: (width: number) => void
   maximumSidebarWidth?: number
   title?: string
@@ -31,12 +32,13 @@ const Layout: React.FunctionComponent<LayoutProps> = (props: LayoutProps) => {
     mainContent,
     headerContent,
     title = '',
+    topbarButtons,
     showNav = true
   } = props
 
   return (
     <div id={id} className='sidebar-layout'>
-      {showNav && <NavTopbar title={title} />}
+      {showNav && <NavTopbar title={title} buttons={topbarButtons} />}
       {headerContent}
       <div className='columns'>
         {sidebarContent && <Resizable

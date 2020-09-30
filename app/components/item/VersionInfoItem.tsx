@@ -1,38 +1,65 @@
 import React from 'react'
-import classNames from 'classnames'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faFileAlt } from '@fortawesome/free-solid-svg-icons'
+import moment from 'moment'
+import numeral from 'numeral'
+import ReactTooltip from 'react-tooltip'
 
 import { VersionInfo } from '../../models/store'
+import CheckboxInput from '../form/CheckboxInput'
+import { QRI_CLOUD_URL } from '../../constants'
 
-import { DatasetDetailsSubtext } from '../dataset/DatasetDetailsSubtext'
+import Icon from '../chrome/Icon'
+import ExternalLink from '../ExternalLink'
 
 interface VersionInfoItemProps {
   data: VersionInfo
-  selected?: boolean
+  selected: boolean
 
+  onToggleSelect: (data: VersionInfo, selected: boolean) => void
   onClick: (data: VersionInfo, e?: React.MouseEvent) => void
+  onClickFolder?: (data: VersionInfo, e: React.MouseEvent) => void
 }
 
-const VersionInfoItem: React.FunctionComponent<VersionInfoItemProps> = ({ data, selected = false, onClick }) => {
-  const { username, name } = data
+const VersionInfoItem: React.FC<VersionInfoItemProps> = (props) => {
+  const { data, selected = false, onToggleSelect, onClick, onClickFolder } = props
+  const { username, name, commitTime, bodySize, bodyRows, fsiPath, published } = data
   return (
-    <div
+    <tr
       id={`${username}-${name}`}
       key={`${username}/${name}`}
-      className={classNames('sidebar-list-item', 'sidebar-list-item-text', {
-        'selected': selected
-      })}
-      onClick={(e: React.MouseEvent) => { onClick(data, e) }}
+      className='version-info-item'
     >
-      <div className='icon-column'>
-        <FontAwesomeIcon icon={faFileAlt} size='lg'/>
-      </div>
-      <div className='text-column'>
-        <div className='text'>{username}/{name}</div>
-        <DatasetDetailsSubtext data={data} />
-      </div>
-    </div>
+      <td>
+        <ReactTooltip type='dark' effect='solid' delayShow={200} multiline />
+        <CheckboxInput
+          name='selected'
+          checked={selected}
+          onChange={(_: string, v: boolean) => { onToggleSelect(data, v) }}
+        />
+      </td>
+      <td>
+        <span className='ref text' onClick={(e: React.MouseEvent) => { onClick(data, e) }}>{username}/{name}</span>
+      </td>
+      <td>
+        <span data-tip={commitTime}>{commitTime ? moment(commitTime).fromNow() : '--'}</span>
+      </td>
+      <td>{bodySize ? numeral(bodySize).format('0.00 b') : '--'}</td>
+      <td>
+        <span data-tip={bodyRows}>{bodyRows ? numeral(bodyRows).format('0a') : '--'}</span>
+      </td>
+      <td className='icons'>
+        <span className="dataset-link" data-tip={published ? 'published' : 'unpublished'}>
+          <ExternalLink href={`${QRI_CLOUD_URL}/${username}/${name}`}>
+            <Icon icon="publish" size="sm" color={published ? 'dark' : 'medium'}/>
+          </ExternalLink>
+        </span>
+        {onClickFolder && <a onClick={(e: React.MouseEvent) => onClickFolder(data, e)} className="dataset-link" data-tip={fsiPath ? 'working directory' : 'no working directory'}>
+          <Icon icon="openInFinder" size="sm" color={fsiPath ? 'dark' : 'medium'}/>
+        </a>}
+        {/* <button onClick={() => updateDataset(username, name)} className="dataset-button" data-tip="Updates available">
+          <Icon icon="sync" size="sm" color={updatesAvailable ? 'dark' : 'medium'}/>
+        </button> */}
+      </td>
+    </tr>
   )
 }
 

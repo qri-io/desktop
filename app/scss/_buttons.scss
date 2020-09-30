@@ -151,3 +151,24 @@ input[type="button"] {
   width: 254px;
   height: 50px;
 }
+
+.header-column {
+  display: inline-flex;
+  padding: 10px 0px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  align-items: center;
+  cursor: pointer;
+
+  &:last-child {
+    padding-left: 20px;
+  }
+
+  .header-column-icon {
+    color: $text-light;
+    margin-right: 8px;
+  }
+  .header-column-text {
+    color: $light-blue-accent;
+  }
+}
