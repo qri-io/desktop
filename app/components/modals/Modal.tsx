@@ -8,6 +8,33 @@ import ReactTooltip from 'react-tooltip'
  */
 const titleBarHeight = 22
 
+/**
+ * HOW TO USE MODALS
+ *
+ * Once you have created your modal component how do you wire it up to work in
+ * the app?
+ *
+ * First, look at the `/app/models/modals.ts` file. You need to create a specific
+ * `ModalType` for your new modal. Then, any parameters that you need so the
+ * modal can function should be added as fields on the modal type.
+ *
+ * When you want the modal to appear, emit the `setModal` action, with the correct
+ * modal type and appropriate details. That action will add the modal struct to
+ * UI reducer. The App component will then get the modal struct. If the modal
+ * struct is NOT of `NoModal` type, it will pass the modal struct to the `Modals`
+ * component.
+ *
+ * You must add your new modal component to the `Modals` component. This component
+ * switches on `type` to determine what modal to display.
+ *
+ * All modals should be containerized, aka, have a `connect` function that
+ * connects the modal to the state tree. It is required to get its own modal struct
+ * from the state tree (use the `selectModal` selector).
+ *
+ * Each modal should emit the `dismissModal` function to close the modal on cancel
+ * or any other action that makes sense for the modal to close.
+ *
+ */
 export interface ModalProps {
   /**
    * An optional dialog title. Most, if not all dialogs should have
@@ -74,27 +101,7 @@ export interface ModalProps {
    * An optional className to be applied to the rendered dialog element.
    */
   readonly className?: string
-
-  /**
-   * Whether or not the dialog should be disabled. All dialogs wrap their
-   * content in a <fieldset> element which, when disabled, causes all descendant
-   * form elements and buttons to also become disabled. This is useful for
-   * consumers implementing a typical save dialog where the save action isn't
-   * instantaneous (such as a sign in dialog) and they need to ensure that the
-   * user doesn't continue mutating the form state or click buttons while the
-   * save/submit action is in progress. Note that this does not prevent the
-   * dialog from being dismissed.
-   */
   readonly disabled?: boolean
-
-  /**
-   * Whether or not the dialog contents are currently involved in processing
-   * data, executing an asynchronous operation or by other means working.
-   * Setting this value will render a spinning progress icon in the dialog
-   * header (if the dialog has a header). Note that the spinning icon
-   * will temporarily replace the dialog icon (if present) for the duration
-   * of the loading operation.
-   */
   readonly loading?: boolean
 
   /**
