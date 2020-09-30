@@ -1,6 +1,7 @@
 import React from 'react'
 import moment from 'moment'
-import filesize from 'filesize'
+import numeral from 'numeral'
+import ReactTooltip from 'react-tooltip'
 
 import { VersionInfo } from '../../models/store'
 import CheckboxInput from '../form/CheckboxInput'
@@ -28,21 +29,30 @@ const VersionInfoItem: React.FC<VersionInfoItemProps> = (props) => {
       className='version-info-item'
     >
       <td>
+        <ReactTooltip type='dark' effect='solid' delayShow={200} multiline />
         <CheckboxInput
           name='selected'
           checked={selected}
           onChange={(_: string, v: boolean) => { onToggleSelect(data, v) }}
         />
       </td>
-      <td className='ref text' onClick={(e: React.MouseEvent) => { onClick(data, e) }}>{username}/{name}</td>
-      <td>{commitTime ? moment(commitTime).fromNow() : '--'}</td>
-      <td>{bodySize ? filesize(bodySize) : '--'}</td>
-      <td>{bodyRows || '--'}</td>
+      <td>
+        <span className='ref text' onClick={(e: React.MouseEvent) => { onClick(data, e) }}>{username}/{name}</span>
+      </td>
+      <td>
+        <span data-tip={commitTime}>{commitTime ? moment(commitTime).fromNow() : '--'}</span>
+      </td>
+      <td>{bodySize ? numeral(bodySize).format('0.00 b') : '--'}</td>
+      <td>
+        <span data-tip={bodyRows}>{bodyRows ? numeral(bodyRows).format('0a') : '--'}</span>
+      </td>
       <td className='icons'>
-        <ExternalLink href={`${QRI_CLOUD_URL}/${username}/${name}`} className="dataset-link" tooltip="Published">
-          <Icon icon="publish" size="sm" color={published ? 'dark' : 'medium'}/>
-        </ExternalLink>
-        {onClickFolder && <a onClick={(e: React.MouseEvent) => onClickFolder(data, e)} className="dataset-link" data-tip="Linked to filesystem">
+        <span className="dataset-link" data-tip={published ? 'published' : 'unpublished'}>
+          <ExternalLink href={`${QRI_CLOUD_URL}/${username}/${name}`}>
+            <Icon icon="publish" size="sm" color={published ? 'dark' : 'medium'}/>
+          </ExternalLink>
+        </span>
+        {onClickFolder && <a onClick={(e: React.MouseEvent) => onClickFolder(data, e)} className="dataset-link" data-tip={fsiPath ? 'working directory' : 'no working directory'}>
           <Icon icon="openInFinder" size="sm" color={fsiPath ? 'dark' : 'medium'}/>
         </a>}
         {/* <button onClick={() => updateDataset(username, name)} className="dataset-button" data-tip="Updates available">

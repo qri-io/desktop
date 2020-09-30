@@ -38,7 +38,7 @@ export const DatasetListComponent: React.FC<DatasetListProps> = (props) => {
   const lowercasedFilterString = filter.toLowerCase()
 
   const [checked, setChecked] = useState({})
-  const [onlyMine, setOnlyMine] = useState(false)
+  const [onlySessionUserDatasets, setOnlySessionUserDatasets] = useState(false)
   const checkedCount = Object.keys(checked).length
 
   const handleSetFilter = (value: string) => {
@@ -77,7 +77,7 @@ export const DatasetListComponent: React.FC<DatasetListProps> = (props) => {
   }
 
   const filteredDatasets = datasets
-    .filter(({ username }) => onlyMine ? (username === sessionUsername) : true)
+    .filter(({ username }) => onlySessionUserDatasets ? (username === sessionUsername) : true)
     .filter(({ username, name, metaTitle = '' }) => {
       // if there's a non-empty filter string, only show matches on username, name, and title
       // TODO (chriswhong) replace this simple filtering with an API call for deeper matches
@@ -90,13 +90,12 @@ export const DatasetListComponent: React.FC<DatasetListProps> = (props) => {
       return true
     })
 
-  const countMessage = (onlyMine && filter === '')
+  const countMessage = (onlySessionUserDatasets && filter === '')
     ? `You have ${filteredDatasets.length} local dataset${filteredDatasets.length !== 1 ? 's' : ''}`
     : `Showing ${filteredDatasets.length} local dataset${filteredDatasets.length !== 1 ? 's' : ''}`
 
   return (
     <div id='dataset-list'>
-
       <header>
         <div id='dataset-list-filter'>
           <div className='filter-input-container'>
@@ -119,21 +118,21 @@ export const DatasetListComponent: React.FC<DatasetListProps> = (props) => {
         </div>
         <div className='list-picker-and-bulk-actions'>
           <div className='list-picker'>
-            <button className={classNames({ active: onlyMine })} onClick={() => setOnlyMine(true)}>
-              My Datasets
+            <button className={classNames({ active: onlySessionUserDatasets })} onClick={() => setOnlySessionUserDatasets(true)}>
+              My Datasets <span className='count-indicator'>{datasets.filter(({ username }) => (username === sessionUsername)).length}</span>
             </button>
-            <button className={classNames({ active: !onlyMine })} onClick={() => setOnlyMine(false)}>
-              All Local Datasets
+            <button className={classNames({ active: !onlySessionUserDatasets })} onClick={() => setOnlySessionUserDatasets(false)}>
+              All Datasets <span className='count-indicator'>{datasets.length}</span>
             </button>
           </div>
-          {checkedCount > 0 &&
           <div className='bulk-actions'>
-            <button onClick={() => alert(`Pull Latest: ${Object.keys(checked)}`)}>Pull latest</button>
-            <button onClick={() => alert(`quick export CSV: ${Object.keys(checked)}`)}>Quick Export CSV</button>
-            <button onClick={() => alert(`remove: ${Object.keys(checked)}`)}>Remove</button>
-          </div>}
-          <div className='count-message'>
-            {countMessage}
+            {checkedCount === 0 && countMessage}
+            {checkedCount > 0 && <>
+              <span>{checkedCount} selected</span>
+              <button onClick={() => alert(`Pull Latest: ${Object.keys(checked)}`)}>Pull latest</button>
+              <button onClick={() => alert(`quick export CSV: ${Object.keys(checked)}`)}>Quick Export CSV</button>
+              <button onClick={() => alert(`remove: ${Object.keys(checked)}`)}>Remove</button>
+            </>}
           </div>
         </div>
       </header>

@@ -59,26 +59,30 @@
 
       .list-picker {
         flex: 1;
-        max-width: 30%;
         button {
           padding: 6px 10px;
           margin: 0 4px;
+        }
+        .count-indicator {
+          color: #aaa;
+          font-weight: bold;
         }
       }
 
       .bulk-actions {
         flex: 1;
-        text-align: center;
-        padding-top: 10px;
+        text-align: right;
+        padding: 6px 10px 0 0;
         
         button {
-          margin: 4px 5px;
+          margin: 0 5px;
           font-weight: bold;
           color: #4FC7F3;
         }
       }
 
       .count-message {
+        float: right;
         padding: 14px 20px 6px 12px;
       }
     }
@@ -87,7 +91,7 @@
   #list {
     flex: 1;
     width: 100%;
-    overflow: auto;
+    overflow-y: auto;
 
     table {
       width: 100%;
@@ -105,12 +109,17 @@
       }
 
       .ref.text {
+        display: block;
         cursor: pointer;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
       }
 
       tr td, 
       tr th {
         padding: 8px 12px;
+        white-space: nowrap;
       }
       tr td.icons {
         position: relative;
