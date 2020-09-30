@@ -1,12 +1,10 @@
 import React from 'react'
 import { Action } from 'redux'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faClock } from '@fortawesome/free-regular-svg-icons'
 import classNames from 'classnames'
 import { VersionInfo } from '../../models/store'
 import moment from 'moment'
 
-interface LogListItemProps {
+export interface LogListItemProps {
   id: string
   data: VersionInfo
   selected: boolean
@@ -47,7 +45,6 @@ const LogListItem: React.FunctionComponent<LogListItemProps> = (props) => {
       onClick={() => { if (!(foreign && allowDisable)) props.onClick(path) }}
     >
       <div className='icon-column'>
-        <div className='history-timeline-line history-timeline-line-top' />
         <div className='history-timeline-dot' />
         <div className='history-timeline-line history-timeline-line-bottom' />
       </div>
@@ -56,7 +53,7 @@ const LogListItem: React.FunctionComponent<LogListItemProps> = (props) => {
         <div className='subtext'>
           {/* Bring back avatar later <img className= 'user-image' src = {props.avatarUrl} /> */}
           <div className='time-message'>
-            <FontAwesomeIcon icon={faClock} size='sm'/> {moment(commitTime).fromNow()}
+            {moment(commitTime).fromNow()}
           </div>
         </div>
       </div>

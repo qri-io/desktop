@@ -122,12 +122,6 @@ $header-font-size: .9rem;
     }
   }
 
-  &.first {
-    .history-timeline-line-top {
-      display: none;
-    }
-  }
-
   &.last {
     .history-timeline-line-bottom {
       display: none;
@@ -147,16 +141,38 @@ $header-font-size: .9rem;
     }
   }
 
-  .history-timeline-line {
-    width: 4px;
-    background-color: $timeline-color;
-    position: absolute;
-    left: 13px;
+  &.working-dataset {
+    height: 50px;
+    .history-timeline-line {
+      border-style: dashed;
+      height: 30px;
+      top: 32px;
+    }
+    .history-timeline-dot {
+      background-color: transparent;
+      height: 12px;
+      width: 12px;
+      border: solid 1px $timeline-color;
+      left: -1px;
+      top: 8px;
+    }
+    &.selected {
+      .history-timeline-dot {
+        background-color: $light-blue-accent;
+        border: none;
+      }
+    }
+    &.last {
+      .history-timeline-line {
+        display: none;
+      }
+    }
   }
 
-  .history-timeline-line-top {
-    top: 0;
-    height: 16px;
+  .history-timeline-line {
+    border: solid 2px $timeline-color;
+    position: absolute;
+    left: 13px;
   }
 
   .history-timeline-line-bottom {
@@ -187,17 +203,22 @@ $header-font-size: .9rem;
   }
 }
 
+#dataset-edit-main-sidebar {
+  border-right: 1px solid $border-color; 
+
+}
+
 .sidebar {
   height: 100%;
   font-size: $header-font-size;
   cursor: default;
   display: flex;
   flex-direction: column;
-  background-color: $qri-blue;
+  background-color: $dataset-sidebar-color;
   border-right: 1px solid $border-color;
-  color: $white;
+  color: $black;
   overflow: hidden;
-  padding: 60px 0 0 0;
+  padding: 10px 0 0 0;
 
   .sidebar-padded-container {
     padding: 0 10px;
@@ -209,7 +230,7 @@ $header-font-size: .9rem;
     }
 
     .pane-title {
-      color: white;
+      color: $black;
       font-size: 1.2rem;
       font-weight: 900;
     }
@@ -227,10 +248,10 @@ $header-font-size: .9rem;
       overflow: hidden;
 
       input {
-        background-color: #2f578c;
+        background-color: $primary-muted;
         border: none;
         border-radius: 5px;
-        color: #fff;
+        color: black;
         padding: 0 5px;
         outline: none;
         width: 100%;

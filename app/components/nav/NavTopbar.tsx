@@ -9,7 +9,7 @@ import Breadcrumb from '../chrome/Breadcrumb'
 import { Modal, ModalType } from '../../models/modals'
 
 // RouteProps includes `history`, `location`, and `match`
-interface NavbarProps extends RouteProps {
+interface NavTopbarProps extends RouteProps {
   title: string
   setModal: (modal: Modal) => void
 }
@@ -46,7 +46,7 @@ const ForwardArrow: React.FunctionComponent<ArrowProps> = (props) => {
 }
 
 // Navbar is persistent chrome from app-wide navigation
-export const NavbarComponent: React.FunctionComponent<NavbarProps> = ({ title, location, setModal, history }) => {
+export const NavTopbarComponent: React.FunctionComponent<NavTopbarProps> = ({ title, location, setModal, history }) => {
   const handleOnEnter = (e: React.KeyboardEvent) => {
     setModal({ q: e.target.value, type: ModalType.Search })
   }
@@ -66,7 +66,7 @@ export const NavbarComponent: React.FunctionComponent<NavbarProps> = ({ title, l
 }
 
 export default connectComponentToPropsWithRouter(
-  NavbarComponent,
+  NavTopbarComponent,
   {},
   { setModal }
 )

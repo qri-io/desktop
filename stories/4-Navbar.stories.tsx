@@ -1,7 +1,7 @@
 import React from 'react'
 import { BrowserRouter as Router, Route } from 'react-router-dom'
 
-import { NavbarComponent } from '../app/components/nav/Navbar'
+import { NavTopbarComponent } from '../app/components/nav/NavTopbar'
 
 export default {
   title: 'Chrome | Navbar',
@@ -15,7 +15,7 @@ export const std = () => {
     <div style={{ width: 800, margin: '10px auto' }}>
       <Router>
         <Route render={(props) => {
-          return <NavbarComponent setModal={() => console.log("set modal!")} {...props} />
+          return <NavTopbarComponent setModal={() => console.log("set modal!")} {...props} />
         }}/>
       </Router>
     </div>

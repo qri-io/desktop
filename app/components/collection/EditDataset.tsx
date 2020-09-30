@@ -14,6 +14,8 @@ import ComponentRouter from './ComponentRouter'
 import DatasetLayout from './layouts/DatasetLayout'
 import WorkingComponentList from './WorkingComponentList'
 import NotInNamespace from './NotInNamespace'
+import Layout from '../Layout'
+import LogList from './LogList'
 
 interface EditDatasetProps extends RouteProps {
   qriRef: QriRef
@@ -39,8 +41,18 @@ export const EditDatasetComponent: React.FunctionComponent<EditDatasetProps> = (
     <DatasetLayout
       id='dataset-edit'
       activeTab='status'
-      mainContent={<ComponentRouter />}
-      sidebarContent={<WorkingComponentList />}
+      mainContent={<Layout
+        showNav={false}
+        id='dataset-edit-main'
+        sidebarContent={
+          <WorkingComponentList />
+        }
+        sidebarWidth={150}
+        mainContent={
+          <ComponentRouter qriRef={qriRef}/>
+        }
+      />}
+      sidebarContent={<LogList qriRef={qriRef}/>}
     />
   )
 }

@@ -46,6 +46,7 @@ $sidebar-item-padding:  6px 10px;
 .clear-to-commit {
   #commit-status {
     background-color: $light-blue-accent;
+    color: $white;
 
     &.sidebar-list-item-text.selected {
       border-left: 4px solid #FFF;
