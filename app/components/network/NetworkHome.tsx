@@ -1,21 +1,28 @@
 import React from 'react'
-import { withRouter } from 'react-router-dom'
 
 import { BACKEND_URL } from '../../constants'
 import { NetworkHomeData } from '../../models/network'
 import { VersionInfo, RouteProps } from '../../models/store'
+import { Modal, ModalType } from '../../models/modals'
+import { connectComponentToPropsWithRouter } from '../../utils/connectComponentToProps'
+import { setModal } from '../../actions/ui'
 
 import Spinner from '../chrome/Spinner'
 import DatasetItem from '../item/DatasetItem'
 import { pathToNetworkDataset } from '../../paths'
+import SearchBox from '../chrome/SearchBox'
 
 const initialDataState: NetworkHomeData = {
   featured: [],
   recent: []
 }
 
+interface NetworkHomeProps extends RouteProps {
+  setModal: (modal: Modal) => void
+}
+
 // NetworkHome accepts no props
-export const NetworkHome: React.FunctionComponent<RouteProps> = ({ history }) => {
+export const NetworkHome: React.FunctionComponent<NetworkHomeProps> = ({ history, setModal }) => {
   const [loading, setLoading] = React.useState(true)
   const [data, setData] = React.useState(initialDataState)
   const [error, setError] = React.useState('')
@@ -39,11 +46,16 @@ export const NetworkHome: React.FunctionComponent<RouteProps> = ({ history }) =>
     return <div><h3>{JSON.stringify(error)}</h3></div>
   }
 
+  const handleOnEnter = (e: React.KeyboardEvent) => {
+    setModal({ q: e.target.value, type: ModalType.Search })
+  }
+
   const { featured, recent } = data
 
   return (
     <div className='network_home'>
       <h2>Home</h2>
+      <SearchBox onEnter={handleOnEnter} id='search-box' />
       {featured && featured.length && <div>
         <h4>Featured Datasets</h4>
         {featured.map((vi: VersionInfo, i) => <div key={i} className='featured-datasets-item'>
@@ -64,7 +76,13 @@ export const NetworkHome: React.FunctionComponent<RouteProps> = ({ history }) =>
   )
 }
 
-export default withRouter(NetworkHome)
+export default connectComponentToPropsWithRouter(
+  NetworkHome,
+  {},
+  {
+    setModal
+  }
+)
 
 // TODO (b5) - bring this back in the near future for fetching home feed
 async function homeFeed (): Promise<NetworkHomeData> {

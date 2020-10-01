@@ -1,0 +1,95 @@
+
+@keyframes pulse { /* flame pulses */
+  0%   { opacity:1; }
+  50%  { opacity:0.25; }
+  100% { opacity:1; }
+}
+
+.transfers {
+  position: relative;
+  margin: 0px 10px 10px 10px;
+
+  header {
+    width: 100%;
+    padding-top: 5px;
+    text-align: right;
+    cursor: pointer;
+
+    .header-message {
+      color: #777777;
+      margin-right: 10px;
+      font-size: 12px;
+    }
+    .progress-bar {
+      display: inline-block;
+      width: 100px;
+    }
+    .transfer-indicators {
+      float: right;
+      margin: 5px 0 0 10px;
+  
+      .icon {
+        opacity: 0.2;
+        display: inline-block;
+        margin-left: 4px;
+      }
+      .icon.active {
+        animation: pulse 2s linear infinite;
+      }
+    }
+  }
+
+  .popover {
+    position: absolute;
+    right: 0;
+    top: 40px;
+    width: 300px;
+
+    border-radius: 5px;
+    overflow: hidden;
+    box-shadow: 0 0 5px #00000020;
+    background: white;
+
+    header {
+      padding: 5px 15px 0 15px;
+      text-transform: uppercase;
+      font-size: 12px;
+      letter-spacing: 1px;
+      text-align: left;
+      font-weight: bold;
+      color: #888;
+      border-bottom: 1px solid #eee;
+    }
+
+    .item {
+      padding: 10px 20px 10px 15px;
+      border-bottom: 1px solid #eee;
+
+      .icon {
+        height: 100%;
+        display: inline-block;
+        margin: 0 15px 15px 0;
+        padding: 0;
+      }
+
+      .details {
+        width: 200px;
+        display: inline-block;
+      }
+      .title {
+        width: 200px;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        font-size: 13px;
+        font-weight: bold;
+      }
+    }
+
+    .no-transfers {
+      padding: 20px 15px 10px 15px;
+      text-align: center;
+      color: #aaa;
+    }
+  }
+}

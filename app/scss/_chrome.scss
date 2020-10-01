@@ -66,49 +66,22 @@
   }
 }
 
-// .top-bar-title-bar {
-//   flex: 1 0 100%;
-//   width: 100%;
-//   height: 20px;
-//   text-align: center;
-// }
+.number-badge {
+  border-radius: 100%;
+  background: $primary;
+  color: white;
+  text-align: center;
+  font-weight: bold;
+  box-shadow: 0 0 5px #00000029;
+  overflow: hidden;
 
-// .top-bar-first-item {
-//   margin-right: 10;
-//   margin-left: 0;
-// }
-
-// .top-bar-item-spacing {
-//   margin-right: 30px;
-//   display: inline-block;
-// }
-
-// .top-bar-no-shrink {
-//   flex: 1 0;
-//   align-items: baseline;
-//   padding: 11px 0 0 20px;
-// }
-
-// .top-bar-help {
-//   display: flex;
-//   justify-content: flex-end;
-//   align-items: baseline;
-//   flex: 1 1;
-// }
-
-// .top-bar-current {
-//   color: $primary;
-// }
-
-// .top-bar-nav-button {
-//   font-family: SSPika;
-//   display: inline-block;
-//   text-align: center;
-//   width: 22px;
-//   height: 30px;
-//   font-size: 19px;
-//   color: $text;
-// }
+  &.sm {
+    padding-top: 5px;
+    font-size: 28px;
+    width: 50px;
+    height: 50px;
+  }
+}
 
 
 ////////////////////////////
