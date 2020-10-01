@@ -11,6 +11,7 @@ import workbenchRoutesReducer from './workbenchRoutes'
 import datasetReducer from './dataset'
 import mutationsReducer from './mutations'
 import logReducer from './log'
+import transfersReducer from './transfers'
 
 import { Session } from '../models/session'
 
@@ -67,6 +68,7 @@ const createRootReducer = (history) => combineReducers({
   dataset: datasetReducer,
   log: logReducer,
   mutations: mutationsReducer,
+  transfers: transfersReducer,
   router: connectRouter(history)
 })
 

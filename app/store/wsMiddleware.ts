@@ -4,7 +4,17 @@ import { WEBSOCKETS_URL, WEBSOCKETS_PROTOCOL } from '../constants'
 
 import IStore from '../models/store'
 import { fetchWorkingDatasetDetails } from '../actions/api'
+import { trackVersionTransfer, completeVersionTransfer, removeVersionTransfer } from '../actions/transfers'
 import { resetMutationsDataset, resetMutationsStatus } from '../actions/mutations'
+import {
+  ETRemoteClientPushVersionProgress,
+  ETRemoteClientPushVersionCompleted,
+  ETRemoteClientPushDatasetCompleted,
+  ETRemoteClientPullVersionProgress,
+  ETRemoteClientPullVersionCompleted,
+  ETRemoteClientPullDatasetCompleted,
+  ETRemoteClientRemoveDatasetCompleted
+} from '../reducers/transfers'
 
 // wsMiddleware manages requests to connect to the qri backend via websockets
 // as well as managing messages that get passed through
@@ -63,6 +73,20 @@ const socketMiddleware = () => {
               }
             })
           }
+          break
+        case ETRemoteClientPushVersionProgress:
+        case ETRemoteClientPullVersionProgress:
+          event.data.type = event.type === ETRemoteClientPushVersionProgress ? "push-version" : "pull-version"
+          store.dispatch(trackVersionTransfer(event.data))
+          break
+        case ETRemoteClientPushDatasetCompleted:
+        case ETRemoteClientPullDatasetCompleted:
+        case ETRemoteClientPushVersionCompleted:
+        case ETRemoteClientPullVersionCompleted:
+          store.dispatch(completeVersionTransfer(event.data))
+          break
+        case ETRemoteClientRemoveDatasetCompleted:
+          store.dispatch(removeVersionTransfer(event.data))
           break
         default:
           console.log(`received websocket event: ${event.type}`)

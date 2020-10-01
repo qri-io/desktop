@@ -16,7 +16,10 @@ enum ModalType {
   PullDataset,
 }
 
-export type ComponentType = 'component' | 'commit' | 'commitComponent'
+export type ComponentType =
+  | 'component'
+  | 'commit'
+  | 'commitComponent'
 
 type Modal =
 | {
@@ -45,7 +48,10 @@ export interface Mutations {
   [key: string]: Mutation
 }
 
-export type ToastType = 'success' | 'error'
+export type ToastType =
+  | 'success'
+  | 'info'
+  | 'error'
 
 export interface Toast {
   type: ToastType
@@ -78,9 +84,20 @@ export interface UI {
   bootupComponent: BootupComponentType
 }
 
-export type BootupComponentType = 'loading' | 'migrating' | 'migrationFailure' | string
+export type BootupComponentType =
+  | 'loading'
+  | 'migrating'
+  | 'migrationFailure'
+  | string
 
-export type SelectedComponent = 'commit' | 'readme' | 'meta' | 'body' | 'structure' | 'transform' | ''
+export type SelectedComponent =
+  | 'commit'
+  | 'readme'
+  | 'meta'
+  | 'body'
+  | 'structure'
+  | 'transform'
+  | ''
 
 // currently selected dataset, tab, dataset component, commit, etc
 export interface Selections {
@@ -161,7 +178,12 @@ export interface MyDatasets {
   filter: string // filter string from ui
 }
 
-export type ComponentStatus = 'modified' | 'unmodified' | 'removed' | 'add' | 'parse error'
+export type ComponentStatus =
+  | 'modified'
+  | 'unmodified'
+  | 'removed'
+  | 'add'
+  | 'parse error'
 
 // info about a dataset component as compared the same component in previous commit
 export interface StatusInfo {
@@ -181,6 +203,21 @@ export interface Status {
   [key: string]: StatusInfo
 }
 
+type DagCompletion = number[]
+
+type RemoteEventType =
+  | 'push-version'
+  | 'pull-version'
+
+export interface RemoteEvent {
+  ref: QriRef
+  remoteAddr: string
+  progress: DagCompletion
+  type: RemoteEventType
+}
+
+export type RemoteEvents = Record<string, RemoteEvent>
+
 export interface DatasetStore {
   path: string
   prevPath: string
@@ -194,8 +231,8 @@ export interface DatasetStore {
       value: Commit
     }
     readme: {
-      value: string | undefined
-      preview: string | undefined
+      value?: string
+      preview?: string
     }
     body: {
       value: any[]
@@ -208,7 +245,7 @@ export interface DatasetStore {
       value: Structure
     }
     transform: {
-      value: string | undefined
+      value?: string
     }
   }
   stats: Array<Record<string, any>>
@@ -236,6 +273,7 @@ export default interface Store {
   session: Session
   connection: Connection
   ui: UI
+  remoteEvents: RemoteEvents
   selections: Selections
   myDatasets: MyDatasets
   workingDataset: WorkingDataset
