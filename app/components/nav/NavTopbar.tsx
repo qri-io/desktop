@@ -7,7 +7,6 @@ import { setModal } from '../../actions/ui'
 
 import SearchBox from '../chrome/SearchBox'
 import BackArrow from '../chrome/BackArrow'
-import ForwardArrow from '../chrome/ForwardArrow'
 import Breadcrumb from '../chrome/Breadcrumb'
 import HeaderColumnButton from '../chrome/HeaderColumnButton'
 import HeaderColumnButtonDropdown from '../chrome/HeaderColumnButtonDropdown'
@@ -47,7 +46,6 @@ export const NavTopbar: React.FunctionComponent<NavTopbarProps> = ({ title, loca
       <div className='row'>
         <div className='nav-buttons'>
           <a className='back' onClick={() => history.goBack()}><BackArrow /></a>
-          <a className='forward' onClick={() => history.goForward()}><ForwardArrow /></a>
         </div>
         <SearchBox onEnter={handleOnEnter} id='search-box' />
       </div>
