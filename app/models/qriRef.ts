@@ -82,6 +82,12 @@ export function qriRefIsEmpty (qriRef: QriRef): boolean {
   return !qriRef.location || qriRef.location === '' || !qriRef.username || qriRef.username === '' || !qriRef.name || qriRef.name === ''
 }
 
+// checks if the two given qriRefs refer to the same dataset
+// aka, have the same username and name
+export function qriRefIsSameDataset (a: QriRef, b: QriRef): boolean {
+  return a.username === b.username && a.name === b.name
+}
+
 // selectedComponentFromQriRef takes a qriRef and gets the selected component
 // from the location param
 export function selectedComponentFromLocation (location: string): SelectedComponent | undefined {

@@ -120,6 +120,10 @@ export function selectLogPageInfo (state: Store): PageInfo {
   return state.log.pageInfo
 }
 
+export function selectHasHistory (state: Store): boolean {
+  return !!state.log.value.length
+}
+
 /**
  *
  * MYDATASETS STATE TREE
@@ -176,7 +180,7 @@ export function selectMutationsDataset (state: Store): Dataset {
 }
 
 export function selectMutationsIsDirty (state: Store): boolean {
-  return !!state.mutations.dirty
+  return !!state.mutations.dirty && !state.workingDataset.fsiPath
 }
 
 export function selectIsCommiting (state: Store): boolean {

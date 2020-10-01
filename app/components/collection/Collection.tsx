@@ -9,12 +9,11 @@ import { Session } from '../../models/session'
 import { SelectedComponent, RouteProps } from '../../models/store'
 import { Modal, ModalType } from '../../models/modals'
 import { QriRef, qriRefFromRoute } from '../../models/qriRef'
-import { ApiActionThunk, LaunchedFetchesAction } from '../../store/api'
+import { ApiActionThunk } from '../../store/api'
 
 import { setModal, setSidebarWidth } from '../../actions/ui'
 import { setActiveTab } from '../../actions/selections'
 import { resetMutationsDataset, discardMutationsChanges, resetMutationsStatus } from '../../actions/mutations'
-import { fetchWorkbench } from '../../actions/workbench'
 import { discardChangesAndFetch, fetchWorkingDatasetDetails } from '../../actions/api'
 
 import {
@@ -23,7 +22,6 @@ import {
   selectWorkingDatasetIsPublished,
   selectSessionUsername,
   selectShowDetailsBar,
-  selectMutationsIsDirty,
   selectSidebarWidth,
   selectHasDatasets
 } from '../../selections'
@@ -54,9 +52,6 @@ export interface CollectionProps extends RouteProps {
   details: Details
   inNamespace: boolean
 
-  // only used if there is no fsiPath
-  modified?: boolean
-
   // setting actions
   setModal: (modal: Modal) => void
   setActiveTab: (activeTab: string) => Action
@@ -65,7 +60,6 @@ export interface CollectionProps extends RouteProps {
   resetMutationsStatus: () => Action
 
   // fetching actions
-  fetchWorkbench: (qriRef: QriRef) => LaunchedFetchesAction
   fetchWorkingDatasetDetails: (username: string, name: string) => ApiActionThunk
 
   // api actions (that aren't fetching)
@@ -91,8 +85,6 @@ export class CollectionComponent extends React.Component<CollectionProps> {
     ipcRenderer.on('show-history', this.handleShowHistory)
     ipcRenderer.on('open-working-directory', this.openWorkingDirectory)
     ipcRenderer.on('publish-unpublish-dataset', this.publishUnpublishDataset)
-
-    this.props.fetchWorkbench(this.props.qriRef)
   }
 
   componentWillUnmount () {
@@ -100,9 +92,6 @@ export class CollectionComponent extends React.Component<CollectionProps> {
     ipcRenderer.removeListener('show-history', this.handleShowHistory)
     ipcRenderer.removeListener('open-working-directory', this.openWorkingDirectory)
     ipcRenderer.removeListener('publish-unpublish-dataset', this.publishUnpublishDataset)
-
-    this.props.resetMutationsDataset()
-    this.props.resetMutationsStatus()
   }
 
   private handleShowStatus () {
@@ -111,13 +100,6 @@ export class CollectionComponent extends React.Component<CollectionProps> {
 
   private handleShowHistory () {
     this.props.setActiveTab('history')
-  }
-
-  async componentDidUpdate (prevProps: CollectionProps) {
-    if (prevProps.qriRef.location !== this.props.qriRef.location) {
-      // TODO (b5) - this was bailing early when fetch happened
-      this.props.fetchWorkbench(this.props.qriRef)
-    }
   }
 
   openWorkingDirectory () {
@@ -254,7 +236,6 @@ export default connectComponentToProps(
       sidebarWidth: selectSidebarWidth(state, 'workbench'),
       details: selectDetails(state),
       inNamespace: selectSessionUsername(state) === qriRef.username,
-      modified: selectMutationsIsDirty(state),
       ...ownProps
     }
   },
@@ -263,7 +244,6 @@ export default connectComponentToProps(
     setActiveTab,
     resetMutationsDataset,
     resetMutationsStatus,
-    fetchWorkbench,
     setSidebarWidth,
     fetchWorkingDatasetDetails,
     discardChangesAndFetch,

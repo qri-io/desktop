@@ -8,20 +8,24 @@ import { QriRef, qriRefFromRoute } from '../../models/qriRef'
 import { Status, SelectedComponent, RouteProps } from '../../models/store'
 
 import { discardChangesAndFetch } from '../../actions/api'
+import { discardMutationsChanges } from '../../actions/mutations'
 
-import { selectStatusFromMutations, selectFsiPath } from '../../selections'
+import { selectStatusFromMutations, selectFsiPath, selectHasHistory } from '../../selections'
 import { pathToEdit } from '../../paths'
 
 import ContextMenuArea from '../ContextMenuArea'
 import ComponentItem from '../item/ComponentItem'
 import { connectComponentToPropsWithRouter } from '../../utils/connectComponentToProps'
+import { Action } from 'redux'
 
 interface WorkingComponentListProps extends RouteProps {
   qriRef: QriRef
   status: Status
   selectedComponent: string
   discardChangesAndFetch?: (username: string, name: string, component: SelectedComponent) => void
+  discardMutationsChanges?: (component: string) => Action
   fsiPath?: string
+  hasHistory: boolean
 }
 
 export const components = [
@@ -84,7 +88,9 @@ export const WorkingComponentListComponent: React.FunctionComponent<WorkingCompo
     history,
     selectedComponent,
     discardChangesAndFetch,
-    fsiPath
+    discardMutationsChanges,
+    fsiPath,
+    hasHistory
   } = props
 
   const { username, name: datasetName } = qriRef
@@ -99,17 +105,62 @@ export const WorkingComponentListComponent: React.FunctionComponent<WorkingCompo
     <div className={classNames({ 'clear-to-commit': clearToCommit })}>
       {
         visibleComponents.map(({ name, displayName, tooltip, icon }) => {
+          let filename = ''
+          let fileStatus
+          let filepath
+          if (status[name]) {
+            fileStatus = status[name].status
+            filepath = status[name].filepath
+            if (filepath !== name) {
+              filename = path.basename(filepath)
+            }
+          }
+
+          let menuItems: MenuItemConstructorOptions[] = []
           if (status[name]) {
             const { filepath, status: fileStatus } = status[name]
-
-            // if filepath is the same as the component name, we are looking at a
-            // a commit's component, and should not render a filename
             let filename = ''
             if (filepath !== name) {
               filename = path.basename(filepath)
             }
+            if (fsiPath) {
+              menuItems = [
+                {
+                  label: 'Open in Finder',
+                  click: () => { shell.showItemInFolder(`${fsiPath}/${filename}`) }
+                },
+                {
+                  label: 'Copy File Path',
+                  click: () => { clipboard.writeText(`${fsiPath}/${filename}`) }
+                }
+              ]
 
-            const fileRow = (
+              if (discardChangesAndFetch && fileStatus !== 'unmodified' && hasHistory) {
+                menuItems.unshift({
+                  label: 'Discard Changes...',
+                  click: () => {
+                    console.log("component is", name)
+                    discardChangesAndFetch(username, datasetName, name as SelectedComponent)
+                  }
+                })
+                if (menuItems.length > 1) {
+                  menuItems.unshift({ type: 'separator' })
+                }
+              }
+            } else {
+              if (discardMutationsChanges && fileStatus !== 'unmodified') {
+                menuItems.unshift({
+                  label: 'Discard Changes...',
+                  click: () => {
+                    discardMutationsChanges(name)
+                  }
+                })
+              }
+            }
+          }
+
+          return (
+            <ContextMenuArea data={menuItems} menuItemsFactory={(data) => data} key={name}>
               <ComponentItem
                 key={name}
                 displayName={displayName}
@@ -123,60 +174,8 @@ export const WorkingComponentListComponent: React.FunctionComponent<WorkingCompo
                 }}
                 color='light'
               />
-            )
-
-            if (discardChangesAndFetch || fsiPath) {
-              let menuItems: MenuItemConstructorOptions[] = []
-              if (fsiPath) {
-                menuItems = [
-                  {
-                    label: 'Open in Finder',
-                    click: () => { shell.showItemInFolder(`${fsiPath}/${filename}`) }
-                  },
-                  {
-                    label: 'Copy File Path',
-                    click: () => { clipboard.writeText(`${fsiPath}/${filename}`) }
-                  }
-                ]
-              }
-
-              // add discard changes option of file is modified
-              if (discardChangesAndFetch && fileStatus !== 'unmodified') {
-                menuItems.unshift({
-                  label: 'Discard Changes...',
-                  click: () => {
-                    discardChangesAndFetch(username, datasetName, name as SelectedComponent)
-                  }
-                })
-                if (menuItems.length > 1) {
-                  menuItems.unshift({ type: 'separator' })
-                }
-              }
-
-              return (
-                <ContextMenuArea data={menuItems} menuItemsFactory={(data) => data} key={name}>
-                  {fileRow}
-                </ContextMenuArea>
-              )
-            } else {
-              return fileRow
-            }
-          } else {
-            return (
-              <ComponentItem
-                color='light'
-                key={name}
-                displayName={displayName}
-                icon={icon}
-                selected={selectedComponent === name}
-                // TODO (ramfox): we should create a 'isDisabled' function and add these specifications & test
-                tooltip={tooltip}
-                onClick={(component: SelectedComponent) => {
-                  history.push(pathToEdit(username, datasetName, component))
-                }}
-              />
-            )
-          }
+            </ContextMenuArea>
+          )
         })
       }
     </div>
@@ -191,11 +190,13 @@ export default connectComponentToPropsWithRouter(
       status: selectStatusFromMutations(state),
       selectedComponent: qriRef.component,
       fsiPath: selectFsiPath(state),
+      hasHistory: selectHasHistory(state),
       qriRef,
       ...ownProps
     }
   },
   {
-    discardChangesAndFetch
+    discardChangesAndFetch,
+    discardMutationsChanges
   }
 )

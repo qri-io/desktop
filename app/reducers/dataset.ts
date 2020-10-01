@@ -38,7 +38,7 @@ const initialState: DatasetStore = {
   stats: []
 }
 
-const [COMMITDATASET_REQ, COMMITDATASET_SUCC, COMMITDATASET_FAIL] = apiActionTypes('commitdataset')
+export const [COMMITDATASET_REQ, COMMITDATASET_SUCC, COMMITDATASET_FAIL] = apiActionTypes('commitdataset')
 const [COMMITSTATUS_REQ, COMMITSTATUS_SUCC, COMMITSTATUS_FAIL] = apiActionTypes('commitstatus')
 const [COMMITBODY_REQ, COMMITBODY_SUCC, COMMITBODY_FAIL] = apiActionTypes('commitbody')
 const [COMMITSTATS_REQ, COMMITSTATS_SUCC, COMMITSTATS_FAIL] = apiActionTypes('commitstats')
@@ -55,6 +55,8 @@ const DatasetReducer: Reducer = (state = initialState, action: AnyAction): Datas
     case COMMITDATASET_REQ:
       return {
         ...state,
+        peername: action.segments.username,
+        name: action.segments.name,
         isLoading: true
       }
     case COMMITDATASET_SUCC:
