@@ -1,33 +1,20 @@
 import React from 'react'
 import { Prompt, RouteProps } from 'react-router-dom'
-import { Action } from 'redux'
 
 import { connectComponentToPropsWithRouter } from '../../utils/connectComponentToProps'
 import { QriRef } from '../../models/qriRef'
-import { resetMutationsDataset, resetMutationsStatus } from '../../actions/mutations'
 import { selectMutationsIsDirty, selectRecentEditRef } from '../../selections'
 
-interface UncommitedChangesPromptProps extends RouteProps {
+interface UncommittedChangesPromptProps extends RouteProps {
   recentEditRef: QriRef
   modified: boolean
-  resetMutationsDataset: () => Action
-  resetMutationsStatus: () => Action
 }
 
-export const UncommitedChangesPromptComponent: React.FC<UncommitedChangesPromptProps> = (props) => {
+export const UncommittedChangesPromptComponent: React.FC<UncommittedChangesPromptProps> = (props) => {
   const {
     recentEditRef,
-    modified,
-    resetMutationsDataset,
-    resetMutationsStatus
+    modified
   } = props
-
-  React.useEffect(() => {
-    return () => {
-      resetMutationsDataset()
-      resetMutationsStatus()
-    }
-  }, [])
 
   const okToContinue = (newPath: string) => {
     return recentEditRef.location === '' ||
@@ -35,27 +22,27 @@ export const UncommitedChangesPromptComponent: React.FC<UncommitedChangesPromptP
             newPath.includes(recentEditRef.name))
   }
 
-  const uncommitedChangesText = `You have uncommited changes! Click 'cancel' and commit these changes before you navigate away or you will lose your work.`
+  const uncommittedChangesText = `You have uncommitted changes to dataset ${recentEditRef.username}/${recentEditRef.name} that will be lost if you navigate to a different dataset. 
+  
+Click 'cancel', navigate to dataset ${recentEditRef.username}/${recentEditRef.name}, and commit those changes to save.
+ 
+Click 'ok' to continue and lose those changes.`
 
   return (
     <Prompt when={modified} message={(location) => {
       if (okToContinue(location.pathname)) return true
-      return uncommitedChangesText
+      return uncommittedChangesText
     }}/>
   )
 }
 
 export default connectComponentToPropsWithRouter(
-  UncommitedChangesPromptComponent,
-  (state: any, ownProps: UncommitedChangesPromptProps) => {
+  UncommittedChangesPromptComponent,
+  (state: any, ownProps: UncommittedChangesPromptProps) => {
     return {
       ...ownProps,
       recentEditRef: selectRecentEditRef(state),
       modified: selectMutationsIsDirty(state)
     }
-  },
-  {
-    resetMutationsDataset,
-    resetMutationsStatus
   }
 )
