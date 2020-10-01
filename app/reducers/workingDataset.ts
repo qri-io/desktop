@@ -5,6 +5,7 @@ import { apiActionTypes } from '../utils/actionType'
 import { reducerWithPagination, initialPageInfo } from '../utils/pagination'
 import { ipcRenderer } from 'electron'
 import bodyValue from '../utils/bodyValue'
+import { COMMITDATASET_REQ } from './dataset'
 
 import {
   REMOVE_SUCC
@@ -55,12 +56,19 @@ export const RESET_BODY = 'RESET_BODY'
 
 const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction): WorkingDataset | null => {
   switch (action.type) {
+    case COMMITDATASET_REQ:
+      if (action.segments.username !== state.peername || action.segments.name !== state.name) {
+        return initialState
+      }
+      return state
     case DATASET_REQ:
-      if (action.segments.peername === state.peername && action.segments.name === state.name) {
+      if (action.segments.username === state.peername && action.segments.name === state.name) {
         return state
       }
       return {
         ...initialState,
+        peername: action.segments.username,
+        name: action.segments.name,
         isLoading: true
       }
     case DATASET_SUCC: // when adding a new dataset, set it as the new workingDataset
