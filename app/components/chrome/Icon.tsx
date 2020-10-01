@@ -34,9 +34,15 @@ import {
   faEllipsisH,
   faSort,
   faMinus,
-  faSave,
-  faSync
+  faSync,
+  faBars
 } from '@fortawesome/free-solid-svg-icons'
+
+import {
+  faClock,
+  faStickyNote,
+  faHdd
+} from '@fortawesome/free-regular-svg-icons'
 
 interface IconProps {
   // name of the icon
@@ -45,7 +51,7 @@ interface IconProps {
   // md: 1.33em
   // lg: 2em
   size?: 'xs' | 'sm' | 'md' | 'lg'
-  color?: 'light' | 'medium' | 'dark' | 'red' | 'green'
+  color?: 'light' | 'medium' | 'dark' | 'red' | 'green' | 'default'
 }
 
 const icons: Record<string, any> = {
@@ -74,7 +80,6 @@ const icons: Record<string, any> = {
   'dataset': faFileAlt,
   'datasets': faCopy,
   'readme': faGlasses,
-  'commit': faSave,
   'lock': faLock,
   'transform': faCode,
   'close': faTimes,
@@ -91,7 +96,11 @@ const icons: Record<string, any> = {
   'hamburger': faEllipsisH,
   'minus': faMinus,
   'plus': faPlus,
-  'sync': faSync
+  'sync': faSync,
+  'clock': faClock,
+  'bars': faBars,
+  'hdd': faHdd,
+  'stickyNote': faStickyNote
 }
 
 export const iconsList = Object.keys(icons)
@@ -108,7 +117,17 @@ const Icon: React.FunctionComponent<IconProps> = ({
     'lg': '2x'
   }
 
-  return <FontAwesomeIcon size={sizes[size]} icon={icons[icon]} className={`icon-${color}`}/>
+  if (icon === 'commit') {
+    return (
+      <svg aria-hidden='true' focusable='false' className={`svg-inline--fa fa-${sizes[size]}`} role='img' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 52 91'>
+        <circle id='Oval' stroke='currentColor' strokeWidth='10' cx='26' cy='45' r='21' fill='none'></circle>
+        <line x1='26.5' y1='4.5' x2='26.5' y2='22.5' id='Line' stroke='currentColor' strokeWidth='10' strokeLinecap='square'></line>
+        <line x1='26.5' y1='66.5' x2='26.5' y2='86.5' id='Line' stroke='currentColor' strokeWidth='10' strokeLinecap='square'></line>
+      </svg>
+    )
+  }
+
+  return <FontAwesomeIcon size={sizes[size]} icon={icons[icon]} className={color === 'default' ? '' : `icon-${color}`}/>
 }
 
 export default Icon

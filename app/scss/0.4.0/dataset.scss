@@ -1,28 +1,27 @@
 
+// dataset details w/ icons
+.dataset-details-container {
+  display: flex;
+  justify-content: space-between;
+}
+
 .dataset-details {
-  font-family: $font-family-sans-serif;
-  font-size: 14px;
-  font-weight: 300;
-  margin: 2px 0;
+  font-size: 12px;
+  display: inline-block;
+  font-weight: 500;
+  color: #797878;
+  margin: 0 16px 0 0;
 
-  &.muted {
-    color: #B1B1B1
+  &:first-child {
+    margin-left: 0
   }
 
-  &.light {
-    color: #ffffff;
+  &:last-child {
+    margin-right: 0
   }
 
-  &.small {
-    font-size: 11px;
-    
-    .dataset-details-item {
-      margin-right: 10px;
-    }
-  }
-
-  .dataset-details-item {
-    margin-right: 24px;
+  svg {
+    margin-right: 6px;
   }
 }
 
@@ -48,7 +47,7 @@
     &.expandable {
       cursor: pointer;
     }
-    
+
     .title-bar-icon {
       margin-top: 5px;
       margin-right: 10px;
@@ -183,8 +182,36 @@
 }
 
 #history-list {
-  padding: 10px;
+  padding: 0 10px;
   flex-grow: 1;
   height: 100%;
   overflow: auto;
+}
+
+#export-dataset {
+  .options-row {
+    display: flex;
+    padding-top: 8px;
+
+    .options-column {
+      flex: 50%;
+
+      .options-column-content {
+        margin-top: 9px;
+        margin-left: 23px;
+
+        .checkbox-input-container, .radio-input-container {
+          margin-bottom: 6px;
+        }
+      }
+    }
+  }
+
+  .export-dataset-info {
+    background-color: #f5f5f5;
+    padding: 4px 10px 10px 10px;
+    margin-bottom: 15px;
+    width: 100%;
+    border-radius: 3px;
+  }
 }

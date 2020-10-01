@@ -804,3 +804,19 @@ b {
     opacity: 1
   }
 }
+
+// webkit scrollbars
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+  -webkit-border-radius: 10px;
+  border-radius: 10px;
+  background: #D2D2D2;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #B8B8B8;
+}
