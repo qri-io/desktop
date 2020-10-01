@@ -1,39 +1,21 @@
 import * as React from 'react'
 
-import { connectComponentToPropsWithRouter } from '../../../utils/connectComponentToProps'
-import { QriRef, qriRefFromRoute } from '../../../models/qriRef'
-import { RouteProps } from '../../../models/store'
-import { ApiActionThunk } from '../../../store/api'
-import { fetchWorkingDatasetDetails } from '../../../actions/api'
-import { selectFsiPath, selectMutationsIsDirty } from '../../../selections'
+import LinkButton from '../headerButtons/LinkButton'
+import PublishButton from '../headerButtons/PublishButton'
+import UncommitedChangesPrompt from '../UncommitedChangesPrompt'
 
-interface DatasetMainContentProps extends RouteProps {
-  qriRef: QriRef
-  modified: boolean
-  fsiPath: string
-  fetchWorkingDatasetDetails: (username: string, name: string) => ApiActionThunk
+const DatasetMainContentComponent: React.FunctionComponent = (props) => {
+  const {
+    children
+  } = props
+  return <>
+    <UncommitedChangesPrompt />
+    <div className='main-content-header'>
+      <LinkButton />
+      <PublishButton />
+    </div>
+    {children}
+  </>
 }
 
-const DatasetMainContentComponent: React.FunctionComponent<DatasetMainContentProps> = (props) => {
-  const { children } = props
-  return (
-    <>
-      {children}
-    </>
-  )
-}
-
-export default connectComponentToPropsWithRouter(
-  DatasetMainContentComponent,
-  (state: any, ownProps: DatasetMainContentProps) => {
-    return {
-      ...ownProps,
-      qriRef: qriRefFromRoute(ownProps),
-      fsiPath: selectFsiPath(state),
-      modified: selectMutationsIsDirty(state)
-    }
-  },
-  {
-    fetchWorkingDatasetDetails
-  }
-)
+export default DatasetMainContentComponent

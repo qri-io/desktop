@@ -10,7 +10,6 @@ import { selectSidebarWidth } from '../../../selections'
 
 import Layout from '../../Layout'
 import DatasetSidebar from './DatasetSidebar'
-import DatasetMainContent from './DatasetMainContent'
 
 interface DatasetLayoutProps {
   // from connect
@@ -41,7 +40,7 @@ const DatasetLayoutComponent: React.FunctionComponent<DatasetLayoutProps> = (pro
       sidebarWidth={sidebarWidth}
       headerContent={headerContent}
       onSidebarResize={onSidebarResize}
-      mainContent={<DatasetMainContent>{mainContent}</DatasetMainContent>}
+      mainContent={mainContent}
       sidebarContent={<DatasetSidebar />}
     />
   )
