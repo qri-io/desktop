@@ -204,7 +204,7 @@ $header-font-size: .9rem;
 }
 
 #dataset-edit-main-sidebar {
-  border-right: 1px solid $border-color; 
+  border-right: 1px solid $border-color;
 
 }
 
@@ -218,7 +218,6 @@ $header-font-size: .9rem;
   border-right: 1px solid $border-color;
   color: $black;
   overflow: hidden;
-  padding: 10px 0 0 0;
 
   .sidebar-padded-container {
     padding: 0 10px;
@@ -600,6 +599,8 @@ $header-font-size: .9rem;
     width: 100%;
     overflow-y: auto;
     position:relative;
+    display: flex;
+    flex-direction: column;
 
     #body-table-container {
       overflow-y: none;

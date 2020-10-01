@@ -7,8 +7,6 @@ import { connectComponentToPropsWithRouter } from '../../../utils/connectCompone
 
 import { selectVersionInfoFromWorkingDataset } from '../../../selections'
 
-import DatasetReference from '../../DatasetReference'
-import DatasetDetailsSubtext from '../../dataset/DatasetDetailsSubtext'
 import ReactTooltip from 'react-tooltip'
 import LogList from '../LogList'
 
@@ -18,10 +16,7 @@ export interface DatasetSidebarProps extends RouteProps {
 }
 
 export const DatasetSidebarComponent: React.FunctionComponent<DatasetSidebarProps> = (props) => {
-  const {
-    qriRef,
-    data
-  } = props
+  const { qriRef } = props
 
   // The `ReactTooltip` component relies on the `data-for` and `data-tip` attributes
   // we need to rebuild `ReactTooltip` so that it can recognize the `data-for`
@@ -30,10 +25,6 @@ export const DatasetSidebarComponent: React.FunctionComponent<DatasetSidebarProp
 
   return (
     <div className='sidebar'>
-      <div className='sidebar-header sidebar-padded-container'>
-        <DatasetReference qriRef={qriRef} />
-        <DatasetDetailsSubtext data={data} />
-      </div>
       <LogList qriRef={qriRef} />
     </div>
   )

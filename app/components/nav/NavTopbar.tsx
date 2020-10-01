@@ -37,6 +37,11 @@ export const NavTopbar: React.FunctionComponent<NavTopbarProps> = ({ title, loca
   const handleOnEnter = (e: React.KeyboardEvent) => {
     setModal({ q: e.target.value, type: ModalType.Search })
   }
+
+  const handleExportButtonClick = () => {
+    setModal({ type: ModalType.ExportDataset })
+  }
+
   return (
     <div className='page-navbar'>
       <div className='row'>
@@ -60,6 +65,7 @@ export const NavTopbar: React.FunctionComponent<NavTopbarProps> = ({ title, loca
                 return <HeaderColumnButton key={props.id} {...props} />
             }
           })}
+          <div onClick={handleExportButtonClick}>export</div>
         </div>
       </div>
     </div>

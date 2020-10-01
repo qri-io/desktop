@@ -1,8 +1,11 @@
 import React from 'react'
 import { Action } from 'redux'
 import classNames from 'classnames'
+
 import { VersionInfo } from '../../models/store'
-import moment from 'moment'
+
+import RelativeTimestamp from '../RelativeTimestamp'
+import Icon from '../chrome/Icon'
 
 export interface LogListItemProps {
   id: string
@@ -52,9 +55,7 @@ const LogListItem: React.FunctionComponent<LogListItemProps> = (props) => {
         <div className='text'>{commitTitle}</div>
         <div className='subtext'>
           {/* Bring back avatar later <img className= 'user-image' src = {props.avatarUrl} /> */}
-          <div className='time-message'>
-            {moment(commitTime).fromNow()}
-          </div>
+          <span className='dataset-details'><Icon icon='clock' size='sm' color='default' /><RelativeTimestamp timestamp={commitTime}/></span>
         </div>
       </div>
     </div>
