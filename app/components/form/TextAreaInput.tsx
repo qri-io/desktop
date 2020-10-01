@@ -55,7 +55,7 @@ const TextAreaInput: React.FunctionComponent<TextAreaInputProps> = (props) => {
           name={name}
           maxLength={maxLength}
           className='input'
-          value={stateValue || ''}
+          defaultValue={stateValue || ''}
           placeholder={placeHolder}
           onChange={handleOnChange}
           onBlur={onBlur}
