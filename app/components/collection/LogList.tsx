@@ -57,8 +57,8 @@ export const LogListComponent: React.FunctionComponent<LogListProps> = (props) =
 
     const directory = path.dirname(selectedPath)
     const filename = path.basename(selectedPath)
-    const exportUrl = `http://localhost:2503/get/${refStringFromQriRef(qriRef)}?format=zip`
-    ipcRenderer.send('export', { url: exportUrl, filename: filename, directory: directory })
+    const refString = refStringFromQriRef(qriRef)
+    ipcRenderer.send('export', { refString, filename: filename, directory: directory })
   }
 
   return (

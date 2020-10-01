@@ -1,9 +1,10 @@
-const log = require('electron-log')
 const { app, BrowserWindow, Menu, shell, ipcMain } = require('electron')
-const { autoUpdater } = require('electron-updater')
-const { BackendProcess } = require('./backend')
 const { download } = require('electron-dl')
-const { DISCORD_URL, QRI_IO_URL} = require('./constants')
+const log = require('electron-log')
+const { autoUpdater } = require('electron-updater')
+
+const { BackendProcess } = require('./backend')
+const { BACKEND_URL, DISCORD_URL, QRI_IO_URL } = require('./constants')
 
 process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = '1'
 
@@ -510,9 +511,10 @@ app.on('ready', () =>
       })
 
       // catch export events
-      ipcMain.on('export', async (e, { url, filename, directory }) => {
+      ipcMain.on('export', async (e, { refString, filename, directory }) => {
+        const exportUrl = `${BACKEND_URL}/get/${refString}?format=zip`
         const win = BrowserWindow.getFocusedWindow()
-        await download(win, url, { filename, directory })
+        await download(win, exportUrl, { filename, directory })
       })
 
       ipcMain.on('block-menus', (e, blockMenus) => {
