@@ -25,8 +25,8 @@ export const WORKBENCH_ROUTES_CLEAR = 'WORKBENCH_ROUTES_CLEAR'
 export default (state = initialState, action: AnyAction) => {
   switch (action.type) {
     case WORKBENCH_ROUTES_HISTORY_REF:
-      if (state.historyRef.username !== action.qriRef.username ||
-        state.historyRef.name !== action.qriRef.name) {
+      if ((state.historyRef.username !== '' && state.historyRef.username !== action.qriRef.username) ||
+        (state.historyRef.name !== '' && state.historyRef.name !== action.qriRef.name)) {
         return {
           ...initialState,
           historyRef: action.qriRef,
@@ -39,8 +39,8 @@ export default (state = initialState, action: AnyAction) => {
         location: action.qriRef.location
       }
     case WORKBENCH_ROUTES_EDIT_REF:
-      if (state.editRef.username !== action.qriRef.username ||
-        state.editRef.name !== action.qriRef.name) {
+      if ((state.editRef.username !== '' && state.editRef.username !== action.qriRef.username) ||
+        (state.editRef.name !== '' && state.editRef.name !== action.qriRef.name)) {
         return {
           ...initialState,
           editRef: action.qriRef,
