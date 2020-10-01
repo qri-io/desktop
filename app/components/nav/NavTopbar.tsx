@@ -32,7 +32,7 @@ export interface NavbarButtonProps {
 }
 
 // Navbar is persistent chrome from app-wide navigation
-export const NavTopbar: React.FunctionComponent<NavTopbarProps> = ({ title, location, setModal, history, buttons = [] }) => {
+export const NavTopbar: React.FunctionComponent<NavTopbarProps> = ({ title, location, match, setModal, history, buttons = [] }) => {
   const handleOnEnter = (e: React.KeyboardEvent) => {
     setModal({ q: e.target.value, type: ModalType.Search })
   }
@@ -41,11 +41,21 @@ export const NavTopbar: React.FunctionComponent<NavTopbarProps> = ({ title, loca
     setModal({ type: ModalType.ExportDataset })
   }
 
+  // determines if route is at base route (e.g. /collection or /network)
+  const isBaseRoute = Object.keys(match.params).length === 0
+
+  const onBackClick = () => {
+    // if not on base route, clicking back takes you to base route
+    // (e.g. /collection/edit/username/dataset/body => /collection)
+    const baseRoute = location.pathname.split("/")[1]
+    return history.push(`/${baseRoute}`)
+  }
+
   return (
     <div className='page-navbar'>
       <div className='row'>
         <div className='nav-buttons'>
-          <a className='back' onClick={() => history.goBack()}><BackArrow /></a>
+          {!isBaseRoute && <a className='back' onClick={onBackClick}><BackArrow /></a>}
         </div>
         <SearchBox onEnter={handleOnEnter} id='search-box' />
       </div>
