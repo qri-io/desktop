@@ -145,7 +145,7 @@ export interface VersionInfo {
   // commit description message
   commitMessage: string
   // commit.Timestamp field, time of version creation
-  commitTime: Date
+  commitTime: string
   // number of commits in history
   numCommits?: number
 

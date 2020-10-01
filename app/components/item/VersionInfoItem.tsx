@@ -19,9 +19,12 @@ interface VersionInfoItemProps {
   onClickFolder?: (data: VersionInfo, e: React.MouseEvent) => void
 }
 
+const zeroTimeString = '0001-01-01T00:00:00Z'
+
 const VersionInfoItem: React.FC<VersionInfoItemProps> = (props) => {
   const { data, selected = false, onToggleSelect, onClick, onClickFolder } = props
   const { username, name, commitTime, bodySize, bodyRows, fsiPath, published } = data
+
   return (
     <tr
       id={`${username}-${name}`}
@@ -40,7 +43,7 @@ const VersionInfoItem: React.FC<VersionInfoItemProps> = (props) => {
         <span className='ref text' onClick={(e: React.MouseEvent) => { onClick(data, e) }}>{username}/{name}</span>
       </td>
       <td>
-        <span data-tip={commitTime}>{commitTime ? moment(commitTime).fromNow() : '--'}</span>
+        <span data-tip={commitTime}>{commitTime !== zeroTimeString ? moment(commitTime).fromNow() : '--'}</span>
       </td>
       <td>{bodySize ? numeral(bodySize).format('0.00 b') : '--'}</td>
       <td>
