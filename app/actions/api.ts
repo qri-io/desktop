@@ -5,7 +5,12 @@ import { CALL_API, ApiAction, ApiActionThunk, chainSuccess } from '../store/api'
 import { SelectedComponent } from '../models/store'
 import { actionWithPagination } from '../utils/pagination'
 import { openToast, setImportFileDetails } from './ui'
-import { setSaveComplete, resetMutationsDataset, resetMutationsStatus } from './mutations'
+import {
+  setSaveComplete,
+  resetMutationsDataset,
+  resetMutationsStatus,
+  discardMutationsChanges
+} from './mutations'
 
 import {
   mapDataset,
@@ -592,6 +597,7 @@ export function discardChangesAndFetch (username: string, name: string, componen
     let response: Action
     response = await discardChanges(username, name, component)(dispatch, getState)
       .then((res) => {
+        dispatch(discardMutationsChanges(component))
         dispatch(fetchWorkingDataset(username, name))
         dispatch(fetchWorkingStatus(username, name))
         return res

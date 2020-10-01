@@ -6,7 +6,9 @@ import {
   setCommitTitle,
   setCommitMessage,
   setMutationsStatus,
-  setMutationsDataset
+  setMutationsDataset,
+  resetMutationsDataset,
+  resetMutationsStatus
 } from './mutations'
 
 import {
@@ -48,6 +50,8 @@ export function fetchWorkbench (qriRef: QriRef): LaunchedFetchesAction {
        (routeUsername !== workingUsername ||
         routeName !== workingName)) {
       fetchLog(routeUsername, routeName)(dispatch, getState)
+      dispatch(resetMutationsDataset())
+      dispatch(resetMutationsStatus())
       dispatch(fetchWorkingDataset(routeUsername, routeName))
       dispatch(fetchWorkingStatus(routeUsername, routeName))
       dispatch(fetchStats(routeUsername, routeName))
