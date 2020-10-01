@@ -2,8 +2,9 @@ import { Dispatch, AnyAction, Store } from 'redux'
 
 import { WEBSOCKETS_URL, WEBSOCKETS_PROTOCOL } from '../constants'
 
-import IStore from '../models/store'
+import IStore, { ProgressEvent } from '../models/store'
 import { fetchWorkingDatasetDetails } from '../actions/api'
+import { updateProgress, completeProgress } from '../actions/progress'
 import { resetMutationsDataset, resetMutationsStatus } from '../actions/mutations'
 
 // wsMiddleware manages requests to connect to the qri backend via websockets
@@ -24,6 +25,37 @@ const ETDeletedFile = "watchfs:DeletedFile"
 // const ETRenamedFolder = "watchfs:RenamedFolder"
 // ETRemovedFolder is the event for removing a folder
 // const ETRemovedFolder = "watchfs:RemovedFolder"
+
+// ETRemoteClientPushVersionProgress indicates a change in progress of a
+// dataset version push. Progress can fire as much as once-per-block.
+// subscriptions do not block the publisher
+// payload will be a RemoteEvent
+const ETRemoteClientPushVersionProgress = "remoteClient:PushVersionProgress"
+// ETRemoteClientPushVersionCompleted indicates a version successfully pushed
+// to a remote.
+// payload will be a RemoteEvent
+const ETRemoteClientPushVersionCompleted = "remoteClient:PushVersionCompleted"
+// ETRemoteClientPushDatasetCompleted indicates pushing a dataset
+// (logbook + versions) completed
+// payload will be a RemoteEvent
+const ETRemoteClientPushDatasetCompleted = "remoteClient:PushDatasetCompleted"
+// ETRemoteClientPullVersionProgress indicates a change in progress of a
+// dataset version pull. Progress can fire as much as once-per-block.
+// subscriptions do not block the publisher
+// payload will be a RemoteEvent
+const ETRemoteClientPullVersionProgress = "remoteClient:PullVersionProgress"
+// ETRemoteClientPullVersionCompleted indicates a version successfully pulled
+// from a remote.
+// payload will be a RemoteEvent
+const ETRemoteClientPullVersionCompleted = "remoteClient:PullVersionCompleted"
+// ETRemoteClientPullDatasetCompleted indicates pulling a dataset
+// (logbook + versions) completed
+// payload will be a RemoteEvent
+const ETRemoteClientPullDatasetCompleted = "remoteClient:PullDatasetCompleted"
+// ETRemoteClientRemoveDatasetCompleted indicates removing a dataset
+// (logbook + versions) remove completed
+// payload will be a RemoteEvent
+const ETRemoteClientRemoveDatasetCompleted = "remoteClient:RemoveDatasetCompleted"
 
 const socketMiddleware = () => {
   let socket: WebSocket = null
@@ -63,6 +95,44 @@ const socketMiddleware = () => {
               }
             })
           }
+          break
+        case ETRemoteClientPushVersionProgress:
+        case ETRemoteClientPullVersionProgress:
+          let progress: ProgressEvent = {
+            dsref: {
+              initID: event.data.Ref.initID,
+              name: event.data.Ref.name,
+              path: event.data.Ref.path,
+              profileID: event.data.Ref.profileID,
+              username: event.data.Ref.username
+            },
+            remoteAddr: event.data.RemoteAddr,
+            progress: event.data.Progress,
+            type: event.type === ETRemoteClientPushVersionProgress ? "push" : "pull"
+          }
+          store.dispatch(updateProgress(progress))
+          break
+        case ETRemoteClientPushDatasetCompleted:
+        case ETRemoteClientPullDatasetCompleted:
+          progress = {
+            dsref: {
+              initID: event.data.Ref.initID,
+              name: event.data.Ref.name,
+              path: event.data.Ref.path,
+              profileID: event.data.Ref.profileID,
+              username: event.data.Ref.username
+            },
+            remoteAddr: event.data.RemoteAddr,
+            type: event.type === ETRemoteClientPushDatasetCompleted ? "push" : "pull"
+          }
+          store.dispatch(completeProgress(progress))
+          break
+        case ETRemoteClientPushVersionCompleted:
+        case ETRemoteClientPullVersionCompleted:
+          // TODO(arqu): handle version complete events
+          break
+        case ETRemoteClientRemoveDatasetCompleted:
+          // TODO(aqru): handle remove events
           break
         default:
           console.log(`received websocket event: ${event.type}`)

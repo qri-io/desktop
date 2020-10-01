@@ -181,6 +181,28 @@ export interface Status {
   [key: string]: StatusInfo
 }
 
+export interface ProgressEvent {
+  dsref: object
+  remoteAddr: string
+  progress: number[]
+  type: string
+}
+
+export interface ProgressStore {
+  progress: ProgressDetails[]
+}
+
+export interface ProgressDetails {
+  username: string
+  name: string
+  path: string
+  profileID: string
+  initID: string
+  percentComplete: number
+  type: string
+  isComplete: boolean
+}
+
 export interface DatasetStore {
   path: string
   prevPath: string
