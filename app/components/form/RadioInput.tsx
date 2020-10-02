@@ -15,7 +15,7 @@ const RadioInput: React.FunctionComponent<RadioInputProps> = (props) => {
 
   return (
     <>
-      <div className={classNames('radio-input-container', { 'disabled': disabled === true })}>
+      <div className={classNames('radio-input-container', { disabled })}>
         <input
           id={name}
           name={name}

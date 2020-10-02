@@ -1,22 +1,20 @@
-import * as React from 'react'
+import React from 'react'
 
 import Store, { RouteProps } from '../../models/Store'
 import Dataset from '../../models/dataset'
 import { QriRef, qriRefFromRoute } from '../../models/qriRef'
-
 import { LaunchedFetchesAction } from '../../store/api'
-
 import { connectComponentToPropsWithRouter } from '../../utils/connectComponentToProps'
-
 import { fetchWorkbench } from '../../actions/workbench'
-
 import { selectDataset } from '../../selections'
+// import { Modal, ModalType } from '../../models/modals'
+import { setModal } from '../../actions/ui'
 
 import ComponentList from './ComponentList'
 import ComponentRouter from './ComponentRouter'
-import Layout from '../Layout'
 import DatasetHeader from './DatasetHeader'
 import DatasetLayout from './layouts/DatasetLayout'
+import Layout from '../Layout'
 import LogList from './LogList'
 
 export interface DatasetProps extends RouteProps {
@@ -44,7 +42,7 @@ export const DatasetComponent: React.FunctionComponent<DatasetProps> = (props) =
         <div className='dataset-content transition-group'>
           <Layout
             showNav={false}
-            id={'commit-details'}
+            id='commit-details'
             headerContent={
               <DatasetHeader
                 path={qriRef.path || ''}
@@ -52,13 +50,9 @@ export const DatasetComponent: React.FunctionComponent<DatasetProps> = (props) =
                 commit={dataset.commit}
               />
             }
-            sidebarContent={(
-              <ComponentList qriRef={qriRef}/>
-            )}
+            sidebarContent={<ComponentList qriRef={qriRef}/>}
             sidebarWidth={150}
-            mainContent={(
-              <ComponentRouter qriRef={qriRef}/>
-            )}
+            mainContent={<ComponentRouter qriRef={qriRef}/>}
           />
         </div>}
       sidebarContent={<LogList qriRef={qriRef}/>}
@@ -76,6 +70,7 @@ export default connectComponentToPropsWithRouter(
     }
   },
   {
-    fetchWorkbench
+    fetchWorkbench,
+    setModal
   }
 )

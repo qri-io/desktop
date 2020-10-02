@@ -31,7 +31,8 @@ const DatasetLayoutComponent: React.FunctionComponent<DatasetLayoutProps> = (pro
     mainContent,
     headerContent,
     sidebarWidth = 0,
-    onSidebarResize
+    onSidebarResize,
+    setModal
   } = props
 
   const buttons = [

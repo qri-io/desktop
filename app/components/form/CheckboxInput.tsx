@@ -14,7 +14,7 @@ export interface CheckboxInputProps {
 const CheckboxInput: React.FunctionComponent<CheckboxInputProps> = (props) => {
   const { label, name, checked, onChange, indeterminate = false, strong = false, disabled = false } = props
   return (
-    <div className={classNames('checkbox-input-container', { 'disabled': disabled === true })}>
+    <div className={classNames('checkbox-input-container', { disabled })}>
       <input
         id={name}
         name={name}

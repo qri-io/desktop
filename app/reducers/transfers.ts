@@ -3,20 +3,20 @@ import { Reducer, AnyAction } from 'redux'
 import { RemoteEvent, RemoteEvents } from '../models/store'
 import { TRACK_VERSION_TRANSFER, COMPLETE_VERSION_TRANSFER, REMOVE_VERSION_TRANSFER } from '../actions/transfers'
 
-export const initialState: RemoteEvents = {
-  // 'b5/world_bank_population@/ipfs/QmVersionHash': {
-  //   type: 'pull-version',
-  //   ref: {
-  //     location: 'b5/world_bank_population@/ipfs/QmVersionHash',
-  //     username: 'b5',
-  //     name: 'world_bank_population',
-  //     profileId: 'QmProfileID',
-  //     path: '/ipfs/QmVersionHash'
-  //   },
-  //   remoteAddress: 'https://registry.qri.cloud',
-  //   progress: [0, 100, 0, 0, 100]
-  // }
-}
+// example remote event:
+// 'b5/world_bank_population@/ipfs/QmVersionHash': {
+//   type: 'pull-version',
+//   ref: {
+//     location: 'b5/world_bank_population@/ipfs/QmVersionHash',
+//     username: 'b5',
+//     name: 'world_bank_population',
+//     profileId: 'QmProfileID',
+//     path: '/ipfs/QmVersionHash'
+//   },
+//   remoteAddress: 'https://registry.qri.cloud',
+//   progress: [0, 100, 0, 0, 100]
+// }
+export const initialState: RemoteEvents = {}
 
 // ETRemoteClientPushVersionProgress indicates a change in progress of a
 // dataset version push. Progress can fire as much as once-per-block.

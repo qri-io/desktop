@@ -134,7 +134,7 @@ const Icon: React.FunctionComponent<IconProps> = ({
     )
   }
 
-  return <FontAwesomeIcon size={sizes[size]} icon={icons[icon]} className={className('icon', `icon-${color}`, className)}/>
+  return <FontAwesomeIcon size={sizes[size]} icon={icons[icon]} className={classNames('icon', `icon-${color}`, className)}/>
 }
 
 export default Icon
