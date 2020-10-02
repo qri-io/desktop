@@ -8,6 +8,7 @@ import hasParseError from '../../../utils/hasParseError'
 import Dataset from '../../../models/dataset'
 import { refStringFromQriRef, QriRef, qriRefFromRoute } from '../../../models/qriRef'
 import Store, { StatusInfo, RouteProps } from '../../../models/store'
+import { onClick as openExternal } from '../../platformSpecific/ExternalLink.electron'
 
 import { writeDataset } from '../../../actions/workbench'
 
@@ -29,6 +30,8 @@ export interface ReadmeEditorProps extends RouteProps {
   statusInfo: StatusInfo
   write: (peername: string, name: string, dataset: any) => ApiActionThunk | void
 }
+
+const passEventToOpenExternal = (e: MouseEvent) => { openExternal(e, e.target.href) }
 
 export const ReadmeEditorComponent: React.FunctionComponent<ReadmeEditorProps> = (props) => {
   const {
@@ -77,6 +80,8 @@ export const ReadmeEditorComponent: React.FunctionComponent<ReadmeEditorProps> =
     setInternalValue(value)
   }
 
+  const [ listenerAdded, setListenerAdded ] = React.useState(false)
+
   /**
    * TODO (ramfox): this func is getting to the point where it probably should
    * live outside of this component, however, I'm not sure where it should live
@@ -85,6 +90,11 @@ export const ReadmeEditorComponent: React.FunctionComponent<ReadmeEditorProps> =
    * are okay living where they work
    */
   const getPreview = (plainText: string, preview: HTMLElement) => {
+    if (!listenerAdded) {
+      preview.addEventListener('click', passEventToOpenExternal)
+      setListenerAdded(true)
+    }
+
     if (isLinked) {
       fetch(`http://localhost:2503/render/${refStringFromQriRef(qriRef)}?fsi=true`)
         .then(async (res) => res.text())
