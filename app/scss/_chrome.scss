@@ -66,24 +66,6 @@
   }
 }
 
-.number-badge {
-  border-radius: 100%;
-  background: $primary;
-  color: white;
-  text-align: center;
-  font-weight: bold;
-  box-shadow: 0 0 5px #00000029;
-  overflow: hidden;
-
-  &.sm {
-    padding-top: 5px;
-    font-size: 28px;
-    width: 50px;
-    height: 50px;
-  }
-}
-
-
 ////////////////////////////
 //        Dropdown        //
 ////////////////////////////

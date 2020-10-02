@@ -7,7 +7,6 @@ import { LaunchedFetchesAction } from '../../store/api'
 import { connectComponentToPropsWithRouter } from '../../utils/connectComponentToProps'
 import { fetchWorkbench } from '../../actions/workbench'
 import { selectDataset } from '../../selections'
-// import { Modal, ModalType } from '../../models/modals'
 import { setModal } from '../../actions/ui'
 
 import ComponentList from './ComponentList'
