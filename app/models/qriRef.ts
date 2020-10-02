@@ -37,7 +37,7 @@ import { SelectedComponent, RouteProps } from "./store"
 // 2. an "identifier reference string: [identifier]/at[path]/[selector]
 export interface QriRef {
   // string this ref parsed from
-  location: string
+  location?: string
   // human-readble name of the owner of this dataset
   username: string
   // user identifier

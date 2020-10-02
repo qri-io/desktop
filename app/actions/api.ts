@@ -1,17 +1,6 @@
 import { Action, AnyAction } from 'redux'
 import { push } from 'connected-react-router'
 
-import { CALL_API, ApiAction, ApiActionThunk, chainSuccess } from '../store/api'
-import { SelectedComponent } from '../models/store'
-import { actionWithPagination } from '../utils/pagination'
-import { openToast, setImportFileDetails } from './ui'
-import {
-  setSaveComplete,
-  resetMutationsDataset,
-  resetMutationsStatus,
-  discardMutationsChanges
-} from './mutations'
-
 import {
   mapDataset,
   mapRecord,
@@ -20,13 +9,16 @@ import {
   mapBody,
   mapHistory
 } from './mappingFuncs'
-import { getActionType } from '../utils/actionType'
-import { datasetConvertStringToScriptBytes } from '../utils/datasetConvertStringToScriptBytes'
-
-import { CLEAR_DATASET_HEAD } from '../reducers/dataset'
+import { SelectedComponent } from '../models/store'
+import {
+  setSaveComplete,
+  resetMutationsDataset,
+  resetMutationsStatus,
+  discardMutationsChanges
+} from './mutations'
 import Dataset from '../models/dataset'
-
 import { pathToDataset, pathToCollection } from '../paths'
+import { CLEAR_DATASET_HEAD } from '../reducers/dataset'
 import { selectWorkingDatasetBodyPageInfo,
   selectFsiPath,
   selectMutationsCommit,
@@ -36,6 +28,12 @@ import { selectWorkingDatasetBodyPageInfo,
   selectLogPageInfo,
   selectMutationsDataset
 } from '../selections'
+import { CALL_API, ApiAction, ApiActionThunk, chainSuccess } from '../store/api'
+import { openToast, setImportFileDetails } from './ui'
+import { actionWithPagination } from '../utils/pagination'
+import { getActionType } from '../utils/actionType'
+import { datasetConvertStringToScriptBytes } from '../utils/datasetConvertStringToScriptBytes'
+import { QriRef } from '../models/qriRef'
 
 const pageSizeDefault = 100
 export const bodyPageSizeDefault = 50
@@ -434,6 +432,14 @@ export function saveWorkingDatasetAndFetch (username: string, name: string): Api
         dispatch(openToast('error', 'commit', action.payload.err.message))
         return action
       })
+  }
+}
+
+export function pullDatasets (refs: QriRef[]): ApiActionThunk {
+  return async (dispatch) => {
+    return Promise.all(
+      refs.map(async (ref) => pullDataset(ref.username, ref.name)(dispatch))
+    )
   }
 }
 
