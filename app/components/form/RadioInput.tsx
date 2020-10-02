@@ -1,4 +1,4 @@
-import * as React from 'react'
+import React from 'react'
 import classNames from 'classnames'
 
 export interface RadioInputProps {
@@ -25,10 +25,7 @@ const RadioInput: React.FunctionComponent<RadioInputProps> = (props) => {
           onChange={ () => { onChange(name, !checked) }}
           disabled={disabled}
         />
-        { strong && (
-          <strong>{label}</strong>
-        )}
-        {!strong && label}
+        <span className={classNames({ strong })}>{label}</span>
       </div>
     </>
   )

@@ -14,6 +14,7 @@ import {
 } from '../../selections'
 
 import CheckboxInput from '../form/CheckboxInput'
+import TristateCheckboxInput from '../form/TristateCheckboxInput'
 import RadioInput from '../form/RadioInput'
 import Modal from './Modal'
 import Error from './Error'
@@ -45,7 +46,7 @@ export const ExportDatasetComponent: React.FC<ExportDatasetProps> = (props: Expo
     body: true,
     // otherChecked has three states, 'true', 'false', 'indeterminate'
     // indeterminate state means the checkbox shows a '-' instead of checked or unchecked
-    other: 'false',
+    other: false as boolean | 'indeterminate',
     meta: false,
     structure: false,
     readme: false
@@ -55,7 +56,6 @@ export const ExportDatasetComponent: React.FC<ExportDatasetProps> = (props: Expo
     const update = { ...config, [field]: value }
 
     if (field === 'other') {
-      update.other = value ? 'true' : 'false'
       enabledOtherComponents.forEach((compName: string) => {
         update[compName] = value
       })
@@ -65,9 +65,9 @@ export const ExportDatasetComponent: React.FC<ExportDatasetProps> = (props: Expo
 
       // set state of parent checkbox
       if (checkedCount === 0) {
-        update.other = 'false'
+        update.other = false
       } else if (checkedCount === enabledCount) {
-        update.other = 'true'
+        update.other = true
       } else {
         update.other = 'indeterminate'
       }
@@ -136,11 +136,10 @@ export const ExportDatasetComponent: React.FC<ExportDatasetProps> = (props: Expo
                 </div>
               </div>
               <div className='options-column'>
-                <CheckboxInput
+                <TristateCheckboxInput
                   name='other-components'
-                  checked={config.other === 'true'}
-                  onChange={() => { setConfigField('other', config.other === 'false') }}
-                  indeterminate={config.other === 'indeterminate'}
+                  value={config.other}
+                  onChange={(_: string, v: boolean) => { setConfigField('other', v) }}
                   label='Other Components'
                   strong
                 />
