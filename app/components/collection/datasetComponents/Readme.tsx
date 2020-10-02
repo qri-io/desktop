@@ -2,7 +2,7 @@ import * as React from 'react'
 
 import Store, { RouteProps } from '../../../models/store'
 import { refStringFromQriRef, QriRef, qriRefFromRoute } from '../../../models/qriRef'
-import { onClick as openExternal } from '../../platformSpecific/ExternalLink.electron'
+import { onClick as openExternal } from '../../platformSpecific/ExternalLink.TARGET_PLATFORM'
 
 import { connectComponentToProps } from '../../../utils/connectComponentToProps'
 
