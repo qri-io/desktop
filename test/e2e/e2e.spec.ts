@@ -7,7 +7,6 @@ import fakeDialog from 'spectron-fake-dialog'
 import { E2ETestUtils, newE2ETestUtils } from '../utils/e2eTestUtils'
 import http from 'http'
 import Dataset, { Commit, Meta, Structure } from '../../app/models/dataset'
-import { delay } from 'underscore'
 
 const { Application } = require('spectron')
 
@@ -215,7 +214,7 @@ describe('Qri End to End tests', function spec () {
     }
   })
 
-  it('accept terms of service by clicking accept and get taken to signup', async () => {
+  it('accept terms of service', async () => {
     const {
       atLocation,
       waitForExist,
@@ -241,7 +240,7 @@ describe('Qri End to End tests', function spec () {
     await atLocation('#/onboard/signup', artifactPath('accept_terms_of_service_by_clicking_accept_and_get_taken_to_signup.png'))
   })
 
-  it('create a new account, taken to datasets page', async () => {
+  it('create a new account', async () => {
     const {
       atLocation,
       waitForExist,
@@ -310,9 +309,11 @@ describe('Qri End to End tests', function spec () {
       atLocation,
       atDataset,
       click,
-      expectTextToBe,
-      onHistoryTab,
+      checkDatasetReference,
+      atDatasetVersion,
       checkStatus,
+      delay,
+      waitForExist,
       takeScreenshot
     } = utils
 
@@ -337,15 +338,10 @@ describe('Qri End to End tests', function spec () {
     await atDataset(username, datasetName)
 
     // ensure we have navigated to the correct dataset
-    // TODO (ramfox): it's weird that we have to pass in this newline character
-    // to get the reference to match. It looks like because the #dataset-reference
-    // div divides the peername and name among multiple divs, we get this odd
-    // whitespace character
-    const reference = `${username}/\n${datasetName}`
-    await expectTextToBe('#dataset-reference', reference)
+    await checkDatasetReference(username, datasetName)
 
-    // enure we are on the history tab
-    await onHistoryTab()
+    // ensure a initial version was made
+    await atDatasetVersion(0)
 
     if (takeScreenshots) {
       await takeScreenshot(artifactPath('csv-dataset-history.png'))
@@ -361,25 +357,23 @@ describe('Qri End to End tests', function spec () {
       atLocation,
       atDataset,
       click,
-      expectTextToBe,
-      onHistoryTab
+      atDatasetVersion,
+      checkDatasetReference,
+      delay
     } = utils
-
-    await click('#history-tab')
-    await onHistoryTab()
 
     await click('#collection')
     // ensure we have redirected to the collection page
     await atLocation('#/collection')
     // click the dataset
-    const ref = `#${username}-${datasetName}`
+    const ref = `#${username}-${datasetName}-link`
     await click(ref)
     // ensure we have redirected to the dataset page
     await atDataset(username, datasetName)
-    // ensure we are still at the history tab
-    await onHistoryTab()
-    // ensure we have a commit title
-    await expectTextToBe('#commit-title', createdCommitTitle, artifactPath('new-csv-commit-title-created-datasets.png'))
+    // ensure we at the right dataset
+    await checkDatasetReference(username, datasetName)
+    // ensure we are at the right version
+    await atDatasetVersion(0)
   })
 
   // checkout
@@ -387,16 +381,12 @@ describe('Qri End to End tests', function spec () {
     const {
       atDataset,
       click,
-      onStatusTab,
       waitForNotExist,
       takeScreenshot
     } = utils
 
     // ensure we at at the correct page
     await atDataset(username, datasetName)
-    // at status
-    await click('#status-tab')
-    await onStatusTab()
 
     if (takeScreenshots) {
       await takeScreenshot(artifactPath('dataset-checkout.png'))
@@ -417,8 +407,6 @@ describe('Qri End to End tests', function spec () {
     await click('#submit')
     // expect modal to be gone
     await waitForNotExist('#checkout-dataset')
-    // check we are at status tab
-    await onStatusTab()
 
     if (takeScreenshots) {
       await takeScreenshot(artifactPath('csv-dataset-status.png'))
@@ -429,50 +417,33 @@ describe('Qri End to End tests', function spec () {
   it('write the body to the filesystem & commit', async () => {
     const {
       click,
-      checkStatus,
       doesNotExist,
-      setValue,
-      expectTextToBe,
-      onHistoryTab,
-      waitForExist
+      checkStatus
     } = utils
 
     // on status tab
-    await click('#status-tab', artifactPath('write-the-body-to-the-filesystem-and-commit-click-status.png'))
+    await click('#working-version', artifactPath('write-the-body-to-the-filesystem-and-commit-click-working-version.png'))
     // no changes, so cannot commit
     await doesNotExist('.clear-to-commit #commit-status', artifactPath('write-the-body-to-the-filesystem-and-commit-does-not-exist-clear-to-commit.png'))
     // create file in memory and save over the previous body.csv
     const csvPath = path.join(backend.dir, datasetName, 'body.csv')
     fs.writeFileSync(csvPath, earthquakeDatasetEdit)
-    // body status should be modified
-    await checkStatus('body', 'modified', artifactPath('write-the-body-to-the-filesystem-and-commit-check-status-body-modified.png'))
-    // commit should be active
-    await waitForExist('.clear-to-commit #commit-status', artifactPath('write-the-body-to-the-filesystem-and-commit-exists-clear-to-commit.png'))
-    // navigate to commit
-    await click('#commit-status', artifactPath('write-the-body-to-the-filesystem-and-commit-click-commit-status.png'))
-    // set value of title & message
-    await setValue('#title', bodyCommitTitle, artifactPath('write-the-body-to-the-filesystem-and-commit-set-value-title.png'))
-    await setValue('#message', bodyCommitMessage, artifactPath('write-the-body-to-the-filesystem-and-commit-set-value-message.png'))
-    // send accept
-    await click('#submit', artifactPath('write-the-body-to-the-filesystem-and-commit-click-status2.png'))
-    // should be on the history tab
-    await onHistoryTab(artifactPath('write-the-body-to-the-filesystem-and-commit-on-history-tab.png'))
-    // body status should be modified
-    await checkStatus('body', 'modified', artifactPath('write-the-body-to-the-filesystem-and-commit-check-status-body2.png'))
-    // title should be the same as title we added
-    await expectTextToBe('#commit-title', bodyCommitTitle, artifactPath('write-the-body-to-the-filesystem-and-commit-expect-text-to-be-commit-title.png'))
+
+    await checkStatus("body", "modified")
+
+    await writeCommitAndSubmit("write-fsi-body", "body", "modified", bodyCommitTitle, bodyCommitMessage, utils, imagesDir)
   })
 
   // meta write and commit
   it('fsi editing - create a meta & commit', async () => {
     await utils.atDataset(username, datasetName)
-    await editMeta('fsi-meta-edit', { meta, commit: metaCommit }, 'added', utils, imagesDir)
+    await editMetaAndCommit('fsi-meta-edit', { meta, commit: metaCommit }, 'added', utils, imagesDir)
   })
 
   // structure write and commit
   it('fsi editing - edit the structure & commit', async () => {
     await utils.atDataset(username, datasetName)
-    await editCSVStructure('fsi-setructure-edit', { structure: csvStructure, commit: structureCommit }, 'modified', utils, imagesDir)
+    await editCSVStructureAndCommit('fsi-setructure-edit', { structure: csvStructure, commit: structureCommit }, 'modified', utils, imagesDir)
   })
 
   // rename
@@ -483,8 +454,8 @@ describe('Qri End to End tests', function spec () {
       atDataset,
       setValue,
       doesNotExist,
-      takeScreenshot,
-      delay
+      sendKeys,
+      takeScreenshot
     } = utils
 
     await atDataset(username, datasetName)
@@ -505,53 +476,46 @@ describe('Qri End to End tests', function spec () {
 
     // get correct class
     await doesNotExist('#dataset-name-input.invalid')
-    // submit by clicking away
-    await click('#history-tab')
+    await sendKeys('#dataset-name-input', "Enter")
   })
 
   // switch between commits
   it('switch between commits', async () => {
     const {
       click,
-      delay,
-      onHistoryTab,
       atDataset,
-      // atLocation,
-      expectTextToBe,
+      expectTextToContain,
+      waitForExist,
       takeScreenshot
     } = utils
 
-    // await click('#collection')
-    // await atLocation('#/collection')
-    // await click(`#${username}-${datasetRename}`)
     // ensure we have redirected to the dataset page
     await atDataset(username, datasetRename)
-    await click('#history-tab')
-    await onHistoryTab()
-    await click('#meta-status')
 
-    await delay(5000)
+    await click('#commit-status')
+
     takeScreenshot(artifactPath('fsi-checking-commits.png'))
 
-    // click the original commit and check commit-title
-    await click('#HEAD-4', artifactPath('switch-between-commits-click-head-3.png'))
-    await delay(500)
-    await expectTextToBe('#commit-title', createdCommitTitle, artifactPath('fsi-editing-commit-title-created-dataset.png'))
+    // click the original commit and check commit title
+    await click('#HEAD-3', artifactPath('switch-between-commits-click-head-3.png'))
+    await waitForExist("#history-commit")
 
-    // click the third commit and check commit-title
-    await click('#HEAD-3')
-    await delay(500)
-    await expectTextToBe('#commit-title', bodyCommitTitle, artifactPath('fsi-editing-commit-title-body-commit.png'))
+    await expectTextToContain('#history-commit', createdCommitTitle, artifactPath('fsi-editing-commit-title-created-dataset.png'))
 
-    // click the second commit and check commit-title
+    // click the third commit and check commit title
     await click('#HEAD-2')
-    await delay(500)
-    await expectTextToBe('#commit-title', metaCommit.title, artifactPath('fsi-editing-commit-title-meta-commit.png'))
+    await waitForExist("#history-commit")
+    await expectTextToContain('#history-commit', bodyCommitTitle, artifactPath('fsi-editing-commit-title-body-commit.png'))
 
-    // click the most recent commit and check commit-title
+    // click the second commit and check commit title
     await click('#HEAD-1')
-    await delay(500)
-    await expectTextToBe('#commit-title', structureCommit.title, artifactPath('fsi-editing-commit-title-structure-commit.png'))
+    await waitForExist("#history-commit")
+    await expectTextToContain('#history-commit', metaCommit.title, artifactPath('fsi-editing-commit-title-meta-commit.png'))
+
+    // click the most recent commit and check commit title
+    await click('#HEAD-0')
+    await waitForExist("#history-commit")
+    await expectTextToContain('#history-commit', structureCommit.title, artifactPath('fsi-editing-commit-title-structure-commit.png'))
   })
 
   it('create another CSV dataset from a data source', async () => {
@@ -559,9 +523,9 @@ describe('Qri End to End tests', function spec () {
       atLocation,
       atDataset,
       click,
-      expectTextToBe,
-      onHistoryTab,
+      checkDatasetReference,
       checkStatus,
+      atDatasetVersion,
       takeScreenshot
     } = utils
 
@@ -586,16 +550,10 @@ describe('Qri End to End tests', function spec () {
     // ensure we are redirected to the dataset
     await atDataset(username, datasetName)
 
-    // ensure we have navigated to the correct dataset
-    // TODO (ramfox): it's weird that we have to pass in this newline character
-    // to get the reference to match. It looks like because the #dataset-reference
-    // div divides the peername and name among multiple divs, we get this odd
-    // whitespace character
-    const reference = `${username}/\n${datasetName}`
-    await expectTextToBe('#dataset-reference', reference)
+    await checkDatasetReference(username, datasetName)
 
-    // enure we are on the history tab
-    await onHistoryTab()
+    // ensure we are on the latest commit
+    await atDatasetVersion(0)
 
     if (takeScreenshots) {
       await takeScreenshot(artifactPath('csv-dataset-history.png'))
@@ -609,13 +567,13 @@ describe('Qri End to End tests', function spec () {
   // meta write and commit
   it('in app editing - create a meta & commit', async () => {
     await utils.atDataset(username, datasetName)
-    await editMeta('in-app-meta-edit', { meta, commit: metaCommit }, 'added', utils, imagesDir)
+    await editMetaAndCommit('in-app-meta-edit', { meta, commit: metaCommit }, 'added', utils, imagesDir)
   })
 
   // structure write and commit
   it('in app editing - edit the structure & commit', async () => {
     await utils.atDataset(username, datasetName)
-    await editCSVStructure('in-app-structure-edit', { structure: csvStructure, commit: structureCommit }, 'modified', utils, imagesDir)
+    await editCSVStructureAndCommit('in-app-structure-edit', { structure: csvStructure, commit: structureCommit }, 'modified', utils, imagesDir)
   })
 
   // switch between commits
@@ -623,34 +581,35 @@ describe('Qri End to End tests', function spec () {
     const {
       delay,
       click,
-      onHistoryTab,
       atDataset,
-      expectTextToBe,
+      waitForExist,
+      expectTextToContain,
       takeScreenshot
     } = utils
 
     // make sure we are on the dataset page, looking at history
     await atDataset(username, datasetName)
-    await click('#history-tab')
-    await onHistoryTab()
-    await click('#meta-status')
+
+    // to reduce loading time, click on the meta component
+    // otherwise, we would be loading the body on each click
+    await click('#commit-status')
     await delay(500)
     takeScreenshot(artifactPath('in-app-checking-commits.png'))
 
-    // click the third commit and check commit-title
-    await click('#HEAD-3', artifactPath('in-app-editing-switch-between-commits-click-head-3.png'))
-    await delay(500)
-    await expectTextToBe('#commit-title', createdCommitTitle, artifactPath('in-app-editing-commit-title-created-dataset.png'))
+    // click the third commit and check commit title
+    await click('#HEAD-2', artifactPath('in-app-editing-switch-between-commits-click-head-3.png'))
+    await waitForExist("#history-commit")
+    await expectTextToContain('#history-commit', createdCommitTitle, artifactPath('in-app-editing-commit-title-created-dataset.png'))
 
-    // click the third commit and check commit-title
-    await click('#HEAD-2')
-    await delay(500)
-    await expectTextToBe('#commit-title', metaCommit.title, artifactPath('in-app-editing-commit-title-meta-commit.png'))
-
-    // click the third commit and check commit-title
+    // click the third commit and check commit title
     await click('#HEAD-1')
-    await delay(500)
-    await expectTextToBe('#commit-title', structureCommit.title, artifactPath('in-app-editing-commit-title-structure-commit.png'))
+    await waitForExist("#history-commit")
+    await expectTextToContain('#history-commit', metaCommit.title, artifactPath('in-app-editing-commit-title-meta-commit.png'))
+
+    // click the third commit and check commit title
+    await click('#HEAD-0')
+    await waitForExist("#history-commit")
+    await expectTextToContain('#history-commit', structureCommit.title, artifactPath('in-app-editing-commit-title-structure-commit.png'))
   })
 
   it('create a new JSON dataset from a data source', async () => {
@@ -658,10 +617,8 @@ describe('Qri End to End tests', function spec () {
       atLocation,
       atDataset,
       click,
-      expectTextToBe,
-      onHistoryTab,
+      atDatasetVersion,
       checkStatus,
-      waitForExist,
       takeScreenshot
     } = utils
 
@@ -695,19 +652,8 @@ describe('Qri End to End tests', function spec () {
       takeScreenshot(artifactPath('json_dataset-at_location_dataset.png'))
     }
 
-    // ensure we have navigated to the correct dataset
-    // TODO (ramfox): it's weird that we have to pass in this newline character
-    // to get the reference to match. It looks like because the #dataset-reference
-    // div divides the peername and name among multiple divs, we get this odd
-    // whitespace character
-    await waitForExist('#dataset-reference', artifactPath('json-dataset-from-data-source-wait-for-exist-dataset-reference.png'))
-    const reference = `${username}/\n${jsonDatasetName}`
-    await expectTextToBe('#dataset-reference', reference)
-
-    await expectTextToBe('#commit-details-header-entries', '3 entries')
-
-    // enure we are on the history tab
-    await onHistoryTab()
+    // enure we are on the latest commit
+    await atDatasetVersion(0)
 
     // ensure the body and structure indicate that they were 'added'
     await checkStatus('body', 'added')
@@ -774,7 +720,7 @@ describe('Qri End to End tests', function spec () {
     // the dataset should be part of the collection
     await click('#collection')
     await atLocation('#/collection')
-    const datasets = await app.client.$$('.sidebar-list-item')
+    const datasets = await app.client.$$('.version-info-item')
     expect(datasets.length).toBe(4)
 
     if (takeScreenshots) {
@@ -818,61 +764,25 @@ describe('Qri End to End tests', function spec () {
     await waitForNotExist('#sidebar-action')
   })
 
-  it('search: clicking a local dataset brings you to the dataset page', async () => {
-    const {
-      click,
-      sendKeys,
-      waitForExist,
-      setValue,
-      expectTextToBe,
-      atDataset,
-      takeScreenshot
-    } = utils
-    // click the search box to bring up the modal
-    // send the "Enter" key to the search bar to activate the search modal
-    await click('#search-box', artifactPath('search_local-click_search_box.png'))
-    await sendKeys('#search-box', "Enter")
-    await waitForExist('#search')
-
-    // set search scope to 'local' & search for the local dataset
-    await click('#switch-local')
-    expect(await app.client.$('#switch-local input').getValue()).toBe("on")
-    await setValue('#modal-search-box', datasetRename)
-    await sendKeys('#modal-search-box', "Enter")
-
-    // wait for results to populate
-    await waitForExist('#result-0')
-
-    if (takeScreenshots) {
-      await takeScreenshot(artifactPath('local-search.png'))
-    }
-
-    // check that the results are what we expect them to be
-    await expectTextToBe("#result-0 .header a", username + '/' + datasetRename)
-
-    // click on #result-0 & get sent to the network preview page
-    await click('#result-0 .header a')
-
-    // check location
-    await atDataset(username, datasetRename)
-    // ensure we are on the correct dataset
-    await expectTextToBe('#dataset-reference', username + '/\n' + datasetRename)
-  })
-
   it('publishing a dataset adds a dataset to the network feed, unpublishing removes it', async () => {
     const {
       click,
       atLocation,
       atDataset,
       expectTextToBe,
+      checkDatasetReference,
       waitForExist,
       takeScreenshot,
       expectTextToContain
     } = utils
+
+    await click('#collection')
+    await atLocation('#/collection')
+    await click(`#${username}-${datasetRename}-link`)
+
     // check location
     await atDataset(username, datasetRename)
-    // ensure we are on the correct dataset
-    await expectTextToBe('#dataset-reference', username + '/\n' + datasetRename, artifactPath('publishing_dataset-expect_text_to_be_dataset_reference.png'))
+    await checkDatasetReference(username, datasetRename)
 
     // click publish
     await click('#publish-button')
@@ -913,7 +823,8 @@ describe('Qri End to End tests', function spec () {
 
     // head back to the dataset & unpublish
     await click('#collection', artifactPath('network-click-collection.png'))
-    await click(`#${username}-${datasetRename}`)
+    await atLocation('#/collection')
+    await click(`#${username}-${datasetRename}-link`)
     await atDataset(username, datasetRename, artifactPath('network-at-location-navigate-to-dataset.png'))
     // ensure we are on the correct dataset
     await expectTextToBe('#dataset-reference', username + '/\n' + datasetRename, artifactPath('network-expect-text-dataset-reference.png'))
@@ -940,6 +851,7 @@ describe('Qri End to End tests', function spec () {
     expect(recentDatasets.length).toBe(1)
   })
 
+  //
   // TODO(ramfox): remove a dataset is commented out until we have a keyboard command in
   // place to open the remove modal
   // we also must create a `keyboard` function that takes a string
@@ -970,7 +882,7 @@ describe('Qri End to End tests', function spec () {
   // })
 })
 
-async function editCommit (uniqueName: string, component: string, status: 'added' | 'modified' | 'removed', commitTitle: string, commitMessage: string | undefined, utils: E2ETestUtils, imagesDir: string) {
+async function writeCommitAndSubmit (uniqueName: string, component: string, status: 'added' | 'modified' | 'removed', commitTitle: string, commitMessage: string | undefined, utils: E2ETestUtils, imagesDir: string) {
   // remove any illegal characters
   const name = uniqueName.replace(/([^a-z0-9]+)/gi, '-')
 
@@ -979,9 +891,9 @@ async function editCommit (uniqueName: string, component: string, status: 'added
     waitForExist,
     setValue,
     takeScreenshot,
-    onHistoryTab,
     checkStatus,
-    expectTextToBe
+    atDatasetVersion,
+    expectTextToContain
   } = utils
 
   // commit should be enabled
@@ -1001,20 +913,19 @@ async function editCommit (uniqueName: string, component: string, status: 'added
   // submit
   await click('#submit', artifactPathFromDir(imagesDir, `${name}-commit-click-submit.png`))
   // on history tab
-  await onHistoryTab(artifactPathFromDir(imagesDir, `${name}-commit-on-history-tab.png`))
+  await atDatasetVersion(0, artifactPathFromDir(imagesDir, `${name}-commit-on-history-tab.png`))
   // check component status
   await checkStatus(component, status, artifactPathFromDir(imagesDir, `${name}-commit-check-status-${component}-${status}.png`))
   // commit title should be the same
-  await expectTextToBe('#commit-title', commitTitle, artifactPathFromDir(imagesDir, `${name}-commit-expect-text-to-be-commit-title.png`))
-  // verify component title and description should be correct
-  await click(`#${component}-status`, artifactPathFromDir(imagesDir, `${name}-commit-click-${component}-status.png`))
+  await click('#commit-status')
+  await expectTextToContain('#history-commit', commitTitle, artifactPathFromDir(imagesDir, `${name}-commit-expect-text-to-be-commit-title.png`))
 
   if (takeScreenshots) {
     await takeScreenshot(artifactPathFromDir(imagesDir, `${name}-commit-history.png`))
   }
 }
 
-async function editMeta (uniqueName: string, dataset: Dataset, status: 'added' | 'modified' | 'removed', utils: E2ETestUtils, imagesDir: string) {
+async function editMetaAndCommit (uniqueName: string, dataset: Dataset, status: 'added' | 'modified' | 'removed', utils: E2ETestUtils, imagesDir: string) {
   const name = uniqueName.replace(/([^a-z0-9]+)/gi, '-')
   const {
     delay,
@@ -1031,10 +942,10 @@ async function editMeta (uniqueName: string, dataset: Dataset, status: 'added' |
 
   const { meta, commit } = dataset
 
-  if (!meta || !commit || !commit.title) throw new Error('expected meta and commit to exist when dataset is passed to `editMeta` function')
+  if (!meta || !commit || !commit.title) throw new Error('expected meta and commit to exist when dataset is passed to `editMetaAndCommit` function')
 
   // on status tab
-  await click('#status-tab', artifactPathFromDir(imagesDir, `${name}-click-status-tab.png`))
+  await click('#working-version', artifactPathFromDir(imagesDir, `${name}-click-working-version.png`))
   // commit should be disabled
   await doesNotExist('.clear-to-commit #commit-status', artifactPathFromDir(imagesDir, `${name}-commit-does-not-exist-clear-to-commit.png`))
   // click #meta-status
@@ -1199,7 +1110,10 @@ async function editMeta (uniqueName: string, dataset: Dataset, status: 'added' |
   }
 
   // commit!
-  await editCommit('fsi-meta-edit', 'meta', 'added', commit.title, commit.message, utils, imagesDir)
+  await writeCommitAndSubmit('fsi-meta-edit', 'meta', 'added', commit.title, commit.message, utils, imagesDir)
+
+  // navigate to the meta component
+  await click(`#meta-status`, artifactPathFromDir(imagesDir, `${name}-commit-click-meta-status.png`))
 
   // check if all non null fields properly exist on page
   if (meta.title) await expectTextToBe('#meta-title', meta.title, artifactPathFromDir(imagesDir, `${name}-commit-expect-text-to-be-meta-title.png`))
@@ -1232,7 +1146,7 @@ async function editMeta (uniqueName: string, dataset: Dataset, status: 'added' |
   if (meta.identifier) await expectTextToBe('#meta-identifier', meta.identifier)
 }
 
-async function editCSVStructure (uniqueName: string, dataset: Dataset, status: 'added' | 'modified' | 'removed', utils: E2ETestUtils, imagesDir: string) {
+async function editCSVStructureAndCommit (uniqueName: string, dataset: Dataset, status: 'added' | 'modified' | 'removed', utils: E2ETestUtils, imagesDir: string) {
   const name = uniqueName.replace(/([^a-z0-9]+)/gi, '-')
   const {
     isChecked,
@@ -1256,7 +1170,7 @@ async function editCSVStructure (uniqueName: string, dataset: Dataset, status: '
   const { formatConfig, schema } = structure
 
   // on status tab
-  await click('#status-tab', artifactPathFromDir(imagesDir, `${name}-click-status-tab.png`))
+  await click('#working-version', artifactPathFromDir(imagesDir, `${name}-click-status-tab.png`))
   // commit should be disabled
   await doesNotExist('.clear-to-commit #commit-status', artifactPathFromDir(imagesDir, `${name}-commit-does-not-exist-clear-to-commit.png`))
   // click #structure-status
@@ -1312,7 +1226,9 @@ async function editCSVStructure (uniqueName: string, dataset: Dataset, status: '
   // check that the status dot is correct
   await checkStatus('structure', status, artifactPathFromDir(imagesDir, `${name}-check-status-${status}.png`))
 
-  await editCommit(name, 'structure', 'modified', commit.title, commit.message, utils, imagesDir)
+  await writeCommitAndSubmit(name, 'structure', 'modified', commit.title, commit.message, utils, imagesDir)
+
+  await click('#structure-status', artifactPathFromDir(imagesDir, `${name}-commit-click-structure-status.png`))
 
   if (formatConfig) {
     if (formatConfig.headerRow) {
