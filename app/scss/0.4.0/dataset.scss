@@ -94,6 +94,9 @@
 }
 
 .structure {
+  height: 100%;
+  overflow-y: scroll;
+
   > div {
     padding: 15px;
   }
@@ -214,4 +217,15 @@
     width: 100%;
     border-radius: 3px;
   }
+}
+
+// easyMDE (readme)
+.EasyMDEContainer {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.cm-s-easymde {
+  height: 100%;
 }

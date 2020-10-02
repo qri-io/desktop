@@ -172,7 +172,6 @@ export const WorkingComponentListComponent: React.FunctionComponent<WorkingCompo
                 onClick={(component: SelectedComponent) => {
                   history.push(pathToEdit(username, datasetName, component))
                 }}
-                color='light'
               />
             </ContextMenuArea>
           )

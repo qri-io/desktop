@@ -2,11 +2,16 @@ import * as React from 'react'
 
 import Store, { RouteProps } from '../../../models/store'
 import { refStringFromQriRef, QriRef, qriRefFromRoute } from '../../../models/qriRef'
+import { onClick as openExternal } from '../../platformSpecific/ExternalLink.TARGET_PLATFORM'
 
 import { connectComponentToProps } from '../../../utils/connectComponentToProps'
 
 export interface ReadmeProps extends RouteProps {
   qriRef: QriRef
+}
+
+const handleClick = (e: React.MouseEvent) => {
+  openExternal(e, e.target.href)
 }
 
 export const ReadmeComponent: React.FunctionComponent<ReadmeProps> = (props) => {
@@ -40,6 +45,7 @@ export const ReadmeComponent: React.FunctionComponent<ReadmeProps> = (props) => 
       // use "editor-preview" class to piggie-back off the simplemde styling
       className="editor-preview"
       ref={ref}
+      onClick={handleClick}
     >loading...
     </div>
   )
