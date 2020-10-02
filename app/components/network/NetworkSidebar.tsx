@@ -5,9 +5,6 @@ const NetworkSidebar: React.FunctionComponent = (props) => {
   return (
     <div id='network-sidebar'>
       <div className='sidebar' >
-        <div className='sidebar-header sidebar-padded-container'>
-          <p className='pane-title'>Network</p>
-        </div>
         <div className='sidebar-content'>
           {children}
         </div>

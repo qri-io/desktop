@@ -2,16 +2,16 @@ import React from 'react'
 import { Action } from 'redux'
 import classNames from 'classnames'
 
-export interface HeadLogListItemProps {
+export interface WorkingLogListItemProps {
   selected?: boolean
   last?: boolean
   onClick?: () => Action
 }
 
-const HeadLogListItem: React.FunctionComponent<HeadLogListItemProps> = ({ last, selected, onClick }) => {
+const WorkingLogListItem: React.FunctionComponent<WorkingLogListItemProps> = ({ last, selected, onClick }) => {
   return (
     <div
-      id='head'
+      id='working-version'
       className={classNames(
         'sidebar-list-item',
         'sidebar-list-item-text',
@@ -38,4 +38,4 @@ const HeadLogListItem: React.FunctionComponent<HeadLogListItemProps> = ({ last, 
   )
 }
 
-export default HeadLogListItem
+export default WorkingLogListItem

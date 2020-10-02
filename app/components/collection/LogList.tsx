@@ -16,7 +16,7 @@ import { selectLog, selectLogPageInfo, selectInNamespace, selectRecentEditRef } 
 
 import LogListItem from '../item/LogListItem'
 import { pathToDataset, pathToEdit } from '../../paths'
-import HeadLogListItem from '../item/HeadLogListItem'
+import WorkingLogListItem from '../item/WorkingLogListItem'
 
 interface LogListProps extends RouteProps {
   qriRef: QriRef
@@ -68,7 +68,7 @@ export const LogListComponent: React.FunctionComponent<LogListProps> = (props) =
       onScroll={(e) => handleLogScroll(e)}
     >
       {
-        editableDataset && <HeadLogListItem
+        editableDataset && <WorkingLogListItem
           onClick={() => {
             if (qriRefIsEmpty(recentEditRef)) {
               history.push(pathToEdit(username, name))
@@ -82,11 +82,12 @@ export const LogListComponent: React.FunctionComponent<LogListProps> = (props) =
       }
       {
         log.map((item, i) => {
+          const id = `HEAD-${i}`
           if (item.foreign) {
             return <LogListItem
               data={item}
               key={item.path}
-              id={`HEAD-${i + 1}`}
+              id={id}
               first={i === 0}
               last={i === log.length - 1}
               selected={qriRef.path === item.path}
@@ -108,7 +109,7 @@ export const LogListComponent: React.FunctionComponent<LogListProps> = (props) =
               <LogListItem
                 data={item}
                 key={item.path}
-                id={`HEAD-${i + 1}`}
+                id={id}
                 first={i === 0}
                 last={i === log.length - 1}
                 selected={qriRef.path === item.path}
