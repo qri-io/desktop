@@ -20,10 +20,12 @@ interface NavTopbarProps extends RouteProps {
 }
 
 export interface NavbarButtonProps {
-  type: 'button' | 'button-dropdown'
-  id: string
-  label: string
-  onClick: (event: React.MouseEvent) => void
+  type: 'button' | 'button-dropdown' | 'component'
+  component?: React.ReactElement
+
+  id?: string
+  label?: string
+  onClick?: (event: React.MouseEvent) => void
 
   tooltip?: string
   icon?: IconDefinition | React.ReactElement
@@ -36,11 +38,6 @@ export const NavTopbar: React.FunctionComponent<NavTopbarProps> = ({ title, loca
   const handleOnEnter = (e: React.KeyboardEvent) => {
     setModal({ q: e.target.value, type: ModalType.Search })
   }
-
-  const handleExportButtonClick = () => {
-    setModal({ type: ModalType.ExportDataset })
-  }
-
   // determines if route is at base route (e.g. /collection or /network)
   const isBaseRoute = Object.keys(match.params).length === 0
 
@@ -69,11 +66,12 @@ export const NavTopbar: React.FunctionComponent<NavTopbarProps> = ({ title, loca
             switch (props.type) {
               case 'button-dropdown':
                 return <HeaderColumnButtonDropdown key={props.id} {...props} items={props.dropdownItems} />
+              case 'component':
+                return props.component
               default:
                 return <HeaderColumnButton key={props.id} {...props} />
             }
           })}
-          <div onClick={handleExportButtonClick}>export</div>
         </div>
       </div>
     </div>
