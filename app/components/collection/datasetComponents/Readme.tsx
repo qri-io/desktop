@@ -10,7 +10,7 @@ export interface ReadmeProps extends RouteProps {
   qriRef: QriRef
 }
 
-const handleClick = (e: React.SyntheticEvent) => {
+const handleClick = (e: React.MouseEvent) => {
   openExternal(e, e.target.href)
 }
 
