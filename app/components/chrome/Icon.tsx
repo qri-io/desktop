@@ -1,10 +1,13 @@
-import * as React from 'react'
+import React from 'react'
+import classNames from 'classnames'
 
 import { FontAwesomeIcon, FontAwesomeIconProps } from '@fortawesome/react-fontawesome'
 import {
   faQuestionCircle,
   faFont,
   faHashtag,
+  faArrowDown,
+  faArrowUp,
   faCode,
   faGlasses,
   faLock,
@@ -51,10 +54,13 @@ interface IconProps {
   // md: 1.33em
   // lg: 2em
   size?: 'xs' | 'sm' | 'md' | 'lg'
-  color?: 'light' | 'medium' | 'dark' | 'red' | 'green' | 'default'
+  color?: 'light' | 'medium' | 'dark' | 'red' | 'green'
+  className?: string
 }
 
 const icons: Record<string, any> = {
+  'down-arrow': faArrowDown,
+  'up-arrow': faArrowUp,
   'search': faSearch,
   'any': faQuestion,
   'string': faFont,
@@ -103,23 +109,24 @@ const icons: Record<string, any> = {
   'stickyNote': faStickyNote
 }
 
+const sizes: {[key: string]: FontAwesomeIconProps['size']} = {
+  'xs': 'xs',
+  'sm': 'sm',
+  'md': 'lg',
+  'lg': '2x'
+}
+
 export const iconsList = Object.keys(icons)
 
 const Icon: React.FunctionComponent<IconProps> = ({
   icon = 'unknown',
   size = 'md',
-  color = 'dark'
+  color = 'dark',
+  className
 }) => {
-  const sizes: {[key: string]: FontAwesomeIconProps['size']} = {
-    'xs': 'xs',
-    'sm': 'sm',
-    'md': 'lg',
-    'lg': '2x'
-  }
-
   if (icon === 'commit') {
     return (
-      <svg aria-hidden='true' focusable='false' className={`svg-inline--fa fa-${sizes[size]}`} role='img' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 52 91'>
+      <svg aria-hidden='true' focusable='false' className={classNames('icon', `icon-${color}`, className, 'svg-inline--fa', `fa-${sizes[size]}`)} role='img' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 52 91'>
         <circle id='Oval' stroke='currentColor' strokeWidth='10' cx='26' cy='45' r='21' fill='none'></circle>
         <line x1='26.5' y1='4.5' x2='26.5' y2='22.5' id='Line' stroke='currentColor' strokeWidth='10' strokeLinecap='square'></line>
         <line x1='26.5' y1='66.5' x2='26.5' y2='86.5' id='Line' stroke='currentColor' strokeWidth='10' strokeLinecap='square'></line>
@@ -127,7 +134,7 @@ const Icon: React.FunctionComponent<IconProps> = ({
     )
   }
 
-  return <FontAwesomeIcon size={sizes[size]} icon={icons[icon]} className={color === 'default' ? '' : `icon-${color}`}/>
+  return <FontAwesomeIcon size={sizes[size]} icon={icons[icon]} className={classNames('icon', `icon-${color}`, className)}/>
 }
 
 export default Icon

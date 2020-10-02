@@ -16,7 +16,7 @@ import { setWorkingDataset } from '../../../actions/selections'
 import { setModal } from '../../../actions/ui'
 
 import VersionInfoItem from '../../item/VersionInfoItem'
-import CheckboxInput from '../../form/CheckboxInput'
+import TristateCheckboxInput from '../../form/TristateCheckboxInput'
 import { selectSessionUsername, selectWorkingDataset } from '../../../selections'
 
 interface DatasetListProps extends RouteProps {
@@ -142,11 +142,18 @@ export const DatasetListComponent: React.FC<DatasetListProps> = (props) => {
           <thead>
             <tr>
               <th>
-                <CheckboxInput
+                <TristateCheckboxInput
                   name='all'
-                  checked={filteredDatasets.length > 0 && filteredDatasets.length === checkedCount }
-                  onChange={(name, value) => {
-                    if (checkedCount < filteredDatasets.length) {
+                  value={(() => {
+                    if (filteredDatasets.length === 0 || checkedCount === 0) {
+                      return false
+                    } else if (filteredDatasets.length === checkedCount) {
+                      return true
+                    }
+                    return 'indeterminate'
+                  })()}
+                  onChange={(_: string, value: boolean) => {
+                    if (value) {
                       setChecked(filteredDatasets.reduce((acc, vi) => {
                         acc[`${vi.username}/${vi.name}`] = true
                         return acc

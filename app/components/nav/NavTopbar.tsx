@@ -3,20 +3,17 @@ import { IconDefinition } from '@fortawesome/free-regular-svg-icons'
 
 import { RouteProps } from '../../models/Store'
 import { connectComponentToPropsWithRouter } from '../../utils/connectComponentToProps'
-import { setModal } from '../../actions/ui'
 
-import SearchBox from '../chrome/SearchBox'
 import BackArrow from '../chrome/BackArrow'
 import Breadcrumb from '../chrome/Breadcrumb'
 import HeaderColumnButton from '../chrome/HeaderColumnButton'
 import HeaderColumnButtonDropdown from '../chrome/HeaderColumnButtonDropdown'
-import { Modal, ModalType } from '../../models/modals'
+import Transfers from '../Transfers'
 
 // RouteProps includes `history`, `location`, and `match`
 interface NavTopbarProps extends RouteProps {
   title: string
   buttons: NavbarButtonProps[]
-  setModal: (modal: Modal) => void
 }
 
 export interface NavbarButtonProps {
@@ -34,10 +31,7 @@ export interface NavbarButtonProps {
 }
 
 // Navbar is persistent chrome from app-wide navigation
-export const NavTopbar: React.FunctionComponent<NavTopbarProps> = ({ title, location, match, setModal, history, buttons = [] }) => {
-  const handleOnEnter = (e: React.KeyboardEvent) => {
-    setModal({ q: e.target.value, type: ModalType.Search })
-  }
+export const NavTopbarComponent: React.FunctionComponent<NavTopbarProps> = ({ title, buttons = [], location, match, history }) => {
   // determines if route is at base route (e.g. /collection or /network)
   const isBaseRoute = Object.keys(match.params).length === 0
 
@@ -54,7 +48,9 @@ export const NavTopbar: React.FunctionComponent<NavTopbarProps> = ({ title, loca
         <div className='nav-buttons'>
           {!isBaseRoute && <a className='back' onClick={onBackClick}><BackArrow /></a>}
         </div>
-        <SearchBox onEnter={handleOnEnter} id='search-box' />
+        <div className='transfers'>
+          <Transfers />
+        </div>
       </div>
       <div className='page-details'>
         <div className='title-and-breadcrumb'>
@@ -78,8 +74,5 @@ export const NavTopbar: React.FunctionComponent<NavTopbarProps> = ({ title, loca
   )
 }
 
-export default connectComponentToPropsWithRouter(
-  NavTopbar,
-  {},
-  { setModal }
-)
+// only props we need come from the router
+export default connectComponentToPropsWithRouter(NavTopbarComponent, {}, {})

@@ -1,4 +1,4 @@
-import * as React from 'react'
+import React from 'react'
 import { CSSTransition } from 'react-transition-group'
 import classNames from 'classnames'
 import { Action } from 'redux'
@@ -6,9 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCheck, faExclamationTriangle } from '@fortawesome/free-solid-svg-icons'
 
 import { Toast } from '../models/store'
-
 import { closeToast } from '../actions/ui'
-
 import { selectToast } from '../selections'
 import { connectComponentToProps } from '../utils/connectComponentToProps'
 
@@ -18,7 +16,7 @@ interface ToastProps {
   onClose: () => Action
 }
 
-export const ToastComponent: React.FunctionComponent<ToastProps> = (props: ToastProps) => {
+export const ToastComponent: React.FunctionComponent<ToastProps> = (props) => {
   const { toast, onClose, timeout = 3000 } = props
   const { type, message, visible: isVisible, name } = toast
   const icon = type === 'success'
