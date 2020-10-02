@@ -14,9 +14,9 @@ export interface E2ETestUtils {
   exists: (selectors: string[], screenshotLocation?: string) => Promise<void>
   doesNotExist: (selector: string, screenshotLocation?: string) => Promise<void>
   expectTextToBe: (selector: string, text: string, screenshotLocation?: string) => Promise<void>
+  checkDatasetReference: (username: string, name: string, screenshotLocation?: string) => Promise<void>
+  atDatasetVersion: (ver: "working" | number, screenshotLocation?: string) => Promise<void>
   expectTextToContain: (selector: string, text: string, screenshotLocation?: string) => Promise<void>
-  onHistoryTab: (screenshotLocation?: string) => Promise<void>
-  onStatusTab: (screenshotLocation?: string) => Promise<void>
   checkStatus: (component: string, status: string, screenshotLocation?: string) => Promise<void>
   delay: (time: number, screenshotLocation?: string) => Promise<unknown>
   sendKeys: (selector: string, value: string | string[], screenshotLocation?: string) => Promise<void>
@@ -29,6 +29,7 @@ export function newE2ETestUtils (app: any): E2ETestUtils {
     delay: delay,
     atLocation: atLocation(app),
     atDataset: atDataset(app),
+    checkDatasetReference: checkDatasetReference(app),
     waitForExist: waitForExist(app),
     waitForNotExist: waitForNotExist(app),
     click: click(app),
@@ -36,9 +37,8 @@ export function newE2ETestUtils (app: any): E2ETestUtils {
     exists: exists(app),
     doesNotExist: doesNotExist(app),
     expectTextToBe: expectTextToBe(app),
+    atDatasetVersion: atDatasetVersion(app),
     expectTextToContain: expectTextToContain(app),
-    onHistoryTab: onHistoryTab(app),
-    onStatusTab: onStatusTab(app),
     checkStatus: checkStatus(app),
     sendKeys: sendKeys(app),
     takeScreenshot: takeScreenshot(app),
@@ -55,11 +55,15 @@ function takeScreenshot (app: any) {
     if (delayTime !== 0) {
       await delay(delayTime)
     }
-    app.browserWindow.capturePage().then(function (imageBuffer) {
-      console.log(`writing screenshot: ${screenshotLocation}`)
-      fs.writeFileSync(screenshotLocation, imageBuffer)
-    })
+    _takeScreenshot(app, screenshotLocation)
   }
+}
+
+function _takeScreenshot (app: any, screenshotLocation: string) {
+  app.browserWindow.capturePage().then(function (imageBuffer) {
+    console.log(`writing screenshot: ${screenshotLocation}`)
+    fs.writeFileSync(screenshotLocation, imageBuffer)
+  })
 }
 
 // atLocation checks to see if the given hash location is where we expected it.
@@ -76,10 +80,7 @@ function atLocation (app: any) {
       }, 10000, `expected url to start with '${expected}', got: ${location.hash}`)
     } catch (e) {
       if (screenshotLocation) {
-        app.browserWindow.capturePage().then(function (imageBuffer) {
-          console.log(`writing screenshot: ${screenshotLocation}`)
-          fs.writeFileSync(screenshotLocation, imageBuffer)
-        })
+        _takeScreenshot(app, screenshotLocation)
       }
       throw new Error(`function 'atLocation': ${e}`)
     }
@@ -101,10 +102,7 @@ function atDataset (app: any) {
       }, 10000, `expected url to be '#/collection/${username === '' ? 'some_username' : username}/${datasetName}', got: ${location}`)
     } catch (e) {
       if (screenshotLocation) {
-        app.browserWindow.capturePage().then(function (imageBuffer) {
-          console.log(`writing screenshot: ${screenshotLocation}`)
-          fs.writeFileSync(screenshotLocation, imageBuffer)
-        })
+        _takeScreenshot(app, screenshotLocation)
       }
       throw new Error(`function 'atDataset': ${e}`)
     }
@@ -122,10 +120,7 @@ function waitForExist (app: any) {
       }, 10000, `element '${selector}' cannot be found`)
     } catch (e) {
       if (screenshotLocation) {
-        app.browserWindow.capturePage().then(function (imageBuffer) {
-          console.log(`writing screenshot: ${screenshotLocation}`)
-          fs.writeFileSync(screenshotLocation, imageBuffer)
-        })
+        _takeScreenshot(app, screenshotLocation)
       }
       throw new Error(`function 'waitForExist': ${e}`)
     }
@@ -145,10 +140,7 @@ function waitForNotExist (app: any) {
       }, 10000, `element ${selector} should not exist, but is existing`)
     } catch (e) {
       if (screenshotLocation) {
-        app.browserWindow.capturePage().then(function (imageBuffer) {
-          console.log(`writing screenshot: ${screenshotLocation}`)
-          fs.writeFileSync(screenshotLocation, imageBuffer)
-        })
+        _takeScreenshot(app, screenshotLocation)
       }
       throw new Error(`function 'waitForNotExist': ${e}`)
     }
@@ -168,10 +160,7 @@ function click (app: any) {
       await client.click(selector)
     } catch (e) {
       if (screenshotLocation) {
-        app.browserWindow.capturePage().then(function (imageBuffer) {
-          console.log(`writing screenshot: ${screenshotLocation}`)
-          fs.writeFileSync(screenshotLocation, imageBuffer)
-        })
+        _takeScreenshot(app, screenshotLocation)
       }
       throw new Error(`function 'click', selector '${selector}': ${e}`)
     }
@@ -186,10 +175,7 @@ function setValue (app: any) {
       await app.client.element(selector).setValue(value)
     } catch (e) {
       if (screenshotLocation) {
-        app.browserWindow.capturePage().then(function (imageBuffer) {
-          console.log(`writing screenshot: ${screenshotLocation}`)
-          fs.writeFileSync(screenshotLocation, imageBuffer)
-        })
+        _takeScreenshot(app, screenshotLocation)
       }
       throw new Error(`function 'setValue', selector '${selector}': ${e}`)
     }
@@ -205,10 +191,7 @@ function sendKeys (app: any) {
       await app.client.element(selector).keys(value)
     } catch (e) {
       if (screenshotLocation) {
-        app.browserWindow.capturePage().then(function (imageBuffer) {
-          console.log(`writing screenshot: ${screenshotLocation}`)
-          fs.writeFileSync(screenshotLocation, imageBuffer)
-        })
+        _takeScreenshot(app, screenshotLocation)
       }
       throw new Error(`function 'sendKeys', selector '${selector}': ${e}`)
     }
@@ -225,10 +208,7 @@ function exists (app: any) {
       })
     } catch (e) {
       if (screenshotLocation) {
-        app.browserWindow.capturePage().then(function (imageBuffer) {
-          console.log(`writing screenshot: ${screenshotLocation}`)
-          fs.writeFileSync(screenshotLocation, imageBuffer)
-        })
+        _takeScreenshot(app, screenshotLocation)
       }
       throw new Error(`function 'exists', selector '${selectors}': ${e}`)
     }
@@ -246,10 +226,7 @@ function doesNotExist (app: any) {
       expect(err.type).toBe('NoSuchElement')
     } catch (e) {
       if (screenshotLocation) {
-        app.browserWindow.capturePage().then(function (imageBuffer) {
-          console.log(`writing screenshot: ${screenshotLocation}`)
-          fs.writeFileSync(screenshotLocation, imageBuffer)
-        })
+        _takeScreenshot(app, screenshotLocation)
       }
       throw new Error(`function 'sendKeys', selector '${selector}': ${e}`)
     }
@@ -267,12 +244,30 @@ function expectTextToBe (app: any) {
       expect(await app.client.element(selector).getText()).toBe(text)
     } catch (e) {
       if (screenshotLocation) {
-        app.browserWindow.capturePage().then(function (imageBuffer) {
-          console.log(`writing screenshot: ${screenshotLocation}`)
-          fs.writeFileSync(screenshotLocation, imageBuffer)
-        })
+        _takeScreenshot(app, screenshotLocation)
       }
       throw new Error(`function 'expectTextToBe', selector '${selector}': ${e}`)
+    }
+    if (!headless) await delay(delayTime)
+  }
+}
+
+// checkDatasetReference takes a username and a name, checking that the given
+// dataset reference matches the one at the #dataset-reference id
+function checkDatasetReference (app: any) {
+  return async (username: string, name: string, screenshotLocation?: string) => {
+    try {
+      // TODO (ramfox): it's weird that we have to pass in this newline character
+      // to get the reference to match. It looks like because the #dataset-reference
+      // div divides the peername and name among multiple divs, we get this odd
+      // whitespace character
+      const ref = `${username}/\n${name}`
+      expect(await app.client.element('#dataset-reference').getText()).toBe(ref)
+    } catch (e) {
+      if (screenshotLocation) {
+        _takeScreenshot(app, screenshotLocation)
+      }
+      throw new Error(`function 'checkDatasetReference': ${e}`)
     }
     if (!headless) await delay(delayTime)
   }
@@ -283,59 +278,39 @@ function expectTextToContain (app: any) {
   return async (selector: string, text: string, screenshotLocation?: string) => {
     try {
       expect(await app.client.element(selector).getText()).toContain(text)
-      if (!headless) await delay(delayTime)
     } catch (e) {
       if (screenshotLocation) {
-        app.browserWindow.capturePage().then(function (imageBuffer) {
-          console.log(`writing screenshot: ${screenshotLocation}`)
-          fs.writeFileSync(screenshotLocation, imageBuffer)
-        })
+        _takeScreenshot(app, screenshotLocation)
       }
       throw new Error(`${selector}, ${text}: ${e}`)
     }
-  }
-}
-
-// onHistoryTab uses onTab to check if the we are on the history tab
-function onHistoryTab (app: any) {
-  return async (screenshotLocation?: string) => {
-    try {
-      await onTab(app, 'history')
-    } catch (e) {
-      if (screenshotLocation) {
-        app.browserWindow.capturePage().then(function (imageBuffer) {
-          console.log(`writing screenshot: ${screenshotLocation}`)
-          fs.writeFileSync(screenshotLocation, imageBuffer)
-        })
-      }
-      throw new Error(`function 'onHistoryTab': ${e}`)
-    }
     if (!headless) await delay(delayTime)
   }
 }
 
-// onStatusTab uses onTab to check if the we are on the history tab
-function onStatusTab (app: any) {
-  return async (screenshotLocation?: string) => {
+// atDatasetVersion takes a number or the string "working"
+// to determine if the expected version is the selected version.
+// the latest version of the dataset is HEAD-0, with the previous version being
+// HEAD-1. The "working" version is the version of the dataset that is being
+// edited
+function atDatasetVersion (app: any) {
+  return async (ver: "working" | number, screenshotLocation: string) => {
+    let verStr = ''
+    if (ver === "working") {
+      verStr = "#working-version"
+    } else {
+      verStr = `#HEAD-${ver}`
+    }
     try {
-      await onTab(app, 'status')
+      expect(await app.client.element(verStr).getAttribute("class")).toContain("selected")
     } catch (e) {
       if (screenshotLocation) {
-        app.browserWindow.capturePage().then(function (imageBuffer) {
-          console.log(`writing screenshot: ${screenshotLocation}`)
-          fs.writeFileSync(screenshotLocation, imageBuffer)
-        })
+        _takeScreenshot(app, screenshotLocation)
       }
-      throw new Error(`function 'onStatusTab': ${e}`)
+      throw new Error(`function 'atDatasetVersion': ${e}`)
     }
     if (!headless) await delay(delayTime)
   }
-}
-
-// onTab checks to see if the element exists with the 'active' class
-async function onTab (app: any, tab: string) {
-  expect(await app.client.element(`#${tab}-tab.active`)).toBeDefined()
-  if (!headless) await delay(delayTime)
 }
 
 // checkStatus ensures that component exists with the correct status dot class
@@ -345,10 +320,7 @@ function checkStatus (app: any) {
       expect(await app.client.element(`#${component}-status.status-dot-${status}`)).toBeDefined()
     } catch (e) {
       if (screenshotLocation) {
-        app.browserWindow.capturePage().then(function (imageBuffer) {
-          console.log(`writing screenshot: ${screenshotLocation}`)
-          fs.writeFileSync(screenshotLocation, imageBuffer)
-        })
+        _takeScreenshot(app, screenshotLocation)
       }
       throw new Error(`function 'checkStatus': ${e}`)
     }
@@ -367,10 +339,7 @@ function isChecked (app: any) {
       return await client.element(selector).isSelected()
     } catch (e) {
       if (screenshotLocation) {
-        app.browserWindow.capturePage().then(function (imageBuffer) {
-          console.log(`writing screenshot: ${screenshotLocation}`)
-          fs.writeFileSync(screenshotLocation, imageBuffer)
-        })
+        _takeScreenshot(app, screenshotLocation)
       }
       throw new Error(`function 'waitForExist': ${e}`)
     }
