@@ -40,7 +40,7 @@ const VersionInfoItem: React.FC<VersionInfoItemProps> = (props) => {
         />
       </td>
       <td>
-        <span className='ref text' onClick={(e: React.MouseEvent) => { onClick(data, e) }}>{username}/{name}</span>
+        <span id={`${username}-${name}-link`} className='ref text' onClick={(e: React.MouseEvent) => { onClick(data, e) }}>{username}/{name}</span>
       </td>
       <td>
         <span data-tip={commitTime}>{commitTime !== zeroTimeString ? moment(commitTime).fromNow() : '--'}</span>
