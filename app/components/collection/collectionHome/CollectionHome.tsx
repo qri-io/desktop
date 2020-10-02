@@ -31,8 +31,8 @@ export const CollectionHome: React.FC<CollectionHomeProps> = ({ setModal }) => {
               type: 'button',
               id: 'create-dataset',
               icon: faPlus,
-              label: 'New Dataset',
-              onClick: () => { setModal({ type: ModalType.NewDataset }) }
+              label: 'Create Dataset',
+              onClick: () => { setModal({ type: ModalType.CreateDataset }) }
             },
             {
               type: 'button',
