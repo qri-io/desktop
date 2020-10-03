@@ -9,10 +9,10 @@
     flex-direction: column;
 
     #dataset-list-filter {
-      padding: 12px 10px;
+      padding: 13px 16px 4px 16px;
       width: 100%;
       display: flex;
-  
+
       .filter-input-container {
         width: 30%;
         max-width: 40%;
@@ -28,7 +28,7 @@
           padding: 2px 5px;
           box-shadow: none;
           border: 1px solid transparent;
-  
+
           &:focus {
             outline: none;
             border-color: $primary;
@@ -45,7 +45,7 @@
 
     .list-picker-and-bulk-actions {
       display: flex;
-      padding: 12px 40px 0 40px; 
+      padding: 0 9px;
 
       button {
         border: none;
@@ -60,6 +60,7 @@
       .list-picker {
         flex: 1;
         button {
+          width:140px;
           padding: 6px 10px;
           margin: 0 4px;
         }
@@ -73,7 +74,7 @@
         flex: 1;
         text-align: right;
         padding: 6px 10px 0 0;
-        
+
         button {
           margin: 0 5px;
           font-weight: bold;
@@ -91,7 +92,7 @@
   #list {
     flex: 1;
     width: 100%;
-    overflow-y: auto;
+    overflow: hidden;
 
     table {
       width: 100%;
@@ -116,7 +117,7 @@
         text-overflow: ellipsis;
       }
 
-      tr td, 
+      tr td,
       tr th {
         padding: 8px 12px;
         white-space: nowrap;

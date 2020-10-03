@@ -12,7 +12,7 @@ interface LayoutProps {
   topbarButtons: NavbarButtonProps[]
   onSidebarResize?: (width: number) => void
   maximumSidebarWidth?: number
-  title?: string
+  title?: string | React.ReactElement
 
   /**
    * Some views may not want to display the navbar, setting `showNav` = false

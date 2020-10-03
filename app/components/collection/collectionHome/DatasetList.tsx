@@ -15,9 +15,8 @@ import { pullDatasets, fetchMyDatasets } from '../../../actions/api'
 import { setWorkingDataset } from '../../../actions/selections'
 import { setModal, openToast } from '../../../actions/ui'
 
-import VersionInfoItem from '../../item/VersionInfoItem'
-import TristateCheckboxInput from '../../form/TristateCheckboxInput'
 import { selectSessionUsername, selectWorkingDataset } from '../../../selections'
+import DataTable from './DataTable'
 
 interface DatasetListProps extends RouteProps {
   qriRef: QriRef
@@ -25,7 +24,6 @@ interface DatasetListProps extends RouteProps {
   workingDataset: WorkingDataset
   sessionUsername: string
   showFSI: boolean
-
   setFilter: (filter: string) => Action
   setWorkingDataset: (username: string, name: string) => Action
   fetchMyDatasets: (page: number, pageSize: number) => Promise<AnyAction>
@@ -49,23 +47,6 @@ export const DatasetListComponent: React.FC<DatasetListProps> = (props) => {
   const handleSetFilter = (value: string) => {
     setFilter(value)
     setChecked({})
-  }
-
-  const handleScroll = (e: any) => {
-    // this assumes myDatasets is being called for the first time by the App component
-    if (!myDatasets.pageInfo) return
-    if (e.target.scrollHeight === parseInt(e.target.scrollTop) + parseInt(e.target.offsetHeight)) {
-      fetchMyDatasets(myDatasets.pageInfo.page + 1, myDatasets.pageInfo.pageSize)
-    }
-  }
-
-  let handleOpenInFinder: (data: VersionInfo) => void
-  if (showFSI) {
-    handleOpenInFinder = (data: VersionInfo) => {
-      if (data.fsiPath) {
-        onClickOpenInFinder(data.fsiPath)
-      }
-    }
   }
 
   const handlePullSelectedDatasets = () => {
@@ -117,6 +98,29 @@ export const DatasetListComponent: React.FC<DatasetListProps> = (props) => {
     ? `You have ${filteredDatasets.length} local dataset${filteredDatasets.length !== 1 ? 's' : ''}`
     : `Showing ${filteredDatasets.length} local dataset${filteredDatasets.length !== 1 ? 's' : ''}`
 
+  // when a table row is clicked, navigate to dataset workbench
+  const handleRowClicked = (row: VersionInfo) => {
+    history.push(pathToDataset(row.username, row.name, row.path))
+  }
+
+  // keep track of selected items in state
+  const handleSelectedRowsChange = ({ selectedRows }: { selectedRows: VersionInfo[] }) => {
+    setChecked(selectedRows.reduce((acc: any, vi: VersionInfo) => {
+      acc[`${vi.username}/${vi.name}`] = true
+      return acc
+    }, {}))
+  }
+
+  // open FSI directory in OS
+  let handleOpenInFinder: (data: VersionInfo) => void
+  if (showFSI) {
+    handleOpenInFinder = (data: VersionInfo) => {
+      if (data.fsiPath) {
+        onClickOpenInFinder(data.fsiPath)
+      }
+    }
+  }
+
   return (
     <div id='dataset-list'>
       <header>
@@ -160,66 +164,14 @@ export const DatasetListComponent: React.FC<DatasetListProps> = (props) => {
         </div>
       </header>
 
-      <div id='list' onScroll={handleScroll}>
-        <table>
-          <thead>
-            <tr>
-              <th>
-                <TristateCheckboxInput
-                  name='all'
-                  value={(() => {
-                    if (filteredDatasets.length === 0 || checkedCount === 0) {
-                      return false
-                    } else if (filteredDatasets.length === checkedCount) {
-                      return true
-                    }
-                    return 'indeterminate'
-                  })()}
-                  onChange={(_: string, value: boolean) => {
-                    if (value) {
-                      setChecked(filteredDatasets.reduce((acc, vi) => {
-                        acc[`${vi.username}/${vi.name}`] = true
-                        return acc
-                      }, {}))
-                    } else {
-                      setChecked({})
-                    }
-                  }}
-                />
-              </th>
-              <th>name</th>
-              <th>updated</th>
-              <th>size</th>
-              <th>rows</th>
-              <th>status</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredDatasets.length === 0 && renderNoDatasets()}
-            {filteredDatasets
-              .map((vi: VersionInfo) => (
-                <VersionInfoItem
-                  data={vi}
-                  key={`${vi.username}/${vi.name}`}
-                  selected={!!checked[`${vi.username}/${vi.name}`]}
-                  onToggleSelect={(data: VersionInfo, value: boolean) => {
-                    const updated = Object.assign({}, checked)
-                    if (!value) {
-                      delete updated[`${vi.username}/${vi.name}`]
-                    } else {
-                      updated[`${vi.username}/${vi.name}`] = true
-                    }
-                    setChecked(updated)
-                  }}
-                  onClick={(data: VersionInfo) => {
-                    history.push(pathToDataset(data.username, data.name, data.path))
-                  }}
-                  onClickFolder={handleOpenInFinder}
-                />)
-              )}
-          </tbody>
-        </table>
+      <div id='list'>
+        {filteredDatasets.length === 0 && renderNoDatasets()}
+        <DataTable
+          filteredDatasets={filteredDatasets}
+          onRowClicked={handleRowClicked}
+          onSelectedRowsChange={handleSelectedRowsChange}
+          onOpenInFinder={handleOpenInFinder}
+        />
       </div>
     </div>
   )

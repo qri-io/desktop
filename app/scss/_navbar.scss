@@ -137,14 +137,19 @@ $navbar-item-margin: 6px;
 
 
 .page-navbar {
+  height: 115px;
   .page-details {
     display: flex;
     .title-and-breadcrumb {
       flex: 1;
+      .single-line {
+        padding: 12px 0 0 0;
+        line-height: 34px;
+      }
     }
     .buttons {
       flex: 1;
-      padding: 10px;
+      padding: 12px 0 0 0;
 
       .header-column {
         float: right;

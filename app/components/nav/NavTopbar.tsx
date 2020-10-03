@@ -1,18 +1,18 @@
 import React from 'react'
 import { IconDefinition } from '@fortawesome/free-regular-svg-icons'
+import classNames from 'classnames'
 
 import { RouteProps } from '../../models/Store'
 import { connectComponentToPropsWithRouter } from '../../utils/connectComponentToProps'
 
 import BackArrow from '../chrome/BackArrow'
-import Breadcrumb from '../chrome/Breadcrumb'
 import HeaderColumnButton from '../chrome/HeaderColumnButton'
 import HeaderColumnButtonDropdown from '../chrome/HeaderColumnButtonDropdown'
 import Transfers from '../Transfers'
 
 // RouteProps includes `history`, `location`, and `match`
 interface NavTopbarProps extends RouteProps {
-  title: string
+  title: string | React.ReactElement
   buttons: NavbarButtonProps[]
 }
 
@@ -42,6 +42,8 @@ export const NavTopbarComponent: React.FunctionComponent<NavTopbarProps> = ({ ti
     return history.push(`/${baseRoute}`)
   }
 
+  const titleIsString = typeof title === 'string'
+
   return (
     <div className='page-navbar'>
       <div className='row'>
@@ -54,8 +56,7 @@ export const NavTopbarComponent: React.FunctionComponent<NavTopbarProps> = ({ ti
       </div>
       <div className='page-details'>
         <div className='title-and-breadcrumb'>
-          <Breadcrumb id='navbar-breadcrumb' value={location.pathname} />
-          {title && <h3 className='title'>{title}</h3>}
+          {title && <h3 className={classNames('title', { 'single-line': titleIsString })}>{title}</h3>}
         </div>
         <div className='buttons'>
           {buttons.map((props) => {
