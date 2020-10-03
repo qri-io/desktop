@@ -67,13 +67,14 @@ const PublishButtonComponent: React.FunctionComponent<PublishButtonProps> = (pro
       })
     }
     return (
-      <><HeaderColumnButton
-        id='view-in-cloud'
-        onClick={() => { shell.openExternal(`${QRI_CLOUD_URL}/${username}/${name}`) }}
-        icon={faCloud}
-        label='View in Cloud'
-      />
-      <Hamburger id='workbench-hamburger' data={extraActions} />
+      <>
+        <HeaderColumnButton
+          id='view-in-cloud'
+          onClick={() => { shell.openExternal(`${QRI_CLOUD_URL}/${username}/${name}`) }}
+          icon={faCloud}
+          label='View in Cloud'
+        />
+        <Hamburger id='workbench-hamburger' data={extraActions} />
       </>
     )
   }

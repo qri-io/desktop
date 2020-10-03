@@ -45,7 +45,8 @@ import {
 import {
   faClock,
   faStickyNote,
-  faHdd
+  faHdd,
+  faTrashAlt
 } from '@fortawesome/free-regular-svg-icons'
 
 interface IconProps {
@@ -108,7 +109,8 @@ const icons: Record<string, any> = {
   'bars': faBars,
   'hdd': faHdd,
   'stickyNote': faStickyNote,
-  'pencil': faPencilAlt
+  'pencil': faPencilAlt,
+  'trash': faTrashAlt
 }
 
 const sizes: {[key: string]: FontAwesomeIconProps['size']} = {

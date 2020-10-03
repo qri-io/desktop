@@ -8,6 +8,7 @@ import { VersionInfo } from '../../../models/store'
 
 import RelativeTimestamp from '../../RelativeTimestamp'
 import StatusIcons from './StatusIcons'
+import TableRowHamburger from './TableRowHamburger'
 
 interface DataTableProps {
   filteredDatasets: VersionInfo[]
@@ -110,8 +111,14 @@ const DataTable: React.FC<DataTableProps> = (props) => {
     {
       name: 'status',
       selector: 'status',
-      width: '100px',
+      width: '85px',
       cell: (row: VersionInfo) => <StatusIcons row={row} onClickFolder={onOpenInFinder} /> // eslint-disable-line
+    },
+    {
+      name: '',
+      selector: 'hamburger',
+      width: '60px',
+      cell: (row: VersionInfo) => <TableRowHamburger row={row} /> // eslint-disable-line
     }
   ]
 

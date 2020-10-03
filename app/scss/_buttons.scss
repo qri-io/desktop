@@ -160,10 +160,6 @@ input[type="button"] {
   align-items: center;
   cursor: pointer;
 
-  &:last-child {
-    padding-left: 20px;
-  }
-
   .header-column-icon {
     color: $text-light;
     margin-right: 8px;

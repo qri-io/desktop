@@ -32,7 +32,7 @@ const Hamburger: React.FunctionComponent<HamburgerProps> = (props) => {
         onMouseEnter={onHamburgerEnter}
         onMouseLeave={onHamburgerLeave}
       >
-        <Icon icon='hamburger' size='lg' color={isOpen ? 'dark' : iconColor} />
+        <Icon icon='hamburger' color={isOpen ? 'dark' : iconColor} />
       </div>
       <div className='hamburger-overlay'>
         <HamburgerOverlay

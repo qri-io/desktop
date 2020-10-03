@@ -150,6 +150,9 @@ $navbar-item-margin: 6px;
     .buttons {
       flex: 1;
       padding: 12px 0 0 0;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
 
       .header-column {
         float: right;

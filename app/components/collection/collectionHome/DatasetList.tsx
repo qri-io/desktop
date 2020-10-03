@@ -93,6 +93,10 @@ export const DatasetListComponent: React.FC<DatasetListProps> = (props) => {
       }
       return true
     })
+    .map((d) => ({
+      id: `${d.username}-${d.name}`, // used by react-data-table-component to give each row a unique id
+      ...d
+    }))
 
   const countMessage = (onlySessionUserDatasets && filter === '')
     ? `You have ${filteredDatasets.length} local dataset${filteredDatasets.length !== 1 ? 's' : ''}`

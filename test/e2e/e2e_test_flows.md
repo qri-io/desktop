@@ -4,17 +4,17 @@ This is a basic rundown of what we expect for the e2e flows as the newer feature
 
 Some thoughts on the e2e tests:
 They have been super helpful in catching bugs & making sure we don't regress in
-functionality. However, they are EXTREMELY stateful. Any change you make to a 
+functionality. However, they are EXTREMELY stateful. Any change you make to a
 previous test may effect a test later. Something as simple as removing a button
 or changing an id tag, if the id is relied on to find the element, can have
 adverse effects on the tests.
 
-The goal for this basic rundown is to give you a quick idea of what might get 
+The goal for this basic rundown is to give you a quick idea of what might get
 effected if you make a change to an e2e test. It would also be great if we could
 keep track of relied on ids and expectations here, until we figure out a better
 method.
 
-It would also be a good idea to checkout the `/test/utils/e2eTestUtils.ts` 
+It would also be a good idea to checkout the `/test/utils/e2eTestUtils.ts`
 functions. The comments should give you an idea of what its expected that they
 do & how to use them. Two things to note. First, each test util function has an optional `screenshotLocation` string. If this variable is not undefined AND the test errored, a screenshot of the app will be saved to the temp directory. This is mostly used to understand what is going wrong in circle ci, as you can watch the test from your personal computer, but can't watch it in circle ci. Second, the `delayTime` variable at the start of the file adjusts the amount of time we delay when the app is NOT in headless mode. This allows the app to render each view & gives us as humans a moment to understand what's going on. You can adjust this if you feel it is too fast or slow.
 
@@ -63,7 +63,7 @@ The following flows deal with launching the app for the first time, signing out 
 ### navigate to the collection and back to the dataset
 - click the #collection button
 - ensure we are at the #collection
-- click on the dataset reference (#username-name-link)
+- click on the dataset reference (#row-username-name)
 - ensure we are at the correct location
 - ensure we are the same version
 
