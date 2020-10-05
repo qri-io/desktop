@@ -171,6 +171,15 @@ export interface VersionInfo {
   // published: boolean
 }
 
+export function qriRefFromVersionInfo (vi: VersionInfo): QriRef {
+  return {
+    username: vi.username,
+    profileId: vi.profileId,
+    name: vi.name,
+    path: vi.path
+  }
+}
+
 // list of local datasets
 export interface MyDatasets {
   pageInfo: PageInfo

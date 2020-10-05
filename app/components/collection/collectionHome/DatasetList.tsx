@@ -7,13 +7,13 @@ import { faTimes } from '@fortawesome/free-solid-svg-icons'
 import { pathToDataset } from '../../../paths'
 import { QriRef } from '../../../models/qriRef'
 import { Modal } from '../../../models/modals'
-import { Store, MyDatasets, WorkingDataset, VersionInfo, RouteProps } from '../../../models/store'
+import { Store, MyDatasets, WorkingDataset, VersionInfo, RouteProps, qriRefFromVersionInfo, ToastType } from '../../../models/store'
 import { onClickOpenInFinder } from '../../platformSpecific/DatasetStatus.TARGET_PLATFORM'
 import { connectComponentToPropsWithRouter } from '../../../utils/connectComponentToProps'
 import { setFilter } from '../../../actions/myDatasets'
-import { fetchMyDatasets } from '../../../actions/api'
+import { pullDatasets, fetchMyDatasets } from '../../../actions/api'
 import { setWorkingDataset } from '../../../actions/selections'
-import { setModal } from '../../../actions/ui'
+import { setModal, openToast } from '../../../actions/ui'
 
 import VersionInfoItem from '../../item/VersionInfoItem'
 import TristateCheckboxInput from '../../form/TristateCheckboxInput'
@@ -29,17 +29,22 @@ interface DatasetListProps extends RouteProps {
   setFilter: (filter: string) => Action
   setWorkingDataset: (username: string, name: string) => Action
   fetchMyDatasets: (page: number, pageSize: number) => Promise<AnyAction>
+  pullDatasets: (refs: QriRef[]) => Promise<AnyAction>
   setModal: (modal: Modal) => void
+  openToast: (type: ToastType, name: string, message: string) => Action
 }
 
+const initialChecked: Record<string, boolean> = {}
+
 export const DatasetListComponent: React.FC<DatasetListProps> = (props) => {
-  const { showFSI, setFilter, myDatasets, history, sessionUsername } = props
+  const { showFSI, setFilter, myDatasets, history, sessionUsername, pullDatasets, openToast } = props
   const { filter, value: datasets } = myDatasets
   const lowercasedFilterString = filter.toLowerCase()
 
-  const [checked, setChecked] = useState({})
+  const [checked, setChecked] = useState(initialChecked)
   const [onlySessionUserDatasets, setOnlySessionUserDatasets] = useState(false)
   const checkedCount = Object.keys(checked).length
+  const [bulkActionExecuting, setBulkActionExecuting] = useState(false)
 
   const handleSetFilter = (value: string) => {
     setFilter(value)
@@ -61,6 +66,24 @@ export const DatasetListComponent: React.FC<DatasetListProps> = (props) => {
         onClickOpenInFinder(data.fsiPath)
       }
     }
+  }
+
+  const handlePullSelectedDatasets = () => {
+    const refs = filteredDatasets
+      .filter((vi) => checked[`${vi.username}/${vi.name}`])
+      .map(qriRefFromVersionInfo)
+
+    setBulkActionExecuting(true)
+    openToast('info', 'pull', `pulling ${refs.length} ${refs.length === 1 ? 'dataset' : 'datasets'}`)
+    pullDatasets(refs)
+      .then(() => {
+        setBulkActionExecuting(false)
+        openToast('success', 'pull-success', `pulled ${refs.length} ${refs.length === 1 ? 'dataset' : 'datasets'}`)
+      })
+      .catch((reason) => {
+        setBulkActionExecuting(false)
+        openToast('error', 'pull-error', `pulling datasets: ${reason}`)
+      })
   }
 
   const renderNoDatasets = () => {
@@ -129,9 +152,9 @@ export const DatasetListComponent: React.FC<DatasetListProps> = (props) => {
             {checkedCount === 0 && countMessage}
             {checkedCount > 0 && <>
               <span>{checkedCount} selected</span>
-              <button onClick={() => alert(`Pull Latest: ${Object.keys(checked)}`)}>Pull latest</button>
-              <button onClick={() => alert(`quick export CSV: ${Object.keys(checked)}`)}>Quick Export CSV</button>
-              <button onClick={() => alert(`remove: ${Object.keys(checked)}`)}>Remove</button>
+              <button disabled={bulkActionExecuting} onClick={handlePullSelectedDatasets}>Pull latest</button>
+              <button disabled={bulkActionExecuting} onClick={() => alert(`quick export CSV: ${Object.keys(checked)}`)}>Quick Export CSV</button>
+              <button disabled={bulkActionExecuting} onClick={() => alert(`remove: ${Object.keys(checked)}`)}>Remove</button>
             </>}
           </div>
         </div>
@@ -214,6 +237,8 @@ export default connectComponentToPropsWithRouter(
     setFilter,
     setWorkingDataset,
     fetchMyDatasets,
-    setModal
+    setModal,
+    pullDatasets,
+    openToast
   }
 )
