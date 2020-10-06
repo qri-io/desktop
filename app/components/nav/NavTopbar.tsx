@@ -1,6 +1,5 @@
 import React from 'react'
 import { IconDefinition } from '@fortawesome/free-regular-svg-icons'
-import classNames from 'classnames'
 
 import { RouteProps } from '../../models/Store'
 import { connectComponentToPropsWithRouter } from '../../utils/connectComponentToProps'
@@ -12,7 +11,8 @@ import Transfers from '../Transfers'
 
 // RouteProps includes `history`, `location`, and `match`
 interface NavTopbarProps extends RouteProps {
-  title: string | React.ReactElement
+  title: string
+  subTitle?: string
   buttons: NavbarButtonProps[]
 }
 
@@ -31,7 +31,8 @@ export interface NavbarButtonProps {
 }
 
 // Navbar is persistent chrome from app-wide navigation
-export const NavTopbarComponent: React.FunctionComponent<NavTopbarProps> = ({ title, buttons = [], location, match, history }) => {
+export const NavTopbarComponent: React.FunctionComponent<NavTopbarProps> = (props) => {
+  const { title, subTitle, buttons = [], location, match, history } = props
   // determines if route is at base route (e.g. /collection or /network)
   const isBaseRoute = Object.keys(match.params).length === 0
 
@@ -41,8 +42,6 @@ export const NavTopbarComponent: React.FunctionComponent<NavTopbarProps> = ({ ti
     const baseRoute = location.pathname.split("/")[1]
     return history.push(`/${baseRoute}`)
   }
-
-  const titleIsString = typeof title === 'string'
 
   return (
     <div className='page-navbar'>
@@ -55,8 +54,9 @@ export const NavTopbarComponent: React.FunctionComponent<NavTopbarProps> = ({ ti
         </div>
       </div>
       <div className='page-details'>
-        <div className='title-and-breadcrumb'>
-          {title && <h3 className={classNames('title', { 'single-line': titleIsString })}>{title}</h3>}
+        <div className='title-container'>
+          <h5 className='subtitle'>{subTitle}</h5>
+          <h3 className='title'>{title}</h3>
         </div>
         <div className='buttons'>
           {buttons.map((props) => {

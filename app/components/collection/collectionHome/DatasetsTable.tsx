@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react'
 import numeral from 'numeral'
-import orderBy from 'lodash/orderBy'
 import ReactDataTable from 'react-data-table-component'
 import ReactTooltip from 'react-tooltip'
 
@@ -10,42 +9,46 @@ import RelativeTimestamp from '../../RelativeTimestamp'
 import StatusIcons from './StatusIcons'
 import TableRowHamburger from './TableRowHamburger'
 
-interface DataTableProps {
+interface DatasetsTableProps {
   filteredDatasets: VersionInfo[]
   onRowClicked: (row: VersionInfo) => void
   onSelectedRowsChange: ({ selectedRows }: { selectedRows: VersionInfo[] }) => void
   onOpenInFinder: (data: VersionInfo) => void
 }
 
+// fieldValue returns a VersionInfo value for a given field argument
+const fieldValue = (row: VersionInfo, field: string) => {
+  switch (field) {
+    case 'name':
+      return `${row['username']}/${row['name']}`
+    case 'updated':
+      return row.commitTime
+    case 'size':
+      return row.bodySize
+    case 'rows':
+      return row.bodyRows
+    default:
+      return row[field]
+  }
+}
 // column sort function for react-data-table
 // defines the actual string to sort on when a sortable column is clicked
 const customSort = (rows: VersionInfo[], field: string, direction: 'asc' | 'desc') => {
-  const handleField = (row: VersionInfo) => {
-    if (field === 'name') {
-      return `${row['username']}/${row['name']}`
+  return rows.sort((a, b) => {
+    const aVal = fieldValue(a, field)
+    const bVal = fieldValue(b, field)
+    if (aVal === bVal) {
+      return 0
+    } else if (aVal < bVal) {
+      return (direction === 'asc') ? -1 : 1
     }
-
-    if (field === 'updated') {
-      return row['commitTime']
-    }
-
-    if (field === 'size') {
-      return row['bodySize']
-    }
-
-    if (field === 'rows') {
-      return row['bodyRows']
-    }
-
-    return row[field]
-  }
-
-  return orderBy(rows, handleField, direction)
+    return (direction === 'asc') ? 1 : -1
+  })
 }
 
 const zeroTimeString = '0001-01-01T00:00:00Z'
 
-const DataTable: React.FC<DataTableProps> = (props) => {
+const DatasetsTable: React.FC<DatasetsTableProps> = (props) => {
   const {
     filteredDatasets,
     onRowClicked,
@@ -112,13 +115,13 @@ const DataTable: React.FC<DataTableProps> = (props) => {
       name: 'status',
       selector: 'status',
       width: '85px',
-      cell: (row: VersionInfo) => <StatusIcons row={row} onClickFolder={onOpenInFinder} /> // eslint-disable-line
+      cell: (row: VersionInfo) => <StatusIcons data={row} onClickFolder={onOpenInFinder} /> // eslint-disable-line
     },
     {
       name: '',
       selector: 'hamburger',
       width: '60px',
-      cell: (row: VersionInfo) => <TableRowHamburger row={row} /> // eslint-disable-line
+      cell: (row: VersionInfo) => <TableRowHamburger data={row} /> // eslint-disable-line
     }
   ]
 
@@ -140,4 +143,4 @@ const DataTable: React.FC<DataTableProps> = (props) => {
   )
 }
 
-export default DataTable
+export default DatasetsTable

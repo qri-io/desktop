@@ -1,18 +1,18 @@
 import React from 'react'
 
 import { VersionInfo } from '../../../models/store'
+import { QRI_CLOUD_URL } from '../../../constants'
 
 import ExternalLink from '../../ExternalLink'
 import Icon from '../../chrome/Icon'
-import { QRI_CLOUD_URL } from '../../../constants'
 
 interface StatusIconsProps {
-  row: VersionInfo
+  data: VersionInfo
   onClickFolder: (data: VersionInfo, e: React.MouseEvent) => void
 }
 
-const StatusIcons: React.FC<StatusIconsProps> = ({ row, onClickFolder }) => {
-  const { published, username, name, fsiPath } = row
+const StatusIcons: React.FC<StatusIconsProps> = ({ data, onClickFolder }) => {
+  const { published, username, name, fsiPath } = data
   return (
     <>
       <span className="dataset-link" data-tip={published ? 'published' : 'unpublished'}>

@@ -6,8 +6,7 @@ import { connectComponentToProps } from '../../../utils/connectComponentToProps'
 import { setModal, setSidebarWidth } from '../../../actions/ui'
 import {
   selectSidebarWidth,
-  selectDatasetUsername,
-  selectDatasetName
+  selectDatasetRef
 } from '../../../selections'
 import { Modal, ModalType } from '../../../models/modals'
 
@@ -19,8 +18,7 @@ import PublishButton from '../headerButtons/PublishButton'
 interface DatasetLayoutProps {
   // from connect
   sidebarWidth?: number
-  username?: string
-  name?: string
+  qriRef?: QriRef
   onSidebarResize?: (width: number) => void
   setModal: (modal: Modal) => void
   // from props
@@ -37,8 +35,7 @@ const DatasetLayoutComponent: React.FunctionComponent<DatasetLayoutProps> = (pro
     mainContent,
     headerContent,
     sidebarWidth = 0,
-    username,
-    name,
+    qriRef = { username: '', name: '', path: '' },
     onSidebarResize,
     setModal
   } = props
@@ -58,13 +55,8 @@ const DatasetLayoutComponent: React.FunctionComponent<DatasetLayoutProps> = (pro
   return (
     <Layout
       id={id}
-      title={(
-        <div className='dataset-ref-editor'>
-          <span className='username'>{username}/</span>
-          <br/>
-          <span className='name'>{name}</span>
-        </div>
-      )}
+      subTitle={`${qriRef.username}/`}
+      title={qriRef.name}
       sidebarWidth={sidebarWidth}
       headerContent={headerContent}
       onSidebarResize={onSidebarResize}
@@ -79,10 +71,9 @@ export default connectComponentToProps(
   DatasetLayoutComponent,
   (state: Store, ownProps: DatasetLayoutProps) => {
     return {
-      sidebarWidth: selectSidebarWidth(state, 'workbench'),
-      username: selectDatasetUsername(state),
-      name: selectDatasetName(state),
-      ...ownProps
+      ...ownProps,
+      qriRef: selectDatasetRef(state),
+      sidebarWidth: selectSidebarWidth(state, 'workbench')
     }
   },
   {

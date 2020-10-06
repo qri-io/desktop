@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useCallback, useMemo } from 'react'
 import { Action, AnyAction } from 'redux'
 import classNames from "classnames"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -16,7 +16,7 @@ import { setWorkingDataset } from '../../../actions/selections'
 import { setModal, openToast } from '../../../actions/ui'
 
 import { selectSessionUsername, selectWorkingDataset } from '../../../selections'
-import DataTable from './DataTable'
+import DatasetsTable from './DatasetsTable'
 
 interface DatasetListProps extends RouteProps {
   qriRef: QriRef
@@ -32,51 +32,50 @@ interface DatasetListProps extends RouteProps {
   openToast: (type: ToastType, name: string, message: string) => Action
 }
 
-const initialChecked: Record<string, boolean> = {}
-
 export const DatasetListComponent: React.FC<DatasetListProps> = (props) => {
   const { showFSI, setFilter, myDatasets, history, sessionUsername, pullDatasets, openToast } = props
   const { filter, value: datasets } = myDatasets
   const lowercasedFilterString = filter.toLowerCase()
 
-  const [checked, setChecked] = useState(initialChecked)
+  const [selected, setSelected] = useState([] as VersionInfo[])
   const [onlySessionUserDatasets, setOnlySessionUserDatasets] = useState(false)
-  const checkedCount = Object.keys(checked).length
   const [bulkActionExecuting, setBulkActionExecuting] = useState(false)
 
   const handleSetFilter = (value: string) => {
     setFilter(value)
-    setChecked({})
+    setSelected([])
   }
 
-  const handlePullSelectedDatasets = () => {
-    const refs = filteredDatasets
-      .filter((vi) => checked[`${vi.username}/${vi.name}`])
-      .map(qriRefFromVersionInfo)
+  // when a table row is clicked, navigate to dataset workbench
+  const handleRowClicked = (row: VersionInfo) => {
+    history.push(pathToDataset(row.username, row.name, row.path))
+  }
 
-    setBulkActionExecuting(true)
-    openToast('info', 'pull', `pulling ${refs.length} ${refs.length === 1 ? 'dataset' : 'datasets'}`)
-    pullDatasets(refs)
-      .then(() => {
-        setBulkActionExecuting(false)
-        openToast('success', 'pull-success', `pulled ${refs.length} ${refs.length === 1 ? 'dataset' : 'datasets'}`)
-      })
-      .catch((reason) => {
-        setBulkActionExecuting(false)
-        openToast('error', 'pull-error', `pulling datasets: ${reason}`)
-      })
+  // keep track of selected items in state
+  const handleSelectedRowsChange = useCallback(({ selectedRows }: { selectedRows: VersionInfo[] }) => {
+    setSelected(selectedRows)
+  }, [])
+
+  // open FSI directory in OS
+  let handleOpenInFinder: (data: VersionInfo) => void
+  if (showFSI) {
+    handleOpenInFinder = (data: VersionInfo) => {
+      if (data.fsiPath) {
+        onClickOpenInFinder(data.fsiPath)
+      }
+    }
   }
 
   const renderNoDatasets = () => {
     if (myDatasets.value.length !== 0) {
-      return <tr className='sidebar-list-item-text'>
-        <td colSpan={4}>no matches found for <strong>&apos;{myDatasets.filter}&apos;</strong></td>
-      </tr>
+      return <div className='sidebar-list-item-text'>
+        <span>no matches found for <strong>&apos;{myDatasets.filter}&apos;</strong></span>
+      </div>
     }
     return (
-      <tr id='no-datasets' className='sidebar-list-item-text'>
-        <td colSpan={4}>Your datasets will be listed here</td>
-      </tr>
+      <div id='no-datasets' className='sidebar-list-item-text'>
+        <span>Your datasets will be listed here</span>
+      </div>
     )
   }
 
@@ -102,28 +101,36 @@ export const DatasetListComponent: React.FC<DatasetListProps> = (props) => {
     ? `You have ${filteredDatasets.length} local dataset${filteredDatasets.length !== 1 ? 's' : ''}`
     : `Showing ${filteredDatasets.length} local dataset${filteredDatasets.length !== 1 ? 's' : ''}`
 
-  // when a table row is clicked, navigate to dataset workbench
-  const handleRowClicked = (row: VersionInfo) => {
-    history.push(pathToDataset(row.username, row.name, row.path))
-  }
+  // use memoization to theoretically speed up rendering for example:
+  // https://github.com/jbetancur/react-data-table-component/blob/master/stories/DataTable/Basic/SelectableRowsMgmt.stories.js
+  // TODO (b5) - not currently giving great performance when playing with checklist items
+  const bulkActions = useMemo(() => {
+    const handlePullSelectedDatasets = () => {
+      const refs = selected.map(qriRefFromVersionInfo)
 
-  // keep track of selected items in state
-  const handleSelectedRowsChange = ({ selectedRows }: { selectedRows: VersionInfo[] }) => {
-    setChecked(selectedRows.reduce((acc: any, vi: VersionInfo) => {
-      acc[`${vi.username}/${vi.name}`] = true
-      return acc
-    }, {}))
-  }
-
-  // open FSI directory in OS
-  let handleOpenInFinder: (data: VersionInfo) => void
-  if (showFSI) {
-    handleOpenInFinder = (data: VersionInfo) => {
-      if (data.fsiPath) {
-        onClickOpenInFinder(data.fsiPath)
-      }
+      setBulkActionExecuting(true)
+      openToast('info', 'pull', `pulling ${refs.length} ${refs.length === 1 ? 'dataset' : 'datasets'}`)
+      pullDatasets(refs)
+        .then(() => {
+          setBulkActionExecuting(false)
+          openToast('success', 'pull-success', `pulled ${refs.length} ${refs.length === 1 ? 'dataset' : 'datasets'}`)
+        })
+        .catch((reason) => {
+          setBulkActionExecuting(false)
+          openToast('error', 'pull-error', `pulling datasets: ${reason}`)
+        })
     }
-  }
+
+    return (<div className='bulk-actions'>
+      {selected.length === 0 && countMessage}
+      {selected.length > 0 && <>
+        <span>{selected.length} selected</span>
+        <button disabled={bulkActionExecuting} onClick={handlePullSelectedDatasets}>Pull latest</button>
+        <button disabled={bulkActionExecuting} onClick={() => alert(`quick export CSV: ${selected}`)}>Quick Export CSV</button>
+        <button disabled={bulkActionExecuting} onClick={() => alert(`remove: ${selected}`)}>Remove</button>
+      </>}
+    </div>)
+  }, [selected, filteredDatasets, bulkActionExecuting])
 
   return (
     <div id='dataset-list'>
@@ -156,21 +163,13 @@ export const DatasetListComponent: React.FC<DatasetListProps> = (props) => {
               All Datasets <span className='count-indicator'>{datasets.length}</span>
             </button>
           </div>
-          <div className='bulk-actions'>
-            {checkedCount === 0 && countMessage}
-            {checkedCount > 0 && <>
-              <span>{checkedCount} selected</span>
-              <button disabled={bulkActionExecuting} onClick={handlePullSelectedDatasets}>Pull latest</button>
-              <button disabled={bulkActionExecuting} onClick={() => alert(`quick export CSV: ${Object.keys(checked)}`)}>Quick Export CSV</button>
-              <button disabled={bulkActionExecuting} onClick={() => alert(`remove: ${Object.keys(checked)}`)}>Remove</button>
-            </>}
-          </div>
+          {bulkActions}
         </div>
       </header>
 
       <div id='list'>
         {filteredDatasets.length === 0 && renderNoDatasets()}
-        <DataTable
+        <DatasetsTable
           filteredDatasets={filteredDatasets}
           onRowClicked={handleRowClicked}
           onSelectedRowsChange={handleSelectedRowsChange}

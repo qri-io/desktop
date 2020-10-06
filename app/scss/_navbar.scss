@@ -138,12 +138,23 @@ $navbar-item-margin: 6px;
 
 .page-navbar {
   height: 115px;
+
   .page-details {
     display: flex;
-    .title-and-breadcrumb {
+    .title-container {
       flex: 1;
-      .single-line {
-        padding: 12px 0 0 0;
+
+      .subtitle {
+        font-size: 14px;
+        line-height: 16px;
+        margin-top: 4px;
+        margin-bottom: 0;
+        min-height: 16px;
+        color: #888;
+      }
+
+      .title {
+        padding: 0;
         line-height: 34px;
       }
     }

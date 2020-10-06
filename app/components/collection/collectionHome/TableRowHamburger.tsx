@@ -7,12 +7,12 @@ import { setModal } from '../../../actions/ui'
 import { connectComponentToProps } from '../../../utils/connectComponentToProps'
 
 interface TableRowHamburgerProps {
-  row: VersionInfo
+  data: VersionInfo
   setModal: (modal: Modal) => void
 }
 
-const TableRowHamburger: React.FC<TableRowHamburgerProps> = ({ row, setModal }) => {
-  const { username, name, fsiPath } = row
+const TableRowHamburger: React.FC<TableRowHamburgerProps> = ({ data, setModal }) => {
+  const { username, name, fsiPath } = data
   const actions = [{
     icon: 'trash',
     text: 'Remove',
@@ -27,7 +27,7 @@ const TableRowHamburger: React.FC<TableRowHamburgerProps> = ({ row, setModal }) 
   }]
 
   return (
-    <Hamburger id={`${row.username}/${row.name}`} data={actions} />
+    <Hamburger id={`${data.username}/${data.name}`} data={actions} />
   )
 }
 

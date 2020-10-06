@@ -72,8 +72,12 @@ export function selectDatasetUsername (state: Store): string {
   return state.dataset.peername
 }
 
-export function selectDatasetRef (state: Store): string {
-  return `${state.dataset.peername}/${state.dataset.name}/at${state.dataset.path}`
+export function selectDatasetRef (state: Store): QriRef {
+  return {
+    username: state.dataset.peername,
+    name: state.dataset.name,
+    path: state.dataset.path
+  }
 }
 
 export function selectDatasetStats (state: Store): Array<Record<string, any>> {
