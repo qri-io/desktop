@@ -276,7 +276,7 @@ class AppComponent extends React.Component<AppProps, AppState> {
           place='bottom'
           type='dark'
           effect='solid'
-          delayShow={200}
+          delayShow={1000}
           multiline
         />
       </div>

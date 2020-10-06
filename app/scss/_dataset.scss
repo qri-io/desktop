@@ -626,3 +626,13 @@ $header-font-size: .9rem;
   top: -2px;
   font-weight: 700;
 }
+
+.dataset-ref-editor {
+  font-size: 18px;
+  line-height: 20px;
+
+  .username {
+    font-size: 14px;
+    font-color: #888;
+  }
+}

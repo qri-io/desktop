@@ -366,7 +366,7 @@ describe('Qri End to End tests', function spec () {
     // ensure we have redirected to the collection page
     await atLocation('#/collection')
     // click the dataset
-    const ref = `#${username}-${datasetName}-link`
+    const ref = `#row-${username}-${datasetName}`
     await click(ref)
     // ensure we have redirected to the dataset page
     await atDataset(username, datasetName)
@@ -778,7 +778,7 @@ describe('Qri End to End tests', function spec () {
 
     await click('#collection')
     await atLocation('#/collection')
-    await click(`#${username}-${datasetRename}-link`)
+    await click(`#row-${username}-${datasetRename}`)
 
     // check location
     await atDataset(username, datasetRename)
@@ -824,7 +824,7 @@ describe('Qri End to End tests', function spec () {
     // head back to the dataset & unpublish
     await click('#collection', artifactPath('network-click-collection.png'))
     await atLocation('#/collection')
-    await click(`#${username}-${datasetRename}-link`)
+    await click(`#row-${username}-${datasetRename}`)
     await atDataset(username, datasetRename, artifactPath('network-at-location-navigate-to-dataset.png'))
     // ensure we are on the correct dataset
     await expectTextToBe('#dataset-reference', username + '/\n' + datasetRename, artifactPath('network-expect-text-dataset-reference.png'))

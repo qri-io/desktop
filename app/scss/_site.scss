@@ -820,3 +820,9 @@ b {
 ::-webkit-scrollbar-thumb:hover {
   background: #B8B8B8;
 }
+
+// react-data-table-component
+// hides built-in header that displays selected count, etc
+.rdt_TableHeader {
+  display: none !important;
+}

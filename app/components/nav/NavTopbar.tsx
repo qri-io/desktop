@@ -5,7 +5,6 @@ import { RouteProps } from '../../models/Store'
 import { connectComponentToPropsWithRouter } from '../../utils/connectComponentToProps'
 
 import BackArrow from '../chrome/BackArrow'
-import Breadcrumb from '../chrome/Breadcrumb'
 import HeaderColumnButton from '../chrome/HeaderColumnButton'
 import HeaderColumnButtonDropdown from '../chrome/HeaderColumnButtonDropdown'
 import Transfers from '../Transfers'
@@ -13,6 +12,7 @@ import Transfers from '../Transfers'
 // RouteProps includes `history`, `location`, and `match`
 interface NavTopbarProps extends RouteProps {
   title: string
+  subTitle?: string
   buttons: NavbarButtonProps[]
 }
 
@@ -31,7 +31,8 @@ export interface NavbarButtonProps {
 }
 
 // Navbar is persistent chrome from app-wide navigation
-export const NavTopbarComponent: React.FunctionComponent<NavTopbarProps> = ({ title, buttons = [], location, match, history }) => {
+export const NavTopbarComponent: React.FunctionComponent<NavTopbarProps> = (props) => {
+  const { title, subTitle, buttons = [], location, match, history } = props
   // determines if route is at base route (e.g. /collection or /network)
   const isBaseRoute = Object.keys(match.params).length === 0
 
@@ -53,9 +54,9 @@ export const NavTopbarComponent: React.FunctionComponent<NavTopbarProps> = ({ ti
         </div>
       </div>
       <div className='page-details'>
-        <div className='title-and-breadcrumb'>
-          <Breadcrumb id='navbar-breadcrumb' value={location.pathname} />
-          {title && <h3 className='title'>{title}</h3>}
+        <div className='title-container'>
+          <h5 className='subtitle'>{subTitle}</h5>
+          <h3 className='title'>{title}</h3>
         </div>
         <div className='buttons'>
           {buttons.map((props) => {

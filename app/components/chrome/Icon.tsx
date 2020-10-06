@@ -38,13 +38,15 @@ import {
   faSort,
   faMinus,
   faSync,
-  faBars
+  faBars,
+  faPencilAlt
 } from '@fortawesome/free-solid-svg-icons'
 
 import {
   faClock,
   faStickyNote,
-  faHdd
+  faHdd,
+  faTrashAlt
 } from '@fortawesome/free-regular-svg-icons'
 
 interface IconProps {
@@ -106,7 +108,9 @@ const icons: Record<string, any> = {
   'clock': faClock,
   'bars': faBars,
   'hdd': faHdd,
-  'stickyNote': faStickyNote
+  'stickyNote': faStickyNote,
+  'pencil': faPencilAlt,
+  'trash': faTrashAlt
 }
 
 const sizes: {[key: string]: FontAwesomeIconProps['size']} = {

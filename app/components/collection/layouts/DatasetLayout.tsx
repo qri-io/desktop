@@ -4,7 +4,10 @@ import { faDownload } from '@fortawesome/free-solid-svg-icons'
 import Store from '../../../models/store'
 import { connectComponentToProps } from '../../../utils/connectComponentToProps'
 import { setModal, setSidebarWidth } from '../../../actions/ui'
-import { selectSidebarWidth } from '../../../selections'
+import {
+  selectSidebarWidth,
+  selectDatasetRef
+} from '../../../selections'
 import { Modal, ModalType } from '../../../models/modals'
 
 import DatasetSidebar from './DatasetSidebar'
@@ -15,6 +18,7 @@ import PublishButton from '../headerButtons/PublishButton'
 interface DatasetLayoutProps {
   // from connect
   sidebarWidth?: number
+  qriRef?: QriRef
   onSidebarResize?: (width: number) => void
   setModal: (modal: Modal) => void
   // from props
@@ -31,6 +35,7 @@ const DatasetLayoutComponent: React.FunctionComponent<DatasetLayoutProps> = (pro
     mainContent,
     headerContent,
     sidebarWidth = 0,
+    qriRef = { username: '', name: '', path: '' },
     onSidebarResize,
     setModal
   } = props
@@ -50,7 +55,8 @@ const DatasetLayoutComponent: React.FunctionComponent<DatasetLayoutProps> = (pro
   return (
     <Layout
       id={id}
-      title='Collection'
+      subTitle={`${qriRef.username}/`}
+      title={qriRef.name}
       sidebarWidth={sidebarWidth}
       headerContent={headerContent}
       onSidebarResize={onSidebarResize}
@@ -65,8 +71,9 @@ export default connectComponentToProps(
   DatasetLayoutComponent,
   (state: Store, ownProps: DatasetLayoutProps) => {
     return {
-      sidebarWidth: selectSidebarWidth(state, 'workbench'),
-      ...ownProps
+      ...ownProps,
+      qriRef: selectDatasetRef(state),
+      sidebarWidth: selectSidebarWidth(state, 'workbench')
     }
   },
   {

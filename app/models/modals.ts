@@ -46,6 +46,9 @@ export interface PublishDatasetModal {
 
 export interface RemoveDatasetModal {
   type: ModalType.RemoveDataset
+  username: string
+  name: string
+  fsiPath?: string
 }
 
 export interface SearchModal {
