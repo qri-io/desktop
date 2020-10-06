@@ -116,6 +116,12 @@ function datasetFromDatasetStore (historyDataset: DatasetStore): Dataset {
  *
  */
 
+export function selectLogLatestVersion (state: Store): VersionInfo | undefined {
+  if (selectHasHistory(state)) {
+    return selectLog(state)[0]
+  }
+}
+
 export function selectLog (state: Store): VersionInfo[] {
   return state.log.value
 }
@@ -242,10 +248,6 @@ export function selectSelectedComponent (state: Store): SelectedComponent {
 
 export function selectSelectedCommitComponent (state: Store): SelectedComponent {
   return state.selections.commitComponent
-}
-
-export function selectOnHistoryTab (state: Store): boolean {
-  return state.selections.activeTab === 'history'
 }
 
 /**

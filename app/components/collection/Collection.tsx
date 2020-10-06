@@ -4,26 +4,20 @@ import { ipcRenderer, shell } from 'electron'
 import { CSSTransition, TransitionGroup } from 'react-transition-group'
 import { Switch, Route, useLocation, useRouteMatch, Redirect } from 'react-router-dom'
 
-import { Details } from '../../models/details'
-import { Session } from '../../models/session'
-import { SelectedComponent, RouteProps } from '../../models/store'
+import { RouteProps, VersionInfo } from '../../models/store'
 import { Modal, ModalType } from '../../models/modals'
 import { QriRef, qriRefFromRoute } from '../../models/qriRef'
-import { ApiActionThunk } from '../../store/api'
 
 import { setModal, setSidebarWidth } from '../../actions/ui'
-import { setActiveTab } from '../../actions/selections'
-import { resetMutationsDataset, discardMutationsChanges, resetMutationsStatus } from '../../actions/mutations'
-import { discardChangesAndFetch, fetchWorkingDatasetDetails } from '../../actions/api'
 
 import {
   selectFsiPath,
-  selectDetails,
   selectWorkingDatasetIsPublished,
   selectSessionUsername,
   selectShowDetailsBar,
   selectSidebarWidth,
-  selectHasDatasets
+  selectHasDatasets,
+  selectLogLatestVersion
 } from '../../selections'
 
 import { defaultSidebarWidth } from '../../reducers/ui'
@@ -31,7 +25,7 @@ import { defaultSidebarWidth } from '../../reducers/ui'
 import { Resizable } from '../Resizable'
 import DetailsBar from '../DetailsBar'
 import Dataset from './Dataset'
-import { pathToNoDatasetSelected, pathToEdit } from '../../paths'
+import { pathToNoDatasetSelected, pathToEdit, pathToDataset, pathToCollection } from '../../paths'
 import CollectionHome from './collectionHome/CollectionHome'
 
 import EditDataset from './EditDataset'
@@ -45,26 +39,15 @@ export interface CollectionProps extends RouteProps {
   qriRef: QriRef
   isPublished: boolean
   fsiPath: string
-  session: Session
   hasDatasets: boolean
   showDetailsBar: boolean
   sidebarWidth: number
-  details: Details
+  latestVersion: VersionInfo
   inNamespace: boolean
 
   // setting actions
   setModal: (modal: Modal) => void
-  setActiveTab: (activeTab: string) => Action
   setSidebarWidth: (type: string, sidebarWidth: number) => Action
-  resetMutationsDataset: () => Action
-  resetMutationsStatus: () => Action
-
-  // fetching actions
-  fetchWorkingDatasetDetails: (username: string, name: string) => ApiActionThunk
-
-  // api actions (that aren't fetching)
-  discardChangesAndFetch: (username: string, name: string, component: SelectedComponent) => ApiActionThunk
-  discardMutationsChanges: (component: SelectedComponent) => Action
 }
 
 export class CollectionComponent extends React.Component<CollectionProps> {
@@ -73,33 +56,19 @@ export class CollectionComponent extends React.Component<CollectionProps> {
 
     [
       'openWorkingDirectory',
-      'publishUnpublishDataset',
-      'handleShowStatus',
-      'handleShowHistory'
+      'publishUnpublishDataset'
     ].forEach((m) => { this[m] = this[m].bind(this) })
   }
 
   componentDidMount () {
     // electron menu events
-    ipcRenderer.on('show-status', this.handleShowStatus)
-    ipcRenderer.on('show-history', this.handleShowHistory)
     ipcRenderer.on('open-working-directory', this.openWorkingDirectory)
     ipcRenderer.on('publish-unpublish-dataset', this.publishUnpublishDataset)
   }
 
   componentWillUnmount () {
-    ipcRenderer.removeListener('show-status', this.handleShowStatus)
-    ipcRenderer.removeListener('show-history', this.handleShowHistory)
     ipcRenderer.removeListener('open-working-directory', this.openWorkingDirectory)
     ipcRenderer.removeListener('publish-unpublish-dataset', this.publishUnpublishDataset)
-  }
-
-  private handleShowStatus () {
-    this.props.setActiveTab('status')
-  }
-
-  private handleShowHistory () {
-    this.props.setActiveTab('history')
   }
 
   openWorkingDirectory () {
@@ -126,7 +95,9 @@ export class CollectionComponent extends React.Component<CollectionProps> {
     const {
       qriRef,
       hasDatasets,
-      sidebarWidth
+      sidebarWidth,
+      inNamespace,
+      latestVersion
     } = this.props
 
     // actions
@@ -157,6 +128,8 @@ export class CollectionComponent extends React.Component<CollectionProps> {
         <CollectionRouter
           qriRef={qriRef}
           hasDatasets={hasDatasets}
+          latestVersion={latestVersion}
+          inNamespace={inNamespace}
         />
       </>
     )
@@ -166,10 +139,12 @@ export class CollectionComponent extends React.Component<CollectionProps> {
 interface CollectionRouterProps {
   qriRef: QriRef
   hasDatasets: boolean
+  latestVersion?: VersionInfo
+  inNamespace: boolean
 }
 
 const CollectionRouter: React.FunctionComponent<CollectionRouterProps> = (props) => {
-  const { hasDatasets } = props
+  const { hasDatasets, latestVersion, inNamespace } = props
   const location = useLocation()
   const { path } = useRouteMatch()
 
@@ -208,6 +183,17 @@ const CollectionRouter: React.FunctionComponent<CollectionRouterProps> = (props)
           } }/>
           <Route path={`${path}/:username/:name`} render={({ match }) => {
             const { params } = match
+            if (!inNamespace) {
+              if (latestVersion) {
+                return <Redirect
+                  to={pathToDataset(params.username, params.name, latestVersion.path)}
+                />
+              } else {
+                return <Redirect
+                  to={pathToCollection()}
+                />
+              }
+            }
             return <Redirect
               to={pathToEdit(params.username, params.name)}
             />
@@ -234,19 +220,13 @@ export default connectComponentToProps(
       hasDatasets: selectHasDatasets(state),
       showDetailsBar: selectShowDetailsBar(state),
       sidebarWidth: selectSidebarWidth(state, 'workbench'),
-      details: selectDetails(state),
       inNamespace: selectSessionUsername(state) === qriRef.username,
+      latestVersion: selectLogLatestVersion(state),
       ...ownProps
     }
   },
   {
     setModal,
-    setActiveTab,
-    resetMutationsDataset,
-    resetMutationsStatus,
-    setSidebarWidth,
-    fetchWorkingDatasetDetails,
-    discardChangesAndFetch,
-    discardMutationsChanges
+    setSidebarWidth
   }
 )

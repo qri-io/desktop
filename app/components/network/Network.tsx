@@ -11,7 +11,6 @@ import { connectComponentToProps } from '../../utils/connectComponentToProps'
 import { setSidebarWidth, openToast, SidebarTypes } from '../../actions/ui'
 import { pullDatasetAndFetch } from '../../actions/api'
 import {
-  setActiveTab,
   setSelectedListItem
 } from '../../actions/selections'
 
@@ -143,7 +142,6 @@ export default connectComponentToProps(
   {
     openToast,
     pullDatasetAndFetch,
-    setActiveTab,
     setSidebarWidth,
     setSelectedListItem
   }

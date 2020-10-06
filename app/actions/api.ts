@@ -469,8 +469,9 @@ export function pullDatasetAndFetch (username: string, name: string): ApiActionT
     try {
       response = await pullDataset(username, name)(dispatch, getState)
       // reset pagination
+      const path = response.payload.data.dataset.path
       response = await whenOk(fetchMyDatasets(-1))(response)
-      dispatch(push(pathToDataset(username, name, '')))
+      dispatch(push(pathToDataset(username, name, path)))
     } catch (action) {
       dispatch(openToast('error', 'add', action.payload.err.message))
       throw action

@@ -2,7 +2,6 @@
 import { Reducer } from 'redux-testkit'
 import SelectionsReducer, {
   initialState,
-  SELECTIONS_SET_ACTIVE_TAB,
   SELECTIONS_SET_SELECTED_LISTITEM,
   SELECTIONS_SET_WORKING_DATASET,
   SELECTIONS_CLEAR,
@@ -117,19 +116,6 @@ describe('Body Reducer', () => {
   })
 
   //
-  // SELECTIONS_SET_ACTION_TAB
-  //
-  it('SELECTIONS_SET_ACTIVE_TAB', () => {
-    const action = {
-      type: SELECTIONS_SET_ACTIVE_TAB,
-      payload: {
-        activeTab: 'history'
-      }
-    }
-    Reducer(SelectionsReducer).withState(initialState).expect(action).toChangeInState({ activeTab: 'history' })
-  })
-
-  //
   // SELECTIONS_SET_SELECTED_LISTITEM
   //
   const casesSelectedListItem = [
@@ -155,19 +141,6 @@ describe('Body Reducer', () => {
     it(`case ${c.type} of SELECTIONS_SET_SELECTED_LISTITEM`, () => {
       Reducer(SelectionsReducer).withState(initialState).expect(action).toChangeInState({ [c.type]: c.selectedListItem })
     })
-  })
-
-  //
-  // SELECTIONS_SET_ACTIVE_TAB
-  //
-  it('SELECTIONS_SET_ACTIVE_TAB', () => {
-    const action = {
-      type: SELECTIONS_SET_ACTIVE_TAB,
-      payload: {
-        activeTab: 'history'
-      }
-    }
-    Reducer(SelectionsReducer).withState(initialState).expect(action).toChangeInState({ activeTab: 'history' })
   })
 
   //

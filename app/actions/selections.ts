@@ -1,17 +1,9 @@
 import {
-  SELECTIONS_SET_ACTIVE_TAB,
   SELECTIONS_SET_SELECTED_LISTITEM,
   SELECTIONS_SET_WORKING_DATASET,
   SELECTIONS_CLEAR
 } from '../reducers/selections'
 import { SelectedComponent } from '../models/store'
-
-export const setActiveTab = (activeTab: string) => {
-  return {
-    type: SELECTIONS_SET_ACTIVE_TAB,
-    payload: { activeTab }
-  }
-}
 
 export const setSelectedListItem = (type: string, selectedListItem: string) => {
   return {

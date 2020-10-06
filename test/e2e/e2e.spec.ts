@@ -667,6 +667,7 @@ describe('Qri End to End tests', function spec () {
       click,
       expectTextToContain,
       waitForExist,
+      atDatasetVersion,
       sendKeys,
       setValue,
       takeScreenshot
@@ -713,9 +714,7 @@ describe('Qri End to End tests', function spec () {
     await click('#sidebar-action')
     await atDataset('', registryDatasetName)
 
-    // flaky tests, they change whether or not the username is so long that the dataset name is cut off by the dataset sidebar.
-    // await waitForExist('#dataset-reference')
-    // await expectTextToContain('#dataset-reference', registryDatasetName, artifactPath(`search_foreign_dataset_expect_dataset_name.png`))
+    await atDatasetVersion(0)
 
     // the dataset should be part of the collection
     await click('#collection')

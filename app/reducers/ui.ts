@@ -7,8 +7,7 @@ import { DetailsType } from '../models/details'
 import {
   SELECTIONS_SET_SELECTED_LISTITEM,
   SELECTIONS_SET_WORKING_DATASET,
-  SELECTIONS_CLEAR,
-  SELECTIONS_SET_ACTIVE_TAB
+  SELECTIONS_CLEAR
 } from './selections'
 import { blockMenusOnFirstLoad, blockMenusIfModalIsOpen } from './platformSpecific/ui.TARGET_PLATFORM'
 
@@ -146,7 +145,6 @@ export default (state = initialState, action: AnyAction) => {
     // if we change screens
     case SELECTIONS_SET_WORKING_DATASET:
     case SELECTIONS_CLEAR:
-    case SELECTIONS_SET_ACTIVE_TAB:
     case SELECTIONS_SET_SELECTED_LISTITEM:
       return {
         ...state,
