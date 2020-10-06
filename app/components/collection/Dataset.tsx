@@ -36,7 +36,6 @@ export const DatasetComponent: React.FunctionComponent<DatasetProps> = (props) =
   return (
     <DatasetLayout
       id='dataset-history'
-      activeTab='history'
       mainContent={
         <div className='dataset-content transition-group'>
           <Layout
