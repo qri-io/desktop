@@ -135,7 +135,7 @@ export const DatasetListComponent: React.FC<DatasetListProps> = (props) => {
   return (
     <div id='dataset-list'>
       <header>
-        <div id='dataset-list-filter'>
+        <div className='filter-search-input'>
           <div className='filter-input-container'>
             <input
               type='text'

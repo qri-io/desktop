@@ -98,7 +98,7 @@ const NetworkComponent: React.FunctionComponent<NetworkProps> = (props) => {
         {
           qriRef.username && qriRef.name && !inCollection &&
           <SidebarActionButton
-            text='Clone Dataset'
+            text='Pull Dataset'
             onClick={() => pullDatasetAndFetch(qriRef.username, qriRef.name)}
           />
         }

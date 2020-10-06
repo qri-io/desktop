@@ -39,7 +39,9 @@ import {
   faMinus,
   faSync,
   faBars,
-  faPencilAlt
+  faPencilAlt,
+  faCircle,
+  faEye
 } from '@fortawesome/free-solid-svg-icons'
 
 import {
@@ -110,14 +112,16 @@ const icons: Record<string, any> = {
   'hdd': faHdd,
   'stickyNote': faStickyNote,
   'pencil': faPencilAlt,
-  'trash': faTrashAlt
+  'trash': faTrashAlt,
+  'circle': faCircle,
+  'eye': faEye
 }
 
 const sizes: {[key: string]: FontAwesomeIconProps['size']} = {
   'xs': 'xs',
   'sm': 'sm',
-  'md': 'lg',
-  'lg': '2x'
+  'md': undefined,
+  'lg': 'lg'
 }
 
 export const iconsList = Object.keys(icons)
@@ -125,7 +129,7 @@ export const iconsList = Object.keys(icons)
 const Icon: React.FunctionComponent<IconProps> = ({
   icon = 'unknown',
   size = 'md',
-  color = 'dark',
+  color = 'default',
   className
 }) => {
   if (icon === 'commit') {

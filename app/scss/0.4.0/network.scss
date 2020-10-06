@@ -1,5 +1,10 @@
 .network_home {
   padding: 10px;
+
+  h4 {
+    padding: 8px;
+    margin-bottom: 0;
+  }
 }
 
 .page-navbar {
@@ -43,13 +48,13 @@
   }
 }
 
-.searchbox {
+.filter-search-input.searchbox {
   position: relative;
 
-  .search_icon {
+  svg {
     position: absolute;
-    top: 6px;
-    left: 7px;
+    top: 13px;
+    left: 11px;
   }
 
   input {
@@ -57,15 +62,9 @@
     background: #E8EDF2;
     border-radius: 5px;
     border: none;
-    padding: 6px 8px 6px 30px;
+    padding: 6px 8px 6px 38px;
     font-size: 16px;
-    font-weight: bold;
     color: #333;
-  }
-
-  input::placeholder {
-    font-weight: normal;
-    color: #CBCBCB;
   }
 }
 
