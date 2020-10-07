@@ -34,6 +34,10 @@ const getNextPageNumber = (direction: 'up' | 'down', value: any[], pageSize: num
   return firstPage - 1
 }
 
+const shouldFetchNextPageDown = (scrollHeight: number, scrollTop: number, offsetHeight: number, buffer: number) => {
+  return Math.abs(scrollTop + offsetHeight - scrollHeight) < buffer
+}
+
 export default class BodyTable extends React.Component<BodyTableProps> {
   constructor (props: BodyTableProps) {
     super(props)
@@ -50,7 +54,8 @@ export default class BodyTable extends React.Component<BodyTableProps> {
     // grab the scrollable container from the BodyTable layout
     const scroller: any = document.getElementById('body-table-container')
     const { scrollHeight, scrollTop, offsetHeight } = scroller
-    if (scrollHeight === parseInt(scrollTop) + parseInt(offsetHeight)) {
+
+    if (shouldFetchNextPageDown(scrollHeight, scrollTop, offsetHeight, 10)) {
       this.fetchNextPage('down')
     }
 
