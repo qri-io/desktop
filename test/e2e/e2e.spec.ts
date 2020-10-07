@@ -320,16 +320,15 @@ describe('Qri End to End tests', function spec () {
     // make sure we are on the collection page
     await atLocation('#/collection')
 
-    // click create-dataset to open up the Create Dataset modal
-    await click('#create-dataset')
+    // click new-dataset to open up the Create Dataset modal
+    await click('#new-dataset')
 
     // mock the dialog and create a temp csv file
-    // clicking the '#chooseBodyFilePath' button will connect the fakeDialog
-    // to the correct input
     const csvPath = path.join(backend.dir, filename)
     fs.writeFileSync(csvPath, earthquakeDataset)
-    await fakeDialog.mock([ { method: 'showOpenDialogSync', value: [csvPath] } ])
-    await click('#chooseBodyFilePath')
+    await waitForExist('#chooseBodyFile-input')
+    await app.client.chooseFile(`#chooseBodyFile-input`, csvPath)
+    await delay(100)
 
     // submit to create a new dataset
     await click('#submit')
@@ -526,23 +525,24 @@ describe('Qri End to End tests', function spec () {
       checkDatasetReference,
       checkStatus,
       atDatasetVersion,
-      takeScreenshot
+      delay,
+      takeScreenshot,
+      waitForExist
     } = utils
 
     await click('#collection')
     // make sure we are on the collection page
     await atLocation('#/collection')
 
-    // click create-dataset to open up the Create Dataset modal
-    await click('#create-dataset')
+    // click new-dataset to open up the Create Dataset modal
+    await click('#new-dataset')
 
     // mock the dialog and create a temp csv file
-    // clicking the '#chooseBodyFilePath' button will connect the fakeDialog
-    // to the correct input
     const csvPath = path.join(backend.dir, filename)
     fs.writeFileSync(csvPath, earthquakeDataset)
-    await fakeDialog.mock([ { method: 'showOpenDialogSync', value: [csvPath] } ])
-    await click('#chooseBodyFilePath')
+    await waitForExist('#chooseBodyFile-input')
+    await app.client.chooseFile(`#chooseBodyFile-input`, csvPath)
+    await delay(100)
 
     // submit to create a new dataset
     await click('#submit')
@@ -561,6 +561,7 @@ describe('Qri End to End tests', function spec () {
 
     // ensure the body and structure indicate that they were 'added'
     await checkStatus('body', 'added')
+    await checkStatus('meta', 'added')
     await checkStatus('structure', 'added')
   })
 
@@ -626,16 +627,15 @@ describe('Qri End to End tests', function spec () {
     await click('#collection')
     await atLocation('#/collection')
 
-    // click create-dataset to open up the Create Dataset modal
-    await click('#create-dataset')
+    // click new-dataset to open up the Create Dataset modal
+    await click('#new-dataset')
 
     // mock the dialog and create a temp csv file
-    // clicking the '#chooseBodyFilePath' button will connect the fakeDialog
+    // clicking the '#chooseBodyFile' button will connect the fakeDialog
     // to the correct input
     const jsonPath = path.join(backend.dir, jsonFilename)
     fs.writeFileSync(jsonPath, '{"a": 1, "b":2, "c": 3}')
-    await fakeDialog.mock([ { method: 'showOpenDialogSync', value: [jsonPath] } ])
-    await click('#chooseBodyFilePath')
+    await app.client.chooseFile(`#chooseBodyFile-input`, jsonPath)
     if (takeScreenshots) {
       takeScreenshot(artifactPath('json_dataset-choose_body_file.png'))
     }

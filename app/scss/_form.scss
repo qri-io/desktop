@@ -350,3 +350,28 @@
 .view-mode-button-inactive {
   background: transparent;
 }
+
+.drop-picker-container {
+  width: 100%;
+
+  .drag-drop-picker {
+    width: 100%;
+    min-height: 60px;
+    padding: 15px;
+    background: $primary-light;
+    border-radius: 4px;
+    box-shadow: inset 0 0 3px #00000030;
+    text-align: center;
+    border: 1px solid $primary-muted;
+
+    &.dragging {
+      border: 1px solid $primary;
+    }
+
+    .label {
+      font-weight: normal;
+      color: #666;
+      margin-top: 10px;
+    }
+  }
+}
