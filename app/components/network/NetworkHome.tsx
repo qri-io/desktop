@@ -1,16 +1,15 @@
 import React from 'react'
 
-import { BACKEND_URL } from '../../constants'
 import { NetworkHomeData } from '../../models/network'
-import { VersionInfo, RouteProps } from '../../models/store'
+import { RouteProps } from '../../models/store'
 import { Modal, ModalType } from '../../models/modals'
 import { connectComponentToPropsWithRouter } from '../../utils/connectComponentToProps'
 import { setModal } from '../../actions/ui'
 
 import Spinner from '../chrome/Spinner'
-import DatasetItem from '../item/DatasetItem'
 import { pathToNetworkDataset } from '../../paths'
 import SearchBox from '../chrome/SearchBox'
+import FeaturedDatasets from '../dataset/FeaturedDatasets'
 
 const initialDataState: NetworkHomeData = {
   featured: [],
@@ -41,7 +40,7 @@ export const NetworkHome: React.FunctionComponent<NetworkHomeProps> = ({ history
   }, [false])
 
   if (loading) {
-    return <Spinner />
+    return <div className='spinner-container'><Spinner /></div>
   } else if (error) {
     return <div><h3>{JSON.stringify(error)}</h3></div>
   }
@@ -52,27 +51,25 @@ export const NetworkHome: React.FunctionComponent<NetworkHomeProps> = ({ history
 
   const { featured, recent } = data
 
+  const onClick = (username: string, name: string) => {
+    history.push(pathToNetworkDataset(username, name))
+  }
+
   return (
-    <div className='network_home'>
-      <h2>Home</h2>
+    <>
       <SearchBox onEnter={handleOnEnter} id='search-box' />
-      {featured && featured.length && <div>
-        <h4>Featured Datasets</h4>
-        {featured.map((vi: VersionInfo, i) => <div key={i} className='featured-datasets-item'>
-          <DatasetItem onClick={(username: string, name: string) => {
-            history.push(pathToNetworkDataset(username, name))
-          }} data={vi} id={`featured-${i}`}/>
-        </div>)}
-      </div>}
-      {recent && recent.length && <div>
-        <h4>Recent Datasets</h4>
-        {recent.map((vi: VersionInfo, i) => <div key={i} className='recent-datasets-item'>
-          <DatasetItem onClick={(username: string, name: string) => {
-            history.push(pathToNetworkDataset(username, name))
-          }} data={vi} id={`recent-${i}`} />
-        </div>)}
-      </div>}
-    </div>
+      <div className='network_home'>
+        {featured && featured.length && <div>
+          <h4>Featured Datasets</h4>
+          <FeaturedDatasets datasets={featured} onClick={onClick}/>
+        </div>
+        }
+        {recent && recent.length && <div>
+          <h4>Recent Datasets</h4>
+          <FeaturedDatasets datasets={recent} onClick={onClick}/>
+        </div>}
+      </div>
+    </>
   )
 }
 
@@ -90,7 +87,7 @@ async function homeFeed (): Promise<NetworkHomeData> {
     method: 'GET'
   }
 
-  const r = await fetch(`${BACKEND_URL}/feeds`, options)
+  const r = await fetch(`https://registry.qri.cloud/dataset_summary/splash`, options)
   const res = await r.json()
   if (res.meta.code !== 200) {
     var err = { code: res.meta.code, message: res.meta.error }
