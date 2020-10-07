@@ -49,7 +49,7 @@ export default class TestBackendProcess {
 
       this.stdout = fs.createWriteStream(path.join(base, 'stdout.log'))
       this.stderr = fs.createWriteStream(path.join(base, 'stderr.log'))
-      console.log("backend err log:", path.join(base, 'stderr.log'))
+      // console.log("backend err log:", path.join(base, 'stderr.log'))
       console.log("launching backend process")
       this.process = childProcess.spawn(this.qriBinPath, ['connect', '--setup', '--no-prompt'], {
         // stdio: ['pipe', this.stdout, this.stderr],

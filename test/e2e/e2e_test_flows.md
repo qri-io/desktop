@@ -1,6 +1,7 @@
 # e2e test flows
 
-This is a basic rundown of what we expect for the e2e flows as the newer features come in.
+This is a basic rundown of what we expect for the e2e flows as the newer 
+features come in.
 
 Some thoughts on the e2e tests:
 They have been super helpful in catching bugs & making sure we don't regress in
@@ -16,12 +17,25 @@ method.
 
 It would also be a good idea to checkout the `/test/utils/e2eTestUtils.ts`
 functions. The comments should give you an idea of what its expected that they
-do & how to use them. Two things to note. First, each test util function has an optional `screenshotLocation` string. If this variable is not undefined AND the test errored, a screenshot of the app will be saved to the temp directory. This is mostly used to understand what is going wrong in circle ci, as you can watch the test from your personal computer, but can't watch it in circle ci. Second, the `delayTime` variable at the start of the file adjusts the amount of time we delay when the app is NOT in headless mode. This allows the app to render each view & gives us as humans a moment to understand what's going on. You can adjust this if you feel it is too fast or slow.
+do & how to use them. Two things to note. First, each test util function has an 
+optional `screenshotLocation` string. If this variable is not undefined AND the 
+test errored, a screenshot of the app will be saved to the temp directory. This 
+is mostly used to understand what is going wrong in circle ci, as you can watch 
+the test from your personal computer, but can't watch it in circle ci. Second,
+the `delayTime` variable at the start of the file adjusts the amount of time we
+delay when the app is NOT in headless mode. This allows the app to render each 
+view & gives us as humans a moment to understand what's going on. You can adjust
+this if you feel it is too fast or slow.
 
 At the top of the e2e.spec.ts file, there are two globals I want to point out.
-The first is `takeScreenshots`. When true, there are different moments in the app where the app will take a screenshot of the current page. This can be used to see what's going on (but also was primarily used to generate screenshots of the desktop app for use on our qri.io/docs site).
+The first is `takeScreenshots`. When true, there are different moments in the 
+app where the app will take a screenshot of the current page. This can be used 
+to see what's going on (but also was primarily used to generate screenshots of 
+the desktop app for use on our qri.io/docs site).
 
-The second is `printConsoleLogs`. When true, any console logs that occur during the main or renderer processes will get printed. console logs from the test will get printed regardless.
+The second is `printConsoleLogs`. When true, any console logs that occur during 
+the main or renderer processes will get printed. console logs from the test will
+get printed regardless.
 
 ## onboarding
 The following flows deal with launching the app for the first time, signing out and signing in
@@ -53,12 +67,12 @@ The following flows deal with launching the app for the first time, signing out 
 ## creating and modifying an FSI dataset
 ### create a new csv
 - make sure you are on the #/collection page
-- click the #create-dataset button
-- create a temp csv file & mock the save dialog when you click #chooseBodyFilePath
+- click the #new-dataset button
+- create a temp csv file & mock the save dialog when you click #chooseBodyFile
 - click #submit
 - make sure we get redirected to the new dataset page
 - ensure we are at the correct version (the latest)
-- ensure the body and structure were 'added'
+- ensure the body, meta and structure were 'added'
 
 ### navigate to the collection and back to the dataset
 - click the #collection button

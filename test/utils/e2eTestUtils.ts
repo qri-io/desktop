@@ -2,7 +2,7 @@ import url from 'url'
 import fs from 'fs'
 
 const headless = false
-const delayTime = 300
+const delayTime = 100
 
 export interface E2ETestUtils {
   atLocation: (expected: string, screenshotLocation?: string) => Promise<void>

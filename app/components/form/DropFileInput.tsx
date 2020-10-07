@@ -4,6 +4,7 @@ import classNames from 'classnames'
 import InputLabel from './InputLabel'
 
 export interface DropFileInputProps {
+  id: string
   label: string
   placeholder: string
   value: File
@@ -14,7 +15,7 @@ export interface DropFileInputProps {
 }
 
 const DropFileInput: React.FunctionComponent<DropFileInputProps> = (props) => {
-  const { label, tooltipFor, labelTooltip, placeholder = '', value, onChange } = props
+  const { id, label, tooltipFor, labelTooltip, placeholder = '', value, onChange } = props
   const fileInput = useRef(null)
   const [dragging, setDragging] = useState(false)
 
@@ -38,7 +39,7 @@ const DropFileInput: React.FunctionComponent<DropFileInputProps> = (props) => {
         tooltipFor={tooltipFor}
       />
       <div
-        id='drag-drop'
+        id={id}
         className={classNames('drag-drop-picker', { dragging })}
         onClick={(e: React.SyntheticEvent) => { fileInput.current.click() }}
         onDragEnter={setDragStateHandler(true)}
@@ -50,6 +51,7 @@ const DropFileInput: React.FunctionComponent<DropFileInputProps> = (props) => {
         <div className="inner">
           {dragging && <div className='drop-zone'></div>}
           <input
+            id={`${id}-input`}
             type='file'
             ref={fileInput}
             onChange={(e: React.FormEvent) => { onChange(e.target.files[0]) }}

@@ -11,7 +11,7 @@ import { selectModal, selectSessionUsername } from '../../selections'
 import { ApiAction } from '../../store/api'
 
 import Buttons from './Buttons'
-import DropZonePicker from '../form/DropFileInput'
+import DropFileInput from '../form/DropFileInput'
 import Error from './Error'
 import TextInput from '../form/TextInput'
 import Modal from './Modal'
@@ -132,8 +132,9 @@ export const NewDatasetComponent: React.FC<NewDatasetProps> = (props) => {
             )
           }
           <div className='file-picker flex-space-between'>
-            <DropZonePicker
-              label='Data File'
+            <DropFileInput
+              id='chooseBodyFile'
+              label='Body File'
               labelTooltip='File to build your dataset on'
               tooltipFor='modal-tooltip'
               placeholder='drop a csv or json file'

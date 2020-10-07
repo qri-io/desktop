@@ -754,7 +754,6 @@ export function newDataset (ds: Dataset): ApiActionThunk {
         endpoint: 'save',
         method: 'POST',
         query: {
-          // bodypath: filePath,
           new: true
         },
         body: ds
