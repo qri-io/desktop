@@ -29,7 +29,7 @@ import { selectWorkingDatasetBodyPageInfo,
   selectMutationsDataset
 } from '../selections'
 import { CALL_API, ApiAction, ApiActionThunk, chainSuccess } from '../store/api'
-import { openToast, setImportFileDetails } from './ui'
+import { openToast } from './ui'
 import { actionWithPagination } from '../utils/pagination'
 import { getActionType } from '../utils/actionType'
 import { datasetConvertStringToScriptBytes } from '../utils/datasetConvertStringToScriptBytes'
@@ -745,7 +745,7 @@ export function renameDataset (username: string, name: string, newName: string):
   }
 }
 
-export function importFile (filePath: string, fileName: string, fileSize: number): ApiActionThunk {
+export function newDataset (ds: Dataset): ApiActionThunk {
   return async (dispatch, getState) => {
     const whenOk = chainSuccess(dispatch, getState)
     const action = {
@@ -754,24 +754,26 @@ export function importFile (filePath: string, fileName: string, fileSize: number
         endpoint: 'save',
         method: 'POST',
         query: {
-          bodypath: filePath,
+          // bodypath: filePath,
           new: true
         },
-        body: {}
+        body: ds
       }
     }
-    let response: Action
+
+    let response = await dispatch(action)
+    // TODO (b5) - 'API_IMPORT_FAILURE' should be a constant
+    if (response.type === 'API_IMPORT_FAILURE') {
+      dispatch(openToast('error', 'import', response.payload.err.message))
+      throw response.payload.err.message
+    }
+
     try {
-      dispatch(setImportFileDetails(fileName, fileSize))
-      response = await dispatch(action)
       const { peername, name, path } = response.payload.data
       response = await whenOk(fetchMyDatasets(-1))(response)
       dispatch(push(pathToDataset(peername, name, path)))
-      dispatch(setImportFileDetails('', 0))
-    } catch (action) {
-      dispatch(setImportFileDetails('', 0))
-      dispatch(openToast('error', 'import', action.payload.err.message))
-      throw action
+    } catch (err) {
+      throw err.payload.err.message
     }
 
     return response

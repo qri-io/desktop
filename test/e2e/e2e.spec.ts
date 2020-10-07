@@ -320,8 +320,8 @@ describe('Qri End to End tests', function spec () {
     // make sure we are on the collection page
     await atLocation('#/collection')
 
-    // click create-dataset to open up the Create Dataset modal
-    await click('#create-dataset')
+    // click new-dataset to open up the Create Dataset modal
+    await click('#new-dataset')
 
     // mock the dialog and create a temp csv file
     // clicking the '#chooseBodyFilePath' button will connect the fakeDialog
@@ -533,8 +533,8 @@ describe('Qri End to End tests', function spec () {
     // make sure we are on the collection page
     await atLocation('#/collection')
 
-    // click create-dataset to open up the Create Dataset modal
-    await click('#create-dataset')
+    // click new-dataset to open up the Create Dataset modal
+    await click('#new-dataset')
 
     // mock the dialog and create a temp csv file
     // clicking the '#chooseBodyFilePath' button will connect the fakeDialog
@@ -626,8 +626,8 @@ describe('Qri End to End tests', function spec () {
     await click('#collection')
     await atLocation('#/collection')
 
-    // click create-dataset to open up the Create Dataset modal
-    await click('#create-dataset')
+    // click new-dataset to open up the Create Dataset modal
+    await click('#new-dataset')
 
     // mock the dialog and create a temp csv file
     // clicking the '#chooseBodyFilePath' button will connect the fakeDialog

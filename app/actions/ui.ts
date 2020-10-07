@@ -9,7 +9,6 @@ import {
   UI_SET_DATASET_DIR_PATH,
   UI_SET_EXPORT_PATH,
   UI_SET_DETAILS_BAR,
-  UI_SET_IMPORT_FILE_DETAILS,
   UI_SET_BOOTUP_COMPONENT
 } from '../reducers/ui'
 
@@ -90,15 +89,6 @@ export const setDetailsBar = (details: Details) => {
   return {
     type: UI_SET_DETAILS_BAR,
     details
-  }
-}
-
-// filesize in bytes, provided by drag n drop UI
-export const setImportFileDetails = (fileName: string, fileSize: number) => {
-  return {
-    type: UI_SET_IMPORT_FILE_DETAILS,
-    fileName,
-    fileSize
   }
 }
 

@@ -1,64 +1,102 @@
-import * as React from 'react'
+import React, { useState } from 'react'
+import path from 'path'
 
+import { newDataset } from '../../actions/api'
+import { dismissModal } from '../../actions/ui'
+import { Dataset } from '../../models/dataset'
 import { NewDatasetModal } from '../../models/modals'
 import { connectComponentToProps } from '../../utils/connectComponentToProps'
-import { dismissModal } from '../../actions/ui'
+import { nameFromTitle, titleFromBodyFile } from '../../utils/naming'
 import { selectModal, selectSessionUsername } from '../../selections'
-import nameFromTitle from '../../utils/nameFromTitle'
+import { ApiAction } from '../../store/api'
 
-import Modal from './Modal'
-import TextInput from '../form/TextInput'
-import Error from './Error'
 import Buttons from './Buttons'
+import DropZonePicker from '../form/DropFileInput'
+import Error from './Error'
+import TextInput from '../form/TextInput'
+import Modal from './Modal'
 
 interface NewDatasetProps {
-  onDismissed: () => void
   modal: NewDatasetModal
   username: string
+  onDismissed: () => void
+  newDataset: (ds: Dataset) => Promise<ApiAction>
 }
 
 // 136 because dataset names cannot be longer than 144 characters,
 // and we might have to prepend `dataset_` if the title begins with a number
 const TITLE_CHARACTER_LIMIT = 136
+const nullFile = new File([], '')
 
-export const NewDatasetComponent: React.FunctionComponent<NewDatasetProps> = (props) => {
-  const {
-    onDismissed,
-    username
-  } = props
+function validState (title: string, bodyFile: File): boolean {
+  return (title.trim() !== '') && (bodyFile.size > 0)
+}
 
-  const [formValues, setFormValues] = React.useState({
-    title: '',
-    datasetName: ''
+export const NewDatasetComponent: React.FC<NewDatasetProps> = (props) => {
+  const { username, onDismissed, newDataset } = props
+  const { bodyFile = nullFile } = props.modal
+
+  const [formValues, setFormValues] = useState({
+    title: titleFromBodyFile(bodyFile),
+    datasetName: nameFromTitle(titleFromBodyFile(bodyFile)),
+    bodyFile: bodyFile,
+    valid: validState(titleFromBodyFile(bodyFile), bodyFile)
   })
-  const [buttonDisabled, setButtonDisabled] = React.useState(true)
-  const [error, setError] = React.useState('')
-  const [loading, setLoading] = React.useState(false)
-
-  React.useEffect(() => {
-    setButtonDisabled(formValues.title === '')
-  }, [formValues.title])
+  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
 
   const handleTitleChange = (e: React.ChangeEvent) => {
     const { value } = e.target
-    let datasetName
-    if (!value.length) {
-      datasetName = ''
-    } else {
-      datasetName = nameFromTitle(value)
+    setFormValues({
+      title: value,
+      datasetName: nameFromTitle(value),
+      bodyFile: formValues.bodyFile,
+      valid: validState(value, formValues.bodyFile)
+    })
+  }
+
+  const handleBodyFileChange = (f: File) => {
+    let { title, datasetName, bodyFile } = formValues
+    const ext = path.extname(f.name)
+    if (!(ext === '.csv' || ext === '.json')) {
+      setError(`unsupported file format: ${ext} only json and csv supported`)
+      return
     }
-    setFormValues({ title: value, datasetName })
+
+    setError('')
+    if (title === '' || title === titleFromBodyFile(bodyFile)) {
+      title = titleFromBodyFile(f)
+    }
+    if (datasetName === '' || datasetName === nameFromTitle(titleFromBodyFile(bodyFile))) {
+      // if dataset name is empty, set title from filename without extension
+      datasetName = nameFromTitle(titleFromBodyFile(f))
+    }
+
+    setFormValues({
+      title,
+      datasetName,
+      bodyFile: f,
+      valid: validState(title, f)
+    })
   }
 
   const handleSubmit = () => {
-    const dataset = {
-      meta: { title: formValues.title.trim() }
-    }
-    console.log(dataset)
-    // TODO(chriswhong): make this create a new dataset
     setLoading(true)
     error && setError('')
-    onDismissed()
+
+    newDataset({
+      peername: username,
+      name: formValues.datasetName,
+      meta: {
+        title: formValues.title.trim()
+      },
+      bodyPath: formValues.bodyFile.path
+    })
+      .then(onDismissed)
+      .catch((reason) => {
+        setError(reason)
+        setLoading(false)
+      })
   }
 
   return (
@@ -84,17 +122,25 @@ export const NewDatasetComponent: React.FunctionComponent<NewDatasetProps> = (pr
             />
           </div>
           {
-            formValues.title !== '' && (
+            formValues.datasetName !== '' && (
               <div className='dialog-text-small'>
                 <p>
                   Your new dataset will be known on Qri as<br/>
                   <code>{username}/{formValues.datasetName}</code>
                 </p>
-                <p>Don&apos;t worry, you can change this later</p>
               </div>
             )
           }
-
+          <div className='file-picker flex-space-between'>
+            <DropZonePicker
+              label='Data File'
+              labelTooltip='File to build your dataset on'
+              tooltipFor='modal-tooltip'
+              placeholder='drop a csv or json file'
+              value={formValues.bodyFile}
+              onChange={handleBodyFileChange}
+            />
+          </div>
         </div>
       </div>
       <Error id={'new-dataset-modal-error'} text={error} />
@@ -103,7 +149,7 @@ export const NewDatasetComponent: React.FunctionComponent<NewDatasetProps> = (pr
         onCancel={onDismissed}
         submitText='Create'
         onSubmit={handleSubmit}
-        disabled={buttonDisabled}
+        disabled={!formValues.valid}
         loading={loading}
       />
     </Modal>
@@ -120,6 +166,7 @@ export default connectComponentToProps(
     }
   },
   {
-    onDismissed: dismissModal
+    onDismissed: dismissModal,
+    newDataset
   }
 )

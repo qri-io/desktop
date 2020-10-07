@@ -1,14 +1,16 @@
 import changeCase from 'change-case'
+import path from 'path'
 
-export default function nameFromTitle (title: string) {
-  // cast name to meet our specification
+// cast name to meet our specification
+export function nameFromTitle (title: string): string {
+  if (title.trim() === '') {
+    return ''
+  }
 
   // make lowercase
   let coercedName = changeCase.lowerCase(title)
-
   // make snakecase
   coercedName = changeCase.snakeCase(coercedName)
-
   // remove invalid characters
   coercedName = coercedName.replace(/^[^a-z0-9_]+$/g, '')
 
@@ -18,4 +20,8 @@ export default function nameFromTitle (title: string) {
     coercedName = `dataset_${coercedName}`
   }
   return coercedName
+}
+
+export function titleFromBodyFile (f: File): string {
+  return path.parse(f.name).name
 }

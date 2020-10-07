@@ -1,7 +1,17 @@
-import nameFromTitle from "../../../app/utils/nameFromTitle"
+import { nameFromTitle, titleFromBodyFile } from "../../../app/utils/naming"
 
 describe('nameFromTitle', () => {
   const cases = [
+    {
+      describe: 'handles the empty string',
+      title: '',
+      expectedName: ''
+    },
+    {
+      describe: 'handles space-only strings',
+      title: ' ',
+      expectedName: ''
+    },
     {
       describe: 'lowercases and replaces spaces with underscores',
       title: 'The Quick Brown Fox Jumps Over the Lazy Dog',
@@ -27,6 +37,28 @@ describe('nameFromTitle', () => {
   cases.forEach(({ describe, title, expectedName }) => {
     it(`case '${describe}'`, () => {
       const got = nameFromTitle(title)
+      expect(got).toStrictEqual(expectedName)
+    })
+  })
+})
+
+describe('titleFromBodyFile', () => {
+  const cases = [
+    {
+      describe: 'empty string',
+      file: new File([], ''),
+      expectedName: ''
+    },
+    {
+      describe: 'basic',
+      file: new File([], 'oh hey there.csv'),
+      expectedName: 'oh hey there'
+    }
+  ]
+
+  cases.forEach(({ describe, file, expectedName }) => {
+    it(`case '${describe}'`, () => {
+      const got = titleFromBodyFile(file)
       expect(got).toStrictEqual(expectedName)
     })
   })

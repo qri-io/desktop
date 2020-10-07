@@ -23,7 +23,6 @@ export const UI_HIDE_COMMIT_NUDGE = 'UI_HIDE_COMMIT_NUDGE'
 export const UI_SET_DATASET_DIR_PATH = 'UI_SET_DATASET_DIR_PATH'
 export const UI_SET_EXPORT_PATH = 'UI_SET_EXPORT_PATH'
 export const UI_SET_DETAILS_BAR = 'UI_SET_DETAILS_BAR'
-export const UI_SET_IMPORT_FILE_DETAILS = 'UI_SET_IMPORT_FILE_DETAILS'
 export const UI_SET_BOOTUP_COMPONENT = 'UI_SET_BOOTUP_COMPONENT'
 
 export const UNAUTHORIZED = 'UNAUTHORIZED'
@@ -198,14 +197,6 @@ export default (state = initialState, action: AnyAction) => {
           message: `${action.type === ADD_SUCC ? 'Added' : 'Created new'} dataset ${peername}/${name}`,
           visible: true
         }
-      }
-
-    case UI_SET_IMPORT_FILE_DETAILS:
-      const { fileSize, fileName } = action
-      return {
-        ...state,
-        importFileSize: fileSize,
-        importFileName: fileName
       }
 
     case UI_SET_BOOTUP_COMPONENT:

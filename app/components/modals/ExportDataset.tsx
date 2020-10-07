@@ -1,17 +1,16 @@
 import React, { useState } from 'react'
 
+import { dismissModal } from '../../actions/ui'
 import { Dataset } from '../../../app/models/dataset'
 import { ExportDatasetModal } from '../../../app/models/modals'
-import { ApiAction } from '../../store/api'
-import { connectComponentToProps } from '../../utils/connectComponentToProps'
-import { dismissModal } from '../../actions/ui'
+import { QriRef } from '../../models/qriRef'
 import {
   selectModal,
-  selectDatasetUsername,
-  selectDatasetName,
-  selectDatasetPath,
+  selectDatasetRef,
   selectDataset
 } from '../../selections'
+import { ApiAction } from '../../store/api'
+import { connectComponentToProps } from '../../utils/connectComponentToProps'
 
 import CheckboxInput from '../form/CheckboxInput'
 import TristateCheckboxInput from '../form/TristateCheckboxInput'
@@ -23,16 +22,14 @@ import CommitDetails from '../CommitDetails'
 
 interface ExportDatasetProps {
   modal: ExportDatasetModal
-  username: string
-  name: string
-  path: string
+  qriRef: QriRef
   dataset: Dataset
   onDismissed: () => void
   onSubmit: () => Promise<ApiAction>
 }
 
 export const ExportDatasetComponent: React.FC<ExportDatasetProps> = (props: ExportDatasetProps) => {
-  const { username, name, path, dataset, onDismissed, onSubmit } = props
+  const { dataset, onDismissed, onSubmit, qriRef } = props
   const { commit, structure, meta, readme } = dataset
   const enabledOtherComponents = ['structure'] // structure is always enabled
   if (meta) enabledOtherComponents.push('meta')
@@ -98,10 +95,10 @@ export const ExportDatasetComponent: React.FC<ExportDatasetProps> = (props: Expo
         <div className='content'>
           <div className='export-dataset-info'>
             <div className='dialog-text-small'>
-              <code style={{ marginBottom: '15px' }}>{username}/{name}</code><br/>
+              <code style={{ marginBottom: '15px' }}>{qriRef.username}/{qriRef.name}</code><br/>
               {
                 structure && commit && (
-                  <CommitDetails commit={commit} structure={structure} path={path} />
+                  <CommitDetails commit={commit} structure={structure} path={qriRef.path} />
                 )
               }
             </div>
@@ -189,9 +186,7 @@ export default connectComponentToProps(
     return {
       ...ownProps,
       modal: selectModal(state),
-      username: selectDatasetUsername(state),
-      name: selectDatasetName(state),
-      path: selectDatasetPath(state),
+      qriRef: selectDatasetRef(state),
       dataset: selectDataset(state)
     }
   },

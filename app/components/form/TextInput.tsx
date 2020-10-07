@@ -1,4 +1,4 @@
-import * as React from 'react'
+import React from 'react'
 
 import InputLabel from './InputLabel'
 
@@ -54,30 +54,28 @@ const TextInput: React.FunctionComponent<TextInputProps> = (props) => {
   }
 
   return (
-    <>
-      <div className='text-input-container'>
-        <InputLabel
-          label={label}
-          tooltip={labelTooltip}
-          tooltipFor={tooltipFor}
-        />
-        <input
-          id={name}
-          name={name}
-          type={type}
-          maxLength={maxLength}
-          className='input'
-          defaultValue={stateValue || ''}
-          placeholder={placeHolder}
-          onChange={handleOnChange}
-          onBlur={onBlur}
-          onKeyDown={onKeyDown}
-        />
-        <div style={{ height: 20 }}>
-          <h6 style={{ textAlign: 'left', margin: 3 }} className={feedbackColor} >{feedback || ''}</h6>
-        </div>
+    <div className='text-input-container'>
+      <InputLabel
+        label={label}
+        tooltip={labelTooltip}
+        tooltipFor={tooltipFor}
+      />
+      <input
+        id={name}
+        name={name}
+        type={type}
+        maxLength={maxLength}
+        className='input'
+        defaultValue={stateValue || ''}
+        placeholder={placeHolder}
+        onChange={handleOnChange}
+        onBlur={onBlur}
+        onKeyDown={onKeyDown}
+      />
+      <div style={{ height: 20 }}>
+        <h6 style={{ textAlign: 'left', margin: 3 }} className={feedbackColor} >{feedback || ''}</h6>
       </div>
-    </>
+    </div>
   )
 }
 
