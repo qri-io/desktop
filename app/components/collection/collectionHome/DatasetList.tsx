@@ -177,7 +177,7 @@ export const DatasetListComponent: React.FC<DatasetListProps> = (props) => {
             {selected.length > 0 && <>
               <span>{selected.length} selected</span>
               <button disabled={bulkActionExecuting} onClick={handleBulkPullSelectedDatasets}>Pull latest</button>
-              <button disabled={bulkActionExecuting} onClick={openRemoveModal}>Remove</button>
+              <button id="button-bulk-remove" disabled={bulkActionExecuting} onClick={openRemoveModal}>Remove</button>
             </>}
           </div>
         </div>

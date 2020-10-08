@@ -188,3 +188,20 @@ This section deals with the network page
 - it should show as unpublished
 - navigate to the network page
 - it should not show up
+
+### bulk remove actions
+#### remove multiple datasets
+- create two new datasets for user
+- click checkbox for each dataset
+- click 'remove' bulk action button
+- remove modal should appear
+- click 'remove' button on modal
+- check that both datasets have been removed
+
+#### remove one dataset
+- create one new dataset for user
+- click checkbox for the dataset
+- click 'remove' bulk action button
+- remove modal should appear
+- click 'remove' button on modal
+- check that dataset has been removed
