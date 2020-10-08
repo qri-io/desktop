@@ -516,7 +516,11 @@ app.on('ready', () =>
           exportUrl = `${BACKEND_URL}/get/${refString}/body.csv`
         }
         const win = BrowserWindow.getFocusedWindow()
-        await download(win, exportUrl, { filename, directory })
+        await download(win, exportUrl, {
+          filename,
+          directory,
+          openFolderWhenDone: true
+        })
       })
 
       ipcMain.on('block-menus', (e, blockMenus) => {

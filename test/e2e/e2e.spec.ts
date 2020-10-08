@@ -478,6 +478,18 @@ describe('Qri End to End tests', function spec () {
     await sendKeys('#dataset-name-input', "Enter")
   })
 
+  it('export CSV version', async () => {
+    const { click, delay } = utils
+
+    const savePath = path.join(backend.dir, 'body.csv')
+    await fakeDialog.mock([ { method: 'showSaveDialogSync', value: savePath } ])
+
+    await click('#export-dataset')
+    await click('#submit')
+    await delay(200) // wait to ensure file has time to write
+    expect(fs.existsSync(savePath)).toEqual(true)
+  })
+
   // switch between commits
   it('switch between commits', async () => {
     const {

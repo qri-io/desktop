@@ -113,6 +113,12 @@ The following flows deal with launching the app for the first time, signing out 
 - set a good name
 - click away to submit
 
+### export a CSV version
+- click the header export dataset button: #export-button
+- mock the electron save dialog to send to `TEST_TMP_DIR/body.csv`
+- click #submit
+- check that a file at `TEST_TMP_DIR/body.csv` exists
+
 ### switch between commits
 - ensure you are at the correct dataset
 - click on each commit #HEAD-3 #HEAD-2 #HEAD-1 #HEAD-0

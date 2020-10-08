@@ -2,14 +2,8 @@ import React, { useState } from 'react'
 import classNames from 'classnames'
 
 import { dismissModal } from '../../actions/ui'
-import { Dataset } from '../../../app/models/dataset'
 import { ExportDatasetModal } from '../../../app/models/modals'
-import { QriRef } from '../../models/qriRef'
-import {
-  selectModal,
-  selectDatasetRef,
-  selectDataset
-} from '../../selections'
+import { selectModal } from '../../selections'
 import { connectComponentToProps } from '../../utils/connectComponentToProps'
 import exportDatasetVersion from '../../actions/platformSpecific/export.TARGET_PLATFORM'
 
@@ -21,13 +15,11 @@ import RadioInput from '../form/RadioInput'
 
 interface ExportDatasetProps {
   modal: ExportDatasetModal
-  qriRef: QriRef
-  dataset: Dataset
   onDismissed: () => void
 }
 
 export const ExportDatasetComponent: React.FC<ExportDatasetProps> = (props: ExportDatasetProps) => {
-  const { onDismissed, qriRef, dataset: { structure, commit } } = props
+  const { onDismissed } = props
   const { version } = props.modal
 
   const [dismissable, setDismissable] = useState(true)
@@ -75,10 +67,8 @@ export const ExportDatasetComponent: React.FC<ExportDatasetProps> = (props: Expo
         <div className='content'>
           <div className='export-dataset-info'>
             <div className='dialog-text-small'>
-              <code style={{ marginBottom: '15px' }}>{qriRef.username}/{qriRef.name}</code><br/>
-              {structure && commit && (
-                <CommitDetails commit={commit} structure={structure} path={qriRef.path} />
-              )}
+              <code style={{ marginBottom: '15px' }}>{version.username}/{version.name}</code><br/>
+              <CommitDetails {...version} />
             </div>
           </div>
           <div className='mode-picker'>
@@ -117,9 +107,7 @@ export default connectComponentToProps(
   (state: any, ownProps: ExportDatasetProps) => {
     return {
       ...ownProps,
-      modal: selectModal(state),
-      qriRef: selectDatasetRef(state),
-      dataset: selectDataset(state)
+      modal: selectModal(state)
     }
   },
   {
