@@ -18,17 +18,29 @@ const TableRowHamburger: React.FC<TableRowHamburgerProps> = ({ data, setModal, r
   const { username, name, fsiPath } = data
   const onRemoveHandler = async (keepFiles: boolean) => removeDatasetAndFetch(username, name, !!fsiPath, keepFiles)
 
-  const actions = [{
-    icon: 'trash',
-    text: 'Remove',
-    onClick: () => {
-      setModal({
-        type: ModalType.RemoveDataset,
-        datasets: [{ username, name, fsiPath }],
-        onSubmit: onRemoveHandler
-      })
+  const actions = [
+    {
+      icon: 'download',
+      text: 'Export',
+      onClick: () => {
+        setModal({
+          type: ModalType.ExportDataset,
+          version: data
+        })
+      }
+    },
+    {
+      icon: 'trash',
+      text: 'Remove',
+      onClick: () => {
+        setModal({
+          type: ModalType.RemoveDataset,
+          datasets: [{ username, name, fsiPath }],
+          onSubmit: onRemoveHandler
+        })
+      }
     }
-  }]
+  ]
 
   return (
     <Hamburger id={`${data.username}/${data.name}`} data={actions} />

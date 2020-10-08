@@ -1,11 +1,8 @@
-import * as React from 'react'
+import React, { useState } from 'react'
 
 import { RemoveDatasetModal } from '../../../app/models/modals'
-
 import { connectComponentToProps } from '../../utils/connectComponentToProps'
-
 import { dismissModal } from '../../actions/ui'
-
 import { selectModal, selectSessionUsername } from '../../selections'
 
 import CheckboxInput from '../form/CheckboxInput'
@@ -19,15 +16,13 @@ interface RemoveDatasetProps {
   onDismissed: () => void
 }
 
-export const RemoveDatasetComponent: React.FunctionComponent<RemoveDatasetProps> = (props: RemoveDatasetProps) => {
+export const RemoveDatasetComponent: React.FC<RemoveDatasetProps> = (props: RemoveDatasetProps) => {
   const { modal: { datasets, onSubmit }, sessionUsername, onDismissed } = props
 
-  const [keepFiles, setKeepFiles] = React.useState(true)
-
-  const [dismissable, setDismissable] = React.useState(true)
-
-  const [error, setError] = React.useState('')
-  const [loading, setLoading] = React.useState(false)
+  const [keepFiles, setKeepFiles] = useState(true)
+  const [dismissable, setDismissable] = useState(true)
+  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
 
   const isLinked = !!datasets.find(dataset => dataset.fsiPath)
   const isSingleDataset = datasets.length === 1

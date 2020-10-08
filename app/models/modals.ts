@@ -1,5 +1,7 @@
 import { AnyAction } from 'redux'
 
+import { VersionInfo } from './store'
+
 export enum ModalType {
   NoModal,
   NewDataset,
@@ -23,6 +25,7 @@ export interface NewDatasetModal {
 
 export interface ExportDatasetModal {
   type: ModalType.ExportDataset
+  version: VersionInfo
 }
 
 export interface HideModal {
