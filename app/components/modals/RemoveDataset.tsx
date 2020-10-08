@@ -42,16 +42,8 @@ export const RemoveDatasetComponent: React.FunctionComponent<RemoveDatasetProps>
     error && setError('')
     if (!onSubmit) return
 
-    let submitFn
-    if (isSingleDataset) {
-      const dataset = datasets[0]
-      submitFn = () => onSubmit(dataset.username, dataset.name, isLinked, keepFiles)
-    } else {
-      submitFn = () => onSubmit(datasets.map(dataset => ({ username: dataset.username, name: dataset.name, isLinked: dataset.fsiPath, keepFiles })))
-    }
-
     try {
-      await submitFn()
+      await onSubmit(keepFiles)
       setLoading(false)
       setDismissable(true)
       onDismissed()

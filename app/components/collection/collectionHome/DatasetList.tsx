@@ -105,28 +105,38 @@ export const DatasetListComponent: React.FC<DatasetListProps> = (props) => {
     ? `You have ${filteredDatasets.length} local dataset${filteredDatasets.length !== 1 ? 's' : ''}`
     : `Showing ${filteredDatasets.length} local dataset${filteredDatasets.length !== 1 ? 's' : ''}`
 
-  const handleBulkActionForSelectedDatasets = (actionType: DatasetActionType, actionGerund: string, actionPastTense: string, action: DatasetAction, refs: QriRef[] | VersionInfo[]) => {
-    return () => {
-      setBulkActionExecuting(true)
-      openToast('info', actionType, `${actionGerund} ${refs.length} ${refs.length === 1 ? 'dataset' : 'datasets'}`)
-      action(refs)
-        .then(() => {
-          setBulkActionExecuting(false)
-          openToast('success', `${actionType}-success`, `${actionPastTense} ${refs.length} ${refs.length === 1 ? 'dataset' : 'datasets'}`)
-        })
-        .catch((reason) => {
-          setBulkActionExecuting(false)
-          openToast('error', `${actionType}-error`, `${actionGerund} datasets: ${reason}`)
-        })
-    }
+  const handleBulkPullSelectedDatasets = async () => {
+    const refs = selected.map(qriRefFromVersionInfo)
+    return handleBulkActionForDatasets('pull', 'pulling', 'pulled', pullDatasets, refs)
   }
 
-  const handleRemoveSelectedDatasets = () => {
+  const handleBulkRemoveSelectedDatasets = async (keepFiles: boolean) => {
+    const refs = selected.map(ds => ({ username: ds.username, name: ds.name, isLinked: !!ds.fsiPath, keepFiles }))
+    return handleBulkActionForDatasets('remove', 'removing', 'removed', removeDatasetsAndFetch, refs)
+  }
+
+  const handleBulkActionForDatasets = async (actionType: DatasetActionType, actionGerund: string, actionPastTense: string, action: DatasetAction, refs: Array<{username: string, name: string, isLinked?: boolean, keepFiles?: boolean}>) => {
+    setBulkActionExecuting(true)
+    openToast('info', actionType, `${actionGerund} ${refs.length} ${refs.length === 1 ? 'dataset' : 'datasets'}`)
+    let result: AnyAction
+    try {
+      result = await action(refs)
+      setBulkActionExecuting(false)
+      openToast('success', `${actionType}-success`, `${actionPastTense} ${refs.length} ${refs.length === 1 ? 'dataset' : 'datasets'}`)
+    } catch (reason) {
+      setBulkActionExecuting(false)
+      openToast('error', `${actionType}-error`, `${actionGerund} datasets: ${reason}`)
+      throw (reason)
+    }
+    return result
+  }
+
+  const openRemoveModal = () => {
     setModal(
       {
         type: ModalType.RemoveDataset,
         datasets: selected.map(ds => ({ username: ds.username, name: ds.name, fsiPath: ds.fsiPath })),
-        onSubmit: (refs: VersionInfo[]) => handleBulkActionForSelectedDatasets('remove', 'removing', 'removed', removeDatasetsAndFetch, refs)()
+        onSubmit: handleBulkRemoveSelectedDatasets
       }
     )
   }
@@ -166,8 +176,8 @@ export const DatasetListComponent: React.FC<DatasetListProps> = (props) => {
             {selected.length === 0 && countMessage}
             {selected.length > 0 && <>
               <span>{selected.length} selected</span>
-              <button disabled={bulkActionExecuting} onClick={handleBulkActionForSelectedDatasets('pull', 'pulling', 'pulled', pullDatasets, selected.map(qriRefFromVersionInfo))}>Pull latest</button>
-              <button disabled={bulkActionExecuting} onClick={handleRemoveSelectedDatasets}>Remove</button>
+              <button disabled={bulkActionExecuting} onClick={handleBulkPullSelectedDatasets}>Pull latest</button>
+              <button disabled={bulkActionExecuting} onClick={openRemoveModal}>Remove</button>
             </>}
           </div>
         </div>

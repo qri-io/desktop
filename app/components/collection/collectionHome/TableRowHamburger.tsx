@@ -16,6 +16,8 @@ interface TableRowHamburgerProps {
 
 const TableRowHamburger: React.FC<TableRowHamburgerProps> = ({ data, setModal, removeDatasetAndFetch }) => {
   const { username, name, fsiPath } = data
+  const onRemoveHandler = async (keepFiles: boolean) => removeDatasetAndFetch(username, name, !!fsiPath, keepFiles)
+
   const actions = [{
     icon: 'trash',
     text: 'Remove',
@@ -23,7 +25,7 @@ const TableRowHamburger: React.FC<TableRowHamburgerProps> = ({ data, setModal, r
       setModal({
         type: ModalType.RemoveDataset,
         datasets: [{ username, name, fsiPath }],
-        onSubmit: removeDatasetAndFetch
+        onSubmit: onRemoveHandler
       })
     }
   }]

@@ -1,3 +1,5 @@
+import { AnyAction } from 'redux'
+
 export enum ModalType {
   NoModal,
   NewDataset,
@@ -43,7 +45,7 @@ export interface PublishDatasetModal {
 export interface RemoveDatasetModal {
   type: ModalType.RemoveDataset
   datasets: Array<{ username: string, name: string, fsiPath?: string }>
-  onSubmit: (...args: any) => any
+  onSubmit: (keepFiles: boolean) => Promise<AnyAction>
 }
 
 export interface SearchModal {
