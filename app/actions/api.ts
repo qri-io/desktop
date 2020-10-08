@@ -674,6 +674,25 @@ export function removeDatasetAndFetch (username: string, name: string, isLinked:
   }
 }
 
+// remove the specified datasets, then refresh the dataset list
+export function removeDatasetsAndFetch (refs: Array<{username: string, name: string, isLinked: boolean, keepFiles: boolean}>): ApiActionThunk {
+  return async (dispatch, getState) => {
+    try {
+      await Promise.all(
+        refs.map(async (ref) => removeDataset(ref.username, ref.name, ref.isLinked, ref.keepFiles)(dispatch, getState))
+      )
+      // reset pagination
+      return fetchMyDatasets(-1)(dispatch, getState)
+    } catch (action) {
+      if (!action.payload.err.message.contains('directory not empty')) {
+        throw action
+      }
+      dispatch(openToast('error', 'removeDatasetsAndFetch', action.payload.err.message))
+      return Promise.reject(action.payload.err.message)
+    }
+  }
+}
+
 export function fsiWrite (username: string, name: string, dataset: any): ApiActionThunk {
   return async (dispatch) => {
     const action = {

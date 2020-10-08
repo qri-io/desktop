@@ -42,9 +42,8 @@ export interface PublishDatasetModal {
 
 export interface RemoveDatasetModal {
   type: ModalType.RemoveDataset
-  username: string
-  name: string
-  fsiPath?: string
+  datasets: Array<{ username: string, name: string, fsiPath?: string }>
+  onSubmit: (...args: any) => any
 }
 
 export interface SearchModal {

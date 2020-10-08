@@ -1,17 +1,20 @@
 import React from 'react'
+import { AnyAction } from 'redux'
 import Hamburger from '../../chrome/Hamburger'
 
 import { VersionInfo } from '../../../models/store'
 import { Modal, ModalType } from '../../../models/modals'
+import { removeDatasetAndFetch } from '../../../actions/api'
 import { setModal } from '../../../actions/ui'
 import { connectComponentToProps } from '../../../utils/connectComponentToProps'
 
 interface TableRowHamburgerProps {
   data: VersionInfo
   setModal: (modal: Modal) => void
+  removeDatasetAndFetch: (...args: Parameters<typeof removeDatasetAndFetch>) => Promise<AnyAction>
 }
 
-const TableRowHamburger: React.FC<TableRowHamburgerProps> = ({ data, setModal }) => {
+const TableRowHamburger: React.FC<TableRowHamburgerProps> = ({ data, setModal, removeDatasetAndFetch }) => {
   const { username, name, fsiPath } = data
   const actions = [{
     icon: 'trash',
@@ -19,9 +22,8 @@ const TableRowHamburger: React.FC<TableRowHamburgerProps> = ({ data, setModal })
     onClick: () => {
       setModal({
         type: ModalType.RemoveDataset,
-        username,
-        name,
-        fsiPath
+        datasets: [{ username, name, fsiPath }],
+        onSubmit: removeDatasetAndFetch
       })
     }
   }]
@@ -35,6 +37,7 @@ export default connectComponentToProps(
   TableRowHamburger,
   {},
   {
-    setModal
+    setModal,
+    removeDatasetAndFetch
   }
 )
