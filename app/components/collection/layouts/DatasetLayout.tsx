@@ -1,5 +1,5 @@
 import React from 'react'
-import { faDownload } from '@fortawesome/free-solid-svg-icons'
+import { faDownload, faTrash } from '@fortawesome/free-solid-svg-icons'
 
 import Store from '../../../models/store'
 import { connectComponentToProps } from '../../../utils/connectComponentToProps'
@@ -14,6 +14,8 @@ import DatasetSidebar from './DatasetSidebar'
 import Layout from '../../Layout'
 import LinkButton from '../headerButtons/LinkButton'
 import PublishButton from '../headerButtons/PublishButton'
+import RenameButton from '../headerButtons/RenameButton'
+import { QriRef } from '../../../models/qriRef'
 
 interface DatasetLayoutProps {
   // from connect
@@ -49,7 +51,15 @@ const DatasetLayoutComponent: React.FunctionComponent<DatasetLayoutProps> = (pro
       onClick: () => { setModal({ type: ModalType.ExportDataset, version: qriRef }) }
     },
     { type: 'component', component: <LinkButton key='link-button' /> },
-    { type: 'component', component: <PublishButton key='publish-button' /> }
+    { type: 'component', component: <PublishButton key='publish-button' /> },
+    { type: 'component', component: <RenameButton key='rename-button' /> },
+    {
+      type: 'button',
+      id: 'remove-dataset',
+      icon: faTrash,
+      label: 'Remove',
+      onClick: () => { setModal({ type: ModalType.RemoveDataset, username: qriRef.username, name: qriRef.name }) }
+    }
   ]
 
   return (
