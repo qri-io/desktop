@@ -164,10 +164,10 @@ export const DatasetListComponent: React.FC<DatasetListProps> = (props) => {
         </div>
         <div className='list-picker-and-bulk-actions'>
           <div className='list-picker'>
-            <button className={classNames({ active: onlySessionUserDatasets })} onClick={() => setOnlySessionUserDatasets(true)}>
+            <button id='my-datasets-button' className={classNames({ active: onlySessionUserDatasets })} onClick={() => setOnlySessionUserDatasets(true)}>
               My Datasets <span className='count-indicator'>{datasets.filter(({ username }) => (username === sessionUsername)).length}</span>
             </button>
-            <button className={classNames({ active: !onlySessionUserDatasets })} onClick={() => setOnlySessionUserDatasets(false)}>
+            <button id='all-datasets-button' className={classNames({ active: !onlySessionUserDatasets })} onClick={() => setOnlySessionUserDatasets(false)}>
               All Datasets <span className='count-indicator'>{datasets.length}</span>
             </button>
           </div>

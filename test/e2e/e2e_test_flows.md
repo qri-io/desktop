@@ -205,3 +205,12 @@ This section deals with the network page
 - remove modal should appear
 - click 'remove' button on modal
 - check that dataset has been removed
+## remove a dataset
+- go to the collection view
+- click on a dataset
+- click on the #remove button
+- wait for the modal to load
+- click #submit to remove the dataset
+- wait fot the modal to disappear
+- expect to be at the collection page
+- expect the removed dataset to not be there

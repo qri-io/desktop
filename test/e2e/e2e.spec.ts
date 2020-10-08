@@ -44,7 +44,7 @@ describe('Qri End to End tests', function spec () {
   const email = 'fred@qri.io'
   const password = '1234567890!!'
 
-  const createdCommitTitle = 'created dataset from all_week.csv'
+  const createdCommitTitle = 'created dataset'
 
   const metaCommit: Commit = {
     title: 'edited meta',
@@ -309,7 +309,6 @@ describe('Qri End to End tests', function spec () {
       atLocation,
       atDataset,
       click,
-      checkDatasetReference,
       atDatasetVersion,
       checkStatus,
       delay,
@@ -336,9 +335,6 @@ describe('Qri End to End tests', function spec () {
     // ensure we are redirected to the dataset
     await atDataset(username, datasetName)
 
-    // ensure we have navigated to the correct dataset
-    await checkDatasetReference(username, datasetName)
-
     // ensure a initial version was made
     await atDatasetVersion(0)
 
@@ -356,9 +352,7 @@ describe('Qri End to End tests', function spec () {
       atLocation,
       atDataset,
       click,
-      atDatasetVersion,
-      checkDatasetReference,
-      delay
+      atDatasetVersion
     } = utils
 
     await click('#collection')
@@ -369,8 +363,6 @@ describe('Qri End to End tests', function spec () {
     await click(ref)
     // ensure we have redirected to the dataset page
     await atDataset(username, datasetName)
-    // ensure we at the right dataset
-    await checkDatasetReference(username, datasetName)
     // ensure we are at the right version
     await atDatasetVersion(0)
   })
@@ -450,17 +442,22 @@ describe('Qri End to End tests', function spec () {
     const {
       click,
       waitForExist,
+      waitForNotExist,
       atDataset,
       setValue,
       doesNotExist,
       sendKeys,
-      takeScreenshot
+      takeScreenshot,
+      isEnabled
     } = utils
 
     await atDataset(username, datasetName)
-    // click #dataset-name
-    await click('#dataset-name')
-    // make sure the input exists
+
+    // open rename modal
+    await click('#rename')
+    // make sure modal exists
+    await waitForExist('#rename-dataset')
+    // the input exists
     await waitForExist('#dataset-name-input')
     // setValue as a bad name
     await setValue('#dataset-name-input', '9test')
@@ -476,6 +473,10 @@ describe('Qri End to End tests', function spec () {
     // get correct class
     await doesNotExist('#dataset-name-input.invalid')
     await sendKeys('#dataset-name-input', "Enter")
+    expect(await isEnabled('#submit')).toBe(true)
+
+    await click('#submit')
+    await waitForNotExist('#rename-dataset')
   })
 
   it('export CSV version', async () => {
@@ -486,7 +487,7 @@ describe('Qri End to End tests', function spec () {
 
     await click('#export-dataset')
     await click('#submit')
-    await delay(200) // wait to ensure file has time to write
+    await delay(400) // wait to ensure file has time to write
     expect(fs.existsSync(savePath)).toEqual(true)
   })
 
@@ -503,28 +504,30 @@ describe('Qri End to End tests', function spec () {
     // ensure we have redirected to the dataset page
     await atDataset(username, datasetRename)
 
-    await click('#commit-status')
-
     takeScreenshot(artifactPath('fsi-checking-commits.png'))
 
     // click the original commit and check commit title
     await click('#HEAD-3', artifactPath('switch-between-commits-click-head-3.png'))
+    await click('#commit-status')
     await waitForExist("#history-commit")
 
     await expectTextToContain('#history-commit', createdCommitTitle, artifactPath('fsi-editing-commit-title-created-dataset.png'))
 
     // click the third commit and check commit title
     await click('#HEAD-2')
+    await click('#commit-status')
     await waitForExist("#history-commit")
     await expectTextToContain('#history-commit', bodyCommitTitle, artifactPath('fsi-editing-commit-title-body-commit.png'))
 
     // click the second commit and check commit title
     await click('#HEAD-1')
+    await click('#commit-status')
     await waitForExist("#history-commit")
     await expectTextToContain('#history-commit', metaCommit.title, artifactPath('fsi-editing-commit-title-meta-commit.png'))
 
     // click the most recent commit and check commit title
     await click('#HEAD-0')
+    await click('#commit-status')
     await waitForExist("#history-commit")
     await expectTextToContain('#history-commit', structureCommit.title, artifactPath('fsi-editing-commit-title-structure-commit.png'))
   })
@@ -534,7 +537,6 @@ describe('Qri End to End tests', function spec () {
       atLocation,
       atDataset,
       click,
-      checkDatasetReference,
       checkStatus,
       atDatasetVersion,
       delay,
@@ -561,8 +563,6 @@ describe('Qri End to End tests', function spec () {
 
     // ensure we are redirected to the dataset
     await atDataset(username, datasetName)
-
-    await checkDatasetReference(username, datasetName)
 
     // ensure we are on the latest commit
     await atDatasetVersion(0)
@@ -611,16 +611,19 @@ describe('Qri End to End tests', function spec () {
 
     // click the third commit and check commit title
     await click('#HEAD-2', artifactPath('in-app-editing-switch-between-commits-click-head-3.png'))
+    await click('#commit-status')
     await waitForExist("#history-commit")
     await expectTextToContain('#history-commit', createdCommitTitle, artifactPath('in-app-editing-commit-title-created-dataset.png'))
 
     // click the third commit and check commit title
     await click('#HEAD-1')
+    await click('#commit-status')
     await waitForExist("#history-commit")
     await expectTextToContain('#history-commit', metaCommit.title, artifactPath('in-app-editing-commit-title-meta-commit.png'))
 
     // click the third commit and check commit title
     await click('#HEAD-0')
+    await click('#commit-status')
     await waitForExist("#history-commit")
     await expectTextToContain('#history-commit', structureCommit.title, artifactPath('in-app-editing-commit-title-structure-commit.png'))
   })
@@ -682,11 +685,12 @@ describe('Qri End to End tests', function spec () {
       atDatasetVersion,
       sendKeys,
       setValue,
-      takeScreenshot
+      takeScreenshot,
+      delay
     } = utils
-    // make sure we are on the collection page
-    await click('#collection')
-    await atLocation('#/collection', artifactPath('search_for_foreign_dataset-at_location_collection.png'))
+    // make sure we are on the network page
+    await click('#network')
+    await atLocation('#/network', artifactPath('search_for_foreign_dataset-at-location-network.png'))
 
     // send the "Enter" key to the search bar to activate the search modal
     // await waitForExist('#search-box')
@@ -714,16 +718,13 @@ describe('Qri End to End tests', function spec () {
     // check location
     await atLocation('#/network')
 
-    // check we are at the right dataset
-    await waitForExist('#navbar-breadcrumb')
-    await expectTextToContain('#navbar-breadcrumb', registryDatasetName)
-
     if (takeScreenshots) {
       await takeScreenshot(artifactPath('network-preview.png'))
     }
 
     // clone the dataset by clicking on the action button
     await click('#sidebar-action')
+    await atLocation('#/collection')
     await atDataset('', registryDatasetName)
 
     await atDatasetVersion(0)
@@ -731,8 +732,9 @@ describe('Qri End to End tests', function spec () {
     // the dataset should be part of the collection
     await click('#collection')
     await atLocation('#/collection')
-    const datasets = await app.client.$$('.version-info-item')
-    expect(datasets.length).toBe(4)
+
+    // check that we have the expected number of datasets
+    await expectTextToContain('#all-datasets-button', "4")
 
     if (takeScreenshots) {
       await takeScreenshot(artifactPath('collection-with-datasets.png'), 2000)
@@ -748,6 +750,7 @@ describe('Qri End to End tests', function spec () {
     const {
       click,
       atLocation,
+      waitForExist,
       expectTextToContain,
       waitForNotExist
     } = utils
@@ -764,9 +767,7 @@ describe('Qri End to End tests', function spec () {
     await expectTextToContain('#recent-0 .header a', registryDatasetName)
     await click('#recent-0 .header a')
 
-    // check we are at the right dataset
-    await expectTextToContain('#navbar-breadcrumb ', registryDatasetName)
-
+    await waitForExist('.history-list-item')
     // there should be two history items
     const historyItems = await app.client.$$('.history-list-item')
     expect(historyItems.length).toBe(2)
@@ -780,11 +781,8 @@ describe('Qri End to End tests', function spec () {
       click,
       atLocation,
       atDataset,
-      expectTextToBe,
-      checkDatasetReference,
       waitForExist,
-      takeScreenshot,
-      expectTextToContain
+      takeScreenshot
     } = utils
 
     await click('#collection')
@@ -793,7 +791,6 @@ describe('Qri End to End tests', function spec () {
 
     // check location
     await atDataset(username, datasetRename)
-    await checkDatasetReference(username, datasetRename)
 
     // click publish
     await click('#publish-button')
@@ -825,9 +822,6 @@ describe('Qri End to End tests', function spec () {
     await waitForExist(`[data-ref="${username}/${datasetRename}"]`)
     await click(`[data-ref="${username}/${datasetRename}"] .header a`)
 
-    await waitForExist('#navbar-breadcrumb')
-    await expectTextToContain('#navbar-breadcrumb', datasetRename)
-
     if (takeScreenshots) {
       await takeScreenshot(artifactPath('network-preview-with-local.png'))
     }
@@ -837,8 +831,6 @@ describe('Qri End to End tests', function spec () {
     await atLocation('#/collection')
     await click(`#row-${username}-${datasetRename}`)
     await atDataset(username, datasetRename, artifactPath('network-at-location-navigate-to-dataset.png'))
-    // ensure we are on the correct dataset
-    await expectTextToBe('#dataset-reference', username + '/\n' + datasetRename, artifactPath('network-expect-text-dataset-reference.png'))
 
     // click the hamburger & click the unpublish action
     await click('#workbench-hamburger', artifactPath('network-click-hamburger.png'))
@@ -862,35 +854,36 @@ describe('Qri End to End tests', function spec () {
     expect(recentDatasets.length).toBe(1)
   })
 
-  //
-  // TODO(ramfox): remove a dataset is commented out until we have a keyboard command in
-  // place to open the remove modal
-  // we also must create a `keyboard` function that takes a string
-  // and mocks the user typing that string into the keyboard
-  // it must handle both windows and mac defaults (ctrl vs cmd)
-  // it('remove a dataset', async () => {
-  //   const {
-  //     click,
-  //     exists,
-  //     atLocation,
-  //     keyboard
-  //   } = utils
+  it('remove a dataset', async () => {
+    const {
+      click,
+      atDataset,
+      atLocation,
+      waitForExist,
+      waitForNotExist,
+      doesNotExist
+    } = utils
 
-  //   // on dataset
-  //   await click('#dataset')
-  //   // type command (control) shift r to get remove dataset modal
-  //   await keyboard('')
-  //   // ensure we are on the remove modal
-  //   await exists(['#remove'])
-  //   // select to remove files
-  //   await click('#should-remove-files')
-  //   // click submit
-  //   await click('#submit')
-  //   // end up on collection page
-  //   await atLocation('#/collection')
-  //   // no datasets
-  //   await exists(['#no-datasets'])
-  // })
+    // on dataset
+    await click('#collection')
+    // click on dataset
+    await click(`#row-${username}-${datasetName}`)
+    await atDataset(username, datasetName)
+
+    // click remove
+    await click('#remove')
+    // wait for modal to load
+    await waitForExist('#remove-dataset')
+    // remove the dataset
+    await click('#submit')
+    // wait for modal to go away
+    await waitForNotExist('#remove-dataset')
+
+    // end up on collection page
+    await atLocation('#/collection')
+    // no datasets
+    await doesNotExist(`#row-${username}-${datasetName}`)
+  })
 
   it('removes multiple datasets from Collections page via bulk remove action', async () => {
     const {
@@ -972,6 +965,7 @@ async function writeCommitAndSubmit (uniqueName: string, component: string, stat
   const {
     click,
     waitForExist,
+    waitForNotExist,
     setValue,
     takeScreenshot,
     checkStatus,
@@ -995,6 +989,9 @@ async function writeCommitAndSubmit (uniqueName: string, component: string, stat
   }
   // submit
   await click('#submit', artifactPathFromDir(imagesDir, `${name}-commit-click-submit.png`))
+
+  // wait for the commit to be created
+  await waitForNotExist('.clear-to-commit #commit-status')
   // on history tab
   await atDatasetVersion(0, artifactPathFromDir(imagesDir, `${name}-commit-on-history-tab.png`))
   // check component status
