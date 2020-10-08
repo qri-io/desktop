@@ -362,9 +362,9 @@ function createDatasetForUser (app: any) {
     // mock the dialog and create a temp csv file
     // clicking the '#chooseBodyFile' button will connect the fakeDialog
     // to the correct input
-    const jsonPath0 = path.join(backend.dir, fileName)
-    fs.writeFileSync(jsonPath0, '{"a": 1, "b":2, "c": 3}')
-    await app.client.chooseFile(`#chooseBodyFile-input`, jsonPath0)
+    const jsonPath = path.join(backend.dir, fileName)
+    fs.writeFileSync(jsonPath, '{"a": 1, "b":2, "c": 3}')
+    await app.client.chooseFile(`#chooseBodyFile-input`, jsonPath)
     // submit to create a new dataset
     await click(app)('#submit')
 

@@ -940,18 +940,18 @@ describe('Qri End to End tests', function spec () {
       waitForExist
     } = utils
 
-    const jsonFilename0 = 'dataset_to_be_removed_0.json'
-    const jsonDatasetName0 = 'dataset_to_be_removed_0'
+    const jsonFilename = 'dataset_to_be_removed.json'
+    const jsonDatasetName = 'dataset_to_be_removed'
 
     await delay(1000)
-    await createDatasetForUser(jsonFilename0, jsonDatasetName0, username, backend)
+    await createDatasetForUser(jsonFilename, jsonDatasetName, username, backend)
 
     // make sure we are on the collection page
     await click('#collection')
     await atLocation('#/collection')
 
     // select newly created dataset and click the remove button
-    await click(`input[name='select-row-${username}-${jsonDatasetName0}']`)
+    await click(`input[name='select-row-${username}-${jsonDatasetName}']`)
     await click("#button-bulk-remove")
 
     // expect bulk remove modal to appear
