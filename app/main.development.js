@@ -125,7 +125,6 @@ app.on('ready', () =>
       mainWindow.webContents.on('did-finish-load', () => {
         mainWindow.show()
         mainWindow.focus()
-        mainWindow.webContents.send('set-debug-log-path', backendProcess.debugLogPath)
       })
 
       mainWindow.on('closed', () => {
@@ -511,8 +510,11 @@ app.on('ready', () =>
       })
 
       // catch export events
-      ipcMain.on('export', async (e, { refString, filename, directory }) => {
-        const exportUrl = `${BACKEND_URL}/get/${refString}?format=zip`
+      ipcMain.on('export', async (e, { refString, filename, directory, config = 'zip' }) => {
+        let exportUrl = `${BACKEND_URL}/get/${refString}?format=zip`
+        if (config === 'csv') {
+          exportUrl = `${BACKEND_URL}/get/${refString}/body.csv`
+        }
         const win = BrowserWindow.getFocusedWindow()
         await download(win, exportUrl, { filename, directory })
       })
@@ -578,6 +580,9 @@ app.on('ready', () =>
           }
         })
         .then(backendProcess.launchProcess)
+        .then(() => {
+          mainWindow.webContents.send('set-debug-log-path', backendProcess.debugLogPath)
+        })
         .catch(err => {
           switch (err.message) {
             case "backend-already-running":

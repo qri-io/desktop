@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import classNames from 'classnames'
 
 import { dismissModal } from '../../actions/ui'
 import { Dataset } from '../../../app/models/dataset'
@@ -9,83 +10,62 @@ import {
   selectDatasetRef,
   selectDataset
 } from '../../selections'
-import { ApiAction } from '../../store/api'
 import { connectComponentToProps } from '../../utils/connectComponentToProps'
+import exportDatasetVersion from '../../actions/platformSpecific/export.TARGET_PLATFORM'
 
-import CheckboxInput from '../form/CheckboxInput'
-import TristateCheckboxInput from '../form/TristateCheckboxInput'
-import RadioInput from '../form/RadioInput'
 import Modal from './Modal'
 import Error from './Error'
 import Buttons from './Buttons'
 import CommitDetails from '../CommitDetails'
+import RadioInput from '../form/RadioInput'
 
 interface ExportDatasetProps {
   modal: ExportDatasetModal
   qriRef: QriRef
   dataset: Dataset
   onDismissed: () => void
-  onSubmit: () => Promise<ApiAction>
 }
 
 export const ExportDatasetComponent: React.FC<ExportDatasetProps> = (props: ExportDatasetProps) => {
-  const { dataset, onDismissed, onSubmit, qriRef } = props
-  const { commit, structure, meta, readme } = dataset
-  const enabledOtherComponents = ['structure'] // structure is always enabled
-  if (meta) enabledOtherComponents.push('meta')
-  if (readme) enabledOtherComponents.push('readme')
+  const { onDismissed, qriRef, dataset: { structure, commit } } = props
+  const { version } = props.modal
 
   const [dismissable, setDismissable] = useState(true)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
-  const [bodyFormat, setBodyFormat] = useState('csv')
-  const [ config, setConfig ] = useState({
-    body: true,
-    // otherChecked has three states, 'true', 'false', 'indeterminate'
-    // indeterminate state means the checkbox shows a '-' instead of checked or unchecked
-    other: false as boolean | 'indeterminate',
-    meta: false,
-    structure: false,
-    readme: false
-  })
-
-  const setConfigField = (field: string, value: boolean) => {
-    const update = { ...config, [field]: value }
-
-    if (field === 'other') {
-      enabledOtherComponents.forEach((compName: string) => {
-        update[compName] = value
-      })
-    } else {
-      const enabledCount = enabledOtherComponents.length
-      const checkedCount = [update.meta, update.structure, update.readme].reduce((acc, curr) => (curr ? acc + 1 : acc), 0)
-
-      // set state of parent checkbox
-      if (checkedCount === 0) {
-        update.other = false
-      } else if (checkedCount === enabledCount) {
-        update.other = true
-      } else {
-        update.other = 'indeterminate'
-      }
-    }
-
-    setConfig(update)
-  }
+  const [exportMode, setExportMode] = useState('csv')
 
   const handleSubmit = () => {
     setDismissable(false)
     setLoading(true)
     error && setError('')
-    if (!onSubmit) return
-
-    alert('Exporting Files!')
+    exportDatasetVersion(version, exportMode)
+    onDismissed()
   }
+
+  const modes = [
+    {
+      mode: 'csv',
+      title: 'CSV file',
+      description: 'just the dataset body as a comma-separated values file'
+    },
+    {
+      mode: 'zip',
+      title: 'Zip Archive',
+      description: 'all dataset components in a zip archive of CSV & JSON files'
+    }
+    // {
+    //   mode: 'json',
+    //   title: 'JSON',
+    //   description: 'all dataset data in a single JSON document'
+    // }
+  ]
 
   return (
     <Modal
       id='export-dataset'
-      title='Export Dataset'
+      className='export-dataset-modal'
+      title='Export'
       onDismissed={onDismissed}
       onSubmit={() => {}}
       dismissable={dismissable}
@@ -96,74 +76,26 @@ export const ExportDatasetComponent: React.FC<ExportDatasetProps> = (props: Expo
           <div className='export-dataset-info'>
             <div className='dialog-text-small'>
               <code style={{ marginBottom: '15px' }}>{qriRef.username}/{qriRef.name}</code><br/>
-              {
-                structure && commit && (
-                  <CommitDetails commit={commit} structure={structure} path={qriRef.path} />
-                )
-              }
+              {structure && commit && (
+                <CommitDetails commit={commit} structure={structure} path={qriRef.path} />
+              )}
             </div>
           </div>
-          <div className='dialog-text-small'>
-            <div className='input-label'>Components</div>
-
-            <div className='options-row'>
-              <div className='options-column'>
-                <CheckboxInput
-                  name='body'
-                  checked={config.body}
-                  onChange={() => { setConfigField('body', !config.body) }}
-                  label='Body'
-                  strong
-                />
-                <div className='options-column-content'>
-                  <RadioInput
-                    name='csv'
-                    checked={bodyFormat === 'csv'}
-                    onChange={() => { setBodyFormat('csv') }}
-                    label='body.csv'
-                    disabled={!config.body}
-                  />
-                  <RadioInput
-                    name='should-remove-files'
-                    checked={bodyFormat === 'json'}
-                    onChange={() => { setBodyFormat('json') }}
-                    label='body.json'
-                    disabled={!config.body}
-                  />
+          <div className='mode-picker'>
+            <h4>Format</h4>
+            {modes.map(({ mode, title, description }) => (
+              <div
+                key={mode}
+                className={classNames('mode-item', { selected: (exportMode === mode) })}
+                onClick={() => { setExportMode(mode) }}
+              >
+                <RadioInput name={mode} checked={exportMode === mode} onChange={(m) => setExportMode(m) } />
+                <div className='text'>
+                  <h5 className='title'>{title}</h5>
+                  <span className='description'>{description}</span>
                 </div>
               </div>
-              <div className='options-column'>
-                <TristateCheckboxInput
-                  name='other-components'
-                  value={config.other}
-                  onChange={(_: string, v: boolean) => { setConfigField('other', v) }}
-                  label='Other Components'
-                  strong
-                />
-                <div className='options-column-content'>
-                  <CheckboxInput
-                    name='meta'
-                    checked={config.meta}
-                    onChange={() => { setConfigField('meta', !config.meta) }}
-                    label='meta.json'
-                    disabled={meta === undefined}
-                  />
-                  <CheckboxInput
-                    name='structure'
-                    checked={config.structure}
-                    onChange={() => { setConfigField('structure', !config.structure) }}
-                    label='structure.json'
-                  />
-                  <CheckboxInput
-                    name='readme'
-                    checked={ config.readme }
-                    onChange={() => { setConfigField('readme', !config.readme) }}
-                    label='readme.md'
-                    disabled={readme === undefined}
-                  />
-                </div>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </div>
@@ -191,7 +123,6 @@ export default connectComponentToProps(
     }
   },
   {
-    onDismissed: dismissModal,
-    onSubmit: () => {}
+    onDismissed: dismissModal
   }
 )

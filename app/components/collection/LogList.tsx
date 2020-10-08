@@ -1,12 +1,12 @@
-import * as React from 'react'
-import path from 'path'
-import { MenuItemConstructorOptions, remote, ipcRenderer } from 'electron'
+import React from 'react'
+import { MenuItemConstructorOptions } from 'electron'
 import ContextMenuArea from 'react-electron-contextmenu'
-import moment from 'moment'
 
 import { ApiActionThunk } from '../../store/api'
-import { QriRef, refStringFromQriRef, qriRefFromRoute, qriRefIsEmpty } from '../../models/qriRef'
+import { QriRef, qriRefFromRoute, qriRefIsEmpty } from '../../models/qriRef'
+import { Modal, ModalType } from '../../models/modals'
 import { VersionInfo, PageInfo, RouteProps } from '../../models/store'
+import { setModal } from '../../actions/ui'
 
 import { connectComponentToPropsWithRouter } from '../../utils/connectComponentToProps'
 
@@ -25,6 +25,7 @@ interface LogListProps extends RouteProps {
   logPageInfo: PageInfo
   editableDataset?: boolean
   fetchLog: (username: string, name: string, page?: number, pageSize?: number) => ApiActionThunk
+  setModal: (modal: Modal) => void
 }
 
 export const LogListComponent: React.FunctionComponent<LogListProps> = (props) => {
@@ -35,7 +36,8 @@ export const LogListComponent: React.FunctionComponent<LogListProps> = (props) =
     history,
     editableDataset = false,
     recentEditRef,
-    fetchLog
+    fetchLog,
+    setModal
   } = props
 
   const { username, name } = qriRef
@@ -44,21 +46,6 @@ export const LogListComponent: React.FunctionComponent<LogListProps> = (props) =
     if (e.target.scrollHeight === parseInt(e.target.scrollTop) + parseInt(e.target.offsetHeight)) {
       fetchLog(username, name, logPageInfo.page + 1, logPageInfo.pageSize)
     }
-  }
-
-  const handleExport = (versionInfo: VersionInfo) => {
-    const window = remote.getCurrentWindow()
-    const zipName = `${username}-${name}-${moment(versionInfo.commitTime).format('MM-DD-YYYY-hh-mm-ss-a')}.zip`
-    const selectedPath: string | undefined = remote.dialog.showSaveDialogSync(window, { defaultPath: zipName })
-
-    if (!selectedPath) {
-      return
-    }
-
-    const directory = path.dirname(selectedPath)
-    const filename = path.basename(selectedPath)
-    const refString = refStringFromQriRef(qriRef)
-    ipcRenderer.send('export', { refString, filename: filename, directory: directory })
   }
 
   return (
@@ -100,7 +87,7 @@ export const LogListComponent: React.FunctionComponent<LogListProps> = (props) =
             {
               label: 'Export this version',
               click: () => {
-                handleExport(item)
+                setModal({ type: ModalType.ExportDataset, version: item })
               }
             }
           ]
@@ -138,6 +125,7 @@ export default connectComponentToPropsWithRouter(
     }
   },
   {
-    fetchLog
+    fetchLog,
+    setModal
   }
 )

@@ -43,3 +43,46 @@ height: 100%;
 	font-size: .8rem;
 	color: #777;
 }
+
+.export-dataset-modal {
+  .export-dataset-info {
+    background-color: #f5f5f5;
+    padding: 4px 10px 10px 10px;
+    margin-bottom: 15px;
+    width: 100%;
+    border-radius: 3px;
+	}
+	.mode-picker {
+		.mode-item {
+			padding: 10px 5px;
+			border: 1px solid $primary-muted;
+			border-radius: 4px;
+			margin-bottom: 10px;
+			display: flex;
+			cursor: pointer;
+
+			&.selected {
+				background: #f5f5f5;
+			}
+
+			.radio-input-container {
+				flex: 1;
+				float: left;
+				width: 10%;
+				height: 100%;
+				margin: auto;
+				padding: 10px;
+			}
+
+			.text {
+				margin-left: 10px;
+				width: 90%;
+				.title {
+					color: black;
+					font-weight: bold;
+					margin-bottom: 0;
+				}
+			}
+		}
+	}
+}
