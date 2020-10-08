@@ -233,44 +233,6 @@ $header-font-size: .9rem;
       font-size: 1.2rem;
       font-weight: 900;
     }
-
-    .dataset-reference {
-      font-size: 1.05rem;
-      display: flex;
-      margin: 20px 20px 0 20px;
-    }
-
-    .dataset-name {
-
-      flex: 1;
-      white-space: nowrap;
-      text-overflow: ellipsis;
-      overflow: hidden;
-
-      input {
-        background-color: $primary-muted;
-        border: none;
-        border-radius: 5px;
-        color: black;
-        padding: 0 5px;
-        outline: none;
-        width: 100%;
-        transition: background 0.2s;
-
-        &.invalid {
-          background: #F43535;
-        }
-
-      }
-
-      &:hover {
-        &.no-pointer {
-          cursor: default;
-        }
-        cursor: pointer;
-        text-decoration: underline;
-      }
-    }
   }
 
   #list {
@@ -356,6 +318,47 @@ $header-font-size: .9rem;
   label {
     padding: 20px;
     text-transform: capitalize;
+  }
+}
+
+
+#dataset-reference {
+  .dataset-reference {
+    font-size: 1.05rem;
+    display: flex;
+    margin: 20px 20px 0 20px;
+  }
+
+  .dataset-name {
+
+    flex: 1;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+
+    input {
+      background-color: $primary-muted;
+      border: none;
+      border-radius: 5px;
+      color: black;
+      padding: 0 5px;
+      outline: none;
+      width: 100%;
+      transition: background 0.2s;
+
+      &.invalid {
+        background: #F43535;
+      }
+
+    }
+
+    &:hover {
+      &.no-pointer {
+        cursor: default;
+      }
+      cursor: pointer;
+      text-decoration: underline;
+    }
   }
 }
 

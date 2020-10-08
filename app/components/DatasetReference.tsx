@@ -1,49 +1,89 @@
 // a component that displays the dataset reference including edit-in-place UI
 // for dataset rename
 import * as React from 'react'
+import { AnyAction } from 'redux'
 import classNames from 'classnames'
 
-import { ApiActionThunk } from '../store/api'
 import { QriRef } from '../models/qriRef'
 
 import { connectComponentToPropsWithRouter } from '../utils/connectComponentToProps'
-import { validateDatasetName } from '../utils/formValidation'
+import { validateDatasetName, ValidationError } from '../utils/formValidation'
 
 import { renameDataset } from '../actions/api'
 
 interface DatasetReferenceProps {
+  /**
+   * the qriRef is particularly important in this component: it's where we get
+   * the username and original dataset name
+   */
   qriRef: QriRef
-  renameDataset: (username: string, name: string, newName: string) => ApiActionThunk
+  /**
+   * the optional isValid function allows us to inject additional actions when
+   * the dataset rename has been validated or invalidated
+   */
+  isValid?: (err: ValidationError) => void
+  /**
+   * if used as a container, the DatasetReference will get the `renameDataset`
+   * api action as it's submit function. The `DatasetReferenceComponent` may
+   * or may not use the onSubmit action
+   */
+  onSubmit?: (username: string, name: string, newName: string) => Promise<AnyAction>
+  /**
+   * the optional onChange function allows us to inject additional actions when
+   * any input has changed
+   */
+  onChange?: (newName: string) => void
+  /**
+   * if focusOnFirstRender is true, the dataset name input will be focused when the
+   * component is first rendered
+   */
+  focusOnFirstRender?: boolean
 }
 
-const DatasetReferenceComponent: React.FunctionComponent<DatasetReferenceProps> = (props) => {
-  const { qriRef, renameDataset } = props
+export const DatasetReferenceComponent: React.FunctionComponent<DatasetReferenceProps> = (props) => {
+  const {
+    qriRef,
+    onSubmit,
+    onChange,
+    isValid,
+    focusOnFirstRender = false
+  } = props
+
   const { username, name } = qriRef
-  const [ nameEditing, setNameEditing ] = React.useState(false)
+  const [ nameEditing, setNameEditing ] = React.useState(focusOnFirstRender)
   const [ newName, setNewName ] = React.useState(name)
-  const [ inValid, setInvalid ] = React.useState(null)
+  const [ invalidErr, setInvalidErr ] = React.useState<ValidationError | null>(null)
 
   const datasetSelected = username !== '' && name !== ''
 
+  // use a ref so we can set up a click handler
+  const nameRef: any = React.useRef(null)
+
   const confirmRename = (username: string, name: string, newName: string) => {
     // cancel if no change, change invalid, or empty
-    if ((name === newName) || inValid || newName === '') {
+    if ((name === newName) || invalidErr || newName === '') {
       cancelRename()
     } else {
-      renameDataset(username, name, newName)
-        .then(() => {
-          setNameEditing(false)
-        })
+      if (onSubmit) {
+        onSubmit(username, name, newName)
+          .then(() => {
+            setNameEditing(false)
+          })
+        return
+      }
+      setNameEditing(false)
     }
   }
 
   const cancelRename = () => {
     setNewName(name)
-    setInvalid(null)
+    onChange && onChange(name)
+    setInvalidErr(null)
+    isValid && isValid(null)
     setNameEditing(false)
   }
 
-  const handleKeyDown = (e: any) => {
+  const handleKeyDown = (e: KeyboardEvent) => {
     // cancel on esc
     if (e.keyCode === 27) {
       cancelRename()
@@ -54,9 +94,6 @@ const DatasetReferenceComponent: React.FunctionComponent<DatasetReferenceProps> 
       confirmRename(username, name, newName)
     }
   }
-
-  // use a ref so we can set up a click handler
-  const nameRef: any = React.useRef(null)
 
   const handleMousedown = (e: MouseEvent) => {
     const { target } = e
@@ -85,8 +122,11 @@ const DatasetReferenceComponent: React.FunctionComponent<DatasetReferenceProps> 
 
   const handleInputChange = (e: any) => {
     let { value } = e.target
-    setInvalid(validateDatasetName(value))
+    const err = validateDatasetName(value)
+    setInvalidErr(err)
+    isValid && isValid(err)
     setNewName(value)
+    onChange && onChange(value)
   }
 
   // when the input is focused, set the cursor to the left, and scroll all the way to the left
@@ -101,7 +141,7 @@ const DatasetReferenceComponent: React.FunctionComponent<DatasetReferenceProps> 
       <div className={classNames('dataset-name', { 'no-pointer': !datasetSelected })} id='dataset-name' ref={nameRef}>
         { nameEditing && datasetSelected && <input
           id='dataset-name-input'
-          className={classNames({ invalid: inValid })}
+          className={classNames({ invalid: invalidErr })}
           type='text'
           value={newName}
           maxLength={150}
@@ -119,5 +159,5 @@ const DatasetReferenceComponent: React.FunctionComponent<DatasetReferenceProps> 
 export default connectComponentToPropsWithRouter<DatasetReferenceProps>(
   DatasetReferenceComponent,
   {},
-  { renameDataset }
+  { onSubmit: renameDataset }
 )

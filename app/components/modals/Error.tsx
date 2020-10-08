@@ -5,6 +5,6 @@ interface ErrorProps {
   id: string
 }
 const Error: React.FunctionComponent<ErrorProps> = ({ text, id }) =>
-  <div id={`${id}_error`} className='error'>{text}</div>
+  <div id={id} className='error'>{text}</div>
 
 export default Error
