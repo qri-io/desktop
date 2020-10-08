@@ -15,6 +15,8 @@ interface ComponentAndFormatPickerProps {
 interface ComponentConfig {
   body: boolean
 
+  // tri-state enum of all following fields
+  // indeterminate state means checkbox shows '-'
   other: boolean | 'indeterninate'
   meta: boolean
   structure: boolean
@@ -23,9 +25,8 @@ interface ComponentConfig {
 
 export const defaultConfig: ComponentConfig = {
   body: true,
-  // otherChecked has three states, 'true', 'false', 'indeterminate'
-  // indeterminate state means the checkbox shows a '-' instead of checked or unchecked
-  other: false as boolean | 'indeterminate',
+
+  other: false,
   meta: false,
   structure: false,
   readme: false
