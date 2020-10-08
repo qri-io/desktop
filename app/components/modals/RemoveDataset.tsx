@@ -1,13 +1,10 @@
-import * as React from 'react'
+import React, { useState } from 'react'
 
 import { RemoveDatasetModal } from '../../../app/models/modals'
 import { ApiAction } from '../../store/api'
-
 import { connectComponentToProps } from '../../utils/connectComponentToProps'
-
 import { dismissModal } from '../../actions/ui'
 import { removeDatasetAndFetch } from '../../actions/api'
-
 import { selectModal, selectSessionUsername } from '../../selections'
 
 import CheckboxInput from '../form/CheckboxInput'
@@ -22,16 +19,14 @@ interface RemoveDatasetProps {
   onSubmit: (username: string, name: string, isLinked: boolean, keepFiles: boolean) => Promise<ApiAction>
 }
 
-export const RemoveDatasetComponent: React.FunctionComponent<RemoveDatasetProps> = (props: RemoveDatasetProps) => {
+export const RemoveDatasetComponent: React.FC<RemoveDatasetProps> = (props: RemoveDatasetProps) => {
   const { modal, sessionUsername, onDismissed, onSubmit } = props
   const { username, name, fsiPath } = modal
 
-  const [keepFiles, setKeepFiles] = React.useState(true)
-
-  const [dismissable, setDismissable] = React.useState(true)
-
-  const [error, setError] = React.useState('')
-  const [loading, setLoading] = React.useState(false)
+  const [keepFiles, setKeepFiles] = useState(true)
+  const [dismissable, setDismissable] = useState(true)
+  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
 
   const handleChanges = (name: string, value: any) => {
     setKeepFiles(!value)

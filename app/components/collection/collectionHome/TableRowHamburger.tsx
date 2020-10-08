@@ -13,18 +13,30 @@ interface TableRowHamburgerProps {
 
 const TableRowHamburger: React.FC<TableRowHamburgerProps> = ({ data, setModal }) => {
   const { username, name, fsiPath } = data
-  const actions = [{
-    icon: 'trash',
-    text: 'Remove',
-    onClick: () => {
-      setModal({
-        type: ModalType.RemoveDataset,
-        username,
-        name,
-        fsiPath
-      })
+  const actions = [
+    {
+      icon: 'download',
+      text: 'Export',
+      onClick: () => {
+        setModal({
+          type: ModalType.ExportDataset,
+          version: data
+        })
+      }
+    },
+    {
+      icon: 'trash',
+      text: 'Remove',
+      onClick: () => {
+        setModal({
+          type: ModalType.RemoveDataset,
+          username,
+          name,
+          fsiPath
+        })
+      }
     }
-  }]
+  ]
 
   return (
     <Hamburger id={`${data.username}/${data.name}`} data={actions} />

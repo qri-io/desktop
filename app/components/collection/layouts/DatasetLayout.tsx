@@ -43,10 +43,10 @@ const DatasetLayoutComponent: React.FunctionComponent<DatasetLayoutProps> = (pro
   const buttons = [
     {
       type: 'button',
-      id: 'pull-dataset',
+      id: 'export-dataset',
       icon: faDownload,
       label: 'Export',
-      onClick: () => { setModal({ type: ModalType.ExportDataset }) }
+      onClick: () => { setModal({ type: ModalType.ExportDataset, version: qriRef }) }
     },
     { type: 'component', component: <LinkButton key='link-button' /> },
     { type: 'component', component: <PublishButton key='publish-button' /> }

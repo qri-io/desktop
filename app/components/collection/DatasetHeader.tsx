@@ -10,16 +10,22 @@ interface DatasetHeaderProps {
   commit: Commit
 }
 
-const DatasetHeader: React.FunctionComponent<DatasetHeaderProps> = ({ path, structure, commit }) => {
-  return (
-    <div className='commit-details-header'>
-      {
-        structure && commit && (
-          <CommitDetails structure={structure} commit={commit} path={path} />
-        )
-      }
-    </div>
-  )
-}
+const DatasetHeader: React.FC<DatasetHeaderProps> = ({
+  path,
+  structure,
+  commit
+}) => (
+  <div className='commit-details-header'>
+    {structure && commit && (
+      <CommitDetails
+        bodyRows={structure.entries}
+        bodySize={structure.length}
+        commitTime={commit.timestamp}
+        commitTitle={commit.title}
+        path={path}
+      />
+    )}
+  </div>
+)
 
 export default DatasetHeader

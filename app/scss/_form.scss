@@ -375,3 +375,23 @@
     }
   }
 }
+
+.component-and-format-picker {
+  .options-row {
+    display: flex;
+    padding-top: 8px;
+
+    .options-column {
+      flex: 50%;
+
+      .options-column-content {
+        margin-top: 9px;
+        margin-left: 23px;
+
+        .checkbox-input-container, .radio-input-container {
+          margin-bottom: 6px;
+        }
+      }
+    }
+  }
+}
