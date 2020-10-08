@@ -1,15 +1,16 @@
 import { Reducer, AnyAction } from 'redux'
 import deepEqual from 'deep-equal'
+
 import { WorkingDataset, Status, StatusInfo } from '../models/store'
 import { apiActionTypes } from '../utils/actionType'
 import { reducerWithPagination, initialPageInfo } from '../utils/pagination'
-import { ipcRenderer } from 'electron'
 import bodyValue from '../utils/bodyValue'
-import { COMMITDATASET_REQ } from './dataset'
+import { unblockDatasetMenus } from './platformSpecific/workingDataset.TARGET_PLATFORM'
 
 import {
   REMOVE_SUCC
 } from './selections'
+import { COMMITDATASET_REQ } from './dataset'
 
 const initialState: WorkingDataset = {
   path: '',
@@ -74,13 +75,7 @@ const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction
     case DATASET_SUCC: // when adding a new dataset, set it as the new workingDataset
       const { name, path, peername, published, dataset, fsiPath } = action.payload.data
 
-      // set electron menus
-      ipcRenderer.send('block-menus', false) // unblock menus once we have a working dataset
-      // some menus are contextual based on linked and published status
-      ipcRenderer.send('set-working-dataset', {
-        fsiPath,
-        published
-      })
+      if (unblockDatasetMenus) unblockDatasetMenus(fsiPath, published)
 
       return {
         ...state,
