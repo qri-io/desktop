@@ -1,23 +1,23 @@
 import React from 'react'
 import { faDownload, faTrash } from '@fortawesome/free-solid-svg-icons'
+import { RouterProps } from 'react-router'
 
 import Store from '../../../models/store'
-import { connectComponentToProps } from '../../../utils/connectComponentToProps'
+import { connectComponentToPropsWithRouter } from '../../../utils/connectComponentToProps'
 import { setModal, setSidebarWidth } from '../../../actions/ui'
 import {
-  selectSidebarWidth,
-  selectDatasetRef
+  selectSidebarWidth
 } from '../../../selections'
 import { Modal, ModalType } from '../../../models/modals'
+import { QriRef, qriRefFromRoute } from '../../../models/qriRef'
 
 import DatasetSidebar from './DatasetSidebar'
 import Layout from '../../Layout'
 import LinkButton from '../headerButtons/LinkButton'
 import PublishButton from '../headerButtons/PublishButton'
 import RenameButton from '../headerButtons/RenameButton'
-import { QriRef } from '../../../models/qriRef'
 
-interface DatasetLayoutProps {
+interface DatasetLayoutProps extends RouterProps {
   // from connect
   sidebarWidth?: number
   qriRef?: QriRef
@@ -55,7 +55,7 @@ const DatasetLayoutComponent: React.FunctionComponent<DatasetLayoutProps> = (pro
     { type: 'component', component: <RenameButton key='rename-button' /> },
     {
       type: 'button',
-      id: 'remove-dataset',
+      id: 'remove',
       icon: faTrash,
       label: 'Remove',
       onClick: () => { setModal({ type: ModalType.RemoveDataset, username: qriRef.username, name: qriRef.name }) }
@@ -77,12 +77,13 @@ const DatasetLayoutComponent: React.FunctionComponent<DatasetLayoutProps> = (pro
   )
 }
 
-export default connectComponentToProps(
+export default connectComponentToPropsWithRouter(
   DatasetLayoutComponent,
   (state: Store, ownProps: DatasetLayoutProps) => {
+    const qriRef = qriRefFromRoute(ownProps)
     return {
       ...ownProps,
-      qriRef: selectDatasetRef(state),
+      qriRef,
       sidebarWidth: selectSidebarWidth(state, 'workbench')
     }
   },
