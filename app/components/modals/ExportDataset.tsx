@@ -72,7 +72,7 @@ export const ExportDatasetComponent: React.FC<ExportDatasetProps> = (props: Expo
             </div>
           </div>
           <div className='mode-picker'>
-            <h4>Format</h4>
+            <h4 className='section-title'>Format</h4>
             {modes.map(({ mode, title, description }) => (
               <div
                 key={mode}

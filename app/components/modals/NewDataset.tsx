@@ -135,7 +135,7 @@ export const NewDatasetComponent: React.FC<NewDatasetProps> = (props) => {
             <DropFileInput
               id='chooseBodyFile'
               label='Body File'
-              labelTooltip='File to build your dataset on'
+              labelTooltip='File to build your dataset from'
               tooltipFor='modal-tooltip'
               placeholder='drop a csv or json file'
               value={formValues.bodyFile}

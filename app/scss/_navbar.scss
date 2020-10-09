@@ -14,6 +14,7 @@ $navbar-item-margin: 6px;
   color: $icon-gray;
   background-color: #00000017;
   position: relative;
+  user-select: none;
 
   a {
     color: $white;
@@ -138,6 +139,7 @@ $navbar-item-margin: 6px;
 
 .page-navbar {
   height: 115px;
+  user-select: none;
 
   .page-details {
     display: flex;

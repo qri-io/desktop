@@ -1,11 +1,11 @@
-import * as React from 'react'
+import React from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTimes } from '@fortawesome/free-solid-svg-icons'
 
 import Spinner from '../chrome/Spinner'
 
-// Mimicing React's DialogHeader
-interface IDialogHeaderProps {
+// Mimicing React's ModalHeader
+interface ModalHeaderProps {
   /**
    * The dialog title text. Will be rendered top and center in a dialog.
    * You can also pass JSX for custom styling
@@ -49,7 +49,7 @@ interface IDialogHeaderProps {
  * custom content needs to be rendered in a dialog and in that scenario it
  * might be necessary to use this component directly.
  */
-const DialogHeader: React.FunctionComponent<IDialogHeaderProps> = ({ onDismissed, dismissable = true, titleId, title, loading, children }) => {
+const ModalHeader: React.FunctionComponent<ModalHeaderProps> = ({ onDismissed, dismissable = true, titleId, title, loading, children }) => {
   const onCloseButtonClick = () => {
     if (onDismissed) {
       onDismissed()
@@ -91,4 +91,4 @@ const DialogHeader: React.FunctionComponent<IDialogHeaderProps> = ({ onDismissed
   )
 }
 
-export default DialogHeader
+export default ModalHeader

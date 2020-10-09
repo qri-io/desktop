@@ -1,7 +1,8 @@
-import * as React from 'react'
+import React from 'react'
 import classNames from 'classnames'
-import ModalHeader from './Header'
 import ReactTooltip from 'react-tooltip'
+
+import ModalHeader from './ModalHeader'
 
 /**
  * Title bar height in pixels. Values taken from 'app/styles/_variables.scss'.
@@ -126,7 +127,23 @@ export interface ModalProps {
  * underlying elements. It's not possible to use the tab key to move focus
  * out of the dialog without first dismissing it.
  */
-const Modal: React.FunctionComponent<ModalProps> = ({ title, dismissable = false, setDismissable, onDismissed, id, type, onSubmit, className, disabled, loading, children, noContentPadding = false, maxSize = false }) => {
+const Modal: React.FC<ModalProps> = (props) => {
+  const {
+    title,
+    dismissable = false,
+    setDismissable,
+    onDismissed,
+    id,
+    type,
+    onSubmit,
+    className,
+    disabled,
+    loading,
+    children,
+    noContentPadding = false,
+    maxSize = false
+  } = props
+
   const [modalElement, setModalElement] = React.useState<HTMLElement | null>(null)
 
   React.useEffect(() => {
