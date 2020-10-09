@@ -1,7 +1,10 @@
 /* global describe, it, expect */
-import { Reducer } from 'redux-testkit'
-import transfersReducer, { initialState } from '../../../app/reducers/transfers'
-import { TRACK_VERSION_TRANSFER, COMPLETE_VERSION_TRANSFER, REMOVE_VERSION_TRANSFER } from '../../../app/actions/transfers'
+import transfersReducer, {
+  initialState,
+  TRACK_VERSION_TRANSFER,
+  COMPLETE_VERSION_TRANSFER,
+  REMOVE_VERSION_TRANSFER
+} from '../../../app/reducers/transfers'
 
 describe('Transfers Reducer', () => {
   it('intial state', () => {
@@ -75,22 +78,8 @@ describe('Transfers Reducer', () => {
     },
 
     { description: 'TRACK_VERSION_TRANSFER on empty state does nothing', action: { type: TRACK_VERSION_TRANSFER, transfer: {ref: {username: 'a', name: 'b', path: 'c' }}}, expect: initialState },
-    { description: 'COMPLETE_VERSION_TRANSFER on empty state does nothing', action: { type: COMPLETE_VERSION_TRANSFER, transfer: {ref: {username: 'a', name: 'b', path: 'c' }}}, expect: initialState },
     { description: 'REMOVE_VERSION_TRANSFER on empty state does nothing', action: { type: REMOVE_VERSION_TRANSFER, transfer: {ref: {username: 'a', name: 'b', path: 'c' }}}, expect: initialState },
 
-    {
-      description: 'COMPLETE_VERSION_TRANSFER clears',
-      action: {type: COMPLETE_VERSION_TRANSFER, transfer: {ref: { username: 'a', name: 'b', path: 'c' }}},
-      expect: initialState,
-      initialState: {
-        'a/b@c': {
-          type: 'pull-version',
-          ref: { username: 'a', name: 'b', path: 'c' },
-          remoteAddr: 'sure',
-          progress: [0, 100, 100, 100]
-        }
-      }
-    },
     {
       description: 'REMOVE_VERSION_TRANSFER clears',
       action: {type: REMOVE_VERSION_TRANSFER, transfer: {ref: { username: 'a', name: 'b', path: 'c' }}},
@@ -116,7 +105,6 @@ describe('Transfers Reducer', () => {
     it(c.description, () => {
       const is = c.initialState || initialState
       expect(transfersReducer(is, c.action)).toEqual(c.expect)
-      // Reducer(transfersReducer).withState(is).expect(c.action).toReturnState(c.expect)
     })
   })
 })
