@@ -47,7 +47,7 @@ export interface PublishDatasetModal {
 
 export interface RemoveDatasetModal {
   type: ModalType.RemoveDataset
-  datasets: Array<{ username: string, name: string, fsiPath?: string }>
+  datasets: VersionInfo[]
   onSubmit: (keepFiles: boolean) => Promise<AnyAction>
 }
 

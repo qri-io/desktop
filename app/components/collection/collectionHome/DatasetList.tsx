@@ -134,7 +134,7 @@ export const DatasetListComponent: React.FC<DatasetListProps> = (props) => {
     setModal(
       {
         type: ModalType.RemoveDataset,
-        datasets: selected.map(ds => ({ username: ds.username, name: ds.name, fsiPath: ds.fsiPath })),
+        datasets: selected,
         onSubmit: handleBulkRemove
       }
     )
