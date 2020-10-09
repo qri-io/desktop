@@ -1,20 +1,10 @@
 import { Dispatch, AnyAction, Store } from 'redux'
 
 import { WEBSOCKETS_URL, WEBSOCKETS_PROTOCOL } from '../constants'
-
 import IStore from '../models/store'
 import { fetchWorkingDatasetDetails } from '../actions/api'
 import { trackVersionTransfer, completeVersionTransfer, removeVersionTransfer } from '../actions/transfers'
 import { resetMutationsDataset, resetMutationsStatus } from '../actions/mutations'
-import {
-  ETRemoteClientPushVersionProgress,
-  ETRemoteClientPushVersionCompleted,
-  ETRemoteClientPushDatasetCompleted,
-  ETRemoteClientPullVersionProgress,
-  ETRemoteClientPullVersionCompleted,
-  ETRemoteClientPullDatasetCompleted,
-  ETRemoteClientRemoveDatasetCompleted
-} from '../reducers/transfers'
 
 // wsMiddleware manages requests to connect to the qri backend via websockets
 // as well as managing messages that get passed through
@@ -34,6 +24,37 @@ const ETDeletedFile = "watchfs:DeletedFile"
 // const ETRenamedFolder = "watchfs:RenamedFolder"
 // ETRemovedFolder is the event for removing a folder
 // const ETRemovedFolder = "watchfs:RemovedFolder"
+
+// ETRemoteClientPushVersionProgress indicates a change in progress of a
+// dataset version push. Progress can fire as much as once-per-block.
+// subscriptions do not block the publisher
+// payload will be a RemoteEvent
+export const ETRemoteClientPushVersionProgress = "remoteClient:PushVersionProgress"
+// ETRemoteClientPushVersionCompleted indicates a version successfully pushed
+// to a remote.
+// payload will be a RemoteEvent
+export const ETRemoteClientPushVersionCompleted = "remoteClient:PushVersionCompleted"
+// ETRemoteClientPushDatasetCompleted indicates pushing a dataset
+// (logbook + versions) completed
+// payload will be a RemoteEvent
+export const ETRemoteClientPushDatasetCompleted = "remoteClient:PushDatasetCompleted"
+// ETRemoteClientPullVersionProgress indicates a change in progress of a
+// dataset version pull. Progress can fire as much as once-per-block.
+// subscriptions do not block the publisher
+// payload will be a RemoteEvent
+export const ETRemoteClientPullVersionProgress = "remoteClient:PullVersionProgress"
+// ETRemoteClientPullVersionCompleted indicates a version successfully pulled
+// from a remote.
+// payload will be a RemoteEvent
+export const ETRemoteClientPullVersionCompleted = "remoteClient:PullVersionCompleted"
+// ETRemoteClientPullDatasetCompleted indicates pulling a dataset
+// (logbook + versions) completed
+// payload will be a RemoteEvent
+export const ETRemoteClientPullDatasetCompleted = "remoteClient:PullDatasetCompleted"
+// ETRemoteClientRemoveDatasetCompleted indicates removing a dataset
+// (logbook + versions) remove completed
+// payload will be a RemoteEvent
+export const ETRemoteClientRemoveDatasetCompleted = "remoteClient:RemoveDatasetCompleted"
 
 const socketMiddleware = () => {
   let socket: WebSocket = null
@@ -79,10 +100,11 @@ const socketMiddleware = () => {
           event.data.type = event.type === ETRemoteClientPushVersionProgress ? "push-version" : "pull-version"
           store.dispatch(trackVersionTransfer(event.data))
           break
-        case ETRemoteClientPushDatasetCompleted:
-        case ETRemoteClientPullDatasetCompleted:
+        // case ETRemoteClientPushDatasetCompleted:
+        // case ETRemoteClientPullDatasetCompleted:
         case ETRemoteClientPushVersionCompleted:
         case ETRemoteClientPullVersionCompleted:
+          event.data.type = event.type === ETRemoteClientPushVersionCompleted ? "push-version" : "pull-version"
           store.dispatch(completeVersionTransfer(event.data))
           break
         case ETRemoteClientRemoveDatasetCompleted:

@@ -1,7 +1,10 @@
 import { Reducer, AnyAction } from 'redux'
 
 import { RemoteEvent, RemoteEvents } from '../models/store'
-import { TRACK_VERSION_TRANSFER, COMPLETE_VERSION_TRANSFER, REMOVE_VERSION_TRANSFER } from '../actions/transfers'
+
+export const TRACK_VERSION_TRANSFER = 'TRACK_VERSION_TRANSFER'
+export const COMPLETE_VERSION_TRANSFER = 'COMPLETE_VERSION_TRANSFER'
+export const REMOVE_VERSION_TRANSFER = 'REMOVE_VERSION_TRANSFER'
 
 // example remote event:
 // 'b5/world_bank_population@/ipfs/QmVersionHash': {
@@ -18,37 +21,6 @@ import { TRACK_VERSION_TRANSFER, COMPLETE_VERSION_TRANSFER, REMOVE_VERSION_TRANS
 // }
 export const initialState: RemoteEvents = {}
 
-// ETRemoteClientPushVersionProgress indicates a change in progress of a
-// dataset version push. Progress can fire as much as once-per-block.
-// subscriptions do not block the publisher
-// payload will be a RemoteEvent
-export const ETRemoteClientPushVersionProgress = "remoteClient:PushVersionProgress"
-// ETRemoteClientPushVersionCompleted indicates a version successfully pushed
-// to a remote.
-// payload will be a RemoteEvent
-export const ETRemoteClientPushVersionCompleted = "remoteClient:PushVersionCompleted"
-// ETRemoteClientPushDatasetCompleted indicates pushing a dataset
-// (logbook + versions) completed
-// payload will be a RemoteEvent
-export const ETRemoteClientPushDatasetCompleted = "remoteClient:PushDatasetCompleted"
-// ETRemoteClientPullVersionProgress indicates a change in progress of a
-// dataset version pull. Progress can fire as much as once-per-block.
-// subscriptions do not block the publisher
-// payload will be a RemoteEvent
-export const ETRemoteClientPullVersionProgress = "remoteClient:PullVersionProgress"
-// ETRemoteClientPullVersionCompleted indicates a version successfully pulled
-// from a remote.
-// payload will be a RemoteEvent
-export const ETRemoteClientPullVersionCompleted = "remoteClient:PullVersionCompleted"
-// ETRemoteClientPullDatasetCompleted indicates pulling a dataset
-// (logbook + versions) completed
-// payload will be a RemoteEvent
-export const ETRemoteClientPullDatasetCompleted = "remoteClient:PullDatasetCompleted"
-// ETRemoteClientRemoveDatasetCompleted indicates removing a dataset
-// (logbook + versions) remove completed
-// payload will be a RemoteEvent
-export const ETRemoteClientRemoveDatasetCompleted = "remoteClient:RemoveDatasetCompleted"
-
 function eventID (data: RemoteEvent): string {
   return `${data.ref.username}/${data.ref.name}@${data.ref.path}`
 }
@@ -62,10 +34,10 @@ function deleteOne (state: RemoteEvents, data: RemoteEvent): RemoteEvents {
 const transfersReducer: Reducer = (state = initialState, action: AnyAction): RemoteEvents => {
   if (![TRACK_VERSION_TRANSFER, COMPLETE_VERSION_TRANSFER, REMOVE_VERSION_TRANSFER].includes(action.type)) {
     return state
-  }
-  if (!action.transfer || !action.transfer.ref) {
+  } else if (!action.transfer || !action.transfer.ref) {
     return state
   }
+
   let t = action.transfer
 
   switch (action.type) {
@@ -79,6 +51,11 @@ const transfersReducer: Reducer = (state = initialState, action: AnyAction): Rem
         [eventID(t)]: t
       }
     case COMPLETE_VERSION_TRANSFER:
+      t.complete = true
+      return {
+        ...state,
+        [eventID(t)]: t
+      }
     case REMOVE_VERSION_TRANSFER:
       return deleteOne(state, t)
     default:

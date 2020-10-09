@@ -223,6 +223,7 @@ export interface RemoteEvent {
   remoteAddr: string
   progress: DagCompletion
   type: RemoteEventType
+  complete?: boolean
 }
 
 export type RemoteEvents = Record<string, RemoteEvent>

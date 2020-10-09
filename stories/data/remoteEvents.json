@@ -38,6 +38,7 @@
         "profileId": "QmProfileID",
         "path": "/ipfs/QmVersionHash"
       },
+      "complete": true,
       "remoteAddress": "https://registry.qri.cloud",
       "progress": [100, 100, 100, 100, 100]
     }
@@ -78,6 +79,7 @@
         "profileId": "QmProfileID",
         "path": "/ipfs/QmVersionHash"
       },
+      "complete": true,
       "remoteAddress": "https://registry.qri.cloud",
       "progress": [100, 100, 100, 100, 100]
     },
@@ -104,6 +106,7 @@
         "profileId": "QmProfileID",
         "path": "/ipfs/QmVersionHash"
       },
+      "complete": true,
       "remoteAddress": "https://registry.qri.cloud",
       "progress": [100, 100, 100, 100, 100]
     },
@@ -130,6 +133,47 @@
       },
       "remoteAddress": "https://registry.qri.cloud",
       "progress": [100, 0, 100, 0, 0]
+    }
+  },
+  {
+    "b5/world_bank_population@/ipfs/QmVersionHash": {
+      "type": "pull-version",
+      "ref": {
+        "location": "b5/world_bank_population@/ipfs/QmVersionHash",
+        "username": "b5",
+        "name": "world_bank_population",
+        "profileId": "QmProfileID",
+        "path": "/ipfs/QmVersionHash"
+      },
+      "complete": true,
+      "remoteAddress": "https://registry.qri.cloud",
+      "progress": [100, 100, 100, 100, 100]
+    },
+    "xristosk/bots@/ipfs/QmVersionHash": {
+      "type": "pull-version",
+      "ref": {
+        "location": "b5/bots@/ipfs/QmVersionHash",
+        "username": "xristosk",
+        "name": "bots",
+        "profileId": "QmProfileID",
+        "path": "/ipfs/QmVersionHash"
+      },
+      "remoteAddress": "https://registry.qri.cloud",
+      "complete": true,
+      "progress": [100, 100, 100, 100, 100]
+    },
+    "star_lord_long_username/heart_of_darkness_with_a_long_title@/ipfs/QmHashE": {
+      "type": "push-version",
+      "ref": {
+        "location": "star_lord_long_username/heart_of_darkness_with_a_long_title@/ipfs/QmVersionHash",
+        "username": "star_lord_long_username",
+        "name": "heart_of_darkness_with_a_long_title",
+        "profileId": "QmProfileID",
+        "path": "/ipfs/QmVersionHash"
+      },
+      "remoteAddress": "https://registry.qri.cloud",
+      "complete": true,
+      "progress": [100, 100, 100, 100, 100]
     }
   }
   

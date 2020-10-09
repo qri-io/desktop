@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Route } from 'react-router-dom'
 
 import { ModalType } from '../app/models/modals'
 import { SearchComponent } from '../app/components/modals/SearchModal'
-import { NewDatasetComponent } from '../app/components/modals/NewDataset'
+// import { NewDatasetComponent } from '../app/components/modals/NewDataset'
 import { ExportDatasetComponent } from '../app/components/modals/ExportDataset'
 
 export default {
@@ -37,27 +37,27 @@ std.story = {
   parameters: { note: 'search results modal' }
 }
 
-export const newDataset = () => (
-  <div style={{ margin: 0, padding: 30, height: '100%', background: '#F5F7FA' }}>
-    <div style={{ width: 800, margin: '2em auto' }}>
-      <Router>
-        <Route render={(props) =>
-          <NewDatasetComponent
-            {...props}
-            username='qri_user'
-            modal={{ type: ModalType.NewDataset }}
-            onDismissed={() => console.log('New dataset modal is dismissed.')}
-          />}
-        />
-      </Router>
-    </div>
-  </div>
-)
+// export const newDataset = () => (
+//   <div style={{ margin: 0, padding: 30, height: '100%', background: '#F5F7FA' }}>
+//     <div style={{ width: 800, margin: '2em auto' }}>
+//       <Router>
+//         <Route render={(props) =>
+//           <NewDatasetComponent
+//             {...props}
+//             username='qri_user'
+//             modal={{ type: ModalType.NewDataset }}
+//             onDismissed={() => console.log('New dataset modal is dismissed.')}
+//           />}
+//         />
+//       </Router>
+//     </div>
+//   </div>
+// )
 
-newDataset.story = {
-  name: 'New Dataset',
-  parameters: { note: 'new dataset modal' }
-}
+// newDataset.story = {
+//   name: 'New Dataset',
+//   parameters: { note: 'new dataset modal' }
+// }
 
 const dataset = {
   structure: {

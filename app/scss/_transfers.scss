@@ -66,6 +66,9 @@
     .item {
       padding: 10px 20px 10px 15px;
       border-bottom: 1px solid #eee;
+      &.complete {
+        cursor: pointer;
+      }
 
       .icon {
         height: 100%;
@@ -85,6 +88,9 @@
         overflow: hidden;
         font-size: 13px;
         font-weight: bold;
+      }
+      .complete {
+        font-size: 12px;
       }
     }
 
