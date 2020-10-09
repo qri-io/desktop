@@ -59,6 +59,7 @@ export const RenameDatasetComponent: React.FC<RenameDatasetProps> = (props: Rena
             onChange={handleDatasetReferenceSubmit}
             isValid={setError}
             focusOnFirstRender
+            inline={false}
           />
           <div className='margin-top'>
             <Error text={error} id='rename-dataset-error' />

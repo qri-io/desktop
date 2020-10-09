@@ -336,7 +336,7 @@ $header-font-size: .9rem;
     text-overflow: ellipsis;
     overflow: hidden;
 
-    input {
+    .inline-input {
       background-color: $primary-muted;
       border: none;
       border-radius: 5px;
@@ -349,7 +349,12 @@ $header-font-size: .9rem;
       &.invalid {
         background: #F43535;
       }
+    }
 
+    input {
+      &.invalid {
+        border: solid 1px #F43535;
+      }
     }
 
     &:hover {

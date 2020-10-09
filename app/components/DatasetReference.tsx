@@ -38,6 +38,12 @@ interface DatasetReferenceProps {
    * component is first rendered
    */
   focusOnFirstRender?: boolean
+  /**
+   * default true: when inline is true, the UI will not show that the reference
+   * is editable until clicked. When false, the component looks like a more
+   * traditional editable inpu
+   */
+  inline?: boolean
 }
 
 export const DatasetReferenceComponent: React.FunctionComponent<DatasetReferenceProps> = (props) => {
@@ -46,6 +52,7 @@ export const DatasetReferenceComponent: React.FunctionComponent<DatasetReference
     onSubmit,
     onChange,
     isValid,
+    inline = true,
     focusOnFirstRender = false
   } = props
 
@@ -91,6 +98,7 @@ export const DatasetReferenceComponent: React.FunctionComponent<DatasetReference
 
     // submit on enter or tab
     if ((e.keyCode === 13) || (e.keyCode === 9)) {
+      e.preventDefault()
       confirmRename(username, name, newName)
     }
   }
@@ -137,11 +145,11 @@ export const DatasetReferenceComponent: React.FunctionComponent<DatasetReference
 
   return (
     <div id='dataset-reference' className='dataset-reference'>
-      <div className='dataset-username'>{username}/</div>
-      <div className={classNames('dataset-name', { 'no-pointer': !datasetSelected })} id='dataset-name' ref={nameRef}>
-        { nameEditing && datasetSelected && <input
+      <div className={classNames('dataset-username', { 'input-label': !inline })}>{username}/</div>
+      <div className={classNames('dataset-name', { 'no-pointer': !datasetSelected, 'text-input-container': !inline })} id='dataset-name' ref={nameRef}>
+        { (!inline || (nameEditing && datasetSelected)) && <input
           id='dataset-name-input'
-          className={classNames({ invalid: invalidErr })}
+          className={classNames('input', { 'inline-input': inline, invalid: invalidErr })}
           type='text'
           value={newName}
           maxLength={150}
