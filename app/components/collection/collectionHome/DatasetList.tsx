@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback, useEffect } from 'react'
 import { Action, AnyAction } from 'redux'
 import classNames from "classnames"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -56,6 +56,20 @@ export const DatasetListComponent: React.FC<DatasetListProps> = (props) => {
   const [selected, setSelected] = useState([] as VersionInfo[])
   const [onlySessionUserDatasets, setOnlySessionUserDatasets] = useState(false)
 
+  useEffect(() => {
+    if (datasets.length === 0) return
+
+    const datasetNames = datasets.map(ds => ds.name)
+    const updatedSelected = selected.reduce((acc, selectedDs) => {
+      if (datasetNames.includes(selectedDs.name)) {
+        return [...acc, selectedDs]
+      }
+      return acc
+    }, [])
+    console.log({ updatedSelected })
+    setSelected(updatedSelected)
+  }, [datasets])
+
   const handleSetFilter = (value: string) => {
     setFilter(value)
     setSelected([])
@@ -68,6 +82,7 @@ export const DatasetListComponent: React.FC<DatasetListProps> = (props) => {
 
   // keep track of selected items in state
   const handleSelectedRowsChange = useCallback(({ selectedRows }: { selectedRows: VersionInfo[] }) => {
+    console.log({ selectedRows }) // THIS VALUE IS INCORRECT
     setSelected(selectedRows)
   }, [])
 
