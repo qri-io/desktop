@@ -7,7 +7,7 @@ import { faTimes } from '@fortawesome/free-solid-svg-icons'
 import { pathToDataset } from '../../../paths'
 import { QriRef } from '../../../models/qriRef'
 import { Modal, ModalType } from '../../../models/modals'
-import { Store, MyDatasets, WorkingDataset, VersionInfo, RouteProps, qriRefFromVersionInfo, ToastType } from '../../../models/store'
+import { Store, MyDatasets, WorkingDataset, VersionInfo, RouteProps, ToastType } from '../../../models/store'
 import { onClickOpenInFinder } from '../../platformSpecific/DatasetStatus.TARGET_PLATFORM'
 import { connectComponentToPropsWithRouter } from '../../../utils/connectComponentToProps'
 import { setFilter } from '../../../actions/myDatasets'
@@ -27,14 +27,13 @@ interface DatasetListProps extends RouteProps {
   setFilter: (filter: string) => Action
   setWorkingDataset: (username: string, name: string) => Action
   fetchMyDatasets: (page: number, pageSize: number) => Promise<AnyAction>
-  pullDatasets: DatasetAction
-  removeDatasetsAndFetch: DatasetAction
+  pullDatasets: (refs: VersionInfo[]) => Promise<AnyAction>
+  removeDatasetsAndFetch: (refs: VersionInfo[], keepFiles: boolean) => Promise<AnyAction>
   setModal: (modal: Modal) => void
   openToast: (type: ToastType, name: string, message: string) => Action
 }
 
 type DatasetActionType = 'pull' | 'remove'
-type DatasetAction = (refs: QriRef[]) => Promise<AnyAction>
 
 export const DatasetListComponent: React.FC<DatasetListProps> = (props) => {
   const { showFSI, setFilter, myDatasets, history, sessionUsername, pullDatasets, removeDatasetsAndFetch, openToast, setModal } = props
@@ -105,22 +104,22 @@ export const DatasetListComponent: React.FC<DatasetListProps> = (props) => {
     ? `You have ${filteredDatasets.length} local dataset${filteredDatasets.length !== 1 ? 's' : ''}`
     : `Showing ${filteredDatasets.length} local dataset${filteredDatasets.length !== 1 ? 's' : ''}`
 
-  const handleBulkPullSelectedDatasets = async () => {
-    const refs = selected.map(qriRefFromVersionInfo)
-    return handleBulkActionForDatasets('pull', 'pulling', 'pulled', pullDatasets, refs)
+  const handleBulkPull = async () => {
+    const actionCallback = async () => pullDatasets(selected)
+    return handleBulkActionForDatasets('pull', 'pulling', 'pulled', actionCallback, selected)
   }
 
-  const handleBulkRemoveSelectedDatasets = async (keepFiles: boolean) => {
-    const refs = selected.map(ds => ({ username: ds.username, name: ds.name, isLinked: !!ds.fsiPath, keepFiles }))
-    return handleBulkActionForDatasets('remove', 'removing', 'removed', removeDatasetsAndFetch, refs)
+  const handleBulkRemove = async (keepFiles: boolean) => {
+    const actionCallback = async () => removeDatasetsAndFetch(selected, keepFiles)
+    return handleBulkActionForDatasets('remove', 'removing', 'removed', actionCallback, selected)
   }
 
-  const handleBulkActionForDatasets = async (actionType: DatasetActionType, actionGerund: string, actionPastTense: string, action: DatasetAction, refs: Array<{username: string, name: string, isLinked?: boolean, keepFiles?: boolean}>) => {
+  const handleBulkActionForDatasets = async (actionType: DatasetActionType, actionGerund: string, actionPastTense: string, actionCallback: () => Promise<AnyAction>, refs: VersionInfo[]) => {
     setBulkActionExecuting(true)
     openToast('info', actionType, `${actionGerund} ${refs.length} ${refs.length === 1 ? 'dataset' : 'datasets'}`)
     let result: AnyAction
     try {
-      result = await action(refs)
+      result = await actionCallback()
       setBulkActionExecuting(false)
       openToast('success', `${actionType}-success`, `${actionPastTense} ${refs.length} ${refs.length === 1 ? 'dataset' : 'datasets'}`)
     } catch (reason) {
@@ -136,7 +135,7 @@ export const DatasetListComponent: React.FC<DatasetListProps> = (props) => {
       {
         type: ModalType.RemoveDataset,
         datasets: selected.map(ds => ({ username: ds.username, name: ds.name, fsiPath: ds.fsiPath })),
-        onSubmit: handleBulkRemoveSelectedDatasets
+        onSubmit: handleBulkRemove
       }
     )
   }
@@ -176,7 +175,7 @@ export const DatasetListComponent: React.FC<DatasetListProps> = (props) => {
             {selected.length === 0 && countMessage}
             {selected.length > 0 && <>
               <span>{selected.length} selected</span>
-              <button disabled={bulkActionExecuting} onClick={handleBulkPullSelectedDatasets}>Pull latest</button>
+              <button disabled={bulkActionExecuting} onClick={handleBulkPull}>Pull latest</button>
               <button id="button-bulk-remove" disabled={bulkActionExecuting} onClick={openRemoveModal}>Remove</button>
             </>}
           </div>

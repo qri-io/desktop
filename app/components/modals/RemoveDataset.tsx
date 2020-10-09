@@ -66,7 +66,7 @@ export const RemoveDatasetComponent: React.FC<RemoveDatasetProps> = (props: Remo
           <div className='dialog-text-small'>
             <p>Are you sure you want to remove {datasetRefs}&nbsp;?</p>
             <br/><br/>
-            {isDeletingSessionUserDataset && <div className='warning'>Warning: removing a dataset which belongs to you means you cannot return to that dataset&apos;s history.</div>}
+            {isDeletingSessionUserDataset && <div className='warning'>Warning: removing a dataset that you created means you cannot return to that dataset&apos;s history.</div>}
           </div>
           { isLinked &&
               <CheckboxInput
