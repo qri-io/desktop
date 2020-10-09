@@ -1,10 +1,8 @@
 import React, { useState } from 'react'
 
 import { RemoveDatasetModal } from '../../../app/models/modals'
-import { ApiAction } from '../../store/api'
 import { connectComponentToProps } from '../../utils/connectComponentToProps'
 import { dismissModal } from '../../actions/ui'
-import { removeDatasetAndFetch } from '../../actions/api'
 import { selectModal, selectSessionUsername } from '../../selections'
 
 import CheckboxInput from '../form/CheckboxInput'
@@ -16,37 +14,43 @@ interface RemoveDatasetProps {
   modal: RemoveDatasetModal
   sessionUsername: string
   onDismissed: () => void
-  onSubmit: (username: string, name: string, isLinked: boolean, keepFiles: boolean) => Promise<ApiAction>
 }
 
 export const RemoveDatasetComponent: React.FC<RemoveDatasetProps> = (props: RemoveDatasetProps) => {
-  const { modal, sessionUsername, onDismissed, onSubmit } = props
-  const { username, name, fsiPath } = modal
+  const { modal: { datasets, onSubmit }, sessionUsername, onDismissed } = props
 
   const [keepFiles, setKeepFiles] = useState(true)
   const [dismissable, setDismissable] = useState(true)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
-  const handleChanges = (name: string, value: any) => {
+  const isLinked = !!datasets.find(dataset => dataset.fsiPath)
+  const isSingleDataset = datasets.length === 1
+
+  const handleChanges = (name: string, value: boolean) => {
     setKeepFiles(!value)
   }
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     setDismissable(false)
     setLoading(true)
     error && setError('')
     if (!onSubmit) return
 
-    const isLinked = !!fsiPath
-    onSubmit(username, name, isLinked, keepFiles)
-      .then(onDismissed)
-      .catch((action) => {
-        setLoading(false)
-        setDismissable(true)
-        setError(action.payload.err.message)
-      })
+    try {
+      await onSubmit(keepFiles)
+      setLoading(false)
+      setDismissable(true)
+      onDismissed()
+    } catch (action) {
+      setLoading(false)
+      setDismissable(true)
+      setError(action.payload.err.message)
+    }
   }
+
+  const datasetRefs = datasets.map((dataset, index) => (<span key={index}><br/><code key={index}>{dataset.username}/{dataset.name}</code></span>))
+  const isDeletingSessionUserDataset = !!datasets.find(ds => ds.username === sessionUsername)
 
   return (
     <Modal
@@ -60,24 +64,24 @@ export const RemoveDatasetComponent: React.FC<RemoveDatasetProps> = (props: Remo
       <div className='content-wrap'>
         <div className='content'>
           <div className='dialog-text-small'>
-            <p>Are you sure you want to remove <br/> <code>{username}/{name}</code>&nbsp;?</p>
+            <p>Are you sure you want to remove {datasetRefs}&nbsp;?</p>
             <br/><br/>
-            {sessionUsername === username && <div className='warning'>Warning: removing a dataset which belongs to you means you cannot return to that dataset&apos;s history.</div>}
+            {isDeletingSessionUserDataset && <div className='warning'>Warning: removing a dataset that you created means you cannot return to that dataset&apos;s history.</div>}
           </div>
-          { fsiPath &&
+          { isLinked &&
               <CheckboxInput
                 name='should-remove-files'
                 checked={!keepFiles}
                 onChange={handleChanges}
-                label={'Also remove the dataset\'s files'}
+                label={'Also remove dataset files from my local file system'}
               />
           }
         </div>
       </div>
       <p className='content-bottom submit-message'>
-        { fsiPath && !keepFiles && <span>Qri will delete dataset files in <strong>{fsiPath}</strong></span>}
+        { isSingleDataset && isLinked && !keepFiles && <span>Qri will delete dataset files in <strong>{datasets[0].fsiPath}</strong></span>}
       </p>
-      <Error text={error} />
+      <Error id='remove-dataset-error' text={error} />
       <Buttons
         cancelText='cancel'
         onCancel={onDismissed}
@@ -100,7 +104,6 @@ export default connectComponentToProps(
     }
   },
   {
-    onDismissed: dismissModal,
-    onSubmit: removeDatasetAndFetch
+    onDismissed: dismissModal
   }
 )

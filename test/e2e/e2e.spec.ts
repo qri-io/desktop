@@ -891,6 +891,78 @@ describe('Qri End to End tests', function spec () {
   //   // no datasets
   //   await exists(['#no-datasets'])
   // })
+
+  it('removes multiple datasets from Collections page via bulk remove action', async () => {
+    const {
+      atLocation,
+      click,
+      createDatasetForUser,
+      expectTextToBe,
+      delay,
+      waitForExist
+    } = utils
+
+    const jsonFilename0 = 'dataset_to_be_removed_0.json'
+    const jsonDatasetName0 = 'dataset_to_be_removed_0'
+    const jsonFilename1 = 'dataset_to_be_removed_1.json'
+    const jsonDatasetName1 = 'dataset_to_be_removed_1'
+
+    await delay(1000)
+    await createDatasetForUser(jsonFilename0, jsonDatasetName0, username, backend)
+    await createDatasetForUser(jsonFilename1, jsonDatasetName1, username, backend)
+
+    // make sure we are on the collection page
+    await click('#collection')
+    await atLocation('#/collection')
+
+    // select both newly created datasets and click the remove button
+    await click(`input[name='select-row-${username}-${jsonDatasetName0}']`)
+    await click(`input[name='select-row-${username}-${jsonDatasetName1}']`)
+    await click("#button-bulk-remove")
+
+    // expect bulk remove modal to appear
+    await waitForExist("#remove-dataset")
+
+    // click remove button
+    await click("#submit")
+
+    // ensure both datasets are removed from collection page
+    await expectTextToBe(".active .count-indicator", "3")
+  })
+
+  it('removes a single dataset from Collections page via bulk remove action', async () => {
+    const {
+      atLocation,
+      click,
+      createDatasetForUser,
+      expectTextToBe,
+      delay,
+      waitForExist
+    } = utils
+
+    const jsonFilename = 'dataset_to_be_removed.json'
+    const jsonDatasetName = 'dataset_to_be_removed'
+
+    await delay(1000)
+    await createDatasetForUser(jsonFilename, jsonDatasetName, username, backend)
+
+    // make sure we are on the collection page
+    await click('#collection')
+    await atLocation('#/collection')
+
+    // select newly created dataset and click the remove button
+    await click(`input[name='select-row-${username}-${jsonDatasetName}']`)
+    await click("#button-bulk-remove")
+
+    // expect bulk remove modal to appear
+    await waitForExist("#remove-dataset")
+
+    // click remove button
+    await click("#submit")
+
+    // ensure both datasets are removed from collection page
+    await expectTextToBe(".active .count-indicator", "3")
+  })
 })
 
 async function writeCommitAndSubmit (uniqueName: string, component: string, status: 'added' | 'modified' | 'removed', commitTitle: string, commitMessage: string | undefined, utils: E2ETestUtils, imagesDir: string) {

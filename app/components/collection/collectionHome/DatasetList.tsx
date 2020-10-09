@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from 'react'
+import React, { useState, useCallback } from 'react'
 import { Action, AnyAction } from 'redux'
 import classNames from "classnames"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -6,12 +6,12 @@ import { faTimes } from '@fortawesome/free-solid-svg-icons'
 
 import { pathToDataset } from '../../../paths'
 import { QriRef } from '../../../models/qriRef'
-import { Modal } from '../../../models/modals'
-import { Store, MyDatasets, WorkingDataset, VersionInfo, RouteProps, qriRefFromVersionInfo, ToastType } from '../../../models/store'
+import { Modal, ModalType } from '../../../models/modals'
+import { Store, MyDatasets, WorkingDataset, VersionInfo, RouteProps, ToastType } from '../../../models/store'
 import { onClickOpenInFinder } from '../../platformSpecific/DatasetStatus.TARGET_PLATFORM'
 import { connectComponentToPropsWithRouter } from '../../../utils/connectComponentToProps'
 import { setFilter } from '../../../actions/myDatasets'
-import { pullDatasets, fetchMyDatasets } from '../../../actions/api'
+import { pullDatasets, fetchMyDatasets, removeDatasetsAndFetch } from '../../../actions/api'
 import { setWorkingDataset } from '../../../actions/selections'
 import { setModal, openToast } from '../../../actions/ui'
 
@@ -27,13 +27,16 @@ interface DatasetListProps extends RouteProps {
   setFilter: (filter: string) => Action
   setWorkingDataset: (username: string, name: string) => Action
   fetchMyDatasets: (page: number, pageSize: number) => Promise<AnyAction>
-  pullDatasets: (refs: QriRef[]) => Promise<AnyAction>
+  pullDatasets: (refs: VersionInfo[]) => Promise<AnyAction>
+  removeDatasetsAndFetch: (refs: VersionInfo[], keepFiles: boolean) => Promise<AnyAction>
   setModal: (modal: Modal) => void
   openToast: (type: ToastType, name: string, message: string) => Action
 }
 
+type DatasetActionType = 'pull' | 'remove'
+
 export const DatasetListComponent: React.FC<DatasetListProps> = (props) => {
-  const { showFSI, setFilter, myDatasets, history, sessionUsername, pullDatasets, openToast } = props
+  const { showFSI, setFilter, myDatasets, history, sessionUsername, pullDatasets, removeDatasetsAndFetch, openToast, setModal } = props
   const { filter, value: datasets } = myDatasets
   const lowercasedFilterString = filter.toLowerCase()
 
@@ -101,36 +104,41 @@ export const DatasetListComponent: React.FC<DatasetListProps> = (props) => {
     ? `You have ${filteredDatasets.length} local dataset${filteredDatasets.length !== 1 ? 's' : ''}`
     : `Showing ${filteredDatasets.length} local dataset${filteredDatasets.length !== 1 ? 's' : ''}`
 
-  // use memoization to theoretically speed up rendering for example:
-  // https://github.com/jbetancur/react-data-table-component/blob/master/stories/DataTable/Basic/SelectableRowsMgmt.stories.js
-  // TODO (b5) - not currently giving great performance when playing with checklist items
-  const bulkActions = useMemo(() => {
-    const handlePullSelectedDatasets = () => {
-      const refs = selected.map(qriRefFromVersionInfo)
+  const handleBulkPull = async () => {
+    const actionCallback = async () => pullDatasets(selected)
+    return handleBulkActionForDatasets('pull', 'pulling', 'pulled', actionCallback, selected)
+  }
 
-      setBulkActionExecuting(true)
-      openToast('info', 'pull', `pulling ${refs.length} ${refs.length === 1 ? 'dataset' : 'datasets'}`)
-      pullDatasets(refs)
-        .then(() => {
-          setBulkActionExecuting(false)
-          openToast('success', 'pull-success', `pulled ${refs.length} ${refs.length === 1 ? 'dataset' : 'datasets'}`)
-        })
-        .catch((reason) => {
-          setBulkActionExecuting(false)
-          openToast('error', 'pull-error', `pulling datasets: ${reason}`)
-        })
+  const handleBulkRemove = async (keepFiles: boolean) => {
+    const actionCallback = async () => removeDatasetsAndFetch(selected, keepFiles)
+    return handleBulkActionForDatasets('remove', 'removing', 'removed', actionCallback, selected)
+  }
+
+  const handleBulkActionForDatasets = async (actionType: DatasetActionType, actionGerund: string, actionPastTense: string, actionCallback: () => Promise<AnyAction>, refs: VersionInfo[]) => {
+    setBulkActionExecuting(true)
+    openToast('info', actionType, `${actionGerund} ${refs.length} ${refs.length === 1 ? 'dataset' : 'datasets'}`)
+    let result: AnyAction
+    try {
+      result = await actionCallback()
+      setBulkActionExecuting(false)
+      openToast('success', `${actionType}-success`, `${actionPastTense} ${refs.length} ${refs.length === 1 ? 'dataset' : 'datasets'}`)
+    } catch (reason) {
+      setBulkActionExecuting(false)
+      openToast('error', `${actionType}-error`, `${actionGerund} datasets: ${reason}`)
+      throw (reason)
     }
+    return result
+  }
 
-    return (<div className='bulk-actions'>
-      {selected.length === 0 && countMessage}
-      {selected.length > 0 && <>
-        <span>{selected.length} selected</span>
-        <button disabled={bulkActionExecuting} onClick={handlePullSelectedDatasets}>Pull latest</button>
-        <button disabled={bulkActionExecuting} onClick={() => alert(`quick export CSV: ${selected}`)}>Quick Export CSV</button>
-        <button disabled={bulkActionExecuting} onClick={() => alert(`remove: ${selected}`)}>Remove</button>
-      </>}
-    </div>)
-  }, [selected, filteredDatasets, bulkActionExecuting])
+  const openRemoveModal = () => {
+    setModal(
+      {
+        type: ModalType.RemoveDataset,
+        datasets: selected,
+        onSubmit: handleBulkRemove
+      }
+    )
+  }
 
   return (
     <div id='dataset-list'>
@@ -163,7 +171,14 @@ export const DatasetListComponent: React.FC<DatasetListProps> = (props) => {
               All Datasets <span className='count-indicator'>{datasets.length}</span>
             </button>
           </div>
-          {bulkActions}
+          <div className='bulk-actions'>
+            {selected.length === 0 && countMessage}
+            {selected.length > 0 && <>
+              <span>{selected.length} selected</span>
+              <button disabled={bulkActionExecuting} onClick={handleBulkPull}>Pull latest</button>
+              <button id="button-bulk-remove" disabled={bulkActionExecuting} onClick={openRemoveModal}>Remove</button>
+            </>}
+          </div>
         </div>
       </header>
 
@@ -194,6 +209,7 @@ export default connectComponentToPropsWithRouter(
     fetchMyDatasets,
     setModal,
     pullDatasets,
+    removeDatasetsAndFetch,
     openToast
   }
 )

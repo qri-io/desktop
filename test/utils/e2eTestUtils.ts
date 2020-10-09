@@ -1,5 +1,7 @@
-import url from 'url'
 import fs from 'fs'
+import path from 'path'
+import url from 'url'
+import TestBackendProcess from '../utils/testQriBackend'
 
 const headless = false
 const delayTime = 100
@@ -22,6 +24,7 @@ export interface E2ETestUtils {
   sendKeys: (selector: string, value: string | string[], screenshotLocation?: string) => Promise<void>
   takeScreenshot: (screenshotLocation: string, delayTime?: number) => Promise<void>
   isChecked: (selector: string, screenshotLocation?: string) => Promise<boolean>
+  createDatasetForUser: (fileName: string, datasetName: string, username: string, backend: TestBackendProcess) => Promise<void>
 }
 
 export function newE2ETestUtils (app: any): E2ETestUtils {
@@ -42,7 +45,8 @@ export function newE2ETestUtils (app: any): E2ETestUtils {
     checkStatus: checkStatus(app),
     sendKeys: sendKeys(app),
     takeScreenshot: takeScreenshot(app),
-    isChecked: isChecked(app)
+    isChecked: isChecked(app),
+    createDatasetForUser: createDatasetForUser(app)
   }
 }
 
@@ -343,5 +347,28 @@ function isChecked (app: any) {
       }
       throw new Error(`function 'waitForExist': ${e}`)
     }
+  }
+}
+
+function createDatasetForUser (app: any) {
+  return async (fileName: string, datasetName: string, username: string, backend: TestBackendProcess) => {
+    // make sure we are on the collection page
+    await click(app)('#collection')
+    await atLocation(app)('#/collection')
+
+    // click new-dataset to open up the Create Dataset modal
+    await click(app)('#new-dataset')
+
+    // mock the dialog and create a temp csv file
+    // clicking the '#chooseBodyFile' button will connect the fakeDialog
+    // to the correct input
+    const jsonPath = path.join(backend.dir, fileName)
+    fs.writeFileSync(jsonPath, '{"a": 1, "b":2, "c": 3}')
+    await app.client.chooseFile(`#chooseBodyFile-input`, jsonPath)
+    // submit to create a new dataset
+    await click(app)('#submit')
+
+    // ensure we have redirected to the dataset section
+    await atDataset(app)(username, datasetName)
   }
 }

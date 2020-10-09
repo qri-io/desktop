@@ -9,7 +9,7 @@ import {
   mapBody,
   mapHistory
 } from './mappingFuncs'
-import { SelectedComponent } from '../models/store'
+import { SelectedComponent, VersionInfo } from '../models/store'
 import {
   setSaveComplete,
   resetMutationsDataset,
@@ -33,7 +33,6 @@ import { openToast } from './ui'
 import { actionWithPagination } from '../utils/pagination'
 import { getActionType } from '../utils/actionType'
 import { datasetConvertStringToScriptBytes } from '../utils/datasetConvertStringToScriptBytes'
-import { QriRef } from '../models/qriRef'
 
 const pageSizeDefault = 100
 export const bodyPageSizeDefault = 50
@@ -435,7 +434,7 @@ export function saveWorkingDatasetAndFetch (username: string, name: string): Api
   }
 }
 
-export function pullDatasets (refs: QriRef[]): ApiActionThunk {
+export function pullDatasets (refs: VersionInfo[]): ApiActionThunk {
   return async (dispatch) => {
     return Promise.all(
       refs.map(async (ref) => pullDataset(ref.username, ref.name)(dispatch))
@@ -671,6 +670,25 @@ export function removeDatasetAndFetch (username: string, name: string, isLinked:
     dispatch(push(pathToCollection()))
     response = await fetchMyDatasets(-1)(dispatch, getState)
     return response
+  }
+}
+
+// remove the specified datasets, then refresh the dataset list
+export function removeDatasetsAndFetch (refs: VersionInfo[], keepFiles: boolean): ApiActionThunk {
+  return async (dispatch, getState) => {
+    try {
+      await Promise.all(
+        refs.map(async (ref) => removeDataset(ref.username, ref.name, !!ref.fsiPath, keepFiles)(dispatch, getState))
+      )
+      // reset pagination
+      return fetchMyDatasets(-1)(dispatch, getState)
+    } catch (action) {
+      if (!action.payload.err.message.contains('directory not empty')) {
+        throw action
+      }
+      dispatch(openToast('error', 'removeDatasetsAndFetch', action.payload.err.message))
+      return Promise.reject(action.payload.err.message)
+    }
   }
 }
 
