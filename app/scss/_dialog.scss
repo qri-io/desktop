@@ -175,6 +175,10 @@ dialog {
     overflow-wrap: normal;
     width: 90%;
     margin-bottom: $spacer;
+    
+    &.sm {
+      font-size: small;
+    }
   }
 
   .buttons {

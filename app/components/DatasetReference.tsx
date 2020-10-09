@@ -68,7 +68,7 @@ export const DatasetReferenceComponent: React.FunctionComponent<DatasetReference
 
   const confirmRename = (username: string, name: string, newName: string) => {
     // cancel if no change, change invalid, or empty
-    if ((name === newName) || invalidErr || newName === '') {
+    if (name === newName || invalidErr || newName === '') {
       cancelRename()
     } else {
       if (onSubmit) {
@@ -99,7 +99,7 @@ export const DatasetReferenceComponent: React.FunctionComponent<DatasetReference
     // submit on enter or tab
     if ((e.keyCode === 13) || (e.keyCode === 9)) {
       e.preventDefault()
-      confirmRename(username, name, newName)
+      inline && confirmRename(username, name, newName)
     }
   }
 
@@ -114,7 +114,8 @@ export const DatasetReferenceComponent: React.FunctionComponent<DatasetReference
     }
 
     if (!nameRef.current.contains(target)) {
-      confirmRename(username, name, newName)
+      e.preventDefault()
+      inline && confirmRename(username, name, newName)
     }
   }
 

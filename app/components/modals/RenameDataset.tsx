@@ -62,7 +62,7 @@ export const RenameDatasetComponent: React.FC<RenameDatasetProps> = (props: Rena
             inline={false}
           />
           <div className='margin-top'>
-            <Error text={error} id='rename-dataset-error' />
+            <Error text={error} id='rename-dataset-error' size='sm' />
           </div>
         </div>
       </div>

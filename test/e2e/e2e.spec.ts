@@ -920,7 +920,7 @@ describe('Qri End to End tests', function spec () {
     await click("#submit")
 
     // ensure both datasets are removed from collection page
-    await expectTextToBe(".active .count-indicator", "3")
+    await expectTextToBe(".active .count-indicator", "4")
   })
 
   it('removes a single dataset from Collections page via bulk remove action', async () => {
@@ -954,7 +954,7 @@ describe('Qri End to End tests', function spec () {
     await click("#submit")
 
     // ensure both datasets are removed from collection page
-    await expectTextToBe(".active .count-indicator", "3")
+    await expectTextToBe(".active .count-indicator", "4")
   })
 })
 
