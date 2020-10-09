@@ -4,7 +4,7 @@ import Hamburger from '../../chrome/Hamburger'
 
 import { VersionInfo } from '../../../models/store'
 import { Modal, ModalType } from '../../../models/modals'
-import { removeDatasetAndFetch } from '../../../actions/api'
+import { removeDatasetAndFetch, pullDataset } from '../../../actions/api'
 import { setModal } from '../../../actions/ui'
 import { connectComponentToProps } from '../../../utils/connectComponentToProps'
 
@@ -12,13 +12,21 @@ interface TableRowHamburgerProps {
   data: VersionInfo
   setModal: (modal: Modal) => void
   removeDatasetAndFetch: (...args: Parameters<typeof removeDatasetAndFetch>) => Promise<AnyAction>
+  pullDataset: (username: string, name: string) => Promise<AnyAction>
 }
 
-const TableRowHamburger: React.FC<TableRowHamburgerProps> = ({ data, setModal, removeDatasetAndFetch }) => {
+const TableRowHamburger: React.FC<TableRowHamburgerProps> = ({ data, setModal, removeDatasetAndFetch, pullDataset }) => {
   const { username, name, fsiPath } = data
   const onRemoveHandler = async (keepFiles: boolean) => removeDatasetAndFetch(username, name, !!fsiPath, keepFiles)
 
   const actions = [
+    {
+      icon: 'download',
+      text: 'Pull',
+      onClick: () => {
+        pullDataset(username, name)
+      }
+    },
     {
       icon: 'download',
       text: 'Export',
@@ -52,6 +60,7 @@ export default connectComponentToProps(
   {},
   {
     setModal,
-    removeDatasetAndFetch
+    removeDatasetAndFetch,
+    pullDataset
   }
 )

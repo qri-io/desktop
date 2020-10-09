@@ -54,7 +54,6 @@ export const NetworkHome: React.FunctionComponent<NetworkHomeProps> = ({ history
 
   return (
     <div className='network_home'>
-      <h2>Home</h2>
       <SearchBox onEnter={handleOnEnter} id='search-box' />
       {featured && featured.length && <div>
         <h4>Featured Datasets</h4>
