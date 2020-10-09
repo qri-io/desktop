@@ -5,7 +5,7 @@ import { shell } from 'electron'
 import {
   faExternalLinkAlt,
   faDatabase,
-  faCopy,
+  faListUl,
   faComment,
   faGlobeEurope
 } from '@fortawesome/free-solid-svg-icons'
@@ -98,16 +98,16 @@ export const NavbarComponent: React.FunctionComponent<NavbarProps> = (props: Nav
 
   let navItems = [
     {
-      icon: faCopy,
+      icon: faListUl,
       id: 'collection',
       link: '/collection',
-      tooltip: 'Collection - Local Datasets'
+      tooltip: 'Collection - Manage Local Datasets'
     },
     {
       icon: faGlobeEurope,
       id: 'network',
       link: '/network',
-      tooltip: 'Network - Browse other datasets'
+      tooltip: 'Network - Find & Pull Datasets'
     }
   ]
 

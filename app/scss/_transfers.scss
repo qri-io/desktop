@@ -8,6 +8,7 @@
 .transfers {
   position: relative;
   margin: 0px 10px 10px 10px;
+  z-index: $modal-z-index;
 
   header {
     width: 100%;

@@ -72,7 +72,7 @@ const PullDatasetComponent: React.FunctionComponent<PullDatasetProps> = (props) 
   return (
     <Modal
       id="add_modal"
-      title={'Add an Existing Qri Dataset'}
+      title={'Pull Dataset'}
       onDismissed={onDismissed}
       onSubmit={() => {}}
       dismissable={dismissable}
@@ -112,7 +112,7 @@ const PullDatasetComponent: React.FunctionComponent<PullDatasetProps> = (props) 
       <Buttons
         cancelText='cancel'
         onCancel={onDismissed}
-        submitText='Add Dataset'
+        submitText='Pull'
         onSubmit={handleSubmit}
         disabled={buttonDisabled}
         loading={loading}
