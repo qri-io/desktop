@@ -16,7 +16,6 @@ export interface E2ETestUtils {
   exists: (selectors: string[], screenshotLocation?: string) => Promise<void>
   doesNotExist: (selector: string, screenshotLocation?: string) => Promise<void>
   expectTextToBe: (selector: string, text: string, screenshotLocation?: string) => Promise<void>
-  checkDatasetReference: (username: string, name: string, screenshotLocation?: string) => Promise<void>
   atDatasetVersion: (ver: "working" | number, screenshotLocation?: string) => Promise<void>
   expectTextToContain: (selector: string, text: string, screenshotLocation?: string) => Promise<void>
   checkStatus: (component: string, status: string, screenshotLocation?: string) => Promise<void>
@@ -25,6 +24,7 @@ export interface E2ETestUtils {
   takeScreenshot: (screenshotLocation: string, delayTime?: number) => Promise<void>
   isChecked: (selector: string, screenshotLocation?: string) => Promise<boolean>
   createDatasetForUser: (fileName: string, datasetName: string, username: string, backend: TestBackendProcess) => Promise<void>
+  isEnabled: (selector: string, screenshotLocation?: string) => Promise<boolean>
 }
 
 export function newE2ETestUtils (app: any): E2ETestUtils {
@@ -32,7 +32,6 @@ export function newE2ETestUtils (app: any): E2ETestUtils {
     delay: delay,
     atLocation: atLocation(app),
     atDataset: atDataset(app),
-    checkDatasetReference: checkDatasetReference(app),
     waitForExist: waitForExist(app),
     waitForNotExist: waitForNotExist(app),
     click: click(app),
@@ -46,7 +45,8 @@ export function newE2ETestUtils (app: any): E2ETestUtils {
     sendKeys: sendKeys(app),
     takeScreenshot: takeScreenshot(app),
     isChecked: isChecked(app),
-    createDatasetForUser: createDatasetForUser(app)
+    createDatasetForUser: createDatasetForUser(app),
+    isEnabled: isEnabled(app)
   }
 }
 
@@ -93,8 +93,12 @@ function atLocation (app: any) {
 }
 
 // atDataset checks to see if we are at the correct route for the expected dataset
-// the `username` can be empty, for cases where the username is randomaly generated
+// the `username` can be empty, for cases where the username is randomly generated
 // and we don't know what it is at runtime
+// if a username is given, it checks that the given username matches the the
+// `TopNavbar` component's `.title-container.subtitle` element text.
+// It will always check that the dataset name matches the `.title-container.title`
+// element text
 function atDataset (app: any) {
   return async (username: string, datasetName: string, screenshotLocation?: string) => {
     const { client, browserWindow } = app
@@ -104,6 +108,10 @@ function atDataset (app: any) {
         const location = new url.URL(currUrl).hash
         return location.startsWith('#/collection') && username === '' ? true : location.includes(username) && location.includes(datasetName)
       }, 10000, `expected url to be '#/collection/${username === '' ? 'some_username' : username}/${datasetName}', got: ${location}`)
+      if (username !== '') {
+        expect(await app.client.element('.title-container .subtitle').getText()).toBe(username + '/')
+      }
+      expect(await app.client.element('.title-container .title').getText()).toBe(datasetName)
     } catch (e) {
       if (screenshotLocation) {
         _takeScreenshot(app, screenshotLocation)
@@ -257,16 +265,14 @@ function expectTextToBe (app: any) {
 }
 
 // checkDatasetReference takes a username and a name, checking that the given
-// dataset reference matches the one at the #dataset-reference id
+// dataset username matches the `TopNavbar` component's `.title-container.subtitle`
+// element and the dataset name matches the `.title-container.title` element
+// it assumes you are currently on the dataset page!
 function checkDatasetReference (app: any) {
   return async (username: string, name: string, screenshotLocation?: string) => {
     try {
-      // TODO (ramfox): it's weird that we have to pass in this newline character
-      // to get the reference to match. It looks like because the #dataset-reference
-      // div divides the peername and name among multiple divs, we get this odd
-      // whitespace character
-      const ref = `${username}/\n${name}`
-      expect(await app.client.element('#dataset-reference').getText()).toBe(ref)
+      expect(await app.client.element('.title-container.subtitle').getText()).toBe(username)
+      expect(await app.client.element('.title-container.title').getText()).toBe(name)
     } catch (e) {
       if (screenshotLocation) {
         _takeScreenshot(app, screenshotLocation)
@@ -370,5 +376,23 @@ function createDatasetForUser (app: any) {
 
     // ensure we have redirected to the dataset section
     await atDataset(app)(username, datasetName)
+  }
+}
+
+// isEnabled returns whether the element has been enabled
+function isEnabled (app: any) {
+  return async (selector: string, screenshotLocation?: string): Promise<boolean> => {
+    const { client } = app
+    try {
+      await client.waitUntil(async () => {
+        return client.element(selector)
+      }, 10000, `element '${selector}' cannot be found`)
+      return await client.element(selector).isEnabled()
+    } catch (e) {
+      if (screenshotLocation) {
+        _takeScreenshot(app, screenshotLocation)
+      }
+      throw new Error(`function 'isEnabled': ${e}`)
+    }
   }
 }

@@ -1,5 +1,6 @@
 import React from 'react'
 import LogListItem, { LogListItemProps } from '../app/components/item/LogListItem'
+import WorkingLogListItem from '../app/components/item/WorkingLogListItem'
 import { VersionInfo } from '../app/models/store'
 
 export default {
@@ -12,6 +13,7 @@ export default {
 export const items = () => {
   return (
     <div style={{ display: 'flex', flexDirection:'column', flexWrap: 'wrap', justifyContent:'center', margin: 100 }}>
+      <WorkingLogListItem onClick={() => console.log('clicked!')} />
       <LogListItem {...historyLogData} first />
       <LogListItem {...historyLogData} selected/>
       <LogListItem {...historyLogData} last />

@@ -6,6 +6,7 @@ import PullDataset from './PullDataset'
 import LinkDataset from './LinkDataset'
 import RemoveDataset from './RemoveDataset'
 import ExportDataset from './ExportDataset'
+import RenameDataset from './RenameDataset'
 import NewDataset from './NewDataset'
 import PublishDataset from './PublishDataset'
 import UnpublishDataset from './UnpublishDataset'
@@ -29,6 +30,8 @@ const Modals: React.FunctionComponent<ModalsProps> = ({ type }) => {
       return <RemoveDataset />
     case ModalType.ExportDataset:
       return <ExportDataset />
+    case ModalType.RenameDataset:
+      return <RenameDataset />
     case ModalType.Search:
       return <SearchModal />
     case ModalType.UnpublishDataset:

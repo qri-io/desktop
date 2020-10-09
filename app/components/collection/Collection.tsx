@@ -43,7 +43,7 @@ export interface CollectionProps extends RouteProps {
   showDetailsBar: boolean
   sidebarWidth: number
   latestVersion: VersionInfo
-  inNamespace: boolean
+  sessionUsername: string
 
   // setting actions
   setModal: (modal: Modal) => void
@@ -96,7 +96,7 @@ export class CollectionComponent extends React.Component<CollectionProps> {
       qriRef,
       hasDatasets,
       sidebarWidth,
-      inNamespace,
+      sessionUsername,
       latestVersion
     } = this.props
 
@@ -129,7 +129,7 @@ export class CollectionComponent extends React.Component<CollectionProps> {
           qriRef={qriRef}
           hasDatasets={hasDatasets}
           latestVersion={latestVersion}
-          inNamespace={inNamespace}
+          sessionUsername={sessionUsername}
         />
       </>
     )
@@ -140,11 +140,11 @@ interface CollectionRouterProps {
   qriRef: QriRef
   hasDatasets: boolean
   latestVersion?: VersionInfo
-  inNamespace: boolean
+  sessionUsername: string
 }
 
 const CollectionRouter: React.FunctionComponent<CollectionRouterProps> = (props) => {
-  const { hasDatasets, latestVersion, inNamespace } = props
+  const { hasDatasets, latestVersion, sessionUsername } = props
   const location = useLocation()
   const { path } = useRouteMatch()
 
@@ -183,7 +183,7 @@ const CollectionRouter: React.FunctionComponent<CollectionRouterProps> = (props)
           } }/>
           <Route path={`${path}/:username/:name`} render={({ match }) => {
             const { params } = match
-            if (!inNamespace) {
+            if (sessionUsername !== params.username) {
               if (latestVersion) {
                 return <Redirect
                   to={pathToDataset(params.username, params.name, latestVersion.path)}
@@ -220,7 +220,7 @@ export default connectComponentToProps(
       hasDatasets: selectHasDatasets(state),
       showDetailsBar: selectShowDetailsBar(state),
       sidebarWidth: selectSidebarWidth(state, 'workbench'),
-      inNamespace: selectSessionUsername(state) === qriRef.username,
+      sessionUsername: selectSessionUsername(state),
       latestVersion: selectLogLatestVersion(state),
       ...ownProps
     }

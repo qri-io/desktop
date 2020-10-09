@@ -9,7 +9,6 @@ import { selectVersionInfoFromWorkingDataset } from '../../../selections'
 
 import ReactTooltip from 'react-tooltip'
 import LogList from '../LogList'
-import DatasetReference from '../../DatasetReference'
 
 export interface DatasetSidebarProps extends RouteProps {
   qriRef: QriRef
@@ -26,9 +25,6 @@ export const DatasetSidebarComponent: React.FunctionComponent<DatasetSidebarProp
 
   return (
     <div className='sidebar'>
-      <div className='sidebar-header'>
-        <DatasetReference qriRef={qriRef} />
-      </div>
       <LogList qriRef={qriRef} />
     </div>
   )

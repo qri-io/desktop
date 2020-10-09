@@ -5,6 +5,8 @@ import { ModalType } from '../app/models/modals'
 import { SearchComponent } from '../app/components/modals/SearchModal'
 // import { NewDatasetComponent } from '../app/components/modals/NewDataset'
 import { ExportDatasetComponent } from '../app/components/modals/ExportDataset'
+import { RenameDatasetComponent } from '../app/components/modals/RenameDataset'
+import { ApiAction } from '../app/store/api'
 
 export default {
   title: 'Modals',
@@ -91,19 +93,16 @@ const dataset = {
 export const exportDataset = () => (
   <div style={{ margin: 0, padding: 30, height: '100%', background: '#F5F7FA' }}>
     <div style={{ width: 800, margin: '2em auto' }}>
-      <Router>
-        <Route render={(props) =>
-          <ExportDatasetComponent
-            {...props}
-            username='qri_user'
-            name='my_cool_dataset'
-            path='/ipfs/QmUmfPswPF6Q3aoYrqJejSvnuLMuFtCzpiJ58wudKJyTJ3'
-            dataset={dataset}
-            modal={{ type: ModalType.ExportDataset }}
-            onDismissed={() => console.log('New dataset modal is dismissed.')}
-          />}
-        />
-      </Router>
+      <ExportDatasetComponent
+        qriRef={{
+          username:'qri_user',
+          name:'my_cool_dataset',
+          path:'/ipfs/QmUmfPswPF6Q3aoYrqJejSvnuLMuFtCzpiJ58wudKJyTJ3'
+        }}
+        dataset={dataset}
+        modal={{ type: ModalType.ExportDataset }}
+        onDismissed={() => console.log('Export dataset modal is dismissed.')}
+      />
     </div>
   </div>
 )
@@ -111,4 +110,24 @@ export const exportDataset = () => (
 exportDataset.story = {
   name: 'Export Dataset',
   parameters: { note: 'export dataset modal' }
+}
+
+export const renameDataset = () => {
+  const onSubmit = (username: string, name: string, newName: string) =>{
+    return new Promise<ApiAction>(resolve => console.log("Rename dataset modal promise resolved", username, name, newName))
+  }
+  return <div style={{ margin: 0, padding: 30, height: '100%', background: '#F5F7FA' }}>
+    <div style={{ width: 800, margin: '2em auto' }}>
+          <RenameDatasetComponent
+            modal={{ type: ModalType.RenameDataset, username: 'qri_user', name: 'my_cool_dataset' }}
+            onSubmit={onSubmit}
+            onDismissed={() => console.log('Rename dataset modal is dismissed.')}
+          />
+    </div>
+  </div>
+}
+
+renameDataset.story = {
+  name: 'Rename Dataset',
+  parameters: { note: 'rename dataset modal' }
 }

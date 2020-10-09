@@ -1,24 +1,30 @@
 import React from 'react'
-import { faDownload } from '@fortawesome/free-solid-svg-icons'
+import { faDownload, faTrash } from '@fortawesome/free-solid-svg-icons'
+import { RouterProps } from 'react-router'
 
-import Store from '../../../models/store'
-import { connectComponentToProps } from '../../../utils/connectComponentToProps'
+import Store, { VersionInfo } from '../../../models/store'
+import { connectComponentToPropsWithRouter } from '../../../utils/connectComponentToProps'
 import { setModal, setSidebarWidth } from '../../../actions/ui'
 import {
-  selectSidebarWidth,
-  selectDatasetRef
+  selectFsiPath,
+  selectSidebarWidth
 } from '../../../selections'
+import { removeDatasetsAndFetch } from '../../../actions/api'
 import { Modal, ModalType } from '../../../models/modals'
+import { QriRef, qriRefFromRoute } from '../../../models/qriRef'
 
 import DatasetSidebar from './DatasetSidebar'
 import Layout from '../../Layout'
 import LinkButton from '../headerButtons/LinkButton'
 import PublishButton from '../headerButtons/PublishButton'
+import RenameButton from '../headerButtons/RenameButton'
+import { ApiAction } from '../../../store/api'
 
-interface DatasetLayoutProps {
+interface DatasetLayoutProps extends RouterProps {
   // from connect
   sidebarWidth?: number
   qriRef?: QriRef
+  versionInfo?: VersionInfo
   onSidebarResize?: (width: number) => void
   setModal: (modal: Modal) => void
   // from props
@@ -27,6 +33,8 @@ interface DatasetLayoutProps {
   sidebarContent: React.ReactElement
   activeTab: string
   headerContent?: React.ReactElement
+  fsiPath: string
+  removeDatasetsAndFetch: (datasets: VersionInfo[], keepFiles: boolean) => Promise<ApiAction>
 }
 
 const DatasetLayoutComponent: React.FunctionComponent<DatasetLayoutProps> = (props) => {
@@ -37,7 +45,9 @@ const DatasetLayoutComponent: React.FunctionComponent<DatasetLayoutProps> = (pro
     sidebarWidth = 0,
     qriRef = { username: '', name: '', path: '' },
     onSidebarResize,
-    setModal
+    setModal,
+    removeDatasetsAndFetch,
+    fsiPath
   } = props
 
   const buttons = [
@@ -49,7 +59,21 @@ const DatasetLayoutComponent: React.FunctionComponent<DatasetLayoutProps> = (pro
       onClick: () => { setModal({ type: ModalType.ExportDataset, version: qriRef }) }
     },
     { type: 'component', component: <LinkButton key='link-button' /> },
-    { type: 'component', component: <PublishButton key='publish-button' /> }
+    { type: 'component', component: <PublishButton key='publish-button' /> },
+    { type: 'component', component: <RenameButton key='rename-button' /> },
+    {
+      type: 'button',
+      id: 'remove',
+      icon: faTrash,
+      label: 'Remove',
+      onClick: () => {
+        setModal({
+          type: ModalType.RemoveDataset,
+          datasets: [{ ...qriRef, fsiPath }],
+          onSubmit: async (keepfiles: boolean) => removeDatasetsAndFetch([{ ...qriRef, fsiPath }], keepfiles)
+        })
+      }
+    }
   ]
 
   return (
@@ -67,17 +91,20 @@ const DatasetLayoutComponent: React.FunctionComponent<DatasetLayoutProps> = (pro
   )
 }
 
-export default connectComponentToProps(
+export default connectComponentToPropsWithRouter(
   DatasetLayoutComponent,
   (state: Store, ownProps: DatasetLayoutProps) => {
+    const qriRef = qriRefFromRoute(ownProps)
     return {
       ...ownProps,
-      qriRef: selectDatasetRef(state),
-      sidebarWidth: selectSidebarWidth(state, 'workbench')
+      qriRef,
+      sidebarWidth: selectSidebarWidth(state, 'workbench'),
+      fsiPath: selectFsiPath(state)
     }
   },
   {
     onSidebarResize: (width: number) => setSidebarWidth('workbench', width),
-    setModal
+    setModal,
+    removeDatasetsAndFetch
   }
 )

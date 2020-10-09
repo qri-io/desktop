@@ -7,7 +7,6 @@ import TitleBar from '../app/components/dataset/TitleBar'
 import Overview from '../app/components/dataset/Overview'
 import Dataset from '../app/components/dataset/Dataset'
 // import Navbar from '../app/components/nav/Navbar'
-import { BrowserRouter as Router } from 'react-router-dom'
 import { ActionButtonProps } from '../app/components/chrome/ActionButton'
 import BodySegment from '../app/components/dataset/BodySegment'
 const cities = require('./data/cities.dataset.json')
