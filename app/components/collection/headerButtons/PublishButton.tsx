@@ -1,10 +1,8 @@
 import * as React from 'react'
-import { faCloudUploadAlt, faCloud } from '@fortawesome/free-solid-svg-icons'
-import { shell, clipboard } from 'electron'
+import { faCloudUploadAlt } from '@fortawesome/free-solid-svg-icons'
 import ReactTooltip from 'react-tooltip'
 
 import { RouteProps } from '../../../models/store'
-import { QRI_CLOUD_URL } from '../../../constants'
 import { Modal, ModalType } from '../../../models/modals'
 import { isDatasetSelected, QriRef, qriRefFromRoute } from '../../../models/qriRef'
 

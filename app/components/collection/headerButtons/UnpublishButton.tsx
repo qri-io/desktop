@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { faCloudRain } from '@fortawesome/free-solid-svg-icons'
+import { faCloud, faTimes } from '@fortawesome/free-solid-svg-icons'
 
 import { RouteProps } from '../../../models/store'
 import { Modal, ModalType } from '../../../models/modals'
@@ -11,6 +11,7 @@ import { selectIsPublished, selectInNamespace, selectLatestPath } from '../../..
 
 import HeaderColumnButton from '../../chrome/HeaderColumnButton'
 import { connectComponentToPropsWithRouter } from '../../../utils/connectComponentToProps'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 interface UnpublishButtonProps extends RouteProps {
   qriRef: QriRef
@@ -47,20 +48,26 @@ export const UnpublishButtonComponent: React.FunctionComponent<UnpublishButtonPr
   }
 
   return (
-    <span data-tip={'Unpublish this dataset from Qri Cloud'}>
-      <HeaderColumnButton
-        id='unpublish-button'
-        label='Unpublish'
-        icon={showIcon && faCloudRain}
-        onClick={() => {
-          setModal({
-            type: ModalType.UnpublishDataset,
-            username,
-            name
-          })
-        }}
-      />
-    </span>
+    <HeaderColumnButton
+      id='unpublish-button'
+      label='Unpublish'
+      tooltip='Unpublish this dataset from the Qri Cloud website'
+      icon={showIcon && (
+        <span className='fa-layers fa-fw'>
+          <FontAwesomeIcon icon={faCloud} size='lg'/>
+          <FontAwesomeIcon color='white' icon={faTimes} transform='shrink-1 right-2 down-1'/>
+        </span>
+      )
+
+      }
+      onClick={() => {
+        setModal({
+          type: ModalType.UnpublishDataset,
+          username,
+          name
+        })
+      }}
+    />
   )
 }
 

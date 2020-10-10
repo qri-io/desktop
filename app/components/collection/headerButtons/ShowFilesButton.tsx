@@ -1,15 +1,18 @@
-// only if checked out
+import { faFolderOpen } from '@fortawesome/free-solid-svg-icons'
 import * as React from 'react'
 import { RouteProps } from 'react-router-dom'
 
 import { isDatasetSelected, QriRef, qriRefFromRoute } from '../../../models/qriRef'
+import { openItem } from './platformSpecific/ButtonActions.TARGET_PLATFORM'
 import { selectFsiPath } from '../../../selections'
 
 import { connectComponentToPropsWithRouter } from '../../../utils/connectComponentToProps'
+import HeaderColumnButton from '../../chrome/HeaderColumnButton'
 
 interface ShowFilesButtonProps extends RouteProps {
   qriRef: QriRef
   fsiPath: string
+  showIcon: boolean
 }
 
 /**
@@ -21,7 +24,8 @@ interface ShowFilesButtonProps extends RouteProps {
 export const ShowFilesButtonComponent: React.FunctionComponent<ShowFilesButtonProps> = (props) => {
   const {
     qriRef,
-    fsiPath
+    fsiPath,
+    showIcon = true
   } = props
 
   const datasetSelected = isDatasetSelected(qriRef)
@@ -29,7 +33,15 @@ export const ShowFilesButtonComponent: React.FunctionComponent<ShowFilesButtonPr
   if (!(fsiPath && datasetSelected)) {
     return null
   }
-  return <div>ShowFilesButton</div>
+  return (<HeaderColumnButton
+    id='show-files-button'
+    label='Show Files'
+    tooltip='Show the dataset files on your file system'
+    icon={showIcon && faFolderOpen}
+    onClick={() => {
+      openItem && openItem(fsiPath)
+    }}
+  />)
 }
 
 export default connectComponentToPropsWithRouter(

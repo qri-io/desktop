@@ -1,14 +1,22 @@
 import * as React from 'react'
+import { faFile } from '@fortawesome/free-regular-svg-icons'
+import { faLink } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { RouteProps } from 'react-router-dom'
+
+import { QRI_CLOUD_URL } from '../../../constants'
+import { addToClipboard } from './platformSpecific/ButtonActions.TARGET_PLATFORM'
 
 import { isDatasetSelected, QriRef, qriRefFromRoute } from '../../../models/qriRef'
 import { selectIsPublished } from '../../../selections'
 
 import { connectComponentToPropsWithRouter } from '../../../utils/connectComponentToProps'
+import HeaderColumnButton from '../../chrome/HeaderColumnButton'
 
 interface CopyCloudLinkButtonProps extends RouteProps {
   qriRef: QriRef
   isPublished: boolean
+  showIcon: boolean
 }
 
 /**
@@ -21,15 +29,30 @@ interface CopyCloudLinkButtonProps extends RouteProps {
 export const CopyCloudLinkButtonComponent: React.FunctionComponent<CopyCloudLinkButtonProps> = (props) => {
   const {
     qriRef,
-    isPublished
+    isPublished,
+    showIcon = true
   } = props
 
+  const { username, name } = qriRef
   const datasetSelected = isDatasetSelected(qriRef)
 
   if (!(datasetSelected && isPublished)) {
     return null
   }
-  return <div>CopyCloudLinkButton</div>
+  return (<HeaderColumnButton
+    id='copy-cloud-link'
+    label='Copy Cloud Link'
+    tooltip='Copy the url of this dataset on the cloud to your clipboard'
+    icon={(showIcon &&
+      <span className='fa-layers fa-fw'>
+        <FontAwesomeIcon icon={faFile} size='lg'/>
+        <FontAwesomeIcon icon={faLink} transform='shrink-8' />
+      </span>
+    )}
+    onClick={() => {
+      addToClipboard && addToClipboard(`${QRI_CLOUD_URL}/${username}/${name}`)
+    }}
+  />)
 }
 
 export default connectComponentToPropsWithRouter(

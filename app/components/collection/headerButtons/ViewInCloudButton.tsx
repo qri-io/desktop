@@ -7,7 +7,7 @@ import { isDatasetSelected, QriRef, qriRefFromRoute } from '../../../models/qriR
 import { connectComponentToPropsWithRouter } from '../../../utils/connectComponentToProps'
 import { QRI_CLOUD_URL } from '../../../constants'
 
-import { openExternal } from './platformSpecific/ButtonActions.TARGET_PLATFORM'
+import { openInExternalWindow } from './platformSpecific/ButtonActions.TARGET_PLATFORM'
 
 import { setModal } from '../../../actions/ui'
 
@@ -48,7 +48,7 @@ export const ViewInCloudButtonComponent: React.FunctionComponent<ViewInCloudButt
     tooltip='View this dataset on the Qri Cloud website'
     icon={showIcon && faCloud}
     onClick={() => {
-      openExternal && openExternal(`${QRI_CLOUD_URL}/${username}/${name}`)
+      openInExternalWindow && openInExternalWindow(`${QRI_CLOUD_URL}/${username}/${name}`)
     }}
   />)
 }

@@ -1,14 +1,24 @@
 import * as React from 'react'
+import { faTrash } from '@fortawesome/free-solid-svg-icons'
 import { RouteProps } from 'react-router-dom'
-//  icon: faTrash
-import { QriRef, qriRefFromRoute, isDatasetSelected } from '../../../models/qriRef'
-import { selectInNamespace } from '../../../selections'
 
+import { setModal } from '../../../actions/ui'
+import { Modal, ModalType } from '../../../models/modals'
+import { QriRef, qriRefFromRoute, isDatasetSelected } from '../../../models/qriRef'
+import { selectFsiPath } from '../../../selections'
 import { connectComponentToPropsWithRouter } from '../../../utils/connectComponentToProps'
+
+import HeaderColumnButton from '../../chrome/HeaderColumnButton'
+import { removeDatasetsAndFetch } from '../../../actions/api'
+import { ApiAction } from '../../../store/api'
+import { VersionInfo } from '../../../models/store'
 
 interface RemoveButtonProps extends RouteProps {
   qriRef: QriRef
-  inNamespace: boolean
+  fsiPath: string
+  showIcon: boolean
+  setModal: (modal: Modal) => void
+  removeDatasetsAndFetch: (datasets: VersionInfo[], keepfiles: boolean) => Promise<ApiAction>
 }
 
 /**
@@ -20,15 +30,30 @@ interface RemoveButtonProps extends RouteProps {
 export const RemoveButtonComponent: React.FunctionComponent<RemoveButtonProps> = (props) => {
   const {
     qriRef,
-    inNamespace
+    fsiPath,
+    showIcon = true,
+    removeDatasetsAndFetch,
+    setModal
   } = props
 
   const datasetSelected = isDatasetSelected(qriRef)
 
-  if (!(inNamespace && datasetSelected)) {
+  if (!(datasetSelected)) {
     return null
   }
-  return <div>RemoveButton</div>
+  return (<HeaderColumnButton
+    id='remove'
+    label='Remove'
+    tooltip='Copy the url of this dataset on the cloud to your clipboard'
+    icon={showIcon && faTrash }
+    onClick={() => {
+      setModal({
+        type: ModalType.RemoveDataset,
+        datasets: [{ ...qriRef, fsiPath }],
+        onSubmit: async (keepfiles: boolean) => removeDatasetsAndFetch([{ ...qriRef, fsiPath }], keepfiles)
+      })
+    }}
+  />)
 }
 
 export default connectComponentToPropsWithRouter(
@@ -38,7 +63,10 @@ export default connectComponentToPropsWithRouter(
     return {
       ...ownProps,
       qriRef,
-      inNamespace: selectInNamespace(state, qriRef)
+      fsiPath: selectFsiPath(state)
     }
+  }, {
+    setModal,
+    removeDatasetsAndFetch
   }
 )
