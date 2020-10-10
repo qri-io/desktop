@@ -145,6 +145,7 @@ $navbar-item-margin: 6px;
     display: flex;
     .title-container {
       flex: 1;
+      width: 50%;
 
       .subtitle {
         font-size: 14px;
@@ -158,6 +159,7 @@ $navbar-item-margin: 6px;
       .title {
         padding: 0;
         line-height: 34px;
+        overflow: auto;
       }
     }
     .buttons {
