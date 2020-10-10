@@ -15,7 +15,7 @@ import { QriRef, qriRefFromRoute } from '../../../models/qriRef'
 
 import DatasetSidebar from './DatasetSidebar'
 import Layout from '../../Layout'
-import LinkButton from '../headerButtons/LinkButton'
+import CheckoutButton from '../headerButtons/CheckoutButton'
 import PublishButton from '../headerButtons/PublishButton'
 import RenameButton from '../headerButtons/RenameButton'
 import { ApiAction } from '../../../store/api'
@@ -58,7 +58,7 @@ const DatasetLayoutComponent: React.FunctionComponent<DatasetLayoutProps> = (pro
       label: 'Export',
       onClick: () => { setModal({ type: ModalType.ExportDataset, version: qriRef }) }
     },
-    { type: 'component', component: <LinkButton key='link-button' /> },
+    { type: 'component', component: <CheckoutButton key='checkout-button' /> },
     { type: 'component', component: <PublishButton key='publish-button' /> },
     { type: 'component', component: <RenameButton key='rename-button' /> },
     {

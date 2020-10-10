@@ -7,7 +7,7 @@ import Hamburger from '../app/components/chrome/Hamburger'
 
 import { CopyCloudLinkButtonComponent } from '../app/components/collection/headerButtons/CopyCloudLinkButton'
 import { ExportButtonComponent } from '../app/components/collection/headerButtons/ExportButton' 
-import { LinkButtonComponent } from '../app/components/collection/headerButtons/LinkButton' 
+import { CheckoutButtonComponent } from '../app/components/collection/headerButtons/CheckoutButton' 
 import { PublishButtonComponent } from '../app/components/collection/headerButtons/PublishButton' 
 import { RemoveButtonComponent } from '../app/components/collection/headerButtons/RemoveButton' 
 import { RenameButtonComponent } from '../app/components/collection/headerButtons/RenameButton' 
@@ -78,18 +78,79 @@ segments.story = {
 }
 
 export const datasetActionButtons = () => {
-  const qriRef = { username: 'qri_user', name: 'my_dataset' }
+  const fsiPathVal = '/path/to/dataset'
+  const latestPath = '/ipfs/Qmfoo'
+
+  const [isPublished, setIsPublished] = React.useState(false)
+  const [fsiPath, setFsiPath] = React.useState('')
+  const [inNamespace, setInNamespace] = React.useState(true)
+  const [path, setPath] = React.useState(latestPath)
+  const qriRef = { username: 'qri_user', name: 'my_dataset', path }
+
+  const toggleIsPublished = () => {
+    setIsPublished(!isPublished)
+  }
+
+  const toggleFsiPath = () => {
+    if (fsiPath) {
+      setFsiPath('')
+      return
+    }
+    console.log('setting fsi path', fsiPathVal)
+    setFsiPath(fsiPathVal)
+  }
+
+  const toggleInNamespace = () => {
+    setInNamespace(!inNamespace)
+  }
+
+  const togglePath = () => {
+    if (path) {
+      setPath('')
+      return
+    }
+    setPath(latestPath)
+  }
+
   return (
-    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%'}} >
-        <CopyCloudLinkButtonComponent qriRef={qriRef} />
+    <div style={{ display: 'flex', flexDirection:'column', justifyContent: 'center', alignItems: 'center', height: '100%'}} >
+      <div style={{ paddingTop: 20, display: 'flex', flexDirection:'column', justifyContent: 'space-between', alignItems: 'center', height: 400}} >
         <ExportButtonComponent qriRef={qriRef} />
-        <LinkButtonComponent qriRef={qriRef} />
-        <PublishButtonComponent qriRef={qriRef} />
-        <RemoveButtonComponent qriRef={qriRef} />
-        <RenameButtonComponent qriRef={qriRef} />
-        <ShowFilesButtonComponent qriRef={qriRef} />
-        <UnpublishButtonComponent qriRef={qriRef} />
-        <ViewInCloudButtonComponent qriRef={qriRef} />
+        <CheckoutButtonComponent qriRef={qriRef} fsiPath={fsiPath} />
+        <ShowFilesButtonComponent qriRef={qriRef} fsiPath={fsiPath} />
+        <PublishButtonComponent qriRef={qriRef} inNamespace={inNamespace} isPublished={isPublished} latestPath={latestPath} />
+        <UnpublishButtonComponent qriRef={qriRef} inNamespace={inNamespace} latestPath={latestPath} isPublished={isPublished} />
+        <ViewInCloudButtonComponent qriRef={qriRef} isPublished={isPublished} />
+        <CopyCloudLinkButtonComponent qriRef={qriRef} isPublished={isPublished} />
+        <RemoveButtonComponent qriRef={qriRef} inNamespace={inNamespace} />
+        <RenameButtonComponent qriRef={qriRef} inNamespace={inNamespace} />
+      </div>
+        <div style={{ paddingTop: 40, display: 'flex', justifyContent:'space-around', alignItems: 'center', width: '100%'}}>
+          <div>
+            <label>
+            <input type='checkbox' checked={isPublished} id='is-published' onClick={toggleIsPublished}/>
+              is published?
+            </label>
+          </div>
+          <div>
+            <label>
+            <input type='checkbox' checked={!!fsiPath} id='fsi-path' onClick={toggleFsiPath}/>
+              is checked out?
+            </label>
+          </div>
+          <div>
+            <label>
+            <input type='checkbox' checked={inNamespace} id='in-namespace' onClick={toggleInNamespace}/>
+              is in namespace?
+            </label>
+          </div>
+          <div>
+            <label>
+            <input type='checkbox' checked={!!path} id='at-latest' onClick={togglePath}/>
+              has path & at latest?
+            </label>
+          </div>
+        </div>
     </div>
   )
 }
@@ -104,7 +165,7 @@ export const hamburger = () => {
 
 export const hamburgerWithButtons = () => {
   const qriRef={ username: 'qri_user', name:'my_dataset'}
-  const buttons = [<LinkButtonComponent inNamespace qriRef={qriRef}/>, <RenameButtonComponent qriRef={qriRef} />]
+  const buttons = [<CheckoutButtonComponent inNamespace qriRef={qriRef}/>, <RenameButtonComponent qriRef={qriRef} />]
   return (
     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
       <Hamburger data={buttons} />

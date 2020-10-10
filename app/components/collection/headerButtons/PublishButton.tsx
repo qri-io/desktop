@@ -6,7 +6,7 @@ import ReactTooltip from 'react-tooltip'
 import { RouteProps } from '../../../models/store'
 import { QRI_CLOUD_URL } from '../../../constants'
 import { Modal, ModalType } from '../../../models/modals'
-import { QriRef, qriRefFromRoute } from '../../../models/qriRef'
+import { isDatasetSelected, QriRef, qriRefFromRoute } from '../../../models/qriRef'
 
 import { setModal } from '../../../actions/ui'
 
@@ -24,7 +24,13 @@ interface PublishButtonProps extends RouteProps {
   showIcon: boolean
 }
 
-// show if at head & is not published
+/**
+ * If there is a dataset selected, we are at the latest version, and the version
+ * is not published, show the `PublishButton`
+ *  NOTE: before adjusting any logic in this component, check out the
+ * `DatasetActionButtons` story in storybook to double check that it still works
+ * as expected
+ */
 export const PublishButtonComponent: React.FunctionComponent<PublishButtonProps> = (props) => {
   const {
     qriRef,
@@ -32,7 +38,7 @@ export const PublishButtonComponent: React.FunctionComponent<PublishButtonProps>
     isPublished,
     latestPath,
     setModal,
-    showIcon
+    showIcon = true
   } = props
 
   // The `ReactTooltip` component relies on the `data-for` and `data-tip` attributes
@@ -41,33 +47,29 @@ export const PublishButtonComponent: React.FunctionComponent<PublishButtonProps>
   React.useEffect(ReactTooltip.rebuild, [])
 
   const { username, name, path = '' } = qriRef
-  const datasetSelected = username !== '' && name !== ''
+  const datasetSelected = isDatasetSelected(qriRef)
   const atHead = path !== '' && path === latestPath
 
-  if (!inNamespace || !datasetSelected || isPublished) {
+  if (!(inNamespace && datasetSelected && !isPublished && atHead)) {
     return null
   }
 
-  if (atHead) {
-    return (
-      <span data-tip={'Publish this dataset to Qri Cloud'}>
-        <HeaderColumnButton
-          id='publish-button'
-          label='Publish'
-          icon={showIcon && faCloudUploadAlt}
-          disabled={!atHead || latestPath === ''}
-          onClick={() => {
-            setModal({
-              type: ModalType.PublishDataset,
-              username,
-              name
-            })
-          }}
-        />
-      </span>
-    )
-  }
-  return null
+  return (
+    <span data-tip={'Publish this dataset to Qri Cloud'}>
+      <HeaderColumnButton
+        id='publish-button'
+        label='Publish'
+        icon={showIcon && faCloudUploadAlt}
+        onClick={() => {
+          setModal({
+            type: ModalType.PublishDataset,
+            username,
+            name
+          })
+        }}
+      />
+    </span>
+  )
 }
 
 export default connectComponentToPropsWithRouter(
@@ -75,11 +77,11 @@ export default connectComponentToPropsWithRouter(
   (state: any, ownProps: PublishButtonProps) => {
     const qriRef = qriRefFromRoute(ownProps)
     return {
+      ...ownProps,
       qriRef,
       inNamespace: selectInNamespace(state, qriRef),
       isPublished: selectIsPublished(state),
-      latestPath: selectLatestPath(state, qriRef.username, qriRef.name),
-      ...ownProps
+      latestPath: selectLatestPath(state, qriRef.username, qriRef.name)
     }
   },
   {

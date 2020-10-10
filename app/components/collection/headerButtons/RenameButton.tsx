@@ -3,27 +3,41 @@ import { faPen } from '@fortawesome/free-solid-svg-icons'
 
 import { RouteProps } from '../../../models/store'
 import { Modal, ModalType } from '../../../models/modals'
-import { QriRef, qriRefFromRoute } from '../../../models/qriRef'
+import { isDatasetSelected, QriRef, qriRefFromRoute } from '../../../models/qriRef'
 
 import { connectComponentToPropsWithRouter } from '../../../utils/connectComponentToProps'
 
 import { setModal } from '../../../actions/ui'
 
 import HeaderColumnButton from '../../chrome/HeaderColumnButton'
+import { selectInNamespace } from '../../../selections'
 
 interface RenameButtonProps extends RouteProps {
   qriRef: QriRef
   setModal: (modal: Modal) => void
   showIcon: boolean
+  inNamespace: boolean
 }
 
-// show if in your namespace
+/**
+ * If there is a dataset selected & it is in the user's namespace, show the `RenameButton`
+ *  NOTE: before adjusting any logic in this component, check out the
+ * `DatasetActionButtons` story in storybook to double check that it still works
+ * as expected
+ */
 export const RenameButtonComponent: React.FunctionComponent<RenameButtonProps> = (props) => {
   const {
     qriRef,
     setModal,
-    showIcon
+    showIcon = true,
+    inNamespace
   } = props
+
+  const datasetSelected = isDatasetSelected(qriRef)
+
+  if (!(inNamespace && datasetSelected)) {
+    return null
+  }
 
   const { username, name } = qriRef
 
@@ -44,7 +58,8 @@ export default connectComponentToPropsWithRouter(
     const qriRef = qriRefFromRoute(ownProps)
     return {
       ...ownProps,
-      qriRef
+      qriRef,
+      inNamespace: selectInNamespace(state, qriRef)
     }
   },
   {

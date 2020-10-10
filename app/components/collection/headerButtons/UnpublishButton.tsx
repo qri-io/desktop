@@ -3,7 +3,7 @@ import { faCloudRain } from '@fortawesome/free-solid-svg-icons'
 
 import { RouteProps } from '../../../models/store'
 import { Modal, ModalType } from '../../../models/modals'
-import { QriRef, qriRefFromRoute } from '../../../models/qriRef'
+import { isDatasetSelected, QriRef, qriRefFromRoute } from '../../../models/qriRef'
 
 import { setModal } from '../../../actions/ui'
 
@@ -21,7 +21,13 @@ interface UnpublishButtonProps extends RouteProps {
   showIcon?: boolean
 }
 
-// only shows when we are published & at head & in namespace
+/**
+ * If there is a dataset selected, we are in the user's namespace, the dataset
+ * is published and we are at the latest version, show the `UnpublishButton`
+ *  NOTE: before adjusting any logic in this component, check out the
+ * `DatasetActionButtons` story in storybook to double check that it still works
+ * as expected
+ */
 export const UnpublishButtonComponent: React.FunctionComponent<UnpublishButtonProps> = (props) => {
   const {
     qriRef,
@@ -33,28 +39,29 @@ export const UnpublishButtonComponent: React.FunctionComponent<UnpublishButtonPr
   } = props
 
   const { username, name, path = '' } = qriRef
-  const datasetSelected = username !== '' && name !== ''
+  const datasetSelected = isDatasetSelected(qriRef)
   const atHead = path !== '' && path === latestPath
 
-  if (inNamespace && datasetSelected && isPublished && atHead) {
-    return (
-      <span data-tip={'Unpublish this dataset from Qri Cloud'}>
-        <HeaderColumnButton
-          id='unpublish-button'
-          label='Unpublish'
-          icon={showIcon && faCloudRain}
-          onClick={() => {
-            setModal({
-              type: ModalType.UnpublishDataset,
-              username,
-              name
-            })
-          }}
-        />
-      </span>
-    )
+  if (!(inNamespace && datasetSelected && isPublished && atHead)) {
+    return null
   }
-  return null
+
+  return (
+    <span data-tip={'Unpublish this dataset from Qri Cloud'}>
+      <HeaderColumnButton
+        id='unpublish-button'
+        label='Unpublish'
+        icon={showIcon && faCloudRain}
+        onClick={() => {
+          setModal({
+            type: ModalType.UnpublishDataset,
+            username,
+            name
+          })
+        }}
+      />
+    </span>
+  )
 }
 
 export default connectComponentToPropsWithRouter(
@@ -62,11 +69,11 @@ export default connectComponentToPropsWithRouter(
   (state: any, ownProps: UnpublishButtonProps) => {
     const qriRef = qriRefFromRoute(ownProps)
     return {
+      ...ownProps,
       qriRef,
       inNamespace: selectInNamespace(state, qriRef),
       isPublished: selectIsPublished(state),
-      latestPath: selectLatestPath(state, qriRef.username, qriRef.name),
-      ...ownProps
+      latestPath: selectLatestPath(state, qriRef.username, qriRef.name)
     }
   },
   {

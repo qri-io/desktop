@@ -2,7 +2,7 @@ import * as React from 'react'
 import { faCloud } from '@fortawesome/free-solid-svg-icons'
 
 import { RouteProps } from '../../../models/store'
-import { QriRef, qriRefFromRoute } from '../../../models/qriRef'
+import { isDatasetSelected, QriRef, qriRefFromRoute } from '../../../models/qriRef'
 
 import { connectComponentToPropsWithRouter } from '../../../utils/connectComponentToProps'
 import { QRI_CLOUD_URL } from '../../../constants'
@@ -11,7 +11,7 @@ import { openExternal } from './platformSpecific/ButtonActions.TARGET_PLATFORM'
 
 import { setModal } from '../../../actions/ui'
 
-import { selectInNamespace } from '../../../selections'
+import { selectIsPublished } from '../../../selections'
 
 import HeaderColumnButton from '../../chrome/HeaderColumnButton'
 
@@ -21,7 +21,13 @@ interface ViewInCloudButtonProps extends RouteProps {
   showIcon: boolean
 }
 
-// only if published => goes to head
+/**
+ * If there is a dataset selected & the dataset is published, show the
+ * `ViewInCloudButton`
+ *  NOTE: before adjusting any logic in this component, check out the
+ * `DatasetActionButtons` story in storybook to double check that it still works
+ * as expected
+ */
 export const ViewInCloudButtonComponent: React.FunctionComponent<ViewInCloudButtonProps> = (props) => {
   const {
     qriRef,
@@ -30,16 +36,16 @@ export const ViewInCloudButtonComponent: React.FunctionComponent<ViewInCloudButt
   } = props
 
   const { username, name } = qriRef
-  const datasetSelected = username !== '' && name !== ''
+  const datasetSelected = isDatasetSelected(qriRef)
 
   if (!(isPublished && datasetSelected)) {
     return null
   }
 
   return (<HeaderColumnButton
-    id='checkout'
-    label='checkout'
-    tooltip='Checkout this dataset to a folder on your computer'
+    id='view-in-cloud'
+    label='View in Cloud'
+    tooltip='View this dataset on the Qri Cloud website'
     icon={showIcon && faCloud}
     onClick={() => {
       openExternal && openExternal(`${QRI_CLOUD_URL}/${username}/${name}`)
@@ -52,9 +58,9 @@ export default connectComponentToPropsWithRouter(
   (state: any, ownProps: ViewInCloudButtonProps) => {
     const qriRef = qriRefFromRoute(ownProps)
     return {
+      ...ownProps,
       qriRef,
-      inNamespace: selectInNamespace(state, qriRef),
-      ...ownProps
+      isPublished: selectIsPublished(state)
     }
   },
   {
