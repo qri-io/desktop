@@ -1,5 +1,6 @@
 import React from 'react'
 import classNames from 'classnames'
+import ReactTooltip from 'react-tooltip'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { IconDefinition } from '@fortawesome/free-regular-svg-icons'
 
@@ -7,7 +8,7 @@ export interface HeaderColumnButtonProps {
   id?: string
   tooltip?: string
   label?: string
-  icon?: IconDefinition | React.ReactElement
+  icon?: IconDefinition | React.ReactElement | false
   disabled?: boolean
   onClick?: (event: React.MouseEvent) => void
 }
@@ -15,6 +16,10 @@ export interface HeaderColumnButtonProps {
 const HeaderColumnButton: React.FunctionComponent<HeaderColumnButtonProps> = (props) => {
   const { id = '', icon, label, tooltip, disabled, onClick } = props
 
+  // The `ReactTooltip` component relies on the `data-for` and `data-tip` attributes
+  // we need to rebuild `ReactTooltip` so that it can recognize the `data-for`
+  // or `data-tip` attributes that are rendered in this component
+  React.useEffect(ReactTooltip.rebuild, [])
   return (
     <div
       id={id}

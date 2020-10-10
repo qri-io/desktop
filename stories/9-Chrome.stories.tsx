@@ -5,6 +5,16 @@ import ActionButton, { ActionButtonProps } from '../app/components/chrome/Action
 import ActionButtonBar from '../app/components/chrome/ActionButtonBar'
 import Hamburger from '../app/components/chrome/Hamburger'
 
+import { CopyCloudLinkButtonComponent } from '../app/components/collection/headerButtons/CopyCloudLinkButton'
+import { ExportButtonComponent } from '../app/components/collection/headerButtons/ExportButton' 
+import { LinkButtonComponent } from '../app/components/collection/headerButtons/LinkButton' 
+import { PublishButtonComponent } from '../app/components/collection/headerButtons/PublishButton' 
+import { RemoveButtonComponent } from '../app/components/collection/headerButtons/RemoveButton' 
+import { RenameButtonComponent } from '../app/components/collection/headerButtons/RenameButton' 
+import { ShowFilesButtonComponent } from '../app/components/collection/headerButtons/ShowFilesButton' 
+import { UnpublishButtonComponent } from '../app/components/collection/headerButtons/UnpublishButton' 
+import { ViewInCloudButtonComponent } from '../app/components/collection/headerButtons/ViewInCloudButton' 
+
 export default {
   title: 'Chrome',
   parameters: {
@@ -67,6 +77,41 @@ segments.story = {
   paramaters: { note: 'collapse, untwirl, expand and contract' }
 }
 
+export const datasetActionButtons = () => {
+  const qriRef = { username: 'qri_user', name: 'my_dataset' }
+  return (
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%'}} >
+        <CopyCloudLinkButtonComponent qriRef={qriRef} />
+        <ExportButtonComponent qriRef={qriRef} />
+        <LinkButtonComponent qriRef={qriRef} />
+        <PublishButtonComponent qriRef={qriRef} />
+        <RemoveButtonComponent qriRef={qriRef} />
+        <RenameButtonComponent qriRef={qriRef} />
+        <ShowFilesButtonComponent qriRef={qriRef} />
+        <UnpublishButtonComponent qriRef={qriRef} />
+        <ViewInCloudButtonComponent qriRef={qriRef} />
+    </div>
+  )
+}
+
+export const hamburger = () => {
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+      
+    </div>
+  )
+}
+
+export const hamburgerWithButtons = () => {
+  const qriRef={ username: 'qri_user', name:'my_dataset'}
+  const buttons = [<LinkButtonComponent inNamespace qriRef={qriRef}/>, <RenameButtonComponent qriRef={qriRef} />]
+  return (
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+      <Hamburger data={buttons} />
+    </div>
+  )
+}
+
 export const actionButtons = () => {
   return (
     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
@@ -85,14 +130,6 @@ const titleBarActions: ActionButtonProps[] = [
 actionButtons.story = {
   name: 'Action Buttons',
   parameters: { note: 'text, icon, onClick functions only params' }
-}
-
-export const hamburger = () => {
-  return (
-    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
-      <Hamburger data={titleBarActions} />
-    </div>
-  )
 }
 
 export const actionButtonBar = () => {

@@ -14,12 +14,15 @@ import HeaderColumnButton from '../../chrome/HeaderColumnButton'
 interface RenameButtonProps extends RouteProps {
   qriRef: QriRef
   setModal: (modal: Modal) => void
+  showIcon: boolean
 }
 
-const RenameButtonComponent: React.FunctionComponent<RenameButtonProps> = (props) => {
+// show if in your namespace
+export const RenameButtonComponent: React.FunctionComponent<RenameButtonProps> = (props) => {
   const {
     qriRef,
-    setModal
+    setModal,
+    showIcon
   } = props
 
   const { username, name } = qriRef
@@ -28,7 +31,7 @@ const RenameButtonComponent: React.FunctionComponent<RenameButtonProps> = (props
     id='rename'
     label='Rename'
     tooltip='Rename this dataset'
-    icon={faPen}
+    icon={showIcon && faPen}
     onClick={() => {
       setModal({ type: ModalType.RenameDataset, username, name })
     }}

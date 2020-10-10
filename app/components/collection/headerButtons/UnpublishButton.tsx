@@ -1,10 +1,7 @@
 import * as React from 'react'
-import { faCloudUploadAlt, faCloud } from '@fortawesome/free-solid-svg-icons'
-import { shell, clipboard } from 'electron'
-import ReactTooltip from 'react-tooltip'
+import { faCloudRain } from '@fortawesome/free-solid-svg-icons'
 
 import { RouteProps } from '../../../models/store'
-import { QRI_CLOUD_URL } from '../../../constants'
 import { Modal, ModalType } from '../../../models/modals'
 import { QriRef, qriRefFromRoute } from '../../../models/qriRef'
 
@@ -15,50 +12,40 @@ import { selectIsPublished, selectInNamespace, selectLatestPath } from '../../..
 import HeaderColumnButton from '../../chrome/HeaderColumnButton'
 import { connectComponentToPropsWithRouter } from '../../../utils/connectComponentToProps'
 
-interface PublishButtonProps extends RouteProps {
+interface UnpublishButtonProps extends RouteProps {
   qriRef: QriRef
   inNamespace: boolean
   isPublished: boolean
   latestPath: string
   setModal: (modal: Modal) => void
-  showIcon: boolean
+  showIcon?: boolean
 }
 
-// show if at head & is not published
-export const PublishButtonComponent: React.FunctionComponent<PublishButtonProps> = (props) => {
+// only shows when we are published & at head & in namespace
+export const UnpublishButtonComponent: React.FunctionComponent<UnpublishButtonProps> = (props) => {
   const {
     qriRef,
     inNamespace,
     isPublished,
     latestPath,
     setModal,
-    showIcon
+    showIcon = true
   } = props
-
-  // The `ReactTooltip` component relies on the `data-for` and `data-tip` attributes
-  // we need to rebuild `ReactTooltip` so that it can recognize the `data-for`
-  // or `data-tip` attributes that are rendered in this component
-  React.useEffect(ReactTooltip.rebuild, [])
 
   const { username, name, path = '' } = qriRef
   const datasetSelected = username !== '' && name !== ''
   const atHead = path !== '' && path === latestPath
 
-  if (!inNamespace || !datasetSelected || isPublished) {
-    return null
-  }
-
-  if (atHead) {
+  if (inNamespace && datasetSelected && isPublished && atHead) {
     return (
-      <span data-tip={'Publish this dataset to Qri Cloud'}>
+      <span data-tip={'Unpublish this dataset from Qri Cloud'}>
         <HeaderColumnButton
-          id='publish-button'
-          label='Publish'
-          icon={showIcon && faCloudUploadAlt}
-          disabled={!atHead || latestPath === ''}
+          id='unpublish-button'
+          label='Unpublish'
+          icon={showIcon && faCloudRain}
           onClick={() => {
             setModal({
-              type: ModalType.PublishDataset,
+              type: ModalType.UnpublishDataset,
               username,
               name
             })
@@ -71,8 +58,8 @@ export const PublishButtonComponent: React.FunctionComponent<PublishButtonProps>
 }
 
 export default connectComponentToPropsWithRouter(
-  PublishButtonComponent,
-  (state: any, ownProps: PublishButtonProps) => {
+  UnpublishButtonComponent,
+  (state: any, ownProps: UnpublishButtonProps) => {
     const qriRef = qriRefFromRoute(ownProps)
     return {
       qriRef,

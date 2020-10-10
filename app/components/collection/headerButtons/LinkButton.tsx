@@ -1,6 +1,5 @@
 import * as React from 'react'
-import { faFolderOpen, faFile, faLink } from '@fortawesome/free-solid-svg-icons'
-import { shell } from 'electron'
+import { faFile, faLink } from '@fortawesome/free-solid-svg-icons'
 
 import { RouteProps } from '../../../models/store'
 import { Modal, ModalType } from '../../../models/modals'
@@ -21,15 +20,16 @@ interface LinkButtonProps extends RouteProps {
   fsiPath: string
   modified: boolean
   setModal: (modal: Modal) => void
+  showIcon: boolean
 }
 
-const LinkButtonComponent: React.FunctionComponent<LinkButtonProps> = (props) => {
+// show if fsiPath == ''
+export const LinkButtonComponent: React.FunctionComponent<LinkButtonProps> = (props) => {
   const {
     qriRef,
     inNamespace,
-    fsiPath,
     modified,
-    setModal
+    showIcon
   } = props
 
   const { username, name } = qriRef
@@ -39,20 +39,11 @@ const LinkButtonComponent: React.FunctionComponent<LinkButtonProps> = (props) =>
     return null
   }
 
-  if (fsiPath !== '') {
-    return (<HeaderColumnButton
-      id='show-files'
-      icon={faFolderOpen}
-      label='Show Files'
-      onClick={() => shell.openItem(fsiPath)}
-    />)
-  }
-
   return (<HeaderColumnButton
     id='checkout'
     label='checkout'
     tooltip='Checkout this dataset to a folder on your computer'
-    icon={(
+    icon={(showIcon &&
       <span className='fa-layers fa-fw'>
         <FontAwesomeIcon icon={faFile} size='lg'/>
         <FontAwesomeIcon icon={faLink} transform='shrink-8' />
