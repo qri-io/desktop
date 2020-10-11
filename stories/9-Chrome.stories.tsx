@@ -165,10 +165,10 @@ export const hamburger = () => {
 
 export const hamburgerWithButtons = () => {
   const qriRef={ username: 'qri_user', name:'my_dataset'}
-  const buttons = [<CheckoutButtonComponent inNamespace qriRef={qriRef}/>, <RenameButtonComponent qriRef={qriRef} />]
+  const buttons = [<CheckoutButtonComponent fsiPath='test' qriRef={qriRef}/>, <RenameButtonComponent qriRef={qriRef} />]
   return (
     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
-      <Hamburger data={buttons} />
+      <Hamburger items={buttons} />
     </div>
   )
 }

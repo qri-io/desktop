@@ -7,11 +7,11 @@ import Icon from './Icon'
 
 interface HamburgerProps {
   id: string
-  data: DatasetAction[]
+  items?: DatasetAction[] | React.ReactElement[]
 }
 
 const Hamburger: React.FunctionComponent<HamburgerProps> = (props) => {
-  const { data, id } = props
+  const { items, id } = props
 
   const [isOpen, setIsOpen] = React.useState(false)
   const [iconColor, setIconColor] = React.useState<'light' |'medium' | 'dark'>('medium')
@@ -36,7 +36,7 @@ const Hamburger: React.FunctionComponent<HamburgerProps> = (props) => {
       </div>
       <div className='hamburger-overlay'>
         <HamburgerOverlay
-          data={data}
+          items={items}
           open={isOpen}
           onCancel={() => setIsOpen(false)}
         />

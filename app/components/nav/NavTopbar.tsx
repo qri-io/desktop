@@ -7,7 +7,7 @@ import { connectComponentToPropsWithRouter } from '../../utils/connectComponentT
 import BackArrow from '../chrome/BackArrow'
 import HeaderColumnButton from '../chrome/HeaderColumnButton'
 import Transfers from '../Transfers'
-// import Hamburger from '../chrome/Hamburger'
+import Hamburger from '../chrome/Hamburger'
 
 // RouteProps includes `history`, `location`, and `match`
 interface NavTopbarProps extends RouteProps {
@@ -59,14 +59,14 @@ export const NavTopbarComponent: React.FunctionComponent<NavTopbarProps> = (prop
           <h3 className='title'>{title}</h3>
         </div>
         <div className='buttons'>
-          {buttons.map((props) => {
+          {buttons.map((props, i) => {
             switch (props.type) {
-              // case 'button-dropdown':
-              //   return <Hamburger key={props.id} {...props} items={props.dropdownItems} />
+              case 'button-dropdown':
+                return <Hamburger id='navbar-hamburger' key={i} {...props} items={props.dropdownItems} />
               case 'component':
                 return props.component
               default:
-                return <HeaderColumnButton key={props.id} {...props} />
+                return <HeaderColumnButton key={i} {...props} />
             }
           })}
         </div>

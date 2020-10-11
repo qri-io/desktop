@@ -8,7 +8,7 @@ interface TypePickerOverlayProps {
   // function to close the picker
   onCancel: () => void
   // list of actions to take in hamburger
-  data: DatasetAction[] | React.ReactElement[]
+  items: DatasetAction[] | React.ReactElement[]
   // when open is true, the overlay is visible
   open: boolean
 }
@@ -19,7 +19,7 @@ function isDatasetAction (data: DatasetAction | React.ReactElement): boolean {
 
 const HamburgerOverlay: React.FunctionComponent<TypePickerOverlayProps> = ({
   onCancel,
-  data,
+  items,
   open = true
 }) => {
   return (
@@ -30,7 +30,7 @@ const HamburgerOverlay: React.FunctionComponent<TypePickerOverlayProps> = ({
       height={200}
       open={open}
     >
-      {data.map((item: DatasetAction | React.ReactElement, i: number) => {
+      {items && items.map((item: DatasetAction | React.ReactElement, i: number) => {
         if (isDatasetAction(item)) {
           return (
             <div
@@ -45,7 +45,7 @@ const HamburgerOverlay: React.FunctionComponent<TypePickerOverlayProps> = ({
             </div>
           )
         }
-        return (<div key={i}>{item}</div>)
+        return item
       })}
     </Overlay>
   )
