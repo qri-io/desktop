@@ -11,6 +11,11 @@ import TableRowHamburger from './TableRowHamburger'
 
 interface DatasetsTableProps {
   filteredDatasets: VersionInfo[]
+  /**
+   * When the clearSelectedTrigger changes value, it triggers the ReactDataTable
+   * to its internal the selections
+   */
+  clearSelectedTrigger: boolean
   onRowClicked: (row: VersionInfo) => void
   onSelectedRowsChange: ({ selectedRows }: { selectedRows: VersionInfo[] }) => void
   onOpenInFinder: (data: VersionInfo) => void
@@ -53,7 +58,8 @@ const DatasetsTable: React.FC<DatasetsTableProps> = (props) => {
     filteredDatasets,
     onRowClicked,
     onSelectedRowsChange,
-    onOpenInFinder
+    onOpenInFinder,
+    clearSelectedTrigger
   } = props
 
   // rebuild tooltips on mount and update
@@ -139,6 +145,7 @@ const DatasetsTable: React.FC<DatasetsTableProps> = (props) => {
       pointerOnHover
       onRowClicked={onRowClicked}
       onSelectedRowsChange={onSelectedRowsChange}
+      clearSelectedRows={clearSelectedTrigger}
     />
   )
 }

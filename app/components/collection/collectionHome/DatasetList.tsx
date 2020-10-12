@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback, useEffect } from 'react'
 import { Action, AnyAction } from 'redux'
 import classNames from "classnames"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -55,6 +55,13 @@ export const DatasetListComponent: React.FC<DatasetListProps> = (props) => {
 
   const [selected, setSelected] = useState([] as VersionInfo[])
   const [onlySessionUserDatasets, setOnlySessionUserDatasets] = useState(false)
+  const [clearSelectedTrigger, setClearSelectedTrigger] = useState(false)
+
+  useEffect(() => {
+    // when this value is toggled, it tells the underlying ReactDataTable
+    // to clear its internal selection
+    setClearSelectedTrigger(!clearSelectedTrigger)
+  }, [datasets.length])
 
   const handleSetFilter = (value: string) => {
     setFilter(value)
@@ -192,6 +199,7 @@ export const DatasetListComponent: React.FC<DatasetListProps> = (props) => {
         {filteredDatasets.length === 0 && renderNoDatasets()}
         <DatasetsTable
           filteredDatasets={filteredDatasets}
+          clearSelectedTrigger={clearSelectedTrigger}
           onRowClicked={handleRowClicked}
           onSelectedRowsChange={handleSelectedRowsChange}
           onOpenInFinder={handleOpenInFinder}
