@@ -1,3 +1,95 @@
+# [0.5.0](https://github.com/qri-io/desktop/compare/v0.4.5...v0.5.0) (2020-10-12)
+
+Hello and welcome to the new and improved Qri Desktop 0.5.0! We've listened to your feedback and have a new and improved Collection view, a dynamic progress viewer, as well as some new functionality built into the app!
+
+## Collection
+The collection view can now do so much more than before! You can quickly filter between datasets that you own and datasets that you have cloned. You can view high level stats on each dataset, such as the last update, the size, the number of versions, and whether the dataset is published to the cloud or checkout out to the filesystem. You can also export or remove any dataset from the collection view by clicking the additional options at the end of the row.
+
+## Pull (or Update/Sync) a dataset
+We’ve made it very easy to sync a dataset that you have previously added from the Qri Cloud to the latest version! Just use our new `Pull` action on the Collection page to make sure you are always up to date with the latest data.
+
+## Multi-Select/Batch Actions
+We are very excited about the multi select functionality that we've added to the Collection view, and we will probably be expanding it down the line to do even more! From the collection view you can now quickly select multiple datasets and perform batch actions on them, such as removing them or pulling down the latest version from the cloud.
+
+We hope this new batch ability and the remodeled collection page will make it easier and more enjoyable to browse your datasets in Qri!
+
+## Transfers/Progress
+We wanted to clean up the story around *transferring* datasets, aka, pushing a dataset to or pulling a dataset down from Qri Cloud. When you push or pull a dataset, Qri can track its progress and update you as it’s working. We've added some progress indicators to the navigation bar that you can expand to see the progress of your transfers! This will also track progress for multiple pushes and pulls so you are aware of all the actions the app is currently taking.
+
+## Updated New Dataset Flow
+In prior iterations, we’d try to name your dataset for you based on the file name you selected. But this left most datasets ‘title-less’, since we did nothing to encourage the user to add a title before publishing. And since it’s so important, we wanted to make it easier for you to lead the process. Now, when you add a new dataset, you specify a *title* and we infer the dataset name based on that!
+
+## Dataset Page Layout
+We've incorporated a lot of user feedback into our new Dataset page layout. When you open up a dataset, the sidebar now contains a 'History Track' - a visual indicator of all the versions of this dataset. Clicking a stop on the track will bring you to that version of the dataset. If you are looking at a dataset that you yourself created, then you will also see (as the most recent version) a 'working dataset' stop. This is where you can craft the **next** version of your dataset!
+
+## Expanded Export options
+Previously, we offered no flexibility when it came to exporting a dataset, you just chose a location and we added the exported zip file there. We've added an export modal that allows you to be more specific about what you want to export from that dataset version!
+
+## Fixes
+We made a large number of bug fixes based directly on your feedback (you can view them below under 'Bug Fixes'). Thank you! Please keep it coming :)
+
+
+### Bug Fixes
+
+* **body:** relax stipulations for fetching next page ([e7cafc7](https://github.com/qri-io/desktop/commit/e7cafc7))
+* **Collection:** selected table state ([8a3a7f4](https://github.com/qri-io/desktop/commit/8a3a7f4))
+* **commit:** add back tooltips & add button margins ([d5f2948](https://github.com/qri-io/desktop/commit/d5f2948))
+* **commit:** Don't push cursor to end of text input elements ([84affa9](https://github.com/qri-io/desktop/commit/84affa9))
+* **Dataset:** prompt about uncommited changes ([9aeb645](https://github.com/qri-io/desktop/commit/9aeb645))
+* **dataset-menu:** ensure dataset menu shows when looking at a dataset ([433f3a7](https://github.com/qri-io/desktop/commit/433f3a7))
+* **DatasetLayout:** bug that was overriding the qriRef ([548196c](https://github.com/qri-io/desktop/commit/548196c))
+* **DatasetList:** ensure overlay menu can be seen for last item ([60766cb](https://github.com/qri-io/desktop/commit/60766cb)), closes [#654](https://github.com/qri-io/desktop/issues/654)
+* **DatasetList:** wip fix of Collection selected table state ([8be1281](https://github.com/qri-io/desktop/commit/8be1281))
+* external readme links ([f486197](https://github.com/qri-io/desktop/commit/f486197))
+* remove fixed height on input descriptions ([5751660](https://github.com/qri-io/desktop/commit/5751660))
+* **dataset:** add back publish & show files buttons ([5220f18](https://github.com/qri-io/desktop/commit/5220f18))
+* **DynamicEditField:** sanitize paste content into editable div ([e8dc430](https://github.com/qri-io/desktop/commit/e8dc430))
+* **formValidation:** add `-` as allowed character in a dataset name ([0a660fb](https://github.com/qri-io/desktop/commit/0a660fb))
+* **mutations:** allow user to discard changes of a working dataset component ([cae9e64](https://github.com/qri-io/desktop/commit/cae9e64))
+* **pull:** adjust flow after a dataset is pulled ([f188dc1](https://github.com/qri-io/desktop/commit/f188dc1))
+* **Remove:** adjust to remove modal expectations ([12e94b6](https://github.com/qri-io/desktop/commit/12e94b6))
+* numerous tweaks & tuning ([214bc4d](https://github.com/qri-io/desktop/commit/214bc4d))
+* **datasetReducer, workingDatasetReducer:** include peername and name from request ([2b35d8b](https://github.com/qri-io/desktop/commit/2b35d8b))
+* **NavTopbar:** use 'NavTopbar' as component name ([f94f2b4](https://github.com/qri-io/desktop/commit/f94f2b4))
+* **PublishButton:** ensure tooltip loads ([deee663](https://github.com/qri-io/desktop/commit/deee663))
+* **PublishButton:** fix "Copy Cloud Link" ([336e843](https://github.com/qri-io/desktop/commit/336e843))
+* **sidebar:** network history sidebar overflows correctly ([bc20f4a](https://github.com/qri-io/desktop/commit/bc20f4a))
+* **UncommitedChangesPrompt:** fix too-eager reset ([d2045b0](https://github.com/qri-io/desktop/commit/d2045b0))
+* **VersionInfoItem:** if there is no commit time, display '--' ([a820934](https://github.com/qri-io/desktop/commit/a820934))
+* **websocket:** use lower-case names on websocket UI ([49e8858](https://github.com/qri-io/desktop/commit/49e8858))
+* **workbenchRoutes:** recent qriRefs adjusted correctly ([831bd11](https://github.com/qri-io/desktop/commit/831bd11))
+
+
+### Features
+
+* **`HeadLogListItem`:** add history track to sidebar ([375668b](https://github.com/qri-io/desktop/commit/375668b))
+* **Bit:** initialize empty Bit workspace ([5e7caea](https://github.com/qri-io/desktop/commit/5e7caea))
+* **bulkActionExecuting:** add param to state tree if a bulk action is executing ([bb36b49](https://github.com/qri-io/desktop/commit/bb36b49))
+* **collection:** add tooltips, list-picker counts ([fb81d4f](https://github.com/qri-io/desktop/commit/fb81d4f))
+* **collection:** overhaul collection view, support multi-select ([b040af3](https://github.com/qri-io/desktop/commit/b040af3))
+* **collection:** style collection home view ([6dd77eb](https://github.com/qri-io/desktop/commit/6dd77eb))
+* **Collection:** add bulk dataset remove action ([0db21a4](https://github.com/qri-io/desktop/commit/0db21a4))
+* **Collection:** add bulk remove for datasets except single dataset ([aaa153e](https://github.com/qri-io/desktop/commit/aaa153e))
+* **collection home:** support bulk pulling ([2722ecc](https://github.com/qri-io/desktop/commit/2722ecc))
+* **Collection Home:** add export collection row option ([dd66399](https://github.com/qri-io/desktop/commit/dd66399))
+* **CollectionHome:** add "pull" to row hamburger menu ([1d7ac10](https://github.com/qri-io/desktop/commit/1d7ac10))
+* **DatasetLayout:** add a Rename and Remove button to the dataset layout ([18042aa](https://github.com/qri-io/desktop/commit/18042aa))
+* **export:** wire up export modal with csv & zip options ([879dd69](https://github.com/qri-io/desktop/commit/879dd69))
+* **NewDataset:** attach body file to new dataset ([8cea4d2](https://github.com/qri-io/desktop/commit/8cea4d2))
+* **RenameDataset:** add modal to rename dataset ([ec7aa3c](https://github.com/qri-io/desktop/commit/ec7aa3c))
+* **Transfers:** persist transfers after completion ([ddf79cc](https://github.com/qri-io/desktop/commit/ddf79cc))
+* add hamburger menu to collection rows ([f449189](https://github.com/qri-io/desktop/commit/f449189))
+* export modal and css improvements ([5e96ecd](https://github.com/qri-io/desktop/commit/5e96ecd))
+* improve commit tooltips ([49daa7d](https://github.com/qri-io/desktop/commit/49daa7d))
+* new dataset modal ([8decc8f](https://github.com/qri-io/desktop/commit/8decc8f))
+* responsive collection table ([fe8f9cf](https://github.com/qri-io/desktop/commit/fe8f9cf))
+* **Remove dataset:** add warning for when a user removes their own dataset ([0232823](https://github.com/qri-io/desktop/commit/0232823))
+* **transfers:** add transfers indicator ([c4a875b](https://github.com/qri-io/desktop/commit/c4a875b))
+* **transfers:** track transfer events ([5e6b745](https://github.com/qri-io/desktop/commit/5e6b745))
+* **TristateCheckboxInput:** add checkbox that supports true/false/other ([22b7a13](https://github.com/qri-io/desktop/commit/22b7a13))
+
+
+
 ## [0.4.5](https://github.com/qri-io/desktop/compare/v0.4.4...v0.4.5) (2020-09-11)
 
 This is another quick release to match the latest qri backend! Two small adjustsments: 
