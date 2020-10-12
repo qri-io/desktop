@@ -4,6 +4,15 @@
   z-index: 110;
   height: 100%;
 
+  // this specifically targets the ReactDataTable & the last row in the table
+  // if there are any changes in ReactDataTable, this may not work any longer
+  // allows the hamburger dropdown/overlay menu to be seen without being cut off
+  [role="rowgroup"]:last-of-type {
+    [role="row"]:last-of-type {
+      margin-bottom: 60px;
+    }
+  }
+
   header {
     display: flex;
     flex-direction: column;
