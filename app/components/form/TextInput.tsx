@@ -72,7 +72,7 @@ const TextInput: React.FunctionComponent<TextInputProps> = (props) => {
         onBlur={onBlur}
         onKeyDown={onKeyDown}
       />
-      <div style={{ height: 20 }}>
+      <div>
         <h6 style={{ textAlign: 'left', margin: 3 }} className={feedbackColor} >{feedback || ''}</h6>
       </div>
     </div>

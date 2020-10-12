@@ -46,7 +46,7 @@ const SelectInput: React.FunctionComponent<SelectInputProps> = ({ label, name, o
           )}
         </select>
       </div>
-      <div style={{ height: 20 }}>
+      <div>
         <h6 style={{ textAlign: 'left', margin: 3 }} className={feedbackStyle} >{feedback || ''}</h6>
       </div>
     </div>
