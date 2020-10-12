@@ -1,5 +1,3 @@
-import { AnyAction } from 'redux'
-
 import { VersionInfo } from './store'
 
 export enum ModalType {
@@ -55,7 +53,6 @@ export interface PublishDatasetModal {
 export interface RemoveDatasetModal {
   type: ModalType.RemoveDataset
   datasets: VersionInfo[]
-  onSubmit: (keepFiles: boolean) => Promise<AnyAction>
 }
 
 export interface SearchModal {

@@ -9,16 +9,13 @@ import { selectFsiPath } from '../../../selections'
 import { connectComponentToPropsWithRouter } from '../../../utils/connectComponentToProps'
 
 import HeaderColumnButton from '../../chrome/HeaderColumnButton'
-import { removeDatasetsAndFetch } from '../../../actions/api'
-import { ApiAction } from '../../../store/api'
-import { VersionInfo } from '../../../models/store'
 
 interface RemoveButtonProps extends RouteProps {
   qriRef: QriRef
   fsiPath: string
   showIcon: boolean
   setModal: (modal: Modal) => void
-  removeDatasetsAndFetch: (datasets: VersionInfo[], keepfiles: boolean) => Promise<ApiAction>
+  size: 'sm' | 'md'
 }
 
 /**
@@ -31,8 +28,8 @@ export const RemoveButtonComponent: React.FunctionComponent<RemoveButtonProps> =
   const {
     qriRef,
     fsiPath,
+    size = 'md',
     showIcon = true,
-    removeDatasetsAndFetch,
     setModal
   } = props
 
@@ -42,15 +39,15 @@ export const RemoveButtonComponent: React.FunctionComponent<RemoveButtonProps> =
     return null
   }
   return (<HeaderColumnButton
-    id='remove'
+    id='remove-button'
     label='Remove'
     tooltip='Copy the url of this dataset on the cloud to your clipboard'
     icon={showIcon && faTrash }
+    size={size}
     onClick={() => {
       setModal({
         type: ModalType.RemoveDataset,
-        datasets: [{ ...qriRef, fsiPath }],
-        onSubmit: async (keepfiles: boolean) => removeDatasetsAndFetch([{ ...qriRef, fsiPath }], keepfiles)
+        datasets: [{ ...qriRef, fsiPath }]
       })
     }}
   />)
@@ -66,7 +63,6 @@ export default connectComponentToPropsWithRouter(
       fsiPath: selectFsiPath(state)
     }
   }, {
-    setModal,
-    removeDatasetsAndFetch
+    setModal
   }
 )

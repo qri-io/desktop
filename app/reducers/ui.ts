@@ -23,6 +23,7 @@ export const UI_SET_DATASET_DIR_PATH = 'UI_SET_DATASET_DIR_PATH'
 export const UI_SET_EXPORT_PATH = 'UI_SET_EXPORT_PATH'
 export const UI_SET_DETAILS_BAR = 'UI_SET_DETAILS_BAR'
 export const UI_SET_BOOTUP_COMPONENT = 'UI_SET_BOOTUP_COMPONENT'
+export const UI_BULK_ACTION_EXECUTING = 'UI_BULK_ACTION_EXECUTING'
 
 export const UNAUTHORIZED = 'UNAUTHORIZED'
 
@@ -62,7 +63,8 @@ const initialState = {
   detailsBar: { type: DetailsType.NoDetails },
   importFileName: '',
   importFileSize: 0,
-  bootupComponent: 'loading'
+  bootupComponent: 'loading',
+  bulkActionExecuting: false
 }
 
 // send an event to electron to block menus on first load
@@ -202,6 +204,13 @@ export default (state = initialState, action: AnyAction) => {
       return {
         ...state,
         bootupComponent: component
+      }
+
+    case UI_BULK_ACTION_EXECUTING:
+      const { executing } = action
+      return {
+        ...state,
+        bulkActionExecuting: executing
       }
     default:
       return state

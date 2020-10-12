@@ -323,6 +323,10 @@ export function selectToast (state: Store): Toast {
 export function selectBootupComponent (state: Store): BootupComponentType {
   return state.ui.bootupComponent
 }
+
+export function selectBulkActionExecuting (state: Store): boolean {
+  return state.ui.bulkActionExecuting
+}
 /**
  *
  * WORKINGDATASET STATE TREE
