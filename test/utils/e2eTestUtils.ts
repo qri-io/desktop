@@ -108,6 +108,9 @@ function atDataset (app: any) {
         const location = new url.URL(currUrl).hash
         return location.startsWith('#/collection') && username === '' ? true : location.includes(username) && location.includes(datasetName)
       }, 10000, `expected url to be '#/collection/${username === '' ? 'some_username' : username}/${datasetName}', got: ${location}`)
+      await client.waitUntil(async () => {
+        return client.element('.title-container .subtitle').isExisting()
+      }, 10000, `element '.title-container .subtitle cannot be found`)
       if (username !== '') {
         expect(await app.client.element('.title-container .subtitle').getText()).toBe(username + '/')
       }
