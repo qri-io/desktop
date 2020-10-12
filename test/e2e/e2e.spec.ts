@@ -304,6 +304,55 @@ describe('Qri End to End tests', function spec () {
     }
   })
 
+  it('create a new JSON dataset from a data source', async () => {
+    const {
+      atLocation,
+      atDataset,
+      click,
+      atDatasetVersion,
+      checkStatus,
+      takeScreenshot
+    } = utils
+
+    // make sure we are on the collection page
+    await click('#collection')
+    await atLocation('#/collection')
+
+    // click new-dataset to open up the Create Dataset modal
+    await click('#new-dataset')
+
+    // mock the dialog and create a temp csv file
+    // clicking the '#chooseBodyFile' button will connect the fakeDialog
+    // to the correct input
+    const jsonPath = path.join(backend.dir, jsonFilename)
+    fs.writeFileSync(jsonPath, '{"a": 1, "b":2, "c": 3}')
+    await app.client.chooseFile(`#chooseBodyFile-input`, jsonPath)
+    if (takeScreenshots) {
+      takeScreenshot(artifactPath('json_dataset-choose_body_file.png'))
+    }
+    // submit to create a new dataset
+    await click('#submit')
+
+    if (takeScreenshots) {
+      takeScreenshot(artifactPath('json_dataset-submit'))
+    }
+
+    // ensure we have redirected to the dataset section
+    await atDataset(username, jsonDatasetName)
+    if (takeScreenshots) {
+      takeScreenshot(artifactPath('json_dataset-at_location_dataset.png'))
+    }
+
+    // enure we are on the latest commit
+    await atDatasetVersion(0)
+
+    // ensure the body and structure indicate that they were 'added'
+    await checkStatus('body', 'added')
+    await checkStatus('structure', 'added')
+
+    await click('#collection')
+  })
+
   it('create new CSV dataset from a data source', async () => {
     const {
       atLocation,
@@ -316,6 +365,7 @@ describe('Qri End to End tests', function spec () {
       takeScreenshot
     } = utils
 
+    await click("#collection")
     // make sure we are on the collection page
     await atLocation('#/collection')
 
@@ -453,6 +503,8 @@ describe('Qri End to End tests', function spec () {
 
     await atDataset(username, datasetName)
 
+    // open navbar hamburger
+    await click('#navbar-hamburger')
     // open rename modal
     await click('#rename')
     // make sure modal exists
@@ -485,7 +537,7 @@ describe('Qri End to End tests', function spec () {
     const savePath = path.join(backend.dir, 'body.csv')
     await fakeDialog.mock([ { method: 'showSaveDialogSync', value: savePath } ])
 
-    await click('#export-dataset')
+    await click('#export-button')
     await click('#submit')
     await delay(400) // wait to ensure file has time to write
     expect(fs.existsSync(savePath)).toEqual(true)
@@ -628,53 +680,6 @@ describe('Qri End to End tests', function spec () {
     await expectTextToContain('#history-commit', structureCommit.title, artifactPath('in-app-editing-commit-title-structure-commit.png'))
   })
 
-  it('create a new JSON dataset from a data source', async () => {
-    const {
-      atLocation,
-      atDataset,
-      click,
-      atDatasetVersion,
-      checkStatus,
-      takeScreenshot
-    } = utils
-
-    // make sure we are on the collection page
-    await click('#collection')
-    await atLocation('#/collection')
-
-    // click new-dataset to open up the Create Dataset modal
-    await click('#new-dataset')
-
-    // mock the dialog and create a temp csv file
-    // clicking the '#chooseBodyFile' button will connect the fakeDialog
-    // to the correct input
-    const jsonPath = path.join(backend.dir, jsonFilename)
-    fs.writeFileSync(jsonPath, '{"a": 1, "b":2, "c": 3}')
-    await app.client.chooseFile(`#chooseBodyFile-input`, jsonPath)
-    if (takeScreenshots) {
-      takeScreenshot(artifactPath('json_dataset-choose_body_file.png'))
-    }
-    // submit to create a new dataset
-    await click('#submit')
-
-    if (takeScreenshots) {
-      takeScreenshot(artifactPath('json_dataset-submit'))
-    }
-
-    // ensure we have redirected to the dataset section
-    await atDataset(username, jsonDatasetName)
-    if (takeScreenshots) {
-      takeScreenshot(artifactPath('json_dataset-at_location_dataset.png'))
-    }
-
-    // enure we are on the latest commit
-    await atDatasetVersion(0)
-
-    // ensure the body and structure indicate that they were 'added'
-    await checkStatus('body', 'added')
-    await checkStatus('structure', 'added')
-  })
-
   it('Search: search for a foreign dataset, navigate it, clone it', async () => {
     const {
       atLocation,
@@ -685,8 +690,7 @@ describe('Qri End to End tests', function spec () {
       atDatasetVersion,
       sendKeys,
       setValue,
-      takeScreenshot,
-      delay
+      takeScreenshot
     } = utils
     // make sure we are on the network page
     await click('#network')
@@ -833,13 +837,13 @@ describe('Qri End to End tests', function spec () {
     await atDataset(username, datasetRename, artifactPath('network-at-location-navigate-to-dataset.png'))
 
     // click the hamburger & click the unpublish action
-    await click('#workbench-hamburger', artifactPath('network-click-hamburger.png'))
+    await click('#navbar-hamburger', artifactPath('network-click-hamburger.png'))
 
     if (takeScreenshots) {
       await takeScreenshot(artifactPath('unpublish-hamburger.png'))
     }
 
-    await click('#hamburger-action-unpublish', artifactPath('network-click-unpublish-action.png'))
+    await click('#unpublish-button', artifactPath('network-click-unpublish-action.png'))
     await click('#submit', artifactPath('network-click-submit.png'))
 
     // publish button should exist again
@@ -854,7 +858,7 @@ describe('Qri End to End tests', function spec () {
     expect(recentDatasets.length).toBe(1)
   })
 
-  it('remove a dataset', async () => {
+  it('remove a dataset from the dataset page', async () => {
     const {
       click,
       atDataset,
@@ -870,8 +874,10 @@ describe('Qri End to End tests', function spec () {
     await click(`#row-${username}-${datasetName}`)
     await atDataset(username, datasetName)
 
+    // open navbar hamburger
+    await click('#navbar-hamburger')
     // click remove
-    await click('#remove')
+    await click('#remove-button')
     // wait for modal to load
     await waitForExist('#remove-dataset')
     // remove the dataset
@@ -920,7 +926,7 @@ describe('Qri End to End tests', function spec () {
     await click("#submit")
 
     // ensure both datasets are removed from collection page
-    await expectTextToBe(".active .count-indicator", "4")
+    await expectTextToBe(".active .count-indicator", "3")
   })
 
   it('removes a single dataset from Collections page via bulk remove action', async () => {
@@ -954,7 +960,7 @@ describe('Qri End to End tests', function spec () {
     await click("#submit")
 
     // ensure both datasets are removed from collection page
-    await expectTextToBe(".active .count-indicator", "4")
+    await expectTextToBe(".active .count-indicator", "3")
   })
 })
 

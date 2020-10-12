@@ -107,11 +107,12 @@ The following flows deal with launching the app for the first time, signing out 
 
 ### rename a dataset
 - ensure you are on the correct dataset
-- click the dataset name
+- click the #navbar-hamburger => #rename-button
+- wait for modal
 - set an incorrect value as the name
 - ensure we get the invalid indication
 - set a good name
-- click away to submit
+- click #submit
 
 ### export a CSV version
 - click the header export dataset button: #export-button
@@ -183,7 +184,7 @@ This section deals with the network page
 - navigate to to the network page
 - it should exist on the network page
 - navigate to the dataset
-- unpublish
+- unpublish (#navbar-hamburger => #unpublish-button)
 - navigate to the collection page
 - it should show as unpublished
 - navigate to the network page
@@ -205,10 +206,11 @@ This section deals with the network page
 - remove modal should appear
 - click 'remove' button on modal
 - check that dataset has been removed
-## remove a dataset
+
+## remove a dataset from the dataset page
 - go to the collection view
 - click on a dataset
-- click on the #remove button
+- click on the #navbar-hamburger => #remove-button
 - wait for the modal to load
 - click #submit to remove the dataset
 - wait fot the modal to disappear

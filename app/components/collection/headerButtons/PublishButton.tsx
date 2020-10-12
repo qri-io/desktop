@@ -1,6 +1,5 @@
 import * as React from 'react'
 import { faCloudUploadAlt } from '@fortawesome/free-solid-svg-icons'
-import ReactTooltip from 'react-tooltip'
 
 import { RouteProps } from '../../../models/store'
 import { Modal, ModalType } from '../../../models/modals'
@@ -40,11 +39,6 @@ export const PublishButtonComponent: React.FunctionComponent<PublishButtonProps>
     size = 'md',
     showIcon = true
   } = props
-
-  // The `ReactTooltip` component relies on the `data-for` and `data-tip` attributes
-  // we need to rebuild `ReactTooltip` so that it can recognize the `data-for`
-  // or `data-tip` attributes that are rendered in this component
-  React.useEffect(ReactTooltip.rebuild, [])
 
   const { username, name, path = '' } = qriRef
   const datasetSelected = isDatasetSelected(qriRef)
