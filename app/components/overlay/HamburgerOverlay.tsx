@@ -8,14 +8,18 @@ interface TypePickerOverlayProps {
   // function to close the picker
   onCancel: () => void
   // list of actions to take in hamburger
-  data: DatasetAction[]
+  items: DatasetAction[] | React.ReactElement[]
   // when open is true, the overlay is visible
   open: boolean
 }
 
+function isDatasetAction (data: DatasetAction | React.ReactElement): boolean {
+  return (data as React.ReactElement).props === undefined
+}
+
 const HamburgerOverlay: React.FunctionComponent<TypePickerOverlayProps> = ({
   onCancel,
-  data,
+  items,
   open = true
 }) => {
   return (
@@ -26,19 +30,22 @@ const HamburgerOverlay: React.FunctionComponent<TypePickerOverlayProps> = ({
       height={200}
       open={open}
     >
-      {data.map((item, i) => {
-        return (
-          <div
-            key={i}
-            id={`hamburger-action-${item.text.toLowerCase()}`}
-            onClick={(e: MouseEvent<HTMLDivElement, MouseEvent>) => {
-              item.onClick(e)
-              onCancel()
-            }}
-          >
-            {item.text}
-          </div>
-        )
+      {items && items.map((item: DatasetAction | React.ReactElement, i: number) => {
+        if (isDatasetAction(item)) {
+          return (
+            <div
+              key={i}
+              id={`hamburger-action-${item.text.toLowerCase()}`}
+              onClick={(e: MouseEvent<HTMLDivElement, MouseEvent>) => {
+                item.onClick(e)
+                onCancel()
+              }}
+            >
+              {item.text}
+            </div>
+          )
+        }
+        return item
       })}
     </Overlay>
   )

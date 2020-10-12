@@ -111,3 +111,8 @@ export function selectedComponentFromLocation (location: string): SelectedCompon
   }
   return undefined
 }
+
+// isDatasetSelected determines if the user has selected a dataset to view
+export function isDatasetSelected (qriRef: QriRef): boolean {
+  return !!qriRef.username && !!qriRef.name
+}

@@ -29,7 +29,7 @@ import { selectWorkingDatasetBodyPageInfo,
   selectMutationsDataset
 } from '../selections'
 import { CALL_API, ApiAction, ApiActionThunk, chainSuccess } from '../store/api'
-import { openToast } from './ui'
+import { openToast, setBulkActionExecuting } from './ui'
 import { actionWithPagination } from '../utils/pagination'
 import { getActionType } from '../utils/actionType'
 import { datasetConvertStringToScriptBytes } from '../utils/datasetConvertStringToScriptBytes'
@@ -641,52 +641,32 @@ export function removeDataset (
       }
     }
 
-    let response: Action
-    try {
-      response = await dispatch(action)
-      dispatch(openToast('success', 'remove', `Removed ${username}/${name}`))
-    } catch (action) {
-      dispatch(openToast('error', 'remove', action.payload.err.message))
-      throw action
-    }
-
-    return response
-  }
-}
-
-// remove the specified dataset, then refresh the dataset list
-export function removeDatasetAndFetch (username: string, name: string, isLinked: boolean, keepFiles: boolean): ApiActionThunk {
-  return async (dispatch, getState) => {
-    let response: Action
-
-    try {
-      response = await removeDataset(username, name, isLinked, keepFiles)(dispatch, getState)
-    } catch (action) {
-      if (!action.payload.err.message.contains('directory not empty')) {
-        throw action
-      }
-    }
-    // reset pagination
-    dispatch(push(pathToCollection()))
-    response = await fetchMyDatasets(-1)(dispatch, getState)
-    return response
+    return dispatch(action)
   }
 }
 
 // remove the specified datasets, then refresh the dataset list
 export function removeDatasetsAndFetch (refs: VersionInfo[], keepFiles: boolean): ApiActionThunk {
   return async (dispatch, getState) => {
+    const datasetsString = refs.length === 1 ? `${refs[0].username}/${refs[0].name}` : `${refs.length} datasets`
     try {
+      dispatch(setBulkActionExecuting(true))
+      dispatch(openToast('info', 'remove', `removing ${datasetsString}`))
       await Promise.all(
         refs.map(async (ref) => removeDataset(ref.username, ref.name, !!ref.fsiPath, keepFiles)(dispatch, getState))
       )
+      dispatch(openToast('success', `remove-success`, `removed ${datasetsString}`))
       // reset pagination
-      return fetchMyDatasets(-1)(dispatch, getState)
+      const res = await fetchMyDatasets(-1)(dispatch, getState)
+      dispatch(push(pathToCollection()))
+      dispatch(setBulkActionExecuting(false))
+      return res
     } catch (action) {
       if (!action.payload.err.message.contains('directory not empty')) {
         throw action
       }
-      dispatch(openToast('error', 'removeDatasetsAndFetch', action.payload.err.message))
+      dispatch(openToast('error', 'remove-error', `error removing ${datasetsString}: ${action.payload.err.message}`))
+      dispatch(setBulkActionExecuting(false))
       return Promise.reject(action.payload.err.message)
     }
   }

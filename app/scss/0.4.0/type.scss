@@ -5,9 +5,14 @@
   font-size: 14px;
 }
 
-.label.small {
+.label.x-small {
   font-size: 10px;
   letter-spacing: 1px;
+}
+
+.label.small {
+  font-size: 12px;
+  font-weight: 200;
 }
 
 .label.large {

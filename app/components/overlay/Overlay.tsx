@@ -60,7 +60,7 @@ const Overlay: React.FunctionComponent<OverlayProps> = ({
       ref={overlayRef}
     >
       {title && <div className='title-bar'>
-        <div className='label small'>{title}</div>
+        <div className='label x-small'>{title}</div>
         <div className='pointer' onClick={onCancel}><Icon icon='close' size='xs' /></div>
       </div>}
       {navigation && <div className='nav'>{navigation}</div>}

@@ -13,9 +13,9 @@ import { connectComponentToPropsWithRouter } from '../../../utils/connectCompone
 import { setFilter } from '../../../actions/myDatasets'
 import { pullDatasets, fetchMyDatasets, removeDatasetsAndFetch } from '../../../actions/api'
 import { setWorkingDataset } from '../../../actions/selections'
-import { setModal, openToast } from '../../../actions/ui'
+import { setModal, openToast, setBulkActionExecuting } from '../../../actions/ui'
 
-import { selectSessionUsername, selectWorkingDataset } from '../../../selections'
+import { selectSessionUsername, selectWorkingDataset, selectBulkActionExecuting } from '../../../selections'
 import DatasetsTable from './DatasetsTable'
 
 interface DatasetListProps extends RouteProps {
@@ -24,25 +24,37 @@ interface DatasetListProps extends RouteProps {
   workingDataset: WorkingDataset
   sessionUsername: string
   showFSI: boolean
+  bulkActionExecuting: boolean
   setFilter: (filter: string) => Action
   setWorkingDataset: (username: string, name: string) => Action
   fetchMyDatasets: (page: number, pageSize: number) => Promise<AnyAction>
   pullDatasets: (refs: VersionInfo[]) => Promise<AnyAction>
-  removeDatasetsAndFetch: (refs: VersionInfo[], keepFiles: boolean) => Promise<AnyAction>
   setModal: (modal: Modal) => void
   openToast: (type: ToastType, name: string, message: string) => Action
+  setBulkActionExecuting: (executing: boolean) => Action
 }
 
 type DatasetActionType = 'pull' | 'remove'
 
 export const DatasetListComponent: React.FC<DatasetListProps> = (props) => {
-  const { showFSI, setFilter, myDatasets, history, sessionUsername, pullDatasets, removeDatasetsAndFetch, openToast, setModal } = props
+  const {
+    showFSI,
+    setFilter,
+    myDatasets,
+    history,
+    sessionUsername,
+    bulkActionExecuting,
+    pullDatasets,
+    openToast,
+    setModal,
+    setBulkActionExecuting
+  } = props
+
   const { filter, value: datasets } = myDatasets
   const lowercasedFilterString = filter.toLowerCase()
 
   const [selected, setSelected] = useState([] as VersionInfo[])
   const [onlySessionUserDatasets, setOnlySessionUserDatasets] = useState(false)
-  const [bulkActionExecuting, setBulkActionExecuting] = useState(false)
 
   const handleSetFilter = (value: string) => {
     setFilter(value)
@@ -109,11 +121,6 @@ export const DatasetListComponent: React.FC<DatasetListProps> = (props) => {
     return handleBulkActionForDatasets('pull', 'pulling', 'pulled', actionCallback, selected)
   }
 
-  const handleBulkRemove = async (keepFiles: boolean) => {
-    const actionCallback = async () => removeDatasetsAndFetch(selected, keepFiles)
-    return handleBulkActionForDatasets('remove', 'removing', 'removed', actionCallback, selected)
-  }
-
   const handleBulkActionForDatasets = async (actionType: DatasetActionType, actionGerund: string, actionPastTense: string, actionCallback: () => Promise<AnyAction>, refs: VersionInfo[]) => {
     setBulkActionExecuting(true)
     openToast('info', actionType, `${actionGerund} ${refs.length} ${refs.length === 1 ? 'dataset' : 'datasets'}`)
@@ -134,8 +141,7 @@ export const DatasetListComponent: React.FC<DatasetListProps> = (props) => {
     setModal(
       {
         type: ModalType.RemoveDataset,
-        datasets: selected,
-        onSubmit: handleBulkRemove
+        datasets: selected
       }
     )
   }
@@ -201,7 +207,8 @@ export default connectComponentToPropsWithRouter(
     ...ownProps,
     myDatasets: state.myDatasets,
     sessionUsername: selectSessionUsername(state),
-    setWorkingDataset: selectWorkingDataset(state)
+    setWorkingDataset: selectWorkingDataset(state),
+    bulkActionExecuting: selectBulkActionExecuting(state)
   }),
   {
     setFilter,
@@ -210,6 +217,7 @@ export default connectComponentToPropsWithRouter(
     setModal,
     pullDatasets,
     removeDatasetsAndFetch,
-    openToast
+    openToast,
+    setBulkActionExecuting
   }
 )

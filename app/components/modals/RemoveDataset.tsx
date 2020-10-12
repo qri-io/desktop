@@ -4,20 +4,24 @@ import { RemoveDatasetModal } from '../../../app/models/modals'
 import { connectComponentToProps } from '../../utils/connectComponentToProps'
 import { dismissModal } from '../../actions/ui'
 import { selectModal, selectSessionUsername } from '../../selections'
+import { ApiAction } from '../../store/api'
+import { removeDatasetsAndFetch } from '../../actions/api'
 
 import CheckboxInput from '../form/CheckboxInput'
 import Modal from './Modal'
 import Error from './Error'
 import Buttons from './Buttons'
+import { VersionInfo } from '../../models/store'
 
 interface RemoveDatasetProps {
   modal: RemoveDatasetModal
   sessionUsername: string
   onDismissed: () => void
+  onSubmit: (refs: VersionInfo[], keepfiles: boolean) => Promise<ApiAction>
 }
 
 export const RemoveDatasetComponent: React.FC<RemoveDatasetProps> = (props: RemoveDatasetProps) => {
-  const { modal: { datasets, onSubmit }, sessionUsername, onDismissed } = props
+  const { modal: { datasets }, sessionUsername, onDismissed, onSubmit } = props
 
   const [keepFiles, setKeepFiles] = useState(true)
   const [dismissable, setDismissable] = useState(true)
@@ -38,7 +42,7 @@ export const RemoveDatasetComponent: React.FC<RemoveDatasetProps> = (props: Remo
     if (!onSubmit) return
 
     try {
-      await onSubmit(keepFiles)
+      await onSubmit(datasets, keepFiles)
       setLoading(false)
       setDismissable(true)
       onDismissed()
@@ -104,6 +108,7 @@ export default connectComponentToProps(
     }
   },
   {
-    onDismissed: dismissModal
+    onDismissed: dismissModal,
+    onSubmit: removeDatasetsAndFetch
   }
 )

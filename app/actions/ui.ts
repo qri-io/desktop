@@ -9,7 +9,8 @@ import {
   UI_SET_DATASET_DIR_PATH,
   UI_SET_EXPORT_PATH,
   UI_SET_DETAILS_BAR,
-  UI_SET_BOOTUP_COMPONENT
+  UI_SET_BOOTUP_COMPONENT,
+  UI_BULK_ACTION_EXECUTING
 } from '../reducers/ui'
 
 import { ToastType, BootupComponentType } from '../models/store'
@@ -96,5 +97,12 @@ export const setBootupComponent = (component: BootupComponentType) => {
   return {
     type: UI_SET_BOOTUP_COMPONENT,
     component
+  }
+}
+
+export const setBulkActionExecuting = (executing: boolean) => {
+  return {
+    type: UI_BULK_ACTION_EXECUTING,
+    executing
   }
 }

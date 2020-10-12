@@ -1,58 +1,57 @@
 import * as React from 'react'
-import { faFolderOpen, faFile, faLink } from '@fortawesome/free-solid-svg-icons'
-import { shell } from 'electron'
+import { faFile, faLink } from '@fortawesome/free-solid-svg-icons'
 
 import { RouteProps } from '../../../models/store'
 import { Modal, ModalType } from '../../../models/modals'
-import { QriRef, qriRefFromRoute } from '../../../models/qriRef'
+import { isDatasetSelected, QriRef, qriRefFromRoute } from '../../../models/qriRef'
 
 import { connectComponentToPropsWithRouter } from '../../../utils/connectComponentToProps'
 
 import { setModal } from '../../../actions/ui'
 
-import { selectInNamespace, selectFsiPath, selectMutationsIsDirty } from '../../../selections'
+import { selectFsiPath, selectMutationsIsDirty } from '../../../selections'
 
 import HeaderColumnButton from '../../chrome/HeaderColumnButton'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
-interface LinkButtonProps extends RouteProps {
+interface CheckoutButtonProps extends RouteProps {
   qriRef: QriRef
-  inNamespace: boolean
   fsiPath: string
   modified: boolean
   setModal: (modal: Modal) => void
+  showIcon: boolean
+  size: 'sm' | 'md'
 }
 
-const LinkButtonComponent: React.FunctionComponent<LinkButtonProps> = (props) => {
+/**
+ * If there is a dataset selected & there is no fsiPath, show the `CheckoutButton`
+ *  NOTE: before adjusting any logic in this component, check out the
+ * `DatasetActionButtons` story in storybook to double check that it still works
+ * as expected
+ */
+export const CheckoutButtonComponent: React.FunctionComponent<CheckoutButtonProps> = (props) => {
   const {
     qriRef,
-    inNamespace,
     fsiPath,
     modified,
-    setModal
+    size = 'md',
+    setModal,
+    showIcon = true
   } = props
 
   const { username, name } = qriRef
-  const datasetSelected = username !== '' && name !== ''
+  const datasetSelected = isDatasetSelected(qriRef)
 
-  if (!inNamespace || !datasetSelected) {
+  if (!(datasetSelected && !fsiPath)) {
     return null
-  }
-
-  if (fsiPath !== '') {
-    return (<HeaderColumnButton
-      id='show-files'
-      icon={faFolderOpen}
-      label='Show Files'
-      onClick={() => shell.openItem(fsiPath)}
-    />)
   }
 
   return (<HeaderColumnButton
     id='checkout'
-    label='checkout'
+    label='Checkout'
     tooltip='Checkout this dataset to a folder on your computer'
-    icon={(
+    size={size}
+    icon={(showIcon &&
       <span className='fa-layers fa-fw'>
         <FontAwesomeIcon icon={faFile} size='lg'/>
         <FontAwesomeIcon icon={faLink} transform='shrink-8' />
@@ -65,15 +64,14 @@ const LinkButtonComponent: React.FunctionComponent<LinkButtonProps> = (props) =>
 }
 
 export default connectComponentToPropsWithRouter(
-  LinkButtonComponent,
-  (state: any, ownProps: LinkButtonProps) => {
+  CheckoutButtonComponent,
+  (state: any, ownProps: CheckoutButtonProps) => {
     const qriRef = qriRefFromRoute(ownProps)
     return {
+      ...ownProps,
       qriRef,
-      inNamespace: selectInNamespace(state, qriRef),
       fsiPath: selectFsiPath(state),
-      modified: selectMutationsIsDirty(state),
-      ...ownProps
+      modified: selectMutationsIsDirty(state)
     }
   },
   {

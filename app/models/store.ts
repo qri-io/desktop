@@ -82,6 +82,7 @@ export interface UI {
   importFileName: string
   importFileSize: number
   bootupComponent: BootupComponentType
+  bulkActionExecuting: boolean
 }
 
 export type BootupComponentType =
