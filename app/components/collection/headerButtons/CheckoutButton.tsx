@@ -20,6 +20,7 @@ interface CheckoutButtonProps extends RouteProps {
   modified: boolean
   setModal: (modal: Modal) => void
   showIcon: boolean
+  size: 'sm' | 'md'
 }
 
 /**
@@ -33,6 +34,8 @@ export const CheckoutButtonComponent: React.FunctionComponent<CheckoutButtonProp
     qriRef,
     fsiPath,
     modified,
+    size = 'md',
+    setModal,
     showIcon = true
   } = props
 
@@ -47,6 +50,7 @@ export const CheckoutButtonComponent: React.FunctionComponent<CheckoutButtonProp
     id='checkout'
     label='Checkout'
     tooltip='Checkout this dataset to a folder on your computer'
+    size={size}
     icon={(showIcon &&
       <span className='fa-layers fa-fw'>
         <FontAwesomeIcon icon={faFile} size='lg'/>

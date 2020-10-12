@@ -9,8 +9,6 @@ import { QRI_CLOUD_URL } from '../../../constants'
 
 import { openInExternalWindow } from './platformSpecific/ButtonActions.TARGET_PLATFORM'
 
-import { setModal } from '../../../actions/ui'
-
 import { selectIsPublished } from '../../../selections'
 
 import HeaderColumnButton from '../../chrome/HeaderColumnButton'
@@ -19,6 +17,7 @@ interface ViewInCloudButtonProps extends RouteProps {
   qriRef: QriRef
   isPublished: boolean
   showIcon: boolean
+  size: 'sm' | 'md'
 }
 
 /**
@@ -32,6 +31,7 @@ export const ViewInCloudButtonComponent: React.FunctionComponent<ViewInCloudButt
   const {
     qriRef,
     isPublished,
+    size = 'md',
     showIcon = true
   } = props
 
@@ -47,6 +47,7 @@ export const ViewInCloudButtonComponent: React.FunctionComponent<ViewInCloudButt
     label='View in Cloud'
     tooltip='View this dataset on the Qri Cloud website'
     icon={showIcon && faCloud}
+    size={size}
     onClick={() => {
       openInExternalWindow && openInExternalWindow(`${QRI_CLOUD_URL}/${username}/${name}`)
     }}
@@ -62,8 +63,5 @@ export default connectComponentToPropsWithRouter(
       qriRef,
       isPublished: selectIsPublished(state)
     }
-  },
-  {
-    setModal
   }
 )

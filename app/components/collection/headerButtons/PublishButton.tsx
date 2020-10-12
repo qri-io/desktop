@@ -20,6 +20,7 @@ interface PublishButtonProps extends RouteProps {
   latestPath: string
   setModal: (modal: Modal) => void
   showIcon: boolean
+  size: 'sm' | 'md'
 }
 
 /**
@@ -36,6 +37,7 @@ export const PublishButtonComponent: React.FunctionComponent<PublishButtonProps>
     isPublished,
     latestPath,
     setModal,
+    size = 'md',
     showIcon = true
   } = props
 
@@ -58,6 +60,7 @@ export const PublishButtonComponent: React.FunctionComponent<PublishButtonProps>
         id='publish-button'
         label='Publish'
         icon={showIcon && faCloudUploadAlt}
+        size={size}
         onClick={() => {
           setModal({
             type: ModalType.PublishDataset,

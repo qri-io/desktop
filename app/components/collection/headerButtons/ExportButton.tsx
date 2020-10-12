@@ -14,6 +14,7 @@ interface ExportButtonProps extends RouteProps {
   qriRef: QriRef
   showIcon: boolean
   setModal: (modal: Modal) => void
+  size: 'sm' | 'md'
 }
 
 /**
@@ -27,6 +28,7 @@ export const ExportButtonComponent: React.FunctionComponent<ExportButtonProps> =
   const {
     qriRef,
     showIcon = true,
+    size = 'md',
     setModal
   } = props
 
@@ -40,6 +42,7 @@ export const ExportButtonComponent: React.FunctionComponent<ExportButtonProps> =
     label='Export'
     tooltip='Export this verison of the dataset to your filesystem'
     icon={showIcon && faDownload}
+    size={size}
     onClick={() => {
       setModal({ type: ModalType.ExportDataset, version: qriRef })
     }}

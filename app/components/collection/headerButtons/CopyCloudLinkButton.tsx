@@ -17,6 +17,7 @@ interface CopyCloudLinkButtonProps extends RouteProps {
   qriRef: QriRef
   isPublished: boolean
   showIcon: boolean
+  size: 'sm' | 'md'
 }
 
 /**
@@ -30,6 +31,7 @@ export const CopyCloudLinkButtonComponent: React.FunctionComponent<CopyCloudLink
   const {
     qriRef,
     isPublished,
+    size = 'md',
     showIcon = true
   } = props
 
@@ -43,6 +45,7 @@ export const CopyCloudLinkButtonComponent: React.FunctionComponent<CopyCloudLink
     id='copy-cloud-link'
     label='Copy Cloud Link'
     tooltip='Copy the url of this dataset on the cloud to your clipboard'
+    size={size}
     icon={(showIcon &&
       <span className='fa-layers fa-fw'>
         <FontAwesomeIcon icon={faFile} size='lg'/>

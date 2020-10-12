@@ -13,6 +13,7 @@ interface ShowFilesButtonProps extends RouteProps {
   qriRef: QriRef
   fsiPath: string
   showIcon: boolean
+  size: 'sm' | 'md'
 }
 
 /**
@@ -25,6 +26,7 @@ export const ShowFilesButtonComponent: React.FunctionComponent<ShowFilesButtonPr
   const {
     qriRef,
     fsiPath,
+    size = 'md',
     showIcon = true
   } = props
 
@@ -38,6 +40,7 @@ export const ShowFilesButtonComponent: React.FunctionComponent<ShowFilesButtonPr
     label='Show Files'
     tooltip='Show the dataset files on your file system'
     icon={showIcon && faFolderOpen}
+    size={size}
     onClick={() => {
       openItem && openItem(fsiPath)
     }}

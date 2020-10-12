@@ -20,6 +20,7 @@ interface UnpublishButtonProps extends RouteProps {
   latestPath: string
   setModal: (modal: Modal) => void
   showIcon?: boolean
+  size: 'sm' | 'md'
 }
 
 /**
@@ -36,6 +37,7 @@ export const UnpublishButtonComponent: React.FunctionComponent<UnpublishButtonPr
     isPublished,
     latestPath,
     setModal,
+    size = 'md',
     showIcon = true
   } = props
 
@@ -57,9 +59,8 @@ export const UnpublishButtonComponent: React.FunctionComponent<UnpublishButtonPr
           <FontAwesomeIcon icon={faCloud} size='lg'/>
           <FontAwesomeIcon color='white' icon={faTimes} transform='shrink-1 right-2 down-1'/>
         </span>
-      )
-
-      }
+      )}
+      size={size}
       onClick={() => {
         setModal({
           type: ModalType.UnpublishDataset,

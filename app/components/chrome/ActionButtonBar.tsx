@@ -16,7 +16,7 @@ const ActionButtonBar: React.FunctionComponent<ActionButtonBarProps> = (props) =
   const { data, size } = props
   if (data.length === 0) return null
   if (size.width && size.width < 40) {
-    return <Hamburger data={data} />
+    return <Hamburger id='action-button-bar-hamburger' items={data} />
   }
   const [areVisible, setAreVisible] = React.useState<boolean[]>(data.map(() => true))
 
@@ -60,7 +60,7 @@ const ActionButtonBar: React.FunctionComponent<ActionButtonBarProps> = (props) =
     <div className='action-button-bar'>
       {buttons}
       {/* If any are not visible, show the hamburger */}
-      {areVisible.some((val: boolean) => val === false) && <Hamburger data={data.filter((d: DatasetAction, i: number) => {
+      {areVisible.some((val: boolean) => val === false) && <Hamburger items={data.filter((d: DatasetAction, i: number) => {
         if (!areVisible[i]) return d
         else return undefined
       })}/>}

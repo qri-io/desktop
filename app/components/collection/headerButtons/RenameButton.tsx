@@ -16,6 +16,7 @@ interface RenameButtonProps extends RouteProps {
   qriRef: QriRef
   setModal: (modal: Modal) => void
   showIcon: boolean
+  size: 'sm' | 'md'
   inNamespace: boolean
 }
 
@@ -30,6 +31,7 @@ export const RenameButtonComponent: React.FunctionComponent<RenameButtonProps> =
     qriRef,
     setModal,
     showIcon = true,
+    size = 'md',
     inNamespace
   } = props
 
@@ -46,6 +48,7 @@ export const RenameButtonComponent: React.FunctionComponent<RenameButtonProps> =
     label='Rename'
     tooltip='Rename this dataset'
     icon={showIcon && faPen}
+    size={size}
     onClick={() => {
       setModal({ type: ModalType.RenameDataset, username, name })
     }}
