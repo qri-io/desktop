@@ -298,17 +298,9 @@ app.on('ready', () =>
           {
             id: 'show-collection',
             label: 'Collection',
-            accelerator: 'CmdOrCtrl+2',
+            accelerator: 'CmdOrCtrl+1',
             click () {
               mainWindow.webContents.send('history-push', '/collection')
-            }
-          },
-          {
-            id: 'show-workbench',
-            label: 'Workbench',
-            accelerator: 'CmdOrCtrl+2',
-            click () {
-              mainWindow.webContents.send('history-push', '/workbench')
             }
           },
           {
@@ -360,25 +352,6 @@ app.on('ready', () =>
         id: 'dataset-menu',
         label: 'Dataset',
         submenu: [
-          {
-            id: 'show-status',
-            label: 'Show Status',
-            accelerator: 'CmdOrCtrl+[',
-            click () {
-              mainWindow.webContents.send('show-status')
-            }
-          },
-          {
-            id: 'show-history',
-            label: 'Show History',
-            accelerator: 'CmdOrCtrl+]',
-            click () {
-              mainWindow.webContents.send('show-history')
-            }
-          },
-          {
-            type: 'separator'
-          },
           {
             id: 'publish-unpublish-dataset',
             label: 'Publish/Unpublish Dataset',
