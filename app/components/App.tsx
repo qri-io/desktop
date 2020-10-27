@@ -12,7 +12,7 @@ import {
   sendElectronEventToMain,
   saveDialogSync,
   reloadWindow
-} from './platformSpecific/app.TARGET_PLATFORM'
+} from './platformSpecific/App.TARGET_PLATFORM'
 
 // import constants
 import { DEFAULT_POLL_INTERVAL } from '../constants'
