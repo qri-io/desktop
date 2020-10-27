@@ -1,10 +1,12 @@
 import * as React from 'react'
-import { remote } from 'electron'
+import { remote, MenuItemConstructorOptions } from 'electron'
 
 const { Menu } = remote
 
+export type MenuItems = MenuItemConstructorOptions
+
 export interface Props<T> {
-  menuItemsFactory: (data: T) => Electron.MenuItemConstructorOptions[]
+  menuItemsFactory: (data: T) => MenuItems[]
   data: T
   style?: any
 }

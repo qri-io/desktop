@@ -1,6 +1,12 @@
 import React from 'react'
-import { MenuItemConstructorOptions } from 'electron'
-import ContextMenuArea from 'react-electron-contextmenu'
+
+/**
+ * Context menus only make sense in context of the electron app right now
+ * as all the actions that one can take are dependent on the dataset being
+ * either in your namespace and/or should be actions that happen only if
+ * you are working locally
+ */
+import ContextMenuArea, { MenuItems } from '../platformSpecific/ContextMenuArea.TARGET_PLATFORM'
 
 import { ApiActionThunk } from '../../store/api'
 import { QriRef, qriRefFromRoute, qriRefIsEmpty } from '../../models/qriRef'
@@ -83,7 +89,7 @@ export const LogListComponent: React.FunctionComponent<LogListProps> = (props) =
               }}
             />
           }
-          const menuItems: MenuItemConstructorOptions[] = [
+          const menuItems: MenuItems[] = [
             {
               label: 'Export this version',
               click: () => {
@@ -92,7 +98,11 @@ export const LogListComponent: React.FunctionComponent<LogListProps> = (props) =
             }
           ]
           return (
-            <ContextMenuArea menuItems={menuItems} key={item.path}>
+            <ContextMenuArea
+              data={menuItems}
+              menuItemsFactory={(data) => data}
+              key={item.path}
+            >
               <LogListItem
                 data={item}
                 key={item.path}
