@@ -1,7 +1,7 @@
 import * as React from 'react'
-import { remote } from 'electron'
 import { Action } from 'redux'
 
+import { showOpenDialogSync } from './platformSpecific/LinkDataset.TARGET_PLATFORM'
 import { LinkDatasetModal } from '../../models/modals'
 import { ApiAction } from '../../store/api'
 
@@ -63,8 +63,7 @@ export const LinkDatasetComponent: React.FunctionComponent<LinkDatasetProps> = (
   const isQriDataset = (path: string) => !path
 
   const showDirectoryPicker = () => {
-    const window = remote.getCurrentWindow()
-    const directory: string[] | undefined = remote.dialog.showOpenDialogSync(window, {
+    const directory: string[] | undefined = showOpenDialogSync({
       properties: ['createDirectory', 'openDirectory']
     })
 

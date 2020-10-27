@@ -66,7 +66,7 @@ const TextInput: React.FunctionComponent<TextInputProps> = (props) => {
         type={type}
         maxLength={maxLength}
         className='input'
-        defaultValue={stateValue || ''}
+        value={stateValue || ''}
         placeholder={placeHolder}
         onChange={handleOnChange}
         onBlur={onBlur}
