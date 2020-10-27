@@ -1,8 +1,9 @@
 import * as React from 'react'
-import { remote } from 'electron'
 import fs from 'fs'
 import { Action } from 'redux'
 import classNames from 'classnames'
+
+import { showOpenDialogSync } from './platformSpecific/CompareSidebar.TARGET_PLATFORM'
 
 import Store, { ToastType } from '../../models/store'
 
@@ -28,8 +29,7 @@ export interface CompareSidebarProps {
 
 export const CompareSidebarComponent: React.FunctionComponent<CompareSidebarProps> = ({ data, onChange, openToast }) => {
   const pathPicker = (side: string) => {
-    const window = remote.getCurrentWindow()
-    const filePaths: string[] | undefined = remote.dialog.showOpenDialogSync(window, {
+    const filePaths: string[] | undefined = showOpenDialogSync({
       title: 'Choose a CSV file',
       buttonLabel: 'Load',
       filters: [
