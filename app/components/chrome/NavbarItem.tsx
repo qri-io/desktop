@@ -11,12 +11,13 @@ export interface NavbarItemProps {
   disabled?: boolean
   onClick?: (event: React.MouseEvent) => void
   link?: string
+  externalLink?: boolean
   items?: React.ReactElement[]
   active?: boolean
 }
 
 const NavbarItem: React.FunctionComponent<NavbarItemProps> = (props) => {
-  const { id = '', icon, tooltip, disabled, onClick, link, active } = props
+  const { id = '', icon, tooltip, disabled, onClick, link, externalLink, active } = props
 
   const item = (
     <div
@@ -36,7 +37,7 @@ const NavbarItem: React.FunctionComponent<NavbarItemProps> = (props) => {
   )
 
   return link ? (
-    <Link to={link}>
+    <Link to={link} target={externalLink && '_blank'}>
       {item}
     </Link>
   ) : item

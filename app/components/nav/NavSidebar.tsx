@@ -1,7 +1,6 @@
 // globals __BUILD__
 import * as React from 'react'
 import { Action } from 'redux'
-import { shell } from 'electron'
 import {
   faExternalLinkAlt,
   faDatabase,
@@ -11,6 +10,8 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { IconDefinition } from '@fortawesome/free-regular-svg-icons'
+
+import { openInExternalWindow } from './platformSpecific/NavSidebar.TARGET_PLATFORM'
 
 import { connectComponentToPropsWithRouter } from '../../utils/connectComponentToProps'
 import { DISCORD_URL, QRI_CLOUD_URL } from '../../constants'
@@ -159,7 +160,11 @@ export const NavbarComponent: React.FunctionComponent<NavbarProps> = (props: Nav
           <NavbarItem
             icon={faComment}
             tooltip={'Need help? Ask questions<br/> in our Discord channel'}
-            onClick={() => { shell.openExternal(DISCORD_URL) }}
+            // when we have a function for `openInExternalWindow` we don't need
+            // a link to get us there, and vise-versa
+            onClick={() => { openInExternalWindow && openInExternalWindow(DISCORD_URL) }}
+            link={!openInExternalWindow && DISCORD_URL}
+            externalLink
           />
           <NavbarItem
             id='nav-options'
