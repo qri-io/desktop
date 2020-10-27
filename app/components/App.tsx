@@ -2,9 +2,17 @@ import * as React from 'react'
 import { Action } from 'redux'
 import { CSSTransition } from 'react-transition-group'
 import { ConnectedRouter, push } from 'connected-react-router'
-import { ipcRenderer, remote } from 'electron'
 import fs from 'fs'
 import ReactTooltip from 'react-tooltip'
+
+// platform specific imports
+import {
+  addRendererListener,
+  removeRendererListener,
+  sendElectronEventToMain,
+  saveDialogSync,
+  reloadWindow
+} from './platformSpecific/app.TARGET_PLATFORM'
 
 // import constants
 import { DEFAULT_POLL_INTERVAL } from '../constants'
@@ -103,7 +111,7 @@ class AppComponent extends React.Component<AppProps, AppState> {
   }
 
   private handleReload () {
-    remote.getCurrentWindow().reload()
+    reloadWindow && reloadWindow()
   }
 
   private handleSetDebugLogPath (_e: any, path: string) {
@@ -111,23 +119,27 @@ class AppComponent extends React.Component<AppProps, AppState> {
   }
 
   private handleExportDebugLog () {
-    const window = remote.getCurrentWindow()
-    const exportFilename: string | undefined = remote.dialog.showSaveDialogSync(window, {
-      defaultPath: 'qri-debug.log'
-    })
-    if (!exportFilename) {
-      // Dialog cancelled, do nothing
+    if (saveDialogSync) {
+      const exportFilename: string | undefined = saveDialogSync({
+        defaultPath: 'qri-debug.log'
+      })
+      if (!exportFilename) {
+        // Dialog cancelled, do nothing
+        return
+      }
+      if (!this.state.debugLogPath) {
+        // Don't have a log file, log and do nothing
+        console.log('debugLogsPath not set, cannot export!')
+        return
+      }
+      fs.copyFileSync(this.state.debugLogPath, exportFilename)
       return
     }
-    if (!this.state.debugLogPath) {
-      // Don't have a log file, log and do nothing
-      console.log('debugLogsPath not set, cannot export!')
-      return
-    }
-    fs.copyFileSync(this.state.debugLogPath, exportFilename)
+
+    console.log('Export debug log not set up in webapp version of Qri Desktop')
   }
 
-  private handleIncompatibleBackend (_: Electron.IpcRendererEvent, ver: string) {
+  private handleIncompatibleBackend (_: any, ver: string) {
     this.props.setBootupComponent(ver)
   }
 
@@ -140,19 +152,23 @@ class AppComponent extends React.Component<AppProps, AppState> {
   }
 
   componentDidMount () {
-    // handle ipc events from electron menus
-    ipcRenderer.on('create-dataset', this.handleNewDataset)
-    ipcRenderer.on('pull-dataset', this.handlePullDataset)
-    ipcRenderer.on('history-push', this.handlePush)
-    ipcRenderer.on('set-debug-log-path', this.handleSetDebugLogPath)
-    ipcRenderer.on('export-debug-log', this.handleExportDebugLog)
-    ipcRenderer.on('reload', this.handleReload)
-    ipcRenderer.on('incompatible-backend', this.handleIncompatibleBackend)
-    ipcRenderer.on('migrating-backend', this.handleMigratingBackend)
-    ipcRenderer.on('migration-failed', this.handleMigrationFailure)
-    ipcRenderer.on("starting-backend", this.handleStartingBackend)
+    if (addRendererListener) {
+      // handle ipc events from electron menus
+      addRendererListener('create-dataset', this.handleNewDataset)
+      addRendererListener('pull-dataset', this.handlePullDataset)
+      addRendererListener('history-push', this.handlePush)
+      addRendererListener('set-debug-log-path', this.handleSetDebugLogPath)
+      addRendererListener('export-debug-log', this.handleExportDebugLog)
+      addRendererListener('reload', this.handleReload)
+      addRendererListener('incompatible-backend', this.handleIncompatibleBackend)
 
-    ipcRenderer.send("app-fully-loaded")
+      // listen for communication from the main process
+      addRendererListener('migrating-backend', this.handleMigratingBackend)
+      addRendererListener('migration-failed', this.handleMigrationFailure)
+      addRendererListener('starting-backend', this.handleStartingBackend)
+    }
+
+    sendElectronEventToMain && sendElectronEventToMain('app-fully-loaded')
 
     setInterval(() => {
       if (this.props.apiConnection !== 1) {
@@ -166,15 +182,17 @@ class AppComponent extends React.Component<AppProps, AppState> {
   }
 
   componentWillUnmount () {
-    ipcRenderer.removeListener('create-dataset', this.handleNewDataset)
-    ipcRenderer.removeListener('pull-dataset', this.handlePullDataset)
-    ipcRenderer.removeListener('history-push', this.handlePush)
-    ipcRenderer.removeListener('set-debug-log-path', this.handleSetDebugLogPath)
-    ipcRenderer.removeListener('reload', this.handleReload)
-    ipcRenderer.removeListener('incompatible-backend', this.handleIncompatibleBackend)
-    ipcRenderer.removeListener('migrating-backend', this.handleMigratingBackend)
-    ipcRenderer.removeListener('migration-failed', this.handleMigrationFailure)
-    ipcRenderer.removeListener("starting-backend", this.handleStartingBackend)
+    if (removeRendererListener) {
+      removeRendererListener('create-dataset', this.handleNewDataset)
+      removeRendererListener('pull-dataset', this.handlePullDataset)
+      removeRendererListener('history-push', this.handlePush)
+      removeRendererListener('set-debug-log-path', this.handleSetDebugLogPath)
+      removeRendererListener('reload', this.handleReload)
+      removeRendererListener('incompatible-backend', this.handleIncompatibleBackend)
+      removeRendererListener('migrating-backend', this.handleMigratingBackend)
+      removeRendererListener('migration-failed', this.handleMigrationFailure)
+      removeRendererListener('starting-backend', this.handleStartingBackend)
+    }
   }
 
   componentDidUpdate (prevProps: AppProps) {
