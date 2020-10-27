@@ -4,6 +4,8 @@ import { ipcRenderer, shell } from 'electron'
 import { CSSTransition, TransitionGroup } from 'react-transition-group'
 import { Switch, Route, useLocation, useRouteMatch, Redirect } from 'react-router-dom'
 
+import { showDatasetMenu } from './platformSpecific/Collection.TARGET_PLATFORM'
+
 import { RouteProps, VersionInfo } from '../../models/store'
 import { Modal, ModalType } from '../../models/modals'
 import { QriRef, qriRefFromRoute } from '../../models/qriRef'
@@ -166,17 +168,17 @@ const CollectionRouter: React.FunctionComponent<CollectionRouterProps> = (props)
       >
         <Switch location={location}>
           <Route exact path={path} render={() => {
-            ipcRenderer.send('show-dataset-menu', false)
+            showDatasetMenu(false)
             return <CollectionHome />
           }} />
           <Route path={`${path}/edit/:username/:name`} render={() => {
-            ipcRenderer.send('show-dataset-menu', true)
+            showDatasetMenu(true)
             return noDatasetsRedirect(
               <EditDataset />
             )
           }}/>
           <Route path={`${path}/:username/:name/at/ipfs/:path`} render={(props) => {
-            ipcRenderer.send('show-dataset-menu', true)
+            showDatasetMenu(true)
             return noDatasetsRedirect(
               <Dataset {...props} />
             )
