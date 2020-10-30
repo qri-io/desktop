@@ -1,4 +1,4 @@
-import * as React from 'react'
+import React from 'react'
 import { Action } from 'redux'
 
 import { showOpenDialogSync } from './platformSpecific/LinkDataset.TARGET_PLATFORM'

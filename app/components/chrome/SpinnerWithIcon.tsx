@@ -1,4 +1,4 @@
-import * as React from 'react'
+import React from 'react'
 import Spinner from './Spinner'
 import { logo } from '../onboard/WelcomeTemplate'
 import { CSSTransition } from 'react-transition-group'

@@ -1,4 +1,4 @@
-import * as React from 'react'
+import React from 'react'
 
 import Store, { RouteProps } from '../../../models/store'
 import { Meta, Citation, License, User } from '../../../models/dataset'

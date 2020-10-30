@@ -1,4 +1,4 @@
-import * as React from 'react'
+import React from 'react'
 import WelcomeTemplate from './onboard/WelcomeTemplate'
 const version: string = require('../../version').desktopVersion
 

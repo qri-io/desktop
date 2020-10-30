@@ -1,4 +1,4 @@
-import * as React from 'react'
+import React from 'react'
 import { faTrash } from '@fortawesome/free-solid-svg-icons'
 import { RouteProps } from 'react-router-dom'
 

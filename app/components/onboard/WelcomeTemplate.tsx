@@ -1,4 +1,4 @@
-import * as React from 'react' // eslint-disable-line
+import React from 'react' // eslint-disable-line
 import Spinner from '../chrome/Spinner'
 import classNames from 'classnames'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'

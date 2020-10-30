@@ -4,7 +4,7 @@
  * either in your namespace and/or should be actions that happen only if
  * you are working locally
  */
-import * as React from 'react'
+import React from 'react'
 
 export type MenuItems = any
 
@@ -15,3 +15,5 @@ export const ContextMenuArea: React.FC<any> = (props) => {
     </div>
   )
 }
+
+export default ContextMenuArea

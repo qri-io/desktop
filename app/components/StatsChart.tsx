@@ -1,6 +1,6 @@
 import { ResponsiveBar } from '@nivo/bar'
 import { ResponsivePie } from '@nivo/pie'
-import * as React from 'react'
+import React from 'react'
 import numeral from 'numeral'
 
 import LabeledStats from './item/LabeledStats'

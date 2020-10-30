@@ -1,4 +1,4 @@
-import * as React from 'react'
+import React from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faInfoCircle } from '@fortawesome/free-solid-svg-icons'
 import cloneDeep from 'clone-deep'

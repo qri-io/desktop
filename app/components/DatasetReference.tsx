@@ -1,6 +1,6 @@
 // a component that displays the dataset reference including edit-in-place UI
 // for dataset rename
-import * as React from 'react'
+import React from 'react'
 import { AnyAction } from 'redux'
 import classNames from 'classnames'
 

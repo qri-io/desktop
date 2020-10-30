@@ -1,4 +1,4 @@
-import * as React from 'react'
+import React from 'react'
 import { RouteProps } from 'react-router-dom'
 import { faDownload } from '@fortawesome/free-solid-svg-icons'
 

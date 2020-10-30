@@ -1,4 +1,4 @@
-import * as React from 'react'
+import React from 'react'
 import Icon from '../chrome/Icon'
 
 export type DataTypes = 'string' | 'integer' | 'number' | 'boolean' | 'null' | 'any' | 'array' | 'object'

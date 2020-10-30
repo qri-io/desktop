@@ -1,7 +1,7 @@
 // TODO (chriswhong): restore drag and drop sorting functionality,
 // check out https://github.com/qri-io/desktop/commit/f0c1ac08850540be4b43db1fbb6b6a8d5d577594
 
-import * as React from 'react'
+import React from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTimes } from '@fortawesome/free-solid-svg-icons'
 

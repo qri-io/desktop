@@ -1,4 +1,4 @@
-import * as React from 'react'
+import React from 'react'
 import { Action } from 'redux'
 import { CSSTransition, TransitionGroup } from 'react-transition-group'
 import { Switch, Route, useLocation, useRouteMatch, Redirect } from 'react-router-dom'

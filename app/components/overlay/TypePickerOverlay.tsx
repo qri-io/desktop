@@ -1,4 +1,4 @@
-import * as React from 'react'
+import React from 'react'
 import Overlay from './Overlay'
 import { typesAndDescriptions } from '../structure/TypePicker'
 import DataType from '../item/DataType'

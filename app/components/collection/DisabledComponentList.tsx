@@ -1,4 +1,4 @@
-import * as React from 'react'
+import React from 'react'
 
 import ComponentItem from '../item/ComponentItem'
 import { components } from './WorkingComponentList'

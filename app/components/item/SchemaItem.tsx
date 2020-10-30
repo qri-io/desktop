@@ -1,4 +1,4 @@
-import * as React from 'react'
+import React from 'react'
 import Icon from '../chrome/Icon'
 import DynamicEditField from '../form/DynamicEditField'
 import { DataTypes } from './DataType'
