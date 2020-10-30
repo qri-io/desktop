@@ -1,5 +1,5 @@
 // globals __BUILD__
-import * as React from 'react'
+import React from 'react'
 import { Action } from 'redux'
 import {
   faExternalLinkAlt,
@@ -10,8 +10,6 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { IconDefinition } from '@fortawesome/free-regular-svg-icons'
-
-import { openInExternalWindow } from './platformSpecific/NavSidebar.TARGET_PLATFORM'
 
 import { connectComponentToPropsWithRouter } from '../../utils/connectComponentToProps'
 import { DISCORD_URL, QRI_CLOUD_URL } from '../../constants'
@@ -157,15 +155,12 @@ export const NavbarComponent: React.FunctionComponent<NavbarProps> = (props: Nav
           }
         </div>
         <div className='navbar-bottom'>
-          <NavbarItem
-            icon={faComment}
-            tooltip={'Need help? Ask questions<br/> in our Discord channel'}
-            // when we have a function for `openInExternalWindow` we don't need
-            // a link to get us there, and vise-versa
-            onClick={() => { openInExternalWindow && openInExternalWindow(DISCORD_URL) }}
-            link={!openInExternalWindow && DISCORD_URL}
-            externalLink
-          />
+          <ExternalLink id='open-discord' href={DISCORD_URL}>
+            <NavbarItem
+              icon={faComment}
+              tooltip={'Need help? Ask questions<br/> in our Discord channel'}
+            />
+          </ExternalLink>
           <NavbarItem
             id='nav-options'
             icon={
