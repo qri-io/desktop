@@ -1,4 +1,4 @@
-import * as React from 'react'
+import React from 'react'
 import WelcomeTemplate from './onboard/WelcomeTemplate'
 import ExternalLink from './ExternalLink'
 import { DISCORD_URL, QRI_IO_URL } from '../constants'

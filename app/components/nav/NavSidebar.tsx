@@ -1,7 +1,6 @@
 // globals __BUILD__
-import * as React from 'react'
+import React from 'react'
 import { Action } from 'redux'
-import { shell } from 'electron'
 import {
   faExternalLinkAlt,
   faDatabase,
@@ -156,11 +155,12 @@ export const NavbarComponent: React.FunctionComponent<NavbarProps> = (props: Nav
           }
         </div>
         <div className='navbar-bottom'>
-          <NavbarItem
-            icon={faComment}
-            tooltip={'Need help? Ask questions<br/> in our Discord channel'}
-            onClick={() => { shell.openExternal(DISCORD_URL) }}
-          />
+          <ExternalLink id='open-discord' href={DISCORD_URL}>
+            <NavbarItem
+              icon={faComment}
+              tooltip={'Need help? Ask questions<br/> in our Discord channel'}
+            />
+          </ExternalLink>
           <NavbarItem
             id='nav-options'
             icon={

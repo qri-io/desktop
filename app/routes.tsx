@@ -1,7 +1,8 @@
 // globals __BUILD__
 import React from 'react'
 import { Switch, Route, Redirect } from 'react-router-dom'
-import { ipcRenderer } from 'electron'
+
+import { showDatasetMenu } from './platformSpecific/routes.TARGET_PLATFORM'
 
 import Store from '../models/store'
 import {
@@ -49,7 +50,7 @@ export const RoutesComponent: React.FunctionComponent<RoutesProps> = (props) => 
   }
 
   const sectionElement = (section: string, dest: React.ReactElement): React.ReactElement => {
-    ipcRenderer.send('show-dataset-menu', false)
+    showDatasetMenu(false)
     return requireSignin(dest)
   }
 
@@ -94,7 +95,7 @@ export const RoutesComponent: React.FunctionComponent<RoutesProps> = (props) => 
         }
 
         <Route path='/' render={() => {
-          ipcRenderer.send('show-dataset-menu', false)
+          showDatasetMenu(false)
           return requireSignin(<Redirect to='/collection' />)
         }} />
       </Switch>

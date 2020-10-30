@@ -1,4 +1,4 @@
-import * as React from 'react'
+import React from 'react'
 import { faFile } from '@fortawesome/free-regular-svg-icons'
 import { faLink } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -53,7 +53,7 @@ export const CopyCloudLinkButtonComponent: React.FunctionComponent<CopyCloudLink
       </span>
     )}
     onClick={() => {
-      addToClipboard && addToClipboard(`${QRI_CLOUD_URL}/${username}/${name}`)
+      addToClipboard(`${QRI_CLOUD_URL}/${username}/${name}`)
     }}
   />)
 }

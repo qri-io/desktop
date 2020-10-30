@@ -1,4 +1,4 @@
-import * as React from 'react'
+import React from 'react'
 import { Structure as IStructure } from '../models/dataset'
 import { formatConfigOptions } from './Structure'
 

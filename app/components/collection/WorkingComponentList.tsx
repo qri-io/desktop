@@ -1,7 +1,8 @@
-import * as React from 'react'
+import React from 'react'
 import path from 'path'
 import classNames from 'classnames'
-import { clipboard, shell, MenuItemConstructorOptions } from 'electron'
+
+import { showItemInFolder, copyToClipboard } from './platformSpecific/WorkingComponentList.TARGET_PLATFORM'
 
 import { checkClearToCommit } from '../../utils/formValidation'
 import { QriRef, qriRefFromRoute } from '../../models/qriRef'
@@ -13,7 +14,8 @@ import { discardMutationsChanges } from '../../actions/mutations'
 import { selectStatusFromMutations, selectFsiPath, selectHasHistory } from '../../selections'
 import { pathToEdit } from '../../paths'
 
-import ContextMenuArea from '../ContextMenuArea'
+import { ContextMenuArea, MenuItems } from '../ContextMenuArea'
+
 import ComponentItem from '../item/ComponentItem'
 import { connectComponentToPropsWithRouter } from '../../utils/connectComponentToProps'
 import { Action } from 'redux'
@@ -116,7 +118,7 @@ export const WorkingComponentListComponent: React.FunctionComponent<WorkingCompo
             }
           }
 
-          let menuItems: MenuItemConstructorOptions[] = []
+          let menuItems: MenuItems[] = []
           if (status[name]) {
             const { filepath, status: fileStatus } = status[name]
             let filename = ''
@@ -127,11 +129,11 @@ export const WorkingComponentListComponent: React.FunctionComponent<WorkingCompo
               menuItems = [
                 {
                   label: 'Open in Finder',
-                  click: () => { shell.showItemInFolder(`${fsiPath}/${filename}`) }
+                  click: () => { showItemInFolder(`${fsiPath}/${filename}`) }
                 },
                 {
                   label: 'Copy File Path',
-                  click: () => { clipboard.writeText(`${fsiPath}/${filename}`) }
+                  click: () => { copyToClipboard(`${fsiPath}/${filename}`) }
                 }
               ]
 
@@ -160,7 +162,11 @@ export const WorkingComponentListComponent: React.FunctionComponent<WorkingCompo
           }
 
           return (
-            <ContextMenuArea data={menuItems} menuItemsFactory={(data) => data} key={name}>
+            <ContextMenuArea
+              data={menuItems}
+              menuItemsFactory={(data) => data}
+              key={name}
+            >
               <ComponentItem
                 key={name}
                 displayName={displayName}

@@ -1,4 +1,4 @@
-import * as React from 'react'
+import React from 'react'
 import { faCloud } from '@fortawesome/free-solid-svg-icons'
 
 import { RouteProps } from '../../../models/store'
@@ -49,7 +49,7 @@ export const ViewInCloudButtonComponent: React.FunctionComponent<ViewInCloudButt
     icon={showIcon && faCloud}
     size={size}
     onClick={() => {
-      openInExternalWindow && openInExternalWindow(`${QRI_CLOUD_URL}/${username}/${name}`)
+      openInExternalWindow(`${QRI_CLOUD_URL}/${username}/${name}`)
     }}
   />)
 }

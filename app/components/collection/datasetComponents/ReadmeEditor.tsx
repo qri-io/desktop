@@ -1,4 +1,4 @@
-import * as React from 'react'
+import React from 'react'
 import SimpleMDE from 'react-simplemde-editor'
 import { useDebounce } from 'use-debounce'
 
@@ -8,7 +8,7 @@ import hasParseError from '../../../utils/hasParseError'
 import Dataset from '../../../models/dataset'
 import { refStringFromQriRef, QriRef, qriRefFromRoute } from '../../../models/qriRef'
 import Store, { StatusInfo, RouteProps } from '../../../models/store'
-import { onClick as openExternal } from '../../platformSpecific/ExternalLink.TARGET_PLATFORM'
+import { openExternal } from './platformSpecific/Readme.TARGET_PLATFORM'
 
 import { writeDataset } from '../../../actions/workbench'
 

@@ -1,4 +1,4 @@
-import * as React from 'react'
+import React from 'react'
 
 import { Status, SelectedComponent, ComponentStatus, RouteProps } from '../../models/store'
 import { pathToDataset } from '../../paths'

@@ -1,18 +1,18 @@
-import * as React from 'react'
+import React from 'react'
 import { Action } from 'redux'
-import { ipcRenderer, shell } from 'electron'
 import { CSSTransition, TransitionGroup } from 'react-transition-group'
 import { Switch, Route, useLocation, useRouteMatch, Redirect } from 'react-router-dom'
 
+import {
+  showDatasetMenu
+} from './platformSpecific/Collection.TARGET_PLATFORM'
+
 import { RouteProps, VersionInfo } from '../../models/store'
-import { Modal, ModalType } from '../../models/modals'
 import { QriRef, qriRefFromRoute } from '../../models/qriRef'
 
-import { setModal, setSidebarWidth } from '../../actions/ui'
+import { setSidebarWidth } from '../../actions/ui'
 
 import {
-  selectFsiPath,
-  selectWorkingDatasetIsPublished,
   selectSessionUsername,
   selectShowDetailsBar,
   selectSidebarWidth,
@@ -37,8 +37,6 @@ require('../../assets/qri-blob-logo-tiny.png')
 export interface CollectionProps extends RouteProps {
   // display details
   qriRef: QriRef
-  isPublished: boolean
-  fsiPath: string
   hasDatasets: boolean
   showDetailsBar: boolean
   sidebarWidth: number
@@ -46,51 +44,10 @@ export interface CollectionProps extends RouteProps {
   sessionUsername: string
 
   // setting actions
-  setModal: (modal: Modal) => void
   setSidebarWidth: (type: string, sidebarWidth: number) => Action
 }
 
 export class CollectionComponent extends React.Component<CollectionProps> {
-  constructor (props: CollectionProps) {
-    super(props);
-
-    [
-      'openWorkingDirectory',
-      'publishUnpublishDataset'
-    ].forEach((m) => { this[m] = this[m].bind(this) })
-  }
-
-  componentDidMount () {
-    // electron menu events
-    ipcRenderer.on('open-working-directory', this.openWorkingDirectory)
-    ipcRenderer.on('publish-unpublish-dataset', this.publishUnpublishDataset)
-  }
-
-  componentWillUnmount () {
-    ipcRenderer.removeListener('open-working-directory', this.openWorkingDirectory)
-    ipcRenderer.removeListener('publish-unpublish-dataset', this.publishUnpublishDataset)
-  }
-
-  openWorkingDirectory () {
-    shell.openItem(this.props.fsiPath)
-  }
-
-  publishUnpublishDataset () {
-    const { isPublished, setModal } = this.props
-
-    isPublished
-      ? setModal({
-        type: ModalType.UnpublishDataset,
-        username: this.props.qriRef.username,
-        name: this.props.qriRef.name
-      })
-      : setModal({
-        type: ModalType.PublishDataset,
-        username: this.props.qriRef.username,
-        name: this.props.qriRef.name
-      })
-  }
-
   render () {
     const {
       qriRef,
@@ -166,17 +123,17 @@ const CollectionRouter: React.FunctionComponent<CollectionRouterProps> = (props)
       >
         <Switch location={location}>
           <Route exact path={path} render={() => {
-            ipcRenderer.send('show-dataset-menu', false)
+            showDatasetMenu(false)
             return <CollectionHome />
           }} />
           <Route path={`${path}/edit/:username/:name`} render={() => {
-            ipcRenderer.send('show-dataset-menu', true)
+            showDatasetMenu(true)
             return noDatasetsRedirect(
               <EditDataset />
             )
           }}/>
           <Route path={`${path}/:username/:name/at/ipfs/:path`} render={(props) => {
-            ipcRenderer.send('show-dataset-menu', true)
+            showDatasetMenu(true)
             return noDatasetsRedirect(
               <Dataset {...props} />
             )
@@ -215,8 +172,6 @@ export default connectComponentToProps(
        * we should pull the published status of the specific version being shown
        * rather then the status of the dataset at head.
        */
-      isPublished: selectWorkingDatasetIsPublished(state),
-      fsiPath: selectFsiPath(state),
       hasDatasets: selectHasDatasets(state),
       showDetailsBar: selectShowDetailsBar(state),
       sidebarWidth: selectSidebarWidth(state, 'workbench'),
@@ -226,7 +181,6 @@ export default connectComponentToProps(
     }
   },
   {
-    setModal,
     setSidebarWidth
   }
 )

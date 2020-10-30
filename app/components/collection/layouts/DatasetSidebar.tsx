@@ -1,4 +1,4 @@
-import * as React from 'react'
+import React from 'react'
 
 import { QriRef, qriRefFromRoute } from '../../../models/qriRef'
 import { VersionInfo, RouteProps } from '../../../models/store'

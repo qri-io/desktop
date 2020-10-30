@@ -1,4 +1,4 @@
-import * as React from 'react'
+import React from 'react'
 
 import { VersionInfo } from '../../models/store'
 import DatasetDetailsSubtext from '../dataset/DatasetDetailsSubtext'

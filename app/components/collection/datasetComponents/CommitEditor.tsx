@@ -1,4 +1,4 @@
-import * as React from 'react'
+import React from 'react'
 import { Action } from 'redux'
 import classNames from 'classnames'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'

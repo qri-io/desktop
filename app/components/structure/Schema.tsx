@@ -1,4 +1,4 @@
-import * as React from 'react'
+import React from 'react'
 import cloneDeep from 'clone-deep'
 
 import { Schema as ISchema } from '../../models/dataset'

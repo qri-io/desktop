@@ -1,6 +1,7 @@
 import React from 'react'
-import { ipcRenderer } from 'electron'
 import { faDownload, faPlus } from '@fortawesome/free-solid-svg-icons'
+
+import { showDatasetMenu } from './platformSpecific/CollectionHome.TARGET_PLATFORM'
 
 import { setModal } from '../../../actions/ui'
 import { connectComponentToProps } from '../../../utils/connectComponentToProps'
@@ -16,7 +17,7 @@ interface CollectionHomeProps {
 
 export const CollectionHome: React.FC<CollectionHomeProps> = ({ setModal }) => {
   React.useEffect(() => {
-    ipcRenderer.send('show-dataset-menu', false)
+    showDatasetMenu(false)
   }, [])
 
   return (

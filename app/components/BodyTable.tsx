@@ -1,4 +1,4 @@
-import * as React from 'react'
+import React from 'react'
 import * as _ from 'underscore'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSync } from '@fortawesome/free-solid-svg-icons'

@@ -68,7 +68,7 @@ const initialState = {
 }
 
 // send an event to electron to block menus on first load
-if (blockMenusOnFirstLoad) blockMenusOnFirstLoad()
+blockMenusOnFirstLoad()
 
 const [, ADD_SUCC] = apiActionTypes('add')
 const [, INIT_SUCC] = apiActionTypes('init')
@@ -130,7 +130,7 @@ export default (state = initialState, action: AnyAction) => {
       const modal = action.payload
 
       // if modal is open, block electron menus
-      if (blockMenusIfModalIsOpen) blockMenusIfModalIsOpen(modal)
+      blockMenusIfModalIsOpen(modal)
 
       return {
         ...state,

@@ -1,4 +1,4 @@
-import * as React from 'react'
+import React from 'react'
 import ReactJson from 'react-json-view'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons'

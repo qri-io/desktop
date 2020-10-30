@@ -75,7 +75,7 @@ const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction
     case DATASET_SUCC: // when adding a new dataset, set it as the new workingDataset
       const { name, path, peername, published, dataset, fsiPath } = action.payload.data
 
-      if (unblockDatasetMenus) unblockDatasetMenus(fsiPath, published)
+      unblockDatasetMenus(fsiPath, published)
 
       return {
         ...state,

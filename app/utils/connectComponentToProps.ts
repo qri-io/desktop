@@ -1,4 +1,4 @@
-import * as React from 'react'
+import React from 'react'
 import { Dispatch, bindActionCreators, ActionCreatorsMapObject } from 'redux'
 import { connect, Matching } from 'react-redux'
 import { withRouter } from 'react-router-dom'

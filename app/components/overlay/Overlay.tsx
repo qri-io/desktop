@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/restrict-plus-operands */
-import * as React from 'react'
+import React from 'react'
 import Icon from '../chrome/Icon'
 import classNames from 'classnames'
 

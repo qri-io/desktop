@@ -4,11 +4,12 @@ import classNames from "classnames"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTimes } from '@fortawesome/free-solid-svg-icons'
 
+import { onClickOpenInFinder } from './platformSpecific/DatasetList.TARGET_PLATFORM'
+
 import { pathToDataset } from '../../../paths'
 import { QriRef } from '../../../models/qriRef'
 import { Modal, ModalType } from '../../../models/modals'
 import { Store, MyDatasets, WorkingDataset, VersionInfo, RouteProps, ToastType } from '../../../models/store'
-import { onClickOpenInFinder } from '../../platformSpecific/DatasetStatus.TARGET_PLATFORM'
 import { connectComponentToPropsWithRouter } from '../../../utils/connectComponentToProps'
 import { setFilter } from '../../../actions/myDatasets'
 import { pullDatasets, fetchMyDatasets, removeDatasetsAndFetch } from '../../../actions/api'

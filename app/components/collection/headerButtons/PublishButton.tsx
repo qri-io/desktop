@@ -1,4 +1,4 @@
-import * as React from 'react'
+import React from 'react'
 import { faCloudUploadAlt } from '@fortawesome/free-solid-svg-icons'
 
 import { RouteProps } from '../../../models/store'

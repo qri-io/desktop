@@ -1,4 +1,4 @@
-import * as React from 'react'
+import React from 'react'
 import { ApiActionThunk } from '../../../store/api'
 
 import Dataset from '../../../models/dataset'
