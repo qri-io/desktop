@@ -63,17 +63,19 @@ export const DatasetComponent: React.FunctionComponent<DatasetProps> = (props) =
   }
 
   React.useEffect(() => {
-    if (addRendererListener) {
-      addRendererListener('open-working-directory', openWorkingDirectory)
-      addRendererListener('publish-unpublish-dataset', publishUnpublishDataset)
-    }
+    addRendererListener('open-working-directory', openWorkingDirectory)
+
     return () => {
-      if (removeRendererListener) {
-        removeRendererListener('open-working-directory', openWorkingDirectory)
-        removeRendererListener('publish-unpublish-dataset', publishUnpublishDataset)
-      }
+      removeRendererListener('open-working-directory', openWorkingDirectory)
     }
-  }, [])
+  }, [fsiPath])
+
+  React.useEffect(() => {
+    addRendererListener('publish-unpublish-dataset', publishUnpublishDataset)
+    return () => {
+      removeRendererListener('publish-unpublish-dataset', publishUnpublishDataset)
+    }
+  }, [qriRef.username, qriRef.name])
 
   React.useEffect(() => {
     fetchWorkbench(qriRef)
