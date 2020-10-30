@@ -539,7 +539,7 @@ describe('Qri End to End tests', function spec () {
 
     await click('#export-button')
     await click('#submit')
-    await delay(400) // wait to ensure file has time to write
+    await delay(500) // wait to ensure file has time to write
     expect(fs.existsSync(savePath)).toEqual(true)
   })
 
