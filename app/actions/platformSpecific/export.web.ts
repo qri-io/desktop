@@ -1,5 +1,5 @@
 import { VersionInfo } from '../../models/store'
 
-export default function exportDatasetVersion (_: VersionInfo) {
-  alert('can\'t export from the web!')
+export function exportDatasetVersion (_: VersionInfo) {
+  console.log("exportDatasetVersion is not implemented in the webapp version of Qri Desktop")
 }

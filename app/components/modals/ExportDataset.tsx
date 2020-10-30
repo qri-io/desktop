@@ -5,7 +5,7 @@ import { dismissModal } from '../../actions/ui'
 import { ExportDatasetModal } from '../../../app/models/modals'
 import { selectModal } from '../../selections'
 import { connectComponentToProps } from '../../utils/connectComponentToProps'
-import exportDatasetVersion from '../../actions/platformSpecific/export.TARGET_PLATFORM'
+import { exportDatasetVersion } from '../../actions/export'
 
 import Modal from './Modal'
 import Error from './Error'

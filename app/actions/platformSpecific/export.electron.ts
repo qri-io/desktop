@@ -5,7 +5,7 @@ import moment from 'moment'
 import { refStringFromQriRef } from '../../models/qriRef'
 import { VersionInfo, qriRefFromVersionInfo } from '../../models/store'
 
-export default function exportDatasetVersion (vi: VersionInfo, config: 'zip' | 'csv') {
+export function exportDatasetVersion (vi: VersionInfo, config: 'zip' | 'csv') {
   const window = remote.getCurrentWindow()
   const defaultPath = `${vi.username}-${vi.name}-${moment(vi.commitTime).format('YYYY-MM-DDThh-mm-ss-a')}.${config}`
   const selectedPath: string | undefined = remote.dialog.showSaveDialogSync(window, { defaultPath })
