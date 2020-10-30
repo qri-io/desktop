@@ -1,4 +1,4 @@
-import * as React from 'react'
+import React from 'react'
 import { Action } from 'redux'
 import { CSSTransition } from 'react-transition-group'
 import { ConnectedRouter, push } from 'connected-react-router'
@@ -111,7 +111,7 @@ class AppComponent extends React.Component<AppProps, AppState> {
   }
 
   private handleReload () {
-    reloadWindow && reloadWindow()
+    reloadWindow()
   }
 
   private handleSetDebugLogPath (_e: any, path: string) {
@@ -119,24 +119,19 @@ class AppComponent extends React.Component<AppProps, AppState> {
   }
 
   private handleExportDebugLog () {
-    if (saveDialogSync) {
-      const exportFilename: string | undefined = saveDialogSync({
-        defaultPath: 'qri-debug.log'
-      })
-      if (!exportFilename) {
-        // Dialog cancelled, do nothing
-        return
-      }
-      if (!this.state.debugLogPath) {
-        // Don't have a log file, log and do nothing
-        console.log('debugLogsPath not set, cannot export!')
-        return
-      }
-      fs.copyFileSync(this.state.debugLogPath, exportFilename)
+    const exportFilename: string | undefined = saveDialogSync({
+      defaultPath: 'qri-debug.log'
+    })
+    if (!exportFilename) {
+      // Dialog cancelled, do nothing
       return
     }
-
-    console.log('Export debug log not set up in webapp version of Qri Desktop')
+    if (!this.state.debugLogPath) {
+      // Don't have a log file, log and do nothing
+      console.log('debugLogsPath not set, cannot export!')
+      return
+    }
+    fs.copyFileSync(this.state.debugLogPath, exportFilename)
   }
 
   private handleIncompatibleBackend (_: any, ver: string) {
@@ -152,23 +147,21 @@ class AppComponent extends React.Component<AppProps, AppState> {
   }
 
   componentDidMount () {
-    if (addRendererListener) {
-      // handle ipc events from electron menus
-      addRendererListener('create-dataset', this.handleNewDataset)
-      addRendererListener('pull-dataset', this.handlePullDataset)
-      addRendererListener('history-push', this.handlePush)
-      addRendererListener('set-debug-log-path', this.handleSetDebugLogPath)
-      addRendererListener('export-debug-log', this.handleExportDebugLog)
-      addRendererListener('reload', this.handleReload)
-      addRendererListener('incompatible-backend', this.handleIncompatibleBackend)
+    // handle ipc events from electron menus
+    addRendererListener('create-dataset', this.handleNewDataset)
+    addRendererListener('pull-dataset', this.handlePullDataset)
+    addRendererListener('history-push', this.handlePush)
+    addRendererListener('set-debug-log-path', this.handleSetDebugLogPath)
+    addRendererListener('export-debug-log', this.handleExportDebugLog)
+    addRendererListener('reload', this.handleReload)
+    addRendererListener('incompatible-backend', this.handleIncompatibleBackend)
 
-      // listen for communication from the main process
-      addRendererListener('migrating-backend', this.handleMigratingBackend)
-      addRendererListener('migration-failed', this.handleMigrationFailure)
-      addRendererListener('starting-backend', this.handleStartingBackend)
-    }
+    // listen for communication from the main process
+    addRendererListener('migrating-backend', this.handleMigratingBackend)
+    addRendererListener('migration-failed', this.handleMigrationFailure)
+    addRendererListener('starting-backend', this.handleStartingBackend)
 
-    sendElectronEventToMain && sendElectronEventToMain('app-fully-loaded')
+    sendElectronEventToMain('app-fully-loaded')
 
     setInterval(() => {
       if (this.props.apiConnection !== 1) {
@@ -182,17 +175,15 @@ class AppComponent extends React.Component<AppProps, AppState> {
   }
 
   componentWillUnmount () {
-    if (removeRendererListener) {
-      removeRendererListener('create-dataset', this.handleNewDataset)
-      removeRendererListener('pull-dataset', this.handlePullDataset)
-      removeRendererListener('history-push', this.handlePush)
-      removeRendererListener('set-debug-log-path', this.handleSetDebugLogPath)
-      removeRendererListener('reload', this.handleReload)
-      removeRendererListener('incompatible-backend', this.handleIncompatibleBackend)
-      removeRendererListener('migrating-backend', this.handleMigratingBackend)
-      removeRendererListener('migration-failed', this.handleMigrationFailure)
-      removeRendererListener('starting-backend', this.handleStartingBackend)
-    }
+    removeRendererListener('create-dataset', this.handleNewDataset)
+    removeRendererListener('pull-dataset', this.handlePullDataset)
+    removeRendererListener('history-push', this.handlePush)
+    removeRendererListener('set-debug-log-path', this.handleSetDebugLogPath)
+    removeRendererListener('reload', this.handleReload)
+    removeRendererListener('incompatible-backend', this.handleIncompatibleBackend)
+    removeRendererListener('migrating-backend', this.handleMigratingBackend)
+    removeRendererListener('migration-failed', this.handleMigrationFailure)
+    removeRendererListener('starting-backend', this.handleStartingBackend)
   }
 
   componentDidUpdate (prevProps: AppProps) {
