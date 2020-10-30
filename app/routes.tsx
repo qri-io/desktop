@@ -50,7 +50,7 @@ export const RoutesComponent: React.FunctionComponent<RoutesProps> = (props) => 
   }
 
   const sectionElement = (section: string, dest: React.ReactElement): React.ReactElement => {
-    showDatasetMenu && showDatasetMenu(false)
+    showDatasetMenu(false)
     return requireSignin(dest)
   }
 

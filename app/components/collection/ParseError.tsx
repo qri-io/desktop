@@ -1,4 +1,4 @@
-import * as React from 'react'
+import React from 'react'
 import path from 'path'
 
 import { SelectedComponent } from '../../models/store'
@@ -7,7 +7,7 @@ import { connectComponentToProps } from '../../utils/connectComponentToProps'
 
 import { selectWorkingStatusInfo } from '../../selections'
 
-import { ShowInFilesystem } from './platformSpecific/ShowInFilesystem.TARGET_PLATFORM'
+import { ShowInFilesystem } from './ShowInFilesystem'
 
 interface ParseErrorProps {
   // from parent component
@@ -23,7 +23,7 @@ const ParseErrorComponent: React.FunctionComponent<ParseErrorProps> = ({ compone
         <div>
           <h4>There are parsing errors in your {component}</h4>
           <p>Fix the errors in your <strong>{filename}</strong> file to be able to view it in Qri Desktop.</p>
-          {ShowInFilesystem && <ShowInFilesystem path={filename && path.dirname(filename)} />}
+          <ShowInFilesystem path={filename && path.dirname(filename)} />
         </div>
       </div>
     </div>

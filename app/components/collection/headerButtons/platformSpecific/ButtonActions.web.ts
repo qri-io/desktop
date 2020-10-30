@@ -1,8 +1,5 @@
-/**
- * need to have web specific versions of the functions inside
- * `ButtonActions.electron.ts`
- *
- * openItem
- * atToClipboard
- *
- */
+export const openItem = (path: string) => {}
+
+export const addToClipboard = (text: string) => {}
+
+export const openInExternalWindow = async (url: string) => {}

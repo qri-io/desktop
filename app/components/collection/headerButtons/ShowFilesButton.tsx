@@ -1,5 +1,5 @@
 import { faFolderOpen } from '@fortawesome/free-solid-svg-icons'
-import * as React from 'react'
+import React from 'react'
 import { RouteProps } from 'react-router-dom'
 
 import { isDatasetSelected, QriRef, qriRefFromRoute } from '../../../models/qriRef'
@@ -42,7 +42,7 @@ export const ShowFilesButtonComponent: React.FunctionComponent<ShowFilesButtonPr
     icon={showIcon && faFolderOpen}
     size={size}
     onClick={() => {
-      openItem && openItem(fsiPath)
+      openItem(fsiPath)
     }}
   />)
 }

@@ -6,7 +6,7 @@ import React from 'react'
  * either in your namespace and/or should be actions that happen only if
  * you are working locally
  */
-import ContextMenuArea, { MenuItems } from '../platformSpecific/ContextMenuArea.TARGET_PLATFORM'
+import { ContextMenuArea, MenuItems } from '../ContextMenuArea'
 
 import { ApiActionThunk } from '../../store/api'
 import { QriRef, qriRefFromRoute, qriRefIsEmpty } from '../../models/qriRef'

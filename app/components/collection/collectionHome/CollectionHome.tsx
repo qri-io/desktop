@@ -17,7 +17,7 @@ interface CollectionHomeProps {
 
 export const CollectionHome: React.FC<CollectionHomeProps> = ({ setModal }) => {
   React.useEffect(() => {
-    showDatasetMenu && showDatasetMenu(false)
+    showDatasetMenu(false)
   }, [])
 
   return (

@@ -1,4 +1,4 @@
-import * as React from 'react'
+import React from 'react'
 import path from 'path'
 import classNames from 'classnames'
 
@@ -14,13 +14,7 @@ import { discardMutationsChanges } from '../../actions/mutations'
 import { selectStatusFromMutations, selectFsiPath, selectHasHistory } from '../../selections'
 import { pathToEdit } from '../../paths'
 
-/**
- * Context menus only make sense in context of the electron app right now
- * as all the actions that one can take are dependent on the dataset being
- * either in your namespace and/or should be actions that happen only if
- * you are working locally
- */
-import ContextMenuArea, { MenuItems } from '../platformSpecific/ContextMenuArea.TARGET_PLATFORM'
+import { ContextMenuArea, MenuItems } from '../ContextMenuArea'
 
 import ComponentItem from '../item/ComponentItem'
 import { connectComponentToPropsWithRouter } from '../../utils/connectComponentToProps'
