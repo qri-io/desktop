@@ -2,7 +2,7 @@ import React from 'react'
 import { Action } from 'redux'
 import { CSSTransition } from 'react-transition-group'
 import { ConnectedRouter, push } from 'connected-react-router'
-import fs from 'fs'
+
 import ReactTooltip from 'react-tooltip'
 
 // platform specific imports
@@ -10,7 +10,7 @@ import {
   addRendererListener,
   removeRendererListener,
   sendElectronEventToMain,
-  saveDialogSync,
+  exportDebugLog,
   reloadWindow
 } from './platformSpecific/App.TARGET_PLATFORM'
 
@@ -119,19 +119,14 @@ class AppComponent extends React.Component<AppProps, AppState> {
   }
 
   private handleExportDebugLog () {
-    const exportFilename: string | undefined = saveDialogSync({
-      defaultPath: 'qri-debug.log'
-    })
-    if (!exportFilename) {
-      // Dialog cancelled, do nothing
-      return
-    }
     if (!this.state.debugLogPath) {
       // Don't have a log file, log and do nothing
       console.log('debugLogsPath not set, cannot export!')
       return
     }
-    fs.copyFileSync(this.state.debugLogPath, exportFilename)
+    exportDebugLog(this.state.debugLogPath, {
+      defaultPath: 'qri-debug.log'
+    })
   }
 
   private handleIncompatibleBackend (_: any, ver: string) {

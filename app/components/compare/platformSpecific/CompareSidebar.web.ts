@@ -1,4 +1,4 @@
-export function showOpenDialogSync (): undefined {
-  console.log("showOpenDialogSync is not implemented for the webapp version of the Qri Desktop")
-  return undefined
+export function chooseFile (): string[] {
+  console.log("chooseFile is not implemented for the webapp version of the Qri Desktop")
+  return ['', '']
 }

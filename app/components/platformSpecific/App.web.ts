@@ -4,6 +4,6 @@ export function removeRendererListener (eventType: string, func: (e?: any, s?: s
 
 export function sendElectronEventToMain (eventType: string) {}
 
-export function saveDialogSync (opts: Electron.SaveDialogSyncOptions): string | undefined { return undefined }
+export function exportDebugLog (path: string, opts: any) {}
 
 export function reloadWindow () {}

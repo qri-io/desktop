@@ -94,7 +94,7 @@ export const ComponentRouterComponent: React.FunctionComponent<ComponentRouterPr
     const ext = path.extname(e.dataTransfer.files[0].path)
     if (!(ext === '.csv' || ext === '.json')) {
       // open toast for 1 second
-      openToast(ToastTypes.error, 'drag-drop', 'unsupported file format: only json and csv supported')
+      openToast('error', 'drag-drop', 'unsupported file format: only json and csv supported')
       setTimeout(closeToast, 1000)
       return
     }
