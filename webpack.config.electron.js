@@ -2,7 +2,6 @@
  * Build config for electron 'Main Process' file
  */
 
-const webpack = require('webpack')
 const merge = require('webpack-merge')
 const baseConfig = require('./webpack.config.base')
 

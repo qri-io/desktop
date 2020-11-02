@@ -77,6 +77,12 @@ export interface Structure {
   schema?: Schema
 }
 
+export interface ColumnProperties {
+  title?: string
+  type?: string
+  [key: string]: any
+}
+
 export type Schema = JSONSchema7
 
 export interface Dataset {

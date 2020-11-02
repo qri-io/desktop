@@ -47,6 +47,7 @@ module.exports = merge(baseConfig, {
           }
         }
       }
+    ]
   },
 
   plugins: [

@@ -17,7 +17,7 @@ export interface E2ETestUtils {
   doesNotExist: (selector: string, screenshotLocation?: string) => Promise<void>
   expectTextToBe: (selector: string, text: string, screenshotLocation?: string) => Promise<void>
   atDatasetVersion: (ver: "working" | number, screenshotLocation?: string) => Promise<void>
-  expectTextToContain: (selector: string, text: string, screenshotLocation?: string) => Promise<void>
+  expectTextToContain: (selector: string, text?: string, screenshotLocation?: string) => Promise<void>
   checkStatus: (component: string, status: string, screenshotLocation?: string) => Promise<void>
   delay: (time: number, screenshotLocation?: string) => Promise<unknown>
   sendKeys: (selector: string, value: string | string[], screenshotLocation?: string) => Promise<void>
@@ -64,7 +64,7 @@ function takeScreenshot (app: any) {
 }
 
 function _takeScreenshot (app: any, screenshotLocation: string) {
-  app.browserWindow.capturePage().then(function (imageBuffer) {
+  app.browserWindow.capturePage().then(function (imageBuffer: any) {
     console.log(`writing screenshot: ${screenshotLocation}`)
     fs.writeFileSync(screenshotLocation, imageBuffer)
   })
@@ -267,29 +267,11 @@ function expectTextToBe (app: any) {
   }
 }
 
-// checkDatasetReference takes a username and a name, checking that the given
-// dataset username matches the `TopNavbar` component's `.title-container.subtitle`
-// element and the dataset name matches the `.title-container.title` element
-// it assumes you are currently on the dataset page!
-function checkDatasetReference (app: any) {
-  return async (username: string, name: string, screenshotLocation?: string) => {
-    try {
-      expect(await app.client.element('.title-container.subtitle').getText()).toBe(username)
-      expect(await app.client.element('.title-container.title').getText()).toBe(name)
-    } catch (e) {
-      if (screenshotLocation) {
-        _takeScreenshot(app, screenshotLocation)
-      }
-      throw new Error(`function 'checkDatasetReference': ${e}`)
-    }
-    if (!headless) await delay(delayTime)
-  }
-}
-
 // expectTextToContain wraps expect().toContain()
 function expectTextToContain (app: any) {
-  return async (selector: string, text: string, screenshotLocation?: string) => {
+  return async (selector: string, text?: string, screenshotLocation?: string) => {
     try {
+      expect(text).toBeTruthy()
       expect(await app.client.element(selector).getText()).toContain(text)
     } catch (e) {
       if (screenshotLocation) {
@@ -307,7 +289,7 @@ function expectTextToContain (app: any) {
 // HEAD-1. The "working" version is the version of the dataset that is being
 // edited
 function atDatasetVersion (app: any) {
-  return async (ver: "working" | number, screenshotLocation: string) => {
+  return async (ver: "working" | number, screenshotLocation?: string) => {
     let verStr = ''
     if (ver === "working") {
       verStr = "#working-version"

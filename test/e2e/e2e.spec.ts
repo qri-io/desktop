@@ -6,7 +6,8 @@ import TestTempRegistry from '../utils/testTempRegistry'
 import fakeDialog from 'spectron-fake-dialog'
 import { E2ETestUtils, newE2ETestUtils } from '../utils/e2eTestUtils'
 import http from 'http'
-import Dataset, { Commit, Meta, Structure } from '../../app/models/dataset'
+import Dataset, { Commit, Meta, Schema, Structure } from '../../app/models/dataset'
+import { schemaColumns } from '../../app/utils/schemaColumns'
 
 const { Application } = require('spectron')
 
@@ -99,7 +100,10 @@ describe('Qri End to End tests', function spec () {
         type: 'array'
       },
       type: 'array'
-    }
+    },
+    entries: 3,
+    length: 100,
+    errCount: 0
   }
 
   const structureCommit: Commit = {
@@ -181,12 +185,12 @@ describe('Qri End to End tests', function spec () {
 
   afterAll(async () => {
     if (printConsoleLogs && app) {
-      app.client.getMainProcessLogs().then((logs) => {
+      app.client.getMainProcessLogs().then((logs: any[]) => {
         logs.forEach((log) => {
           console.log(log)
         })
       })
-      app.client.getRenderProcessLogs().then((logs) => {
+      app.client.getRenderProcessLogs().then((logs: any[]) => {
         logs.forEach((log) => {
           console.log(log)
         })
@@ -1286,26 +1290,23 @@ async function editCSVStructureAndCommit (uniqueName: string, dataset: Dataset, 
     }
   }
 
-  if (schema && schema.items && schema.items.items) {
-    const schemaItems = schema.items.items
-
-    for (var i = 0; i < schemaItems.length; i++) {
-      const item = schemaItems[i]
-      if (item.title) {
-        await setValue(`#title-${i}`, item.title)
-        await sendKeys(`#title-${i}`, "Tab")
-        await delay(100)
-      }
-      if (item.description) {
-        await setValue(`#description-${i}`, item.description)
-        await sendKeys(`#description-${i}`, "Tab")
-        await delay(100)
-      }
-      if (item.validation) {
-        await setValue(`#validation-${i}`, item.validation)
-        await sendKeys(`#validation-${i}`, "Tab")
-        await delay(100)
-      }
+  const schemaItems = schemaColumns(schema as Schema)
+  for (var i = 0; i < schemaItems.length; i++) {
+    const item = schemaItems[i]
+    if (item.title) {
+      await setValue(`#title-${i}`, item.title)
+      await sendKeys(`#title-${i}`, "Tab")
+      await delay(100)
+    }
+    if (item.description) {
+      await setValue(`#description-${i}`, item.description)
+      await sendKeys(`#description-${i}`, "Tab")
+      await delay(100)
+    }
+    if (item.validation) {
+      await setValue(`#validation-${i}`, item.validation)
+      await sendKeys(`#validation-${i}`, "Tab")
+      await delay(100)
     }
   }
 
@@ -1334,15 +1335,11 @@ async function editCSVStructureAndCommit (uniqueName: string, dataset: Dataset, 
     }
   }
 
-  if (schema && schema.items && schema.items.items) {
-    const schemaItems = schema.items.items
-
-    for (i = 0; i < schemaItems.length; i++) {
-      const item = schemaItems[i]
-      if (item.title) await expectTextToBe(`#title-${i}`, item.title)
-      if (item.description) await expectTextToBe(`#description-${i}`, item.description)
-      if (item.validation) await expectTextToBe(`#validation-${i}`, item.validation)
-    }
+  for (i = 0; i < schemaItems.length; i++) {
+    const item = schemaItems[i]
+    if (item.title) await expectTextToBe(`#title-${i}`, item.title)
+    if (item.description) await expectTextToBe(`#description-${i}`, item.description)
+    if (item.validation) await expectTextToBe(`#validation-${i}`, item.validation)
   }
 
   if (takeScreenshots) {

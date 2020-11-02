@@ -18,6 +18,10 @@ export default class TestTempRegistry {
     this.registryBinPath = ''
     this.process = null
     this.dir = ''
+    this.logPath = path.join(this.dir, 'temp_registry_server.log')
+    const write = fs.createWriteStream(this.logPath)
+    this.stdout = write
+    this.stderr = write
   }
 
   start () {
@@ -40,24 +44,21 @@ export default class TestTempRegistry {
 
   launchProcess () {
     try {
-      this.logPath = path.join(this.dir, 'temp_registry_server.log')
-      const write = fs.createWriteStream(this.logPath)
-      this.stdout = write
-      this.stderr = write
       this.process = childProcess.spawn(this.registryBinPath, ['connect', '--setup'], {
         env: Object.assign(process.env, {
           'PORT': '2500'
         })
       })
 
-      this.process.stdout.pipe(this.stdout);
-      this.process.stderr.pipe(this.stderr);
+      this.process.stdout.pipe(this.stdout)
+      this.process.stderr.pipe(this.stderr)
 
       this.process.on('error', (err: any) => { this.handleEvent('error', err) })
-      this.process.on('exit', () => { this.handleEvent('exit', 'registry exited') })
+      this.process.on('exit', () => { this.handleEvent('exit', new Error('registry exited')) })
       this.process.on('close', (err: any) => {
         this.handleEvent('close', err)
-        write.close()
+        this.stderr.close()
+        this.stdout.close()
       })
       this.process.on('disconnect', (err: any) => { this.handleEvent('disconnect', err) })
     } catch (err) {

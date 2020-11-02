@@ -15,6 +15,7 @@ import BodyJson from '../../BodyJson'
 import ParseError from '../ParseError'
 import hasParseError from '../../../utils/hasParseError'
 import { connectComponentToProps } from '../../../utils/connectComponentToProps'
+import { schemaColumns } from '../../../utils/schemaColumns'
 
 export interface BodyProps extends RouteProps {
   qriRef: QriRef
@@ -54,13 +55,7 @@ const extractColumnHeaders = (structure: Structure, value: any[]): undefined | a
     return firstRow.slice(1).map((d: any, i: number) => `field_${i + 1}`)
   }
 
-  if (schema && (!schema.items || (schema.items && !schema.items.items))) {
-    return undefined
-  }
-
-  return schema &&
-    schema.items &&
-    schema.items.items.map((d: { title: string }): Record<string, any> => d)
+  return schemaColumns(schema).map((d: { title: string }): Record<string, any> => d)
 }
 
 export const BodyComponent: React.FunctionComponent<BodyProps> = (props) => {
