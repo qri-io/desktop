@@ -1,29 +1,30 @@
-/* eslint-disable max-len */
 /**
- * Build config for development process that uses Hot-Module-Replacement
- * https://webpack.github.io/docs/hot-module-replacement-with-webpack.html
+ * Build config for electron 'Renderer Process' file
  */
 
+const path = require('path')
 const webpack = require('webpack')
 const merge = require('webpack-merge')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
 
 const baseConfig = require('./webpack.config.base')
 
-const port = process.env.PORT || 1212
+var sourcePath = __dirname
 
 module.exports = merge(baseConfig, {
+  context: sourcePath,
   mode: 'development',
 
-  devtool: 'inline-source-map',
+  devtool: 'cheap-module-eval-source-map',
 
-  entry: [
-    'react-hot-loader/patch',
-    `webpack-hot-middleware/client?path=http://localhost:${port}/__webpack_hmr`,
-    './app/index'
-  ],
+  entry: ['./app/webapp/index.tsx'],
 
   output: {
-    publicPath: `http://localhost:${port}/dist/`
+    globalObject: 'self',
+    path: path.join(__dirname, 'app/webapp/dist'),
+    filename: '[name].js',
+    sourceMapFilename: '[name].js.map',
+    libraryTarget: 'umd'
   },
 
   module: {
@@ -31,7 +32,7 @@ module.exports = merge(baseConfig, {
       {
         test: /\.tsx?$/,
         exclude: /node_modules/,
-        use: [{
+        use: {
           loader: 'babel-loader',
           options: {
             cacheDirectory: true,
@@ -51,28 +52,22 @@ module.exports = merge(baseConfig, {
               'react-hot-loader/babel'
             ]
           }
-        },
-        {
-          loader: 'ts-loader',
-          options: {
-            configFile: 'tsconfig.json'
-          }
-        }]
+        }
       }
     ]
   },
 
   plugins: [
-    // https://webpack.github.io/docs/hot-module-replacement-with-webpack.html
+
     new webpack.HotModuleReplacementPlugin(),
 
     new webpack.NoEmitOnErrorsPlugin(),
 
-    new webpack.DefinePlugin({
-      // manually set NODE_ENV
-      // TODO (b5) - is this even a good idea?
-      'process.env.NODE_ENV': JSON.stringify('development'),
+    // https://webpack.github.io/docs/list-of-plugins.html#occurrenceorderplugin
+    // https://github.com/webpack/webpack/issues/864
+    new webpack.optimize.OccurrenceOrderPlugin(),
 
+    new webpack.DefinePlugin({
       /**
        * compile-time flags are stored under a global __BUILD__ constant.
        * Useful for allowing different behaviour between development builds and
@@ -80,16 +75,37 @@ module.exports = merge(baseConfig, {
        *
        */
       '__BUILD__': {
-        'ENABLE_COMPARE_SECTION': JSON.stringify(true)
+        'ENABLE_COMPARE_SECTION': JSON.stringify(true),
+        'REMOTE': JSON.stringify(process.env.REMOTE)
       }
     }),
-
     new webpack.LoaderOptionsPlugin({
       debug: true
-    })
+    }),
 
+    new HtmlWebpackPlugin({
+      template: './app/webapp/index_dev.html'
+    })
   ],
 
   // https://github.com/chentsulin/webpack-target-electron-renderer#how-this-module-works
-  target: 'electron-renderer'
+  target: 'web',
+
+  devServer: {
+    contentBase: path.join(sourcePath, 'app/webapp'),
+    hot: true,
+    inline: true,
+    historyApiFallback: {
+      disableDotRule: true
+    },
+    stats: 'minimal',
+    clientLogLevel: 'warning'
+  },
+
+  node: {
+    // workaround for webpack-dev-server issue
+    // https://github.com/webpack/webpack-dev-server/issues/60#issuecomment-103411179
+    fs: 'empty',
+    net: 'empty'
+  }
 })

@@ -5,7 +5,6 @@
 const path = require('path')
 const webpack = require('webpack')
 const merge = require('webpack-merge')
-const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 
 const baseConfig = require('./webpack.config.base')
 
@@ -47,76 +46,7 @@ module.exports = merge(baseConfig, {
             ]
           }
         }
-      },
-      {
-        test: /\.scss$/,
-        use: [
-          {
-            loader: MiniCssExtractPlugin.loader,
-            options: {
-              publicPath: '../'
-            }
-          },
-          'css-loader',
-          'resolve-url-loader',
-          'sass-loader'
-        ]
-      },
-      // WOFF Font
-      {
-        test: /\.woff(\?v=\d+\.\d+\.\d+)?$/,
-        use: {
-          loader: 'url-loader',
-          options: {
-            limit: 10000,
-            mimetype: 'application/font-woff'
-          }
-        }
-      },
-      // WOFF2 Font
-      {
-        test: /\.woff2(\?v=\d+\.\d+\.\d+)?$/,
-        use: {
-          loader: 'url-loader',
-          options: {
-            limit: 30000,
-            mimetype: 'application/font-woff'
-          }
-        }
-      },
-      // TTF Font
-      {
-        test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/,
-        use: {
-          loader: 'url-loader',
-          options: {
-            limit: 110000,
-            mimetype: 'font/ttf'
-          }
-        }
-      },
-      // EOT Font
-      {
-        test: /\.eot(\?v=\d+\.\d+\.\d+)?$/,
-        use: 'file-loader'
-      },
-      // SVG Font
-      {
-        test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
-        use: {
-          loader: 'url-loader',
-          options: {
-            limit: 10000,
-            mimetype: 'image/svg+xml'
-          }
-        }
-      },
-      // Common Image Formats
-      {
-        test: /\.(?:ico|gif|png|jpg|jpeg|webp)$/,
-        use: 'url-loader'
       }
-    ]
   },
 
   plugins: [
@@ -132,13 +62,8 @@ module.exports = merge(baseConfig, {
        *
        */
       '__BUILD__': {
-        'ENABLE_SQL_WORKBENCH': JSON.stringify(false)
+        'ENABLE_COMPARE_SECTION': JSON.stringify(true)
       }
-    }),
-
-    new MiniCssExtractPlugin({ // define where to save the file
-      filename: 'bundle.css',
-      allChunks: true
     })
   ],
 
