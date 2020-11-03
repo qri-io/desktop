@@ -43,6 +43,8 @@ export const RoutesComponent: React.FunctionComponent<RoutesProps> = (props) => 
   } = props
 
   const requireSignin = (dest: React.ReactElement): React.ReactElement => {
+    // the remote webapp does not currently need a login
+    if (__BUILD__.REMOTE) return dest
     // require onboarding is complete & valid login before viewing any section
     if (!hasAcceptedTOS) return <Redirect to='/onboard' />
     if (!qriCloudAuthenticated) return <Redirect to='/onboard/signup' />
@@ -52,6 +54,22 @@ export const RoutesComponent: React.FunctionComponent<RoutesProps> = (props) => 
   const sectionElement = (section: string, dest: React.ReactElement): React.ReactElement => {
     showDatasetMenu(false)
     return requireSignin(dest)
+  }
+
+  // special router for the remote
+  if (__BUILD__.REMOTE) {
+    return (
+      <div className='route-content'>
+        <Switch>
+          <Route path='/collection' render={(props) => {
+            return sectionElement('collection', <Collection {...props} />)
+          }} />
+          <Route path='/' render={() => {
+            return <Redirect to='/collection' />
+          }} />
+        </Switch>
+      </div>
+    )
   }
 
   return (

@@ -49,9 +49,9 @@ export const NavTopbarComponent: React.FunctionComponent<NavTopbarProps> = (prop
         <div className='nav-buttons'>
           {!isBaseRoute && <a className='back' onClick={onBackClick}><BackArrow /></a>}
         </div>
-        <div className='transfers'>
+        {!__BUILD__.REMOTE && <div className='transfers'>
           <Transfers />
-        </div>
+        </div>}
       </div>
       <div className='page-details'>
         <div className='title-container'>

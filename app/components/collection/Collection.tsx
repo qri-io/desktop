@@ -126,12 +126,12 @@ const CollectionRouter: React.FunctionComponent<CollectionRouterProps> = (props)
             showDatasetMenu(false)
             return <CollectionHome />
           }} />
-          <Route path={`${path}/edit/:username/:name`} render={() => {
+          {!__BUILD__.REMOTE && <Route path={`${path}/edit/:username/:name`} render={() => {
             showDatasetMenu(true)
             return noDatasetsRedirect(
               <EditDataset />
             )
-          }}/>
+          }}/>}
           <Route path={`${path}/:username/:name/at/ipfs/:path`} render={(props) => {
             showDatasetMenu(true)
             return noDatasetsRedirect(
@@ -151,9 +151,11 @@ const CollectionRouter: React.FunctionComponent<CollectionRouterProps> = (props)
                 />
               }
             }
-            return <Redirect
-              to={pathToEdit(params.username, params.name)}
-            />
+            return __BUILD__.REMOTE
+              ? <Redirect to={pathToCollection()}/>
+              : <Redirect
+                to={pathToEdit(params.username, params.name)}
+              />
           }}/>
         </Switch>
       </CSSTransition>

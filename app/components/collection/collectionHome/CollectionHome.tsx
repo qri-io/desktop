@@ -27,22 +27,27 @@ export const CollectionHome: React.FC<CollectionHomeProps> = ({ setModal }) => {
         id='collection-container'
         title='Collection'
         topbarButtons={
-          [
-            {
-              type: 'button',
-              id: 'new-dataset',
-              icon: faPlus,
-              label: 'New Dataset',
-              onClick: () => { setModal({ type: ModalType.NewDataset }) }
-            },
-            {
-              type: 'button',
-              id: 'pull-dataset',
-              icon: faDownload,
-              label: 'Pull Dataset',
-              onClick: () => { setModal({ type: ModalType.PullDataset }) }
-            }
-          ]
+          // when building for a remote, you don't know the identity of the person
+          // viewing the ui, so we should not give them the option to create or pull
+          // a dataset
+          __BUILD__.REMOTE
+            ? []
+            : [
+              {
+                type: 'button',
+                id: 'new-dataset',
+                icon: faPlus,
+                label: 'New Dataset',
+                onClick: () => { setModal({ type: ModalType.NewDataset }) }
+              },
+              {
+                type: 'button',
+                id: 'pull-dataset',
+                icon: faDownload,
+                label: 'Pull Dataset',
+                onClick: () => { setModal({ type: ModalType.PullDataset }) }
+              }
+            ]
         }
         mainContent={<DatasetCollection />}
       />

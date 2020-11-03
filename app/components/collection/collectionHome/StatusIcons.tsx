@@ -21,7 +21,7 @@ const StatusIcons: React.FC<StatusIconsProps> = ({ data, onClickFolder }) => {
         </ExternalLink>}
         {!published && <Icon icon="publish" size="sm" color={published ? 'dark' : 'medium'}/>}
       </span>
-      {onClickFolder && <a onClick={(e: React.MouseEvent) => onClickFolder(row, e)} className="dataset-link" data-tip={fsiPath ? 'working directory' : 'no working directory'}>
+      {!__BUILD__.REMOTE && onClickFolder && <a onClick={(e: React.MouseEvent) => onClickFolder(row, e)} className="dataset-link" data-tip={fsiPath ? 'working directory' : 'no working directory'}>
         <Icon icon="openInFinder" size="sm" color={fsiPath ? 'dark' : 'medium'}/>
       </a>}
     </>

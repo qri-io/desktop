@@ -131,10 +131,11 @@ function apiUrl (endpoint: string, segments?: ApiSegments, query?: ApiQuery, pag
     if (!(url[url.length - 1] === '/' || seg[0] === '/')) url += '/'
     return url + seg
   }
-  // if we are targeting the webapp, we assume that the same place that is serving
+  // if we are targeting the remote webapp, we assume that the same place that is serving
   // the webapp is also where we can ping the api
   // otherwise, we are using the electron app and have a local node available
-  let url = __BUILD__.REMOTE === 'true' ? `${window.location.origin}/${endpoint}` : `${BACKEND_URL}/${endpoint}`
+  // let url = __BUILD__.REMOTE === 'true' ? `${window.location.origin}/${endpoint}` : `${BACKEND_URL}/${endpoint}`
+  let url = `${BACKEND_URL}/${endpoint}`
   if (segments) {
     if (segments.username) {
       url = addToUrl(url, segments.username)

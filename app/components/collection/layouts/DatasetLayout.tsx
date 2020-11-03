@@ -20,6 +20,7 @@ import ExportButton from '../headerButtons/ExportButton'
 import UnpublishButton from '../headerButtons/UnpublishButton'
 import CopyCloudLinkButton from '../headerButtons/CopyCloudLinkButton'
 import RemoveButton from '../headerButtons/RemoveButton'
+import { NavbarButtonProps } from '../../nav/NavTopbar'
 
 interface DatasetLayoutProps extends RouterProps {
   // from connect
@@ -43,37 +44,48 @@ const DatasetLayoutComponent: React.FunctionComponent<DatasetLayoutProps> = (pro
     onSidebarResize
   } = props
 
-  const buttons = [
-    {
-      type: 'component',
-      component: <ExportButton key='export-button' />
-    },
-    {
-      type: 'component',
-      component: <CheckoutButton key='checkout-button'/>
-    },
-    {
-      type: 'component',
-      component: <ShowFilesButton key='show-files-button'/>
-    },
-    {
-      type: 'component',
-      component: <PublishButton key='publish-button' />
-    },
-    {
-      type: 'component',
-      component: <ViewInCloudButton key='view-in-cloud-button'/>
-    },
-    {
-      type: 'button-dropdown',
-      dropdownItems: [
-        <RenameButton key='rename-button' />,
-        <UnpublishButton key='unpublish-button' />,
-        <CopyCloudLinkButton key='copy-cloud-link-button' />,
-        <RemoveButton key='remove-button' />
-      ]
-    }
-  ]
+  let buttons: NavbarButtonProps[]
+
+  if (__BUILD__.REMOTE) {
+    buttons = [
+      {
+        type: 'component',
+        component: <ExportButton key='export-button' />
+      }
+    ]
+  } else {
+    buttons = [
+      {
+        type: 'component',
+        component: <ExportButton key='export-button' />
+      },
+      {
+        type: 'component',
+        component: <CheckoutButton key='checkout-button'/>
+      },
+      {
+        type: 'component',
+        component: <ShowFilesButton key='show-files-button'/>
+      },
+      {
+        type: 'component',
+        component: <PublishButton key='publish-button' />
+      },
+      {
+        type: 'component',
+        component: <ViewInCloudButton key='view-in-cloud-button'/>
+      },
+      {
+        type: 'button-dropdown',
+        dropdownItems: [
+          <RenameButton key='rename-button' />,
+          <UnpublishButton key='unpublish-button' />,
+          <CopyCloudLinkButton key='copy-cloud-link-button' />,
+          <RemoveButton key='remove-button' />
+        ]
+      }
+    ]
+  }
 
   return (
     <Layout

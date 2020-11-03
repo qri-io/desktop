@@ -8,6 +8,7 @@ import { VersionInfo } from '../../../models/store'
 import RelativeTimestamp from '../../RelativeTimestamp'
 import StatusIcons from './StatusIcons'
 import TableRowHamburger from './TableRowHamburger'
+import ExportButton from '../headerButtons/ExportButton'
 
 interface DatasetsTableProps {
   filteredDatasets: VersionInfo[]
@@ -127,7 +128,12 @@ const DatasetsTable: React.FC<DatasetsTableProps> = (props) => {
       name: '',
       selector: 'hamburger',
       width: '60px',
-      cell: (row: VersionInfo) => <TableRowHamburger data={row} /> // eslint-disable-line
+      cell: (row: VersionInfo) => {
+        if (__BUILD__.REMOTE) {
+          return <ExportButton qriRef={row} showText={false}/> // eslint-disable-line
+        }
+        return <TableRowHamburger data={row} /> // eslint-disable-line
+      }
     }
   ]
 
@@ -137,7 +143,7 @@ const DatasetsTable: React.FC<DatasetsTableProps> = (props) => {
       data={filteredDatasets}
       customStyles={customStyles}
       sortFunction={customSort}
-      selectableRows
+      selectableRows={!__BUILD__.REMOTE}
       fixedHeader
       overflowY
       overflowYOffset='250px'

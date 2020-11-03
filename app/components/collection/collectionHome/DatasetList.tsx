@@ -178,21 +178,21 @@ export const DatasetListComponent: React.FC<DatasetListProps> = (props) => {
         </div>
         <div className='list-picker-and-bulk-actions'>
           <div className='list-picker'>
-            <button id='my-datasets-button' className={classNames({ active: onlySessionUserDatasets })} onClick={() => setOnlySessionUserDatasets(true)}>
+            {!__BUILD__.REMOTE && <button id='my-datasets-button' className={classNames({ active: onlySessionUserDatasets })} onClick={() => setOnlySessionUserDatasets(true)}>
               My Datasets <span className='count-indicator'>{datasets.filter(({ username }) => (username === sessionUsername)).length}</span>
-            </button>
+            </button>}
             <button id='all-datasets-button' className={classNames({ active: !onlySessionUserDatasets })} onClick={() => setOnlySessionUserDatasets(false)}>
               All Datasets <span className='count-indicator'>{datasets.length}</span>
             </button>
           </div>
-          <div className='bulk-actions'>
+          {!__BUILD__.REMOTE && <div className='bulk-actions'>
             {selected.length === 0 && countMessage}
             {selected.length > 0 && <>
               <span>{selected.length} selected</span>
               <button disabled={bulkActionExecuting} onClick={handleBulkPull}>Pull latest</button>
               <button id="button-bulk-remove" disabled={bulkActionExecuting} onClick={openRemoveModal}>Remove</button>
             </>}
-          </div>
+          </div>}
         </div>
       </header>
 

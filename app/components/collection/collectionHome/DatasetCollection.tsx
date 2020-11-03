@@ -46,7 +46,7 @@ export const DatasetCollection: React.FunctionComponent<DatasetCollectionProps> 
 
   return (
     <div className='main-content-flex' onDragEnter={setDragStateHandler(true)}>
-      {dragging && <DropZone
+      {!__BUILD__.REMOTE && dragging && <DropZone
         title='Drop to create a new dataset'
         subtitle='You can import csv and json files'
         setDragging={setDragging}

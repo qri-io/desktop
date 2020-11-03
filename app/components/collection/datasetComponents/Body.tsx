@@ -78,6 +78,7 @@ export const BodyComponent: React.FunctionComponent<BodyProps> = (props) => {
   const showHistory = !!qriRef.path
 
   const { body, structure } = data
+
   const headers = extractColumnHeaders(structure, body)
 
   const makeStatsDetails = (stats: Record<string, any>, title: string, index: number): StatsDetails => {

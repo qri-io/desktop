@@ -2,7 +2,7 @@ import React from 'react'
 import { RouteProps } from 'react-router-dom'
 import { faDownload } from '@fortawesome/free-solid-svg-icons'
 
-import { isDatasetSelected, QriRef, qriRefFromRoute } from '../../../models/qriRef'
+import { QriRef, qriRefFromRoute } from '../../../models/qriRef'
 
 import { connectComponentToPropsWithRouter } from '../../../utils/connectComponentToProps'
 import { Modal, ModalType } from '../../../models/modals'
@@ -15,6 +15,7 @@ interface ExportButtonProps extends RouteProps {
   showIcon: boolean
   setModal: (modal: Modal) => void
   size: 'sm' | 'md'
+  showText: boolean
 }
 
 /**
@@ -29,17 +30,17 @@ export const ExportButtonComponent: React.FunctionComponent<ExportButtonProps> =
     qriRef,
     showIcon = true,
     size = 'md',
+    showText = true,
     setModal
   } = props
 
-  const datasetSelected = isDatasetSelected(qriRef)
-
-  if (!(datasetSelected && qriRef.path)) {
+  if (!(qriRef.username && qriRef.name && qriRef.path)) {
+    console.log(qriRef)
     return null
   }
   return (<HeaderColumnButton
     id='export-button'
-    label='Export'
+    label={showText && 'Export'}
     tooltip='Export this verison of the dataset to your filesystem'
     icon={showIcon && faDownload}
     size={size}
@@ -54,8 +55,8 @@ export default connectComponentToPropsWithRouter(
   (state: any, ownProps: ExportButtonProps) => {
     const qriRef = qriRefFromRoute(ownProps)
     return {
-      ...ownProps,
-      qriRef
+      qriRef,
+      ...ownProps
     }
   }, {
     setModal

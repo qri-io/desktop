@@ -21,6 +21,8 @@ import NavbarItem from '../chrome/NavbarItem'
 import { Session } from '../../models/session'
 import { RouteProps } from '../../models/store'
 
+import { defaultPhoto } from '../App'
+
 interface MenuItemProps {
   id: string
   label: string
@@ -101,14 +103,17 @@ export const NavbarComponent: React.FunctionComponent<NavbarProps> = (props: Nav
       id: 'collection',
       link: '/collection',
       tooltip: 'Collection - Manage Local Datasets'
-    },
-    {
+    }
+  ]
+
+  if (!__BUILD__.REMOTE) {
+    navItems.push({
       icon: faGlobeEurope,
       id: 'network',
       link: '/network',
       tooltip: 'Network - Find & Pull Datasets'
-    }
-  ]
+    })
+  }
 
   if (__BUILD__.ENABLE_SQL_WORKBENCH) {
     navItems.push({
@@ -161,7 +166,7 @@ export const NavbarComponent: React.FunctionComponent<NavbarProps> = (props: Nav
               tooltip={'Need help? Ask questions<br/> in our Discord channel'}
             />
           </ExternalLink>
-          <NavbarItem
+          {!__BUILD__.REMOTE && <NavbarItem
             id='nav-options'
             icon={
               <div className='userphoto' style={{
@@ -169,7 +174,7 @@ export const NavbarComponent: React.FunctionComponent<NavbarProps> = (props: Nav
               }}/>
             }
             onClick={toggleUserMenu}
-          />
+          />}
         </div>
       </div>
     </div>
