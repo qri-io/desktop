@@ -45,7 +45,7 @@ import MigratingBackend from './MigratingBackend'
 import MigrationFailed from './MigrationFailed'
 import IncompatibleBackend from './IncompatibleBackend'
 
-const defaultPhoto = require('../assets/default_46x46.png') //eslint-disable-line
+export  const defaultPhoto = require('../assets/default_46x46.png') //eslint-disable-line
 
 // declare interface for props
 export interface AppProps {
