@@ -14,7 +14,7 @@ export const ExportSubmitButton: React.FunctionComponent<ExportSubmitButtonProps
   <Button
     id='submit'
     color='dark'
-    text={text}
+    text='Download...'
     onClick={onSubmit}
     loading={loading}
     disabled={disabled}
