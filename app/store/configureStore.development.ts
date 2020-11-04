@@ -1,6 +1,6 @@
 import { createStore, applyMiddleware, compose } from 'redux'
 import thunk from 'redux-thunk'
-import { createHashHistory } from 'history'
+import { history } from './history'
 import { routerMiddleware, push } from 'connected-react-router'
 // import { createLogger } from 'redux-logger'
 import createRootReducer from '../reducers'
@@ -21,7 +21,6 @@ const actionCreators = Object.assign({},
   { push }
 )
 
-export const history = createHashHistory()
 const router = routerMiddleware(history)
 
 // If Redux DevTools Extension is installed use it, otherwise use Redux compose

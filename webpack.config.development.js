@@ -51,12 +51,6 @@ module.exports = merge(baseConfig, {
               'react-hot-loader/babel'
             ]
           }
-        },
-        {
-          loader: 'ts-loader',
-          options: {
-            configFile: 'tsconfig.json'
-          }
         }]
       }
     ]

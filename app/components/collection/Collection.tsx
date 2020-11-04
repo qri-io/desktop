@@ -31,9 +31,6 @@ import CollectionHome from './collectionHome/CollectionHome'
 import EditDataset from './EditDataset'
 import { connectComponentToProps } from '../../utils/connectComponentToProps'
 
-// TODO (b5) - is this still required?
-require('../../assets/qri-blob-logo-tiny.png')
-
 export interface CollectionProps extends RouteProps {
   // display details
   qriRef: QriRef
