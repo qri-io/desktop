@@ -24,13 +24,9 @@ interface ExportDatasetProps {
 }
 
 export function exportLink (vi: VersionInfo, config: string): string {
-  let backendURL = BACKEND_URL
-  // if (__BUILD__.REMOTE) {
-  //   backendURL = window.location.origin
-  // }
-  let exportUrl = `${backendURL}/get/${refStringFromQriRef(vi)}?format=zip`
+  let exportUrl = `${BACKEND_URL}/get/${refStringFromQriRef(vi)}?format=zip`
   if (config === 'csv') {
-    exportUrl = `${backendURL}/get/${refStringFromQriRef(vi)}/body.csv`
+    exportUrl = `${BACKEND_URL}/get/${refStringFromQriRef(vi)}/body.csv`
   }
   return exportUrl
 }

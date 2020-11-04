@@ -1,6 +1,10 @@
 // these constants may be used by both the main process and frontend
 // so they need to be defined as CommonJS
-const BACKEND_URL = 'http://localhost:2503'
+
+// if we are targeting the remote build & we are not in dev mode, we want the
+// backend url to be the url that the user is viewing the webapp from
+// otherwise, we are trying to talk to the local qri backend
+const BACKEND_URL = __BUILD__.REMOTE && !__BUILD__.DEV ? window.location.origin : 'http://localhost:2503'
 const CRASH_REPORTER_URL = 'https://crashreports.qri.io/desktop'
 const DISCORD_URL = 'https://discordapp.com/invite/thkJHKj'
 const GITHUB_ORG_URL = 'https://github.com/qri-io'
