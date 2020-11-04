@@ -1,9 +1,8 @@
 import React from 'react'
-import fs from 'fs'
 import { Action } from 'redux'
 import classNames from 'classnames'
 
-import { showOpenDialogSync } from './platformSpecific/CompareSidebar.TARGET_PLATFORM'
+import { chooseFile } from './platformSpecific/chooseFile.TARGET_PLATFORM'
 
 import Store, { ToastType } from '../../models/store'
 
@@ -29,7 +28,7 @@ export interface CompareSidebarProps {
 
 export const CompareSidebarComponent: React.FunctionComponent<CompareSidebarProps> = ({ data, onChange, openToast }) => {
   const pathPicker = (side: string) => {
-    const filePaths: string[] | undefined = showOpenDialogSync({
+    const [filepath, errorStr] = chooseFile({
       title: 'Choose a CSV file',
       buttonLabel: 'Load',
       filters: [
@@ -38,18 +37,12 @@ export const CompareSidebarComponent: React.FunctionComponent<CompareSidebarProp
       properties: ['openFile']
     })
 
-    if (!filePaths) {
-      return
+    if (errorStr === 'error: over 10MB') {
+      openToast("error", "file size", "file must be under 10MB")
     }
 
-    let filepath = filePaths[0]
-
-    const stats = fs.statSync(filepath)
-
-    // if over 10 mb reject
-    if (stats.size > (1024 * 1000 * 10)) {
-      filepath = ''
-      openToast("error", "file size", "file must be under 10MB")
+    if (filepath === '') {
+      return
     }
 
     switch (side) {

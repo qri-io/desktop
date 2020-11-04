@@ -3,6 +3,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faToggleOn } from '@fortawesome/free-solid-svg-icons'
 
 import KeyValueTable from './KeyValueTable'
+import { schemaColumns } from '../utils/schemaColumns'
+import { Schema } from '../models/dataset'
 
 interface RowProps {
   column: ColumnProperties
@@ -74,16 +76,12 @@ interface ColumnProperties {
 }
 
 interface TwoDSchemaLayoutProps {
-  schema: {
-    items: {
-      items: ColumnProperties[]
-    }
-  }
+  schema: Schema
 }
 
 const TwoDSchemaLayout: React.FunctionComponent<TwoDSchemaLayoutProps> = ({ schema }) => {
-  if (schema && schema.items && schema.items) {
-    const columns = schema.items.items
+  const columns = schemaColumns(schema)
+  if (columns.length !== 0) {
     return (
       <div className='twod-schema-layout'>
         <div className='flex-table'>

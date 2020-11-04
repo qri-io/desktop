@@ -2,9 +2,8 @@
  * Build config for electron 'Main Process' file
  */
 
-const webpack = require('webpack');
-const merge = require('webpack-merge');
-const baseConfig = require('./webpack.config.base');
+const merge = require('webpack-merge')
+const baseConfig = require('./webpack.config.base')
 
 module.exports = merge(baseConfig, {
   devtool: 'source-map',
@@ -40,5 +39,5 @@ module.exports = merge(baseConfig, {
   node: {
     __dirname: false,
     __filename: false
-  },
-});
+  }
+})

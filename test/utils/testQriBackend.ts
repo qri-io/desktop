@@ -15,11 +15,18 @@ export default class TestBackendProcess {
   dir: string
   stdout: WriteStream
   stderr: WriteStream
+  base: string
+  qriPath: string
 
   constructor () {
     this.qriBinPath = ''
     this.process = null
     this.dir = ''
+    const [ base, qriPath ] = this.setupRepo()
+    this.base = base
+    this.qriPath = qriPath
+    this.stdout = fs.createWriteStream(path.join(base, 'stdout.log'))
+    this.stderr = fs.createWriteStream(path.join(base, 'stderr.log'))
   }
 
   async start () {
@@ -45,17 +52,15 @@ export default class TestBackendProcess {
 
   async launchProcess () {
     try {
-      const [ base, qriPath ] = this.setupRepo()
-
-      this.stdout = fs.createWriteStream(path.join(base, 'stdout.log'))
-      this.stderr = fs.createWriteStream(path.join(base, 'stderr.log'))
+      this.stdout = fs.createWriteStream(path.join(this.base, 'stdout.log'))
+      this.stderr = fs.createWriteStream(path.join(this.base, 'stderr.log'))
       // console.log("backend err log:", path.join(base, 'stderr.log'))
       console.log("launching backend process")
       this.process = childProcess.spawn(this.qriBinPath, ['connect', '--setup', '--no-prompt'], {
         // stdio: ['pipe', this.stdout, this.stderr],
         env: Object.assign(process.env, {
           'QRI_SETUP_CONFIG_DATA': qriConfig,
-          'QRI_PATH': qriPath
+          'QRI_PATH': this.qriPath
         })
       })
 

@@ -1,6 +1,7 @@
 import React from 'react'
 
-import Dataset, { Body } from '../models/dataset'
+import Dataset, { Body, ColumnProperties } from '../models/dataset'
+import { schemaColumns } from '../utils/schemaColumns'
 import { TypeLabel } from './TwoDSchemaLayout'
 
 interface BodyPreviewProps {
@@ -33,9 +34,9 @@ const BodyTablePreview: React.FunctionComponent<BodyPreviewProps> = ({ data }) =
     )
   })
 
-  let headers: Array<{ type: string, title: string}> = []
+  let headers: ColumnProperties[] = []
   if (structure && structure.schema) {
-    structure.schema.items.items.forEach((column: { type: string, title: string}) => {
+    schemaColumns(structure.schema).forEach((column: ColumnProperties) => {
       headers.push(column)
     })
   }
