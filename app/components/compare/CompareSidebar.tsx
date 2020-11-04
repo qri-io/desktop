@@ -2,7 +2,7 @@ import React from 'react'
 import { Action } from 'redux'
 import classNames from 'classnames'
 
-import { chooseFile } from './platformSpecific/CompareSidebar.TARGET_PLATFORM'
+import { chooseFile } from './platformSpecific/chooseFile.TARGET_PLATFORM'
 
 import Store, { ToastType } from '../../models/store'
 

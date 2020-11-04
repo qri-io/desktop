@@ -79,7 +79,7 @@ export interface Structure {
 
 export interface ColumnProperties {
   title?: string
-  type?: string
+  type?: string | string[]
   [key: string]: any
 }
 

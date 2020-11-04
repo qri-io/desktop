@@ -1,7 +1,7 @@
 import { remote, OpenDialogSyncOptions } from 'electron'
 import fs from 'fs'
 
-export function chooseFile (opts: OpenDialogSyncOptions): string[] {
+export function chooseFile (opts: OpenDialogSyncOptions): [string, string] {
   const filePaths: string[] | undefined = remote.dialog.showOpenDialogSync(remote.getCurrentWindow(), opts)
 
   if (!filePaths) {

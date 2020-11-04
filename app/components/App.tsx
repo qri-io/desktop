@@ -2,7 +2,6 @@ import React from 'react'
 import { Action } from 'redux'
 import { CSSTransition } from 'react-transition-group'
 import { ConnectedRouter, push } from 'connected-react-router'
-
 import ReactTooltip from 'react-tooltip'
 
 // platform specific imports
