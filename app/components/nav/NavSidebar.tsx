@@ -21,8 +21,6 @@ import NavbarItem from '../chrome/NavbarItem'
 import { Session } from '../../models/session'
 import { RouteProps } from '../../models/store'
 
-export const defaultPhoto = require('../../assets/default_46x46.png')
-
 interface MenuItemProps {
   id: string
   label: string
@@ -64,7 +62,7 @@ export const NavbarComponent: React.FunctionComponent<NavbarProps> = (props: Nav
     name = ''
   } = session
 
-  const photo = potentialPhoto || defaultPhoto
+  const photo = potentialPhoto || require('../../assets/default_46x46.png')
 
   const { pathname } = location
 

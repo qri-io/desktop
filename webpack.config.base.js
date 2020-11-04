@@ -8,6 +8,7 @@ const {
   dependencies: externals
 } = require('./app/package.json')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
 
 const targetPlatform = process.env.TARGET_PLATFORM || 'electron'
 
@@ -110,6 +111,10 @@ module.exports = {
     new MiniCssExtractPlugin({ // define where to save the file
       filename: 'bundle.css',
       allChunks: true
+    }),
+
+    new HtmlWebpackPlugin({
+      favicon: 'app/assets/favicon.ico'
     })
   ],
 
