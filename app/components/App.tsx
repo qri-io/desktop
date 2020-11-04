@@ -191,6 +191,10 @@ class AppComponent extends React.Component<AppProps, AppState> {
   render () {
     const { apiConnection, modal, loading, bootupComponent } = this.props
 
+    const test = { foo: 'foo', bar: undefined, baz: '', trueOrFalse: false, nullOrNot: null }
+
+    const { foo, bar = 'bar', baz = 'baz', trueOrFalse = true, nullOrNot = 'not null' } = test
+    console.log(foo, bar, baz, trueOrFalse, nullOrNot)
     if (loading) {
       return (
         <>

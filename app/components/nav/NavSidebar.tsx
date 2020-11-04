@@ -21,7 +21,7 @@ import NavbarItem from '../chrome/NavbarItem'
 import { Session } from '../../models/session'
 import { RouteProps } from '../../models/store'
 
-import { defaultPhoto } from '../App'
+export const defaultPhoto = require('../../assets/default_46x46.png')
 
 interface MenuItemProps {
   id: string
@@ -58,12 +58,13 @@ interface NavbarProps extends RouteProps{
 
 export const NavbarComponent: React.FunctionComponent<NavbarProps> = (props: NavbarProps) => {
   const { session, location, signout } = props
-
   const {
-    photo = defaultPhoto,
+    photo: potentialPhoto,
     peername: username = '',
     name = ''
   } = session
+
+  const photo = potentialPhoto || defaultPhoto
 
   const { pathname } = location
 
@@ -130,9 +131,7 @@ export const NavbarComponent: React.FunctionComponent<NavbarProps> = (props: Nav
         <div className='user-menu'>
           <div className='user-menu-section'>
             <div className='user-menu-info'>
-              <div className='userphoto' style={{
-                backgroundImage: `url(${photo})`
-              }}/>
+              <img className='userphoto' src={photo} />
               <div className='text'>
                 <div className='username'>{username}</div>
                 <div className='name'>{name}</div>
@@ -169,9 +168,7 @@ export const NavbarComponent: React.FunctionComponent<NavbarProps> = (props: Nav
           {!__BUILD__.REMOTE && <NavbarItem
             id='nav-options'
             icon={
-              <div className='userphoto' style={{
-                backgroundImage: `url(${photo})`
-              }}/>
+              <img className='userphoto' src={photo} />
             }
             onClick={toggleUserMenu}
           />}
