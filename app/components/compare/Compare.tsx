@@ -1,7 +1,7 @@
 import React from 'react'
 import { Action } from 'redux'
 
-import { BACKEND_URL } from '../../constants'
+import { BACKEND_URL } from '../../backendUrl'
 import Store from '../../models/store'
 import { setSidebarWidth } from '../../actions/ui'
 

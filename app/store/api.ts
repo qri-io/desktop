@@ -9,7 +9,7 @@ import mapError from './mapError'
 import { FAILED_TO_FETCH } from '../reducers/connection'
 import { apiActionTypes, getActionType } from '../utils/actionType'
 import { UNAUTHORIZED } from '../reducers/ui'
-import { BACKEND_URL } from '../constants'
+import { BACKEND_URL } from '../platformSpecific/backendUrl.TARGET_PLATFORM'
 
 // CALL_API is a global, unique constant for passing actions to API middleware
 export const CALL_API = Symbol('CALL_API')

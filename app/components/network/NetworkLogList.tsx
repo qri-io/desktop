@@ -4,7 +4,7 @@ import { withRouter } from 'react-router-dom'
 import { QriRef } from '../../models/qriRef'
 import { VersionInfo, RouteProps } from '../../models/store'
 import { FetchOptions } from '../../store/api'
-import { BACKEND_URL } from '../../constants'
+import { BACKEND_URL } from '../../backendUrl'
 import { mapHistory } from '../../actions/mappingFuncs'
 
 import LogListItem from '../item/LogListItem'
