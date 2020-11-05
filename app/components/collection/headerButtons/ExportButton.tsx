@@ -35,7 +35,6 @@ export const ExportButtonComponent: React.FunctionComponent<ExportButtonProps> =
   } = props
 
   if (!(qriRef.username && qriRef.name && qriRef.path)) {
-    console.log(qriRef)
     return null
   }
   return (<HeaderColumnButton

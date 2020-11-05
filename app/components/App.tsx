@@ -45,8 +45,6 @@ import MigratingBackend from './MigratingBackend'
 import MigrationFailed from './MigrationFailed'
 import IncompatibleBackend from './IncompatibleBackend'
 
-require('../assets/favicon.ico')
-
 // declare interface for props
 export interface AppProps {
   loading: boolean

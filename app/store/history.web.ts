@@ -1,3 +1,3 @@
 import { createBrowserHistory } from 'history'
 
-export const history = createBrowserHistory()
+export const history = __BUILD__.REMOTE ? createBrowserHistory({ basename: '/webui' }) : createBrowserHistory()

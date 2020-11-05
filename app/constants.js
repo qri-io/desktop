@@ -1,10 +1,6 @@
 // these constants may be used by both the main process and frontend
 // so they need to be defined as CommonJS
 
-// if we are targeting the remote build & we are in prod mode, we want the
-// backend url to be the url that the user is viewing the webapp from
-// otherwise, we are trying to talk to the local qri backend
-
 const CRASH_REPORTER_URL = 'https://crashreports.qri.io/desktop'
 const DISCORD_URL = 'https://discordapp.com/invite/thkJHKj'
 const GITHUB_ORG_URL = 'https://github.com/qri-io'
