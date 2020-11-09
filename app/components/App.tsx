@@ -17,7 +17,7 @@ import {
 import { DEFAULT_POLL_INTERVAL } from '../constants'
 
 // import models
-import { history } from '../store/configureStore.development'
+import { history } from '../store/history'
 import { ApiAction } from '../store/api'
 import { Modal, ModalType } from '../models/modals'
 import { Selections, ApiConnection, BootupComponentType } from '../models/store'
@@ -44,8 +44,6 @@ import Routes from '../routes'
 import MigratingBackend from './MigratingBackend'
 import MigrationFailed from './MigrationFailed'
 import IncompatibleBackend from './IncompatibleBackend'
-
-const defaultPhoto = require('../assets/default_46x46.png') //eslint-disable-line
 
 // declare interface for props
 export interface AppProps {

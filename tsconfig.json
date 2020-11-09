@@ -34,6 +34,7 @@
   ],
   "include": [
     "./*.js",
+    "./*.*.js",
     "app/**/*.ts",
     "app/**/*.tsx",
     "test/**/*.ts",

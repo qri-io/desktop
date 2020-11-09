@@ -3,6 +3,7 @@ import { Session } from '../models/session'
 import { AnyAction } from 'redux'
 import { fetchMyDatasets } from './api'
 import { wsConnect } from '../store/wsMiddleware'
+import { SESSION_SUCC } from '../reducers/index'
 
 export function fetchSession (): ApiActionThunk {
   return async (dispatch) => {
@@ -20,14 +21,33 @@ export function fetchSession (): ApiActionThunk {
   }
 }
 
+export function noSession (): ApiActionThunk {
+  return async (dispatch) => {
+    const action = {
+      type: SESSION_SUCC,
+      payload: {
+        data: {
+          peername: '',
+          id: '',
+          created: '',
+          updated: ''
+        }
+      }
+    }
+    return dispatch(action)
+  }
+}
+
 export function bootstrap (): ApiActionThunk {
   return async (dispatch, getState) => {
     let response: AnyAction
 
-    response = await fetchSession()(dispatch, getState)
+    const sessionFunc = __BUILD__.REMOTE
+      ? noSession
+      : fetchSession
+    response = await sessionFunc()(dispatch, getState)
       .then(() => dispatch(wsConnect()))
       .then(async () => fetchMyDatasets(-1)(dispatch, getState))
-
     return response
   }
 }

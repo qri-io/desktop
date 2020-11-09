@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { BACKEND_URL } from '../../constants'
+import { BACKEND_URL } from '../../backendUrl'
 import { NetworkHomeData } from '../../models/network'
 import { VersionInfo, RouteProps } from '../../models/store'
 import { Modal, ModalType } from '../../models/modals'

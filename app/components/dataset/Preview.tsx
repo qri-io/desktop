@@ -2,7 +2,7 @@ import React from 'react'
 
 import { Dataset as IDataset, DatasetAction } from '../../models/dataset'
 import { FetchOptions } from '../../store/api'
-import { BACKEND_URL } from '../../constants'
+import { BACKEND_URL } from '../../backendUrl'
 
 import Dataset from './Dataset'
 import PreviewNotFound from './PreviewNotFound'

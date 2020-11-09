@@ -23,7 +23,7 @@ const initialSession: Session = {
   isLoading: true
 }
 
-const [SESSION_REQ, SESSION_SUCC, SESSION_FAIL] = apiActionTypes('session')
+export const [SESSION_REQ, SESSION_SUCC, SESSION_FAIL] = apiActionTypes('session')
 const [SIGNUP_REQ, SIGNUP_SUCC, SIGNUP_FAIL] = apiActionTypes('signup')
 const [SIGNIN_REQ, SIGNIN_SUCC, SIGNIN_FAIL] = apiActionTypes('signin')
 

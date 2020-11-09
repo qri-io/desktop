@@ -17,7 +17,7 @@ module.exports = merge(baseConfig, {
 
   devtool: 'cheap-module-eval-source-map',
 
-  entry: ['./app/webapp/index.tsx'],
+  entry: ['./app/index.tsx'],
 
   output: {
     globalObject: 'self',
@@ -76,6 +76,7 @@ module.exports = merge(baseConfig, {
        */
       '__BUILD__': {
         'ENABLE_COMPARE_SECTION': JSON.stringify(true),
+        'TARGET_PLATFORM': JSON.stringify('web'),
         'REMOTE': JSON.stringify(process.env.REMOTE)
       }
     }),

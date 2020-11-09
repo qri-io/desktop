@@ -9,13 +9,30 @@ import { exportDatasetVersion } from '../../actions/export'
 
 import Modal from './Modal'
 import Error from './Error'
-import Buttons from './Buttons'
 import CommitDetails from '../CommitDetails'
 import RadioInput from '../form/RadioInput'
+import { refStringFromQriRef } from '../../models/qriRef'
+import { BACKEND_URL } from '../../backendUrl'
+import { VersionInfo } from '../../models/store'
+import { ExportSubmitButton } from './ExportSubmitButton'
+import Button from '../chrome/Button'
+import moment from 'moment'
 
 interface ExportDatasetProps {
   modal: ExportDatasetModal
   onDismissed: () => void
+}
+
+export function exportLink (vi: VersionInfo, config: string): string {
+  let exportUrl = `${BACKEND_URL}/get/${refStringFromQriRef(vi)}?format=zip`
+  if (config === 'csv') {
+    exportUrl = `${BACKEND_URL}/get/${refStringFromQriRef(vi)}/body.csv`
+  }
+  return exportUrl
+}
+
+export function downloadName (vi: VersionInfo, config: string): string {
+  return `${vi.username}-${vi.name}-${moment(vi.commitTime).format('YYYY-MM-DDThh-mm-ss-a')}.${config}`
 }
 
 export const ExportDatasetComponent: React.FC<ExportDatasetProps> = (props: ExportDatasetProps) => {
@@ -28,6 +45,7 @@ export const ExportDatasetComponent: React.FC<ExportDatasetProps> = (props: Expo
   const [exportMode, setExportMode] = useState('csv')
 
   const handleSubmit = () => {
+    console.log('submit clicked')
     setDismissable(false)
     setLoading(true)
     error && setError('')
@@ -90,14 +108,19 @@ export const ExportDatasetComponent: React.FC<ExportDatasetProps> = (props: Expo
         </div>
       </div>
       <Error text={error} />
-      <Buttons
-        cancelText='cancel'
-        onCancel={onDismissed}
-        submitText='Save...'
-        onSubmit={handleSubmit}
-        disabled={false}
-        loading={loading}
-      />
+      <div className='buttons'>
+        <Button id='cancel' text='cancel' onClick={onDismissed} color='muted' />
+        <ExportSubmitButton
+          id='submit'
+          color='dark'
+          text={'Save...'}
+          onClick={handleSubmit}
+          loading={loading}
+          disabled={false}
+          download={exportLink(version, exportMode)}
+          downloadName={downloadName(version, exportMode)}
+        />
+      </div>
     </Modal>
   )
 }

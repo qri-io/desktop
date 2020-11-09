@@ -4,7 +4,9 @@ const log = require('electron-log')
 const { autoUpdater } = require('electron-updater')
 
 const { BackendProcess } = require('./backend')
-const { BACKEND_URL, DISCORD_URL, QRI_IO_URL } = require('./constants')
+const { DISCORD_URL, QRI_IO_URL } = require('./constants')
+
+const { BACKEND_URL } = require('./platformSpecific/backendUrl.electron')
 
 process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = '1'
 

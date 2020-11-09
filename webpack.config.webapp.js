@@ -14,7 +14,7 @@ module.exports = merge(baseConfig, {
 
   devtool: 'cheap-module-source-map',
 
-  entry: ['./app/webapp/index.tsx'],
+  entry: ['./app/index.tsx'],
 
   output: {
     globalObject: 'self',
@@ -45,8 +45,7 @@ module.exports = merge(baseConfig, {
             plugins: [
               // plugin-proposal-decorators is only needed if you're using experimental decorators in TypeScript
               ['@babel/plugin-proposal-decorators', { legacy: true }],
-              ['@babel/plugin-proposal-class-properties', { loose: true }],
-              'react-hot-loader/babel'
+              ['@babel/plugin-proposal-class-properties', { loose: true }]
             ]
           }
         }
@@ -73,7 +72,8 @@ module.exports = merge(baseConfig, {
        */
       '__BUILD__': {
         'ENABLE_COMPARE_SECTION': JSON.stringify(true),
-        'TARGET_PLATFORM': JSON.stringify('web')
+        'TARGET_PLATFORM': JSON.stringify('web'),
+        'REMOTE': JSON.stringify(process.env.REMOTE)
       }
     }),
     new webpack.LoaderOptionsPlugin({

@@ -31,11 +31,10 @@ class BackendProcess {
       'launchProcess'
     ].forEach((m) => { this[m] = this[m].bind(this) })
 
-
     try {
       // Create a log whose filename contains the current day.
-      const nowTime = new Date();
-      const nowString = nowTime.toISOString();
+      const nowTime = new Date()
+      const nowString = nowTime.toISOString()
       const filename = `qri_${nowString.substring(0, nowString.indexOf('T'))}.log`
 
       // Log to this file in a temporary directory named after our app
@@ -65,10 +64,10 @@ class BackendProcess {
   setQriBinPath () {
     // In development node, use installed qri binary
     if (process.env.NODE_ENV === 'development') {
-      let processResult = childProcess.execSync('which qri');
-      let whichBin = processResult.toString().trim();
+      let processResult = childProcess.execSync('which qri')
+      let whichBin = processResult.toString().trim()
       if (fs.existsSync(whichBin)) {
-        this.qriBinPath = whichBin;
+        this.qriBinPath = whichBin
       }
       log.info(`because we're in dev mode, looking for qri binary on $PATH. found: ${this.qriBinPath}`)
     }
@@ -88,7 +87,6 @@ class BackendProcess {
     let processResult = childProcess.execSync(`"${this.qriBinPath}" version`)
     this.backendVer = processResult.toString().trim()
     log.info("qri backend version", this.backendVer)
-
   }
 
   close () {
@@ -98,18 +96,18 @@ class BackendProcess {
     }
   }
 
-  standardRepoPath() {
+  standardRepoPath () {
     var qriRepoPath = process.env.QRI_PATH
     if (qriRepoPath === "") {
       home = os.homedir()
       qriRepoPath = path.join(home, ".qri")
     }
-    
+
     log.info(`QRI_PATH is ${qriRepoPath}`)
     return qriRepoPath
   }
 
-  async checkNoActiveBackendProcess() {
+  async checkNoActiveBackendProcess () {
     log.info("checking for active backend process")
     const healthCheck = async () => {
       return new Promise((res, rej) => {
@@ -125,7 +123,6 @@ class BackendProcess {
     if (isQriRunning) {
       throw new Error("backend-already-running")
     }
-    return
   }
 
   async checkBackendCompatibility () {
@@ -176,7 +173,7 @@ class BackendProcess {
     }
   }
 
-  checkNeedsMigration() {
+  checkNeedsMigration () {
     log.info("checking for backend migrations")
     try {
       childProcess.execSync(`"${this.qriBinPath}" config get`)

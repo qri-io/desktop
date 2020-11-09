@@ -1,7 +1,7 @@
 import React from 'react'
 import _ from 'underscore'
 
-import { BACKEND_URL } from '../../constants'
+import { BACKEND_URL } from '../../backendUrl'
 import { FetchOptions } from '../../store/api'
 import { VersionInfo, RouteProps } from '../../models/store'
 import { SearchModal } from '../../models/modals'
