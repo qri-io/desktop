@@ -145,3 +145,10 @@
   position: static;
   margin-bottom: 70px;
 }
+
+.port-occupied {
+  > div {
+    margin-bottom: 20px;
+    text-align: center;
+  }
+}

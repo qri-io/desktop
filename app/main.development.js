@@ -4,7 +4,7 @@ const log = require('electron-log')
 const { autoUpdater } = require('electron-updater')
 
 const { BackendProcess } = require('./backend')
-const { DISCORD_URL, QRI_IO_URL } = require('./constants')
+const { DISCORD_URL, QRI_IO_URL, PORT } = require('./constants')
 
 const { BACKEND_URL } = require('./platformSpecific/backendUrl.electron')
 
@@ -570,7 +570,7 @@ try {
         .catch(err => {
           switch (err.message) {
             case "backend-already-running":
-              log.info("a qri backend is already running at port 2503")
+              log.info('compatible version of the qri backend is running')
               mainWindow.webContents.send("backend-already-running")
               break
             case "incompatible-backend":
@@ -584,6 +584,10 @@ try {
             case "error-launching-backend":
               log.debug("error-launching-backend")
               mainWindow.webContents.send("error-launching-backend")
+              break
+            case "port-occupied":
+              log.debug(`port ${PORT} is occupied by a non-qri process`)
+              mainWindow.webContents.send("port-occupied")
               break
             default:
               log.error(err.message)

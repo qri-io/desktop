@@ -6,8 +6,13 @@ const os = require('os')
 const http = require('http')
 const fkill = require('fkill')
 const { dialog } = require('electron')
+const findProcess = require('find-process')
 
 const { backendVersion: expectedBackendVer } = require('../version')
+
+const { PORT } = require('./constants')
+
+const errPortOccupied = new Error('port-occupied')
 
 // BackendProcess runs the qri backend binary in connected'ed mode, to handle api requests.
 class BackendProcess {
@@ -115,9 +120,41 @@ class BackendProcess {
   async checkNoActiveBackendProcess () {
     log.info("checking for active backend process")
 
+    let errorCheckingPort = false
+    const list = await findProcess('port', PORT)
+                        .catch(e => {
+                          log.info(`error examining port ${PORT}: ${e}. We will attempt to ping the endpoint to see if we get a response`)
+                          errorCheckingPort = true
+                        })
+
+    if (!errorCheckingPort) {
+      if (list.length === 0) {
+        // port is clear
+        return
+      }
+
+      list.forEach(process => {
+        if (!process.cmd.includes('qri connect')) {
+          /**
+           * if the process at the port is not a qri process, throw an error
+           */
+          throw errPortOccupied
+        }
+      })
+    }
+
     const healthResponse = async () => {
       return new Promise((resolve) => {
-        http.get('http://localhost:2503/health', (res) => {
+        http.get(`http://localhost:${PORT}/health`, (res) => {
+          if ( errorCheckingPort && res.statusCode !== 200 ) {
+            /**
+             * if we do not have a successful status code AND we were not able
+             * to confirm that a qri process is running at the given port, we should
+             * warn the user & have them close the process on their own, or reach
+             * out to us for help.
+             */
+            throw errPortOccupied
+          }
           let body = ''
           res.on('data', (chunk) => {
             body += chunk
@@ -135,17 +172,17 @@ class BackendProcess {
 
     if (body === null) {
       /** if the body is null, then we don't have a backend running and so
-       * we can just proceed as normal
+       * we can just proceed as normal. We should very rarely reach this state
+       * as we have already tested if something is running at the given port
        */
       return
     }
 
-    log.info('found process running on port 2503')
     let parsedBody
     try {
       parsedBody = JSON.parse(body)
     } catch (e) {
-      log.info(`error parsing health response from process running at 2503: ${e}`)
+      log.info(`error parsing health response from process running at ${PORT}: ${e}`)
     }
 
     if (parsedBody && parsedBody.meta && parsedBody.meta.version && parsedBody.meta.version === expectedBackendVer) {
@@ -163,8 +200,8 @@ class BackendProcess {
      * in either case, we need to kill the process that is running on that port
      * since it is not playing nicely
      */
-    log.info('killing process currently running at port 2503')
-    await fkill(':2503')
+    log.info(`qri process currently running at port ${PORT} is incompatible with this version of Qri Desktop. Killing the process...`)
+    await fkill(`:${PORT}`)
   }
 
   async checkBackendCompatibility () {

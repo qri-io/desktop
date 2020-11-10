@@ -43,6 +43,7 @@ import Modals from './modals/Modals'
 import Routes from '../routes'
 import MigratingBackend from './MigratingBackend'
 import MigrationFailed from './MigrationFailed'
+import PortOccupied from './PortOccupied'
 import IncompatibleBackend from './IncompatibleBackend'
 
 // declare interface for props
@@ -89,6 +90,7 @@ class AppComponent extends React.Component<AppProps, AppState> {
     this.handleMigratingBackend = this.handleMigratingBackend.bind(this)
     this.handleMigrationFailure = this.handleMigrationFailure.bind(this)
     this.handleStartingBackend = this.handleStartingBackend.bind(this)
+    this.handlePortOccupied = this.handlePortOccupied.bind(this)
   }
 
   private handleStartingBackend () {
@@ -138,6 +140,10 @@ class AppComponent extends React.Component<AppProps, AppState> {
     this.props.setBootupComponent('migrationFailure')
   }
 
+  private handlePortOccupied () {
+    this.props.setBootupComponent('portOccupied')
+  }
+
   componentDidMount () {
     // handle ipc events from electron menus
     addRendererListener('create-dataset', this.handleNewDataset)
@@ -152,12 +158,23 @@ class AppComponent extends React.Component<AppProps, AppState> {
     addRendererListener('migrating-backend', this.handleMigratingBackend)
     addRendererListener('migration-failed', this.handleMigrationFailure)
     addRendererListener('starting-backend', this.handleStartingBackend)
+    addRendererListener('port-occupied', this.handlePortOccupied)
 
     sendElectronEventToMain('app-fully-loaded')
 
-    setInterval(() => {
+    const checkAPI = setInterval(() => {
       if (this.props.apiConnection !== 1) {
         this.props.pingApi()
+      }
+      if (!(this.props.bootupComponent === '' ||
+      this.props.bootupComponent === 'loading' ||
+      this.props.bootupComponent === 'migrating')) {
+        /**
+         * if we have a case where the backend is telling us there is an
+         * error or something isn't lining up properly,
+         * we should clear the interval and not keep pinging that process
+         */
+        clearInterval(checkAPI)
       }
     }, DEFAULT_POLL_INTERVAL)
 
@@ -176,6 +193,7 @@ class AppComponent extends React.Component<AppProps, AppState> {
     removeRendererListener('migrating-backend', this.handleMigratingBackend)
     removeRendererListener('migration-failed', this.handleMigrationFailure)
     removeRendererListener('starting-backend', this.handleStartingBackend)
+    removeRendererListener('port-occupied', this.handlePortOccupied)
   }
 
   componentDidUpdate (prevProps: AppProps) {
@@ -225,7 +243,17 @@ class AppComponent extends React.Component<AppProps, AppState> {
             <MigrationFailed />
           </CSSTransition>
           <CSSTransition
-            in={bootupComponent !== 'loading' && bootupComponent !== 'migrating' && bootupComponent !== 'migrationFailure'}
+            in={bootupComponent === 'portOccupied'}
+            classNames="fade"
+            component="div"
+            timeout={1000}
+            mountOnEnter
+            unmountOnExit
+          >
+            <PortOccupied />
+          </CSSTransition>
+          <CSSTransition
+            in={bootupComponent !== 'loading' && bootupComponent !== 'migrating' && bootupComponent !== 'migrationFailure' && bootupComponent !== 'portOccupied'}
             classNames="fade"
             component="div"
             timeout={1000}
