@@ -99,7 +99,8 @@ const setMenuItemVisible = (menuItemIds, visible) => {
 
 let quitting = false
 
-app.on('ready', () =>
+app.on('ready', () => {
+try {
   installExtensions()
     .then(() => {
       log.info('main process ready')
@@ -534,6 +535,10 @@ app.on('ready', () =>
         quitting = true
       })
 
+      app.on('render-process-gone', () => {
+        app.quit()
+      })
+
       ipcMain.on('app-fully-loaded', () => {
         log.info("starting backend process")
         backendProcess = new BackendProcess()
@@ -590,4 +595,7 @@ app.on('ready', () =>
       })
       log.info('app launched')
     })
+} catch (e) {
+  log.error(e)
+}}
   )

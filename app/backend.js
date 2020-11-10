@@ -4,6 +4,7 @@ const fs = require('fs')
 const path = require('path')
 const os = require('os')
 const http = require('http')
+const fkill = require('fkill')
 const { dialog } = require('electron')
 
 const { backendVersion: expectedBackendVer } = require('../version')
@@ -64,12 +65,16 @@ class BackendProcess {
   setQriBinPath () {
     // In development node, use installed qri binary
     if (process.env.NODE_ENV === 'development') {
-      let processResult = childProcess.execSync('which qri')
-      let whichBin = processResult.toString().trim()
-      if (fs.existsSync(whichBin)) {
-        this.qriBinPath = whichBin
+      try {
+        let processResult = childProcess.execSync('which qri')
+        let whichBin = processResult.toString().trim()
+        if (fs.existsSync(whichBin)) {
+          this.qriBinPath = whichBin
+          log.info(`because we're in dev mode, looking for qri binary on $PATH. found: ${this.qriBinPath}`)
+        }
+      } catch (e) {
+        log.info('unable to find the qri binary on your $PATH. Does running `which qri` in your terminal give you any output?')
       }
-      log.info(`because we're in dev mode, looking for qri binary on $PATH. found: ${this.qriBinPath}`)
     }
     // Locate the binary for the qri backend command-line in common paths
     if (!this.qriBinPath) {
@@ -109,20 +114,57 @@ class BackendProcess {
 
   async checkNoActiveBackendProcess () {
     log.info("checking for active backend process")
-    const healthCheck = async () => {
-      return new Promise((res, rej) => {
-        http.get('http://localhost:2503/health', (data) => {
-          res(true)
+
+    const healthResponse = async () => {
+      return new Promise((resolve) => {
+        http.get('http://localhost:2503/health', (res) => {
+          let body = ''
+          res.on('data', (chunk) => {
+            body += chunk
+          })
+          res.on('end', () => {
+            resolve(body)
+          })
         }).on('error', (e) => {
-          res(false)
+          resolve(null)
         })
       })
     }
 
-    var isQriRunning = await healthCheck()
-    if (isQriRunning) {
+    const body = await healthResponse()
+
+    if (body === null) {
+      /** if the body is null, then we don't have a backend running and so
+       * we can just proceed as normal
+       */
+      return
+    }
+
+    log.info('found process running on port 2503')
+    let parsedBody
+    try {
+      parsedBody = JSON.parse(body)
+    } catch (e) {
+      log.info(`error parsing health response from process running at 2503: ${e}`)
+    }
+
+    if (parsedBody && parsedBody.meta && parsedBody.meta.version && parsedBody.meta.version === expectedBackendVer) {
+      /**
+       * if the response version is equal to our expected version then we already
+       * have a backend running, and we need to throw the error
+       */
       throw new Error("backend-already-running")
     }
+
+    /**
+     * if we make it here it means we were able to get a response from the 
+     * backend, but that response either didn't parse or the backend version was 
+     * not compatible
+     * in either case, we need to kill the process that is running on that port
+     * since it is not playing nicely
+     */
+    log.info('killing process currently running at port 2503')
+    await fkill(':2503')
   }
 
   async checkBackendCompatibility () {
