@@ -4,7 +4,7 @@ import classNames from 'classnames'
 
 interface SegmentProps {
   name: string
-  content: React.Component | Element | null
+  content: React.Component | Element | JSX.Element | null
 
   icon?: string
   subhead?: string
