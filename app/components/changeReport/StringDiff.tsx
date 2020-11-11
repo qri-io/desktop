@@ -26,6 +26,7 @@ const StringDiff: React.FC<StringDiffProps> = (props) => {
     collapsable
     contentHeight={1000}
     componentStatus={componentStatus}
+    animationOn={false}
     content={<ReactDiffViewer
       oldValue={typeof left === 'string' ? left : JSON.stringify(left, null, 2)}
       newValue={typeof right === 'string' ? right : JSON.stringify(right, null, 2)}
