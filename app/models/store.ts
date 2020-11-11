@@ -193,6 +193,7 @@ export type ComponentStatus =
   | 'modified'
   | 'unmodified'
   | 'removed'
+  | 'added'
   | 'add'
   | 'parse error'
 

@@ -169,7 +169,7 @@ describe('formValidation', () => {
       status: {
         body: {
           filepath: '',
-          status: 'add'
+          status: 'added'
         },
         meta: {
           filepath: '',
@@ -207,7 +207,7 @@ describe('formValidation', () => {
       status: {
         body: {
           filepath: '',
-          status: 'add'
+          status: 'added'
         },
         meta: {
           filepath: '',

@@ -24,7 +24,8 @@
      }
   },
   "meta": {
-    "left": {
+    "left": {},
+    "right": {
       "describe": "Global daily updates (aggregated)",
       "description": "Global daily updates (aggregated)",
       "keywords": [
@@ -33,7 +34,6 @@
       "qri": "md:0",
       "title": "JHU CSSE COVID-19 Daily Updates"
      },
-    "right": {},
     "meta": {
       "status": "added"
     }

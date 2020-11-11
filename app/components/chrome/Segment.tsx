@@ -1,6 +1,8 @@
 import React from 'react'
 import Icon from '../chrome/Icon'
+import StatusDot from '../chrome/StatusDot'
 import classNames from 'classnames'
+import { ComponentStatus } from '../../models/store'
 
 interface SegmentProps {
   name: string
@@ -11,10 +13,20 @@ interface SegmentProps {
   collapsable?: boolean
   expandable? : boolean
   contentHeight?: number
+  componentStatus: ComponentStatus
 }
 
 const Segment: React.FunctionComponent<SegmentProps> = (props) => {
-  const { name, subhead, content, icon, collapsable = false, expandable = false, contentHeight = 400 } = props
+  const {
+    name,
+    subhead,
+    content,
+    icon,
+    collapsable = false,
+    expandable = false,
+    contentHeight = 400,
+    componentStatus = ''
+  } = props
 
   if (content === null) return null
 
@@ -49,6 +61,7 @@ const Segment: React.FunctionComponent<SegmentProps> = (props) => {
           </div>
         </div>
         <div className='right-side'>
+          { componentStatus && <StatusDot status={componentStatus}/>}
           {/* ensure the container div you want to expand to has the css */}
           {/* property 'position: relative' */}
           {expandable &&

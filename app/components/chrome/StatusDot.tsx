@@ -15,6 +15,7 @@ export const StatusDot: React.FunctionComponent<StatusDotProps> = (props) => {
       statusTooltip = 'modified'
       break
     case 'add':
+    case 'added':
       statusTooltip = 'added'
       break
     case 'removed':

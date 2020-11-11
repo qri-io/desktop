@@ -16,21 +16,25 @@ export const stringDiff = () => {
       <StringDiff
         left={res.meta.left}
         right={res.meta.right}
+        componentStatus={res.meta.meta.status}
         name='meta'
       />
       <StringDiff
         left={res.structure.left}
         right={res.structure.right}
+        componentStatus={res.structure.meta.status}
         name='structure'
       />
       <StringDiff
         left={res.readme.left}
         right={res.readme.right}
+        componentStatus={res.readme.meta.status}
         name='readme'
       />
       <StringDiff
         left={res.transform.left}
         right={res.transform.right}
+        componentStatus={res.transform.meta.status}
         name='transform'
       />
     </>
