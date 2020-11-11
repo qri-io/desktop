@@ -4,7 +4,7 @@ const log = require('electron-log')
 const { autoUpdater } = require('electron-updater')
 
 const { BackendProcess } = require('./backend')
-const { DISCORD_URL, QRI_IO_URL, PORT } = require('./constants')
+const { DISCORD_URL, QRI_IO_URL, BACKEND_PORT } = require('./constants')
 
 const { BACKEND_URL } = require('./platformSpecific/backendUrl.electron')
 
@@ -586,7 +586,7 @@ try {
               mainWindow.webContents.send("error-launching-backend")
               break
             case "port-occupied":
-              log.debug(`port ${PORT} is occupied by a non-qri process`)
+              log.debug(`port ${BACKEND_PORT} is occupied by a non-qri process`)
               mainWindow.webContents.send("port-occupied")
               break
             default:

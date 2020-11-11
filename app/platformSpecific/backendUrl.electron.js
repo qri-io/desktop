@@ -1,8 +1,8 @@
-const { PORT } = require('../constants')
+const { BACKEND_PORT } = require('../constants')
 
-const BACKEND_URL = `http://localhost:${PORT}`
+const BACKEND_URL = `http://localhost:${BACKEND_PORT}`
 
 module.exports = {
   BACKEND_URL,
-  PORT
+  BACKEND_PORT
 }

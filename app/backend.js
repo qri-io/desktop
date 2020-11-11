@@ -10,7 +10,7 @@ const findProcess = require('find-process')
 
 const { backendVersion: expectedBackendVer } = require('../version')
 
-const { PORT } = require('./constants')
+const { BACKEND_PORT } = require('./constants')
 
 const errPortOccupied = new Error('port-occupied')
 
@@ -121,9 +121,9 @@ class BackendProcess {
     log.info("checking for active backend process")
 
     let errorCheckingPort = false
-    const list = await findProcess('port', PORT)
+    const list = await findProcess('port', BACKEND_PORT)
                         .catch(e => {
-                          log.info(`error examining port ${PORT}: ${e}. We will attempt to ping the endpoint to see if we get a response`)
+                          log.info(`error examining port ${BACKEND_PORT}: ${e}. pinging health endpoint for a response...`)
                           errorCheckingPort = true
                         })
 
@@ -145,7 +145,7 @@ class BackendProcess {
 
     const healthResponse = async () => {
       return new Promise((resolve) => {
-        http.get(`http://localhost:${PORT}/health`, (res) => {
+        http.get(`http://localhost:${BACKEND_PORT}/health`, (res) => {
           if ( errorCheckingPort && res.statusCode !== 200 ) {
             /**
              * if we do not have a successful status code AND we were not able
@@ -182,7 +182,7 @@ class BackendProcess {
     try {
       parsedBody = JSON.parse(body)
     } catch (e) {
-      log.info(`error parsing health response from process running at ${PORT}: ${e}`)
+      log.info(`error parsing health response from process running at ${BACKEND_PORT}: ${e}`)
     }
 
     if (parsedBody && parsedBody.meta && parsedBody.meta.version && parsedBody.meta.version === expectedBackendVer) {
@@ -200,8 +200,8 @@ class BackendProcess {
      * in either case, we need to kill the process that is running on that port
      * since it is not playing nicely
      */
-    log.info(`qri process currently running at port ${PORT} is incompatible with this version of Qri Desktop. Killing the process...`)
-    await fkill(`:${PORT}`)
+    log.info(`qri process currently running at port ${BACKEND_PORT} is incompatible with this version of Qri Desktop. Killing the process...`)
+    await fkill(`:${BACKEND_PORT}`)
   }
 
   async checkBackendCompatibility () {
