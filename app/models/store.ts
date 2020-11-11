@@ -89,6 +89,7 @@ export type BootupComponentType =
   | 'loading'
   | 'migrating'
   | 'migrationFailure'
+  | 'portOccupied'
   | string
 
 export type SelectedComponent =

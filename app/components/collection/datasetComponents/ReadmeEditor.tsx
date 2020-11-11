@@ -12,6 +12,8 @@ import { openExternal } from './platformSpecific/Readme.TARGET_PLATFORM'
 
 import { writeDataset } from '../../../actions/workbench'
 
+import { BACKEND_URL } from '../../../backendUrl'
+
 import { selectWorkingDatasetIsLoading, selectDatasetFromMutations, selectIsLinked, selectWorkingDatasetName, selectWorkingDatasetUsername, selectWorkingStatusInfo } from '../../../selections'
 
 import SpinnerWithIcon from '../../chrome/SpinnerWithIcon'
@@ -96,14 +98,14 @@ export const ReadmeEditorComponent: React.FunctionComponent<ReadmeEditorProps> =
     }
 
     if (isLinked) {
-      fetch(`http://localhost:2503/render/${refStringFromQriRef(qriRef)}?fsi=true`)
+      fetch(`${BACKEND_URL}/render/${refStringFromQriRef(qriRef)}?fsi=true`)
         .then(async (res) => res.text())
         .then((render) => {
           preview.innerHTML = render
         })
     } else {
       const d: Dataset = datasetConvertStringToScriptBytes({ readme: plainText })
-      fetch(`http://localhost:2503/render`, {
+      fetch(`${BACKEND_URL}/render`, {
         method: 'post',
         body: JSON.stringify(d),
         headers: {

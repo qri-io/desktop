@@ -1,6 +1,7 @@
 // these constants may be used by both the main process and frontend
 // so they need to be defined as CommonJS
 
+const BACKEND_PORT = 2503
 const CRASH_REPORTER_URL = 'https://crashreports.qri.io/desktop'
 const DISCORD_URL = 'https://discordapp.com/invite/thkJHKj'
 const GITHUB_ORG_URL = 'https://github.com/qri-io'
@@ -13,6 +14,7 @@ const WEBSOCKETS_PROTOCOL = 'qri-websocket'
 const DEFAULT_POLL_INTERVAL = 3000
 
 module.exports = {
+  BACKEND_PORT,
   CRASH_REPORTER_URL,
   DEFAULT_POLL_INTERVAL,
   DISCORD_URL,

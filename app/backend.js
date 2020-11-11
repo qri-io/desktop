@@ -4,9 +4,15 @@ const fs = require('fs')
 const path = require('path')
 const os = require('os')
 const http = require('http')
+const fkill = require('fkill')
 const { dialog } = require('electron')
+const findProcess = require('find-process')
 
 const { backendVersion: expectedBackendVer } = require('../version')
+
+const { BACKEND_PORT } = require('./constants')
+
+const errPortOccupied = new Error('port-occupied')
 
 // BackendProcess runs the qri backend binary in connected'ed mode, to handle api requests.
 class BackendProcess {
@@ -64,12 +70,16 @@ class BackendProcess {
   setQriBinPath () {
     // In development node, use installed qri binary
     if (process.env.NODE_ENV === 'development') {
-      let processResult = childProcess.execSync('which qri')
-      let whichBin = processResult.toString().trim()
-      if (fs.existsSync(whichBin)) {
-        this.qriBinPath = whichBin
+      try {
+        let processResult = childProcess.execSync('which qri')
+        let whichBin = processResult.toString().trim()
+        if (fs.existsSync(whichBin)) {
+          this.qriBinPath = whichBin
+          log.info(`because we're in dev mode, looking for qri binary on $PATH. found: ${this.qriBinPath}`)
+        }
+      } catch (e) {
+        log.info('unable to find the qri binary on your $PATH. Does running `which qri` in your terminal give you any output?')
       }
-      log.info(`because we're in dev mode, looking for qri binary on $PATH. found: ${this.qriBinPath}`)
     }
     // Locate the binary for the qri backend command-line in common paths
     if (!this.qriBinPath) {
@@ -109,20 +119,89 @@ class BackendProcess {
 
   async checkNoActiveBackendProcess () {
     log.info("checking for active backend process")
-    const healthCheck = async () => {
-      return new Promise((res, rej) => {
-        http.get('http://localhost:2503/health', (data) => {
-          res(true)
+
+    let errorCheckingPort = false
+    const list = await findProcess('port', BACKEND_PORT)
+                        .catch(e => {
+                          log.info(`error examining port ${BACKEND_PORT}: ${e}. pinging health endpoint for a response...`)
+                          errorCheckingPort = true
+                        })
+
+    if (!errorCheckingPort) {
+      if (list.length === 0) {
+        // port is clear
+        return
+      }
+
+      list.forEach(process => {
+        if (!process.cmd.includes('qri connect')) {
+          /**
+           * if the process at the port is not a qri process, throw an error
+           */
+          throw errPortOccupied
+        }
+      })
+    }
+
+    const healthResponse = async () => {
+      return new Promise((resolve) => {
+        http.get(`http://localhost:${BACKEND_PORT}/health`, (res) => {
+          if ( errorCheckingPort && res.statusCode !== 200 ) {
+            /**
+             * if we do not have a successful status code AND we were not able
+             * to confirm that a qri process is running at the given port, we should
+             * warn the user & have them close the process on their own, or reach
+             * out to us for help.
+             */
+            throw errPortOccupied
+          }
+          let body = ''
+          res.on('data', (chunk) => {
+            body += chunk
+          })
+          res.on('end', () => {
+            resolve(body)
+          })
         }).on('error', (e) => {
-          res(false)
+          resolve(null)
         })
       })
     }
 
-    var isQriRunning = await healthCheck()
-    if (isQriRunning) {
+    const body = await healthResponse()
+
+    if (body === null) {
+      /** if the body is null, then we don't have a backend running and so
+       * we can just proceed as normal. We should very rarely reach this state
+       * as we have already tested if something is running at the given port
+       */
+      return
+    }
+
+    let parsedBody
+    try {
+      parsedBody = JSON.parse(body)
+    } catch (e) {
+      log.info(`error parsing health response from process running at ${BACKEND_PORT}: ${e}`)
+    }
+
+    if (parsedBody && parsedBody.meta && parsedBody.meta.version && parsedBody.meta.version === expectedBackendVer) {
+      /**
+       * if the response version is equal to our expected version then we already
+       * have a backend running, and we need to throw the error
+       */
       throw new Error("backend-already-running")
     }
+
+    /**
+     * if we make it here it means we were able to get a response from the 
+     * backend, but that response either didn't parse or the backend version was 
+     * not compatible
+     * in either case, we need to kill the process that is running on that port
+     * since it is not playing nicely
+     */
+    log.info(`qri process currently running at port ${BACKEND_PORT} is incompatible with this version of Qri Desktop. Killing the process...`)
+    await fkill(`:${BACKEND_PORT}`)
   }
 
   async checkBackendCompatibility () {

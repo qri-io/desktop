@@ -4,7 +4,7 @@ const log = require('electron-log')
 const { autoUpdater } = require('electron-updater')
 
 const { BackendProcess } = require('./backend')
-const { DISCORD_URL, QRI_IO_URL } = require('./constants')
+const { DISCORD_URL, QRI_IO_URL, BACKEND_PORT } = require('./constants')
 
 const { BACKEND_URL } = require('./platformSpecific/backendUrl.electron')
 
@@ -99,7 +99,8 @@ const setMenuItemVisible = (menuItemIds, visible) => {
 
 let quitting = false
 
-app.on('ready', () =>
+app.on('ready', () => {
+try {
   installExtensions()
     .then(() => {
       log.info('main process ready')
@@ -534,6 +535,10 @@ app.on('ready', () =>
         quitting = true
       })
 
+      app.on('render-process-gone', () => {
+        app.quit()
+      })
+
       ipcMain.on('app-fully-loaded', () => {
         log.info("starting backend process")
         backendProcess = new BackendProcess()
@@ -565,7 +570,7 @@ app.on('ready', () =>
         .catch(err => {
           switch (err.message) {
             case "backend-already-running":
-              log.info("a qri backend is already running at port 2503")
+              log.info('compatible version of the qri backend is running')
               mainWindow.webContents.send("backend-already-running")
               break
             case "incompatible-backend":
@@ -580,6 +585,10 @@ app.on('ready', () =>
               log.debug("error-launching-backend")
               mainWindow.webContents.send("error-launching-backend")
               break
+            case "port-occupied":
+              log.debug(`port ${BACKEND_PORT} is occupied by a non-qri process`)
+              mainWindow.webContents.send("port-occupied")
+              break
             default:
               log.error(err.message)
           }
@@ -590,4 +599,7 @@ app.on('ready', () =>
       })
       log.info('app launched')
     })
+} catch (e) {
+  log.error(e)
+}}
   )

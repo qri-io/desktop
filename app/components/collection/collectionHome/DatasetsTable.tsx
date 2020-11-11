@@ -128,11 +128,12 @@ const DatasetsTable: React.FC<DatasetsTableProps> = (props) => {
       name: '',
       selector: 'hamburger',
       width: '60px',
+      // eslint-disable-next-line react/display-name
       cell: (row: VersionInfo) => {
         if (__BUILD__.REMOTE) {
-          return <ExportButton qriRef={row} showText={false}/> // eslint-disable-line
+          return <ExportButton qriRef={row} showText={false}/>
         }
-        return <TableRowHamburger data={row} /> // eslint-disable-line
+        return <TableRowHamburger data={row} />
       }
     }
   ]

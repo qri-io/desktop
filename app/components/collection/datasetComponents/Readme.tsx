@@ -3,6 +3,7 @@ import * as React from 'react'
 import Store, { RouteProps } from '../../../models/store'
 import { refStringFromQriRef, QriRef, qriRefFromRoute } from '../../../models/qriRef'
 import { openExternal } from './platformSpecific/Readme.TARGET_PLATFORM'
+import { BACKEND_URL } from '../../../backendUrl'
 
 import { connectComponentToProps } from '../../../utils/connectComponentToProps'
 
@@ -17,7 +18,7 @@ export const ReadmeComponent: React.FunctionComponent<ReadmeProps> = (props) => 
     const ref = React.useRef<HTMLDivElement>(null)
     const setRef = React.useCallback((el: HTMLDivElement) => {
       if (el !== null) {
-        fetch(`http://localhost:2503/render/${refStringFromQriRef(qriRef)}`)
+        fetch(`${BACKEND_URL}/render/${refStringFromQriRef(qriRef)}`)
           .then(async (res) => {
             return res.text()
           })
