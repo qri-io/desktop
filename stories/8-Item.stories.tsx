@@ -42,9 +42,10 @@ dataset.story = {
 
 export const labeledStats = () => {
   const data: Stat[] = [{ value: '8', label: 'qri peers' }, { value: '300', label: 'conns.' }, { value: '3.48Mb/s', label: 'data transfer' }]
+  const dataWithDelta: Stat[] = [{ value: '8', label: 'qri peers', delta: -1000 }, { value: '300', label: 'conns.', delta: 500000000 }, { value: '3.48Mb/s', label: 'data transfer' }]
   return (
     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
-      <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-around', alignItems: 'space-between', height: 200 }}>
+      <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-around', alignItems: 'space-between', height: 400 }}>
         <LabeledStats
           color='dark'
           data={data}
@@ -54,9 +55,21 @@ export const labeledStats = () => {
           color='dark'
           data={data}
           size='lg'
+        />
+        <LabeledStats
+          color='dark'
+          data={dataWithDelta}
+          size='sm'
+          uppercase={false}
+        />
+        <LabeledStats
+          color='dark'
+          data={dataWithDelta}
+          size='lg'
+          uppercase={false}
         />
       </div>
-      <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-around', alignItems: 'space-between', height: 200, background: 'grey' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-around', alignItems: 'space-between', height: 400, background: 'grey' }}>
         <LabeledStats
           color='light'
           data={data}
@@ -66,6 +79,18 @@ export const labeledStats = () => {
           color='light'
           data={data}
           size='lg'
+        />
+        <LabeledStats
+          color='light'
+          data={dataWithDelta}
+          size='sm'
+          uppercase={false}
+        />
+        <LabeledStats
+          color='light'
+          data={dataWithDelta}
+          size='lg'
+          uppercase={false}
         />
       </div>
     </div>

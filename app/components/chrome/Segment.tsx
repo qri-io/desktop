@@ -13,8 +13,8 @@ interface SegmentProps {
   collapsable?: boolean
   expandable? : boolean
   contentHeight?: number
-  componentStatus: ComponentStatus
-  animationOn: boolean
+  componentStatus?: ComponentStatus
+  animationOn?: boolean
 }
 
 const Segment: React.FunctionComponent<SegmentProps> = (props) => {

@@ -66,6 +66,7 @@ export const segments = () => {
         subhead='this is a subheading'
         collapsable={true}
         expandable={true}
+        componentStatus='added'
         contentHeight={200}
       />
     </div>
