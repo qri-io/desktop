@@ -5,6 +5,8 @@ import numeral from 'numeral'
 
 import LabeledStats from './item/LabeledStats'
 
+import { BooleanStats, NumericStats, StringStats } from './item/StatDiffRow'
+
 const primaryStatColor = '#0061A6'
 const labelSkipWidth = 10
 
@@ -12,23 +14,24 @@ const labelFormat = (d: Number) => <tspan y={ -8 }>{ d >= 1000 ? numeral(d).form
 
 interface StatsChartProps {
   height?: number
-  data: Record<string, any>
+  data: BooleanStats | StringStats | NumericStats
+  showStats: boolean
 }
 
 const StatsChart: React.FunctionComponent<StatsChartProps> = (props: StatsChartProps) => {
-  const { data, height = 250 } = props
+  const { data, height = 250, showStats = true } = props
   switch (data.type) {
     case 'string':
-      return <StringStat data={data} height={height} />
+      return <StringStat data={data} height={height} showStats={showStats}/>
     case 'numeric':
-      return <NumericStat data={data} height={height} />
+      return <NumericStat data={data} height={height} showStats={showStats}/>
     case 'boolean':
-      return <BooleanStat data={data} height={height} />
+      return <BooleanStat data={data} height={height} showStats={showStats}/>
     default:
       return (
         <div>
           {data.count && <LabeledStats data={[
-            ['count', data.count.toLocaleString()]
+            { label: 'count', value: data.count, delta: data.delta && data.delta.count }
           ]} />}
         </div>
       )
@@ -38,7 +41,7 @@ const StatsChart: React.FunctionComponent<StatsChartProps> = (props: StatsChartP
 export default StatsChart
 
 const NumericStat: React.FunctionComponent<StatsChartProps> = (props: StatsChartProps) => {
-  const { data, height } = props
+  const { data, height, showStats } = props
   let histogram
 
   if (data.histogram && data.histogram.frequencies) {
@@ -92,23 +95,28 @@ const NumericStat: React.FunctionComponent<StatsChartProps> = (props: StatsChart
           labelFormat={labelFormat}
         />
       </div>}
-      <LabeledStats data={[
+      {/* {showStats && <LabeledStats data={[
         ['count', data.count.toLocaleString()],
         ['min', data.min.toLocaleString()],
         ['max', data.max.toLocaleString()],
         ['mean (avg)', data.mean.toLocaleString()],
         ['median', data.median.toLocaleString()]
-      ]} />
+      ]} />} */}
     </div>
   )
 }
 
-const StringStat: React.FunctionComponent<StatsChartProps> = (props: StatsChartProps) => {
-  const { data, height } = props
-  let frequencies
+interface FrequencyProps {
+  id: any
+  label: string
+  value: number
+}
 
+const StringStat: React.FunctionComponent<StatsChartProps> = (props: StatsChartProps) => {
+  const { data, height, showStats } = props
+  let frequencies
   if (data.frequencies) {
-    frequencies = Object.keys(data.frequencies).reduce((acc, key) => {
+    frequencies = Object.keys(data.frequencies).reduce((acc: FrequencyProps[], key) => {
       let label = key
       if (label.length > 20) {
         label = label.slice(0, 18) + '...'
@@ -123,6 +131,8 @@ const StringStat: React.FunctionComponent<StatsChartProps> = (props: StatsChartP
       return acc
     }, [])
   }
+
+  console.log(frequencies)
 
   return (
     <div>
@@ -165,17 +175,17 @@ const StringStat: React.FunctionComponent<StatsChartProps> = (props: StatsChartP
           labelFormat={labelFormat}
         />
       </div>}
-      <LabeledStats data={[
+      {/* { showStats && <LabeledStats data={[
         ['count', data.count.toLocaleString()],
         ['min length', data.minLength.toLocaleString()],
         ['max length', data.maxLength.toLocaleString()]
-      ]} />
+      ]} />} */}
     </div>
   )
 }
 
 const BooleanStat: React.FunctionComponent<StatsChartProps> = (props: StatsChartProps) => {
-  const { data, height } = props
+  const { data, height, showStats } = props
   let frequencies = [
     {
       id: 'false',
@@ -233,11 +243,11 @@ const BooleanStat: React.FunctionComponent<StatsChartProps> = (props: StatsChart
           motionDamping={15}
         />
       </div>}
-      <LabeledStats data={[
+      {/* { showStats && <LabeledStats data={[
         ['count', data.count.toLocaleString()],
         ['true', data.trueCount.toLocaleString()],
         ['false', data.falseCount.toLocaleString()]
-      ]} />
+      ]} />} */}
     </div>
   )
 }

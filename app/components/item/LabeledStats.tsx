@@ -32,7 +32,7 @@ const LabeledStats: React.FunctionComponent<LabeledStatsProps> = ({ data, color 
         return (
           <div key={i} className={classNames('stats-value', { 'large': size === 'lg' })} >
             <label className={classNames('label', { uppercase, 'light': color === 'light', 'large': size === 'lg' })}>{stat.label}</label>
-            <div className={classNames('value', { 'light': color === 'light', 'large': size === 'lg' })}>{stat.value}</div>
+            <div className={classNames('value', { 'light': color === 'light', 'large': size === 'lg' })}>{typeof stat.value === 'number' ? abbreviateNumber(stat.value) : stat.value}</div>
             {stat.delta
               ? <div className={classNames('delta', { 'negative': stat.delta < 0, 'light': color === 'light', 'large': size === 'lg' })}>{abbreviateNumber(stat.delta)}</div>
               : <div className={classNames('delta-spacer', { 'large': size === 'lg' })}></div>}

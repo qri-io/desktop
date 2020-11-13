@@ -1,5 +1,6 @@
 import React from 'react'
 import StringDiff from '../app/components/changeReport/StringDiff'
+import { StatDiffRow, StatDiffItem } from '../app/components/item/StatDiffRow'
 
 const res = require('./data/change_report_sample_api_response.json')
 
@@ -8,6 +9,22 @@ export default {
   parameters: {
     notes: `Change report comprised of string differs for all components, except for stats which are shown in their own series of components that feature charts!`
   }
+}
+
+export const statDiffRow = () => {
+  return (
+    <table style={{verticalAlign: 'top'}} >
+      <tbody>
+      {res.stats.columns.map((row, i) => {
+        return <StatDiffRow key={i} {...row} />
+      })}
+      </tbody>
+    </table>
+  )
+}
+
+statDiffRow.story = {
+  name: 'stat diff row'
 }
 
 export const stringDiff = () => {
@@ -44,4 +61,21 @@ export const stringDiff = () => {
 stringDiff.story = {
   name: 'string differ',
   parameters: { note: 'used for comparing all components except for stats'}
+}
+
+export const statDiffItem = () => {
+  return (
+    <div>{
+      res.stats.columns.map((columnStatDiff) => {
+        const stat = columnStatDiff.right
+        stat["delta"] = columnStatDiff.delta
+        return (<div style={{margin: 20}}><StatDiffItem data={stat} /></div>)
+      })
+    }</div>
+  )
+}
+
+statDiffItem.story = {
+  name: 'stat diff item',
+  parameters: {note: 'one side of the stat diff row, shows the stats and a historgram or frequecy chart, if there is data for it'}
 }

@@ -39,7 +39,8 @@ import {
   faMinus,
   faSync,
   faBars,
-  faPencilAlt
+  faPencilAlt,
+  faCheckCircle
 } from '@fortawesome/free-solid-svg-icons'
 
 import {
@@ -68,7 +69,8 @@ const icons: Record<string, any> = {
   'string': faFont,
   'integer': faHashtag,
   'number': faHashtag,
-  'boolean': faQuestionCircle,
+  'numeric': faHashtag,
+  'boolean': faCheckCircle,
   'null': faQuestionCircle,
   'object': faQuestionCircle,
   'array': faQuestionCircle,
