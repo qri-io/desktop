@@ -9,6 +9,10 @@ interface StatDiffItem {
   type?: 'boolean' | 'numeric' | 'string'
 }
 
+export interface StatMeta {
+  title: string
+}
+
 // boolean
 export interface BooleanStats {
   // needed so we can index into the object using a string field name
@@ -111,6 +115,12 @@ export const StatDiffItem: React.FC<StatDiffItem> = (props) => {
   if (data.type === 'boolean') {
     chartName = 'frequencies'
   }
+
+  if (data.type === 'string' && chartName) {
+    if (Object.keys(data.frequencies).length >= 200) {
+      chartName = 'frequencies of 200 most seen entries'
+    }
+  }
   return <div className='stat-diff-item margin'>
     <StatDiffRowHeader title={title} type={type}/>
     <div className='margin-bottom'>
@@ -134,23 +144,17 @@ export const StatDiffItem: React.FC<StatDiffItem> = (props) => {
 interface StatDiffRowProps {
   left: NumericStats | StringStats | BooleanStats
   right: NumericStats | StringStats | BooleanStats
-  delta: NumericStats | StringStats | BooleanStats
-  title: string
+  meta: StatMeta
 }
 
 export const StatDiffRow: React.FC<StatDiffRowProps> = (props) => {
   const {
     left,
     right,
-    delta,
-    title
+    meta
   } = props
   const { type } = right
-
-  let rightWithDelta = right
-  if (delta && Object.keys(delta).length !== 0) {
-    rightWithDelta.delta = delta
-  }
+  const { title } = meta
 
   return (<tr style={{ verticalAlign: 'top', borderBottom: '1px solid #eee' }}>
     <td>

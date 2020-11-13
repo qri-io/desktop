@@ -229,7 +229,7 @@
     },
     "columns": [
       {
-        "title": "cases",
+        "meta": {"title": "cases"},
         "left": {
           "count": 739788,
           "histogram": {
@@ -386,19 +386,19 @@
           "mean": 4106.587140361923,
           "median": 1865.540598629014,
           "min": 0,
-          "type": "numeric"
-        },
-        "delta": {
-          "count": 19378,
-          "max": 515440,
-          "mean": 157.525528116,
-          "median": 0.35125676881,
-          "min": 0,
-          "type": "numeric"
+          "type": "numeric",
+          "delta": {
+            "count": 19378,
+            "max": 515440,
+            "mean": 157.525528116,
+            "median": 0.35125676881,
+            "min": 0,
+            "type": "numeric"
+          }
         }
       },
       {
-        "title": "severe_case_true_false",
+        "meta": { "title": "severe_case_true_false" },
         "left": {
           "type": "boolean",
           "count": 739788,
@@ -409,17 +409,17 @@
           "type": "boolean",
           "count": 759166,
           "trueCount": 348922,
-          "falseCount": 410244
-        },
-        "delta": {
-          "type": "boolean",
-          "count": 19378,
-          "trueCount": -25638,
-          "falseCount": 45016 
+          "falseCount": 410244,
+          "delta": {
+            "type": "boolean",
+            "count": 19378,
+            "trueCount": -25638,
+            "falseCount": 45016 
+          }
         }
       },
       {
-        "title": "combined_location_name",
+        "meta": {"title": "combined_location_name"},
         "left":   {
           "count": 739788,
           "frequencies": {
@@ -716,18 +716,18 @@
           "maxLength": 49,
           "minLength": 0,
           "type": "string",
-          "unique": 4045
-        },
-        "delta": {
-          "count": 19378,
-          "maxLength": 0,
-          "minLength": 0,
-          "type": "string",
-          "unique": 0
+          "unique": 4045,
+          "delta": {
+            "count": 19378,
+            "maxLength": 0,
+            "minLength": 0,
+            "type": "string",
+            "unique": 0
+          }
         }
       },
       {
-        "title": "lat",
+        "meta" : { "title": "lat" },
         "left": {},
         "right": {
           "count": 543173,
@@ -806,15 +806,15 @@
           "mean": 1025.668974015589,
           "median": 622.6247847962478,
           "min": 0,
-          "type": "numeric"
-        },
-        "delta": {
-          "count": 543173,
-          "max": 17037.77641277641,
-          "mean": 1025.668974015589,
-          "median": 622.6247847962478,
-          "min": 0,
-          "type": "numeric"
+          "type": "numeric",
+          "delta": {
+            "count": 543173,
+            "max": 17037.77641277641,
+            "mean": 1025.668974015589,
+            "median": 622.6247847962478,
+            "min": 0,
+            "type": "numeric"
+          }
         }
       }
     ]
