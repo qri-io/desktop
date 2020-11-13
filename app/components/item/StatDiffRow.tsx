@@ -141,18 +141,22 @@ export const StatDiffItem: React.FC<StatDiffItem> = (props) => {
   </div>
 }
 
-interface StatDiffRowProps {
+export interface ColumnStats {
   left: NumericStats | StringStats | BooleanStats
   right: NumericStats | StringStats | BooleanStats
   meta: StatMeta
 }
 
-export const StatDiffRow: React.FC<StatDiffRowProps> = (props) => {
+export interface StatDiffRowProps {
+  data: ColumnStats
+}
+
+export const StatDiffRow: React.FC<StatDiffRowProps> = ({ data }) => {
   const {
     left,
     right,
     meta
-  } = props
+  } = data
   const { type } = right
   const { title } = meta
 

@@ -1,6 +1,7 @@
 import React from 'react'
 import StringDiff from '../app/components/changeReport/StringDiff'
 import { StatDiffRow, StatDiffItem } from '../app/components/item/StatDiffRow'
+import StatDiff from '../app/components/changeReport/StatDiff'
 
 const res = require('./data/change_report_sample_api_response.json')
 
@@ -11,12 +12,16 @@ export default {
   }
 }
 
+export const statDiff = () => {
+  return <StatDiff data={res.stats}/>
+}
+
 export const statDiffRow = () => {
   return (
     <table style={{verticalAlign: 'top'}} >
       <tbody>
       {res.stats.columns.map((row, i) => {
-        return <StatDiffRow key={i} {...row} />
+        return <StatDiffRow key={i} data={row} />
       })}
       </tbody>
     </table>

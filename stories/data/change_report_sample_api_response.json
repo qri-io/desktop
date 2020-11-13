@@ -207,6 +207,7 @@
      }
   },
   "stats": {
+    "meta": { "status": "modified" },
     "summary": {
       "left": {
         "entries": 739788,
@@ -218,13 +219,13 @@
         "entries": 759166,
         "columns": 4,
         "nullValues": 0,
-        "totalSize": 1047604210
-      },
-      "delta": {
-        "entries": 19378,
-        "columns": 1,
-        "nullValues": -10,
-        "totalSize": 3074177
+        "totalSize": 1047604210,
+        "delta": {
+          "entries": 19378,
+          "columns": 1,
+          "nullValues": -10,
+          "totalSize": 3074177
+        }
       }
     },
     "columns": [

@@ -24,7 +24,6 @@ const StringDiff: React.FC<StringDiffProps> = (props) => {
   return <Segment
     name={name}
     collapsable
-    contentHeight={1000}
     componentStatus={componentStatus}
     animationOn={false}
     content={<ReactDiffViewer

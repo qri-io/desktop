@@ -91,12 +91,14 @@
 
     .delta {
       font-size: 12px;
+      font-weight: 300;
       color: green;
       &.light {
         color: rgb(63, 209, 63);
       }
       &.large {
         font-size: 14px;
+        font-weight: 400;
       }
       &.negative {
         color: $error;
