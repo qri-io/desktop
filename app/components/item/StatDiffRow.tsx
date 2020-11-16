@@ -149,9 +149,10 @@ export interface ColumnStats {
 
 export interface StatDiffRowProps {
   data: ColumnStats
+  last: boolean
 }
 
-export const StatDiffRow: React.FC<StatDiffRowProps> = ({ data }) => {
+export const StatDiffRow: React.FC<StatDiffRowProps> = ({ data, last }) => {
   const {
     left,
     right,
@@ -160,12 +161,12 @@ export const StatDiffRow: React.FC<StatDiffRowProps> = ({ data }) => {
   const { type } = right
   const { title } = meta
 
-  return (<tr style={{ verticalAlign: 'top', borderBottom: '1px solid #eee' }}>
+  return (<tr style={{ verticalAlign: 'top', borderBottom: last ? 'none' : '1px solid #eee' }}>
     <td>
       <StatDiffItem data={left} title={title} type={type}/>
     </td>
     <td>
-      <StatDiffItem data={right}/>
+      <StatDiffItem data={right} />
     </td>
   </tr>)
 }

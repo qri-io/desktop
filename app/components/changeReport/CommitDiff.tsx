@@ -8,7 +8,7 @@ interface ICommitItem extends VersionInfo {
   timestamp: Date
 }
 
-interface ICommitDiff {
+export interface ICommitDiff {
   left: ICommitItem
   right: ICommitItem
 }
@@ -25,7 +25,7 @@ const CommitItem: React.FC<ICommitItem> = (props) => {
   } = props
 
   return (
-    <div>
+    <div style={{ margin: 20 } }>
       <div style={ {
         fontFamily: 'monospace',
         fontSize: 18,
@@ -50,9 +50,9 @@ const CommitDiff: React.FC<ICommitDiff> = (props) => {
     right
   } = props
   return (
-    <table style={{ width: '100%', margin: 20 }}>
+    <table style={{ width: '100%', marginTop: 40 }}>
       <thead>
-        <tr style={{ lineHeight: '40px' }} >
+        <tr>
           <th style={{
             fontSize: 16,
             fontWeight: 300,
@@ -73,7 +73,7 @@ const CommitDiff: React.FC<ICommitDiff> = (props) => {
       </thead>
       <tbody>
         <tr>
-          <td>
+          <td >
             <CommitItem {...left} />
           </td>
           <td>

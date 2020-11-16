@@ -3,6 +3,7 @@ import StringDiff from '../app/components/changeReport/StringDiff'
 import { StatDiffRow, StatDiffItem } from '../app/components/item/StatDiffRow'
 import StatDiff from '../app/components/changeReport/StatDiff'
 import CommitDiff from '../app/components/changeReport/CommitDiff'
+import ChangeReport from '../app/components/changeReport/ChangeReport'
 
 const res = require('./data/change_report_sample_api_response.json')
 
@@ -11,6 +12,14 @@ export default {
   parameters: {
     notes: `Change report comprised of string differs for all components, except for stats which are shown in their own series of components that feature charts!`
   }
+}
+
+export const changeReport = () => {
+  return <ChangeReport 
+    username='b5' 
+    name='world_bank_population'
+    {...res}
+  />
 }
 
 export const commitDiff = () => {

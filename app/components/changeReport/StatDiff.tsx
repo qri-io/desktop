@@ -22,7 +22,7 @@ interface ComponentMeta {
   status: ComponentStatus
 }
 
-interface StatDiffRes {
+export interface StatDiffRes {
   summary: SummaryDiff
   columns: ColumnStats[]
   meta: ComponentMeta
@@ -53,7 +53,7 @@ const StatDiff: React.FC<StatDiffProps> = ({ data }) => {
     meta
   } = data
 
-  const content = <table className='margin'>
+  const content = <table style={{ width: '100%', borderCollapse: 'separate', borderSpacing: 20 }}>
     <thead>
       <tr><th colSpan={2} style={{ fontSize: 20 }}>Change Summary</th></tr>
       <tr>
@@ -67,7 +67,7 @@ const StatDiff: React.FC<StatDiffProps> = ({ data }) => {
       <tr><th colSpan={2} style={{ fontSize: 20 }}>Column Comparison</th></tr>
     </thead>
     <tbody>
-      {columns.map((column, i) => <StatDiffRow key={i} data={column} />)}
+      {columns.map((column, i) => <StatDiffRow last={columns.length - 1 === i} key={i} data={column} />)}
     </tbody>
   </table>
 
