@@ -59,11 +59,14 @@
 
     .label {
       font-family: $font-family-sans-serif;
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 300;
       margin-bottom: 0px;
-      text-transform: uppercase;
       color: #808080;
+      text-transform: capitalize;
+      &.uppercase {
+        text-transform: uppercase;
+      }
       &.light {
         color: white;
       }
@@ -76,13 +79,39 @@
     .value {
       font-family: $font-family-sans-serif;
       margin-bottom: 0;
-      font-size: 14px;
+      font-size: 16px;
       font-weight: 600;
       &.light {
         color: white;
       }
       &.large {
         font-size: 24px;
+      }
+    }
+
+    .delta {
+      font-size: 12px;
+      font-weight: 300;
+      color: green;
+      &.light {
+        color: rgb(63, 209, 63);
+      }
+      &.large {
+        font-size: 14px;
+        font-weight: 400;
+      }
+      &.negative {
+        color: $error;
+        &.light {
+          color: red;
+        }
+      }
+    }
+
+    .delta-spacer {
+      height: 14px;
+      &.large {
+        height: 16px;
       }
     }
   }

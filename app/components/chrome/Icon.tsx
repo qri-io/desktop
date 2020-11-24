@@ -39,13 +39,15 @@ import {
   faMinus,
   faSync,
   faBars,
-  faPencilAlt
+  faPencilAlt,
+  faCheckCircle
 } from '@fortawesome/free-solid-svg-icons'
 
 import {
   faClock,
   faStickyNote,
   faHdd,
+  faFile,
   faTrashAlt
 } from '@fortawesome/free-regular-svg-icons'
 
@@ -58,6 +60,7 @@ interface IconProps {
   size?: 'xs' | 'sm' | 'md' | 'lg'
   color?: 'light' | 'medium' | 'dark' | 'red' | 'green'
   className?: string
+  rotation?: 90 | 180 | 270
 }
 
 const icons: Record<string, any> = {
@@ -68,7 +71,8 @@ const icons: Record<string, any> = {
   'string': faFont,
   'integer': faHashtag,
   'number': faHashtag,
-  'boolean': faQuestionCircle,
+  'numeric': faHashtag,
+  'boolean': faCheckCircle,
   'null': faQuestionCircle,
   'object': faQuestionCircle,
   'array': faQuestionCircle,
@@ -82,6 +86,7 @@ const icons: Record<string, any> = {
   'meta': faTags,
   'create': faPlus,
   'clone': faDownload,
+  'commit-message': faFile,
   'download': faDownload,
   'file': faFileAlt,
   'sort': faSort,
@@ -126,7 +131,8 @@ const Icon: React.FunctionComponent<IconProps> = ({
   icon = 'unknown',
   size = 'md',
   color = 'dark',
-  className
+  className,
+  rotation
 }) => {
   if (icon === 'commit') {
     return (
@@ -138,7 +144,7 @@ const Icon: React.FunctionComponent<IconProps> = ({
     )
   }
 
-  return <FontAwesomeIcon size={sizes[size]} icon={icons[icon]} className={classNames('icon', `icon-${color}`, className)}/>
+  return <FontAwesomeIcon rotation={rotation} size={sizes[size]} icon={icons[icon]} className={classNames('icon', `icon-${color}`, className)}/>
 }
 
 export default Icon

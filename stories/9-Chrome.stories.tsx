@@ -4,6 +4,7 @@ import Segment from '../app/components/chrome/Segment'
 import ActionButton, { ActionButtonProps } from '../app/components/chrome/ActionButton'
 import ActionButtonBar from '../app/components/chrome/ActionButtonBar'
 import Hamburger from '../app/components/chrome/Hamburger'
+import Commitish from '../app/components/chrome/Commitish'
 
 import { CopyCloudLinkButtonComponent } from '../app/components/collection/headerButtons/CopyCloudLinkButton'
 import { ExportButtonComponent } from '../app/components/collection/headerButtons/ExportButton' 
@@ -66,6 +67,7 @@ export const segments = () => {
         subhead='this is a subheading'
         collapsable={true}
         expandable={true}
+        componentStatus='added'
         contentHeight={200}
       />
     </div>
@@ -217,4 +219,14 @@ actionButtonBar.story = {
   parameters: {
     note: 'as we change width, the buttons in the action bar will change'
   }
+}
+
+export const commitish = () => {
+  return (
+    <div style={{ width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
+      <Commitish text='/ipfs/QmtXiN8Q7wJvHMkd2BQtuxfarYfQzR9XNmNH1bnF3Dr8Qa' />
+      <Commitish text='QmNH1bnF3Dr8Qa' />
+      <Commitish text='HEAD' />
+    </div>
+  )
 }

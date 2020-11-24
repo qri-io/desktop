@@ -41,7 +41,12 @@ export function abbreviateNumber (number: number) {
   var tier = Math.log10(number) / 3 | 0
 
   // if zero, we don't need a suffix
-  if (tier === 0) return number
+  if (tier === 0) {
+    if (Number.isInteger(number)) {
+      return number
+    }
+    return number.toFixed(3)
+  }
 
   // get suffix and determine scale
   var suffix = SI_SYMBOL[tier]

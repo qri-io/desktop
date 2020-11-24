@@ -5,6 +5,8 @@ import numeral from 'numeral'
 
 import LabeledStats from './item/LabeledStats'
 
+import { BooleanStats, NumericStats, StringStats } from './item/StatDiffRow'
+
 const primaryStatColor = '#0061A6'
 const labelSkipWidth = 10
 
@@ -12,7 +14,7 @@ const labelFormat = (d: Number) => <tspan y={ -8 }>{ d >= 1000 ? numeral(d).form
 
 interface StatsChartProps {
   height?: number
-  data: Record<string, any>
+  data: BooleanStats | StringStats | NumericStats
 }
 
 const StatsChart: React.FunctionComponent<StatsChartProps> = (props: StatsChartProps) => {
@@ -28,7 +30,7 @@ const StatsChart: React.FunctionComponent<StatsChartProps> = (props: StatsChartP
       return (
         <div>
           {data.count && <LabeledStats data={[
-            ['count', data.count.toLocaleString()]
+            { label: 'count', value: data.count, delta: data.delta && data.delta.count }
           ]} />}
         </div>
       )
@@ -54,11 +56,6 @@ const NumericStat: React.FunctionComponent<StatsChartProps> = (props: StatsChart
 
   return (
     <div>
-      {histogram &&
-        <div style={{ paddingLeft: 35 }}>
-          <b>histogram</b>
-        </div>
-      }
       {histogram && <div style={{ height: height }}>
         <ResponsiveBar
           data={histogram}
@@ -92,23 +89,21 @@ const NumericStat: React.FunctionComponent<StatsChartProps> = (props: StatsChart
           labelFormat={labelFormat}
         />
       </div>}
-      <LabeledStats data={[
-        ['count', data.count.toLocaleString()],
-        ['min', data.min.toLocaleString()],
-        ['max', data.max.toLocaleString()],
-        ['mean (avg)', data.mean.toLocaleString()],
-        ['median', data.median.toLocaleString()]
-      ]} />
     </div>
   )
+}
+
+interface FrequencyProps {
+  id: any
+  label: string
+  value: number
 }
 
 const StringStat: React.FunctionComponent<StatsChartProps> = (props: StatsChartProps) => {
   const { data, height } = props
   let frequencies
-
   if (data.frequencies) {
-    frequencies = Object.keys(data.frequencies).reduce((acc, key) => {
+    frequencies = Object.keys(data.frequencies).reduce((acc: FrequencyProps[], key) => {
       let label = key
       if (label.length > 20) {
         label = label.slice(0, 18) + '...'
@@ -126,11 +121,6 @@ const StringStat: React.FunctionComponent<StatsChartProps> = (props: StatsChartP
 
   return (
     <div>
-      {frequencies &&
-        <div style={{ paddingLeft: 35 }}>
-          <b>frequencies</b>
-        </div>
-      }
       {frequencies && <div style={{ height: height }}>
         <ResponsiveBar
           data={frequencies}
@@ -165,11 +155,6 @@ const StringStat: React.FunctionComponent<StatsChartProps> = (props: StatsChartP
           labelFormat={labelFormat}
         />
       </div>}
-      <LabeledStats data={[
-        ['count', data.count.toLocaleString()],
-        ['min length', data.minLength.toLocaleString()],
-        ['max length', data.maxLength.toLocaleString()]
-      ]} />
     </div>
   )
 }
@@ -202,11 +187,6 @@ const BooleanStat: React.FunctionComponent<StatsChartProps> = (props: StatsChart
 
   return (
     <div>
-      {frequencies &&
-        <div style={{ paddingLeft: 35 }}>
-          <b>frequencies</b>
-        </div>
-      }
       {frequencies && <div style={{ height: height }}>
         <ResponsivePie
           data={frequencies}
@@ -233,11 +213,6 @@ const BooleanStat: React.FunctionComponent<StatsChartProps> = (props: StatsChart
           motionDamping={15}
         />
       </div>}
-      <LabeledStats data={[
-        ['count', data.count.toLocaleString()],
-        ['true', data.trueCount.toLocaleString()],
-        ['false', data.falseCount.toLocaleString()]
-      ]} />
     </div>
   )
 }

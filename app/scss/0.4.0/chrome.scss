@@ -66,6 +66,20 @@
   }
 }
 
+#segment-no-animation {
+  .content {
+    transition: unset;
+  }
+}
+
+#segment-content-no-animation-open {
+  display: block;
+}
+
+#segment-content-no-animation-closed {
+  display: none;
+}
+
 .segment {
   margin: 10px auto;
   background: #FFF;

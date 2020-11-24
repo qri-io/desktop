@@ -1,0 +1,830 @@
+{
+  "commit": {
+    "left": {
+      "author": {
+       "id": "QmRTirNhEPZVidxLZkjVFPMzM4M3gxddcTA1sBkdasGtw3"
+      },
+      "message": "structure:\n\tupdated errCount\nreadme:\n\tremoved scriptBytes\nbody changed",
+      "path": "/ipfs/QmdS48JRCpahYjaadM6WW6zTioGgj5zt8dj2hcbBQEnDB5",
+      "qri": "cm:0",
+      "signature": "BzBXfcMHtBp0NNRM7SfEhJxS0GjuZTq9el08VYHlDkIJQ+9NxSK9OzPopsIh4LxIP6/Dt3dhlL8ekwAJZILw3vvcqlM9p63HA02aQ0vGOhiKpvucMxL2Yv5bMcfSqqNYbynK4bfwJdrPVpvYrgYR2pKajvjWv/pna5mKIhSvml5Rl547p/vApmobRtukr50S0lzCwPfqkJA3/mQRnhlU2O9AtDTj4WIAHoTF+65UE1i85T3DqQkUjEiDWWMfzCMlD6vvCPZD5mYFQaJO0xC416kgcX/YgMwcvJ94dRHSLZTeM2m6TGzCNKqzVvt+uEg6F8UgSMLeJrBUODzbdyPT4A==",
+      "timestamp": "2020-10-14T22:02:31.012584727Z",
+      "title": "updated structure, readme, and body"
+     },
+     "right": {
+      "author": {
+       "id": "QmRTirNhEPZVidxLZkjVFPMzM4M3gxddcTA1sBkdasGtw3"
+      },
+      "message": "structure:\n\tupdated errCount\nreadme:\n\tremoved scriptBytes\nbody changed",
+      "path": "/ipfs/QmX6W5qZcwBcVKD9aEL4VC7BLMrRTewb9x9RZ2HULuDVme",
+      "qri": "cm:0",
+      "signature": "7ZfV4KCTHoU+cGWz501/NkSAW6iNJBRnE66Tk5fLxWAPFoU13uxNfzgu8Z+7/iHqbXPECUsvED5VO6UjztrLEAnlAEnOkZWB429dkKRSp4EQxOk8qiz/zdHDOCY83umJMHZ49hiZGqaIDFKfyq5hV1htoxQOTZA9YLE3CBuWyt00gJa53VyfhEn7cFYWbnZGPNEwzEgo234Z4o0knNdqpbi/+uUuaxRXegjX+QLL/MbKXV7xhm8UBFdEfstd5FmWbHVdMata85TUnk0N2F8ynXqPE9a1GC77NpPXgaBtkvGik9kknu6cB+f93LN6No2DAMA3VR1vqAGe6pNAQLXOQg==",
+      "timestamp": "2020-10-19T19:01:04.431651448Z",
+      "title": "updated structure, readme, and body"
+     }
+  },
+  "meta": {
+    "left": {},
+    "right": {
+      "describe": "Global daily updates (aggregated)",
+      "description": "Global daily updates (aggregated)",
+      "keywords": [
+       "covid-19"
+      ],
+      "qri": "md:0",
+      "title": "JHU CSSE COVID-19 Daily Updates"
+     },
+    "meta": {
+      "status": "added"
+    }
+  },
+  "readme": {
+    "left": "#JHU CSSE COVID-19 Daily Reports (aggregated)\n\nTken from the [COVID-19 Data Repository by the Center for Systems Science and Engineering (CSSE) at Johns Hopkins University](https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data), this dataset is an aggregation of all the CSV files in the daily updates folder.",
+    "right": "#JHU CSSE COVID-19 Daily Reports (aggregated)\n\nTaken from the [COVID-19 Data Repository by the Center for Systems Science and Engineering (CSSE) at Johns Hopkins University](https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data), this dataset is an aggregation of all the CSV files in the daily updates folder.\n\nDataset pulled monthly",
+    "meta": {
+      "status": "modified"
+    }
+  },
+  "structure": {
+    "left": {
+      "checksum": "QmQBApafUqXBqXkU7eiDoa9sZfJGxFfJ9j9nyGMRPVKdKY",
+      "depth": 2,
+      "errCount": 438920,
+      "entries": 739788,
+      "format": "csv",
+      "formatConfig": {
+       "headerRow": true,
+       "lazyQuotes": true,
+       "variadicFields": true
+      },
+      "length": 101686244,
+      "qri": "st:0",
+      "schema": {
+       "items": {
+        "items": [
+         {
+          "title": "fips",
+          "type": "string"
+         },
+         {
+          "title": "admin2",
+          "type": "string"
+         },
+         {
+          "title": "confirmed",
+          "type": "number"
+         },
+         {
+          "title": "deaths",
+          "type": "number"
+         },
+         {
+          "title": "recovered",
+          "type": "number"
+         },
+         {
+          "title": "active",
+          "type": "number"
+         },
+         {
+          "title": "combined_key",
+          "type": "string"
+         },
+         {
+          "title": "incidence_rate",
+          "type": "number"
+         },
+         {
+          "title": "case-fatality_ratio",
+          "type": "number"
+         },
+         {
+          "title": "lat",
+          "type": "number"
+         },
+         {
+          "title": "long_",
+          "type": "number"
+         },
+         {
+          "title": "province_state",
+          "type": "string"
+         },
+         {
+          "title": "country_region",
+          "type": "string"
+         },
+         {
+          "title": "last_update",
+          "type": "string"
+         }
+        ],
+        "type": "array"
+       },
+       "type": "array"
+      }
+     },
+     "right": {
+      "checksum": "QmS5sxbY7EzDpQHDfM7hCVcR3FfWzrZbriRuyuKXUPsHGr",
+      "depth": 2,
+      "errCount": 438937,
+      "entries": 759166,
+      "format": "csv",
+      "formatConfig": {
+       "headerRow": true,
+       "lazyQuotes": true,
+       "variadicFields": true
+      },
+      "length": 104760421,
+      "qri": "st:0",
+      "schema": {
+       "items": {
+        "items": [
+         {
+          "title": "fips",
+          "type": "string"
+         },
+         {
+          "title": "admin2",
+          "type": "string"
+         },
+         {
+          "title": "confirmed",
+          "type": "number"
+         },
+         {
+          "title": "deaths",
+          "type": "number"
+         },
+         {
+          "title": "recovered",
+          "type": "number"
+         },
+         {
+          "title": "active",
+          "type": "number"
+         },
+         {
+          "title": "combined_key",
+          "type": "string"
+         },
+         {
+          "title": "incidence_rate",
+          "type": "number"
+         },
+         {
+          "title": "case-fatality_ratio",
+          "type": "number"
+         },
+         {
+          "title": "lat",
+          "type": "number"
+         },
+         {
+          "title": "long_",
+          "type": "number"
+         },
+         {
+          "title": "province_state",
+          "type": "string"
+         },
+         {
+          "title": "country_region",
+          "type": "string"
+         },
+         {
+          "title": "last_update",
+          "type": "string"
+         }
+        ],
+        "type": "array"
+       },
+       "type": "array"
+      }
+     },
+     "meta": {
+       "status": "modified"
+     }
+  },
+  "stats": {
+    "meta": { "status": "modified" },
+    "summary": {
+      "left": {
+        "entries": 739788,
+        "columns": 3, 
+        "nullValues": 10,
+        "totalSize": 101686244
+      },
+      "right": {
+        "entries": 759166,
+        "columns": 4,
+        "nullValues": 0,
+        "totalSize": 1047604210,
+        "delta": {
+          "entries": 19378,
+          "columns": 1,
+          "nullValues": -10,
+          "totalSize": 3074177
+        }
+      }
+    },
+    "columns": [
+      {
+        "meta": {"title": "cases"},
+        "left": {
+          "count": 739788,
+          "histogram": {
+            "bins": [
+              1294.682904960729,
+              46299.16701680643,
+              106479.77065351418,
+              169254.86489151843,
+              218365.190889371,
+              270637.78961748595,
+              321781.60810810793,
+              376411.21782178205,
+              436034.3382352941,
+              480221.26086956525,
+              518606.85,
+              559853.9285714285,
+              603964.3800000002,
+              646087.3157894739,
+              686639.6595744683,
+              737772.1333333333,
+              792043,
+              848445.7333333333,
+              896521.8571428572,
+              949562.2142857143,
+              1007850.1333333333,
+              1047129.8,
+              1121639,
+              1177755.5,
+              1216511,
+              1253284.5,
+              1301632,
+              1345192.5,
+              1383832.3333333333,
+              1442069.4,
+              1499456.25,
+              1535792.6666666667,
+              1543838
+            ],
+            "frequencies": [
+              -721607,
+              -10472,
+              -4055,
+              -1014,
+              -922,
+              -732,
+              -296,
+              -202,
+              -68,
+              -46,
+              -40,
+              -42,
+              -50,
+              -57,
+              -47,
+              -30,
+              -16,
+              -15,
+              -14,
+              -14,
+              -15,
+              -5,
+              -3,
+              -2,
+              -2,
+              -2,
+              -3,
+              -2,
+              -3,
+              -5,
+              -4,
+              -3
+            ]
+          },
+          "max": 1543837,
+          "mean": 3949.0616122456704,
+          "median": 1865.1893418602017,
+          "min": 0,
+          "type": "numeric"
+        },
+        "right": {
+          "count": 759166,
+          "histogram": {
+            "bins": [
+              1285.0115157692164,
+              43143.99705729645,
+              88561.81627543017,
+              130230.20299500828,
+              172698.41734693872,
+              218337.10457516345,
+              270577.9476309229,
+              324164.9941690965,
+              375533.5025380711,
+              431242.54545454547,
+              479031.612244898,
+              519911.2340425532,
+              560995.6428571428,
+              607092.5573770494,
+              667310.2,
+              730443.3611111111,
+              784772.1785714285,
+              847616.8333333334,
+              896521.8571428572,
+              951090.5,
+              998688.0833333334,
+              1045571.7857142857,
+              1121639,
+              1177755.5,
+              1225264,
+              1292173.75,
+              1345192.5,
+              1383832.3333333333,
+              1423687,
+              1467469.2,
+              1526166,
+              1575353.6,
+              1595382
+            ],
+            "frequencies": [
+              -738813,
+              -11554,
+              -3195,
+              -1803,
+              -980,
+              -918,
+              -802,
+              -343,
+              -197,
+              -88,
+              -49,
+              -47,
+              -42,
+              -61,
+              -100,
+              -36,
+              -28,
+              -18,
+              -14,
+              -18,
+              -12,
+              -14,
+              -3,
+              -2,
+              -3,
+              -4,
+              -2,
+              -3,
+              -2,
+              -5,
+              -5,
+              -5
+            ]
+          },
+          "max": 1595381,
+          "mean": 4106.587140361923,
+          "median": 1865.540598629014,
+          "min": 0,
+          "type": "numeric",
+          "delta": {
+            "count": 19378,
+            "max": 515440,
+            "mean": 157.525528116,
+            "median": 0.35125676881,
+            "min": 0,
+            "type": "numeric"
+          }
+        }
+      },
+      {
+        "meta": { "title": "severe_case_true_false" },
+        "left": {
+          "type": "boolean",
+          "count": 739788,
+          "trueCount": 374560,
+          "falseCount": 365228
+        },
+        "right": {
+          "type": "boolean",
+          "count": 759166,
+          "trueCount": 348922,
+          "falseCount": 410244,
+          "delta": {
+            "type": "boolean",
+            "count": 19378,
+            "trueCount": -25638,
+            "falseCount": 45016 
+          }
+        }
+      },
+      {
+        "meta": {"title": "combined_location_name"},
+        "left":   {
+          "count": 739788,
+          "frequencies": {
+            "": 4799,
+            ",,Belize": 17,
+            ",,France": 3,
+            ",,MS Zaandam": 5,
+            ",,Mauritania": 17,
+            ",,Western Sahara": 7,
+            ",Northern Mariana Islands,US": 12,
+            ",Northwest Territories,Canada": 17,
+            ",Virgin Islands,US": 12,
+            ",Yukon,Canada": 17,
+            "Abbeville, South Carolina, US": 206,
+            "Abruzzo, Italy": 153,
+            "Acadia, Louisiana, US": 206,
+            "Accomack, Virginia, US": 206,
+            "Acre, Brazil": 147,
+            "Ada, Idaho, US": 206,
+            "Adair, Iowa, US": 206,
+            "Adair, Kentucky, US": 202,
+            "Adair, Missouri, US": 206,
+            "Adair, Oklahoma, US": 206,
+            "Adams, Colorado, US": 206,
+            "Adams, Idaho, US": 203,
+            "Adams, Illinois, US": 206,
+            "Adams, Indiana, US": 206,
+            "Adams, Iowa, US": 159,
+            "Adams, Mississippi, US": 206,
+            "Adams, Nebraska, US": 206,
+            "Adams, North Dakota, US": 92,
+            "Adams, Ohio, US": 195,
+            "Adams, Pennsylvania, US": 206,
+            "Adams, Washington, US": 206,
+            "Adams, Wisconsin, US": 204,
+            "Adams,Idaho,US": 1,
+            "Adams,Ohio,US": 7,
+            "Addison, Vermont, US": 206,
+            "Adjuntas, Puerto Rico, US": 88,
+            "Adygea Republic, Russia": 135,
+            "Afghanistan": 206,
+            "Aguada, Puerto Rico, US": 88,
+            "Aguadilla, Puerto Rico, US": 88,
+            "Aguas Buenas, Puerto Rico, US": 88,
+            "Aguascalientes, Mexico": 147,
+            "Aibonito, Puerto Rico, US": 88,
+            "Aichi, Japan": 139,
+            "Aiken, South Carolina, US": 206,
+            "Aitkin, Minnesota, US": 189,
+            "Akita, Japan": 139,
+            "Alachua, Florida, US": 206,
+            "Alagoas, Brazil": 147,
+            "Alamance, North Carolina, US": 206,
+            "Alameda, California, US": 206,
+            "Alamosa, Colorado, US": 206,
+            "Albania": 206,
+            "Albany, New York, US": 206,
+            "Albany, Wyoming, US": 206,
+            "Albemarle, Virginia, US": 206,
+            "Alberta, Canada": 206,
+            "Alcona, Michigan, US": 191,
+            "Alcorn, Mississippi, US": 206,
+            "Aleutians East, Alaska, US": 94,
+            "Aleutians West, Alaska, US": 107,
+            "Alexander, Illinois, US": 189,
+            "Alexander, North Carolina, US": 205,
+            "Alexander,North Carolina,US": 1,
+            "Alexandria, Virginia, US": 206,
+            "Alfalfa, Oklahoma, US": 193,
+            "Alger, Michigan, US": 135,
+            "Algeria": 206,
+            "Allamakee, Iowa, US": 206,
+            "Allegan, Michigan, US": 206,
+            "Allegany, Maryland, US": 204,
+            "Allegany, New York, US": 206,
+            "Alleghany, North Carolina, US": 206,
+            "Alleghany, Virginia, US": 206,
+            "Allegheny, Pennsylvania, US": 206,
+            "Allen, Indiana, US": 206,
+            "Allen, Kansas, US": 154,
+            "Allen, Kentucky, US": 206,
+            "Allen, Louisiana, US": 206,
+            "Allen, Ohio, US": 206,
+            "Allendale, South Carolina, US": 205,
+            "Alpena, Michigan, US": 195,
+            "Alpine, California, US": 205,
+            "Altai Krai, Russia": 135,
+            "Altai Republic, Russia": 135,
+            "Amador, California, US": 206,
+            "Amapa, Brazil": 147,
+            "Amazonas, Brazil": 147,
+            "Amazonas, Colombia": 139,
+            "Amazonas, Peru": 139,
+            "Amelia, Virginia, US": 206,
+            "American Samoa, US": 9,
+            "Amherst, Virginia, US": 206,
+            "Amite, Mississippi, US": 206,
+            "Amur Oblast, Russia": 135,
+            "Anasco, Puerto Rico, US": 88,
+            "Ancash, Peru": 139,
+            "Anchorage, Alaska, US": 200,
+            "Anchorage,Alaska,US": 6,
+            "Andalusia, Spain": 153,
+            "Andaman and Nicobar Islands, India": 126,
+            "Anderson, Kansas, US": 202,
+            "Anderson, Kentucky, US": 206,
+            "Anderson, South Carolina, US": 206,
+            "Anderson, Tennessee, US": 206,
+            "Anderson, Texas, US": 206,
+            "Andhra Pradesh, India": 126,
+            "Andorra": 206,
+            "Andrew, Missouri, US": 195,
+            "Andrews, Texas, US": 206,
+            "Androscoggin, Maine, US": 206,
+            "Angelina, Texas, US": 206,
+            "Angola": 206,
+            "Anguilla, United Kingdom": 200,
+            "Anhui, China": 206,
+            "Anne Arundel, Maryland, US": 206,
+            "Anoka, Minnesota, US": 206,
+            "Anson, North Carolina, US": 206,
+            "Antelope, Nebraska, US": 206,
+            "Antigua and Barbuda": 206,
+            "Antioquia, Colombia": 139,
+            "Antofagasta, Chile": 147,
+            "Antrim, Michigan, US": 206,
+            "Aomori, Japan": 139,
+            "Apache, Arizona, US": 198,
+            "Apache,Arizona,US": 8,
+            "Appanoose, Iowa, US": 206,
+            "Appling, Georgia, US": 206,
+            "Appomattox, Virginia, US": 201,
+            "Apurimac, Peru": 139,
+            "Aragon, Spain": 153,
+            "Aransas, Texas, US": 204,
+            "Arapahoe, Colorado, US": 206,
+            "Arauca, Colombia": 139,
+            "Araucania, Chile": 147,
+            "Archer, Texas, US": 161,
+            "Archuleta, Colorado, US": 206,
+            "Arecibo, Puerto Rico, US": 88,
+            "Arenac, Michigan, US": 206,
+            "Arequipa, Peru": 139,
+            "Argentina": 206,
+            "Arica y Parinacota, Chile": 147,
+            "Arkansas, Arkansas, US": 206,
+            "Arkhangelsk Oblast, Russia": 135,
+            "Arlington, Virginia, US": 206,
+            "Armenia": 206,
+            "Armstrong, Pennsylvania, US": 206,
+            "Armstrong, Texas, US": 192,
+            "Aroostook, Maine, US": 203,
+            "Arroyo, Puerto Rico, US": 88,
+            "Arthur, Nebraska, US": 180,
+            "Aruba, Netherlands": 206,
+            "Arunachal Pradesh, India": 126,
+            "Ascension, Louisiana, US": 206,
+            "Ashe, North Carolina, US": 203,
+            "Ashland, Ohio, US": 206,
+            "Ashland, Wisconsin, US": 206,
+            "Ashley, Arkansas, US": 206,
+            "Ashtabula, Ohio, US": 206,
+            "Asotin, Washington, US": 202,
+            "Assam, India": 126,
+            "Assumption, Louisiana, US": 206,
+            "Astrakhan Oblast, Russia": 135,
+            "Asturias, Spain": 153,
+            "Atacama, Chile": 147,
+            "Atascosa, Texas, US": 206,
+            "Atchison, Kansas, US": 206,
+            "Atchison, Missouri, US": 206,
+            "Athens, Ohio, US": 206,
+            "Atkinson, Georgia, US": 199,
+            "Atlantic, New Jersey, US": 206,
+            "Atlantico, Colombia": 139,
+            "Atoka, Oklahoma, US": 204,
+            "Attala, Mississippi, US": 206,
+            "Audrain, Missouri, US": 185,
+            "Audubon, Iowa, US": 206,
+            "Auglaize, Ohio, US": 206,
+            "Augusta, Virginia, US": 205,
+            "Aurora, South Dakota, US": 206,
+            "Austin, Texas, US": 206,
+            "Australian Capital Territory, Australia": 205,
+            "Australian Capneital Territory, Australia": 1,
+            "Austria": 206,
+            "Autauga, Alabama, US": 206,
+            "Avery, North Carolina, US": 157,
+            "Avoyelles, Louisiana, US": 206,
+            "Ayacucho, Peru": 139,
+            "Aysen, Chile": 147,
+            "Azad Jammu and Kashmir, Pakistan": 126,
+            "Azerbaijan": 206,
+            "Baca, Colorado, US": 206,
+            "Bacon, Georgia, US": 206,
+            "Baden-Wurttemberg, Germany": 153,
+            "Bahamas": 206,
+            "Bahia, Brazil": 147,
+            "Bahrain": 206,
+            "Bailey, Texas, US": 171,
+            "Baja California Sur, Mexico": 147,
+            "Baja California, Mexico": 147,
+            "Baker, Florida, US": 206,
+            "Baker, Georgia, US": 206,
+            "Baker, Oregon, US": 170,
+            "Baldwin, Alabama, US": 206,
+            "Baldwin, Georgia, US": 206,
+            "Baleares, Spain": 153,
+            "Ballard, Kentucky, US": 197,
+            "Balochistan, Pakistan": 126,
+            "Baltimore City, Maryland, US": 206,
+            "Baltimore, Maryland, US": 206,
+            "Bamberg, South Carolina, US": 206,
+            "Bandera, Texas, US": 198,
+            "Bangladesh": 206,
+            "Banks, Georgia, US": 206,
+            "Banner, Nebraska, US": 134,
+            "Bannock, Idaho, US": 206,
+            "Baraga, Michigan, US": 189,
+            "Barbados": 206,
+            "Barber, Kansas, US": 199,
+            "Barbour, Alabama, US": 203,
+            "Barbour, West Virginia, US": 205,
+            "Barceloneta, Puerto Rico, US": 88,
+            "Barnes, North Dakota, US": 206,
+            "Barnstable, Massachusetts, US": 206,
+            "Barnwell, South Carolina, US": 206,
+            "Barranquitas, Puerto Rico, US": 88,
+            "Barren, Kentucky, US": 206,
+            "Barron, Wisconsin, US": 203,
+            "Barrow, Georgia, US": 206,
+            "Barry, Michigan, US": 206,
+            "Barry, Missouri, US": 206,
+            "Bartholomew, Indiana, US": 206,
+            "Barton, Kansas, US": 206,
+            "Barton, Missouri, US": 133,
+            "Bartow, Georgia, US": 206,
+            "Bashkortostan Republic, Russia": 135,
+            "Basilicata, Italy": 153,
+            "Bastrop, Texas, US": 206,
+            "Bates, Missouri, US": 206,
+            "Bath, Kentucky, US": 202,
+            "Bath, Virginia, US": 201,
+            "Baxter, Arkansas, US": 206,
+            "Bay, Florida, US": 206,
+            "Bay, Michigan, US": 206,
+            "Bayamon, Puerto Rico, US": 88,
+            "Bayern, Germany": 153,
+            "Bayfield, Wisconsin, US": 206,
+            "Baylor, Texas, US": 140,
+            "Beadle, South Dakota, US": 206,
+            "Bear Lake, Idaho, US": 115,
+            "Bear River, Utah, US": 178,
+            "Beaufort, North Carolina, US": 206,
+            "Beaufort, South Carolina, US": 206,
+            "Beauregard, Louisiana, US": 206,
+            "Beaver, Oklahoma, US": 199,
+            "Beaver, Pennsylvania, US": 206,
+            "Beaver, Utah, US": 9,
+            "Beaverhead, Montana, US": 202,
+            "Becker, Minnesota, US": 194,
+            "Beckham, Oklahoma, US": 206,
+            "Bedford, Pennsylvania, US": 206,
+            "Bedford, Tennessee, US": 206,
+            "Bedford, Virginia, US": 206,
+            "Bee, Texas, US": 197,
+            "Beijing, China": 206,
+            "Belarus": 206,
+            "Bhutan": 206
+          },
+          "maxLength": 49,
+          "minLength": 0,
+          "type": "string",
+          "unique": 4045
+        },
+        "right":  {
+          "count": 759166,
+          "frequencies": {
+            "": 4799,
+            ",,Belize": 17,
+            ",,France": 3,
+            ",,MS Zaandam": 5,
+            ",,Mauritania": 17,
+            ",,Western Sahara": 7,
+            ",Northern Mariana Islands,US": 12,
+            ",Northwest Territories,Canada": 17,
+            ",Virgin Islands,US": 12,
+            ",Yukon,Canada": 17,
+            "Abbeville, South Carolina, US": 211,
+            "Abruzzo, Italy": 158,
+            "Acadia, Louisiana, US": 211,
+            "Accomack, Virginia, US": 211
+          },
+          "maxLength": 49,
+          "minLength": 0,
+          "type": "string",
+          "unique": 4045,
+          "delta": {
+            "count": 19378,
+            "maxLength": 0,
+            "minLength": 0,
+            "type": "string",
+            "unique": 0
+          }
+        }
+      },
+      {
+        "meta" : { "title": "lat" },
+        "left": {},
+        "right": {
+          "count": 543173,
+          "histogram": {
+            "bins": [
+              135.12312632814573,
+              510.7041388682859,
+              943.8817164781307,
+              1407.0026522361345,
+              1852.7094989452225,
+              2294.666941338195,
+              2751.5861998247083,
+              3277.7071241708977,
+              3831.052568685716,
+              4364.743590017028,
+              4897.707998503534,
+              5453.445051550253,
+              5968.120097759489,
+              6449.7647477794035,
+              6996.55117187603,
+              7549.257135391045,
+              7994.6119196307145,
+              8660.840011837347,
+              9205.288970714337,
+              9876.910827261947,
+              10496.128715563822,
+              11240.437097357266,
+              11837.37221150016,
+              12290.819103182,
+              13208.394648068039,
+              13705.061814360437,
+              14172.204725308291,
+              14733.164397008773,
+              15466.615645082658,
+              16070.331695331697,
+              16533.89895577396,
+              17007.063882063878,
+              17038.77641277641
+            ],
+            "frequencies": [
+              -182621,
+              -119089,
+              -78696,
+              -50971,
+              -32828,
+              -23274,
+              -18259,
+              -14588,
+              -8378,
+              -4962,
+              -3475,
+              -1922,
+              -1354,
+              -704,
+              -359,
+              -254,
+              -278,
+              -200,
+              -234,
+              -184,
+              -57,
+              -66,
+              -54,
+              -59,
+              -66,
+              -38,
+              -57,
+              -95,
+              -35,
+              -6,
+              -8,
+              -2
+            ]
+          },
+          "max": 17037.77641277641,
+          "mean": 1025.668974015589,
+          "median": 622.6247847962478,
+          "min": 0,
+          "type": "numeric",
+          "delta": {
+            "count": 543173,
+            "max": 17037.77641277641,
+            "mean": 1025.668974015589,
+            "median": 622.6247847962478,
+            "min": 0,
+            "type": "numeric"
+          }
+        }
+      }
+    ]
+  },
+  "transform": {
+    "left": "# load dependencies\nload(\"http.star\", \"http\")\nload(\"encoding/csv.star\", \"csv\")\n\n# get the popular baby names dataset as a csv\ndef download(ctx):\n\tcsvDownloadUrl = \"https://data.cityofnewyork.us/api/views/25th-nujf/rows.csv?accessType=DOWNLOAD\"\n\treturn http.get(csvDownloadUrl).body()\n\n# set the body\ndef transform(ds, ctx):\n\t# ctx.download is whatever download() returned\n\tcsv = ctx.download\n\n\t# set the dataset body\n\tds.set_body(csv, parse_as='csv')",
+    "right":"",
+    "meta": {
+      "status": "removed"
+    }
+  }
+}
