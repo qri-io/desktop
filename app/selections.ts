@@ -19,6 +19,9 @@ import { Modal, ModalType } from "./models/modals"
 import { Session } from "./models/session"
 import { SidebarTypes } from "./actions/ui"
 import { QriRef } from "./models/qriRef"
+import { RouterState } from "connected-react-router"
+import { IChangeReportRefs } from "./models/changeReport"
+import { isEditPath } from "./paths"
 
 /**
  *
@@ -433,4 +436,60 @@ export function selectRecentEditRef (state: Store): QriRef {
 // TODO (b5) - we've refactored away from this, should depricate
 export function selectRecentWorkbenchLocation (state: Store): string {
   return state.workbenchRoutes.location
+}
+
+/**
+ *
+ * ROUTER STATE TREE
+ *
+ */
+export function selectRouter (state: Store): RouterState {
+  return state.router
+}
+
+/**
+ * CHANGE REPORT SELECTORS
+ */
+
+export function selectChangeReportParams (state: any): IChangeReportRefs | undefined {
+  var username = selectDatasetUsername(state)
+  var name = selectDatasetName(state)
+
+  // if there is no username or name, then no dataset is currently selected
+  if (!(username && name)) {
+    return undefined
+  }
+
+  // don't show if we are looking at the working dataset
+  const router = selectRouter(state)
+  if (isEditPath(router.location.pathname)) {
+    return undefined
+  }
+  // TODO (ramfox): once we iron out the details, we can potentially show
+  // changes based on uncommited edits made in fsi & HEAD
+  // const fsiPath = selectFsiPath(state)
+  // if (isEditPath(router.location.pathname) && fsiPath === '') {
+  //   return undefined
+  // }
+
+  var currentPath = selectDatasetPath(state)
+  var log = selectLog(state)
+
+  // if there is no history or if the path is the oldest path in the list
+  // then there is no previous version to compare it to
+  if (log.length === 0 || currentPath === log[log.length - 1].path) {
+    return undefined
+  }
+
+  const rightIndex = log.findIndex(vi => vi.path === currentPath)
+  // since we have already guarded against the given path being the last index
+  // we can add 1 to the rightIndex without worrying about overflow
+
+  // if we don't have the previous version, we can't show the changes
+  const left = log[rightIndex + 1]
+  if (left.foreign) {
+    return undefined
+  }
+
+  return { right: log[rightIndex], left }
 }

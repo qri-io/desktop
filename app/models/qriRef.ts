@@ -77,6 +77,28 @@ export function refStringFromQriRef (qriRef: QriRef): string {
   return route
 }
 
+// qriRefFromString takes a string and turns it into a qriRef
+// based on two possible formats for the ref strings:
+// [username]/[name]/at/[network]/[path]
+// [username]/[name]
+// if the string does not follow either strict formatting, we return `undefined`
+export function qriRefFromString (refString: string): QriRef | undefined {
+  let parts = refString.split('/')
+  if (parts.length === 0) {
+    return undefined
+  }
+  if (parts[0] === '/') {
+    parts = parts.slice(1)
+  }
+  if (parts.length === 2) {
+    return { username: parts[0], name: parts[1] }
+  }
+  if (refString.includes('/at/') && parts.length === 5) {
+    return { username: parts[0], name: parts[1], path: `/${parts[3]}/${parts[4]}` }
+  }
+  return undefined
+}
+
 // checks if qriRef has location, username, and name
 export function qriRefIsEmpty (qriRef: QriRef): boolean {
   return !qriRef.location || qriRef.location === '' || !qriRef.username || qriRef.username === '' || !qriRef.name || qriRef.name === ''

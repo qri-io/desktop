@@ -974,8 +974,9 @@ async function writeCommitAndSubmit (uniqueName: string, component: string, stat
 
   const {
     click,
+    atLocation,
     waitForExist,
-    waitForNotExist,
+    delay,
     setValue,
     takeScreenshot,
     checkStatus,
@@ -999,10 +1000,13 @@ async function writeCommitAndSubmit (uniqueName: string, component: string, stat
   }
   // submit
   await click('#submit', artifactPathFromDir(imagesDir, `${name}-commit-click-submit.png`))
+  await delay(200)
+  await atLocation('/collection/changes')
 
-  // wait for the commit to be created
-  await waitForNotExist('.clear-to-commit #commit-status')
-  // on history tab
+  // click on the "right" to get back to the
+  await click('#right')
+  await delay(200)
+
   await atDatasetVersion(0, artifactPathFromDir(imagesDir, `${name}-commit-on-history-tab.png`))
   // check component status
   await checkStatus(component, status, artifactPathFromDir(imagesDir, `${name}-commit-check-status-${component}-${status}.png`))

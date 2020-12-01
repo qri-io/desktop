@@ -21,6 +21,7 @@ import UnpublishButton from '../headerButtons/UnpublishButton'
 import CopyCloudLinkButton from '../headerButtons/CopyCloudLinkButton'
 import RemoveButton from '../headerButtons/RemoveButton'
 import { NavbarButtonProps } from '../../nav/NavTopbar'
+import ViewChangesButton from '../headerButtons/ViewChangesButton'
 
 interface DatasetLayoutProps extends RouterProps {
   // from connect
@@ -51,6 +52,10 @@ const DatasetLayoutComponent: React.FunctionComponent<DatasetLayoutProps> = (pro
       {
         type: 'component',
         component: <ExportButton key='export-button' />
+      },
+      {
+        type: 'component',
+        component: <ViewChangesButton key='view-changes' />
       }
     ]
   } else {
@@ -74,6 +79,10 @@ const DatasetLayoutComponent: React.FunctionComponent<DatasetLayoutProps> = (pro
       {
         type: 'component',
         component: <ViewInCloudButton key='view-in-cloud-button'/>
+      },
+      {
+        type: 'component',
+        component: <ViewChangesButton key='view-changes' />
       },
       {
         type: 'button-dropdown',

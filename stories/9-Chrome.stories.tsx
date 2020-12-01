@@ -15,6 +15,8 @@ import { RenameButtonComponent } from '../app/components/collection/headerButton
 import { ShowFilesButtonComponent } from '../app/components/collection/headerButtons/ShowFilesButton' 
 import { UnpublishButtonComponent } from '../app/components/collection/headerButtons/UnpublishButton' 
 import { ViewInCloudButtonComponent } from '../app/components/collection/headerButtons/ViewInCloudButton' 
+import { ViewChangesButtonComponent } from '../app/components/collection/headerButtons/ViewChangesButton' 
+import { VersionInfo } from '../app/models/store'
 
 export default {
   title: 'Chrome',
@@ -126,6 +128,7 @@ export const datasetActionButtons = () => {
         <CopyCloudLinkButtonComponent qriRef={qriRef} isPublished={isPublished} />
         <RemoveButtonComponent qriRef={qriRef} inNamespace={inNamespace} />
         <RenameButtonComponent qriRef={qriRef} inNamespace={inNamespace} />
+        <ViewChangesButtonComponent data={{ right: qriRef, left: {... qriRef, path: '/ipfs/Qmbar' } }} />
       </div>
         <div style={{ paddingTop: 40, display: 'flex', justifyContent:'space-around', alignItems: 'center', width: '100%'}}>
           <div>

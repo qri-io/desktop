@@ -6,7 +6,7 @@ import { faSync } from '@fortawesome/free-solid-svg-icons'
 import ReactTooltip from 'react-tooltip'
 
 import Store, { Status, RouteProps } from '../../../models/store'
-import { saveWorkingDatasetAndFetch } from '../../../actions/api'
+import { saveWorkingDatasetAndDirectToChangeReport } from '../../../actions/api'
 import { setCommitTitle, setCommitMessage } from '../../../actions/mutations'
 import { validateCommitState } from '../../../utils/formValidation'
 import { ApiAction } from '../../../store/api'
@@ -23,7 +23,7 @@ export interface CommitEditorProps extends RouteProps {
   status: Status
   title: string
   message: string
-  saveWorkingDatasetAndFetch: (username: string, name: string) => Promise<ApiAction>
+  saveWorkingDatasetAndDirectToChangeReport: (username: string, name: string) => Promise<ApiAction>
   setCommitTitle: (title: string) => Action
   setCommitMessage: (message: string) => Action
 }
@@ -35,7 +35,7 @@ export const CommitEditorComponent: React.FunctionComponent<CommitEditorProps> =
     status,
     title,
     message,
-    saveWorkingDatasetAndFetch,
+    saveWorkingDatasetAndDirectToChangeReport,
     setCommitTitle,
     setCommitMessage
   } = props
@@ -63,7 +63,7 @@ export const CommitEditorComponent: React.FunctionComponent<CommitEditorProps> =
   const handleSubmit = (event: any) => {
     event.preventDefault()
     if (isValid) {
-      saveWorkingDatasetAndFetch(username, name)
+      saveWorkingDatasetAndDirectToChangeReport(username, name)
         .then(() => {
           setCommitTitle('')
           setCommitMessage('')
@@ -131,6 +131,6 @@ export default connectComponentToProps(
   {
     setCommitTitle,
     setCommitMessage,
-    saveWorkingDatasetAndFetch
+    saveWorkingDatasetAndDirectToChangeReport
   }
 )
