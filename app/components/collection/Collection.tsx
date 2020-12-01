@@ -124,7 +124,7 @@ const CollectionRouter: React.FunctionComponent<CollectionRouterProps> = (props)
             showDatasetMenu(false)
             return <CollectionHome />
           }} />
-          <Route path={`${path}/changereport/:paths`} render={() => {
+          <Route path={`${path}/changes/:paths`} render={() => {
             return noDatasetsRedirect(
               <TempChangeReport />
             )

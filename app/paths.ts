@@ -1,6 +1,6 @@
 import { QriRef, qriRefFromString, refStringFromQriRef } from "./models/qriRef"
 import { SelectedComponent } from "./models/store"
-import { IChangeReportRefs } from "./models/changeReport"
+import { IChangeReportRefs } from "./models/changes"
 
 export function pathToEdit (username: string, name: string, component?: SelectedComponent): string {
   let uri = `/collection/edit/${username}/${name}`
@@ -41,17 +41,17 @@ export function pathToNetworkDataset (username: string, name: string, path?: str
 }
 
 export function isEditPath (path: string): boolean {
-  return path.includes('/edit')
+  return path.includes('/collection/edit')
 }
 
 export function pathToChangeReport (left: QriRef, right: QriRef): string {
-  return `/collection/changereport/${refStringFromQriRef(left)}...${refStringFromQriRef(right)}`
+  return `/collection/changes/${refStringFromQriRef(left)}...${refStringFromQriRef(right)}`
 }
 
 // parses qriRefs from a change report path string, returning an array of
 // `undefined`
 export function qriRefsFromChangeReportPath (pathname: string): IChangeReportRefs {
-  const index = `/collection/changereport/`.length
+  const index = `/collection/changes/`.length
   const refs = pathname.substr(index).split('...')
   if (refs.length !== 2) {
     return {} as IChangeReportRefs

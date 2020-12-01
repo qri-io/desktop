@@ -1001,7 +1001,7 @@ async function writeCommitAndSubmit (uniqueName: string, component: string, stat
   // submit
   await click('#submit', artifactPathFromDir(imagesDir, `${name}-commit-click-submit.png`))
   await delay(200)
-  await atLocation('/collection/changereport')
+  await atLocation('/collection/changes')
 
   // click on the "right" to get back to the
   await click('#right')

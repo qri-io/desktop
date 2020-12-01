@@ -1,9 +1,9 @@
 import React from 'react'
-import StringDiff from '../app/components/changeReport/StringDiff'
+import StringDiff from '../app/components/changes/StringDiff'
 import { StatDiffRow, StatDiffItem } from '../app/components/item/StatDiffRow'
-import StatDiff from '../app/components/changeReport/StatDiff'
-import CommitDiff from '../app/components/changeReport/CommitDiff'
-import ChangeReport from '../app/components/changeReport/ChangeReport'
+import StatDiff from '../app/components/changes/StatDiff'
+import CommitDiff from '../app/components/changes/CommitDiff'
+import ChangeReport from '../app/components/changes/ChangeReport'
 
 const res = require('./data/change_report_sample_api_response.json')
 
@@ -14,7 +14,7 @@ export default {
   }
 }
 
-export const changeReport = () => {
+export const changes = () => {
   return <ChangeReport 
     username='b5' 
     name='world_bank_population'
