@@ -17,7 +17,7 @@ import {
   discardMutationsChanges
 } from './mutations'
 import Dataset from '../models/dataset'
-import { pathToDataset, pathToCollection } from '../paths'
+import { pathToDataset, pathToCollection, pathToChangeReport } from '../paths'
 import { CLEAR_DATASET_HEAD } from '../reducers/dataset'
 import { selectWorkingDatasetBodyPageInfo,
   selectFsiPath,
@@ -26,7 +26,8 @@ import { selectWorkingDatasetBodyPageInfo,
   selectMyDatasetsPageInfo,
   selectDatasetBodyPageInfo,
   selectLogPageInfo,
-  selectMutationsDataset
+  selectMutationsDataset,
+  selectLog
 } from '../selections'
 import { CALL_API, ApiAction, ApiActionThunk, chainSuccess } from '../store/api'
 import { openToast, setBulkActionExecuting } from './ui'
@@ -406,9 +407,10 @@ export function saveWorkingDataset (username: string, name: string): ApiActionTh
   }
 }
 
-export function saveWorkingDatasetAndFetch (username: string, name: string): ApiActionThunk {
+export function saveWorkingDatasetAndDirectToChangeReport (username: string, name: string): ApiActionThunk {
   return async (dispatch, getState) => {
     let path: string
+    const log = selectLog(getState())
 
     return saveWorkingDataset(username, name)(dispatch, getState)
       .then(async (response) => {
@@ -422,7 +424,13 @@ export function saveWorkingDatasetAndFetch (username: string, name: string): Api
           dispatch(setSaveComplete())
           dispatch(fetchMyDatasets(-1))
           dispatch(openToast('success', 'commit', 'commit success!'))
-          dispatch(push(pathToDataset(username, name, path)))
+          if (log.length === 0) {
+            dispatch(push(pathToDataset(username, name, path)))
+            return response
+          }
+          const prevRef = log[0]
+          const newRef = { ...prevRef, path }
+          dispatch(push(pathToChangeReport(prevRef, newRef)))
         }
         return response
       })

@@ -30,6 +30,7 @@ import CollectionHome from './collectionHome/CollectionHome'
 
 import EditDataset from './EditDataset'
 import { connectComponentToProps } from '../../utils/connectComponentToProps'
+import TempChangeReport from './TempChangeReport'
 
 export interface CollectionProps extends RouteProps {
   // display details
@@ -123,6 +124,11 @@ const CollectionRouter: React.FunctionComponent<CollectionRouterProps> = (props)
             showDatasetMenu(false)
             return <CollectionHome />
           }} />
+          <Route path={`${path}/changereport/:paths`} render={() => {
+            return noDatasetsRedirect(
+              <TempChangeReport />
+            )
+          }}/>
           {!__BUILD__.REMOTE && <Route path={`${path}/edit/:username/:name`} render={() => {
             showDatasetMenu(true)
             return noDatasetsRedirect(

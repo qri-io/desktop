@@ -1,4 +1,4 @@
-import { qriRefFromString } from "./models/qriRef"
+import { QriRef, qriRefFromString, refStringFromQriRef } from "./models/qriRef"
 import { SelectedComponent } from "./models/store"
 import { IChangeReportRefs } from "./models/changeReport"
 
@@ -44,8 +44,8 @@ export function isEditPath (path: string): boolean {
   return path.includes('/edit')
 }
 
-export function pathToChangeReport (left: string, right: string): string {
-  return `/collection/changereport/${left}...${right}`
+export function pathToChangeReport (left: QriRef, right: QriRef): string {
+  return `/collection/changereport/${refStringFromQriRef(left)}...${refStringFromQriRef(right)}`
 }
 
 // parses qriRefs from a change report path string, returning an array of

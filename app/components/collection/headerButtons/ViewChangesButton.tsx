@@ -2,7 +2,7 @@ import React from 'react'
 import { faPlus, faMinus, faSquare } from '@fortawesome/free-solid-svg-icons'
 
 import { RouteProps, VersionInfo } from '../../../models/store'
-import { isDatasetSelected, QriRef, qriRefFromRoute, refStringFromQriRef } from '../../../models/qriRef'
+import { isDatasetSelected, QriRef, qriRefFromRoute } from '../../../models/qriRef'
 
 import { connectComponentToPropsWithRouter } from '../../../utils/connectComponentToProps'
 
@@ -53,15 +53,15 @@ export const ViewChangesButtonComponent: React.FunctionComponent<ViewChangesProp
     return null
   }
 
-  const right = refStringFromQriRef(qriRef)
-  let left = ''
+  const right = qriRef
+  let left
   if (qriRef.path === '') {
-    left = refStringFromQriRef(log[0])
+    left = log[0]
   } else {
     const rightIndex = log.findIndex(vi => vi.path === qriRef.path)
     // since we have already guarded against the given path being the last index
     // we can add 1 to the rightIndex without worrying about overflow
-    left = refStringFromQriRef(log[rightIndex + 1])
+    left = log[rightIndex + 1]
   }
 
   const icon = <span className="fa-layers fa-fw">
