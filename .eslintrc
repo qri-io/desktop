@@ -25,7 +25,6 @@
     "@typescript-eslint/prefer-readonly": "off",
     "@typescript-eslint/no-var-requires": "off",
     "@typescript-eslint/quotes": "off",
-    "@typescript-eslint/consistent-type-assertions": "off",
     "array-bracket-spacing": "off",
     "dot-notation": "off",
     "lines-between-class-members": "off",

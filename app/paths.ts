@@ -50,14 +50,11 @@ export function pathToChangeReport (left: QriRef, right: QriRef): string {
 
 // parses qriRefs from a change report path string, returning an array of
 // `undefined`
-export function qriRefsFromChangeReportPath (pathname: string): IChangeReportRefs {
+export function parseRefsFromChangeReportPath (pathname: string): [string, string] | undefined {
   const index = `/collection/changes/`.length
   const refs = pathname.substr(index).split('...')
   if (refs.length !== 2) {
-    return {} as IChangeReportRefs
+    return undefined
   }
-  return {
-    left: refs[0],
-    right: refs[1]
-  }
+  return [refs[0], refs[1]]
 }

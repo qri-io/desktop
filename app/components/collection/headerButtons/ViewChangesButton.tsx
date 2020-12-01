@@ -1,20 +1,18 @@
 import React from 'react'
 import { faPlus, faMinus, faSquare } from '@fortawesome/free-solid-svg-icons'
 
-import { RouteProps, VersionInfo } from '../../../models/store'
-import { isDatasetSelected, QriRef, qriRefFromRoute } from '../../../models/qriRef'
+import { RouteProps } from '../../../models/store'
 
 import { connectComponentToPropsWithRouter } from '../../../utils/connectComponentToProps'
 
 import HeaderColumnButton from '../../chrome/HeaderColumnButton'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { selectFsiPath, selectLog } from '../../../selections'
+import { selectChangeReportParams } from '../../../selections'
 import { pathToChangeReport } from '../../../paths'
+import { IChangeReportRefs } from '../../../models/changeReport'
 
 interface ViewChangesProps extends RouteProps {
-  qriRef: QriRef
-  fsiPath: string
-  log: VersionInfo[]
+  data?: IChangeReportRefs
   showIcon: boolean
   size: 'sm' | 'md'
 }
@@ -29,39 +27,14 @@ interface ViewChangesProps extends RouteProps {
  */
 export const ViewChangesButtonComponent: React.FunctionComponent<ViewChangesProps> = (props) => {
   const {
-    qriRef,
-    fsiPath,
-    log,
+    data,
     size = 'md',
     showIcon = true,
     history
   } = props
 
-  const { path } = qriRef
-  const datasetSelected = isDatasetSelected(qriRef)
-
-  if (!(
-    log.length !== 0 &&
-    datasetSelected &&
-    // we can only show the changes of a working dataset if that dataset is
-    // fsi linked
-    (path !== '' || fsiPath !== '') &&
-    // if the path is the oldest path in the list, there is no previous
-    // version to compare it to
-    (path !== log[log.length - 1].path)
-  )) {
+  if (!data) {
     return null
-  }
-
-  const right = qriRef
-  let left
-  if (qriRef.path === '') {
-    left = log[0]
-  } else {
-    const rightIndex = log.findIndex(vi => vi.path === qriRef.path)
-    // since we have already guarded against the given path being the last index
-    // we can add 1 to the rightIndex without worrying about overflow
-    left = log[rightIndex + 1]
   }
 
   const icon = <span className="fa-layers fa-fw">
@@ -73,11 +46,11 @@ export const ViewChangesButtonComponent: React.FunctionComponent<ViewChangesProp
   return (<HeaderColumnButton
     id='view-changes'
     label='View Changes'
-    tooltip='Explore the changes made from the previous version of this dataset to the version you are currently viewing'
+    tooltip='Summarize changes from this version to the one before it'
     icon={showIcon && icon}
     size={size}
     onClick={() => {
-      history.push(pathToChangeReport(left, right))
+      history.push(pathToChangeReport(data.left, data.right))
     }}
   />)
 }
@@ -85,12 +58,9 @@ export const ViewChangesButtonComponent: React.FunctionComponent<ViewChangesProp
 export default connectComponentToPropsWithRouter(
   ViewChangesButtonComponent,
   (state: any, ownProps: ViewChangesProps) => {
-    const qriRef = qriRefFromRoute(ownProps)
     return {
       ...ownProps,
-      qriRef,
-      fsiPath: selectFsiPath(state),
-      log: selectLog(state)
+      data: selectChangeReportParams(state)
     }
   }
 )

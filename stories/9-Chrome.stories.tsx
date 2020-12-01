@@ -84,46 +84,11 @@ segments.story = {
 export const datasetActionButtons = () => {
   const fsiPathVal = '/path/to/dataset'
   const latestPath = '/ipfs/Qmfoo'
-  const versionInfos: VersionInfo[] =         [
-    {
-      username:"test",
-      name:"test_dataset",
-      path:"/ipfs/Qmfoo",
-      bodySize:74,
-      commitTime:"2020-11-30T12:16:20.641754-05:00",
-      commitTitle:"created dataset",
-      commitMessage:"created dataset",
-      fsiPath: 'path/to/fsi',
-      profileId: 'QmProfileId',
-      published: false,
-      foreign: true,
-      metaTitle: "Test versionInfo for ViewChangesButton storybook",
-      themeList: '',
-      bodyFormat: 'CSV'
-    },
-    {
-      username:"test",
-      name:"test_dataset",
-      path:"/ipfs/last",
-      bodySize:74,
-      commitTime:"2020-11-30T12:16:20.641754-05:00",
-      commitTitle:"created dataset",
-      commitMessage:"created dataset",
-      fsiPath: 'path/to/fsi',
-      profileId: 'QmProfileId',
-      published: false,
-      foreign: true,
-      metaTitle: "Test versionInfo for ViewChangesButton storybook",
-      themeList: '',
-      bodyFormat: 'CSV'
-    }
-  ]
 
   const [isPublished, setIsPublished] = React.useState(false)
   const [fsiPath, setFsiPath] = React.useState('')
   const [inNamespace, setInNamespace] = React.useState(true)
   const [path, setPath] = React.useState(latestPath)
-  const [log, setLog] = React.useState<VersionInfo[]>(versionInfos)
   const qriRef = { username: 'qri_user', name: 'my_dataset', path }
 
   const toggleIsPublished = () => {
@@ -151,50 +116,6 @@ export const datasetActionButtons = () => {
     setPath(latestPath)
   }
 
-  const toggleLog = () => {
-    if (log.length === 0) {
-      setLog(
-        [
-          {
-            username:"test",
-            name:"test_dataset",
-            path:"/ipfs/first",
-            bodySize:74,
-            commitTime:"2020-11-30T12:16:20.641754-05:00",
-            commitTitle:"created dataset",
-            commitMessage:"created dataset",
-            fsiPath: 'path/to/fsi',
-            profileId: 'QmProfileId',
-            published: false,
-            foreign: true,
-            metaTitle: "Test versionInfo for ViewChangesButton storybook",
-            themeList: '',
-            bodyFormat: 'CSV'
-          },
-          {
-            username:"test",
-            name:"test_dataset",
-            path:"/ipfs/last",
-            bodySize:74,
-            commitTime:"2020-11-30T12:16:20.641754-05:00",
-            commitTitle:"created dataset",
-            commitMessage:"created dataset",
-            fsiPath: 'path/to/fsi',
-            profileId: 'QmProfileId',
-            published: false,
-            foreign: true,
-            metaTitle: "Test versionInfo for ViewChangesButton storybook",
-            themeList: '',
-            bodyFormat: 'CSV'
-          }
-        ]
-      )
-    } else {
-      setLog([])
-    }
-  }
-
-
   return (
     <div style={{ display: 'flex', flexDirection:'column', justifyContent: 'center', alignItems: 'center', height: '100%'}} >
       <div style={{ paddingTop: 20, display: 'flex', flexDirection:'column', justifyContent: 'space-between', alignItems: 'center', height: 400}} >
@@ -207,7 +128,7 @@ export const datasetActionButtons = () => {
         <CopyCloudLinkButtonComponent qriRef={qriRef} isPublished={isPublished} />
         <RemoveButtonComponent qriRef={qriRef} inNamespace={inNamespace} />
         <RenameButtonComponent qriRef={qriRef} inNamespace={inNamespace} />
-        <ViewChangesButtonComponent qriRef={qriRef} fsiPath={fsiPath} log={log} />
+        <ViewChangesButtonComponent data={{ right: qriRef, left: {... qriRef, path: '/ipfs/Qmbar' } }} />
       </div>
         <div style={{ paddingTop: 40, display: 'flex', justifyContent:'space-around', alignItems: 'center', width: '100%'}}>
           <div>
@@ -232,12 +153,6 @@ export const datasetActionButtons = () => {
             <label>
             <input type='checkbox' checked={!!path} id='at-latest' onClick={togglePath}/>
               has path & at latest?
-            </label>
-          </div>
-          <div>
-            <label>
-            <input type='checkbox' checked={log.length !== 0} id='at-latest' onClick={toggleLog}/>
-              has log?
             </label>
           </div>
         </div>
