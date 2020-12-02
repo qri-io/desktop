@@ -1,34 +1,8 @@
 import React from 'react'
 import ReactDiffViewer, { DiffMethod } from 'react-diff-viewer'
-import { Meta, Structure } from '../../models/dataset'
-import { ComponentStatus } from '../../models/store'
+import { IStringDiff, IStructureDiff, IMetaDiff } from '../../models/changes'
 
 import Segment from '../chrome/Segment'
-
-export interface IStructureDiff {
-  left: Structure
-  right: Structure
-  name: string
-  meta: IChangeReportMeta
-}
-
-export interface IMetaDiff {
-  left: Meta
-  right: Meta
-  name: string
-  meta: IChangeReportMeta
-}
-
-export interface IStringDiff {
-  left: string
-  right: string
-  name: string
-  meta: IChangeReportMeta
-}
-
-interface IChangeReportMeta {
-  status: ComponentStatus
-}
 
 const StringDiff: React.FC<IStringDiff | IStructureDiff | IMetaDiff> = (props) => {
   const {
