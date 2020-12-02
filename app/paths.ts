@@ -45,7 +45,7 @@ export function isEditPath (path: string): boolean {
 }
 
 export function pathToChangeReport (left: QriRef, right: QriRef): string {
-  return `/collection/changes/${refStringFromQriRef(left)}...${refStringFromQriRef(right)}`
+  return `/collection/changes/${refStringFromQriRef(left, true)}...${refStringFromQriRef(right, true)}`
 }
 
 // parses qriRefs from a change report path string, returning an array of
