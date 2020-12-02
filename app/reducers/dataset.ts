@@ -33,6 +33,9 @@ const initialState: DatasetStore = {
     },
     transform: {
       value: {}
+    },
+    stats: {
+      value: {}
     }
   },
   stats: []
@@ -81,6 +84,9 @@ const DatasetReducer: Reducer = (state = initialState, action: AnyAction): Datas
           },
           readme: {
             value: dataset.readme
+          },
+          stats: {
+            value: dataset.stats
           },
           transform: {
             value: dataset && dataset.transform && dataset.transform.scriptBytes && atob(dataset.transform.scriptBytes)

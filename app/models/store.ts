@@ -1,5 +1,5 @@
 import { RouterState } from 'connected-react-router'
-import { Meta, Structure, Commit } from './dataset'
+import { Meta, Structure, Commit, IStats } from './dataset'
 import { Session } from './session'
 import { Details } from './details'
 import { QriRef } from './qriRef'
@@ -257,11 +257,13 @@ export interface DatasetStore {
     structure: {
       value: Structure
     }
+    stats: {
+      value?: IStats
+    }
     transform: {
       value?: string
     }
   }
-  stats: Array<Record<string, any>>
   structure: Structure
 }
 

@@ -1,59 +1,17 @@
 import React from 'react'
+import { IBooleanStats, INumericStats, IStringStats } from '../../models/dataset'
 import Icon from '../chrome/Icon'
 import StatsChart from '../StatsChart'
 import LabeledStats, { Stat } from './LabeledStats'
 
-interface StatDiffItem {
-  data: BooleanStats | StringStats | NumericStats
+interface StatDiffItemProps {
+  data: IBooleanStats | IStringStats | INumericStats
   title?: string
   type?: 'boolean' | 'numeric' | 'string'
 }
 
 export interface StatMeta {
   title: string
-}
-
-// boolean
-export interface BooleanStats {
-  // needed so we can index into the object using a string field name
-  [key: string]: any
-  type: 'boolean'
-  true: number
-  false: number
-  count: number
-  delta?: BooleanStats
-}
-
-// string
-export interface StringStats {
-  // needed so we can index into the object using a string field name
-  [key: string]: any
-  type: 'string'
-  count: number
-  maxLength: number
-  minLength: number
-  unique: number
-  frequencies: {
-    [key: string]: number
-  }
-  delta: StringStats
-}
-
-// numeric
-export interface NumericStats {
-  // needed so we can index into the object using a string field name
-  [key: string]: any
-  type: 'numeric'
-  count: number
-  max: number
-  mean: number
-  median: number
-  min: number
-  histogram: {
-    bins: number[]
-    frequencies: number[]
-  }
-  delta: NumericStats
 }
 
 interface StatDiffRowHeaderProps {
@@ -72,7 +30,7 @@ const StatDiffRowHeader: React.FC<StatDiffRowHeaderProps> = (props) => {
   </div>)
 }
 
-export const StatDiffItem: React.FC<StatDiffItem> = (props) => {
+export const StatDiffItem: React.FC<StatDiffItemProps> = (props) => {
   const {
     data,
     title,
@@ -142,8 +100,8 @@ export const StatDiffItem: React.FC<StatDiffItem> = (props) => {
 }
 
 export interface ColumnStats {
-  left: NumericStats | StringStats | BooleanStats
-  right: NumericStats | StringStats | BooleanStats
+  left: INumericStats | IStringStats | IBooleanStats
+  right: INumericStats | IStringStats | IBooleanStats
   meta: StatMeta
 }
 
