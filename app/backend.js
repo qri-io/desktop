@@ -95,7 +95,11 @@ class BackendProcess {
 
   setBackendVer () {
     let processResult = childProcess.execSync(`"${this.qriBinPath}" version`)
-    this.backendVer = processResult.toString().trim()
+    try {
+      this.backendVer = processResult.toString().trim().split('\n', 1)[0].split(':')[1].trim()
+    } catch {
+      this.backendVer = processResult.toString().trim()
+    }
     log.info("qri backend version", this.backendVer)
   }
 
