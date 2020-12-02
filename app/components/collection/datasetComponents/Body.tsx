@@ -3,7 +3,7 @@ import { Action } from 'redux'
 
 import { ApiActionThunk } from '../../../store/api'
 import { DetailsType, StatsDetails, Details } from '../../../models/details'
-import Dataset, { Structure } from '../../../models/dataset'
+import Dataset, { IStatTypes, Structure } from '../../../models/dataset'
 import Store, { PageInfo, StatusInfo, RouteProps } from '../../../models/store'
 import { fetchBody, fetchCommitBody } from '../../../actions/api'
 import { setDetailsBar } from '../../../actions/ui'
@@ -20,7 +20,7 @@ import { schemaColumns } from '../../../utils/schemaColumns'
 export interface BodyProps extends RouteProps {
   qriRef: QriRef
   data: Dataset
-  stats: Array<Record<string, any>>
+  stats: IStatTypes[]
   details: Details
   pageInfo: PageInfo
   statusInfo: StatusInfo
@@ -38,7 +38,7 @@ export interface Header {
   type: string
 }
 
-const extractColumnHeaders = (structure: Structure, value: any[]): undefined | any[] => {
+const extractColumnHeaders = (structure: Structure, value: any[]): undefined | Header[] => {
   if (!structure || !value) {
     return undefined
   }
@@ -55,7 +55,7 @@ const extractColumnHeaders = (structure: Structure, value: any[]): undefined | a
     return firstRow.slice(1).map((d: any, i: number) => `field_${i + 1}`)
   }
 
-  return schemaColumns(schema).map((d: { title: string }): Record<string, any> => d)
+  return schemaColumns(schema).map((d: { title: string, type: string}): Header => d)
 }
 
 export const BodyComponent: React.FunctionComponent<BodyProps> = (props) => {
@@ -81,7 +81,7 @@ export const BodyComponent: React.FunctionComponent<BodyProps> = (props) => {
 
   const headers = extractColumnHeaders(structure, body)
 
-  const makeStatsDetails = (stats: Record<string, any>, title: string, index: number): StatsDetails => {
+  const makeStatsDetails = (stats: IStatTypes, title: string, index: number): StatsDetails => {
     return {
       type: DetailsType.StatsDetails,
       title: title,
@@ -91,10 +91,9 @@ export const BodyComponent: React.FunctionComponent<BodyProps> = (props) => {
   }
 
   const handleToggleDetailsBar = (index: number) => {
-    if (!stats || stats.length === 0) return
-    const statsHeaders = headers as string[]
+    if (!stats || stats.length === 0 || !headers) return
     if (details.type === DetailsType.NoDetails) {
-      setDetailsBar(makeStatsDetails(stats[index], statsHeaders[index], index))
+      setDetailsBar(makeStatsDetails(stats[index], headers[index].title, index))
       return
     }
     if (details.type === DetailsType.StatsDetails) {
@@ -105,7 +104,7 @@ export const BodyComponent: React.FunctionComponent<BodyProps> = (props) => {
         setDetailsBar({ type: DetailsType.NoDetails })
         return
       }
-      setDetailsBar(makeStatsDetails(stats[index], statsHeaders[index], index))
+      setDetailsBar(makeStatsDetails(stats[index], headers[index].title, index))
     }
   }
 
@@ -136,7 +135,7 @@ export const BodyComponent: React.FunctionComponent<BodyProps> = (props) => {
           pageInfo={pageInfo}
           highlighedColumnIndex={highlightedColumnIndex}
           onFetch={handleFetch}
-          setDetailsBar={handleToggleDetailsBar}
+          setDetailsBar={stats && handleToggleDetailsBar}
         />
       }
     </div>
