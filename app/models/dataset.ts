@@ -85,6 +85,56 @@ export interface ColumnProperties {
 
 export type Schema = JSONSchema7
 
+export interface IStats {
+  path: string
+  stats: IStatTypes[]
+}
+
+export type IStatTypes = IBooleanStats | IStringStats | INumericStats
+
+// boolean
+export interface IBooleanStats {
+  // needed so we can index into the object using a string field name
+  [key: string]: any
+  type: 'boolean'
+  true: number
+  false: number
+  count: number
+  delta?: IBooleanStats
+}
+
+// string
+export interface IStringStats {
+  // needed so we can index into the object using a string field name
+  [key: string]: any
+  type: 'string'
+  count: number
+  maxLength: number
+  minLength: number
+  unique: number
+  frequencies: {
+    [key: string]: number
+  }
+  delta: IStringStats
+}
+
+// numeric
+export interface INumericStats {
+  // needed so we can index into the object using a string field name
+  [key: string]: any
+  type: 'numeric'
+  count: number
+  max: number
+  mean: number
+  median: number
+  min: number
+  histogram: {
+    bins: number[]
+    frequencies: number[]
+  }
+  delta: INumericStats
+}
+
 export interface Dataset {
   meta?: Meta
   structure?: Structure
@@ -93,6 +143,7 @@ export interface Dataset {
   commit?: Commit
   readme?: string
   transform?: string
+  stats?: IStats
   [key: string]: any
 }
 

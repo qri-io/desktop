@@ -1,3 +1,4 @@
+import { IStatTypes } from "./dataset"
 
 export enum DetailsType {
   NoDetails,
@@ -6,10 +7,9 @@ export enum DetailsType {
 
 export interface StatsDetails {
   type: DetailsType.StatsDetails
-  // eventually replace with a Stats interface
   index: number
   title: string
-  stats: Record<string, any>
+  stats: IStatTypes
 }
 
 export interface NoDetails {

@@ -72,7 +72,6 @@ export function fetchWorkingDatasetDetails (username: string, name: string): Api
       response = await whenOk(fetchWorkingStatus(username, name))(response)
     }
     response = await whenOk(fetchBody(username, name, -1))(response)
-    response = await whenOk(fetchStats(username, name))(response)
     response = await whenOk(fetchLog(username, name, -1))(response)
 
     return response
@@ -135,7 +134,6 @@ export function fetchCommitDetail (username: string, name: string, path: string)
     response = await fetchCommitDataset(username, name, path)(dispatch, getState)
     response = await whenOk(fetchCommitStatus(username, name, path))(response)
     response = await whenOk(fetchCommitBody(username, name, path, -1))(response)
-    response = await whenOk(fetchCommitStats(username, name, path))(response)
 
     return response
   }
@@ -319,53 +317,6 @@ export function fetchCommitBody (username: string, name: string, path: string, p
       }
     }
     return dispatch(action)
-  }
-}
-
-export function fetchStats (username: string, name: string):
-ApiActionThunk {
-  return async (dispatch) => {
-    const response = await dispatch({
-      type: 'stats',
-      [CALL_API]: {
-        endpoint: 'stats',
-        method: 'GET',
-        segments: {
-          username,
-          name
-        }
-      }
-    })
-
-    return response
-  }
-}
-
-export function fetchCommitStats (username: string, name: string, path: string):
-ApiActionThunk {
-  return async (dispatch) => {
-    if (path === '') {
-      return dispatch({
-        type: CLEAR_DATASET_HEAD,
-        username,
-        name
-      })
-    }
-
-    const response = await dispatch({
-      type: 'commitstats',
-      [CALL_API]: {
-        endpoint: 'stats',
-        method: 'GET',
-        segments: {
-          username,
-          name,
-          path
-        }
-      }
-    })
-
-    return response
   }
 }
 

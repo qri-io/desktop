@@ -1,4 +1,4 @@
-import Dataset, { Commit } from "./models/dataset"
+import Dataset, { Commit, IStatTypes } from "./models/dataset"
 import cloneDeep from 'clone-deep'
 
 import Store, {
@@ -83,8 +83,9 @@ export function selectDatasetRef (state: Store): QriRef {
   }
 }
 
-export function selectDatasetStats (state: Store): Array<Record<string, any>> {
-  return state.dataset.stats
+export function selectDatasetStats (state: Store): IStatTypes[] | undefined {
+  const ds = datasetFromDatasetStore(state.dataset)
+  return ds.stats && ds.stats.stats
 }
 
 export function selectDatasetStatus (state: Store): Status {
@@ -407,8 +408,9 @@ export function selectWorkingStatusInfo (state: Store, component: SelectedCompon
   return status[component] || generateUnmodifiedStatusInfo(component)
 }
 
-export function selectWorkingStats (state: Store): Array<Record<string, any>> {
-  return state.workingDataset.stats
+export function selectWorkingStats (state: Store): IStatTypes[] | undefined {
+  const ds = datasetFromDatasetStore(state.workingDataset)
+  return ds.stats && ds.stats.stats
 }
 
 function generateUnmodifiedStatusInfo (componentName: SelectedComponent): StatusInfo {

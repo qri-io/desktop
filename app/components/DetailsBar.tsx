@@ -8,9 +8,9 @@ import { connectComponentToProps } from '../utils/connectComponentToProps'
 
 import { setDetailsBar } from '../actions/ui'
 
-import StatsChart from './StatsChart'
 import { Header } from './collection/datasetComponents/Body'
 import { TypeLabel } from './TwoDSchemaLayout'
+import { StatDiffItem } from './item/StatDiffRow'
 
 export interface DetailsBarProps {
   details: Details
@@ -26,9 +26,9 @@ const DetailsBarComponent: React.FunctionComponent<DetailsBarProps> = (props) =>
     const statsDetails = details as StatsDetails
     return (
       <div>
-        {renderHeader(statsDetails.title, statsDetails.stats.type)}
+        {renderHeader()}
         <div className="details-bar-content">
-          <StatsChart data={statsDetails.stats} />
+          <StatDiffItem title={statsDetails.title} type={statsDetails.stats.type} data={statsDetails.stats} />
         </div>
       </div>
     )
@@ -38,10 +38,10 @@ const DetailsBarComponent: React.FunctionComponent<DetailsBarProps> = (props) =>
     setDetailsBar({ type: DetailsType.NoDetails })
   }
 
-  const renderHeader = (header: Header) => {
+  const renderHeader = (header?: Header) => {
     return (<div className="details-bar-header">
-      <h3>{header.title}</h3>
-      <h4><TypeLabel type={header.type} /></h4>
+      {header && <h3>{header.title}</h3>}
+      {header && <h4><TypeLabel type={header.type} /></h4>}
       <a
         className="close"
         onClick={onDismiss}

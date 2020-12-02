@@ -37,11 +37,13 @@ const initialState: WorkingDataset = {
     structure: {
       value: {}
     },
+    stats: {
+      value: {}
+    },
     transform: {
       value: ''
     }
-  },
-  stats: []
+  }
 }
 
 export const [DATASET_REQ, DATASET_SUCC, DATASET_FAIL] = apiActionTypes('dataset')
@@ -96,6 +98,9 @@ const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction
           },
           structure: {
             value: dataset && dataset.structure
+          },
+          stats: {
+            value: dataset && dataset.stats
           },
           transform: {
             value: dataset && dataset.transform && dataset.transform.scriptBytes && atob(dataset.transform.scriptBytes)
@@ -225,25 +230,6 @@ const workingDatasetsReducer: Reducer = (state = initialState, action: AnyAction
         return initialState
       }
       return state
-
-    case STATS_REQ:
-      if (state.peername === action.segments.peername && state.name === action.segments.name) {
-        return state
-      }
-      return {
-        ...state,
-        stats: []
-      }
-    case STATS_SUCC:
-      return {
-        ...state,
-        stats: action.payload.data
-      }
-    case STATS_FAIL:
-      return {
-        ...state,
-        stats: []
-      }
 
     case RENAME_SUCC:
       return {

@@ -15,7 +15,7 @@ interface BodyTableProps {
   body: any[]
   highlighedColumnIndex: number | undefined
   onFetch: (page?: number, pageSize?: number) => ApiActionThunk
-  setDetailsBar: (index: number) => void
+  setDetailsBar?: (index: number) => void
   pageInfo: PageInfo
 }
 
@@ -139,7 +139,7 @@ export default class BodyTable extends React.Component<BodyTableProps> {
               {headers && headers.map((d: any, j: number) => {
                 return (
                   <th key={j} className={(j === highlighedColumnIndex) ? 'highlighted' : '' }>
-                    <div className='cell' onClick={() => setDetailsBar(j)}>
+                    <div className='cell' onClick={setDetailsBar && function () { setDetailsBar(j) }}>
                       <TypeLabel type={d.type} showLabel={false}/>&nbsp;{d.title}
                     </div>
                   </th>
