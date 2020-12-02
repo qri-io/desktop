@@ -18,10 +18,10 @@ import { datasetToVersionInfo } from "./actions/mappingFuncs"
 import { Modal, ModalType } from "./models/modals"
 import { Session } from "./models/session"
 import { SidebarTypes } from "./actions/ui"
-import { QriRef } from "./models/qriRef"
+import { QriRef, qriRefFromString } from "./models/qriRef"
 import { RouterState } from "connected-react-router"
-import { IChangeReportRefs } from "./models/changeReport"
-import { isEditPath } from "./paths"
+import { IChangeReport, IChangeReportRefs } from "./models/changes"
+import { isEditPath, parseRefsFromChangeReportPath } from "./paths"
 
 /**
  *
@@ -451,7 +451,7 @@ export function selectRouter (state: Store): RouterState {
  * CHANGE REPORT SELECTORS
  */
 
-export function selectChangeReportParams (state: any): IChangeReportRefs | undefined {
+export function selectChangeReportRefs (state: any): IChangeReportRefs | undefined {
   var username = selectDatasetUsername(state)
   var name = selectDatasetName(state)
 
@@ -492,4 +492,31 @@ export function selectChangeReportParams (state: any): IChangeReportRefs | undef
   }
 
   return { right: log[rightIndex], left }
+}
+
+export function selectChangesIsLoading (state: any): boolean {
+  return state.changes.isLoading
+}
+
+export function selectChangesError (state: any): string {
+  return state.changes.error
+}
+
+export function selectChanges (state: any): IChangeReport {
+  return state.changes.changes
+}
+
+export function selectChangesRefsFromLocation (state: any): [QriRef, QriRef] | undefined {
+  const { location } = selectRouter(state)
+  const refs = parseRefsFromChangeReportPath(location.pathname)
+  if (!refs) {
+    return undefined
+  }
+  const left = qriRefFromString(refs[0])
+  const right = qriRefFromString(refs[1])
+
+  if (!(left && right)) {
+    return undefined
+  }
+  return [left, right]
 }

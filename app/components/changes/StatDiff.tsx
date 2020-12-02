@@ -1,38 +1,14 @@
 import React from 'react'
-import { ComponentStatus } from '../../models/store'
+import { IStatDiffRes, ISummaryStats } from '../../models/changes'
 import Segment from '../chrome/Segment'
 import LabeledStats, { Stat } from '../item/LabeledStats'
-import { ColumnStats, StatDiffRow } from '../item/StatDiffRow'
-
-interface SummaryStats {
-  [key: string]: any
-  entries: number
-  columns: number
-  nullValues: number
-  totalSize: number
-  delta: SummaryStats
-}
-
-interface SummaryDiff {
-  left: SummaryStats
-  right: SummaryStats
-}
-
-interface ComponentMeta {
-  status: ComponentStatus
-}
-
-export interface StatDiffRes {
-  summary: SummaryDiff
-  columns: ColumnStats[]
-  meta: ComponentMeta
-}
+import { StatDiffRow } from '../item/StatDiffRow'
 
 interface StatDiffProps {
-  data: StatDiffRes
+  data: IStatDiffRes
 }
 
-const SummaryItem: React.FC<SummaryStats> = (props) => {
+const SummaryItem: React.FC<ISummaryStats> = (props) => {
   let statsList: Stat[] = []
   for (const [key, val] of Object.entries(props)) {
     if (key !== 'delta') {
@@ -75,7 +51,7 @@ const StatDiff: React.FC<StatDiffProps> = ({ data }) => {
     <Segment
       name='Stats'
       collapsable
-      componentStatus={meta.status}
+      componentStatus={meta && meta.status}
       animationOn={false}
       content={content}
     />

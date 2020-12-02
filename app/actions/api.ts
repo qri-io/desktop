@@ -34,6 +34,7 @@ import { openToast, setBulkActionExecuting } from './ui'
 import { actionWithPagination } from '../utils/pagination'
 import { getActionType } from '../utils/actionType'
 import { datasetConvertStringToScriptBytes } from '../utils/datasetConvertStringToScriptBytes'
+import { QriRef, refStringFromQriRef } from '../models/qriRef'
 
 const pageSizeDefault = 100
 export const bodyPageSizeDefault = 50
@@ -783,5 +784,22 @@ export function newDataset (ds: Dataset): ApiActionThunk {
     }
 
     return response
+  }
+}
+
+export function fetchChanges (left: QriRef, right: QriRef): ApiActionThunk {
+  return async (dispatch) => {
+    const action = {
+      type: 'changes',
+      [CALL_API]: {
+        endpoint: 'changes',
+        method: 'POST',
+        body: {
+          left: refStringFromQriRef(left, true),
+          right: refStringFromQriRef(right, true)
+        }
+      }
+    }
+    return dispatch(action)
   }
 }

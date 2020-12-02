@@ -1,17 +1,8 @@
 import React from 'react'
-import { VersionInfo } from '../../models/store'
+import { ICommitDiff, ICommitItem } from '../../models/changes'
+import { pathToDataset } from '../../paths'
 import Commitish from '../chrome/Commitish'
 import CommitDetails from '../CommitDetails'
-
-interface ICommitItem extends VersionInfo {
-  title: string
-  timestamp: Date
-}
-
-export interface ICommitDiff {
-  left: ICommitItem
-  right: ICommitItem
-}
 
 const CommitItem: React.FC<ICommitItem> = (props) => {
   const {
@@ -26,12 +17,14 @@ const CommitItem: React.FC<ICommitItem> = (props) => {
 
   return (
     <div style={{ margin: 20 } }>
-      <div style={ {
-        fontFamily: 'monospace',
-        fontSize: 18,
-        color: 'black',
-        textOverflow: 'ellipsis'
-      }}>{username}/{name}</div>
+      <a
+        href={pathToDataset(username, name, path)}
+        style={ {
+          fontFamily: 'monospace',
+          fontSize: 18,
+          color: 'black',
+          textOverflow: 'ellipsis'
+        }}>{username}/{name}</a>
       {path && <Commitish text={path}/>}
       <div><CommitDetails
         commitTitle={title || ''}

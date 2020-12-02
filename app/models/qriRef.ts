@@ -70,16 +70,24 @@ export function qriRefFromRoute (p: RouteProps): QriRef {
   }
 }
 
-// refStringFromQriRef takes a qriRef and turns it into a ref string
-export function refStringFromQriRef (qriRef: QriRef): string {
+// refStringFromQriRef takes a qriRef and turns it into a ref string, the optional
+// `useAtSymbol` param, when true, will use the `@` symbol rather than the url safe
+// `/at`
+export function refStringFromQriRef (qriRef: QriRef, useAtSymbol?: boolean): string {
   let route = `${qriRef.username}/${qriRef.name}`
-  if (qriRef.path) route += `/at${qriRef.path}`
+  if (qriRef.path) {
+    if (useAtSymbol) {
+      route += `@${qriRef.path}`
+    } else {
+      route += `/at${qriRef.path}`
+    }
+  }
   return route
 }
 
 // qriRefFromString takes a string and turns it into a qriRef
 // based on two possible formats for the ref strings:
-// [username]/[name]/at/[network]/[path]
+// [username]/[name]@/[network]/[path]
 // [username]/[name]
 // if the string does not follow either strict formatting, we return `undefined`
 export function qriRefFromString (refString: string): QriRef | undefined {
@@ -93,6 +101,10 @@ export function qriRefFromString (refString: string): QriRef | undefined {
   if (parts.length === 2) {
     return { username: parts[0], name: parts[1] }
   }
+  if (refString.includes('@') && parts.length === 4) {
+    return { username: parts[0], name: parts[1].slice(0, parts[1].length - 1), path: `/${parts[2]}/${parts[3]}` }
+  }
+
   if (refString.includes('/at/') && parts.length === 5) {
     return { username: parts[0], name: parts[1], path: `/${parts[3]}/${parts[4]}` }
   }

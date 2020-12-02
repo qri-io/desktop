@@ -1,25 +1,25 @@
 import React from 'react'
-import CommitDiff, { ICommitDiff } from './CommitDiff'
-import StatDiff, { StatDiffRes } from './StatDiff'
+import { IChangeReport } from '../../models/changes'
+import { QriRef } from '../../models/qriRef'
+import CommitDiff from './CommitDiff'
+import StatDiff from './StatDiff'
 
-import StringDiff, { IMetaDiff, IStringDiff, IStructureDiff } from './StringDiff'
+import StringDiff from './StringDiff'
 
-interface IChangeReport {
-  meta?: IMetaDiff
-  structure: IStructureDiff
-  readme?: IStringDiff
-  transform?: IStringDiff
-  viz?: IStringDiff
-  stats: StatDiffRes
-  commit: ICommitDiff
-  name: string
-  username: string
+interface ChangeReportParams {
+  leftRef: QriRef
+  rightRef: QriRef
+  data: IChangeReport
 }
 
-const ChangeReport: React.FC<IChangeReport> = (props) => {
+const ChangeReport: React.FC<ChangeReportParams> = (props) => {
   const {
-    name,
-    username,
+    leftRef,
+    rightRef,
+    data
+  } = props
+
+  const {
     meta,
     structure,
     readme,
@@ -27,20 +27,20 @@ const ChangeReport: React.FC<IChangeReport> = (props) => {
     viz,
     stats,
     commit
-  } = props
+  } = data
 
   const commitDiff = {
     left: {
       ...commit.left,
-      username,
-      name,
+      username: leftRef.username,
+      name: leftRef.name,
       bodySize: structure.left.length,
       bodyRows: structure.left.entries
     },
     right: {
       ...commit.right,
-      username,
-      name,
+      username: rightRef.username,
+      name: rightRef.name,
       bodySize: structure.right.length,
       bodyRows: structure.right.entries
     }

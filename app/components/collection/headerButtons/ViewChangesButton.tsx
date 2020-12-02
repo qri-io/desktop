@@ -7,9 +7,9 @@ import { connectComponentToPropsWithRouter } from '../../../utils/connectCompone
 
 import HeaderColumnButton from '../../chrome/HeaderColumnButton'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { selectChangeReportParams } from '../../../selections'
+import { selectChangeReportRefs } from '../../../selections'
 import { pathToChangeReport } from '../../../paths'
-import { IChangeReportRefs } from '../../../models/changeReport'
+import { IChangeReportRefs } from '../../../models/changes'
 
 interface ViewChangesProps extends RouteProps {
   data?: IChangeReportRefs
@@ -60,7 +60,7 @@ export default connectComponentToPropsWithRouter(
   (state: any, ownProps: ViewChangesProps) => {
     return {
       ...ownProps,
-      data: selectChangeReportParams(state)
+      data: selectChangeReportRefs(state)
     }
   }
 )
