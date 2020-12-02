@@ -15,10 +15,8 @@ import {
   fetchBody,
   fetchCommitBody,
   fetchCommitDataset,
-  fetchCommitStats,
   fetchCommitStatus,
   fetchLog,
-  fetchStats,
   fetchWorkingDataset,
   fetchWorkingStatus,
   fsiWrite
@@ -54,7 +52,6 @@ export function fetchWorkbench (qriRef: QriRef): LaunchedFetchesAction {
       dispatch(resetMutationsStatus())
       dispatch(fetchWorkingDataset(routeUsername, routeName))
       dispatch(fetchWorkingStatus(routeUsername, routeName))
-      dispatch(fetchStats(routeUsername, routeName))
       dispatch(fetchBody(routeUsername, routeName, -1))
       dispatch(setCommitTitle(''))
       dispatch(setCommitMessage(''))
@@ -74,7 +71,6 @@ export function fetchWorkbench (qriRef: QriRef): LaunchedFetchesAction {
          routeName !== versionName ||
          routePath !== versionPath)) {
       dispatch(fetchCommitDataset(routeUsername, routeName, routePath))
-      dispatch(fetchCommitStats(routeUsername, routeName, routePath))
       dispatch(fetchCommitStatus(routeUsername, routeName, routePath))
       dispatch(fetchCommitBody(routeUsername, routeName, routePath, -1))
       return fetching
