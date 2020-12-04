@@ -1,6 +1,7 @@
 import { Dataset } from '../models/dataset'
 import { VersionInfo, StatusInfo, ComponentStatus } from '../models/store'
 import { SearchResult } from '../models/search'
+import { IChangeReport } from '../models/changes'
 
 export function mapDataset (data: Record<string, string>): Dataset {
   return data
@@ -102,4 +103,28 @@ export function mapStatus (data: Array<Record<string, string>>): StatusInfo[] {
       mtime: new Date(d.mtime)
     }
   })
+}
+
+export function mapChanges (data: any): IChangeReport {
+  const leftVersionInfo = {
+    ...data.version_info.left,
+    commitTitle: data.commit.left.title
+  }
+  const rightVersionInfo = {
+    ...data.version_info.right,
+    commitTitle: data.commit.right.title
+  }
+  return {
+    meta: data.meta,
+    structure: data.structure,
+    readme: data.readme,
+    transform: data.transform,
+    viz: data.viz,
+    stats: data.stats,
+    commit: {
+      ...data.version_info,
+      left: leftVersionInfo,
+      right: rightVersionInfo
+    }
+  }
 }

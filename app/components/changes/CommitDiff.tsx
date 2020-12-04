@@ -1,14 +1,15 @@
 import React from 'react'
 
-import { ICommitDiff, ICommitItem } from '../../models/changes'
+import { ICommitDiff } from '../../models/changes'
+import { VersionInfo } from '../../models/store'
 import Commitish from '../chrome/Commitish'
 import CommitDetails from '../CommitDetails'
 
-const CommitItem: React.FC<ICommitItem> = (props) => {
+const CommitItem: React.FC<VersionInfo> = (props) => {
   const {
     path,
-    title,
-    timestamp,
+    commitTitle,
+    commitTime,
     bodySize,
     bodyRows,
     username,
@@ -26,8 +27,8 @@ const CommitItem: React.FC<ICommitItem> = (props) => {
         }}>{username}/{name}</div>
       {path && <Commitish text={path}/>}
       <div><CommitDetails
-        commitTitle={title || ''}
-        commitTime={timestamp}
+        commitTitle={commitTitle || ''}
+        commitTime={commitTime}
         bodyRows={bodyRows}
         bodySize={bodySize}
       />

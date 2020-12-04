@@ -421,42 +421,42 @@ describe('Qri End to End tests', function spec () {
     await atDatasetVersion(0)
   })
 
-  // checkout
-  it('checkout a dataset', async () => {
-    const {
-      atDataset,
-      click,
-      waitForNotExist,
-      takeScreenshot
-    } = utils
+  // // checkout
+  // it('checkout a dataset', async () => {
+  //   const {
+  //     atDataset,
+  //     click,
+  //     waitForNotExist,
+  //     takeScreenshot
+  //   } = utils
 
-    // ensure we at at the correct page
-    await atDataset(username, datasetName)
+  //   // ensure we at at the correct page
+  //   await atDataset(username, datasetName)
 
-    if (takeScreenshots) {
-      await takeScreenshot(artifactPath('dataset-checkout.png'))
-    }
+  //   if (takeScreenshots) {
+  //     await takeScreenshot(artifactPath('dataset-checkout.png'))
+  //   }
 
-    // click #checkout to open checkout modal
-    await click('#checkout')
+  //   // click #checkout to open checkout modal
+  //   await click('#checkout')
 
-    if (takeScreenshots) {
-      await takeScreenshot(artifactPath('checkout-modal.png'))
-    }
+  //   if (takeScreenshots) {
+  //     await takeScreenshot(artifactPath('checkout-modal.png'))
+  //   }
 
-    // mock the dialog
-    await fakeDialog.mock([ { method: 'showOpenDialogSync', value: [backend.dir] } ])
-    // click #chooseCheckoutLocation to open dialog
-    await click('#chooseCheckoutLocation')
-    // click #submit
-    await click('#submit')
-    // expect modal to be gone
-    await waitForNotExist('#checkout-dataset')
+  //   // mock the dialog
+  //   await fakeDialog.mock([ { method: 'showOpenDialogSync', value: [backend.dir] } ])
+  //   // click #chooseCheckoutLocation to open dialog
+  //   await click('#chooseCheckoutLocation')
+  //   // click #submit
+  //   await click('#submit')
+  //   // expect modal to be gone
+  //   await waitForNotExist('#checkout-dataset')
 
-    if (takeScreenshots) {
-      await takeScreenshot(artifactPath('csv-dataset-status.png'))
-    }
-  })
+  //   if (takeScreenshots) {
+  //     await takeScreenshot(artifactPath('csv-dataset-status.png'))
+  //   }
+  // })
 
   // body write & commit
   it('write the body to the filesystem & commit', async () => {

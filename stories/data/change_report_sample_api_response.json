@@ -1,4 +1,29 @@
 {
+  "version_info": {
+    "left": {
+      "bodyFormat": "csv",
+      "bodyRows": 17,
+      "bodySize": 463,
+      "commitTime": "2020-12-04T01:07:55.22457Z",
+      "metaTitle": "test",
+      "name": "test",
+      "path": "/ipfs/QmXxbUaFeRrbYvUpgyGnwenTYELe4ESNq5JYJGc8xrM77W",
+      "username": "ramfox_head"
+    },
+    "right": {
+      "bodyFormat": "csv",
+      "bodyRows": 12,
+      "bodySize": 290,
+      "commitTime": "2020-12-04T01:08:49.36162Z",
+      "metaTitle": "test",
+      "name": "test",
+      "path": "/ipfs/QmURzCMLgsFtQEhJ2QuX2PKY8Zs5bY7j2RWH2uaN9aEzc2",
+      "username": "ramfox_head"
+    },
+    "meta": {
+      "status": "modified"
+    }
+  },
   "commit": {
     "left": {
       "author": {

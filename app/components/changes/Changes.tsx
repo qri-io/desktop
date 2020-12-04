@@ -61,7 +61,7 @@ const ChangesComponent: React.FC<ChangesProps> = (props) => {
     return <ChangesError message={'Error: no change report data found.'} />
   }
 
-  return <div style={{ overflowY: 'auto', height: '100%' }}><ChangeReport data={data} leftRef={left} rightRef={right} /></div>
+  return <div style={{ overflowY: 'auto', height: '100%' }}><ChangeReport {...data} /></div>
 }
 
 export default connectComponentToPropsWithRouter(

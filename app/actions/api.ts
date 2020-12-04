@@ -7,7 +7,8 @@ import {
   mapVersionInfo,
   mapStatus,
   mapBody,
-  mapHistory
+  mapHistory,
+  mapChanges
 } from './mappingFuncs'
 import { SelectedComponent, VersionInfo } from '../models/store'
 import {
@@ -746,7 +747,8 @@ export function fetchChanges (left: QriRef, right: QriRef): ApiActionThunk {
         body: {
           left: refStringFromQriRef(left, true),
           right: refStringFromQriRef(right, true)
-        }
+        },
+        map: mapChanges
       }
     }
     return dispatch(action)

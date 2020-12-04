@@ -15,6 +15,11 @@ export default {
 }
 
 export const changes = () => {
+  const leftCommitTitle = res.commit.left.title
+  const rightCommitTitle = res.commit.right.title
+  res.commit = res.version_info
+  res.commit.left.commitTitle = leftCommitTitle
+  res.commit.right.commitTitle = rightCommitTitle
   return <ChangeReport 
     username='b5' 
     name='world_bank_population'
@@ -23,21 +28,9 @@ export const changes = () => {
 }
 
 export const commitDiff = () => {
-  const left = {
-    username: 'b5',
-    name: 'world_bank_population',
-    bodySize: res.structure.left.length,
-    bodyRows: res.structure.left.entries,
-    ...res.commit.left
-  }
-  const right = {
-    username: 'b5',
-    name: 'world_bank_population',
-    bodySize: res.structure.right.length,
-    bodyRows: res.structure.right.entries,
-    ...res.commit.right
-  }
-  return <CommitDiff left={left} right={right}/>
+  res.version_info.left.commitTitle = res.commit.left.title
+  res.version_info.right.commitTitle = res.commit.right.title
+  return <CommitDiff left={res.version_info.left} right={res.version_info.right}/>
 }
 
 

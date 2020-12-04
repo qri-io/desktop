@@ -16,18 +16,11 @@ export interface IChangeReport {
   viz?: IStringDiff
   stats: IStatDiffRes
   commit: ICommitDiff
-  name: string
-  username: string
-}
-
-export interface ICommitItem extends VersionInfo {
-  title: string
-  timestamp: Date
 }
 
 export interface ICommitDiff {
-  left: ICommitItem
-  right: ICommitItem
+  left: VersionInfo
+  right: VersionInfo
 }
 
 export interface ISummaryStats {
