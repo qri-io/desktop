@@ -2,7 +2,7 @@ import React from 'react'
 
 import { fetchChanges } from '../../actions/api'
 
-import { selectChanges, selectChangesError, selectChangesIsLoading, selectChangesRefsFromLocation } from '../../selections'
+import { selectChanges, selectChangesError, selectChangesIsLoading } from '../../selections'
 
 import { ApiActionThunk } from '../../store/api'
 
@@ -10,48 +10,51 @@ import { IChangeReport } from '../../models/changes'
 import { QriRef } from '../../models/qriRef'
 import Store, { RouteProps } from '../../models/store'
 
-import { pathToCollection } from '../../paths'
 import { connectComponentToPropsWithRouter } from '../../utils/connectComponentToProps'
 import { DISCORD_URL } from '../../constants'
 
 import ChangeReport from './ChangeReport'
-import Spinner from '../chrome/Spinner'
 import ExternalLink from '../ExternalLink'
-import Button from '../chrome/Button'
+import SpinnerWithIcon from '../chrome/SpinnerWithIcon'
 
 interface ChangesProps extends RouteProps {
   fetchChanges: (left: QriRef, right: QriRef) => ApiActionThunk
   loading: boolean
   data?: IChangeReport
   error: string
-  refs: [QriRef, QriRef] | undefined
+
+  // left and right should always be passed in by the parent component
+  left?: QriRef
+  right: QriRef
 }
 
+export const LoadingDatasetChanges: React.FC = () =>
+  <SpinnerWithIcon title='calculating changes...' loading spinner />
+
 const ChangesComponent: React.FC<ChangesProps> = (props) => {
-  if (!props.refs) {
-    return <ChangesError message={'Unable to parse the dataset names'} />
-  }
   const {
-    refs,
+    left,
+    right,
     loading,
     data,
     error,
     fetchChanges
   } = props
 
-  const left = refs[0]
-  const right = refs[1]
-
   React.useEffect(() => {
-    fetchChanges(left, right)
-  }, [left.username, left.name, left.path, right.username, right.name, right.path])
+    if (left) fetchChanges(left, right)
+  }, [left, right.username, right.name, right.path])
+
+  if (loading) {
+    return <LoadingDatasetChanges />
+  }
 
   if (error) {
     return <ChangesError message={error} />
   }
 
-  if (loading) {
-    return <Spinner center />
+  if (!left || !right) {
+    return <ChangesError message={'Unable to load the requested datasets'} />
   }
 
   if (!data) {
@@ -68,8 +71,7 @@ export default connectComponentToPropsWithRouter(
       ...ownProps,
       loading: selectChangesIsLoading(state),
       data: selectChanges(state),
-      error: selectChangesError(state),
-      refs: selectChangesRefsFromLocation(state)
+      error: selectChangesError(state)
     }
   }, {
     fetchChanges
@@ -86,7 +88,6 @@ const ChangesError: React.FC<ChangesErrorProps> = ({ message }) => {
       <div style={{ width: 400, display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', textAlign: 'center' }}>
         <div style={{ fontWeight: 500, marginBottom: 20 }}>{message}</div>
         <div style={{ marginBottom: 20 }}>Reach out to us on <ExternalLink href={DISCORD_URL} >Discord</ExternalLink> for help.</div>
-        <Button color='primary' id='back-to-collection' link={pathToCollection()} text={'Return to the Collection'} />
       </div>
     </div>)
 }

@@ -48,7 +48,7 @@ const ChangeReport: React.FC<ChangeReportParams> = (props) => {
 
   return (
     <div style={{ margin: 20 }}>
-      <h2>Changes</h2>
+      <h2 id='change-report'>Changes</h2>
       <CommitDiff {...commitDiff} />
       {readme && <StringDiff {...readme} name='readme' />}
       {meta && <StringDiff {...meta} name='meta' />}

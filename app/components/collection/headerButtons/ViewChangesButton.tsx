@@ -7,12 +7,13 @@ import { connectComponentToPropsWithRouter } from '../../../utils/connectCompone
 
 import HeaderColumnButton from '../../chrome/HeaderColumnButton'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { selectChangeReportRefs } from '../../../selections'
-import { pathToChangeReport } from '../../../paths'
-import { IChangeReportRefs } from '../../../models/changes'
+import { pathToDatasetChangeReport } from '../../../paths'
+import { QriRef, qriRefFromRoute } from '../../../models/qriRef'
+import { selectChangeReportLeft } from '../../../selections'
 
 interface ViewChangesProps extends RouteProps {
-  data?: IChangeReportRefs
+  qriRef: QriRef
+  showChanges: boolean
   showIcon: boolean
   size: 'sm' | 'md'
 }
@@ -27,13 +28,14 @@ interface ViewChangesProps extends RouteProps {
  */
 export const ViewChangesButtonComponent: React.FunctionComponent<ViewChangesProps> = (props) => {
   const {
-    data,
+    qriRef,
+    showChanges,
     size = 'md',
     showIcon = true,
     history
   } = props
 
-  if (!data) {
+  if (!showChanges || !qriRef.path) {
     return null
   }
 
@@ -50,7 +52,7 @@ export const ViewChangesButtonComponent: React.FunctionComponent<ViewChangesProp
     icon={showIcon && icon}
     size={size}
     onClick={() => {
-      history.push(pathToChangeReport(data.left, data.right))
+      history.push(pathToDatasetChangeReport(qriRef.username, qriRef.name, qriRef.path))
     }}
   />)
 }
@@ -58,9 +60,11 @@ export const ViewChangesButtonComponent: React.FunctionComponent<ViewChangesProp
 export default connectComponentToPropsWithRouter(
   ViewChangesButtonComponent,
   (state: any, ownProps: ViewChangesProps) => {
+    const qriRef = qriRefFromRoute(ownProps)
     return {
       ...ownProps,
-      data: selectChangeReportRefs(state)
+      qriRef,
+      showChanges: !!selectChangeReportLeft(state, qriRef)
     }
   }
 )

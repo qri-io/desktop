@@ -476,507 +476,505 @@ describe('Qri End to End tests', function spec () {
 
     await checkStatus("body", "modified")
 
-    await writeCommitAndSubmit("write-fsi-body", "body", "modified", bodyCommitTitle, bodyCommitMessage, utils, imagesDir)
+    await writeCommitAndSubmit("write-fsi-body", username, datasetName, "body", "modified", bodyCommitTitle, bodyCommitMessage, utils, imagesDir)
   })
 
   // meta write and commit
   it('fsi editing - create a meta & commit', async () => {
     await utils.atDataset(username, datasetName)
-    await editMetaAndCommit('fsi-meta-edit', { meta, commit: metaCommit }, 'added', utils, imagesDir)
+    await editMetaAndCommit('fsi-meta-edit', username, datasetName, { meta, commit: metaCommit }, 'added', utils, imagesDir)
   })
 
   // structure write and commit
   it('fsi editing - edit the structure & commit', async () => {
     await utils.atDataset(username, datasetName)
-    await editCSVStructureAndCommit('fsi-setructure-edit', { structure: csvStructure, commit: structureCommit }, 'modified', utils, imagesDir)
+    await editCSVStructureAndCommit('fsi-setructure-edit', username, datasetName, { structure: csvStructure, commit: structureCommit }, 'modified', utils, imagesDir)
   })
 
-  // rename
-  it('rename a dataset', async () => {
-    const {
-      click,
-      waitForExist,
-      waitForNotExist,
-      atDataset,
-      setValue,
-      doesNotExist,
-      sendKeys,
-      takeScreenshot,
-      isEnabled
-    } = utils
-
-    await atDataset(username, datasetName)
-
-    // open navbar hamburger
-    await click('#navbar-hamburger')
-    // open rename modal
-    await click('#rename')
-    // make sure modal exists
-    await waitForExist('#rename-dataset')
-    // the input exists
-    await waitForExist('#dataset-name-input')
-    // setValue as a bad name
-    await setValue('#dataset-name-input', '9test')
-    // class should be error
-    await waitForExist('#dataset-name-input.invalid')
-    // setValue as good name
-    await setValue('#dataset-name-input', datasetRename)
-
-    if (takeScreenshots) {
-      await takeScreenshot(artifactPath('csv-datase-rename.png'))
-    }
-
-    // get correct class
-    await doesNotExist('#dataset-name-input.invalid')
-    await sendKeys('#dataset-name-input', "Enter")
-    expect(await isEnabled('#submit')).toBe(true)
-
-    await click('#submit')
-    await waitForNotExist('#rename-dataset')
-  })
-
-  it('export CSV version', async () => {
-    const { click, delay } = utils
-
-    const savePath = path.join(backend.dir, 'body.csv')
-    await fakeDialog.mock([ { method: 'showSaveDialogSync', value: savePath } ])
-
-    await click('#export-button')
-    await click('#submit')
-    await delay(500) // wait to ensure file has time to write
-    expect(fs.existsSync(savePath)).toEqual(true)
-  })
-
-  // switch between commits
-  it('switch between commits', async () => {
-    const {
-      click,
-      atDataset,
-      expectTextToContain,
-      waitForExist,
-      takeScreenshot
-    } = utils
-
-    // ensure we have redirected to the dataset page
-    await atDataset(username, datasetRename)
-
-    takeScreenshot(artifactPath('fsi-checking-commits.png'))
-
-    // click the original commit and check commit title
-    await click('#HEAD-3', artifactPath('switch-between-commits-click-head-3.png'))
-    await click('#commit-status')
-    await waitForExist("#history-commit")
-
-    await expectTextToContain('#history-commit', createdCommitTitle, artifactPath('fsi-editing-commit-title-created-dataset.png'))
-
-    // click the third commit and check commit title
-    await click('#HEAD-2')
-    await click('#commit-status')
-    await waitForExist("#history-commit")
-    await expectTextToContain('#history-commit', bodyCommitTitle, artifactPath('fsi-editing-commit-title-body-commit.png'))
-
-    // click the second commit and check commit title
-    await click('#HEAD-1')
-    await click('#commit-status')
-    await waitForExist("#history-commit")
-    await expectTextToContain('#history-commit', metaCommit.title, artifactPath('fsi-editing-commit-title-meta-commit.png'))
-
-    // click the most recent commit and check commit title
-    await click('#HEAD-0')
-    await click('#commit-status')
-    await waitForExist("#history-commit")
-    await expectTextToContain('#history-commit', structureCommit.title, artifactPath('fsi-editing-commit-title-structure-commit.png'))
-  })
-
-  it('create another CSV dataset from a data source', async () => {
-    const {
-      atLocation,
-      atDataset,
-      click,
-      checkStatus,
-      atDatasetVersion,
-      delay,
-      takeScreenshot,
-      waitForExist
-    } = utils
-
-    await click('#collection')
-    // make sure we are on the collection page
-    await atLocation('#/collection')
-
-    // click new-dataset to open up the Create Dataset modal
-    await click('#new-dataset')
-
-    // mock the dialog and create a temp csv file
-    const csvPath = path.join(backend.dir, filename)
-    fs.writeFileSync(csvPath, earthquakeDataset)
-    await waitForExist('#chooseBodyFile-input')
-    await app.client.chooseFile(`#chooseBodyFile-input`, csvPath)
-    await delay(100)
-
-    // submit to create a new dataset
-    await click('#submit')
-
-    // ensure we are redirected to the dataset
-    await atDataset(username, datasetName)
-
-    // ensure we are on the latest commit
-    await atDatasetVersion(0)
-
-    if (takeScreenshots) {
-      await takeScreenshot(artifactPath('csv-dataset-history.png'))
-    }
-
-    // ensure the body and structure indicate that they were 'added'
-    await checkStatus('body', 'added')
-    await checkStatus('meta', 'added')
-    await checkStatus('structure', 'added')
-  })
-
-  // meta write and commit
-  it('in app editing - create a meta & commit', async () => {
-    await utils.atDataset(username, datasetName)
-    await editMetaAndCommit('in-app-meta-edit', { meta, commit: metaCommit }, 'added', utils, imagesDir)
-  })
-
-  // structure write and commit
-  it('in app editing - edit the structure & commit', async () => {
-    await utils.atDataset(username, datasetName)
-    await editCSVStructureAndCommit('in-app-structure-edit', { structure: csvStructure, commit: structureCommit }, 'modified', utils, imagesDir)
-  })
-
-  // switch between commits
-  it('in app editing - switch between commits', async () => {
-    const {
-      delay,
-      click,
-      atDataset,
-      waitForExist,
-      expectTextToContain,
-      takeScreenshot
-    } = utils
-
-    // make sure we are on the dataset page, looking at history
-    await atDataset(username, datasetName)
-
-    // to reduce loading time, click on the meta component
-    // otherwise, we would be loading the body on each click
-    await click('#commit-status')
-    await delay(500)
-    takeScreenshot(artifactPath('in-app-checking-commits.png'))
-
-    // click the third commit and check commit title
-    await click('#HEAD-2', artifactPath('in-app-editing-switch-between-commits-click-head-3.png'))
-    await click('#commit-status')
-    await waitForExist("#history-commit")
-    await expectTextToContain('#history-commit', createdCommitTitle, artifactPath('in-app-editing-commit-title-created-dataset.png'))
-
-    // click the third commit and check commit title
-    await click('#HEAD-1')
-    await click('#commit-status')
-    await waitForExist("#history-commit")
-    await expectTextToContain('#history-commit', metaCommit.title, artifactPath('in-app-editing-commit-title-meta-commit.png'))
-
-    // click the third commit and check commit title
-    await click('#HEAD-0')
-    await click('#commit-status')
-    await waitForExist("#history-commit")
-    await expectTextToContain('#history-commit', structureCommit.title, artifactPath('in-app-editing-commit-title-structure-commit.png'))
-  })
-
-  it('Search: search for a foreign dataset, navigate it, clone it', async () => {
-    const {
-      atLocation,
-      atDataset,
-      click,
-      expectTextToContain,
-      waitForExist,
-      atDatasetVersion,
-      sendKeys,
-      setValue,
-      takeScreenshot
-    } = utils
-    // make sure we are on the network page
-    await click('#network')
-    await atLocation('#/network', artifactPath('search_for_foreign_dataset-at-location-network.png'))
-
-    // send the "Enter" key to the search bar to activate the search modal
-    // await waitForExist('#search-box')
-    await click('#search-box')
-    await sendKeys('#search-box', "Enter")
-    await waitForExist('#search')
-
-    // search for registryDatasetName
-    await setValue('#modal-search-box', registryDatasetName)
-    await sendKeys('#modal-search-box', "Enter")
-
-    // wait for results to populate
-    await waitForExist('#result-0')
-
-    if (takeScreenshots) {
-      await takeScreenshot(artifactPath('search.png'))
-    }
-
-    // check that the results are what we expect them to be
-    await expectTextToContain("#result-0 .header a", registryDatasetName)
-
-    // click on #result-0 & get sent to the network preview page
-    await click('#result-0 .header a')
-
-    // check location
-    await atLocation('#/network')
-
-    if (takeScreenshots) {
-      await takeScreenshot(artifactPath('network-preview.png'))
-    }
-
-    // clone the dataset by clicking on the action button
-    await click('#sidebar-action')
-    await atLocation('#/collection')
-    await atDataset('', registryDatasetName)
-
-    await atDatasetVersion(0)
-
-    // the dataset should be part of the collection
-    await click('#collection')
-    await atLocation('#/collection')
-
-    // check that we have the expected number of datasets
-    await expectTextToContain('#all-datasets-button', "4")
-
-    if (takeScreenshots) {
-      await takeScreenshot(artifactPath('collection-with-datasets.png'), 2000)
-    }
-  })
-
-  it(`clicking 'Network' tab takes you to the feed, navigate to network preview, new commits are foreign`, async () => {
-    // ask the temp registry to create another commit on the dataset
-    http.get(registryLoc + registryNewCommitAction, (res: http.IncomingMessage) => {
-      expect(res.statusCode).toBe(200)
-    })
-
-    const {
-      click,
-      atLocation,
-      waitForExist,
-      expectTextToContain,
-      waitForNotExist
-    } = utils
-
-    // click the Network tab
-    await click('#network')
-    await atLocation('#/network', artifactPath('network_tab_at_feed-at_location_network.png'))
-
-    // there should only be one dataset item in the list
-    const recentDatasets = await app.client.$$('.recent-datasets-item')
-    expect(recentDatasets.length).toBe(1)
-
-    // ensure we are inspecting the correct dataset & navigate to the preview page
-    await expectTextToContain('#recent-0 .header a', registryDatasetName)
-    await click('#recent-0 .header a')
-
-    await waitForExist('.history-list-item')
-    // there should be two history items
-    const historyItems = await app.client.$$('.history-list-item')
-    expect(historyItems.length).toBe(2)
-
-    // since this dataset has already been cloned, expect NO sidebar action button
-    await waitForNotExist('#sidebar-action')
-  })
-
-  it('publishing a dataset adds a dataset to the network feed, unpublishing removes it', async () => {
-    const {
-      click,
-      atLocation,
-      atDataset,
-      waitForExist,
-      takeScreenshot
-    } = utils
-
-    await click('#collection')
-    await atLocation('#/collection')
-    await click(`#row-${username}-${datasetRename}`)
-
-    // check location
-    await atDataset(username, datasetRename)
-
-    // click publish
-    await click('#publish-button')
-    await waitForExist('#submit')
-
-    if (takeScreenshots) {
-      await takeScreenshot(artifactPath('publish.png'))
-    }
-
-    await click('#submit')
-
-    // publish button should change to '#view-in-cloud' button
-    await waitForExist('#view-in-cloud')
-
-    // naviate to feed
-    await click('#network')
-    await atLocation('#/network')
-
-    // should be two recent datasets, dataset username/datasetName should exist
-    let recentDatasets = await app.client.$$('.recent-datasets-item')
-    expect(recentDatasets.length).toBe(2)
-
-    if (takeScreenshots) {
-      await takeScreenshot(artifactPath('network-with-published-dataset.png'), 1000)
-    }
-
-    // ensure the correct dataset exists
-    // Shift+CmdOrCtrl+P
-    await waitForExist(`[data-ref="${username}/${datasetRename}"]`)
-    await click(`[data-ref="${username}/${datasetRename}"] .header a`)
-
-    if (takeScreenshots) {
-      await takeScreenshot(artifactPath('network-preview-with-local.png'))
-    }
-
-    // head back to the dataset & unpublish
-    await click('#collection', artifactPath('network-click-collection.png'))
-    await atLocation('#/collection')
-    await click(`#row-${username}-${datasetRename}`)
-    await atDataset(username, datasetRename, artifactPath('network-at-location-navigate-to-dataset.png'))
-
-    // click the hamburger & click the unpublish action
-    await click('#navbar-hamburger', artifactPath('network-click-hamburger.png'))
-
-    if (takeScreenshots) {
-      await takeScreenshot(artifactPath('unpublish-hamburger.png'))
-    }
-
-    await click('#unpublish-button', artifactPath('network-click-unpublish-action.png'))
-    await click('#submit', artifactPath('network-click-submit.png'))
-
-    // publish button should exist again
-    await waitForExist('#publish-button', artifactPath('network-after-unpublish-publish-button-should-exit.png'))
-
-    // naviate to feed
-    await click('#network')
-    await atLocation('#/network')
-
-    // should be two recent datasets, dataset username/datasetName should exist
-    recentDatasets = await app.client.$$('.recent-datasets-item')
-    expect(recentDatasets.length).toBe(1)
-  })
-
-  it('remove a dataset from the dataset page', async () => {
-    const {
-      click,
-      atDataset,
-      atLocation,
-      waitForExist,
-      waitForNotExist,
-      doesNotExist
-    } = utils
-
-    // on dataset
-    await click('#collection')
-    // click on dataset
-    await click(`#row-${username}-${datasetName}`)
-    await atDataset(username, datasetName)
-
-    // open navbar hamburger
-    await click('#navbar-hamburger')
-    // click remove
-    await click('#remove-button')
-    // wait for modal to load
-    await waitForExist('#remove-dataset')
-    // remove the dataset
-    await click('#submit')
-    // wait for modal to go away
-    await waitForNotExist('#remove-dataset')
-
-    // end up on collection page
-    await atLocation('#/collection')
-    // no datasets
-    await doesNotExist(`#row-${username}-${datasetName}`)
-  })
-
-  it('removes multiple datasets from Collections page via bulk remove action', async () => {
-    const {
-      atLocation,
-      click,
-      createDatasetForUser,
-      expectTextToBe,
-      delay,
-      waitForExist
-    } = utils
-
-    const jsonFilename0 = 'dataset_to_be_removed_0.json'
-    const jsonDatasetName0 = 'dataset_to_be_removed_0'
-    const jsonFilename1 = 'dataset_to_be_removed_1.json'
-    const jsonDatasetName1 = 'dataset_to_be_removed_1'
-
-    await delay(1000)
-    await createDatasetForUser(jsonFilename0, jsonDatasetName0, username, backend)
-    await createDatasetForUser(jsonFilename1, jsonDatasetName1, username, backend)
-
-    // make sure we are on the collection page
-    await click('#collection')
-    await atLocation('#/collection')
-
-    // select both newly created datasets and click the remove button
-    await click(`input[name='select-row-${username}-${jsonDatasetName0}']`)
-    await click(`input[name='select-row-${username}-${jsonDatasetName1}']`)
-    await click("#button-bulk-remove")
-
-    // expect bulk remove modal to appear
-    await waitForExist("#remove-dataset")
-
-    // click remove button
-    await click("#submit")
-
-    // ensure both datasets are removed from collection page
-    await expectTextToBe(".active .count-indicator", "3")
-  })
-
-  it('removes a single dataset from Collections page via bulk remove action', async () => {
-    const {
-      atLocation,
-      click,
-      createDatasetForUser,
-      expectTextToBe,
-      delay,
-      waitForExist
-    } = utils
-
-    const jsonFilename = 'dataset_to_be_removed.json'
-    const jsonDatasetName = 'dataset_to_be_removed'
-
-    await delay(1000)
-    await createDatasetForUser(jsonFilename, jsonDatasetName, username, backend)
-
-    // make sure we are on the collection page
-    await click('#collection')
-    await atLocation('#/collection')
-
-    // select newly created dataset and click the remove button
-    await click(`input[name='select-row-${username}-${jsonDatasetName}']`)
-    await click("#button-bulk-remove")
-
-    // expect bulk remove modal to appear
-    await waitForExist("#remove-dataset")
-
-    // click remove button
-    await click("#submit")
-
-    // ensure both datasets are removed from collection page
-    await expectTextToBe(".active .count-indicator", "3")
-  })
+  // // rename
+  // it('rename a dataset', async () => {
+  //   const {
+  //     click,
+  //     waitForExist,
+  //     waitForNotExist,
+  //     atDataset,
+  //     setValue,
+  //     doesNotExist,
+  //     sendKeys,
+  //     takeScreenshot,
+  //     isEnabled
+  //   } = utils
+
+  //   await atDataset(username, datasetName)
+
+  //   // open navbar hamburger
+  //   await click('#navbar-hamburger')
+  //   // open rename modal
+  //   await click('#rename')
+  //   // make sure modal exists
+  //   await waitForExist('#rename-dataset')
+  //   // the input exists
+  //   await waitForExist('#dataset-name-input')
+  //   // setValue as a bad name
+  //   await setValue('#dataset-name-input', '9test')
+  //   // class should be error
+  //   await waitForExist('#dataset-name-input.invalid')
+  //   // setValue as good name
+  //   await setValue('#dataset-name-input', datasetRename)
+
+  //   if (takeScreenshots) {
+  //     await takeScreenshot(artifactPath('csv-datase-rename.png'))
+  //   }
+
+  //   // get correct class
+  //   await doesNotExist('#dataset-name-input.invalid')
+  //   await sendKeys('#dataset-name-input', "Enter")
+  //   expect(await isEnabled('#submit')).toBe(true)
+
+  //   await click('#submit')
+  //   await waitForNotExist('#rename-dataset')
+  // })
+
+  // it('export CSV version', async () => {
+  //   const { click, delay } = utils
+
+  //   const savePath = path.join(backend.dir, 'body.csv')
+  //   await fakeDialog.mock([ { method: 'showSaveDialogSync', value: savePath } ])
+
+  //   await click('#export-button')
+  //   await click('#submit')
+  //   await delay(500) // wait to ensure file has time to write
+  //   expect(fs.existsSync(savePath)).toEqual(true)
+  // })
+
+  // // switch between commits
+  // it('switch between commits', async () => {
+  //   const {
+  //     click,
+  //     atDataset,
+  //     expectTextToContain,
+  //     waitForExist,
+  //     takeScreenshot
+  //   } = utils
+
+  //   // ensure we have redirected to the dataset page
+  //   await atDataset(username, datasetRename)
+
+  //   takeScreenshot(artifactPath('fsi-checking-commits.png'))
+
+  //   // click the original commit and check commit title
+  //   await click('#HEAD-3', artifactPath('switch-between-commits-click-head-3.png'))
+  //   await click('#commit-status')
+  //   await waitForExist("#history-commit")
+
+  //   await expectTextToContain('#history-commit', createdCommitTitle, artifactPath('fsi-editing-commit-title-created-dataset.png'))
+
+  //   // click the third commit and check commit title
+  //   await click('#HEAD-2')
+  //   await click('#commit-status')
+  //   await waitForExist("#history-commit")
+  //   await expectTextToContain('#history-commit', bodyCommitTitle, artifactPath('fsi-editing-commit-title-body-commit.png'))
+
+  //   // click the second commit and check commit title
+  //   await click('#HEAD-1')
+  //   await click('#commit-status')
+  //   await waitForExist("#history-commit")
+  //   await expectTextToContain('#history-commit', metaCommit.title, artifactPath('fsi-editing-commit-title-meta-commit.png'))
+
+  //   // click the most recent commit and check commit title
+  //   await click('#HEAD-0')
+  //   await click('#commit-status')
+  //   await waitForExist("#history-commit")
+  //   await expectTextToContain('#history-commit', structureCommit.title, artifactPath('fsi-editing-commit-title-structure-commit.png'))
+  // })
+
+  // it('create another CSV dataset from a data source', async () => {
+  //   const {
+  //     atLocation,
+  //     atDataset,
+  //     click,
+  //     checkStatus,
+  //     atDatasetVersion,
+  //     delay,
+  //     takeScreenshot,
+  //     waitForExist
+  //   } = utils
+
+  //   await click('#collection')
+  //   // make sure we are on the collection page
+  //   await atLocation('#/collection')
+
+  //   // click new-dataset to open up the Create Dataset modal
+  //   await click('#new-dataset')
+
+  //   // mock the dialog and create a temp csv file
+  //   const csvPath = path.join(backend.dir, filename)
+  //   fs.writeFileSync(csvPath, earthquakeDataset)
+  //   await waitForExist('#chooseBodyFile-input')
+  //   await app.client.chooseFile(`#chooseBodyFile-input`, csvPath)
+  //   await delay(100)
+
+  //   // submit to create a new dataset
+  //   await click('#submit')
+
+  //   // ensure we are redirected to the dataset
+  //   await atDataset(username, datasetName)
+
+  //   // ensure we are on the latest commit
+  //   await atDatasetVersion(0)
+
+  //   if (takeScreenshots) {
+  //     await takeScreenshot(artifactPath('csv-dataset-history.png'))
+  //   }
+
+  //   // ensure the body and structure indicate that they were 'added'
+  //   await checkStatus('body', 'added')
+  //   await checkStatus('meta', 'added')
+  //   await checkStatus('structure', 'added')
+  // })
+
+  // // meta write and commit
+  // it('in app editing - create a meta & commit', async () => {
+  //   await utils.atDataset(username, datasetName)
+  //   await editMetaAndCommit('in-app-meta-edit', username, datasetName, { meta, commit: metaCommit }, 'added', utils, imagesDir)
+  // })
+
+  // // structure write and commit
+  // it('in app editing - edit the structure & commit', async () => {
+  //   await utils.atDataset(username, datasetName)
+  //   await editCSVStructureAndCommit('in-app-structure-edit', username, datasetName, { structure: csvStructure, commit: structureCommit }, 'modified', utils, imagesDir)
+  // })
+
+  // // switch between commits
+  // it('in app editing - switch between commits', async () => {
+  //   const {
+  //     delay,
+  //     click,
+  //     atDataset,
+  //     waitForExist,
+  //     expectTextToContain,
+  //     takeScreenshot
+  //   } = utils
+
+  //   // make sure we are on the dataset page, looking at history
+  //   await atDataset(username, datasetName)
+
+  //   // to reduce loading time, click on the meta component
+  //   // otherwise, we would be loading the body on each click
+  //   await click('#commit-status')
+  //   await delay(500)
+  //   takeScreenshot(artifactPath('in-app-checking-commits.png'))
+
+  //   // click the third commit and check commit title
+  //   await click('#HEAD-2', artifactPath('in-app-editing-switch-between-commits-click-head-3.png'))
+  //   await click('#commit-status')
+  //   await waitForExist("#history-commit")
+  //   await expectTextToContain('#history-commit', createdCommitTitle, artifactPath('in-app-editing-commit-title-created-dataset.png'))
+
+  //   // click the third commit and check commit title
+  //   await click('#HEAD-1')
+  //   await click('#commit-status')
+  //   await waitForExist("#history-commit")
+  //   await expectTextToContain('#history-commit', metaCommit.title, artifactPath('in-app-editing-commit-title-meta-commit.png'))
+
+  //   // click the third commit and check commit title
+  //   await click('#HEAD-0')
+  //   await click('#commit-status')
+  //   await waitForExist("#history-commit")
+  //   await expectTextToContain('#history-commit', structureCommit.title, artifactPath('in-app-editing-commit-title-structure-commit.png'))
+  // })
+
+  // it('Search: search for a foreign dataset, navigate it, clone it', async () => {
+  //   const {
+  //     atLocation,
+  //     atDataset,
+  //     click,
+  //     expectTextToContain,
+  //     waitForExist,
+  //     atDatasetVersion,
+  //     sendKeys,
+  //     setValue,
+  //     takeScreenshot
+  //   } = utils
+  //   // make sure we are on the network page
+  //   await click('#network')
+  //   await atLocation('#/network', artifactPath('search_for_foreign_dataset-at-location-network.png'))
+
+  //   // send the "Enter" key to the search bar to activate the search modal
+  //   // await waitForExist('#search-box')
+  //   await click('#search-box')
+  //   await sendKeys('#search-box', "Enter")
+  //   await waitForExist('#search')
+
+  //   // search for registryDatasetName
+  //   await setValue('#modal-search-box', registryDatasetName)
+  //   await sendKeys('#modal-search-box', "Enter")
+
+  //   // wait for results to populate
+  //   await waitForExist('#result-0')
+
+  //   if (takeScreenshots) {
+  //     await takeScreenshot(artifactPath('search.png'))
+  //   }
+
+  //   // check that the results are what we expect them to be
+  //   await expectTextToContain("#result-0 .header a", registryDatasetName)
+
+  //   // click on #result-0 & get sent to the network preview page
+  //   await click('#result-0 .header a')
+
+  //   // check location
+  //   await atLocation('#/network')
+
+  //   if (takeScreenshots) {
+  //     await takeScreenshot(artifactPath('network-preview.png'))
+  //   }
+
+  //   // clone the dataset by clicking on the action button
+  //   await click('#sidebar-action')
+  //   await atLocation('#/collection')
+  //   await atDataset('', registryDatasetName)
+
+  //   await atDatasetVersion(0)
+
+  //   // the dataset should be part of the collection
+  //   await click('#collection')
+  //   await atLocation('#/collection')
+
+  //   // check that we have the expected number of datasets
+  //   await expectTextToContain('#all-datasets-button', "4")
+
+  //   if (takeScreenshots) {
+  //     await takeScreenshot(artifactPath('collection-with-datasets.png'), 2000)
+  //   }
+  // })
+
+  // it(`clicking 'Network' tab takes you to the feed, navigate to network preview, new commits are foreign`, async () => {
+  //   // ask the temp registry to create another commit on the dataset
+  //   http.get(registryLoc + registryNewCommitAction, (res: http.IncomingMessage) => {
+  //     expect(res.statusCode).toBe(200)
+  //   })
+
+  //   const {
+  //     click,
+  //     atLocation,
+  //     waitForExist,
+  //     expectTextToContain,
+  //     waitForNotExist
+  //   } = utils
+
+  //   // click the Network tab
+  //   await click('#network')
+  //   await atLocation('#/network', artifactPath('network_tab_at_feed-at_location_network.png'))
+
+  //   // there should only be one dataset item in the list
+  //   const recentDatasets = await app.client.$$('.recent-datasets-item')
+  //   expect(recentDatasets.length).toBe(1)
+
+  //   // ensure we are inspecting the correct dataset & navigate to the preview page
+  //   await expectTextToContain('#recent-0 .header a', registryDatasetName)
+  //   await click('#recent-0 .header a')
+
+  //   await waitForExist('.history-list-item')
+  //   // there should be two history items
+  //   const historyItems = await app.client.$$('.history-list-item')
+  //   expect(historyItems.length).toBe(2)
+
+  //   // since this dataset has already been cloned, expect NO sidebar action button
+  //   await waitForNotExist('#sidebar-action')
+  // })
+
+  // it('publishing a dataset adds a dataset to the network feed, unpublishing removes it', async () => {
+  //   const {
+  //     click,
+  //     atLocation,
+  //     atDataset,
+  //     waitForExist,
+  //     takeScreenshot
+  //   } = utils
+
+  //   await click('#collection')
+  //   await atLocation('#/collection')
+  //   await click(`#row-${username}-${datasetRename}`)
+
+  //   // check location
+  //   await atDataset(username, datasetRename)
+
+  //   // click publish
+  //   await click('#publish-button')
+  //   await waitForExist('#submit')
+
+  //   if (takeScreenshots) {
+  //     await takeScreenshot(artifactPath('publish.png'))
+  //   }
+
+  //   await click('#submit')
+
+  //   // publish button should change to '#view-in-cloud' button
+  //   await waitForExist('#view-in-cloud')
+
+  //   // naviate to feed
+  //   await click('#network')
+  //   await atLocation('#/network')
+
+  //   // should be two recent datasets, dataset username/datasetName should exist
+  //   let recentDatasets = await app.client.$$('.recent-datasets-item')
+  //   expect(recentDatasets.length).toBe(2)
+
+  //   if (takeScreenshots) {
+  //     await takeScreenshot(artifactPath('network-with-published-dataset.png'), 1000)
+  //   }
+
+  //   // ensure the correct dataset exists
+  //   // Shift+CmdOrCtrl+P
+  //   await waitForExist(`[data-ref="${username}/${datasetRename}"]`)
+  //   await click(`[data-ref="${username}/${datasetRename}"] .header a`)
+
+  //   if (takeScreenshots) {
+  //     await takeScreenshot(artifactPath('network-preview-with-local.png'))
+  //   }
+
+  //   // head back to the dataset & unpublish
+  //   await click('#collection', artifactPath('network-click-collection.png'))
+  //   await atLocation('#/collection')
+  //   await click(`#row-${username}-${datasetRename}`)
+  //   await atDataset(username, datasetRename, artifactPath('network-at-location-navigate-to-dataset.png'))
+
+  //   // click the hamburger & click the unpublish action
+  //   await click('#navbar-hamburger', artifactPath('network-click-hamburger.png'))
+
+  //   if (takeScreenshots) {
+  //     await takeScreenshot(artifactPath('unpublish-hamburger.png'))
+  //   }
+
+  //   await click('#unpublish-button', artifactPath('network-click-unpublish-action.png'))
+  //   await click('#submit', artifactPath('network-click-submit.png'))
+
+  //   // publish button should exist again
+  //   await waitForExist('#publish-button', artifactPath('network-after-unpublish-publish-button-should-exit.png'))
+
+  //   // naviate to feed
+  //   await click('#network')
+  //   await atLocation('#/network')
+
+  //   // should be two recent datasets, dataset username/datasetName should exist
+  //   recentDatasets = await app.client.$$('.recent-datasets-item')
+  //   expect(recentDatasets.length).toBe(1)
+  // })
+
+  // it('remove a dataset from the dataset page', async () => {
+  //   const {
+  //     click,
+  //     atDataset,
+  //     atLocation,
+  //     waitForExist,
+  //     waitForNotExist,
+  //     doesNotExist
+  //   } = utils
+
+  //   // on dataset
+  //   await click('#collection')
+  //   // click on dataset
+  //   await click(`#row-${username}-${datasetName}`)
+  //   await atDataset(username, datasetName)
+
+  //   // open navbar hamburger
+  //   await click('#navbar-hamburger')
+  //   // click remove
+  //   await click('#remove-button')
+  //   // wait for modal to load
+  //   await waitForExist('#remove-dataset')
+  //   // remove the dataset
+  //   await click('#submit')
+  //   // wait for modal to go away
+  //   await waitForNotExist('#remove-dataset')
+
+  //   // end up on collection page
+  //   await atLocation('#/collection')
+  //   // no datasets
+  //   await doesNotExist(`#row-${username}-${datasetName}`)
+  // })
+
+  // it('removes multiple datasets from Collections page via bulk remove action', async () => {
+  //   const {
+  //     atLocation,
+  //     click,
+  //     createDatasetForUser,
+  //     expectTextToBe,
+  //     delay,
+  //     waitForExist
+  //   } = utils
+
+  //   const jsonFilename0 = 'dataset_to_be_removed_0.json'
+  //   const jsonDatasetName0 = 'dataset_to_be_removed_0'
+  //   const jsonFilename1 = 'dataset_to_be_removed_1.json'
+  //   const jsonDatasetName1 = 'dataset_to_be_removed_1'
+
+  //   await delay(1000)
+  //   await createDatasetForUser(jsonFilename0, jsonDatasetName0, username, backend)
+  //   await createDatasetForUser(jsonFilename1, jsonDatasetName1, username, backend)
+
+  //   // make sure we are on the collection page
+  //   await click('#collection')
+  //   await atLocation('#/collection')
+
+  //   // select both newly created datasets and click the remove button
+  //   await click(`input[name='select-row-${username}-${jsonDatasetName0}']`)
+  //   await click(`input[name='select-row-${username}-${jsonDatasetName1}']`)
+  //   await click("#button-bulk-remove")
+
+  //   // expect bulk remove modal to appear
+  //   await waitForExist("#remove-dataset")
+
+  //   // click remove button
+  //   await click("#submit")
+
+  //   // ensure both datasets are removed from collection page
+  //   await expectTextToBe(".active .count-indicator", "3")
+  // })
+
+  // it('removes a single dataset from Collections page via bulk remove action', async () => {
+  //   const {
+  //     atLocation,
+  //     click,
+  //     createDatasetForUser,
+  //     expectTextToBe,
+  //     delay,
+  //     waitForExist
+  //   } = utils
+
+  //   const jsonFilename = 'dataset_to_be_removed.json'
+  //   const jsonDatasetName = 'dataset_to_be_removed'
+
+  //   await delay(1000)
+  //   await createDatasetForUser(jsonFilename, jsonDatasetName, username, backend)
+
+  //   // make sure we are on the collection page
+  //   await click('#collection')
+  //   await atLocation('#/collection')
+
+  //   // select newly created dataset and click the remove button
+  //   await click(`input[name='select-row-${username}-${jsonDatasetName}']`)
+  //   await click("#button-bulk-remove")
+
+  //   // expect bulk remove modal to appear
+  //   await waitForExist("#remove-dataset")
+
+  //   // click remove button
+  //   await click("#submit")
+
+  //   // ensure both datasets are removed from collection page
+  //   await expectTextToBe(".active .count-indicator", "3")
+  // })
 })
 
-async function writeCommitAndSubmit (uniqueName: string, component: string, status: 'added' | 'modified' | 'removed', commitTitle: string, commitMessage: string | undefined, utils: E2ETestUtils, imagesDir: string) {
+async function writeCommitAndSubmit (uniqueName: string, username: string, datasetName: string, component: string, status: 'added' | 'modified' | 'removed', commitTitle: string, commitMessage: string | undefined, utils: E2ETestUtils, imagesDir: string, firstCommit: boolean = false) {
   // remove any illegal characters
   const name = uniqueName.replace(/([^a-z0-9]+)/gi, '-')
 
   const {
     click,
-    atLocation,
     waitForExist,
-    delay,
     setValue,
     takeScreenshot,
     checkStatus,
@@ -1000,13 +998,11 @@ async function writeCommitAndSubmit (uniqueName: string, component: string, stat
   }
   // submit
   await click('#submit', artifactPathFromDir(imagesDir, `${name}-commit-click-submit.png`))
-  await delay(200)
-  await atLocation('/collection/changes')
 
-  // click on the "right" to get back to the
-  await click('#right')
-  await delay(200)
-
+  if (!firstCommit) {
+    await waitForExist('#change-report')
+    await click('#HEAD-0')
+  }
   await atDatasetVersion(0, artifactPathFromDir(imagesDir, `${name}-commit-on-history-tab.png`))
   // check component status
   await checkStatus(component, status, artifactPathFromDir(imagesDir, `${name}-commit-check-status-${component}-${status}.png`))
@@ -1019,7 +1015,7 @@ async function writeCommitAndSubmit (uniqueName: string, component: string, stat
   }
 }
 
-async function editMetaAndCommit (uniqueName: string, dataset: Dataset, status: 'added' | 'modified' | 'removed', utils: E2ETestUtils, imagesDir: string) {
+async function editMetaAndCommit (uniqueName: string, username: string, datasetName: string, dataset: Dataset, status: 'added' | 'modified' | 'removed', utils: E2ETestUtils, imagesDir: string) {
   const name = uniqueName.replace(/([^a-z0-9]+)/gi, '-')
   const {
     delay,
@@ -1204,7 +1200,7 @@ async function editMetaAndCommit (uniqueName: string, dataset: Dataset, status: 
   }
 
   // commit!
-  await writeCommitAndSubmit('fsi-meta-edit', 'meta', 'added', commit.title, commit.message, utils, imagesDir)
+  await writeCommitAndSubmit('fsi-meta-edit', username, datasetName, 'meta', 'added', commit.title, commit.message, utils, imagesDir)
 
   // navigate to the meta component
   await click(`#meta-status`, artifactPathFromDir(imagesDir, `${name}-commit-click-meta-status.png`))
@@ -1240,7 +1236,7 @@ async function editMetaAndCommit (uniqueName: string, dataset: Dataset, status: 
   if (meta.identifier) await expectTextToBe('#meta-identifier', meta.identifier)
 }
 
-async function editCSVStructureAndCommit (uniqueName: string, dataset: Dataset, status: 'added' | 'modified' | 'removed', utils: E2ETestUtils, imagesDir: string) {
+async function editCSVStructureAndCommit (uniqueName: string, username: string, datasetName: string, dataset: Dataset, status: 'added' | 'modified' | 'removed', utils: E2ETestUtils, imagesDir: string) {
   const name = uniqueName.replace(/([^a-z0-9]+)/gi, '-')
   const {
     isChecked,
@@ -1317,7 +1313,7 @@ async function editCSVStructureAndCommit (uniqueName: string, dataset: Dataset, 
   // check that the status dot is correct
   await checkStatus('structure', status, artifactPathFromDir(imagesDir, `${name}-check-status-${status}.png`))
 
-  await writeCommitAndSubmit(name, 'structure', 'modified', commit.title, commit.message, utils, imagesDir)
+  await writeCommitAndSubmit(name, username, datasetName, 'structure', 'modified', commit.title, commit.message, utils, imagesDir)
 
   await click('#structure-status', artifactPathFromDir(imagesDir, `${name}-commit-click-structure-status.png`))
 

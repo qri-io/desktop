@@ -31,6 +31,7 @@ import CollectionHome from './collectionHome/CollectionHome'
 import EditDataset from './EditDataset'
 import { connectComponentToProps } from '../../utils/connectComponentToProps'
 import Changes from '../changes/Changes'
+import DatasetChanges from './DatasetChanges'
 
 export interface CollectionProps extends RouteProps {
   // display details
@@ -124,9 +125,9 @@ const CollectionRouter: React.FunctionComponent<CollectionRouterProps> = (props)
             showDatasetMenu(false)
             return <CollectionHome />
           }} />
-          <Route path={`${path}/changes/:paths`} render={() => {
+          <Route path={`${path}/changes/:username/:name/at/ipfs/:path`} render={() => {
             return noDatasetsRedirect(
-              <Changes />
+              <DatasetChanges />
             )
           }}/>
           {!__BUILD__.REMOTE && <Route path={`${path}/edit/:username/:name`} render={() => {
