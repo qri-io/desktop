@@ -44,6 +44,8 @@ app/style.css.map
 dist
 main.js
 main.js.map
+favicon.ico
+index.html
 
 .idea
 storybook-static

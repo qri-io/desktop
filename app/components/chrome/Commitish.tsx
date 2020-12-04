@@ -1,4 +1,5 @@
 import React from 'react'
+import { getCommitishFromPath } from '../../utils/commitish'
 
 interface ICommitish {
   /**
@@ -16,7 +17,7 @@ interface ICommitish {
 const Commitish: React.FC<ICommitish> = ({ text }) => {
   let commitish = text
   if (text !== 'HEAD') {
-    commitish = text.split('/')[text.split('/').length - 1].substr(2, 7)
+    commitish = getCommitishFromPath(commitish)
   }
   return <div style={{
     background: '#D3D3D3',
@@ -27,7 +28,8 @@ const Commitish: React.FC<ICommitish> = ({ text }) => {
     fontWeight: 400,
     margin: 5,
     display: 'inline-block'
-  }}>{commitish}</div>
+  }}>
+    <span style={{ color: '#a2a2a2' }}>{commitish.substr(0, 2)}</span>{commitish.substr(2)}</div>
 }
 
 export default Commitish
