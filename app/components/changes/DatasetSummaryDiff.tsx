@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { ICommitDiff } from '../../models/changes'
+import { IVersionInfoDiff } from '../../models/changes'
 import { VersionInfo } from '../../models/store'
 import Commitish from '../chrome/Commitish'
 import CommitDetails from '../CommitDetails'
@@ -37,7 +37,7 @@ const CommitItem: React.FC<VersionInfo> = (props) => {
   )
 }
 
-const CommitDiff: React.FC<ICommitDiff> = (props) => {
+const DatasetSummaryDiff: React.FC<IVersionInfoDiff> = (props) => {
   const {
     left,
     right
@@ -78,4 +78,4 @@ const CommitDiff: React.FC<ICommitDiff> = (props) => {
   )
 }
 
-export default CommitDiff
+export default DatasetSummaryDiff

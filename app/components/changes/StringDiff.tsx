@@ -9,11 +9,11 @@ const StringDiff: React.FC<IStringDiff | IStructureDiff | IMetaDiff> = (props) =
     left,
     right,
     name,
-    meta
+    about
   } = props
 
-  const { status } = meta
-  if (!(left || right) || (Object.keys(left).length === 0 && Object.keys(right).length === 0)) {
+  const { status } = about
+  if (!(left || right) || (Object.keys(left).length === 0 && Object.keys(right).length === 0) || status === 'missing') {
     return null
   }
 

@@ -121,7 +121,7 @@ export function mapChanges (data: any): IChangeReport {
     transform: data.transform,
     viz: data.viz,
     stats: data.stats,
-    commit: {
+    versionInfo: {
       ...data.version_info,
       left: leftVersionInfo,
       right: rightVersionInfo

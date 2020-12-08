@@ -100,7 +100,6 @@ export interface IBooleanStats {
   true: number
   false: number
   count: number
-  delta?: IBooleanStats
 }
 
 // string
@@ -115,7 +114,6 @@ export interface IStringStats {
   frequencies: {
     [key: string]: number
   }
-  delta: IStringStats
 }
 
 // numeric
@@ -132,7 +130,6 @@ export interface INumericStats {
     bins: number[]
     frequencies: number[]
   }
-  delta: INumericStats
 }
 
 export interface Dataset {

@@ -2,7 +2,7 @@ import React from 'react'
 import StringDiff from '../app/components/changes/StringDiff'
 import { StatDiffRow, StatDiffItem } from '../app/components/item/StatDiffRow'
 import StatDiff from '../app/components/changes/StatDiff'
-import CommitDiff from '../app/components/changes/CommitDiff'
+import DatasetSummaryDiff from '../app/components/changes/DatasetSummaryDiff'
 import ChangeReport from '../app/components/changes/ChangeReport'
 
 const res = require('./data/change_report_sample_api_response.json')
@@ -17,9 +17,9 @@ export default {
 export const changes = () => {
   const leftCommitTitle = res.commit.left.title
   const rightCommitTitle = res.commit.right.title
-  res.commit = res.version_info
-  res.commit.left.commitTitle = leftCommitTitle
-  res.commit.right.commitTitle = rightCommitTitle
+  res.versionInfo = res.version_info
+  res.versionInfo.left.commitTitle = leftCommitTitle
+  res.versionInfo.right.commitTitle = rightCommitTitle
   return <ChangeReport 
     username='b5' 
     name='world_bank_population'
@@ -30,7 +30,7 @@ export const changes = () => {
 export const commitDiff = () => {
   res.version_info.left.commitTitle = res.commit.left.title
   res.version_info.right.commitTitle = res.commit.right.title
-  return <CommitDiff left={res.version_info.left} right={res.version_info.right}/>
+  return <DatasetSummaryDiff left={res.version_info.left} right={res.version_info.right}/>
 }
 
 

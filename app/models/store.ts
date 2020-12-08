@@ -166,7 +166,7 @@ export interface VersionInfo {
   // commit.Timestamp field, time of version creation
   commitTime: string
   // number of commits in history
-  numCommits?: number
+  numVersions?: number
 
   // TODO (b5) - need to figure out publication representation. there's tension
   // about what "publication" as a boolean means.

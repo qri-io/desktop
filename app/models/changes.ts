@@ -1,5 +1,4 @@
-import { ColumnStats } from "../components/item/StatDiffRow"
-import { Meta, Structure } from "./dataset"
+import { IStatTypes, Meta, Structure } from "./dataset"
 import { QriRef } from "./qriRef"
 import { ComponentStatus, VersionInfo } from "./store"
 
@@ -14,11 +13,11 @@ export interface IChangeReport {
   readme?: IStringDiff
   transform?: IStringDiff
   viz?: IStringDiff
-  stats: IStatDiffRes
-  commit: ICommitDiff
+  stats: IStatDiff
+  versionInfo: IVersionInfoDiff
 }
 
-export interface ICommitDiff {
+export interface IVersionInfoDiff {
   left: VersionInfo
   right: VersionInfo
 }
@@ -29,45 +28,55 @@ export interface ISummaryStats {
   columns: number
   nullValues: number
   totalSize: number
-  delta: ISummaryStats
 }
 
 export interface ISummaryDiff {
   left: ISummaryStats
   right: ISummaryStats
+  delta: ISummaryStats
 }
 
-export interface IComponentMeta {
-  status: ComponentStatus
+export interface IAboutComponent {
+  // if a component's status is "missing",
+  // then the backend could not find what it was looking for
+  // and there will be no content to display
+  status: ComponentStatus | "missing"
 }
 
-export interface IStatDiffRes {
+export interface IStatAbout {
+  title: string
+}
+
+export interface IColumnStatsChanges {
+  left: IStatTypes
+  right: IStatTypes
+  delta: IStatTypes
+  about: IStatAbout
+}
+
+export interface IStatDiff {
   summary: ISummaryDiff
-  columns: ColumnStats[]
-  meta: IComponentMeta
+  columns: IColumnStatsChanges[]
+  about: IAboutComponent
 }
 
 export interface IStructureDiff {
   left: Structure
   right: Structure
   name: string
-  meta: IChangeReportMeta
+  about: IAboutComponent
 }
 
 export interface IMetaDiff {
   left: Meta
   right: Meta
   name: string
-  meta: IChangeReportMeta
+  about: IAboutComponent
 }
 
 export interface IStringDiff {
   left: string
   right: string
   name: string
-  meta: IChangeReportMeta
-}
-
-interface IChangeReportMeta {
-  status: ComponentStatus
+  about: IAboutComponent
 }
