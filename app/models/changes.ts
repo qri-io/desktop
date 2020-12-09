@@ -43,15 +43,11 @@ export interface IAboutComponent {
   status: ComponentStatus | "missing"
 }
 
-export interface IStatAbout {
-  title: string
-}
-
 export interface IColumnStatsChanges {
   left: IStatTypes
   right: IStatTypes
   delta: IStatTypes
-  about: IStatAbout
+  title: string
 }
 
 export interface IStatDiff {

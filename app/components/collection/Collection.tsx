@@ -30,7 +30,6 @@ import CollectionHome from './collectionHome/CollectionHome'
 
 import EditDataset from './EditDataset'
 import { connectComponentToProps } from '../../utils/connectComponentToProps'
-import Changes from '../changes/Changes'
 import DatasetChanges from './DatasetChanges'
 
 export interface CollectionProps extends RouteProps {

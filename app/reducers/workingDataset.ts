@@ -50,7 +50,6 @@ export const [DATASET_REQ, DATASET_SUCC, DATASET_FAIL] = apiActionTypes('dataset
 export const [DATASET_STATUS_REQ, DATASET_STATUS_SUCC, DATASET_STATUS_FAIL] = apiActionTypes('status')
 const [DATASET_BODY_REQ, DATASET_BODY_SUCC, DATASET_BODY_FAIL] = apiActionTypes('body')
 const [, RESETOTHERCOMPONENTS_SUCC, RESETOTHERCOMPONENTS_FAIL] = apiActionTypes('resetOtherComponents')
-const [STATS_REQ, STATS_SUCC, STATS_FAIL] = apiActionTypes('stats')
 export const [, RENAME_SUCC] = apiActionTypes('rename')
 export const [FSIWRITE_REQ, FSIWRITE_SUCC, FSIWRITE_FAIL] = apiActionTypes('fsiWrite')
 export const [SAVE_REQ, SAVE_SUCC, SAVE_FAIL] = apiActionTypes('save')

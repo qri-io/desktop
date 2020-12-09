@@ -40,7 +40,6 @@ import {
   faSync,
   faBars,
   faPencilAlt,
-  faCheckCircle,
   faToggleOn
 } from '@fortawesome/free-solid-svg-icons'
 

@@ -109,13 +109,13 @@ export const StatDiffRow: React.FC<StatDiffRowProps> = ({ data, last }) => {
     left,
     right,
     delta,
-    about
+    title
   } = data
   const { type } = right
 
   return (<tr style={{ verticalAlign: 'top', borderBottom: last ? 'none' : '1px solid #eee' }}>
     <td>
-      <StatDiffItem data={left} title={about && about.title} type={type}/>
+      <StatDiffItem data={left} title={title} type={type}/>
     </td>
     <td>
       <StatDiffItem data={right} delta={delta}/>
