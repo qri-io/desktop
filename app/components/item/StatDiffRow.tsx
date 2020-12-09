@@ -1,17 +1,16 @@
 import React from 'react'
-import { IBooleanStats, INumericStats, IStringStats } from '../../models/dataset'
+import { IColumnStatsChanges } from '../../models/changes'
+
+import { IStatTypes } from '../../models/dataset'
 import Icon from '../chrome/Icon'
 import StatsChart from '../StatsChart'
 import LabeledStats, { Stat } from './LabeledStats'
 
 interface StatDiffItemProps {
-  data: IBooleanStats | IStringStats | INumericStats
+  data: IStatTypes
   title?: string
   type?: 'boolean' | 'numeric' | 'string'
-}
-
-export interface StatMeta {
-  title: string
+  delta?: IStatTypes
 }
 
 interface StatDiffRowHeaderProps {
@@ -34,7 +33,8 @@ export const StatDiffItem: React.FC<StatDiffItemProps> = (props) => {
   const {
     data,
     title,
-    type
+    type,
+    delta
   } = props
 
   if (!data || Object.keys(data).length === 0) {
@@ -46,7 +46,7 @@ export const StatDiffItem: React.FC<StatDiffItemProps> = (props) => {
 
   let statsList: Stat[] = []
   let chartName: string = ''
-  const { delta } = data
+
   for (const [key, val] of Object.entries(data)) {
     switch (key) {
       case 'type':
@@ -88,7 +88,7 @@ export const StatDiffItem: React.FC<StatDiffItemProps> = (props) => {
     <div className='margin-bottom'>
       {chartName && <div className='label small uppercase margin-bottom'>{chartName}</div>}
       {chartName
-        ? <StatsChart data={data} showStats={false}/>
+        ? <StatsChart data={data} delta={delta} />
         : <div style={{
           display: 'flex',
           justifyContent: 'center',
@@ -99,14 +99,8 @@ export const StatDiffItem: React.FC<StatDiffItemProps> = (props) => {
   </div>
 }
 
-export interface ColumnStats {
-  left: INumericStats | IStringStats | IBooleanStats
-  right: INumericStats | IStringStats | IBooleanStats
-  meta: StatMeta
-}
-
 export interface StatDiffRowProps {
-  data: ColumnStats
+  data: IColumnStatsChanges
   last: boolean
 }
 
@@ -114,16 +108,17 @@ export const StatDiffRow: React.FC<StatDiffRowProps> = ({ data, last }) => {
   const {
     left,
     right,
-    meta
+    delta,
+    title
   } = data
   const { type } = right
 
   return (<tr style={{ verticalAlign: 'top', borderBottom: last ? 'none' : '1px solid #eee' }}>
     <td>
-      <StatDiffItem data={left} title={meta && meta.title} type={type}/>
+      <StatDiffItem data={left} title={title} type={type}/>
     </td>
     <td>
-      <StatDiffItem data={right} />
+      <StatDiffItem data={right} delta={delta}/>
     </td>
   </tr>)
 }

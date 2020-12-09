@@ -20,13 +20,13 @@ export interface DatasetDetailsSubtextProps {
 
 export const DatasetDetailsSubtext: React.FunctionComponent<DatasetDetailsSubtextProps> = ({ data, size = 'md', color = 'dark', noTimestamp }) => {
   if (!data) { return null }
-  const { commitTime, bodyFormat, numCommits, bodySize } = data
+  const { commitTime, bodyFormat, numVersions, bodySize } = data
 
   return (
     <div className={classNames('dataset-details', { 'small': size === 'sm', 'light': color === 'light', 'muted': color === 'muted' }) }>
       {bodyFormat && <span className='dataset-details-item'> {bodyFormat}</span>}
       {(!noTimestamp && commitTime) && <span className='dataset-details-item'><FontAwesomeIcon icon={faClock} size='sm'/> {moment(commitTime).fromNow()}</span>}
-      {numCommits && <span className='dataset-details-item'>{`${numCommits} ${numCommits === 1 ? 'commits' : 'commits'}`}</span>}
+      {numVersions && <span className='dataset-details-item'>{`${numVersions} ${numVersions === 1 ? 'commits' : 'commits'}`}</span>}
       {bodySize && <span className='dataset-details-item'><FontAwesomeIcon icon={faFile} size='sm'/> {filesize(bodySize)}</span>}
     </div>
   )

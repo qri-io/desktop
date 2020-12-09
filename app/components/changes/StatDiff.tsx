@@ -1,11 +1,11 @@
 import React from 'react'
-import { IStatDiffRes, ISummaryStats } from '../../models/changes'
+import { IStatDiff, ISummaryStats } from '../../models/changes'
 import Segment from '../chrome/Segment'
 import LabeledStats, { Stat } from '../item/LabeledStats'
 import { StatDiffRow } from '../item/StatDiffRow'
 
 interface StatDiffProps {
-  data: IStatDiffRes
+  data: IStatDiff
 }
 
 const SummaryItem: React.FC<ISummaryStats> = (props) => {
@@ -26,8 +26,12 @@ const StatDiff: React.FC<StatDiffProps> = ({ data }) => {
   const {
     summary,
     columns,
-    meta
+    about
   } = data
+
+  if (about && about.status === 'missing') {
+    return null
+  }
 
   const content = <table style={{ width: '100%', borderCollapse: 'separate', borderSpacing: 20 }}>
     <thead>
@@ -37,7 +41,7 @@ const StatDiff: React.FC<StatDiffProps> = ({ data }) => {
           <SummaryItem {...summary.left} />
         </th>
         <th>
-          <SummaryItem {...summary.right} />
+          <SummaryItem {...summary.right} delta={summary.delta} />
         </th>
       </tr>
       <tr><th colSpan={2} style={{ fontSize: 20 }}>Column Comparison</th></tr>
@@ -49,9 +53,9 @@ const StatDiff: React.FC<StatDiffProps> = ({ data }) => {
 
   return (
     <Segment
-      name='Stats'
+      name='stats'
       collapsable
-      componentStatus={meta && meta.status}
+      componentStatus={about && about.status}
       animationOn={false}
       content={content}
     />

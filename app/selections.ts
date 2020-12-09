@@ -18,10 +18,10 @@ import { datasetToVersionInfo } from "./actions/mappingFuncs"
 import { Modal, ModalType } from "./models/modals"
 import { Session } from "./models/session"
 import { SidebarTypes } from "./actions/ui"
-import { QriRef, qriRefFromString } from "./models/qriRef"
+import { QriRef } from "./models/qriRef"
 import { RouterState } from "connected-react-router"
 import { IChangeReport, IChangeReportRefs } from "./models/changes"
-import { isEditPath, parseRefsFromChangeReportPath } from "./paths"
+import { isEditPath } from "./paths"
 
 /**
  *
@@ -453,6 +453,27 @@ export function selectRouter (state: Store): RouterState {
  * CHANGE REPORT SELECTORS
  */
 
+// returns undefined if there are any stipulations that will cause a bad
+// change report to occur
+// specifically, if there is no history, if there is an unrecognized path,
+// or if the path in question has no previous version
+export function selectChangeReportLeft (state: any, qriRef: QriRef): QriRef | undefined {
+  const log = selectLog(state)
+  if (!log) {
+    return undefined
+  }
+
+  const rightIndex = log.findIndex((l: VersionInfo) => l.path === qriRef.path)
+
+  // if this path doesn't exist in the log OR if the path is the last log in the list
+  // returned undefined
+  if (rightIndex === -1 || rightIndex === log.length - 1) {
+    return undefined
+  }
+
+  return log[rightIndex + 1]
+}
+
 export function selectChangeReportRefs (state: any): IChangeReportRefs | undefined {
   var username = selectDatasetUsername(state)
   var name = selectDatasetName(state)
@@ -506,19 +527,4 @@ export function selectChangesError (state: any): string {
 
 export function selectChanges (state: any): IChangeReport {
   return state.changes.changes
-}
-
-export function selectChangesRefsFromLocation (state: any): [QriRef, QriRef] | undefined {
-  const { location } = selectRouter(state)
-  const refs = parseRefsFromChangeReportPath(location.pathname)
-  if (!refs) {
-    return undefined
-  }
-  const left = qriRefFromString(refs[0])
-  const right = qriRefFromString(refs[1])
-
-  if (!(left && right)) {
-    return undefined
-  }
-  return [left, right]
 }

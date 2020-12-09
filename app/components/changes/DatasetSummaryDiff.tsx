@@ -1,14 +1,15 @@
 import React from 'react'
-import { ICommitDiff, ICommitItem } from '../../models/changes'
-import { pathToDataset } from '../../paths'
+
+import { IVersionInfoDiff } from '../../models/changes'
+import { VersionInfo } from '../../models/store'
 import Commitish from '../chrome/Commitish'
 import CommitDetails from '../CommitDetails'
 
-const CommitItem: React.FC<ICommitItem> = (props) => {
+const CommitItem: React.FC<VersionInfo> = (props) => {
   const {
     path,
-    title,
-    timestamp,
+    commitTitle,
+    commitTime,
     bodySize,
     bodyRows,
     username,
@@ -17,18 +18,17 @@ const CommitItem: React.FC<ICommitItem> = (props) => {
 
   return (
     <div style={{ margin: 20 } }>
-      <a
-        href={pathToDataset(username, name, path)}
+      <div
         style={ {
           fontFamily: 'monospace',
           fontSize: 18,
           color: 'black',
           textOverflow: 'ellipsis'
-        }}>{username}/{name}</a>
+        }}>{username}/{name}</div>
       {path && <Commitish text={path}/>}
       <div><CommitDetails
-        commitTitle={title || ''}
-        commitTime={timestamp}
+        commitTitle={commitTitle || ''}
+        commitTime={commitTime}
         bodyRows={bodyRows}
         bodySize={bodySize}
       />
@@ -37,7 +37,7 @@ const CommitItem: React.FC<ICommitItem> = (props) => {
   )
 }
 
-const CommitDiff: React.FC<ICommitDiff> = (props) => {
+const DatasetSummaryDiff: React.FC<IVersionInfoDiff> = (props) => {
   const {
     left,
     right
@@ -78,4 +78,4 @@ const CommitDiff: React.FC<ICommitDiff> = (props) => {
   )
 }
 
-export default CommitDiff
+export default DatasetSummaryDiff

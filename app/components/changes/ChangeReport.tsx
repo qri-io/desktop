@@ -1,24 +1,13 @@
 import React from 'react'
+
 import { IChangeReport } from '../../models/changes'
-import { QriRef } from '../../models/qriRef'
-import CommitDiff from './CommitDiff'
+
+import DatasetSummaryDiff from './DatasetSummaryDiff'
 import StatDiff from './StatDiff'
 
 import StringDiff from './StringDiff'
 
-interface ChangeReportParams {
-  leftRef: QriRef
-  rightRef: QriRef
-  data: IChangeReport
-}
-
-const ChangeReport: React.FC<ChangeReportParams> = (props) => {
-  const {
-    leftRef,
-    rightRef,
-    data
-  } = props
-
+const ChangeReport: React.FC<IChangeReport> = (props) => {
   const {
     meta,
     structure,
@@ -26,30 +15,13 @@ const ChangeReport: React.FC<ChangeReportParams> = (props) => {
     transform,
     viz,
     stats,
-    commit
-  } = data
-
-  const commitDiff = {
-    left: {
-      ...commit.left,
-      username: leftRef.username,
-      name: leftRef.name,
-      bodySize: structure.left.length,
-      bodyRows: structure.left.entries
-    },
-    right: {
-      ...commit.right,
-      username: rightRef.username,
-      name: rightRef.name,
-      bodySize: structure.right.length,
-      bodyRows: structure.right.entries
-    }
-  }
+    versionInfo
+  } = props
 
   return (
     <div style={{ margin: 20 }}>
-      <h2>Changes</h2>
-      <CommitDiff {...commitDiff} />
+      <h2 id='change-report'>Changes</h2>
+      <DatasetSummaryDiff {...versionInfo} />
       {readme && <StringDiff {...readme} name='readme' />}
       {meta && <StringDiff {...meta} name='meta' />}
       {structure && <StringDiff {...structure} name='structure' />}

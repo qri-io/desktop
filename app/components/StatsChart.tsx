@@ -5,7 +5,7 @@ import numeral from 'numeral'
 
 import LabeledStats from './item/LabeledStats'
 
-import { BooleanStats, NumericStats, StringStats } from './item/StatDiffRow'
+import { IStatTypes } from '../models/dataset'
 
 const primaryStatColor = '#0061A6'
 const labelSkipWidth = 10
@@ -14,11 +14,12 @@ const labelFormat = (d: Number) => <tspan y={ -8 }>{ d >= 1000 ? numeral(d).form
 
 interface StatsChartProps {
   height?: number
-  data: BooleanStats | StringStats | NumericStats
+  data: IStatTypes
+  delta?: IStatTypes
 }
 
 const StatsChart: React.FunctionComponent<StatsChartProps> = (props: StatsChartProps) => {
-  const { data, height = 250 } = props
+  const { data, height = 250, delta } = props
   switch (data.type) {
     case 'string':
       return <StringStat data={data} height={height} />
@@ -30,7 +31,7 @@ const StatsChart: React.FunctionComponent<StatsChartProps> = (props: StatsChartP
       return (
         <div>
           {data.count && <LabeledStats data={[
-            { label: 'count', value: data.count, delta: data.delta && data.delta.count }
+            { label: 'count', value: data.count, delta: delta && delta.count }
           ]} />}
         </div>
       )

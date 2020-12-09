@@ -7,7 +7,8 @@ import {
   mapVersionInfo,
   mapStatus,
   mapBody,
-  mapHistory
+  mapHistory,
+  mapChanges
 } from './mappingFuncs'
 import { SelectedComponent, VersionInfo } from '../models/store'
 import {
@@ -17,7 +18,7 @@ import {
   discardMutationsChanges
 } from './mutations'
 import Dataset from '../models/dataset'
-import { pathToDataset, pathToCollection, pathToChangeReport } from '../paths'
+import { pathToDataset, pathToCollection, pathToDatasetChangeReport } from '../paths'
 import { CLEAR_DATASET_HEAD } from '../reducers/dataset'
 import { selectWorkingDatasetBodyPageInfo,
   selectFsiPath,
@@ -380,9 +381,7 @@ export function saveWorkingDatasetAndDirectToChangeReport (username: string, nam
             dispatch(push(pathToDataset(username, name, path)))
             return response
           }
-          const prevRef = log[0]
-          const newRef = { ...prevRef, path }
-          dispatch(push(pathToChangeReport(prevRef, newRef)))
+          dispatch(push(pathToDatasetChangeReport(username, name, path)))
         }
         return response
       })
@@ -748,7 +747,8 @@ export function fetchChanges (left: QriRef, right: QriRef): ApiActionThunk {
         body: {
           left: refStringFromQriRef(left, true),
           right: refStringFromQriRef(right, true)
-        }
+        },
+        map: mapChanges
       }
     }
     return dispatch(action)

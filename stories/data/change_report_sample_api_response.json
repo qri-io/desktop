@@ -1,4 +1,29 @@
 {
+  "version_info": {
+    "left": {
+      "bodyFormat": "csv",
+      "bodyRows": 17,
+      "bodySize": 463,
+      "commitTime": "2020-12-04T01:07:55.22457Z",
+      "metaTitle": "test",
+      "name": "test",
+      "path": "/ipfs/QmXxbUaFeRrbYvUpgyGnwenTYELe4ESNq5JYJGc8xrM77W",
+      "username": "ramfox_head"
+    },
+    "right": {
+      "bodyFormat": "csv",
+      "bodyRows": 12,
+      "bodySize": 290,
+      "commitTime": "2020-12-04T01:08:49.36162Z",
+      "metaTitle": "test",
+      "name": "test",
+      "path": "/ipfs/QmURzCMLgsFtQEhJ2QuX2PKY8Zs5bY7j2RWH2uaN9aEzc2",
+      "username": "ramfox_head"
+    },
+    "about": {
+      "status": "modified"
+    }
+  },
   "commit": {
     "left": {
       "author": {
@@ -21,6 +46,9 @@
       "signature": "7ZfV4KCTHoU+cGWz501/NkSAW6iNJBRnE66Tk5fLxWAPFoU13uxNfzgu8Z+7/iHqbXPECUsvED5VO6UjztrLEAnlAEnOkZWB429dkKRSp4EQxOk8qiz/zdHDOCY83umJMHZ49hiZGqaIDFKfyq5hV1htoxQOTZA9YLE3CBuWyt00gJa53VyfhEn7cFYWbnZGPNEwzEgo234Z4o0knNdqpbi/+uUuaxRXegjX+QLL/MbKXV7xhm8UBFdEfstd5FmWbHVdMata85TUnk0N2F8ynXqPE9a1GC77NpPXgaBtkvGik9kknu6cB+f93LN6No2DAMA3VR1vqAGe6pNAQLXOQg==",
       "timestamp": "2020-10-19T19:01:04.431651448Z",
       "title": "updated structure, readme, and body"
+     },
+     "about": {
+       "status": "modified"
      }
   },
   "meta": {
@@ -34,14 +62,14 @@
       "qri": "md:0",
       "title": "JHU CSSE COVID-19 Daily Updates"
      },
-    "meta": {
+    "about": {
       "status": "added"
     }
   },
   "readme": {
     "left": "#JHU CSSE COVID-19 Daily Reports (aggregated)\n\nTken from the [COVID-19 Data Repository by the Center for Systems Science and Engineering (CSSE) at Johns Hopkins University](https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data), this dataset is an aggregation of all the CSV files in the daily updates folder.",
     "right": "#JHU CSSE COVID-19 Daily Reports (aggregated)\n\nTaken from the [COVID-19 Data Repository by the Center for Systems Science and Engineering (CSSE) at Johns Hopkins University](https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data), this dataset is an aggregation of all the CSV files in the daily updates folder.\n\nDataset pulled monthly",
-    "meta": {
+    "about": {
       "status": "modified"
     }
   },
@@ -202,12 +230,12 @@
        "type": "array"
       }
      },
-     "meta": {
+     "about": {
        "status": "modified"
      }
   },
   "stats": {
-    "meta": { "status": "modified" },
+    "about": { "status": "modified" },
     "summary": {
       "left": {
         "entries": 739788,
@@ -219,13 +247,13 @@
         "entries": 759166,
         "columns": 4,
         "nullValues": 0,
-        "totalSize": 1047604210,
-        "delta": {
-          "entries": 19378,
-          "columns": 1,
-          "nullValues": -10,
-          "totalSize": 3074177
-        }
+        "totalSize": 1047604210
+      },
+      "delta": {
+        "entries": 19378,
+        "columns": 1,
+        "nullValues": -10,
+        "totalSize": 3074177
       }
     },
     "columns": [
@@ -387,15 +415,15 @@
           "mean": 4106.587140361923,
           "median": 1865.540598629014,
           "min": 0,
-          "type": "numeric",
-          "delta": {
-            "count": 19378,
-            "max": 515440,
-            "mean": 157.525528116,
-            "median": 0.35125676881,
-            "min": 0,
-            "type": "numeric"
-          }
+          "type": "numeric"
+        },
+        "delta": {
+          "count": 19378,
+          "max": 515440,
+          "mean": 157.525528116,
+          "median": 0.35125676881,
+          "min": 0,
+          "type": "numeric"
         }
       },
       {
@@ -410,13 +438,13 @@
           "type": "boolean",
           "count": 759166,
           "trueCount": 348922,
-          "falseCount": 410244,
-          "delta": {
-            "type": "boolean",
-            "count": 19378,
-            "trueCount": -25638,
-            "falseCount": 45016 
-          }
+          "falseCount": 410244
+        },
+        "delta": {
+          "type": "boolean",
+          "count": 19378,
+          "trueCount": -25638,
+          "falseCount": 45016 
         }
       },
       {
@@ -717,14 +745,14 @@
           "maxLength": 49,
           "minLength": 0,
           "type": "string",
-          "unique": 4045,
-          "delta": {
-            "count": 19378,
-            "maxLength": 0,
-            "minLength": 0,
-            "type": "string",
-            "unique": 0
-          }
+          "unique": 4045
+        },
+        "delta": {
+          "count": 19378,
+          "maxLength": 0,
+          "minLength": 0,
+          "type": "string",
+          "unique": 0
         }
       },
       {
@@ -807,15 +835,15 @@
           "mean": 1025.668974015589,
           "median": 622.6247847962478,
           "min": 0,
-          "type": "numeric",
-          "delta": {
-            "count": 543173,
-            "max": 17037.77641277641,
-            "mean": 1025.668974015589,
-            "median": 622.6247847962478,
-            "min": 0,
-            "type": "numeric"
-          }
+          "type": "numeric"
+        },
+        "delta": {
+          "count": 543173,
+          "max": 17037.77641277641,
+          "mean": 1025.668974015589,
+          "median": 622.6247847962478,
+          "min": 0,
+          "type": "numeric"
         }
       }
     ]
@@ -823,8 +851,15 @@
   "transform": {
     "left": "# load dependencies\nload(\"http.star\", \"http\")\nload(\"encoding/csv.star\", \"csv\")\n\n# get the popular baby names dataset as a csv\ndef download(ctx):\n\tcsvDownloadUrl = \"https://data.cityofnewyork.us/api/views/25th-nujf/rows.csv?accessType=DOWNLOAD\"\n\treturn http.get(csvDownloadUrl).body()\n\n# set the body\ndef transform(ds, ctx):\n\t# ctx.download is whatever download() returned\n\tcsv = ctx.download\n\n\t# set the dataset body\n\tds.set_body(csv, parse_as='csv')",
     "right":"",
-    "meta": {
+    "about": {
       "status": "removed"
     }
+  },
+  "viz": {
+    "about": {
+      "status": "missing"
+    },
+    "left": "",
+    "right": ""
   }
 }

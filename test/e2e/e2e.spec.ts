@@ -476,19 +476,19 @@ describe('Qri End to End tests', function spec () {
 
     await checkStatus("body", "modified")
 
-    await writeCommitAndSubmit("write-fsi-body", "body", "modified", bodyCommitTitle, bodyCommitMessage, utils, imagesDir)
+    await writeCommitAndSubmit("write-fsi-body", username, datasetName, "body", "modified", bodyCommitTitle, bodyCommitMessage, utils, imagesDir)
   })
 
   // meta write and commit
   it('fsi editing - create a meta & commit', async () => {
     await utils.atDataset(username, datasetName)
-    await editMetaAndCommit('fsi-meta-edit', { meta, commit: metaCommit }, 'added', utils, imagesDir)
+    await editMetaAndCommit('fsi-meta-edit', username, datasetName, { meta, commit: metaCommit }, 'added', utils, imagesDir)
   })
 
   // structure write and commit
   it('fsi editing - edit the structure & commit', async () => {
     await utils.atDataset(username, datasetName)
-    await editCSVStructureAndCommit('fsi-setructure-edit', { structure: csvStructure, commit: structureCommit }, 'modified', utils, imagesDir)
+    await editCSVStructureAndCommit('fsi-setructure-edit', username, datasetName, { structure: csvStructure, commit: structureCommit }, 'modified', utils, imagesDir)
   })
 
   // rename
@@ -636,13 +636,13 @@ describe('Qri End to End tests', function spec () {
   // meta write and commit
   it('in app editing - create a meta & commit', async () => {
     await utils.atDataset(username, datasetName)
-    await editMetaAndCommit('in-app-meta-edit', { meta, commit: metaCommit }, 'added', utils, imagesDir)
+    await editMetaAndCommit('in-app-meta-edit', username, datasetName, { meta, commit: metaCommit }, 'added', utils, imagesDir)
   })
 
   // structure write and commit
   it('in app editing - edit the structure & commit', async () => {
     await utils.atDataset(username, datasetName)
-    await editCSVStructureAndCommit('in-app-structure-edit', { structure: csvStructure, commit: structureCommit }, 'modified', utils, imagesDir)
+    await editCSVStructureAndCommit('in-app-structure-edit', username, datasetName, { structure: csvStructure, commit: structureCommit }, 'modified', utils, imagesDir)
   })
 
   // switch between commits
@@ -968,15 +968,13 @@ describe('Qri End to End tests', function spec () {
   })
 })
 
-async function writeCommitAndSubmit (uniqueName: string, component: string, status: 'added' | 'modified' | 'removed', commitTitle: string, commitMessage: string | undefined, utils: E2ETestUtils, imagesDir: string) {
+async function writeCommitAndSubmit (uniqueName: string, username: string, datasetName: string, component: string, status: 'added' | 'modified' | 'removed', commitTitle: string, commitMessage: string | undefined, utils: E2ETestUtils, imagesDir: string, firstCommit: boolean = false) {
   // remove any illegal characters
   const name = uniqueName.replace(/([^a-z0-9]+)/gi, '-')
 
   const {
     click,
-    atLocation,
     waitForExist,
-    delay,
     setValue,
     takeScreenshot,
     checkStatus,
@@ -1000,13 +998,11 @@ async function writeCommitAndSubmit (uniqueName: string, component: string, stat
   }
   // submit
   await click('#submit', artifactPathFromDir(imagesDir, `${name}-commit-click-submit.png`))
-  await delay(200)
-  await atLocation('/collection/changes')
 
-  // click on the "right" to get back to the
-  await click('#right')
-  await delay(200)
-
+  if (!firstCommit) {
+    await waitForExist('#change-report')
+    await click('#HEAD-0')
+  }
   await atDatasetVersion(0, artifactPathFromDir(imagesDir, `${name}-commit-on-history-tab.png`))
   // check component status
   await checkStatus(component, status, artifactPathFromDir(imagesDir, `${name}-commit-check-status-${component}-${status}.png`))
@@ -1019,7 +1015,7 @@ async function writeCommitAndSubmit (uniqueName: string, component: string, stat
   }
 }
 
-async function editMetaAndCommit (uniqueName: string, dataset: Dataset, status: 'added' | 'modified' | 'removed', utils: E2ETestUtils, imagesDir: string) {
+async function editMetaAndCommit (uniqueName: string, username: string, datasetName: string, dataset: Dataset, status: 'added' | 'modified' | 'removed', utils: E2ETestUtils, imagesDir: string) {
   const name = uniqueName.replace(/([^a-z0-9]+)/gi, '-')
   const {
     delay,
@@ -1204,7 +1200,7 @@ async function editMetaAndCommit (uniqueName: string, dataset: Dataset, status: 
   }
 
   // commit!
-  await writeCommitAndSubmit('fsi-meta-edit', 'meta', 'added', commit.title, commit.message, utils, imagesDir)
+  await writeCommitAndSubmit('fsi-meta-edit', username, datasetName, 'meta', 'added', commit.title, commit.message, utils, imagesDir)
 
   // navigate to the meta component
   await click(`#meta-status`, artifactPathFromDir(imagesDir, `${name}-commit-click-meta-status.png`))
@@ -1240,7 +1236,7 @@ async function editMetaAndCommit (uniqueName: string, dataset: Dataset, status: 
   if (meta.identifier) await expectTextToBe('#meta-identifier', meta.identifier)
 }
 
-async function editCSVStructureAndCommit (uniqueName: string, dataset: Dataset, status: 'added' | 'modified' | 'removed', utils: E2ETestUtils, imagesDir: string) {
+async function editCSVStructureAndCommit (uniqueName: string, username: string, datasetName: string, dataset: Dataset, status: 'added' | 'modified' | 'removed', utils: E2ETestUtils, imagesDir: string) {
   const name = uniqueName.replace(/([^a-z0-9]+)/gi, '-')
   const {
     isChecked,
@@ -1317,7 +1313,7 @@ async function editCSVStructureAndCommit (uniqueName: string, dataset: Dataset, 
   // check that the status dot is correct
   await checkStatus('structure', status, artifactPathFromDir(imagesDir, `${name}-check-status-${status}.png`))
 
-  await writeCommitAndSubmit(name, 'structure', 'modified', commit.title, commit.message, utils, imagesDir)
+  await writeCommitAndSubmit(name, username, datasetName, 'structure', 'modified', commit.title, commit.message, utils, imagesDir)
 
   await click('#structure-status', artifactPathFromDir(imagesDir, `${name}-commit-click-structure-status.png`))
 
