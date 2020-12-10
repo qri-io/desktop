@@ -1,20 +1,25 @@
 // a layout component for the resizable sidebar with main content area
 import React from 'react'
 import { Resizable } from './Resizable'
-import NavTopbar from '../components/nav/NavTopbar'
+import NavTopbar, { NavbarButtonProps } from '../components/nav/NavTopbar'
 
 interface LayoutProps {
   id: string
-  sidebarWidth: number
+  sidebarWidth?: number
   sidebarContent?: React.ReactElement
   mainContent: React.ReactElement
   headerContent?: React.ReactElement
-  topbarButtons: NavbarButtonProps[]
+  topbarButtons?: NavbarButtonProps[]
   onSidebarResize?: (width: number) => void
   maximumSidebarWidth?: number
   subTitle?: string
   title?: string | React.ReactElement
 
+  /**
+   * backButtonUrl - when it exists, will override the "back" button push location
+   * in the NavTopBar
+   */
+  backButtonUrl?: string
   /**
    * Some views may not want to display the navbar, setting `showNav` = false
    * will hide it
@@ -26,6 +31,7 @@ interface LayoutProps {
 const Layout: React.FunctionComponent<LayoutProps> = (props: LayoutProps) => {
   const {
     id,
+    backButtonUrl,
     sidebarContent,
     sidebarWidth,
     onSidebarResize,
@@ -40,7 +46,12 @@ const Layout: React.FunctionComponent<LayoutProps> = (props: LayoutProps) => {
 
   return (
     <div id={id} className='sidebar-layout'>
-      {showNav && <NavTopbar subTitle={subTitle} title={title} buttons={topbarButtons} />}
+      {showNav && <NavTopbar
+        subTitle={subTitle}
+        title={title}
+        buttons={topbarButtons}
+        backButtonUrl={backButtonUrl}
+      />}
       {headerContent}
       <div className='columns'>
         {sidebarContent && <Resizable
