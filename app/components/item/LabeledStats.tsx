@@ -47,7 +47,11 @@ const LabeledStats: React.FunctionComponent<LabeledStatsProps> = (props) => {
         if (typeof displayVal === 'number') {
           if (stat.inBytes) {
             displayVal = fileSize(displayVal)
-            displayDelta = stat.delta && fileSize(displayDelta)
+            // fileSize will return 0 if the input is negative
+            displayDelta = stat.delta && fileSize(Math.abs(stat.delta))
+            if (typeof stat.delta === 'number' && stat.delta < 0) {
+              displayDelta = `-${displayDelta}`
+            }
           } else {
             displayVal = abbreviateNumber(stat.value)
             displayDelta = stat.delta && abbreviateNumber(displayDelta)
