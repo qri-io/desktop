@@ -6,6 +6,7 @@ import bodyValue from '../utils/bodyValue'
 import {
   DATASET_REQ
 } from './workingDataset'
+import { REMOVE_SUCC } from './selections'
 
 const initialState: DatasetStore = {
   path: '',
@@ -169,6 +170,12 @@ const DatasetReducer: Reducer = (state = initialState, action: AnyAction): Datas
         peername: action.username,
         name: action.name
       }
+
+    case REMOVE_SUCC:
+      if (state.peername === action.payload.request.segments.username && state.name === action.payload.request.segments.name) {
+        return initialState
+      }
+      return state
 
     default:
       return state
