@@ -48,17 +48,17 @@ const DatasetSummaryDiff: React.FC<IVersionInfoDiff> = (props) => {
         <tr>
           <th style={{
             fontSize: 16,
-            fontWeight: 300,
+            fontWeight: 400,
             textTransform: 'uppercase',
-            color: '#737373'
+            color: 'red'
           }}>
             BASE
           </th>
           <th style={{
             fontSize: 16,
-            fontWeight: 300,
+            fontWeight: 400,
             textTransform: 'uppercase',
-            color: '#737373'
+            color: 'green'
           }}>
             COMPARE
           </th>

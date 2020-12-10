@@ -88,7 +88,7 @@ export const StatDiffItem: React.FC<StatDiffItemProps> = (props) => {
     <div className='margin-bottom'>
       {chartName && <div className='label small uppercase margin-bottom'>{chartName}</div>}
       {chartName
-        ? <StatsChart data={data} delta={delta} />
+        ? <StatsChart data={data} delta={delta} title={chartName} />
         : <div style={{
           display: 'flex',
           justifyContent: 'center',

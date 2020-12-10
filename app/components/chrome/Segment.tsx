@@ -15,6 +15,13 @@ interface SegmentProps {
   contentHeight?: number
   componentStatus?: ComponentStatus
   animationOn?: boolean
+  startOpen?: boolean
+
+  /**
+   * showNoChanges - when true, we expect an indication that there have been
+   * "no changes". The default is `false`
+  */
+  showNoChanges?: boolean
 }
 
 const Segment: React.FunctionComponent<SegmentProps> = (props) => {
@@ -27,12 +34,14 @@ const Segment: React.FunctionComponent<SegmentProps> = (props) => {
     collapsable = false,
     expandable = false,
     contentHeight = 400,
-    componentStatus = ''
+    componentStatus = '',
+    startOpen = true,
+    showNoChanges = false
   } = props
 
   if (content === null) return null
 
-  const [isOpen, setIsOpen] = React.useState(true)
+  const [isOpen, setIsOpen] = React.useState(startOpen)
   const [isExpanded, setIsExpanded] = React.useState(false)
 
   let heightStyle = {}
@@ -69,7 +78,7 @@ const Segment: React.FunctionComponent<SegmentProps> = (props) => {
           </div>
         </div>
         <div className='right-side'>
-          { componentStatus && <StatusDot status={componentStatus}/>}
+          { componentStatus && <StatusDot status={componentStatus} showNoChanges={showNoChanges} />}
           {/* ensure the container div you want to expand to has the css */}
           {/* property 'position: relative' */}
           {expandable &&
