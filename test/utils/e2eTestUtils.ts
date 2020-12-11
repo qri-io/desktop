@@ -9,6 +9,7 @@ const delayTime = 100
 export interface E2ETestUtils {
   atLocation: (expected: string, screenshotLocation?: string) => Promise<void>
   atDataset: (username: string, datasetName: string, screenshotLocation?: string) => Promise<void>
+  atChanges: (username: string, datasetName: string, screenshotLocation?: string) => Promise<void>
   waitForExist: (selector: string, screenshotLocation?: string) => Promise<void>
   waitForNotExist: (selector: string, screenshotLocation?: string) => Promise<void>
   click: (selector: string, screenshotLocation?: string) => Promise<void>
@@ -32,6 +33,7 @@ export function newE2ETestUtils (app: any): E2ETestUtils {
     delay: delay,
     atLocation: atLocation(app),
     atDataset: atDataset(app),
+    atChanges: atChanges(app),
     waitForExist: waitForExist(app),
     waitForNotExist: waitForNotExist(app),
     click: click(app),
@@ -115,6 +117,27 @@ function atDataset (app: any) {
         expect(await app.client.element('.title-container .subtitle').getText()).toBe(username + '/')
       }
       expect(await app.client.element('.title-container .title').getText()).toBe(datasetName)
+    } catch (e) {
+      if (screenshotLocation) {
+        _takeScreenshot(app, screenshotLocation)
+      }
+      throw new Error(`function 'atDataset': ${e}`)
+    }
+    if (!headless) await delay(delayTime)
+  }
+}
+
+// atChanges checks to see if we are at the correct route for viewing changes to
+// a dataset
+function atChanges (app: any) {
+  return async (username: string, datasetName: string, screenshotLocation?: string) => {
+    const { client, browserWindow } = app
+    try {
+      await client.waitUntil(async () => {
+        const currUrl: string = await browserWindow.getURL()
+        const location = new url.URL(currUrl).hash
+        return location.startsWith('#/collection/changes') && location.includes(username) && location.includes(datasetName)
+      }, 10000, `expected url to be '#/collection/${username}/${datasetName}', got: ${location}`)
     } catch (e) {
       if (screenshotLocation) {
         _takeScreenshot(app, screenshotLocation)

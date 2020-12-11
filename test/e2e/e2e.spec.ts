@@ -979,7 +979,8 @@ async function writeCommitAndSubmit (uniqueName: string, username: string, datas
     takeScreenshot,
     checkStatus,
     atDatasetVersion,
-    expectTextToContain
+    expectTextToContain,
+    atChanges
   } = utils
 
   // commit should be enabled
@@ -1000,7 +1001,7 @@ async function writeCommitAndSubmit (uniqueName: string, username: string, datas
   await click('#submit', artifactPathFromDir(imagesDir, `${name}-commit-click-submit.png`))
 
   if (!firstCommit) {
-    await waitForExist('#change-report')
+    await atChanges(username, datasetName, `${name}-at-change-report`)
     await click('#back')
   }
   await atDatasetVersion(0, artifactPathFromDir(imagesDir, `${name}-commit-on-history-tab.png`))
