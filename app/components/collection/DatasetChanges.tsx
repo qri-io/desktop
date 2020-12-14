@@ -6,11 +6,10 @@ import { LaunchedFetchesAction } from '../../store/api'
 import { connectComponentToPropsWithRouter } from '../../utils/connectComponentToProps'
 import { fetchWorkbench } from '../../actions/workbench'
 
-import DatasetLayout from './layouts/DatasetLayout'
-import LogList from './LogList'
-// import Changes from '../changes/Changes'
 import { selectLogPageInfo, selectChangeReportLeft } from '../../selections'
 import Changes, { LoadingDatasetChanges } from '../changes/Changes'
+import Layout from '../Layout'
+import { pathToDataset } from '../../paths'
 
 export interface DatasetChangesProps extends RouteProps {
   qriRef: QriRef
@@ -33,8 +32,11 @@ export const DatasetChangesComponent: React.FunctionComponent<DatasetChangesProp
   }, [qriRef.location])
 
   return (
-    <DatasetLayout
+    <Layout
       id='dataset-changes'
+      backButtonUrl={pathToDataset(qriRef.username, qriRef.name, qriRef.path || '')}
+      subTitle={`${qriRef.username}/`}
+      title={qriRef.name}
       mainContent={
         <div className='dataset-content transition-group'>
           {
@@ -45,7 +47,6 @@ export const DatasetChangesComponent: React.FunctionComponent<DatasetChangesProp
                 right={qriRef}
               />}
         </div>}
-      sidebarContent={<LogList qriRef={qriRef}/>}
     />
   )
 }

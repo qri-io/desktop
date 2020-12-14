@@ -13,6 +13,12 @@ import Hamburger from '../chrome/Hamburger'
 interface NavTopbarProps extends RouteProps {
   title: string
   subTitle?: string
+
+  /**
+   * backButtonUrl - when it exists, will override default back button behavior
+   * to instead `history.push` to the backButtonUrl location
+   */
+  backButtonUrl?: string
   buttons: NavbarButtonProps[]
 }
 
@@ -32,11 +38,22 @@ export interface NavbarButtonProps {
 
 // Navbar is persistent chrome from app-wide navigation
 export const NavTopbarComponent: React.FunctionComponent<NavTopbarProps> = (props) => {
-  const { title, subTitle, buttons = [], location, match, history } = props
+  const {
+    title,
+    subTitle,
+    buttons = [],
+    location,
+    match,
+    history,
+    backButtonUrl
+  } = props
   // determines if route is at base route (e.g. /collection or /network)
   const isBaseRoute = Object.keys(match.params).length === 0
 
   const onBackClick = () => {
+    if (backButtonUrl) {
+      return history.push(backButtonUrl)
+    }
     // if not on base route, clicking back takes you to base route
     // (e.g. /collection/edit/username/dataset/body => /collection)
     const baseRoute = location.pathname.split("/")[1]
@@ -47,7 +64,7 @@ export const NavTopbarComponent: React.FunctionComponent<NavTopbarProps> = (prop
     <div className='page-navbar'>
       <div className='row'>
         <div className='nav-buttons'>
-          {!isBaseRoute && <a className='back' onClick={onBackClick}><BackArrow /></a>}
+          {!isBaseRoute && <a id='back' className='back' onClick={onBackClick}><BackArrow /></a>}
         </div>
         {!__BUILD__.REMOTE && <div className='transfers'>
           <Transfers />

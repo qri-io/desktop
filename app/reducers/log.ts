@@ -3,6 +3,9 @@ import { Reducer, AnyAction } from 'redux'
 import { Log } from '../models/store'
 import { apiActionTypes } from '../utils/actionType'
 import { reducerWithPagination } from '../utils/pagination'
+import {
+  REMOVE_SUCC
+} from './selections'
 
 const initialState: Log = {
   pageInfo: {
@@ -38,6 +41,12 @@ const logReducer: Reducer = (state = initialState, action: AnyAction): Log | nul
         ...state,
         pageInfo: reducerWithPagination(action, state.pageInfo)
       }
+
+    case REMOVE_SUCC:
+      if (state.peername === action.payload.request.segments.username && state.name === action.payload.request.segments.name) {
+        return initialState
+      }
+      return state
     default:
       return state
   }

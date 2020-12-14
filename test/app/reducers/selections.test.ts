@@ -71,7 +71,7 @@ describe('Body Reducer', () => {
       payload: {
         request: {
           segments: {
-            peername: 'baz',
+            username: 'baz',
             name: 'qux'
           }
         }
@@ -89,7 +89,7 @@ describe('Body Reducer', () => {
       payload: {
         request: {
           segments: {
-            peername: 'foo',
+            username: 'foo',
             name: 'bar'
           }
         }

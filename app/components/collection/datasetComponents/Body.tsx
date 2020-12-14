@@ -30,7 +30,7 @@ export interface BodyProps extends RouteProps {
 }
 
 function shouldDisplayJsonViewer (format: string) {
-  return (format !== undefined && format !== 'csv' && format !== 'xlsx')
+  return !format || (format !== 'csv' && format !== 'xlsx')
 }
 
 export interface Header {

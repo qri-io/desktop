@@ -13,8 +13,9 @@ const SummaryItem: React.FC<ISummaryStats> = (props) => {
   for (const [key, val] of Object.entries(props)) {
     if (key !== 'delta') {
       statsList.push({
-        label: key,
+        label: key === 'totalSize' ? 'File Size' : key,
         value: val,
+        inBytes: key === 'totalSize',
         delta: props.delta && props.delta[key]
       })
     }

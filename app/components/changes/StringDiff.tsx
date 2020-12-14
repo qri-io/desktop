@@ -26,12 +26,15 @@ const StringDiff: React.FC<IStringDiff | IStructureDiff | IMetaDiff> = (props) =
     collapsable
     componentStatus={status}
     animationOn={false}
+    showNoChanges
+    startOpen={!(status === 'unmodified' || name === 'structure')}
     content={<ReactDiffViewer
       styles={styles}
       oldValue={typeof left === 'string' ? left : JSON.stringify(left, null, 2)}
       newValue={typeof right === 'string' ? right : JSON.stringify(right, null, 2)}
       splitView={true}
       compareMethod={DiffMethod.WORDS}
+      showDiffOnly={status !== 'unmodified'}
     />}
   />
 }

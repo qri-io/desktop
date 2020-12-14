@@ -37,6 +37,9 @@ export default function fileSize (l: number): string {
 var SI_SYMBOL = ['', 'k', 'M', 'G', 'T', 'P', 'E']
 
 export function abbreviateNumber (number: number) {
+  if (number === undefined) {
+    return undefined
+  }
   // what tier? (determines SI symbol)
   var tier = Math.log10(number) / 3 | 0
 

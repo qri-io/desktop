@@ -5,17 +5,17 @@ interface ExportSubmitButtonProps {
   text: string
   disabled: boolean
   loading: boolean
-  onSubmit: () => void
+  onClick: () => void
   download: string
   downloadName: string
 }
 
-export const ExportSubmitButton: React.FunctionComponent<ExportSubmitButtonProps> = ({ text, disabled, loading, onSubmit, download, downloadName }) =>
+export const ExportSubmitButton: React.FunctionComponent<ExportSubmitButtonProps> = ({ text, disabled, loading, onClick, download, downloadName }) =>
   <Button
     id='submit'
     color='dark'
     text='Download...'
-    onClick={onSubmit}
+    onClick={onClick}
     loading={loading}
     disabled={disabled}
     download={download}

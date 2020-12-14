@@ -43,7 +43,7 @@ export default (state = initialState, action: AnyAction) => {
       // if the given peername and name don't match the selected peername and name return early
       // otherwise, fall through to clearing the selection
       if (action.type === REMOVE_SUCC) {
-        if (!(action.payload.request.segments.peername === state.peername && action.payload.request.segments.name === state.name)) {
+        if (!(action.payload.request.segments.username === state.peername && action.payload.request.segments.name === state.name)) {
           return state
         }
       }

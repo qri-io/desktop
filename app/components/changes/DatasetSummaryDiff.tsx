@@ -5,7 +5,21 @@ import { VersionInfo } from '../../models/store'
 import Commitish from '../chrome/Commitish'
 import CommitDetails from '../CommitDetails'
 
-const CommitItem: React.FC<VersionInfo> = (props) => {
+interface DatasetSummaryItemProps {
+  data: VersionInfo
+  /**
+   * displayName - defaults to true, when false, doesn not show the dataset
+   * username/name combination
+   */
+  shouldDisplayName?: boolean
+}
+
+const DatasetSummaryItem: React.FC<DatasetSummaryItemProps> = (props) => {
+  const {
+    data,
+    shouldDisplayName = true
+  } = props
+
   const {
     path,
     commitTitle,
@@ -14,17 +28,17 @@ const CommitItem: React.FC<VersionInfo> = (props) => {
     bodyRows,
     username,
     name
-  } = props
+  } = data
 
   return (
     <div style={{ margin: 20 } }>
-      <div
+      {shouldDisplayName && <div
         style={ {
           fontFamily: 'monospace',
           fontSize: 18,
           color: 'black',
           textOverflow: 'ellipsis'
-        }}>{username}/{name}</div>
+        }}>{username}/{name}</div>}
       {path && <Commitish text={path}/>}
       <div><CommitDetails
         commitTitle={commitTitle || ''}
@@ -42,23 +56,25 @@ const DatasetSummaryDiff: React.FC<IVersionInfoDiff> = (props) => {
     left,
     right
   } = props
+
+  const shouldDisplayName = !(left.name === right.name && left.username === right.username)
   return (
     <table style={{ width: '100%', marginTop: 40 }}>
       <thead>
         <tr>
           <th style={{
             fontSize: 16,
-            fontWeight: 300,
+            fontWeight: 400,
             textTransform: 'uppercase',
-            color: '#737373'
+            color: 'red'
           }}>
             BASE
           </th>
           <th style={{
             fontSize: 16,
-            fontWeight: 300,
+            fontWeight: 400,
             textTransform: 'uppercase',
-            color: '#737373'
+            color: 'green'
           }}>
             COMPARE
           </th>
@@ -67,10 +83,10 @@ const DatasetSummaryDiff: React.FC<IVersionInfoDiff> = (props) => {
       <tbody>
         <tr>
           <td >
-            <CommitItem {...left} />
+            <DatasetSummaryItem data={left} shouldDisplayName={shouldDisplayName} />
           </td>
           <td>
-            <CommitItem {...right} />
+            <DatasetSummaryItem data={right} shouldDisplayName={shouldDisplayName} />
           </td>
         </tr>
       </tbody>

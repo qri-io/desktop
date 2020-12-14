@@ -6,11 +6,16 @@ import { ComponentStatus } from '../../models/store'
 
 export interface StatusDotProps {
   status: ComponentStatus
+  showNoChanges?: boolean
 }
 
 export const StatusDot: React.FunctionComponent<StatusDotProps> = (props) => {
+  const {
+    status,
+    showNoChanges = false
+  } = props
   let statusTooltip
-  switch (props.status) {
+  switch (status) {
     case 'modified':
       statusTooltip = 'modified'
       break
@@ -29,6 +34,9 @@ export const StatusDot: React.FunctionComponent<StatusDotProps> = (props) => {
         data-tip='Parsing Error'
         size='sm' />)
     default:
+      if (showNoChanges) {
+        return <div>No Changes</div>
+      }
       statusTooltip = 'unmodified'
   }
 

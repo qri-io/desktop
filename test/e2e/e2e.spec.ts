@@ -11,8 +11,8 @@ import { schemaColumns } from '../../app/utils/schemaColumns'
 
 const { Application } = require('spectron')
 
-const takeScreenshots = false
-const printConsoleLogs = false
+const takeScreenshots = true
+const printConsoleLogs = true
 
 function artifactPathFromDir (dir: string, s: string): string {
   return path.join(dir, s)
@@ -488,7 +488,7 @@ describe('Qri End to End tests', function spec () {
   // structure write and commit
   it('fsi editing - edit the structure & commit', async () => {
     await utils.atDataset(username, datasetName)
-    await editCSVStructureAndCommit('fsi-setructure-edit', username, datasetName, { structure: csvStructure, commit: structureCommit }, 'modified', utils, imagesDir)
+    await editCSVStructureAndCommit('fsi-structure-edit', username, datasetName, { structure: csvStructure, commit: structureCommit }, 'modified', utils, imagesDir)
   })
 
   // rename
@@ -979,7 +979,8 @@ async function writeCommitAndSubmit (uniqueName: string, username: string, datas
     takeScreenshot,
     checkStatus,
     atDatasetVersion,
-    expectTextToContain
+    expectTextToContain,
+    atChanges
   } = utils
 
   // commit should be enabled
@@ -1000,8 +1001,8 @@ async function writeCommitAndSubmit (uniqueName: string, username: string, datas
   await click('#submit', artifactPathFromDir(imagesDir, `${name}-commit-click-submit.png`))
 
   if (!firstCommit) {
-    await waitForExist('#change-report')
-    await click('#HEAD-0')
+    await atChanges(username, datasetName, `${name}-at-change-report`)
+    await click('#back')
   }
   await atDatasetVersion(0, artifactPathFromDir(imagesDir, `${name}-commit-on-history-tab.png`))
   // check component status
@@ -1261,6 +1262,9 @@ async function editCSVStructureAndCommit (uniqueName: string, username: string, 
 
   // on status tab
   await click('#working-version', artifactPathFromDir(imagesDir, `${name}-click-status-tab.png`))
+  if (takeScreenshots) {
+    await takeScreenshot(artifactPathFromDir(imagesDir, `${name}-at-working-version.png`))
+  }
   // commit should be disabled
   await doesNotExist('.clear-to-commit #commit-status', artifactPathFromDir(imagesDir, `${name}-commit-does-not-exist-clear-to-commit.png`))
   // click #structure-status

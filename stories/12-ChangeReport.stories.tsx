@@ -60,25 +60,25 @@ export const stringDiff = () => {
       <StringDiff
         left={res.meta.left}
         right={res.meta.right}
-        componentStatus={res.meta.meta.status}
+        componentStatus={res.meta.about.status}
         name='meta'
       />
       <StringDiff
         left={res.structure.left}
         right={res.structure.right}
-        componentStatus={res.structure.meta.status}
+        componentStatus={res.structure.about.status}
         name='structure'
       />
       <StringDiff
         left={res.readme.left}
         right={res.readme.right}
-        componentStatus={res.readme.meta.status}
+        componentStatus={res.readme.about.status}
         name='readme'
       />
       <StringDiff
         left={res.transform.left}
         right={res.transform.right}
-        componentStatus={res.transform.meta.status}
+        componentStatus={res.transform.about.status}
         name='transform'
       />
     </>
