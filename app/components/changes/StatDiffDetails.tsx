@@ -4,7 +4,7 @@ import { IColumnStatsChanges } from '../../models/changes'
 import { IStatTypes } from '../../models/dataset'
 import Icon from '../chrome/Icon'
 import StatsChart from '../StatsChart'
-import LabeledStats, { Stat } from './LabeledStats'
+import LabeledStats, { Stat } from '../item/LabeledStats'
 
 interface StatDiffItemProps {
   data: IStatTypes
@@ -13,12 +13,12 @@ interface StatDiffItemProps {
   delta?: IStatTypes
 }
 
-interface StatDiffRowHeaderProps {
+interface StatDiffDetailsHeaderProps {
   title?: string
   type?: 'boolean' | 'numeric' | 'string'
 }
 
-const StatDiffRowHeader: React.FC<StatDiffRowHeaderProps> = (props) => {
+const StatDiffDetailsHeader: React.FC<StatDiffDetailsHeaderProps> = (props) => {
   const {
     title,
     type
@@ -39,7 +39,7 @@ export const StatDiffItem: React.FC<StatDiffItemProps> = (props) => {
 
   if (!data || Object.keys(data).length === 0) {
     return <div className='margin' style={{ height: '100%', width: '100%', position: 'absolute' }}>
-      <StatDiffRowHeader title={title} type={type}/>
+      <StatDiffDetailsHeader title={title} type={type}/>
       <div style={{ fontWeight: 600 }}>Column Does Not Exist in this Version</div>
     </div>
   }
@@ -80,7 +80,7 @@ export const StatDiffItem: React.FC<StatDiffItemProps> = (props) => {
     }
   }
   return <div className='stat-diff-item margin'>
-    <StatDiffRowHeader title={title} type={type}/>
+    <StatDiffDetailsHeader title={title} type={type}/>
     <div className='margin-bottom'>
       <div className='label small uppercase margin-bottom'>Column Stats</div>
       <LabeledStats data={statsList} uppercase={false}/>
@@ -99,12 +99,12 @@ export const StatDiffItem: React.FC<StatDiffItemProps> = (props) => {
   </div>
 }
 
-export interface StatDiffRowProps {
+export interface StatDiffDetailsProps {
   data: IColumnStatsChanges
   last: boolean
 }
 
-export const StatDiffRow: React.FC<StatDiffRowProps> = ({ data, last }) => {
+export const StatDiffDetails: React.FC<StatDiffDetailsProps> = ({ data, last }) => {
   const {
     left,
     right,

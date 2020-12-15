@@ -258,7 +258,8 @@
     },
     "columns": [
       {
-        "meta": {"title": "cases"},
+        "title": "cases",
+        "about": {"status": "modified"},
         "left": {
           "count": 739788,
           "histogram": {
@@ -427,7 +428,8 @@
         }
       },
       {
-        "meta": { "title": "severe_case_true_false" },
+        "title":"sever_case_true_false",
+        "meta": { "status": "modified" },
         "left": {
           "type": "boolean",
           "count": 739788,
@@ -448,7 +450,8 @@
         }
       },
       {
-        "meta": {"title": "combined_location_name"},
+        "title": "combined_location_name",
+        "about": {"status": "unmodified"},
         "left":   {
           "count": 739788,
           "frequencies": {
@@ -756,7 +759,8 @@
         }
       },
       {
-        "meta" : { "title": "lat" },
+        "title": "lat",
+        "about" : { "status": "added" },
         "left": {},
         "right": {
           "count": 543173,

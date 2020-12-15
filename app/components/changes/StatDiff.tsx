@@ -2,7 +2,7 @@ import React from 'react'
 import { IStatDiff, ISummaryStats } from '../../models/changes'
 import Segment from '../chrome/Segment'
 import LabeledStats, { Stat } from '../item/LabeledStats'
-import { StatDiffRow } from '../item/StatDiffRow'
+import { StatDiffDetails } from './StatDiffDetails'
 
 interface StatDiffProps {
   data: IStatDiff
@@ -48,7 +48,7 @@ const StatDiff: React.FC<StatDiffProps> = ({ data }) => {
       <tr><th colSpan={2} style={{ fontSize: 20 }}>Column Comparison</th></tr>
     </thead>
     <tbody>
-      {columns.map((column, i) => <StatDiffRow last={columns.length - 1 === i} key={i} data={column} />)}
+      {columns.map((column, i) => <StatDiffDetails last={columns.length - 1 === i} key={i} data={column} />)}
     </tbody>
   </table>
 

@@ -1,6 +1,6 @@
 import React from 'react'
 import StringDiff from '../app/components/changes/StringDiff'
-import { StatDiffRow, StatDiffItem } from '../app/components/item/StatDiffRow'
+import { StatDiffDetails, StatDiffItem } from '../app/components/changes/StatDiffDetails'
 import StatDiff from '../app/components/changes/StatDiff'
 import DatasetSummaryDiff from '../app/components/changes/DatasetSummaryDiff'
 import ChangeReport from '../app/components/changes/ChangeReport'
@@ -38,20 +38,20 @@ export const statDiff = () => {
   return <StatDiff data={res.stats}/>
 }
 
-export const statDiffRow = () => {
+export const statDiffDetails = () => {
   return (
     <table style={{verticalAlign: 'top'}} >
       <tbody>
       {res.stats.columns.map((row, i) => {
-        return <StatDiffRow key={i} data={row} />
+        return <StatDiffDetails key={i} data={row} />
       })}
       </tbody>
     </table>
   )
 }
 
-statDiffRow.story = {
-  name: 'stat diff row'
+statDiffDetails.story = {
+  name: 'stat diff details'
 }
 
 export const stringDiff = () => {

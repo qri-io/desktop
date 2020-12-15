@@ -10,7 +10,7 @@ import { setDetailsBar } from '../actions/ui'
 
 import { Header } from './collection/datasetComponents/Body'
 import { TypeLabel } from './TwoDSchemaLayout'
-import { StatDiffItem } from './item/StatDiffRow'
+import { StatDiffItem } from './changes/StatDiffDetails'
 
 export interface DetailsBarProps {
   details: Details
