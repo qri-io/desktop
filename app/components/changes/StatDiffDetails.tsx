@@ -101,10 +101,13 @@ export const StatDiffItem: React.FC<StatDiffItemProps> = (props) => {
 
 export interface StatDiffDetailsProps {
   data: IColumnStatsChanges
-  last: boolean
 }
 
-export const StatDiffDetails: React.FC<StatDiffDetailsProps> = ({ data, last }) => {
+export const StatDiffDetails: React.FC<StatDiffDetailsProps> = (props) => {
+  const {
+    data
+  } = props
+
   const {
     left,
     right,
@@ -113,12 +116,15 @@ export const StatDiffDetails: React.FC<StatDiffDetailsProps> = ({ data, last }) 
   } = data
   const { type } = right
 
-  return (<tr style={{ verticalAlign: 'top', borderBottom: last ? 'none' : '1px solid #eee' }}>
+  return (<table style={{ width: '100%', borderCollapse: 'separate', tableLayout: 'fixed' }}><tbody><tr style={{
+    verticalAlign: 'top'
+    // borderBottom: last ? 'none' : '1px solid #eee'
+  }}>
     <td>
       <StatDiffItem data={left} title={title} type={type}/>
     </td>
     <td>
       <StatDiffItem data={right} delta={delta}/>
     </td>
-  </tr>)
+  </tr></tbody></table>)
 }

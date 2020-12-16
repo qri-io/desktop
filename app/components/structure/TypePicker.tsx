@@ -22,7 +22,8 @@ export const typesAndDescriptions: Array<{ type: DataTypes, description: string 
   { type: 'array', description: 'list of items' },
   { type: 'object', description: 'key/value pairs' },
   { type: 'boolean', description: 'true or false values' },
-  { type: 'null', description: 'empty values' }
+  { type: 'null', description: 'empty values' },
+  { type: 'numeric', description: 'number, includes floating point and whole numbers' }
 ]
 
 const handleUnknownTypes = (types: DataTypes | DataTypes[]): DataTypes | DataTypes[] => {

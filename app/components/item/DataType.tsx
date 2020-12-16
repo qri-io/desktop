@@ -1,7 +1,7 @@
 import React from 'react'
 import Icon from '../chrome/Icon'
 
-export type DataTypes = 'string' | 'integer' | 'number' | 'boolean' | 'null' | 'any' | 'array' | 'object'
+export type DataTypes = 'string' | 'integer' | 'number' | 'boolean' | 'null' | 'any' | 'array' | 'object' | 'numeric'
 
 interface DataTypeProps {
   type: DataTypes
