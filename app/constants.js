@@ -7,7 +7,7 @@ const DISCORD_URL = 'https://discordapp.com/invite/thkJHKj'
 const GITHUB_ORG_URL = 'https://github.com/qri-io'
 const QRI_CLOUD_URL = 'https://qri.cloud'
 const QRI_IO_URL = 'https://qri.io'
-const WEBSOCKETS_URL = 'ws://localhost:2506'
+const WEBSOCKETS_URL = 'ws://localhost:2503'
 const WEBSOCKETS_PROTOCOL = 'qri-websocket'
 // 3000ms is quick enough for the app to feel responsive
 // but is slow enough to not trip up the backend
